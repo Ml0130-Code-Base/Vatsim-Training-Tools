@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C90 Drill Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D0C;
+    --panel:#0F1614;
+    --panel2:#121A17;
+    --ink:#E7EDE9;
+    --dim:#6F8079;
+    --dim2:#455049;
+    --line:#1E2925;
+    --green:#4FE0A0;
+    --amber:#E8A23D;
+    --red:#E8604D;
+    --display:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(79,224,160,0.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(79,224,160,0.25);}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  a{color:var(--green);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    font-family:var(--mono);font-size:11px;letter-spacing:0.12em;
+    text-transform:uppercase;color:var(--dim);
+    position:sticky;top:0;background:rgba(10,13,12,0.9);
+    backdrop-filter:blur(6px);z-index:20;
+  }
+  .topbar b{color:var(--ink);font-weight:600;}
+
+  .hero{padding:26px 0 4px;}
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--green);margin-bottom:10px;
+  }
+  .hero h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(20px,3vw,26px);margin:0 0 6px;letter-spacing:-0.01em;
+  }
+  .hero p{color:var(--dim);max-width:64ch;margin:0 0 8px;font-size:15px;}
+  .hero .note{
+    font-size:12.5px;color:var(--dim2);
+    border-left:2px solid var(--line);padding-left:10px;margin-top:16px;
+  }
+
+  .modnav{
+    display:flex;gap:8px;flex-wrap:wrap;margin:32px 0;
+    padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .modnav a{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:0.04em;
+    text-decoration:none;color:var(--dim);border:1px solid var(--line);
+    padding:6px 10px;border-radius:3px;transition:color .15s,border-color .15s;
+  }
+  .modnav a:hover{color:var(--ink);border-color:var(--dim2);}
+  .modnav:empty{display:none;}
+
+  section.module{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}
+  .modhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--green);text-transform:uppercase;}
+  .tag.crit{color:var(--red);}
+  section.module h2{font-family:var(--display);font-weight:600;font-size:26px;margin:6px 0 4px;letter-spacing:-0.01em;}
+  .modsub{color:var(--dim);font-size:14px;margin:0 0 6px;}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--dim2);}
+
+  @media(max-width:640px){
+    .hero h1{font-size:26px;}
+    section.module h2{font-size:22px;}
+    .wrap{padding:0 14px 60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div><b>C90</b> Chicago TRACON</div>
+  <div>Drill deck &mdash; skeleton</div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Drill deck</div>
+    <h1>Set the seat, build the drill, fly it, bank what it taught.</h1>
+    <p>The Chicago TRACON frame &mdash; positions, combining, configurations, finals, capture points &mdash; carried out of the vZAU documents. The published geometry that flies traffic is not carried yet, and every empty slot says so and names the document that fills it.</p>
+    <div class="note">Skeleton. Nothing here is invented: a number is either traced to a vZAU document by paragraph, or the slot is empty and marked empty. Student notes attach to any section, any table row and any empty slot, and export as Markdown to be folded back into the reference set.</div>
+  </div>
+  <div class="modnav" id="modnav"></div>
+
+  <footer>
+    Skeleton tool. Single file, no build step, no network, works from file://. Every operational number traces to the vZAU document set &mdash; see claude_Source_Documents_Index.md and claude_C90_Reference.md.
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   C90 DECK v0 (skeleton) — the frame, the spine, and the empty slots
+   Self-contained: injects its own CSS, nav links and sections.
+   Block 1 of 2. Block 2 (builder + student notes) reads window.DD.
+
+   Rule this file is built to: an operational number is either cited to a
+   vZAU document by paragraph, or it is not here. Empty is a state the
+   tool displays, not a state it papers over.
+   ================================================================ */
+(function(){
+'use strict';
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.dd-section{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}'
++ '.dd-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.dd-mono{font-family:var(--mono);}'
++ '.dd-scopewrap{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}'
++ '.dd-scope{width:100%;height:auto;display:block;}'
++ '.dd-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
++ '.dd-bar button,.dd-quick button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
++ '.dd-bar button:hover,.dd-quick button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.dd-bar button.on{color:var(--green);border-color:var(--green);}'
++ '.dd-clock{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto;}'
++ '.dd-strips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}'
++ '.dd-strip{flex:1 1 200px;min-width:180px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;line-height:1.5;cursor:pointer;}'
++ '.dd-strip.sel{border-color:var(--green);}'
++ '.dd-strip.gone{opacity:0.35;}'
++ '.dd-strip b{color:var(--ink);font-size:12.5px;}'
++ '.dd-strip .warn{color:var(--amber);}'
++ '.dd-cmdrow{display:flex;gap:8px;flex-wrap:wrap;}'
++ '.dd-cmd{flex:1 1 260px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--mono);font-size:12.5px;padding:9px 10px;}'
++ '.dd-cmd:focus{outline:2px solid var(--green);outline-offset:1px;}'
++ '.dd-send{font-family:var(--mono);font-size:12px;background:var(--green);color:#062;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;font-weight:600;}'
++ '.dd-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}'
++ '.dd-feed{max-height:300px;overflow-y:auto;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:12.5px;margin-top:12px;}'
++ '.dd-feed p{margin:0 0 7px;line-height:1.45;}'
++ '.dd-feed .t{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin-right:6px;}'
++ '.dd-feed .crew{font-style:italic;color:var(--ink);}'
++ '.dd-feed .coach{color:var(--dim);}'
++ '.dd-chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:0.06em;border-radius:2px;padding:1px 6px;margin-right:6px;text-transform:uppercase;}'
++ '.dd-chip.good{background:rgba(79,224,160,0.15);color:var(--green);}'
++ '.dd-chip.flag{background:rgba(232,162,61,0.15);color:var(--amber);}'
++ '.dd-chip.crit{background:rgba(232,96,77,0.18);color:var(--red);}'
++ '.dd-chip.info{background:rgba(111,128,121,0.18);color:var(--dim);}'
++ '.dd-note{font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:12px;}'
++ '.dd-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;margin-top:8px;}'
++ '.dd-tbl th{text-align:left;color:var(--dim);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;font-size:10px;border-bottom:1px solid var(--line);padding:5px 8px 5px 0;}'
++ '.dd-tbl td{padding:5px 8px 5px 0;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;}'
++ '.dd-tbl td.d{color:var(--dim);}'
++ '.dd-cite{font-family:var(--mono);font-size:10.5px;color:var(--dim2);}'
++ '.dd-slot{background:var(--panel2);border:1px solid var(--line);border-left-width:3px;border-radius:4px;padding:10px 12px;margin:10px 0;}'
++ '.dd-slot.verified{border-left-color:var(--green);}'
++ '.dd-slot.partial{border-left-color:var(--amber);}'
++ '.dd-slot.empty{border-left-color:var(--red);}'
++ '.dd-slot h4{font-family:var(--display);font-size:14.5px;margin:0 0 4px;font-weight:600;}'
++ '.dd-slot p{margin:0 0 5px;font-size:12.5px;color:var(--dim);}'
++ '.dd-pagetabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}'
++ '.dd-pagetabs button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:3px;padding:7px 12px;cursor:pointer;}'
++ '.dd-pagetabs button.on{color:var(--green);border-color:var(--green);}'
++ '.dd-grid{display:flex;gap:10px;flex-wrap:wrap;}'
++ '.dd-fld{flex:1 1 150px;min-width:130px;}'
++ '.dd-fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);margin-bottom:3px;}'
++ '.dd-fld input,.dd-fld select,.dd-fld textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:6px 8px;}'
++ '.dd-fld textarea{font-family:var(--body);font-size:13px;line-height:1.5;resize:vertical;}'
++ '@media (max-width:600px){.dd-strip{flex-basis:100%;}.dd-feed{max-height:240px;}}';
+var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+/* ---------- 2. Geometry ----------
+   Range Ring Center Point, vC90 7110.65C Appendix A: 41 58 48 N / 087 55 40 W
+   (the old ORD west ASR-9 sensor location). C90 airspace is defined by RRCP
+   range marks, and the order talks in RRCP distances throughout — RRCP 15,
+   RRCP 20, RRCP 25, RRCP 35 — so the scope is drawn the same way. */
+var RRCP = {lat:41.98000, lon:-87.92778};
+var COSL = Math.cos(RRCP.lat*Math.PI/180);
+var CX=350, CY=255, SC=4.0;                        /* px centre + px per NM */
+function nmOf(lat,lon){ return {e:(lon-RRCP.lon)*60*COSL, n:(lat-RRCP.lat)*60}; }
+function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
+function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
+function rdToLatLon(r,d){
+  var a=r*Math.PI/180;
+  return {lat:RRCP.lat + (d*Math.cos(a))/60, lon:RRCP.lon + (d*Math.sin(a))/(60*COSL)};
+}
+function rdOf(lat,lon){
+  var p=nmOf(lat,lon), d=Math.sqrt(p.e*p.e+p.n*p.n);
+  var b=(Math.atan2(p.e,p.n)*180/Math.PI+360)%360;
+  return {r:b, d:d};
+}
+/* The rings the order itself works in. */
+var RINGS = [15,20,25,35,40];
+
+/* ---------- 3. Positions — vC90 7110.65C 2-1 and 2-2 ----------
+   2-1 gives symbol, callsign and frequency; 2-2 gives what each position
+   combines into. Z is starred in 2-1 as the combined position that opens
+   first, which is why every chain below ends on Z. */
+var POSITIONS = [
+  {sym:'Z', call:'CHI_Z_APP', freq:'119.000', name:'ORD Final',        group:'final',  into:null, first:true},
+  {sym:'W', call:'CHI_W_APP', freq:'133.625', name:'ORD Final',        group:'final',  into:'Z'},
+  {sym:'F', call:'CHI_F_APP', freq:'124.350', name:'ORD Final',        group:'final',  into:'Z'},
+  {sym:'H', call:'CHI_H_APP', freq:'132.175', name:'ORD Final',        group:'final',  into:'W'},
+  {sym:'X', call:'CHI_X_APP', freq:'135.075', name:'PLANO Feeder',     group:'feeder', into:'W'},
+  {sym:'J', call:'CHI_J_APP', freq:'125.700', name:'KUBBS Feeder',     group:'feeder', into:'F'},
+  {sym:'E', call:'CHI_E_APP', freq:'118.925', name:'OKK Feeder',       group:'feeder', into:'X'},
+  {sym:'Y', call:'CHI_Y_APP', freq:'135.025', name:'FARMM Feeder',     group:'feeder', into:'J'},
+  {sym:'S', call:'CHI_S_APP', freq:'128.200', name:'South Satellite Sector 1', group:'ssat', into:'Z'},
+  {sym:'P', call:'CHI_P_APP', freq:'119.350', name:'South Satellite Sector 2', group:'ssat', into:'S'},
+  {sym:'L', call:'CHI_L_APP', freq:'133.500', name:'South Satellite Sector 3', group:'ssat', into:'P'},
+  {sym:'U', call:'CHI_U_APP', freq:'133.90',  name:'South Satellite Sector 4', group:'ssat', into:'S'},
+  {sym:'B', call:'CHI_B_DEP', freq:'128.575', name:'East Departure',   group:'dep',    into:'Z'},
+  {sym:'M', call:'CHI_M_DEP', freq:'126.625', name:'South Departure',  group:'dep',    into:'B'},
+  {sym:'G', call:'CHI_G_DEP', freq:'135.275', name:'West Departure',   group:'dep',    into:'M'},
+  {sym:'D', call:'CHI_D_DEP', freq:'134.400', name:'North Departure',  group:'dep',    into:'B'},
+  {sym:'A', call:'CHI_A_APP', freq:'120.550', name:'North Satellite',  group:'nsat',   into:'B'}
+];
+var POS = {}; for(var i=0;i<POSITIONS.length;i++){ POS[POSITIONS[i].sym]=POSITIONS[i]; }
+function posOf(sym){ return POS[sym]||null; }
+function posName(sym){ var p=POS[sym]; return p? p.name+' ('+sym+')' : sym; }
+/* Walk the 2-2 chain to whoever is actually open. open is an array of symbols. */
+function ownerOf(sym, open){
+  var seen={}, cur=sym;
+  while(cur && !seen[cur]){
+    if(open.indexOf(cur)>=0) return cur;
+    seen[cur]=1; cur = POS[cur] ? POS[cur].into : null;
+  }
+  return open.length? open[0] : 'Z';
+}
+
+/* ---------- 4. Configurations ----------
+   The four ORD arrival configurations are named in Appendix A (Glossary):
+   West Flow, East Flow, Parallel 22s, 4R Only. The runway each Final owns
+   in each of them is 4-3.b.1 verbatim. Appendix C splits West and East
+   further into Center High and Two Runway for the delegated airspace —
+   the airspace shapes themselves are chart images and are not carried. */
+var CONFIGS = [
+  {id:'west',  name:'West Flow',    cite:'Appendix A; 4-3.b.1',
+   lands:'any of Runways 28L/C/R and 27L/C/R', variants:['Center High','Two Runway']},
+  {id:'east',  name:'East Flow',    cite:'Appendix A; 4-3.b.1',
+   lands:'any of Runways 9L/C/R and 10L/C/R',  variants:['Center High','Two Runway']},
+  {id:'p22s',  name:'Parallel 22s', cite:'Appendix A; 4-3.b.1',
+   lands:'Runways 22L and 22R', variants:[]},
+  {id:'r4r',   name:'4R Only',      cite:'Appendix A; 4-3.b.1',
+   lands:'Runway 4R', variants:[]}
+];
+/* 4-3.b.1 — the runway each Final is normally responsible for when de-combined.
+   A blank means that Final has no runway in that configuration. */
+var FINALS = {
+  F:{west:'27R',       east:'9L',        r4r:'',   p22s:''   },
+  Z:{west:'27C/27L',   east:'9C/9R',     r4r:'4R', p22s:'22R'},
+  W:{west:'28C/28R',   east:'10L/10C',   r4r:'',   p22s:'22L'},
+  H:{west:'28L',       east:'10R',       r4r:'',   p22s:''   }
+};
+function finalFor(sym, cfg){ var r=FINALS[sym]; return r? (r[cfg]||'') : ''; }
+/* MDW configurations drive SSAT sectorisation (7-1.a, 7-4, Appendices F-5..F-9). */
+var MDW_CONFIGS = [
+  {id:'31R', name:'MDW Runway 31R', cite:'7-4; Appendix F-5'},
+  {id:'4R',  name:'MDW Runway 4R',  cite:'7-4; Appendix F-6'},
+  {id:'22L', name:'MDW Runway 22L', cite:'7-4; Appendix F-7'},
+  {id:'13L', name:'MDW Runway 13L', cite:'7-4; Appendix F-9'}
+];
+
+/* ---------- 5. Capture points — 4-4, 4-5 and 4-6 ---------- */
+var CAPTURE = {
+  dual:{cite:'4-4.a',
+    rows:[
+      {flow:'West',            rwys:'27L and 28C',  north:'4,000', south:'at or above 5,000', pt:'6,000 fix'},
+      {flow:'East (PRM)',      rwys:'10C and 10R',  north:'4,000', south:'at or above 5,000', pt:'6,000 fix'},
+      {flow:'East (no PRM)',   rwys:'9R and 10C',   north:'4,000', south:'at or above 5,000', pt:'6,000 fix'},
+      {flow:'Parallel 22s',    rwys:'22L and 22R',  north:'4,000', south:'at or above 5,000', pt:'6,000 fix'}
+    ],
+    rule:'Traffic vectored for the north runway must be at the turn-on altitude before traffic is less than 3 NM from the south runway final approach course (4-4.b).'},
+  triple:{cite:'4-5.b',
+    rows:[
+      {rwy:'North',  alt:'4,000',            pt:'6,000 fix'},
+      {rwy:'Center', alt:'at or above 7,000', pt:'8,000 fix'},
+      {rwy:'South',  alt:'5,000 / 6,000',    pt:'7,000 / 8,000 fix'}
+    ],
+    rule:'Final may issue visual approaches to the north and south runways but must issue instrument approaches to centre runway arrivals (4-5.d).'},
+  visual:{cite:'4-6.a.2',
+    rows:[
+      {flow:'West',         rwys:'27L and 28C', north:'4,000', south:'at or above 5,000', pt:'5,000 fix'},
+      {flow:'East',         rwys:'10C and 10R', north:'4,000', south:'at or above 5,000', pt:'5,000 fix'},
+      {flow:'Parallel 22s', rwys:'22L and 22R', north:'4,000', south:'at or above 5,000', pt:'5,000 fix'}
+    ],
+    rule:'No triple simultaneous visual approaches (4-6.c).'}
+};
+
+/* ---------- 6. Airports ----------
+   The field list and the tower position symbols are 2-6.d verbatim. Runway
+   inventories are deliberately absent: they are not in this order, and a
+   runway list is exactly the kind of thing that must not be guessed. */
+var AIRPORTS = [
+  {icao:'KORD', name:"O'Hare",           tower:'T', note:'ORD North or South tracks display Q (2-6.d)', runways:null},
+  {icao:'KMDW', name:'Midway',           tower:'R', runways:null},
+  {icao:'KPWK', name:'Chicago Executive',tower:'6', runways:null, note:'NSAT procedures 6-4'},
+  {icao:'KDPA', name:'DuPage',           tower:'7', runways:null},
+  {icao:'KARR', name:'Aurora',           tower:'8', runways:null},
+  {icao:'KGYY', name:'Gary',             tower:'9', runways:null},
+  {icao:'KLOT', name:'Lewis',            tower:'5', runways:null},
+  {icao:'KUGN', name:'Waukegan',         tower:'4', runways:null}
+];
+
+/* ---------- 7. The four ORD feeder gates ----------
+   The Feeder positions are named for their gates in 2-1: PLANO, KUBBS, OKK
+   and FARMM. The fixes' coordinates, the STARs that run through them and the
+   crossing restrictions on those STARs are NOT in the SOP — they come off the
+   ORD/MDW STAR reference and the charts, neither of which is extracted yet. */
+var GATES = [
+  {id:'PLANO', pos:'X', fix:null, star:null},
+  {id:'KUBBS', pos:'J', fix:null, star:null},
+  {id:'OKK',   pos:'E', fix:null, star:null},
+  {id:'FARMM', pos:'Y', fix:null, star:null}
+];
+
+/* ---------- 8. Empty geometry ----------
+   Shapes are documented so filling them is mechanical:
+   ROUTES[gate]  = {gate:'KUBBS', star:'name', fixes:[{f:'FIX',lat:,lon:,at:,spd:}]}
+   DEPS[sid]     = {sid:'NAME', fixes:[{f:'FIX',lat:,lon:}], release:{...}}
+   BOUNDARY      = [{r:radial,d:dme}] around the RRCP
+   ADA[cfg]      = polygon of the Arrival Descent Area for that configuration */
+var ROUTES = {};
+var DEPS = {};
+var BOUNDARY = [];
+var ADA = {};
+var MVA = [];
+
+/* ---------- 9. Radar beacon codes — 2-4 ---------- */
+var BEACON = {ifr:'3101-3277', vfr:'5101-5177', cite:'2-4'};
+
+/* ---------- 10. NSAT altitude matrix — 6-2.c ---------- */
+var NSAT_ALTS = [
+  {from:'NSAT', to:'Sector 1', alt:'4,000', cond:'Outside RRCP 35 during MDW Runway 22L'},
+  {from:'NSAT', to:'Sector 3', alt:'3,000', cond:'Outside RRCP 15'},
+  {from:'NSAT', to:'Sector 4', alt:'4,000', cond:'Outside RRCP 20 or the ADA, whichever is farther; do not enter Sector 4 during MDW Runway 22L'},
+  {from:'Sector 1 or 4', to:'NSAT', alt:'3,000', cond:'Outside RRCP 15'},
+  {from:'Sector 3', to:'NSAT', alt:'4,000', cond:'Outside RRCP 20 or the ADA, whichever is farther'}
+];
+/* 7-4's four SSAT matrices (13L, 22L, 4R, 31R) are laid out as four
+   side-by-side tables and did not come out of the text layer cleanly enough
+   to transcribe without guessing which column a number belongs to. Empty
+   until read off the page itself. */
+var SSAT_ALTS = {};
+
+/* ---------- 11. Glossary — Appendix A ---------- */
+var GLOSSARY = [
+  {t:'ADA', d:'Arrival Descent Area. The area used to descend ORD arrivals; references are always to the ADA in use for the current ORD arrival configuration.'},
+  {t:'RRCP', d:'Range Ring Center Point, 41 58 48 N / 087 55 40 W. RRCP 20 means the 20 NM range mark from that point.'},
+  {t:'Capture point', d:'Point on final before which an aircraft must be established on the localizer and cleared for the approach.'},
+  {t:'Capture bars', d:'Lines adjacent to the 5,000, 6,000, 7,000 and 8,000 ft final approach course fixes that identify the capture points.'},
+  {t:'Turn-in', d:'An ORD arrival vectored across the normal arrival flow to the opposite arrival controller for sequencing to that runway.'},
+  {t:'Head fake', d:'An ORD arrival coordinated as a turn-in and then returned to the normal arrival flow.'},
+  {t:'Shore at Four', d:'Point out to North Satellite by Sector 1 or 4 of a northbound departure that will be handed off to North or East Departure at 4,000 ft.'},
+  {t:'Uncommon boundary', d:'A boundary one position owns to the line while the others must remain 3 NM from it. Feeder boundaries are uncommon; Departure and Satellite stay 3 NM off them.'},
+  {t:'Bags', d:'The sectorisation of the TRACON: North Bags is NSAT, South Bags is SSAT.'},
+  {t:'Front line / Foul line / Side line', d:'The ORD arrival positions / the SSAT positions / the Departure and NSAT positions.'}
+];
+
+/* ---------- 12. The data map ----------
+   Every slot the tool knows about, what state it is in, and which document
+   fills it. This is the skeleton's spine: it is rendered as a page, and the
+   builder refuses to invent anything a slot says is empty. */
+var SLOTS = [
+  {id:'positions', title:'Positions, callsigns and frequencies', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 2-1', note:'All 17 positions.'},
+  {id:'combining', title:'Position combining chain', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 2-2', note:'Everything folds to Z, the position that opens first.'},
+  {id:'configs', title:'ORD arrival configurations', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C Appendix A; 4-3.b.1', note:'West, East, Parallel 22s, 4R Only, plus the Centre High and Two Runway variants named in Appendix C.'},
+  {id:'finals', title:'Final runway responsibility by configuration', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 4-3.b.1'},
+  {id:'capture', title:'Turn-on altitudes and capture points', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 4-4, 4-5, 4-6'},
+  {id:'beacon', title:'Beacon code blocks', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 2-4'},
+  {id:'airports', title:'Airports and tower position symbols', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 2-6.d', note:'Runway inventories are not in this order and are not carried.'},
+  {id:'nsat', title:'NSAT entry altitudes', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C 6-2.c'},
+  {id:'glossary', title:'Facility glossary', state:'verified',
+   src:'vZAU C90 TRACON SOP 7110.65C Appendix A'},
+  {id:'ssat', title:'SSAT inter-sector altitudes by MDW configuration', state:'partial',
+   src:'vZAU C90 TRACON SOP 7110.65C 7-4',
+   note:'Four side-by-side tables. Read them off the page; the text layer interleaves the columns and a number in the wrong column is a wrong altitude.'},
+  {id:'gates', title:'Feeder gate fixes and their STARs', state:'empty',
+   src:'ORD MDW STARs.pdf; ORD and MDW Cheatsheet v3.1; charts.zauartcc.org',
+   note:'The four gate names are known from the position titles. Coordinates, ladders and crossing restrictions are not.'},
+  {id:'routes', title:'Arrival ladders (ROUTES)', state:'empty',
+   src:'ORD MDW STARs.pdf; charts',
+   note:'Until this is filled the engine flies what the student gives it: a bearing and a distance from the RRCP, a heading, an altitude and a speed.'},
+  {id:'deps', title:'Departure procedures (DEPS)', state:'empty',
+   src:'ORD MDW STARs.pdf; charts',
+   note:'ACCRA and UECKR are named in 5-6 and Appendix D as SIDs whose centrelines Departure separates from; their geometry is not carried.'},
+  {id:'boundary', title:'C90 lateral boundary', state:'empty',
+   src:'vZAU TRACON Boundaries.pdf; vZAU C90 Diagrams.zip'},
+  {id:'ada', title:'Arrival Descent Area shapes', state:'empty',
+   src:'vZAU C90 TRACON SOP 7110.65C Appendices C-1 through C-11',
+   note:'Chart images. The ADA is referenced constantly in the order and cannot be inferred from the text.'},
+  {id:'mva', title:'Minimum vectoring altitudes', state:'empty',
+   src:'vZAU C90 TRACON SOP 7110.65C Appendix B'},
+  {id:'zau', title:'ZAU interface — release, handoff and climb altitudes', state:'empty',
+   src:'vZAU ZAU-C90 LOA',
+   note:'5-2.e and 7-3.a.3 both point at it (the 250 kt restriction, P-ACP to 15,000). Read the LOA before grading a handoff.'},
+  {id:'towers', title:'Tower interfaces — ORD, MDW, PWK, and the outlying LOAs', state:'empty',
+   src:'vZAU C90-ORD, C90-MDW, C90-PWK, C90-MKE, C90-RFD, C90-SBN ATCT LOAs'},
+  {id:'standing', title:'Standing training items', state:'empty',
+   src:'the student and the instructor',
+   note:'M98 has five, drawn from an OJT review. C90 has none yet: they are what the notes on this page turn into.'}
+];
+function slotOf(id){ for(var i=0;i<SLOTS.length;i++){ if(SLOTS[i].id===id) return SLOTS[i]; } return null; }
+function slotState(id){ var s=slotOf(id); return s? s.state : 'empty'; }
+
+/* ---------- 13. Sim spine ----------
+   The engine flies dead reckoning: heading, speed, and a vertical rate toward
+   whatever altitude is assigned. That is all it can honestly do until ROUTES
+   exists — there is no published track to fly, so a strip is placed by the
+   bearing and distance from the RRCP that the student states. */
+var sim = {t:0, running:false, rate:1, ac:[], feed:[], sel:null, cfg:'west', mdw:'31R', open:['Z'], seats:['Z']};
+var acSeq = 0;
+
+function mkAc(o){
+  o = o || {};
+  var pos = rdToLatLon(o.bearing==null?270:o.bearing, o.dist==null?30:o.dist);
+  var a = {
+    id:'ac'+(++acSeq),
+    cs:o.cs||'UNKNOWN',
+    type:o.type||'',
+    rules:o.rules||'IFR',
+    role:o.role||'arrival',
+    lat:pos.lat, lon:pos.lon,
+    hdg:o.hdg==null?90:o.hdg,
+    alt:o.alt==null?10000:o.alt,
+    tgtAlt:o.alt==null?10000:o.alt,
+    spd:o.spd==null?250:o.spd,
+    tgtSpd:o.spd==null?250:o.spd,
+    dest:o.dest||'',
+    rwy:o.rwy||'',
+    gate:o.gate||'',
+    from:o.from||'',
+    notes:o.notes||'',
+    gone:false
+  };
+  sim.ac.push(a);
+  return a;
+}
+function acOf(cs){
+  cs = (cs||'').toUpperCase();
+  for(var i=0;i<sim.ac.length;i++){ if(sim.ac[i].cs.toUpperCase()===cs) return sim.ac[i]; }
+  return null;
+}
+function tick(dt){
+  if(!sim.running) return;
+  sim.t += dt;
+  for(var i=0;i<sim.ac.length;i++){
+    var a=sim.ac[i]; if(a.gone) continue;
+    /* speed toward target, 2 kt per second */
+    if(a.spd<a.tgtSpd) a.spd=Math.min(a.tgtSpd,a.spd+2*dt);
+    if(a.spd>a.tgtSpd) a.spd=Math.max(a.tgtSpd,a.spd-2*dt);
+    /* altitude toward target, 1,800 fpm */
+    var vs = 1800/60;
+    if(a.alt<a.tgtAlt) a.alt=Math.min(a.tgtAlt,a.alt+vs*dt);
+    if(a.alt>a.tgtAlt) a.alt=Math.max(a.tgtAlt,a.alt-vs*dt);
+    /* position */
+    var nm = a.spd*dt/3600, r=a.hdg*Math.PI/180;
+    a.lat += (nm*Math.cos(r))/60;
+    a.lon += (nm*Math.sin(r))/(60*COSL);
+  }
+  if(window.DD && DD.hooks){ for(var h=0;h<DD.hooks.length;h++){ try{ DD.hooks[h](sim,dt); }catch(e){} } }
+  render();
+}
+function clock(){
+  var s=Math.floor(sim.t), m=Math.floor(s/60);
+  return (m<10?'0':'')+m+':'+((s%60)<10?'0':'')+(s%60);
+}
+function altText(a){ a=Math.round(a/100)*100; return a.toLocaleString? a.toLocaleString('en-US') : ''+a; }
+function fmtAlt(a){ a=Math.round(a/100)*100; return a>=18000? 'FL'+(a/100) : altText(a); }
+
+/* log(text, cls, item) — the third argument names the standing training item
+   the line exercises, the way the M98 deck tags its grading calls. STANDING is
+   empty here, so nothing tallies yet; the tag is in place so that adding an
+   item is the only work needed. */
+var STANDING = [];
+function log(html, cls, item){
+  sim.feed.push({t:clock(), html:html, cls:cls||'', item:item||null});
+  if(sim.feed.length>200) sim.feed.shift();
+  renderFeed();
+}
+function logHtml(){
+  var out='';
+  for(var i=0;i<sim.feed.length;i++){
+    var f=sim.feed[i];
+    out += '<p><span class="t">'+f.t+'</span><span class="'+(f.cls||'')+'">'+f.html+'</span></p>';
+  }
+  return out;
+}
+
+/* ---------- 14. Transmission parser ----------
+   One transmission carries as many instructions as a real one does: every
+   clause is parsed independently and the readbacks come back as one crew
+   response. Verbs carried: altitude, speed, heading, direct, approach,
+   frequency change, squawk, radar contact. Grading is deliberately not
+   asserted — there is no published geometry to grade against yet. */
+function transmit(text){
+  text = (text||'').trim();
+  if(!text) return;
+  log('<b>You:</b> '+esc(text), '');
+  var t=' '+text.toLowerCase()+' ', reads=[], m;
+  var a = sim.sel? acOf(sim.sel) : null;
+  /* callsign first token match */
+  var first = text.split(/\s+/)[0];
+  if(acOf(first)){ a=acOf(first); sim.sel=a.cs; }
+  if(!a){ log('No aircraft selected, and the first word is not a callsign on frequency.', 'coach'); return; }
+
+  m = t.match(/\b(?:descend|climb)\s+(?:and\s+)?maintain\s+(?:flight\s+level\s+)?([0-9][0-9,]*)/);
+  if(!m) m = t.match(/\bmaintain\s+(?:flight\s+level\s+)?([0-9][0-9,]*)/);
+  if(m){
+    var alt=parseInt(m[1].replace(/,/g,''),10);
+    if(alt<1000) alt=alt*100;
+    a.tgtAlt=alt;
+    reads.push((alt>a.alt?'climb':'descend')+' and maintain '+altText(alt));
+  }
+  m = t.match(/\b(?:speed|knots?)\b/) ? t.match(/\b([12][0-9][05])\s*(?:knots?)?\b/) : null;
+  if(m){ a.tgtSpd=parseInt(m[1],10); reads.push('speed '+m[1]); }
+  m = t.match(/\bheading\s+([0-3]?[0-9]{2})\b/);
+  if(m){ a.hdg=parseInt(m[1],10)%360; reads.push('heading '+m[1]); }
+  m = t.match(/\bdirect\s+([a-z]{3,5})\b/);
+  if(m){
+    var fix=m[1].toUpperCase();
+    if(!ROUTES[fix] && !hasFix(fix)){
+      log('Direct '+esc(fix)+' read back, but no fix geometry is carried &mdash; the track does not change. '+slotLink('routes'), 'coach');
+    }
+    reads.push('direct '+fix);
+  }
+  m = t.match(/\bcleared\s+(?:the\s+)?(ils|rnav|visual|localizer|loc)\b/);
+  if(m){ reads.push('cleared '+m[1]+' approach'); a.cleared=m[1]; }
+  m = t.match(/\bsquawk\s+([0-7]{4})\b/);
+  if(m){ a.squawk=m[1]; reads.push('squawk '+m[1]); }
+  if(/\bradar contact\b/.test(t)){
+    if(!a.squawk) log('Radar contact with no code assigned. Assign the code first.', 'coach');
+    else { a.identified=true; reads.push('roger'); }
+  }
+  m = t.match(/\bcontact\s+([a-z ]+?)\s+(1[0-9]{2}\.[0-9]{1,3})\b/);
+  if(m){
+    reads.push('contact '+m[1].trim()+' '+m[2]);
+    a.gone=true;
+    log(a.cs+' switched. '+esc(m[1].trim())+' '+m[2]+'.', 'coach');
+  }
+  if(reads.length) log('<span class="crew">'+esc(a.cs)+': '+reads.join(', ')+'.</span>', '');
+  else log('Nothing in that transmission parsed. Verbs carried: descend/climb and maintain, speed, heading, direct, cleared approach, squawk, radar contact, contact.', 'coach');
+  render();
+}
+function hasFix(f){
+  for(var k in ROUTES){ if(!ROUTES.hasOwnProperty(k)) continue;
+    var fx=ROUTES[k].fixes||[];
+    for(var i=0;i<fx.length;i++) if(fx[i].f===f) return true;
+  }
+  return false;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function slotLink(id){ var s=slotOf(id); return s? '<span class="dd-cite">('+esc(s.title)+' &mdash; '+esc(s.src)+')</span>' : ''; }
+
+/* ---------- 15. Render ---------- */
+function scopeSvg(){
+  var s='<svg class="dd-scope" viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">';
+  s+='<rect width="700" height="510" fill="#0B120F"/>';
+  for(var i=0;i<RINGS.length;i++){
+    var r=RINGS[i]*SC;
+    s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+r+'" fill="none" stroke="#1E2925" stroke-width="1"/>';
+    s+='<text x="'+(CX+2)+'" y="'+(CY-r+11)+'" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">RRCP '+RINGS[i]+'</text>';
+  }
+  s+='<circle cx="'+CX+'" cy="'+CY+'" r="3" fill="#4FE0A0"/>';
+  s+='<text x="'+(CX+7)+'" y="'+(CY+4)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">RRCP</text>';
+  /* any routes that exist get drawn; none do yet */
+  for(var k in ROUTES){
+    if(!ROUTES.hasOwnProperty(k)) continue;
+    var fx=ROUTES[k].fixes||[], d='';
+    for(var j=0;j<fx.length;j++){ var p=px(fx[j].lat,fx[j].lon); d+=(j?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1); }
+    if(d) s+='<path d="'+d+'" fill="none" stroke="#1E2925" stroke-width="1.2"/>';
+  }
+  for(var n=0;n<sim.ac.length;n++){
+    var a=sim.ac[n]; if(a.gone) continue;
+    var q=px(a.lat,a.lon);
+    if(q.x<-40||q.x>740||q.y<-40||q.y>550) continue;
+    var col = (sim.sel===a.cs)? '#4FE0A0' : '#E7EDE9';
+    s+='<rect x="'+(q.x-3)+'" y="'+(q.y-3)+'" width="6" height="6" fill="none" stroke="'+col+'" stroke-width="1.4"/>';
+    var nm=a.spd/60, rr=a.hdg*Math.PI/180;   /* leader line: one minute of flight */
+    s+='<line x1="'+q.x+'" y1="'+q.y+'" x2="'+(q.x+nm*SC*Math.sin(rr))+'" y2="'+(q.y-nm*SC*Math.cos(rr))+'" stroke="'+col+'" stroke-width="1"/>';
+    s+='<text x="'+(q.x+8)+'" y="'+(q.y-4)+'" fill="'+col+'" font-family="IBM Plex Mono, monospace" font-size="9.5">'+esc(a.cs)+'</text>';
+    s+='<text x="'+(q.x+8)+'" y="'+(q.y+7)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+Math.round(a.alt/100)+' '+Math.round(a.spd)+'</text>';
+  }
+  s+='</svg>';
+  return s;
+}
+function stripHtml(a){
+  var rd=rdOf(a.lat,a.lon);
+  return '<div class="dd-strip'+(sim.sel===a.cs?' sel':'')+(a.gone?' gone':'')+'" data-cs="'+esc(a.cs)+'">'
+    +'<b>'+esc(a.cs)+'</b> '+esc(a.type)+'<br>'
+    +esc(a.role)+(a.dest?' &rarr; '+esc(a.dest):'')+'<br>'
+    +Math.round(a.alt/100)*100+' ft &middot; '+Math.round(a.spd)+' kt &middot; hdg '+('00'+Math.round(a.hdg)).slice(-3)+'<br>'
+    +'<span class="dd-cite">RRCP '+rd.d.toFixed(1)+' on the '+('00'+Math.round(rd.r)).slice(-3)+'</span>'
+    +(a.notes? '<br><span class="warn">'+esc(a.notes)+'</span>':'')
+    +'</div>';
+}
+function renderFeed(){
+  var el=document.getElementById('dd-feed');
+  if(el){ el.innerHTML=logHtml(); el.scrollTop=el.scrollHeight; }
+}
+function render(){
+  var sc=document.getElementById('dd-scopewrap'); if(sc) sc.innerHTML=scopeSvg();
+  var sp=document.getElementById('dd-strips');
+  if(sp){
+    var out='';
+    for(var i=0;i<sim.ac.length;i++) out+=stripHtml(sim.ac[i]);
+    sp.innerHTML = out || '<div class="dd-note">No strips. Build one on the set-up page, or press <b>Add a strip</b> below to place one by bearing and distance from the RRCP.</div>';
+    var nodes=sp.querySelectorAll('.dd-strip');
+    for(var n=0;n<nodes.length;n++){
+      nodes[n].onclick=(function(cs){ return function(){ sim.sel=cs; render(); }; })(nodes[n].getAttribute('data-cs'));
+    }
+  }
+  var ck=document.getElementById('dd-clock');
+  if(ck) ck.textContent = clock()+'  '+(sim.running?('running x'+sim.rate):'paused');
+}
+
+/* ---------- 16. Sections ---------- */
+function sec(id, tag, h2, sub, body){
+  var s=document.createElement('section');
+  s.className='dd-section'; s.id=id;
+  s.innerHTML='<div class="modhead"><div><div class="tag">'+tag+'</div><h2>'+h2+'</h2>'
+    +'<p class="modsub">'+sub+'</p></div></div>'+body;
+  return s;
+}
+function tbl(head, rows){
+  var s='<table class="dd-tbl"><tr>';
+  for(var i=0;i<head.length;i++) s+='<th>'+head[i]+'</th>';
+  s+='</tr>';
+  for(var r=0;r<rows.length;r++){
+    s+='<tr>';
+    for(var c=0;c<rows[r].length;c++) s+='<td'+(c?' class="d"':'')+'>'+rows[r][c]+'</td>';
+    s+='</tr>';
+  }
+  return s+'</table>';
+}
+
+function positionBody(){
+  var rows=[];
+  for(var i=0;i<POSITIONS.length;i++){
+    var p=POSITIONS[i];
+    rows.push([p.sym+(p.first?' *':''), p.name, p.call, p.freq, p.into? ('&rarr; '+p.into) : 'opens first']);
+  }
+  return '<div class="dd-panel" data-note="positions">'
+    + tbl(['Sym','Position','Callsign','Frequency','Combines'], rows)
+    + '<div class="dd-note">vC90 7110.65C 2-1 and 2-2. * marks the combined position that opens first. '
+    + 'Chains: FARMM &rarr; KUBBS &rarr; F &rarr; Z; OKK &rarr; PLANO &rarr; W &rarr; Z; H &rarr; W; '
+    + 'Sector 3 &rarr; Sector 2 &rarr; Sector 1 and Sector 4 &rarr; Sector 1, Sector 1 &rarr; Z; '
+    + 'West &rarr; South &rarr; East, North &rarr; East, NSAT &rarr; East, East &rarr; Z.</div>'
+    + '<div class="dd-bar"><span class="dd-cite">Open positions:</span><span id="dd-open"></span></div>'
+    + '<div id="dd-owner" class="dd-note"></div></div>';
+}
+function frameBody(){
+  var crows=[];
+  for(var i=0;i<CONFIGS.length;i++){
+    var c=CONFIGS[i];
+    crows.push([c.name, c.lands, c.variants.length? c.variants.join(' / ') : '&mdash;', '<span class="dd-cite">'+c.cite+'</span>']);
+  }
+  var frows=[];
+  var syms=['F','Z','W','H'];
+  for(var s=0;s<syms.length;s++){
+    var f=FINALS[syms[s]];
+    frows.push([syms[s], f.west||'&mdash;', f.east||'&mdash;', f.r4r||'&mdash;', f.p22s||'&mdash;']);
+  }
+  var drows=[];
+  for(var d=0;d<CAPTURE.dual.rows.length;d++){
+    var r=CAPTURE.dual.rows[d];
+    drows.push([r.flow, r.rwys, r.north, r.south, r.pt]);
+  }
+  var trows=[];
+  for(var t=0;t<CAPTURE.triple.rows.length;t++){
+    var q=CAPTURE.triple.rows[t]; trows.push([q.rwy, q.alt, q.pt]);
+  }
+  var vrows=[];
+  for(var v=0;v<CAPTURE.visual.rows.length;v++){
+    var w=CAPTURE.visual.rows[v]; vrows.push([w.flow, w.rwys, w.north, w.south, w.pt]);
+  }
+  var arows=[];
+  for(var n=0;n<NSAT_ALTS.length;n++){
+    var x=NSAT_ALTS[n]; arows.push([x.from+' &rarr; '+x.to, x.alt, x.cond]);
+  }
+  var prows=[];
+  for(var p=0;p<AIRPORTS.length;p++){
+    var ap=AIRPORTS[p];
+    prows.push([ap.icao, ap.name, ap.tower, ap.runways? ap.runways.join(', ') : '<span class="dd-cite">not carried</span>']);
+  }
+  return '<div class="dd-panel" data-note="configs"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">ORD arrival configurations</h3>'
+    + tbl(['Configuration','Lands','Appendix C variants','Cite'], crows)
+    + '<div class="dd-bar"><span class="dd-cite">Frame:</span><span id="dd-cfgbtns"></span></div></div>'
+    + '<div class="dd-panel" data-note="finals"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Final runway responsibility &mdash; 4-3.b.1</h3>'
+    + tbl(['Final','West','East','4R Only','Parallel 22s'], frows) + '</div>'
+    + '<div class="dd-panel" data-note="capture"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Dual simultaneous instrument &mdash; 4-4.a</h3>'
+    + tbl(['Flow','Runways','North turn-on','South turn-on','Capture point'], drows)
+    + '<div class="dd-note">'+CAPTURE.dual.rule+'</div>'
+    + '<h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:14px 0 4px;">Triple simultaneous &mdash; 4-5.b</h3>'
+    + tbl(['Runway','Turn-on altitude','Capture point'], trows)
+    + '<div class="dd-note">'+CAPTURE.triple.rule+'</div>'
+    + '<h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:14px 0 4px;">Visual &mdash; 4-6.a.2</h3>'
+    + tbl(['Flow','Runways','North turn-on','South turn-on','Capture point'], vrows)
+    + '<div class="dd-note">'+CAPTURE.visual.rule+'</div></div>'
+    + '<div class="dd-panel" data-note="nsat"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">North Satellite entry altitudes &mdash; 6-2.c</h3>'
+    + tbl(['From &rarr; entering','Altitude','Condition'], arows) + '</div>'
+    + '<div class="dd-panel" data-note="airports"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Airports and tower symbols &mdash; 2-6.d</h3>'
+    + tbl(['ICAO','Field','Tower symbol','Runways'], prows)
+    + '<div class="dd-note">Beacon codes: IFR '+BEACON.ifr+', VFR '+BEACON.vfr+' ('+BEACON.cite+').</div></div>';
+}
+function liveBody(){
+  return '<div id="dd-scopewrap" class="dd-scopewrap"></div>'
+    + '<div class="dd-bar">'
+    + '<button id="dd-run">Start</button>'
+    + '<button id="dd-x1" class="on">x1</button><button id="dd-x2">x2</button><button id="dd-x4">x4</button>'
+    + '<button id="dd-add">Add a strip</button>'
+    + '<button id="dd-clear">Clear</button>'
+    + '<span id="dd-clock" class="dd-clock"></span>'
+    + '</div>'
+    + '<div id="dd-strips" class="dd-strips"></div>'
+    + '<div class="dd-cmdrow"><input id="dd-cmd" class="dd-cmd" placeholder="AAL123 descend and maintain 6,000, speed 210, heading 090"><button id="dd-go" class="dd-send">Transmit</button></div>'
+    + '<div class="dd-quick" id="dd-quick"></div>'
+    + '<div id="dd-feed" class="dd-feed"></div>'
+    + '<div class="dd-note">The engine flies heading, speed and altitude. It does not fly a published track: the arrival ladders are an empty slot, so a strip is placed by the bearing and distance from the RRCP you give it. Filling ROUTES is what turns this into a real sequencing drill.</div>';
+}
+function dataBody(){
+  var out='';
+  var order={verified:0, partial:1, empty:2};
+  var list=SLOTS.slice().sort(function(a,b){ return order[a.state]-order[b.state]; });
+  for(var i=0;i<list.length;i++){
+    var s=list[i];
+    out += '<div class="dd-slot '+s.state+'" data-note="slot.'+s.id+'">'
+      + '<h4>'+esc(s.title)+' <span class="dd-chip '+(s.state==='verified'?'good':(s.state==='partial'?'flag':'crit'))+'">'+s.state+'</span></h4>'
+      + (s.note? '<p>'+esc(s.note)+'</p>' : '')
+      + '<div class="dd-cite">'+esc(s.src)+'</div>'
+      + '</div>';
+  }
+  var g='';
+  for(var k=0;k<GLOSSARY.length;k++) g+='<p style="margin:0 0 6px;font-size:12.5px;"><b class="dd-mono">'+esc(GLOSSARY[k].t)+'</b> &mdash; <span style="color:var(--dim)">'+esc(GLOSSARY[k].d)+'</span></p>';
+  return '<div class="dd-panel" data-note="datamap">'+out+'</div>'
+    + '<div class="dd-panel" data-note="glossary"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 8px;">Glossary &mdash; Appendix A</h3>'+g+'</div>';
+}
+
+function mountAll(){
+  var wrap=document.querySelector('.wrap');
+  var foot=wrap.querySelector('footer');
+  function add(s){ wrap.insertBefore(s, foot); }
+  add(sec('dd-position','Seat','Position','Who you are working, and what is open around you. Combining follows 2-2.', positionBody()));
+  add(sec('dd-frame','Frame','Configuration','The arrival configuration, the finals it assigns and the altitudes it turns aircraft on at.', frameBody()));
+  add(sec('dd-live','Fly it','Live','A clock that keeps running while you think.', liveBody()));
+  add(sec('dd-data','Map','What this tool knows','Every data slot, its state, and the document that fills it. Nothing outside this list is carried.', dataBody()));
+  wireLive();
+  wireFrame();
+  wirePositions();
+  render();
+  setInterval(function(){ tick(sim.rate); }, 1000);
+}
+function wirePositions(){
+  var box=document.getElementById('dd-open');
+  if(!box) return;
+  var out='';
+  for(var i=0;i<POSITIONS.length;i++){
+    var p=POSITIONS[i];
+    out+='<button data-sym="'+p.sym+'" class="'+(sim.open.indexOf(p.sym)>=0?'on':'')+'">'+p.sym+'</button> ';
+  }
+  box.innerHTML=out;
+  var btns=box.querySelectorAll('button');
+  for(var b=0;b<btns.length;b++){
+    btns[b].onclick=(function(sym){ return function(){
+      var k=sim.open.indexOf(sym);
+      if(k>=0){ if(sim.open.length>1) sim.open.splice(k,1); }
+      else sim.open.push(sym);
+      wirePositions();
+    }; })(btns[b].getAttribute('data-sym'));
+  }
+  var own=document.getElementById('dd-owner');
+  if(own){
+    var lines=[];
+    for(var j=0;j<POSITIONS.length;j++){
+      var q=POSITIONS[j];
+      if(sim.open.indexOf(q.sym)>=0) continue;
+      lines.push(q.sym+' &rarr; '+ownerOf(q.sym, sim.open));
+    }
+    own.innerHTML = 'Open: '+sim.open.join(', ')+'. Everything else answers on: '+(lines.join(' &middot; ')||'&mdash;')+'.';
+  }
+}
+function wireFrame(){
+  var box=document.getElementById('dd-cfgbtns');
+  if(!box) return;
+  var out='';
+  for(var i=0;i<CONFIGS.length;i++) out+='<button data-cfg="'+CONFIGS[i].id+'" class="'+(sim.cfg===CONFIGS[i].id?'on':'')+'">'+CONFIGS[i].name+'</button> ';
+  for(var m=0;m<MDW_CONFIGS.length;m++) out+='<button data-mdw="'+MDW_CONFIGS[m].id+'" class="'+(sim.mdw===MDW_CONFIGS[m].id?'on':'')+'">'+MDW_CONFIGS[m].name+'</button> ';
+  box.innerHTML=out;
+  var btns=box.querySelectorAll('button');
+  for(var b=0;b<btns.length;b++){
+    btns[b].onclick=(function(el){ return function(){
+      if(el.getAttribute('data-cfg')) sim.cfg=el.getAttribute('data-cfg');
+      else sim.mdw=el.getAttribute('data-mdw');
+      wireFrame();
+      if(window.ddb && window.ddb.onFrame) window.ddb.onFrame();
+    }; })(btns[b]);
+  }
+}
+function wireLive(){
+  var run=document.getElementById('dd-run');
+  if(!run) return;
+  run.onclick=function(){ sim.running=!sim.running; run.textContent=sim.running?'Pause':'Start'; render(); };
+  function rate(n, id){
+    document.getElementById(id).onclick=function(){
+      sim.rate=n;
+      var ids=['dd-x1','dd-x2','dd-x4'];
+      for(var i=0;i<ids.length;i++) document.getElementById(ids[i]).className = (ids[i]===id?'on':'');
+      render();
+    };
+  }
+  rate(1,'dd-x1'); rate(2,'dd-x2'); rate(4,'dd-x4');
+  document.getElementById('dd-add').onclick=function(){
+    var cs=prompt('Callsign, type, role (arrival/departure/overflight), bearing from RRCP, distance NM, altitude, speed, heading\ne.g. AAL123, B738, arrival, 270, 35, 10000, 250, 090');
+    if(!cs) return;
+    var p=cs.split(',');
+    function num(i,d){ var v=parseFloat((p[i]||'').trim()); return isNaN(v)? d : v; }
+    mkAc({cs:(p[0]||'').trim().toUpperCase(), type:(p[1]||'').trim().toUpperCase(), role:(p[2]||'arrival').trim(),
+          bearing:num(3,270), dist:num(4,35), alt:num(5,10000), spd:num(6,250), hdg:num(7,90)});
+    render();
+  };
+  document.getElementById('dd-clear').onclick=function(){ sim.ac=[]; sim.sel=null; sim.feed=[]; renderFeed(); render(); };
+  document.getElementById('dd-go').onclick=function(){
+    var el=document.getElementById('dd-cmd');
+    transmit(el.value); el.value=''; el.focus();
+  };
+  document.getElementById('dd-cmd').onkeydown=function(e){ if(e.key==='Enter'){ document.getElementById('dd-go').click(); } };
+  var q=document.getElementById('dd-quick');
+  var quick=['descend and maintain 6,000','speed 210','heading 090','cleared ILS approach','contact tower 126.9'];
+  var out='';
+  for(var i=0;i<quick.length;i++) out+='<button data-q="'+quick[i]+'">'+quick[i]+'</button>';
+  q.innerHTML=out;
+  var bs=q.querySelectorAll('button');
+  for(var b=0;b<bs.length;b++){
+    bs[b].onclick=(function(txt){ return function(){
+      var el=document.getElementById('dd-cmd');
+      el.value = (sim.sel? sim.sel+' ' : '') + txt;
+      el.focus();
+    }; })(bs[b].getAttribute('data-q'));
+  }
+}
+
+/* ---------- 17. Export ---------- */
+window.DD = {
+  version:0, skeleton:true, facility:'C90', hooks:[],
+  RRCP:RRCP, RINGS:RINGS, px:px, pxRD:pxRD, nmOf:nmOf, rdOf:rdOf, rdToLatLon:rdToLatLon,
+  POSITIONS:POSITIONS, POS:POS, posOf:posOf, posName:posName, ownerOf:ownerOf,
+  CONFIGS:CONFIGS, MDW_CONFIGS:MDW_CONFIGS, FINALS:FINALS, finalFor:finalFor,
+  CAPTURE:CAPTURE, AIRPORTS:AIRPORTS, GATES:GATES, BEACON:BEACON,
+  NSAT_ALTS:NSAT_ALTS, SSAT_ALTS:SSAT_ALTS, GLOSSARY:GLOSSARY,
+  ROUTES:ROUTES, DEPS:DEPS, BOUNDARY:BOUNDARY, ADA:ADA, MVA:MVA,
+  SLOTS:SLOTS, slotOf:slotOf, slotState:slotState, STANDING:STANDING,
+  sim:sim, mkAc:mkAc, acOf:acOf, tick:tick, transmit:transmit,
+  log:log, logHtml:logHtml, clock:clock, altText:altText, fmtAlt:fmtAlt, esc:esc,
+  render:render, renderFeed:renderFeed, scopeSvg:scopeSvg, stripHtml:stripHtml,
+  sec:sec, tbl:tbl
+};
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
+else { mountAll(); }
+})();
+</script>
+
+<script>
+/* ================================================================
+   C90 BUILDER + STUDENT NOTES v0 (skeleton)
+   Block 2 of 2. Requires the C90 deck block (window.DD) earlier in
+   the page and returns early if it is absent.
+
+   The student notes rail is the point of this block. Every section,
+   every table panel and every empty data slot carries a note anchor;
+   a note is stored against that anchor, survives reload, and exports
+   as Markdown addressed to the anchor so it can be folded straight
+   into claude_C90_Reference.md or raised with an instructor.
+   ================================================================ */
+(function(){
+'use strict';
+if(!window.DD) return;
+var DD = window.DD;
+
+/* ---------- CSS ---------- */
+var css = ''
++ '.ddb-notebtn{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim);background:transparent;border:1px dashed var(--dim2);border-radius:3px;padding:2px 7px;cursor:pointer;margin-left:8px;}'
++ '.ddb-notebtn:hover{color:var(--green);border-color:var(--green);}'
++ '.ddb-rail{margin-top:10px;border-left:2px solid var(--dim2);padding-left:10px;}'
++ '.ddb-rail:empty{display:none;}'
++ '.ddb-note{background:rgba(232,162,61,0.06);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin:6px 0;font-size:13px;}'
++ '.ddb-note .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim2);display:flex;gap:8px;align-items:center;}'
++ '.ddb-note .meta button{font-family:var(--mono);font-size:10px;color:var(--dim);background:transparent;border:0;cursor:pointer;padding:0 4px;text-transform:uppercase;letter-spacing:0.06em;}'
++ '.ddb-note .meta button:hover{color:var(--red);}'
++ '.ddb-note .body{margin-top:4px;white-space:pre-wrap;line-height:1.5;}'
++ '.ddb-compose{margin:8px 0;}'
++ '.ddb-compose textarea{width:100%;min-height:70px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--body);font-size:13px;padding:8px 10px;line-height:1.5;}'
++ '.ddb-compose .row{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap;}'
++ '.ddb-room{border:1px dashed var(--dim2);border-radius:4px;padding:10px 12px;margin:10px 0;font-size:12.5px;color:var(--dim2);}'
++ '.ddb-tag{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);border-radius:2px;padding:1px 6px;}'
++ '.ddb-page{display:none;}'
++ '.ddb-page.on{display:block;}';
+var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+/* ---------- State + persistence ---------- */
+var KEY='c90-drill-deck-v1';
+var state={ notes:[], seats:['Z'], entries:[], v:1 };
+var storageOk=true;
+function load(){
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(raw){ var o=JSON.parse(raw); if(o&&o.notes) state=o; }
+  }catch(e){ storageOk=false; }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ storageOk=false; }
+}
+load();
+
+function stamp(){
+  var d=new Date();
+  function p(n){ return (n<10?'0':'')+n; }
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+function notesFor(anchor){
+  var out=[];
+  for(var i=0;i<state.notes.length;i++) if(state.notes[i].anchor===anchor) out.push(state.notes[i]);
+  return out;
+}
+function addNote(anchor, text, kind){
+  if(!text || !text.trim()) return;
+  state.notes.push({id:'n'+Date.now()+Math.floor(Math.random()*1000), anchor:anchor, kind:kind||'note', text:text.trim(), at:stamp()});
+  save(); renderNotes(anchor); renderNotebook();
+}
+function dropNote(id){
+  for(var i=0;i<state.notes.length;i++){
+    if(state.notes[i].id===id){
+      var a=state.notes[i].anchor;
+      state.notes.splice(i,1); save(); renderNotes(a); renderNotebook(); return;
+    }
+  }
+}
+
+/* ---------- The note rail ----------
+   mountRail(el, anchor, label) hangs a note affordance on any node that
+   carries data-note. The rail renders under the node, so a note about the
+   capture-point table sits with the capture-point table. */
+function mountRail(el, anchor, label){
+  if(!el || el.getAttribute('data-rail')==='1') return;
+  el.setAttribute('data-rail','1');
+  var head=document.createElement('div');
+  head.style.cssText='display:flex;align-items:center;justify-content:flex-end;margin-top:8px;';
+  head.innerHTML='<span class="ddb-tag">'+DD.esc(label||anchor)+'</span>';
+  var btn=document.createElement('button');
+  btn.className='ddb-notebtn'; btn.textContent='+ student note';
+  head.appendChild(btn);
+  var comp=document.createElement('div');
+  comp.className='ddb-compose'; comp.style.display='none';
+  comp.innerHTML='<textarea placeholder="What did you learn here, what is wrong here, what should the tool do differently here?"></textarea>'
+    +'<div class="row"><select class="ddb-kind" style="background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:var(--mono);font-size:11px;padding:5px 7px;">'
+    +'<option value="note">Note</option><option value="correction">Correction</option>'
+    +'<option value="question">Question for the instructor</option><option value="tool">Change the tool</option></select>'
+    +'<button class="dd-send ddb-save">Save note</button></div>';
+  var rail=document.createElement('div');
+  rail.className='ddb-rail'; rail.setAttribute('data-anchor', anchor);
+  btn.onclick=function(){
+    comp.style.display = comp.style.display==='none'? 'block':'none';
+    if(comp.style.display==='block') comp.querySelector('textarea').focus();
+  };
+  comp.querySelector('.ddb-save').onclick=function(){
+    var ta=comp.querySelector('textarea');
+    addNote(anchor, ta.value, comp.querySelector('.ddb-kind').value);
+    ta.value=''; comp.style.display='none';
+  };
+  el.appendChild(head); el.appendChild(comp); el.appendChild(rail);
+  renderNotes(anchor);
+}
+function renderNotes(anchor){
+  var rails=document.querySelectorAll('.ddb-rail[data-anchor="'+anchor+'"]');
+  var list=notesFor(anchor), out='';
+  for(var i=0;i<list.length;i++){
+    var n=list[i];
+    out+='<div class="ddb-note"><div class="meta"><span>'+DD.esc(n.kind)+'</span><span>'+DD.esc(n.at)+'</span>'
+      +'<button data-drop="'+n.id+'">remove</button></div>'
+      +'<div class="body">'+DD.esc(n.text)+'</div></div>';
+  }
+  for(var r=0;r<rails.length;r++){
+    rails[r].innerHTML=out;
+    var bs=rails[r].querySelectorAll('button[data-drop]');
+    for(var b=0;b<bs.length;b++){
+      bs[b].onclick=(function(id){ return function(){ dropNote(id); }; })(bs[b].getAttribute('data-drop'));
+    }
+  }
+}
+/* Anchor every node that asked for one, plus one anchor per section. */
+function mountAllRails(){
+  var nodes=document.querySelectorAll('[data-note]');
+  for(var i=0;i<nodes.length;i++){
+    var a=nodes[i].getAttribute('data-note');
+    mountRail(nodes[i], a, a);
+  }
+}
+
+/* ---------- Build page ---------- */
+function buildBody(){
+  return '<div class="dd-panel" data-note="build">'
+    + '<div class="dd-grid">'
+    + fld('Callsign','ddb-cs','text','AAL123')
+    + fld('Type','ddb-type','text','B738')
+    + sel('Role','ddb-role',['arrival','departure','overflight'])
+    + sel('Rules','ddb-rules',['IFR','VFR'])
+    + '</div><div class="dd-grid" style="margin-top:8px;">'
+    + fld('Bearing from RRCP','ddb-brg','number','270')
+    + fld('Distance NM','ddb-dist','number','35')
+    + fld('Altitude','ddb-alt','number','10000')
+    + fld('Speed','ddb-spd','number','250')
+    + fld('Heading','ddb-hdg','number','090')
+    + '</div><div class="dd-grid" style="margin-top:8px;">'
+    + selGate()
+    + fld('Destination','ddb-dest','text','KORD')
+    + fld('Handed off by','ddb-from','text','ZAU')
+    + '</div>'
+    + '<div class="dd-bar"><button id="ddb-place" class="dd-send">Place the strip</button>'
+    + '<button id="ddb-clear">Clear the drill</button></div>'
+    + '<div id="ddb-valid" class="dd-note"></div>'
+    + '</div>'
+    + '<div class="dd-panel" data-note="build.gaps"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is placed by bearing and distance because there is no published track to place it on. Until the arrival ladders exist, the tool cannot check a crossing restriction, a floor, a gate assignment or an in-trail interval &mdash; so it does not pretend to.</p>'
+    + '<div class="ddb-room">Room reserved: when ROUTES is filled, the gate selector below drives the track and this panel becomes the validation report.</div>'
+    + '</div>';
+}
+function fld(label,id,type,ph){
+  return '<div class="dd-fld"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="'+type+'" placeholder="'+ph+'"></div>';
+}
+function sel(label,id,opts){
+  var o='';
+  for(var i=0;i<opts.length;i++) o+='<option value="'+opts[i]+'">'+opts[i]+'</option>';
+  return '<div class="dd-fld"><label for="'+id+'">'+label+'</label><select id="'+id+'">'+o+'</select></div>';
+}
+function selGate(){
+  var o='<option value="">(none carried)</option>';
+  for(var i=0;i<DD.GATES.length;i++){
+    var g=DD.GATES[i];
+    o+='<option value="'+g.id+'">'+g.id+' &mdash; '+DD.posName(g.pos)+'</option>';
+  }
+  return '<div class="dd-fld"><label for="ddb-gate">Feeder gate</label><select id="ddb-gate">'+o+'</select></div>';
+}
+function wireBuild(){
+  var place=document.getElementById('ddb-place');
+  if(!place) return;
+  place.onclick=function(){
+    function v(id,d){ var e=document.getElementById(id); var x=e? e.value.trim() : ''; return x===''? d : x; }
+    function n(id,d){ var x=parseFloat(v(id,'')); return isNaN(x)? d : x; }
+    var cs=v('ddb-cs','').toUpperCase();
+    var msgs=[];
+    if(!cs) msgs.push('A strip needs a callsign.');
+    if(DD.acOf(cs)) msgs.push('That callsign is already on frequency.');
+    var gate=v('ddb-gate','');
+    if(gate) msgs.push('Gate '+gate+' is a name, not a track: the ladder for it is an empty slot, so the strip flies the heading you gave it.');
+    if(msgs.length && !cs){ document.getElementById('ddb-valid').innerHTML=msgs.join(' '); return; }
+    DD.mkAc({cs:cs, type:v('ddb-type','').toUpperCase(), role:v('ddb-role','arrival'), rules:v('ddb-rules','IFR'),
+      bearing:n('ddb-brg',270), dist:n('ddb-dist',35), alt:n('ddb-alt',10000), spd:n('ddb-spd',250),
+      hdg:n('ddb-hdg',90), gate:gate, dest:v('ddb-dest',''), from:v('ddb-from','')});
+    document.getElementById('ddb-valid').innerHTML = msgs.length? msgs.join(' ') : 'Placed. Fly it on the next page.';
+    DD.render();
+    page('fly');
+  };
+  document.getElementById('ddb-clear').onclick=function(){
+    DD.sim.ac=[]; DD.sim.sel=null; DD.render();
+    document.getElementById('ddb-valid').innerHTML='Drill cleared.';
+  };
+}
+
+/* ---------- Notes page ---------- */
+function notesBody(){
+  return '<div class="dd-panel" data-note="notebook">'
+    + '<div id="ddb-notelist"></div>'
+    + '<div class="dd-bar"><button id="ddb-md">Copy as Markdown</button><button id="ddb-json">Copy as JSON</button><button id="ddb-wipe">Delete all notes</button></div>'
+    + '<div id="ddb-exp" class="dd-note"></div>'
+    + '</div>'
+    + '<div class="dd-panel" data-note="debrief"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">Session debrief</h3>'
+    + '<div class="dd-fld"><label for="ddb-debrief">What this session taught</label><textarea id="ddb-debrief" rows="5" placeholder="One line per thing. These become the standing training items once there are enough of them to see a pattern."></textarea></div>'
+    + '<div class="dd-bar"><button id="ddb-bank" class="dd-send">Bank it</button></div>'
+    + '<div id="ddb-banked"></div></div>';
+}
+function renderNotebook(){
+  var el=document.getElementById('ddb-notelist');
+  if(!el) return;
+  if(!state.notes.length){
+    el.innerHTML='<div class="ddb-room">No notes yet. Every panel on every page carries a <b>+ student note</b> button; a note lands against that panel and is exported addressed to it.</div>';
+  } else {
+    var by={};
+    for(var i=0;i<state.notes.length;i++){
+      var n=state.notes[i];
+      (by[n.anchor]=by[n.anchor]||[]).push(n);
+    }
+    var out='';
+    for(var k in by){
+      if(!by.hasOwnProperty(k)) continue;
+      out+='<div style="margin:0 0 14px;"><div class="ddb-tag">'+DD.esc(k)+'</div>';
+      for(var j=0;j<by[k].length;j++){
+        var m=by[k][j];
+        out+='<div class="ddb-note"><div class="meta"><span>'+DD.esc(m.kind)+'</span><span>'+DD.esc(m.at)+'</span>'
+          +'<button data-drop="'+m.id+'">remove</button></div><div class="body">'+DD.esc(m.text)+'</div></div>';
+      }
+      out+='</div>';
+    }
+    el.innerHTML=out;
+    var bs=el.querySelectorAll('button[data-drop]');
+    for(var b=0;b<bs.length;b++){
+      bs[b].onclick=(function(id){ return function(){ dropNote(id); }; })(bs[b].getAttribute('data-drop'));
+    }
+  }
+  var banked=document.getElementById('ddb-banked');
+  if(banked){
+    var o='';
+    for(var e=0;e<state.entries.length;e++){
+      o+='<div class="ddb-note"><div class="meta"><span>debrief</span><span>'+DD.esc(state.entries[e].at)+'</span></div><div class="body">'+DD.esc(state.entries[e].text)+'</div></div>';
+    }
+    banked.innerHTML=o;
+  }
+}
+function toMd(){
+  var out='# C90 student notes\n\nExported '+stamp()+' from the C90 drill deck skeleton.\n';
+  var by={};
+  for(var i=0;i<state.notes.length;i++){ var n=state.notes[i]; (by[n.anchor]=by[n.anchor]||[]).push(n); }
+  for(var k in by){
+    if(!by.hasOwnProperty(k)) continue;
+    out+='\n## '+k+'\n';
+    var s=DD.slotOf? DD.slotOf(k.replace(/^slot\./,'')) : null;
+    if(s) out+='\nSlot state: '+s.state+'. Source: '+s.src+'\n';
+    for(var j=0;j<by[k].length;j++){
+      out+='\n- **'+by[k][j].kind+'** ('+by[k][j].at+') '+by[k][j].text.replace(/\n/g,'\n  ')+'\n';
+    }
+  }
+  if(state.entries.length){
+    out+='\n## Session debriefs\n';
+    for(var e=0;e<state.entries.length;e++) out+='\n- ('+state.entries[e].at+') '+state.entries[e].text.replace(/\n/g,'\n  ')+'\n';
+  }
+  return out;
+}
+function copy(text, where){
+  var el=document.getElementById(where);
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text);
+      el.innerHTML='Copied to the clipboard.';
+      return;
+    }
+  }catch(e){}
+  el.innerHTML='<textarea style="width:100%;min-height:160px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:11.5px;padding:8px;">'+DD.esc(text)+'</textarea>';
+}
+function wireNotes(){
+  var md=document.getElementById('ddb-md');
+  if(!md) return;
+  md.onclick=function(){ copy(toMd(),'ddb-exp'); };
+  document.getElementById('ddb-json').onclick=function(){ copy(JSON.stringify(state,null,2),'ddb-exp'); };
+  document.getElementById('ddb-wipe').onclick=function(){
+    if(!state.notes.length) return;
+    if(window.confirm('Delete all '+state.notes.length+' notes? Export first if you want to keep them.')){
+      state.notes=[]; save(); renderNotebook();
+      var rails=document.querySelectorAll('.ddb-rail');
+      for(var i=0;i<rails.length;i++) rails[i].innerHTML='';
+    }
+  };
+  document.getElementById('ddb-bank').onclick=function(){
+    var ta=document.getElementById('ddb-debrief');
+    if(!ta.value.trim()) return;
+    state.entries.push({at:stamp(), text:ta.value.trim(), cfg:DD.sim.cfg, seats:DD.sim.open.slice()});
+    ta.value=''; save(); renderNotebook();
+  };
+}
+
+/* ---------- Pages ---------- */
+var PAGES=[
+  {id:'setup', label:'Set up a drill', secs:['dd-position','dd-frame','ddb-build']},
+  {id:'fly',   label:'Fly it',         secs:['dd-live']},
+  {id:'notes', label:'Notes and map',  secs:['ddb-notes','dd-data']}
+];
+function page(id){
+  for(var i=0;i<PAGES.length;i++){
+    var v=document.getElementById('ddb-page-'+PAGES[i].id);
+    if(v) v.className='ddb-page'+(PAGES[i].id===id?' on':'');
+  }
+  var tabs=document.querySelectorAll('.dd-pagetabs button');
+  for(var t=0;t<tabs.length;t++) tabs[t].className = (tabs[t].getAttribute('data-page')===id?'on':'');
+  window.scrollTo(0,0);
+}
+function buildPages(){
+  var wrap=document.querySelector('.wrap');
+  var foot=wrap.querySelector('footer');
+  /* the two sections this block owns */
+  wrap.insertBefore(DD.sec('ddb-build','Build','Build a drill','Place the strips you want to work. The tool says plainly what it cannot check yet.', buildBody()), foot);
+  wrap.insertBefore(DD.sec('ddb-notes','Notes','Student notes','Everything you wrote, grouped by where you wrote it, exportable as Markdown addressed to that anchor.', notesBody()), foot);
+  /* page wrappers */
+  var tabs=document.createElement('div');
+  tabs.className='dd-pagetabs';
+  var out='';
+  for(var i=0;i<PAGES.length;i++) out+='<button data-page="'+PAGES[i].id+'">'+PAGES[i].label+'</button>';
+  tabs.innerHTML=out;
+  var nav=document.getElementById('modnav');
+  nav.parentNode.insertBefore(tabs, nav.nextSibling);
+  for(var p=0;p<PAGES.length;p++){
+    var view=document.createElement('div');
+    view.className='ddb-page'; view.id='ddb-page-'+PAGES[p].id;
+    wrap.insertBefore(view, foot);
+    for(var s=0;s<PAGES[p].secs.length;s++){
+      var el=document.getElementById(PAGES[p].secs[s]);
+      if(el) view.appendChild(el);
+    }
+  }
+  var bs=tabs.querySelectorAll('button');
+  for(var b=0;b<bs.length;b++){
+    bs[b].onclick=(function(id){ return function(){ page(id); }; })(bs[b].getAttribute('data-page'));
+  }
+  page('setup');
+}
+
+function start(){
+  buildPages();
+  wireBuild();
+  wireNotes();
+  mountAllRails();
+  renderNotebook();
+  DD.render();
+  if(!storageOk){
+    var el=document.getElementById('ddb-notelist');
+    if(el) el.innerHTML='<div class="ddb-room">Local storage is not available in this context, so notes live only until the page is closed. Export them as Markdown before you leave.</div>'+el.innerHTML;
+  }
+}
+window.ddb = {
+  state:state, addNote:addNote, notesFor:notesFor, toMd:toMd, page:page, save:save,
+  onFrame:function(){ /* the frame changed; nothing depends on it yet */ }
+};
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', start); }
+else { start(); }
+})();
+</script>
+
+</body>
+</html>

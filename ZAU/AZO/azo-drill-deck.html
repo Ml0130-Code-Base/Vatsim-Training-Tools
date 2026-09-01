@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZO Drill Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D0C;
+    --panel:#0F1614;
+    --panel2:#121A17;
+    --ink:#E7EDE9;
+    --dim:#6F8079;
+    --dim2:#455049;
+    --line:#1E2925;
+    --green:#4FE0A0;
+    --amber:#E8A23D;
+    --red:#E8604D;
+    --display:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(79,224,160,0.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(79,224,160,0.25);}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  a{color:var(--green);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    font-family:var(--mono);font-size:11px;letter-spacing:0.12em;
+    text-transform:uppercase;color:var(--dim);
+    position:sticky;top:0;background:rgba(10,13,12,0.9);
+    backdrop-filter:blur(6px);z-index:20;
+  }
+  .topbar b{color:var(--ink);font-weight:600;}
+
+  .hero{padding:26px 0 4px;}
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--green);margin-bottom:10px;
+  }
+  .hero h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(20px,3vw,26px);margin:0 0 6px;letter-spacing:-0.01em;
+  }
+  .hero p{color:var(--dim);max-width:64ch;margin:0 0 8px;font-size:15px;}
+  .hero .note{
+    font-size:12.5px;color:var(--dim2);
+    border-left:2px solid var(--line);padding-left:10px;margin-top:16px;
+  }
+
+  .modnav{
+    display:flex;gap:8px;flex-wrap:wrap;margin:32px 0;
+    padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .modnav a{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:0.04em;
+    text-decoration:none;color:var(--dim);border:1px solid var(--line);
+    padding:6px 10px;border-radius:3px;transition:color .15s,border-color .15s;
+  }
+  .modnav a:hover{color:var(--ink);border-color:var(--dim2);}
+  .modnav:empty{display:none;}
+
+  section.module{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}
+  .modhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+  .tag{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--green);text-transform:uppercase;}
+  .tag.crit{color:var(--red);}
+  section.module h2{font-family:var(--display);font-weight:600;font-size:26px;margin:6px 0 4px;letter-spacing:-0.01em;}
+  .modsub{color:var(--dim);font-size:14px;margin:0 0 6px;}
+  footer{margin-top:70px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--dim2);}
+
+  @media(max-width:640px){
+    .hero h1{font-size:26px;}
+    section.module h2{font-size:22px;}
+    .wrap{padding:0 14px 60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div><b>AZO</b> Great Lakes Approach</div>
+  <div>Drill deck &mdash; skeleton</div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Drill deck</div>
+    <h1>Set the sector, build the drill, fly it, bank what it taught.</h1>
+    <p>Kalamazoo ATCT works as <b>Great Lakes Approach</b>, the West Wall of the Great Lakes TRACON. The sectors, the departure areas, the inter-sector altitudes and the ZAU interface are carried from the vZAU documents; the published tracks are not carried yet, and every empty slot says so and names the document that fills it.</p>
+    <div class="note">Skeleton. Nothing here is invented: a number is either traced to a vZAU document by paragraph, or the slot is empty and marked empty.</div>
+  </div>
+  <div class="modnav" id="modnav"></div>
+
+  <footer>
+    Skeleton tool. Single file, no build step, no network, works from file://. Every operational number traces to the vZAU document set &mdash; see claude_Source_Documents_Index.md and claude_AZO_Reference.md.
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   AZO DECK v0 (skeleton) — the frame, the spine, and the empty slots
+   Great Lakes Approach, West Wall (the ZAU half of the Great Lakes
+   TRACON). Self-contained: injects its own CSS, nav and sections.
+   Block 1 of 2. Block 2 (builder + notebook) reads window.DD.
+
+   Rule this file is built to: an operational number is either cited to
+   a vZAU document by paragraph, or it is not here.
+   ================================================================ */
+(function(){
+'use strict';
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.dd-section{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}'
++ '.dd-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.dd-mono{font-family:var(--mono);}'
++ '.dd-scopewrap{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}'
++ '.dd-scope{width:100%;height:auto;display:block;}'
++ '.dd-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
++ '.dd-bar button,.dd-quick button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
++ '.dd-bar button:hover,.dd-quick button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.dd-bar button.on{color:var(--green);border-color:var(--green);}'
++ '.dd-clock{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto;}'
++ '.dd-strips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}'
++ '.dd-strip{flex:1 1 200px;min-width:180px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;line-height:1.5;cursor:pointer;}'
++ '.dd-strip.sel{border-color:var(--green);}'
++ '.dd-strip.gone{opacity:0.35;}'
++ '.dd-strip b{color:var(--ink);font-size:12.5px;}'
++ '.dd-strip .warn{color:var(--amber);}'
++ '.dd-cmdrow{display:flex;gap:8px;flex-wrap:wrap;}'
++ '.dd-cmd{flex:1 1 260px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--mono);font-size:12.5px;padding:9px 10px;}'
++ '.dd-cmd:focus{outline:2px solid var(--green);outline-offset:1px;}'
++ '.dd-send{font-family:var(--mono);font-size:12px;background:var(--green);color:#062;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;font-weight:600;}'
++ '.dd-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}'
++ '.dd-feed{max-height:300px;overflow-y:auto;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:12.5px;margin-top:12px;}'
++ '.dd-feed p{margin:0 0 7px;line-height:1.45;}'
++ '.dd-feed .t{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin-right:6px;}'
++ '.dd-feed .crew{font-style:italic;color:var(--ink);}'
++ '.dd-feed .coach{color:var(--dim);}'
++ '.dd-chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:0.06em;border-radius:2px;padding:1px 6px;margin-right:6px;text-transform:uppercase;}'
++ '.dd-chip.good{background:rgba(79,224,160,0.15);color:var(--green);}'
++ '.dd-chip.flag{background:rgba(232,162,61,0.15);color:var(--amber);}'
++ '.dd-chip.crit{background:rgba(232,96,77,0.18);color:var(--red);}'
++ '.dd-chip.info{background:rgba(111,128,121,0.18);color:var(--dim);}'
++ '.dd-note{font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:12px;}'
++ '.dd-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;margin-top:8px;}'
++ '.dd-tbl th{text-align:left;color:var(--dim);font-weight:500;letter-spacing:0.06em;text-transform:uppercase;font-size:10px;border-bottom:1px solid var(--line);padding:5px 8px 5px 0;}'
++ '.dd-tbl td{padding:5px 8px 5px 0;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top;}'
++ '.dd-tbl td.d{color:var(--dim);}'
++ '.dd-cite{font-family:var(--mono);font-size:10.5px;color:var(--dim2);}'
++ '.dd-slot{background:var(--panel2);border:1px solid var(--line);border-left-width:3px;border-radius:4px;padding:10px 12px;margin:10px 0;}'
++ '.dd-slot.verified{border-left-color:var(--green);}'
++ '.dd-slot.partial{border-left-color:var(--amber);}'
++ '.dd-slot.empty{border-left-color:var(--red);}'
++ '.dd-slot h4{font-family:var(--display);font-size:14.5px;margin:0 0 4px;font-weight:600;}'
++ '.dd-slot p{margin:0 0 5px;font-size:12.5px;color:var(--dim);}'
++ '.dd-pagetabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}'
++ '.dd-pagetabs button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:3px;padding:7px 12px;cursor:pointer;}'
++ '.dd-pagetabs button.on{color:var(--green);border-color:var(--green);}'
++ '.dd-grid{display:flex;gap:10px;flex-wrap:wrap;}'
++ '.dd-fld{flex:1 1 150px;min-width:130px;}'
++ '.dd-fld label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);margin-bottom:3px;}'
++ '.dd-fld input,.dd-fld select,.dd-fld textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:6px 8px;}'
++ '.dd-fld textarea{font-family:var(--body);font-size:13px;line-height:1.5;resize:vertical;}'
++ '@media (max-width:600px){.dd-strip{flex-basis:100%;}.dd-feed{max-height:240px;}}';
+var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+/* ---------- 2. Geometry ----------
+   The West Wall has no single published range-ring origin the way C90 does,
+   and the airspace appendices are chart images with no text layer. The scope
+   is therefore anchored on the AZO field and drawn as honest schematic
+   geometry: rings and a bearing rose, with the four primary fields plotted
+   at their published coordinates. Nothing here is a boundary. */
+var AZO0 = {lat:42.23472, lon:-85.55194};        /* KAZO field reference */
+var COSL = Math.cos(AZO0.lat*Math.PI/180);
+var CX=350, CY=255, SC=5.2;                       /* px centre + px per NM */
+function nmOf(lat,lon){ return {e:(lon-AZO0.lon)*60*COSL, n:(lat-AZO0.lat)*60}; }
+function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
+function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
+function rdToLatLon(r,d){
+  var a=r*Math.PI/180;
+  return {lat:AZO0.lat + (d*Math.cos(a))/60, lon:AZO0.lon + (d*Math.sin(a))/(60*COSL)};
+}
+function rdOf(lat,lon){
+  var p=nmOf(lat,lon), d=Math.sqrt(p.e*p.e+p.n*p.n);
+  return {r:(Math.atan2(p.e,p.n)*180/Math.PI+360)%360, d:d};
+}
+var RINGS = [10,20,30,40];
+
+/* ---------- 3. Positions — vGreat Lakes 7110.65A 2-2, 2-3, Appendix B ----------
+   The West Wall is ZAU's half of the Great Lakes TRACON: BELLS, BRONCO,
+   GRIFFIN, WHITECAP, SHORELINE and LUMBERTOWN (2-1.a). The East Wall
+   sectors belong to ZOB and are carried here only as neighbours. */
+var POSITIONS = [
+  {sym:'G', call:'AZO_G_APP', freq:'128.400', name:'GRIFFIN',    wall:'west', role:'Combined position'},
+  {sym:'R', call:'AZO_R_APP', freq:'121.200', name:'BRONCO',     wall:'west', role:'North/south split'},
+  {sym:'E', call:'AZO_E_APP', freq:'119.200', name:'BELLS',      wall:'west', role:'MKG/GRR/AZO split'},
+  {sym:'N', call:'AZO_N_APP', freq:'119.800', name:'LUMBERTOWN', wall:'west', role:'No hierarchy'},
+  {sym:'W', call:'AZO_W_APP', freq:'124.600', name:'WHITECAP',   wall:'west', role:'No hierarchy'},
+  {sym:'S', call:'AZO_S_APP', freq:'133.825', name:'SHORELINE',  wall:'west', role:'No hierarchy'}
+];
+var EAST_WALL = [
+  {name:'CAPITOL',  freq:'118.65', note:'ZOB. Appendix B gives the frequency; the sector is ZOB local procedure.'},
+  {name:'REYNOLDS', freq:'127.3',  note:'ZOB.'},
+  {name:'CHIPPEWA', freq:'126.45', note:'ZOB.'},
+  {name:'OLDS',     freq:null,     note:'ZOB. Named in 2-1.b; no frequency in the West Wall appendix.'},
+  {name:'BUICK',    freq:null,     note:'ZOB. Named in 2-1.b.'},
+  {name:'BAY',      freq:null,     note:'ZOB. Named in 2-1.b.'}
+];
+var POS={}; for(var i=0;i<POSITIONS.length;i++){ POS[POSITIONS[i].sym]=POSITIONS[i]; }
+function posOf(sym){ return POS[sym]||null; }
+function posName(sym){ var p=POS[sym]; return p? p.name+' ('+sym+')' : sym; }
+
+/* Sectors treated as combined unless otherwise coordinated — ZAU/AZO LOA 7.h.
+   This is a coordination rule, not a combining chain: it tells ZAU which
+   sectors it need not call separately. There is no published fold-up order
+   for the West Wall beyond 2-3's note that GRIFFIN is the combined position. */
+var COORD_PAIRS = [
+  ['LUMBERTOWN','SHORELINE'],
+  ['WHITECAP','GRIFFIN'],
+  ["BELLS",'BRONCO'],
+  ['CAPITOL','REYNOLDS']
+];
+
+/* ---------- 4. Airports ----------
+   Runway inventories are taken from the departure-area tables, which name the
+   runway pairs actually used at each field, and nowhere else. A field with no
+   table gets no runway list rather than a guessed one.
+
+   The coordinates are field reference points from public airport data, NOT
+   from the vZAU document set — they are here so the scope has something real
+   to plot, and they are the one class of number in this file that is not
+   traced to a vZAU paragraph. They are good to about a tenth of a mile and
+   are not survey data; nothing operational should be derived from them. */
+var AIRPORTS = [
+  {icao:'KAZO', name:'Kalamazoo/Battle Creek', lat:42.23472, lon:-85.55194, sector:'BELLS/BRONCO',
+   runways:['17','35','9','27'], cite:'runway pairs from 4-4'},
+  {icao:'KBTL', name:'Battle Creek', lat:42.30722, lon:-85.25139, sector:'BELLS',
+   runways:null, cite:'Class D procedures 4-6; no runway table in this order'},
+  {icao:'KGRR', name:'Gerald R. Ford', lat:42.88083, lon:-85.52278, sector:'GRIFFIN/WHITECAP',
+   runways:['8L','8R','26L','26R','17','35'], cite:'runway pairs from 5-3'},
+  {icao:'KMKG', name:'Muskegon County', lat:43.16944, lon:-86.23806, sector:'SHORELINE/LUMBERTOWN',
+   runways:['6','24','14','32'], cite:'runway pairs from 6-3'},
+  {icao:'KBIV', name:'West Michigan Regional', lat:42.74250, lon:-86.10722, sector:'GRIFFIN/SHORELINE',
+   runways:null, cite:'named in 5-6 and 6-6'},
+  {icao:'KHLM', name:'Park Township', lat:42.79028, lon:-86.16222, sector:'GRIFFIN/SHORELINE',
+   runways:null, cite:'named in 5-6 and 6-6'}
+];
+function airportOf(icao){
+  icao=(icao||'').toUpperCase();
+  for(var i=0;i<AIRPORTS.length;i++) if(AIRPORTS[i].icao===icao) return AIRPORTS[i];
+  return null;
+}
+
+/* ---------- 5. Departure areas — 4-4, 5-3, 6-3 ----------
+   The silent-coordination departure areas, verbatim. AZO's are measured from
+   the intersection of the two runways in use to 4.1 NM; GRR's and MKG's to
+   5 NM. "RWH" is the runway heading of the runway named. */
+var DEP_AREAS = {
+  KAZO:{radius:4.1, cite:'vGreat Lakes 7110.65A 4-4', rows:[
+    {rwys:'17, or 17 and 23', area:'140 clockwise to the runway heading of Runway 23'},
+    {rwys:'17 and 9',  area:'runway heading of Runway 9 clockwise to 200'},
+    {rwys:'17 and 27', area:'140 clockwise to the runway heading of Runway 27'},
+    {rwys:'35, or 35 and 5', area:'320 clockwise to the runway heading of Runway 5'},
+    {rwys:'35 and 27', area:'runway heading of Runway 27 clockwise to 020'},
+    {rwys:'35 and 9',  area:'320 clockwise to the runway heading of Runway 9'}
+  ]},
+  KGRR:{radius:5, cite:'vGreat Lakes 7110.65A 5-3', rows:[
+    {rwys:'8L/R and 17',   area:'050 clockwise to the runway heading of Runway 17'},
+    {rwys:'8L/R and 35',   area:'runway heading of Runway 35 clockwise to 120'},
+    {rwys:'17 and 26L/R',  area:'runway heading of Runway 17 clockwise to 300'},
+    {rwys:'26L/R and 35',  area:'230 clockwise to the runway heading of Runway 35'}
+  ]},
+  KMKG:{radius:5, cite:'vGreat Lakes 7110.65A 6-3', rows:[
+    {rwys:'6',  area:'015 to 105'},
+    {rwys:'24', area:'195 to 285'},
+    {rwys:'14', area:'095 to 185'},
+    {rwys:'32', area:'275 to 005'}
+  ]}
+};
+
+/* ---------- 6. Inter-sector altitudes — 4-7 through 4-9, 5-5, 5-7, 6-4, 6-5 ---------- */
+var HANDOFF_ALTS = [
+  {from:'SHORELINE', to:'BRONCO',            what:'AZO arrivals above 7,000 must be descending to 7,000',   cite:'4-7 / 6-4'},
+  {from:'BELLS/BRONCO', to:'GRIFFIN',        what:'GRR arrivals at or above 9,000 level at or descending to 9,000', cite:'4-8 / 5-8'},
+  {from:'SHORELINE/LUMBERTOWN', to:'GRIFFIN/WHITECAP', what:'GRR arrivals above 7,000 descending to 7,000', cite:'5-5.a.1 / 6-5.a.1'},
+  {from:'GRIFFIN/WHITECAP', to:'SHORELINE/LUMBERTOWN', what:'MKG arrivals above 6,000 descending to 6,000',  cite:'5-5.b.1 / 6-5.b.1'},
+  {from:'GRIFFIN', to:'MKE area',            what:'MKE area arrivals direct LYSTR or a 290 heading',        cite:'5-5.b.2 / 6-5.b.2'},
+  {from:'BELLS', to:'REYNOLDS/CAPITOL',      what:'LAN or JXN arrivals level or descending to 9,000',       cite:'4-9.a.1'},
+  {from:'REYNOLDS/CAPITOL', to:'BELLS',      what:'AZO or BTL arrivals level or descending to 10,000',      cite:'4-9.b.1'},
+  {from:'REYNOLDS/CAPITOL', to:'BELLS',      what:'APREQ every IFR aircraft entering BELLS assigned 3,000', cite:'4-9.b.2'},
+  {from:'CAPITOL', to:'GRIFFIN/WHITECAP',    what:'GRR arrivals above 8,000 at or descending to 8,000',     cite:'5-7.a.1'},
+  {from:'GRIFFIN/WHITECAP', to:'CAPITOL',    what:'LAN arrivals above 9,000 at or descending to 9,000',     cite:'5-7.b.1'},
+  {from:'GRIFFIN', to:'BIV/HLM',             what:'assign 4,000, direct BIV, HLM, JAVPO or FENAB',          cite:'5-6.a / 6-6.a'},
+  {from:'SHORELINE', to:'GRIFFIN',           what:'departures requesting 9,000 or below assigned 3,000; on course after GRIFFIN takes the handoff', cite:'5-6.b / 6-6.b'}
+];
+
+/* ---------- 7. The ZAU interface — vZAU ZAU-AZO ATCT LOA, eff. 12/21/2025 ---------- */
+var ZAU_IFACE = [
+  {what:'ZAU clears arrivals to the destination airport, and verbally coordinates arrivals at or below 10,000 if not level at least 5 NM from the boundary', cite:'5.a'},
+  {what:'ZAU hands off arrivals to the sector or facility the aircraft will overfly 30 NM from destination', cite:'5.b'},
+  {what:'ZAU releases arrivals for speed, descent and turns up to 30 degrees either side of route', cite:'5.c'},
+  {what:'Great Lakes hands off departures requesting 11,000 or higher at or climbing to 10,000', cite:'6.a'},
+  {what:'Great Lakes provides 5 NM radar separation to ZAU, constant or increasing, before transferring communications or control', cite:'6.b'},
+  {what:'Great Lakes releases departures to ZAU for speed and turns up to 30 degrees either side of route', cite:'6.c'},
+  {what:'Beacon codes 0200-0277, 4200-4577 and 5500-5537 are allocated internally to Great Lakes Approach', cite:'7.b'},
+  {what:'Aircraft transitioning between KUBBS and SHORELINE at or below 10,000 must be level at an appropriate altitude at least 5 NM from the boundary', cite:'7.f'},
+  {what:'ZAU coordinates with each Great Lakes sector, except that LUMBERTOWN/SHORELINE, WHITECAP/GRIFFIN, BELLS/BRONCO and CAPITOL/REYNOLDS are considered combined unless otherwise coordinated', cite:'7.h'}
+];
+/* 3-7 of the SOP splits the code blocks by wall; the LOA quotes a single
+   Great Lakes allocation. Both are carried, and where they differ the
+   difference is shown rather than resolved. */
+var BEACON = {
+  westWallIfr:'0200-0277', westWallVfr:'4500-4577 and 5500-5537', cite:'vGreat Lakes 7110.65A 3-7.a',
+  eastWallIfr:'0400-0477', eastWallVfr:'4300-4377 and 5540-5577',
+  loa:'0200-0277, 4200-4577, 5500-5537', loaCite:'ZAU-AZO LOA 7.b',
+  conflict:'The LOA VFR block starts at 4200; the SOP West Wall block starts at 4500. Not resolved here.'
+};
+
+/* ---------- 8. Local rules worth drilling ---------- */
+var LOCAL = [
+  {t:'AZO TRSA', d:'Great Lakes Approach must provide TRSA services to all aircraft requesting them within the designated TRSA except when radar is unsuitable; VFR aircraft outside the TRSA get basic radar services workload permitting.', cite:'4-3'},
+  {t:'AZO departure area avoidance', d:'Vector VFR below 4,500 to avoid the AZO departure area; vector IFR below 5,000 to avoid it by 3 NM.', cite:'4-2.a, 4-2.b'},
+  {t:'Control for climb', d:'The radar controller has control for climb on contact with everything departing AZO or operating in the AZO Class D surface area.', cite:'4-2.c'},
+  {t:'BTL Class D', d:'Vector VFR below 3,500 and IFR below 4,000 clear of the BTL Class D. A visual approach to BTL must be established on a 5-mile straight-in before entering it. BELLS may authorise special VFR there and controls the airspace in IFR conditions.', cite:'4-6'},
+  {t:'Runway 35 noise APREQ', d:'If BELLS approves a Runway 35 noise APREQ, BRONCO has control to climb at or above 4,000 and, after leaving 4,000, turn to headings west of 020.', cite:'4-5.b'},
+  {t:'GRR noise abatement', d:'Avoid turning aircraft off Runways 8L, 8R and 35 until at least 2 miles from the airport and above 3,000.', cite:'5-4'},
+  {t:'GRR sequencing', d:'GRIFFIN establishes the arrival sequence to GRR. Runways 8R/26L and 8L/26R are 4,313 ft apart.', cite:'5-2'},
+  {t:'MKG sequencing', d:'LUMBERTOWN sequences MKG when Runway 14 or 24 is active; SHORELINE when Runway 6 or 32 is active.', cite:'6-2'},
+  {t:'Transfer of control to a tower', d:'Communications transferred to the tower no farther than 12 NM from the airport.', cite:'3-5'},
+  {t:'Turning a departure back', d:'A departure on runway heading may be turned either way, but once turned it cannot be turned back toward the departure runway; nothing is turned toward the runway it departed until it clears the departure area laterally or vertically.', cite:'3-6'}
+];
+
+/* ---------- 9. Minimums to vector for a visual — 4-10, 5-9, 6-7 ---------- */
+var VIS_MINIMA = [
+  {where:'AZO',                  agl:'2,100 ft', msl:'3,000 ft', vis:'3 miles', cite:'4-10.a'},
+  {where:'BTL',                  agl:'2,000 ft', msl:'3,000 ft', vis:'3 miles', cite:'4-10.b'},
+  {where:'GRIFFIN / WHITECAP',   agl:'2,200 ft', msl:'3,000 ft', vis:'3 miles', cite:'5-9'},
+  {where:'SHORELINE / LUMBERTOWN', agl:'2,100 ft', msl:'2,800 ft', vis:'3 miles', cite:'6-7'}
+];
+
+/* ---------- 10. Empty geometry ----------
+   ROUTES[id] = {id:'', fixes:[{f:'FIX',lat:,lon:,at:,spd:}]}
+   DEPS[id]   = {id:'', fixes:[{f:'FIX',lat:,lon:}]}
+   SECTORS[name] = polygon of that sector's lateral boundary */
+var ROUTES = {};
+var DEPS = {};
+var SECTORS = {};
+var TRSA = null;
+
+/* ---------- 11. The data map ---------- */
+var SLOTS = [
+  {id:'positions', title:'West Wall sectors, callsigns and frequencies', state:'verified',
+   src:'vGreat Lakes 7110.65A 2-2 and Appendix B'},
+  {id:'hierarchy', title:'Position hierarchy', state:'verified',
+   src:'vGreat Lakes 7110.65A 2-3',
+   note:'GRIFFIN is the combined position; BRONCO carries the north/south split; BELLS the MKG/GRR/AZO split; the other three have no hierarchy.'},
+  {id:'eastwall', title:'East Wall neighbours', state:'partial',
+   src:'vGreat Lakes 7110.65A 2-1.b, Appendix B; vZAU-vZOB AZO ATCT LOA 3.b',
+   note:'Six sectors are named; only three carry a frequency in the West Wall appendix. The documents spell the sector both CAPITAL (SOP 2-1.b, 4-9) and Capitol (Appendix B, LOA 7.h) — both spellings are in the source set and neither is corrected here.'},
+  {id:'coords', title:'Field coordinates', state:'partial',
+   src:'public airport data, not the vZAU document set',
+   note:'The six field positions plotted on the scope. They are the only numbers in the tool that do not trace to a vZAU paragraph, and they exist so the scope has something real on it. Nothing operational is derived from them.'},
+  {id:'airports', title:'Fields and their runway pairs', state:'partial',
+   src:'vGreat Lakes 7110.65A 4-4, 5-3, 6-3',
+   note:'AZO, GRR and MKG runway pairs come out of the departure-area tables. BTL, BIV and HLM have no runway table in this order and carry none.'},
+  {id:'deps', title:'Departure areas for silent coordination', state:'verified',
+   src:'vGreat Lakes 7110.65A 4-4, 5-3, 6-3'},
+  {id:'alts', title:'Inter-sector handoff altitudes', state:'verified',
+   src:'vGreat Lakes 7110.65A 4-7, 4-8, 4-9, 5-5, 5-6, 5-7, 6-4, 6-5, 6-6'},
+  {id:'zau', title:'ZAU interface', state:'verified',
+   src:'vZAU ZAU-AZO ATCT LOA, eff. 12/21/2025'},
+  {id:'beacon', title:'Beacon code blocks', state:'partial',
+   src:'vGreat Lakes 7110.65A 3-7; ZAU-AZO LOA 7.b',
+   note:'The two documents give different VFR blocks. Both are carried; neither is resolved.'},
+  {id:'local', title:'Local rules — TRSA, departure areas, Class D, noise', state:'verified',
+   src:'vGreat Lakes 7110.65A 3-5, 3-6, 4-2, 4-3, 4-5, 4-6, 5-2, 5-4, 6-2'},
+  {id:'minima', title:'Minimums to vector for a visual approach', state:'verified',
+   src:'vGreat Lakes 7110.65A 4-10, 5-9, 6-7'},
+  {id:'boundary', title:'Sector boundaries', state:'empty',
+   src:'vGreat Lakes 7110.65A Appendices A and B; ZAU-AZO LOA Appendix A; vZAU TRACON Boundaries.pdf',
+   note:'Chart images with no text layer. The appendix diagram gives the relative arrangement — Lumbertown and Whitecap north, Shoreline and Griffin centre, Bells and Bronco south — and nothing measurable.'},
+  {id:'trsa', title:'AZO TRSA dimensions', state:'empty',
+   src:'charts.zauartcc.org; the AZO TRSA depiction',
+   note:'4-3 requires TRSA service inside it; the order never draws it.'},
+  {id:'routes', title:'Arrival and departure procedures', state:'empty',
+   src:'charts.zauartcc.org',
+   note:'No STAR or SID data anywhere in the vZAU document set for these fields. LYSTR, JAVPO, FENAB, BIV and HLM are named in the SOP as fixes to assign, with no coordinates.'},
+  {id:'mva', title:'Minimum vectoring altitudes', state:'empty',
+   src:'not in the vZAU document set for the West Wall'},
+  {id:'standing', title:'Standing training items', state:'empty',
+   src:'the student and the instructor'}
+];
+function slotOf(id){ for(var i=0;i<SLOTS.length;i++){ if(SLOTS[i].id===id) return SLOTS[i]; } return null; }
+
+/* ---------- 12. Sim spine ---------- */
+var sim = {t:0, running:false, rate:1, ac:[], feed:[], sel:null, seat:'E', field:'KAZO', rwys:'17', ac_n:0};
+var acSeq=0;
+function mkAc(o){
+  o=o||{};
+  var pos=rdToLatLon(o.bearing==null?270:o.bearing, o.dist==null?25:o.dist);
+  var a={ id:'ac'+(++acSeq), cs:o.cs||'UNKNOWN', type:o.type||'', rules:o.rules||'IFR',
+    role:o.role||'arrival', lat:pos.lat, lon:pos.lon, hdg:o.hdg==null?90:o.hdg,
+    alt:o.alt==null?8000:o.alt, tgtAlt:o.alt==null?8000:o.alt,
+    spd:o.spd==null?210:o.spd, tgtSpd:o.spd==null?210:o.spd,
+    dest:o.dest||'', rwy:o.rwy||'', from:o.from||'', notes:o.notes||'', gone:false };
+  sim.ac.push(a); return a;
+}
+function acOf(cs){
+  cs=(cs||'').toUpperCase();
+  for(var i=0;i<sim.ac.length;i++) if(sim.ac[i].cs.toUpperCase()===cs) return sim.ac[i];
+  return null;
+}
+function tick(dt){
+  if(!sim.running) return;
+  sim.t+=dt;
+  for(var i=0;i<sim.ac.length;i++){
+    var a=sim.ac[i]; if(a.gone) continue;
+    if(a.spd<a.tgtSpd) a.spd=Math.min(a.tgtSpd,a.spd+2*dt);
+    if(a.spd>a.tgtSpd) a.spd=Math.max(a.tgtSpd,a.spd-2*dt);
+    var vs=1500/60;
+    if(a.alt<a.tgtAlt) a.alt=Math.min(a.tgtAlt,a.alt+vs*dt);
+    if(a.alt>a.tgtAlt) a.alt=Math.max(a.tgtAlt,a.alt-vs*dt);
+    var nm=a.spd*dt/3600, r=a.hdg*Math.PI/180;
+    a.lat += (nm*Math.cos(r))/60;
+    a.lon += (nm*Math.sin(r))/(60*COSL);
+  }
+  if(window.DD && DD.hooks){ for(var h=0;h<DD.hooks.length;h++){ try{ DD.hooks[h](sim,dt); }catch(e){} } }
+  render();
+}
+function clock(){
+  var s=Math.floor(sim.t), m=Math.floor(s/60);
+  return (m<10?'0':'')+m+':'+((s%60)<10?'0':'')+(s%60);
+}
+function altText(a){ a=Math.round(a/100)*100; return a.toLocaleString? a.toLocaleString('en-US') : ''+a; }
+function fmtAlt(a){ a=Math.round(a/100)*100; return a>=18000? 'FL'+(a/100) : altText(a); }
+var STANDING=[];
+function log(html, cls, item){
+  sim.feed.push({t:clock(), html:html, cls:cls||'', item:item||null});
+  if(sim.feed.length>200) sim.feed.shift();
+  renderFeed();
+}
+function logHtml(){
+  var out='';
+  for(var i=0;i<sim.feed.length;i++){
+    var f=sim.feed[i];
+    out+='<p><span class="t">'+f.t+'</span><span class="'+(f.cls||'')+'">'+f.html+'</span></p>';
+  }
+  return out;
+}
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function transmit(text){
+  text=(text||'').trim();
+  if(!text) return;
+  log('<b>You:</b> '+esc(text), '');
+  var t=' '+text.toLowerCase()+' ', reads=[], m;
+  var a=sim.sel? acOf(sim.sel):null;
+  var first=text.split(/\s+/)[0];
+  if(acOf(first)){ a=acOf(first); sim.sel=a.cs; }
+  if(!a){ log('No aircraft selected, and the first word is not a callsign on frequency.','coach'); return; }
+
+  m=t.match(/\b(?:descend|climb)\s+(?:and\s+)?maintain\s+(?:flight\s+level\s+)?([0-9][0-9,]*)/);
+  if(!m) m=t.match(/\bmaintain\s+(?:flight\s+level\s+)?([0-9][0-9,]*)/);
+  if(m){
+    var alt=parseInt(m[1].replace(/,/g,''),10);
+    if(alt<1000) alt=alt*100;
+    a.tgtAlt=alt;
+    reads.push((alt>a.alt?'climb':'descend')+' and maintain '+altText(alt));
+    checkAlt(a, alt);
+  }
+  m = t.match(/\b(?:speed|knots?)\b/) ? t.match(/\b([12][0-9][05])\s*(?:knots?)?\b/) : null;
+  if(m){ a.tgtSpd=parseInt(m[1],10); reads.push('speed '+m[1]); }
+  m=t.match(/\bheading\s+([0-3]?[0-9]{2})\b/);
+  if(m){ a.hdg=parseInt(m[1],10)%360; reads.push('heading '+m[1]); }
+  m=t.match(/\bdirect\s+([a-z]{3,5})\b/);
+  if(m){
+    reads.push('direct '+m[1].toUpperCase());
+    log('Direct '+esc(m[1].toUpperCase())+' read back, but no fix geometry is carried &mdash; the track does not change. <span class="dd-cite">(Arrival and departure procedures &mdash; charts.zauartcc.org)</span>','coach');
+  }
+  m=t.match(/\bcleared\s+(?:the\s+)?(ils|rnav|visual|localizer|loc)\b/);
+  if(m){ reads.push('cleared '+m[1]+' approach'); a.cleared=m[1]; }
+  m=t.match(/\bsquawk\s+([0-7]{4})\b/);
+  if(m){ a.squawk=m[1]; reads.push('squawk '+m[1]); codeCheck(m[1]); }
+  if(/\bradar contact\b/.test(t)){
+    if(!a.squawk) log('Radar contact with no code assigned. Assign the code first.','coach');
+    else { a.identified=true; reads.push('roger'); }
+  }
+  m=t.match(/\bcontact\s+([a-z ]+?)\s+(1[0-9]{2}\.[0-9]{1,3})\b/);
+  if(m){ reads.push('contact '+m[1].trim()+' '+m[2]); a.gone=true; log(a.cs+' switched.','coach'); }
+  if(reads.length) log('<span class="crew">'+esc(a.cs)+': '+reads.join(', ')+'.</span>','');
+  else log('Nothing in that transmission parsed. Verbs carried: descend/climb and maintain, speed, heading, direct, cleared approach, squawk, radar contact, contact.','coach');
+  render();
+}
+/* The one thing this skeleton can honestly grade: the published inter-sector
+   and interface altitudes are text, not geometry, so they are checked as
+   reminders against the destination on the strip. */
+function checkAlt(a, alt){
+  var d=(a.dest||'').toUpperCase();
+  if(d==='KAZO' && alt>7000 && a.role==='arrival')
+    log('SHORELINE owes BRONCO an AZO arrival descending to 7,000 (4-7). Reminder, not a judgement &mdash; the boundary is not carried.','coach','alts');
+  if(d==='KGRR' && alt>9000 && a.role==='arrival')
+    log('BELLS and BRONCO owe GRIFFIN a GRR arrival level at or descending to 9,000 (4-8).','coach','alts');
+  if(d==='KMKG' && alt>6000 && a.role==='arrival')
+    log('GRIFFIN and WHITECAP owe SHORELINE and LUMBERTOWN an MKG arrival descending to 6,000 (5-5.b.1).','coach','alts');
+  if(a.role==='departure' && alt>=11000)
+    log('A departure requesting 11,000 or higher is handed to ZAU at or climbing to 10,000 (ZAU-AZO LOA 6.a).','coach','zau');
+}
+function codeCheck(code){
+  var n=parseInt(code,10);
+  var ok = (n>=200&&n<=277) || (n>=4200&&n<=4577) || (n>=5500&&n<=5537);
+  if(!ok) log('Code '+code+' is outside the blocks allocated to Great Lakes Approach (ZAU-AZO LOA 7.b: 0200-0277, 4200-4577, 5500-5537). The SOP 3-7 West Wall VFR block starts at 4500 instead; the two disagree.','coach','beacon');
+}
+
+/* ---------- 13. Render ---------- */
+function scopeSvg(){
+  var s='<svg class="dd-scope" viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">';
+  s+='<rect width="700" height="510" fill="#0B120F"/>';
+  for(var i=0;i<RINGS.length;i++){
+    var r=RINGS[i]*SC;
+    s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+r+'" fill="none" stroke="#1E2925" stroke-width="1"/>';
+    s+='<text x="'+(CX+2)+'" y="'+(CY-r+11)+'" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">'+RINGS[i]+' NM</text>';
+  }
+  for(var f=0;f<AIRPORTS.length;f++){
+    var ap=AIRPORTS[f], p=px(ap.lat,ap.lon);
+    if(p.x<0||p.x>700||p.y<0||p.y>510) continue;
+    s+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="2.5" fill="#4FE0A0"/>';
+    s+='<text x="'+(p.x+6)+'" y="'+(p.y+3)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+ap.icao+'</text>';
+  }
+  for(var n=0;n<sim.ac.length;n++){
+    var a=sim.ac[n]; if(a.gone) continue;
+    var q=px(a.lat,a.lon);
+    if(q.x<-40||q.x>740||q.y<-40||q.y>550) continue;
+    var col=(sim.sel===a.cs)?'#4FE0A0':'#E7EDE9';
+    var nm=a.spd/60, rr=a.hdg*Math.PI/180;   /* leader line: one minute of flight */
+    s+='<rect x="'+(q.x-3)+'" y="'+(q.y-3)+'" width="6" height="6" fill="none" stroke="'+col+'" stroke-width="1.4"/>';
+    s+='<line x1="'+q.x+'" y1="'+q.y+'" x2="'+(q.x+nm*SC*Math.sin(rr))+'" y2="'+(q.y-nm*SC*Math.cos(rr))+'" stroke="'+col+'" stroke-width="1"/>';
+    s+='<text x="'+(q.x+8)+'" y="'+(q.y-4)+'" fill="'+col+'" font-family="IBM Plex Mono, monospace" font-size="9.5">'+esc(a.cs)+'</text>';
+    s+='<text x="'+(q.x+8)+'" y="'+(q.y+7)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+Math.round(a.alt/100)+' '+Math.round(a.spd)+'</text>';
+  }
+  s+='<text x="12" y="20" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">Schematic. Fields at published coordinates; no sector boundary is carried.</text>';
+  s+='</svg>';
+  return s;
+}
+function stripHtml(a){
+  var rd=rdOf(a.lat,a.lon);
+  return '<div class="dd-strip'+(sim.sel===a.cs?' sel':'')+(a.gone?' gone':'')+'" data-cs="'+esc(a.cs)+'">'
+    +'<b>'+esc(a.cs)+'</b> '+esc(a.type)+'<br>'
+    +esc(a.role)+(a.dest?' &rarr; '+esc(a.dest):'')+'<br>'
+    +Math.round(a.alt/100)*100+' ft &middot; '+Math.round(a.spd)+' kt &middot; hdg '+('00'+Math.round(a.hdg)).slice(-3)+'<br>'
+    +'<span class="dd-cite">'+rd.d.toFixed(1)+' NM on the '+('00'+Math.round(rd.r)).slice(-3)+' from AZO</span>'
+    +(a.notes?'<br><span class="warn">'+esc(a.notes)+'</span>':'')
+    +'</div>';
+}
+function renderFeed(){
+  var el=document.getElementById('dd-feed');
+  if(el){ el.innerHTML=logHtml(); el.scrollTop=el.scrollHeight; }
+}
+function render(){
+  var sc=document.getElementById('dd-scopewrap'); if(sc) sc.innerHTML=scopeSvg();
+  var sp=document.getElementById('dd-strips');
+  if(sp){
+    var out='';
+    for(var i=0;i<sim.ac.length;i++) out+=stripHtml(sim.ac[i]);
+    sp.innerHTML = out || '<div class="dd-note">No strips. Build one on the set-up page, or press <b>Add a strip</b> to place one by bearing and distance from AZO.</div>';
+    var nodes=sp.querySelectorAll('.dd-strip');
+    for(var n=0;n<nodes.length;n++){
+      nodes[n].onclick=(function(cs){ return function(){ sim.sel=cs; render(); }; })(nodes[n].getAttribute('data-cs'));
+    }
+  }
+  var ck=document.getElementById('dd-clock');
+  if(ck) ck.textContent=clock()+'  '+(sim.running?('running x'+sim.rate):'paused');
+}
+
+/* ---------- 14. Sections ---------- */
+function sec(id, tag, h2, sub, body){
+  var s=document.createElement('section');
+  s.className='dd-section'; s.id=id;
+  s.innerHTML='<div class="modhead"><div><div class="tag">'+tag+'</div><h2>'+h2+'</h2>'
+    +'<p class="modsub">'+sub+'</p></div></div>'+body;
+  return s;
+}
+function tbl(head, rows){
+  var s='<table class="dd-tbl"><tr>';
+  for(var i=0;i<head.length;i++) s+='<th>'+head[i]+'</th>';
+  s+='</tr>';
+  for(var r=0;r<rows.length;r++){
+    s+='<tr>';
+    for(var c=0;c<rows[r].length;c++) s+='<td'+(c?' class="d"':'')+'>'+rows[r][c]+'</td>';
+    s+='</tr>';
+  }
+  return s+'</table>';
+}
+function seatBody(){
+  var rows=[];
+  for(var i=0;i<POSITIONS.length;i++){
+    var p=POSITIONS[i];
+    rows.push([p.sym, p.name, p.call, p.freq, p.role]);
+  }
+  var erows=[];
+  for(var e=0;e<EAST_WALL.length;e++){
+    var q=EAST_WALL[e];
+    erows.push([q.name, q.freq||'<span class="dd-cite">not published here</span>', q.note]);
+  }
+  var crows=[];
+  for(var c=0;c<COORD_PAIRS.length;c++) crows.push([COORD_PAIRS[c][0]+' + '+COORD_PAIRS[c][1], 'considered combined unless otherwise coordinated']);
+  return '<div class="dd-panel" data-note="positions">'
+    + tbl(['Sym','Sector','Callsign','Frequency','Hierarchy'], rows)
+    + '<div class="dd-bar"><span class="dd-cite">Working:</span><span id="dd-seatbtns"></span></div>'
+    + '<div id="dd-seatnote" class="dd-note"></div></div>'
+    + '<div class="dd-panel" data-note="eastwall"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">East Wall &mdash; ZOB</h3>'
+    + tbl(['Sector','Frequency','Note'], erows) + '</div>'
+    + '<div class="dd-panel" data-note="coordpairs"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">ZAU need not call these separately &mdash; LOA 7.h</h3>'
+    + tbl(['Pair','Rule'], crows) + '</div>';
+}
+function fieldBody(){
+  var arows=[];
+  for(var i=0;i<AIRPORTS.length;i++){
+    var ap=AIRPORTS[i];
+    arows.push([ap.icao, ap.name, ap.sector, ap.runways? ap.runways.join(', ') : '<span class="dd-cite">not carried</span>', '<span class="dd-cite">'+ap.cite+'</span>']);
+  }
+  var out='<div class="dd-panel" data-note="airports">'+tbl(['ICAO','Field','Sector','Runways','Source'], arows)+'</div>';
+  for(var k in DEP_AREAS){
+    if(!DEP_AREAS.hasOwnProperty(k)) continue;
+    var da=DEP_AREAS[k], rows=[];
+    for(var r=0;r<da.rows.length;r++) rows.push([da.rows[r].rwys, da.rows[r].area]);
+    out+='<div class="dd-panel" data-note="deps.'+k+'"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">'
+      +k+' departure areas &mdash; bearings from the runway intersection to '+da.radius+' NM</h3>'
+      +tbl(['Runways in use','Departure area'], rows)
+      +'<div class="dd-note">'+da.cite+'. Nothing is turned toward the runway it departed until it clears this area laterally or vertically (3-6.b).</div></div>';
+  }
+  var vrows=[];
+  for(var v=0;v<VIS_MINIMA.length;v++){
+    var m=VIS_MINIMA[v];
+    vrows.push([m.where, m.agl+' AGL ('+m.msl+' MSL)', m.vis, '<span class="dd-cite">'+m.cite+'</span>']);
+  }
+  out+='<div class="dd-panel" data-note="minima"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Minimums to vector for a visual approach</h3>'
+    +tbl(['Where','Ceiling','Visibility','Cite'], vrows)+'</div>';
+  return out;
+}
+function coordBody(){
+  var rows=[];
+  for(var i=0;i<HANDOFF_ALTS.length;i++){
+    var h=HANDOFF_ALTS[i];
+    rows.push([h.from+' &rarr; '+h.to, h.what, '<span class="dd-cite">'+h.cite+'</span>']);
+  }
+  var zrows=[];
+  for(var z=0;z<ZAU_IFACE.length;z++) zrows.push([ZAU_IFACE[z].what, '<span class="dd-cite">'+ZAU_IFACE[z].cite+'</span>']);
+  var lrows=[];
+  for(var l=0;l<LOCAL.length;l++) lrows.push([LOCAL[l].t, LOCAL[l].d, '<span class="dd-cite">'+LOCAL[l].cite+'</span>']);
+  return '<div class="dd-panel" data-note="alts"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Inter-sector altitudes</h3>'
+    + tbl(['Between','Rule','Cite'], rows) + '</div>'
+    + '<div class="dd-panel" data-note="zau"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">ZAU interface &mdash; ZAU-AZO ATCT LOA</h3>'
+    + tbl(['Rule','Cite'], zrows)
+    + '<div class="dd-note">Beacon codes &mdash; West Wall IFR '+BEACON.westWallIfr+', VFR '+BEACON.westWallVfr+' ('+BEACON.cite+'). The LOA states '+BEACON.loa+' ('+BEACON.loaCite+'). '+BEACON.conflict+'</div></div>'
+    + '<div class="dd-panel" data-note="local"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Local rules</h3>'
+    + tbl(['Rule','What it says','Cite'], lrows) + '</div>';
+}
+function liveBody(){
+  return '<div id="dd-scopewrap" class="dd-scopewrap"></div>'
+    + '<div class="dd-bar">'
+    + '<button id="dd-run">Start</button>'
+    + '<button id="dd-x1" class="on">x1</button><button id="dd-x2">x2</button><button id="dd-x4">x4</button>'
+    + '<button id="dd-add">Add a strip</button><button id="dd-clear">Clear</button>'
+    + '<span id="dd-clock" class="dd-clock"></span></div>'
+    + '<div id="dd-strips" class="dd-strips"></div>'
+    + '<div class="dd-cmdrow"><input id="dd-cmd" class="dd-cmd" placeholder="N123AB descend and maintain 7,000, speed 210, heading 090"><button id="dd-go" class="dd-send">Transmit</button></div>'
+    + '<div class="dd-quick" id="dd-quick"></div>'
+    + '<div id="dd-feed" class="dd-feed"></div>'
+    + '<div class="dd-note">The engine flies heading, speed and altitude, and reminds you of the published altitude a destination owes the next sector. It does not fly a published track and it does not know where a boundary is, so it never asserts that one was crossed.</div>';
+}
+function dataBody(){
+  var order={verified:0, partial:1, empty:2}, out='';
+  var list=SLOTS.slice().sort(function(a,b){ return order[a.state]-order[b.state]; });
+  for(var i=0;i<list.length;i++){
+    var s=list[i];
+    out+='<div class="dd-slot '+s.state+'" data-note="slot.'+s.id+'">'
+      +'<h4>'+esc(s.title)+' <span class="dd-chip '+(s.state==='verified'?'good':(s.state==='partial'?'flag':'crit'))+'">'+s.state+'</span></h4>'
+      +(s.note? '<p>'+esc(s.note)+'</p>':'')
+      +'<div class="dd-cite">'+esc(s.src)+'</div></div>';
+  }
+  return '<div class="dd-panel" data-note="datamap">'+out+'</div>';
+}
+function mountAll(){
+  var wrap=document.querySelector('.wrap');
+  var foot=wrap.querySelector('footer');
+  function add(s){ wrap.insertBefore(s, foot); }
+  add(sec('dd-seat','Seat','Sector','Which West Wall sector you are working, and who is on the other side of every line.', seatBody()));
+  add(sec('dd-fields','Frame','Fields and departure areas','The runway pairs in use and the silent-coordination areas they create.', fieldBody()));
+  add(sec('dd-coord','Coordination','Altitudes you owe','What the order and the letter of agreement require at each line.', coordBody()));
+  add(sec('dd-live','Fly it','Live','A clock that keeps running while you think.', liveBody()));
+  add(sec('dd-data','Map','What this tool knows','Every data slot, its state, and the document that fills it.', dataBody()));
+  wireSeat(); wireLive(); render();
+  setInterval(function(){ tick(sim.rate); }, 1000);
+}
+function wireSeat(){
+  var box=document.getElementById('dd-seatbtns');
+  if(!box) return;
+  var out='';
+  for(var i=0;i<POSITIONS.length;i++){
+    var p=POSITIONS[i];
+    out+='<button data-sym="'+p.sym+'" class="'+(sim.seat===p.sym?'on':'')+'">'+p.name+'</button> ';
+  }
+  box.innerHTML=out;
+  var bs=box.querySelectorAll('button');
+  for(var b=0;b<bs.length;b++){
+    bs[b].onclick=(function(sym){ return function(){ sim.seat=sym; wireSeat(); }; })(bs[b].getAttribute('data-sym'));
+  }
+  var note=document.getElementById('dd-seatnote');
+  if(note){
+    var p=posOf(sim.seat);
+    var partner='';
+    for(var c=0;c<COORD_PAIRS.length;c++){
+      if(COORD_PAIRS[c][0]===p.name) partner=COORD_PAIRS[c][1];
+      if(COORD_PAIRS[c][1]===p.name) partner=COORD_PAIRS[c][0];
+    }
+    note.innerHTML = 'Working '+p.name+' on '+p.freq+' as '+p.call+'. '+p.role+'.'
+      + (partner? ' ZAU treats '+p.name+' and '+partner+' as combined unless otherwise coordinated (LOA 7.h).' : '');
+  }
+}
+function wireLive(){
+  var run=document.getElementById('dd-run');
+  if(!run) return;
+  run.onclick=function(){ sim.running=!sim.running; run.textContent=sim.running?'Pause':'Start'; render(); };
+  function rate(n,id){
+    document.getElementById(id).onclick=function(){
+      sim.rate=n;
+      var ids=['dd-x1','dd-x2','dd-x4'];
+      for(var i=0;i<ids.length;i++) document.getElementById(ids[i]).className=(ids[i]===id?'on':'');
+      render();
+    };
+  }
+  rate(1,'dd-x1'); rate(2,'dd-x2'); rate(4,'dd-x4');
+  document.getElementById('dd-add').onclick=function(){
+    var v=prompt('Callsign, type, role, destination, bearing from AZO, distance NM, altitude, speed, heading\ne.g. N123AB, C172, arrival, KAZO, 300, 22, 8000, 150, 120');
+    if(!v) return;
+    var p=v.split(',');
+    function num(i,d){ var x=parseFloat((p[i]||'').trim()); return isNaN(x)?d:x; }
+    mkAc({cs:(p[0]||'').trim().toUpperCase(), type:(p[1]||'').trim().toUpperCase(), role:(p[2]||'arrival').trim(),
+      dest:(p[3]||'').trim().toUpperCase(), bearing:num(4,300), dist:num(5,25), alt:num(6,8000), spd:num(7,180), hdg:num(8,120)});
+    render();
+  };
+  document.getElementById('dd-clear').onclick=function(){ sim.ac=[]; sim.sel=null; sim.feed=[]; renderFeed(); render(); };
+  document.getElementById('dd-go').onclick=function(){
+    var el=document.getElementById('dd-cmd');
+    transmit(el.value); el.value=''; el.focus();
+  };
+  document.getElementById('dd-cmd').onkeydown=function(e){ if(e.key==='Enter') document.getElementById('dd-go').click(); };
+  var q=document.getElementById('dd-quick');
+  var quick=['descend and maintain 7,000','speed 210','heading 090','squawk 0203','radar contact','contact tower 118.3'];
+  var out='';
+  for(var i=0;i<quick.length;i++) out+='<button data-q="'+quick[i]+'">'+quick[i]+'</button>';
+  q.innerHTML=out;
+  var bs=q.querySelectorAll('button');
+  for(var b=0;b<bs.length;b++){
+    bs[b].onclick=(function(txt){ return function(){
+      var el=document.getElementById('dd-cmd');
+      el.value=(sim.sel? sim.sel+' ':'')+txt; el.focus();
+    }; })(bs[b].getAttribute('data-q'));
+  }
+}
+
+/* ---------- 15. Export ---------- */
+window.DD = {
+  version:0, skeleton:true, facility:'AZO', hooks:[],
+  AZO0:AZO0, RINGS:RINGS, px:px, pxRD:pxRD, nmOf:nmOf, rdOf:rdOf, rdToLatLon:rdToLatLon,
+  POSITIONS:POSITIONS, POS:POS, posOf:posOf, posName:posName, EAST_WALL:EAST_WALL, COORD_PAIRS:COORD_PAIRS,
+  AIRPORTS:AIRPORTS, airportOf:airportOf, DEP_AREAS:DEP_AREAS, HANDOFF_ALTS:HANDOFF_ALTS,
+  ZAU_IFACE:ZAU_IFACE, BEACON:BEACON, LOCAL:LOCAL, VIS_MINIMA:VIS_MINIMA,
+  ROUTES:ROUTES, DEPS:DEPS, SECTORS:SECTORS, TRSA:TRSA,
+  SLOTS:SLOTS, slotOf:slotOf, STANDING:STANDING,
+  sim:sim, mkAc:mkAc, acOf:acOf, tick:tick, transmit:transmit, checkAlt:checkAlt, codeCheck:codeCheck,
+  log:log, logHtml:logHtml, clock:clock, altText:altText, fmtAlt:fmtAlt, esc:esc,
+  render:render, renderFeed:renderFeed, scopeSvg:scopeSvg, stripHtml:stripHtml,
+  sec:sec, tbl:tbl
+};
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
+else { mountAll(); }
+})();
+</script>
+
+<script>
+/* ================================================================
+   AZO BUILDER + NOTEBOOK v0 (skeleton)
+   Block 2 of 2. Requires the AZO deck block (window.DD) earlier in
+   the page and returns early if it is absent.
+   ================================================================ */
+(function(){
+'use strict';
+if(!window.DD) return;
+var DD=window.DD;
+
+var css=''
++ '.ddb-page{display:none;}'
++ '.ddb-page.on{display:block;}'
++ '.ddb-note{background:rgba(232,162,61,0.06);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin:6px 0;font-size:13px;}'
++ '.ddb-note .meta{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim2);display:flex;gap:8px;}'
++ '.ddb-note .meta button{font-family:var(--mono);font-size:10px;color:var(--dim);background:transparent;border:0;cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;}'
++ '.ddb-note .meta button:hover{color:var(--red);}'
++ '.ddb-note .body{margin-top:4px;white-space:pre-wrap;line-height:1.5;}'
++ '.ddb-room{border:1px dashed var(--dim2);border-radius:4px;padding:10px 12px;margin:10px 0;font-size:12.5px;color:var(--dim2);}';
+var st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+
+var KEY='azo-drill-deck-v1';
+var state={entries:[], v:1};
+var storageOk=true;
+try{ var raw=localStorage.getItem(KEY); if(raw){ var o=JSON.parse(raw); if(o&&o.entries) state=o; } }catch(e){ storageOk=false; }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ storageOk=false; } }
+function stamp(){
+  var d=new Date();
+  function p(n){ return (n<10?'0':'')+n; }
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+
+function fld(label,id,type,ph){
+  return '<div class="dd-fld"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="'+type+'" placeholder="'+ph+'"></div>';
+}
+function sel(label,id,opts){
+  var o='';
+  for(var i=0;i<opts.length;i++) o+='<option value="'+opts[i]+'">'+opts[i]+'</option>';
+  return '<div class="dd-fld"><label for="'+id+'">'+label+'</label><select id="'+id+'">'+o+'</select></div>';
+}
+function fieldOpts(){
+  var o=[];
+  for(var i=0;i<DD.AIRPORTS.length;i++) o.push(DD.AIRPORTS[i].icao);
+  return o;
+}
+function buildBody(){
+  return '<div class="dd-panel">'
+    + '<div class="dd-grid">'
+    + fld('Callsign','ddb-cs','text','N123AB')
+    + fld('Type','ddb-type','text','C172')
+    + sel('Role','ddb-role',['arrival','departure','overflight'])
+    + sel('Rules','ddb-rules',['IFR','VFR'])
+    + sel('Destination','ddb-dest',fieldOpts())
+    + '</div><div class="dd-grid" style="margin-top:8px;">'
+    + fld('Bearing from AZO','ddb-brg','number','300')
+    + fld('Distance NM','ddb-dist','number','25')
+    + fld('Altitude','ddb-alt','number','8000')
+    + fld('Speed','ddb-spd','number','180')
+    + fld('Heading','ddb-hdg','number','120')
+    + '</div>'
+    + '<div class="dd-bar"><button id="ddb-place" class="dd-send">Place the strip</button><button id="ddb-clear">Clear the drill</button></div>'
+    + '<div id="ddb-valid" class="dd-note"></div></div>'
+    + '<div class="dd-panel"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">There are no published tracks and no sector boundaries in the document set, so a strip is placed by bearing and distance and flies a heading. What the tool can check is the altitude a destination owes the next sector, and whether a beacon code is inside the allocated block.</p>'
+    + '<div class="ddb-room">Room reserved: when the sector boundaries and the TRSA are traced, this panel becomes the validation report.</div></div>';
+}
+function notesBody(){
+  return '<div class="dd-panel">'
+    + '<div class="dd-fld"><label for="ddb-debrief">What this session taught</label><textarea id="ddb-debrief" rows="5" placeholder="One line per thing."></textarea></div>'
+    + '<div class="dd-bar"><button id="ddb-bank" class="dd-send">Bank it</button><button id="ddb-md">Copy as Markdown</button></div>'
+    + '<div id="ddb-banked"></div><div id="ddb-exp" class="dd-note"></div></div>';
+}
+function renderBanked(){
+  var el=document.getElementById('ddb-banked');
+  if(!el) return;
+  if(!state.entries.length){ el.innerHTML='<div class="ddb-room">Nothing banked yet.</div>'; return; }
+  var out='';
+  for(var i=0;i<state.entries.length;i++){
+    var e=state.entries[i];
+    out+='<div class="ddb-note"><div class="meta"><span>'+DD.esc(e.seat)+'</span><span>'+DD.esc(e.at)+'</span>'
+      +'<button data-drop="'+i+'">remove</button></div><div class="body">'+DD.esc(e.text)+'</div></div>';
+  }
+  el.innerHTML=out;
+  var bs=el.querySelectorAll('button[data-drop]');
+  for(var b=0;b<bs.length;b++){
+    bs[b].onclick=(function(idx){ return function(){ state.entries.splice(idx,1); save(); renderBanked(); }; })(parseInt(bs[b].getAttribute('data-drop'),10));
+  }
+}
+function toMd(){
+  var out='# AZO practice log\n\nExported '+stamp()+' from the AZO drill deck skeleton.\n';
+  for(var i=0;i<state.entries.length;i++){
+    var e=state.entries[i];
+    out+='\n## '+e.at+' — '+e.seat+'\n\n'+e.text+'\n';
+  }
+  return out;
+}
+function copy(text){
+  var el=document.getElementById('ddb-exp');
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(text); el.innerHTML='Copied to the clipboard.'; return; }
+  }catch(e){}
+  el.innerHTML='<textarea style="width:100%;min-height:160px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-family:var(--mono);font-size:11.5px;padding:8px;">'+DD.esc(text)+'</textarea>';
+}
+function wire(){
+  var place=document.getElementById('ddb-place');
+  if(place){
+    place.onclick=function(){
+      function v(id,d){ var e=document.getElementById(id); var x=e? e.value.trim():''; return x===''? d:x; }
+      function n(id,d){ var x=parseFloat(v(id,'')); return isNaN(x)? d:x; }
+      var cs=v('ddb-cs','').toUpperCase();
+      if(!cs){ document.getElementById('ddb-valid').innerHTML='A strip needs a callsign.'; return; }
+      if(DD.acOf(cs)){ document.getElementById('ddb-valid').innerHTML='That callsign is already on frequency.'; return; }
+      DD.mkAc({cs:cs, type:v('ddb-type','').toUpperCase(), role:v('ddb-role','arrival'), rules:v('ddb-rules','IFR'),
+        dest:v('ddb-dest',''), bearing:n('ddb-brg',300), dist:n('ddb-dist',25), alt:n('ddb-alt',8000),
+        spd:n('ddb-spd',180), hdg:n('ddb-hdg',120)});
+      document.getElementById('ddb-valid').innerHTML='Placed. Fly it on the next page.';
+      DD.render(); page('fly');
+    };
+    document.getElementById('ddb-clear').onclick=function(){
+      DD.sim.ac=[]; DD.sim.sel=null; DD.render();
+      document.getElementById('ddb-valid').innerHTML='Drill cleared.';
+    };
+  }
+  var bank=document.getElementById('ddb-bank');
+  if(bank){
+    bank.onclick=function(){
+      var ta=document.getElementById('ddb-debrief');
+      if(!ta.value.trim()) return;
+      var p=DD.posOf(DD.sim.seat);
+      state.entries.push({at:stamp(), seat:p? p.name : DD.sim.seat, text:ta.value.trim()});
+      ta.value=''; save(); renderBanked();
+    };
+    document.getElementById('ddb-md').onclick=function(){ copy(toMd()); };
+  }
+}
+
+var PAGES=[
+  {id:'setup', label:'Set up a drill', secs:['dd-seat','dd-fields','dd-coord','ddb-build']},
+  {id:'fly',   label:'Fly it',         secs:['dd-live']},
+  {id:'notes', label:'Notes and map',  secs:['ddb-notes','dd-data']}
+];
+function page(id){
+  for(var i=0;i<PAGES.length;i++){
+    var v=document.getElementById('ddb-page-'+PAGES[i].id);
+    if(v) v.className='ddb-page'+(PAGES[i].id===id?' on':'');
+  }
+  var tabs=document.querySelectorAll('.dd-pagetabs button');
+  for(var t=0;t<tabs.length;t++) tabs[t].className=(tabs[t].getAttribute('data-page')===id?'on':'');
+  window.scrollTo(0,0);
+}
+function buildPages(){
+  var wrap=document.querySelector('.wrap');
+  var foot=wrap.querySelector('footer');
+  wrap.insertBefore(DD.sec('ddb-build','Build','Build a drill','Place the strips you want to work.', buildBody()), foot);
+  wrap.insertBefore(DD.sec('ddb-notes','Notes','Practice log','What each session taught, banked and exportable.', notesBody()), foot);
+  var tabs=document.createElement('div');
+  tabs.className='dd-pagetabs';
+  var out='';
+  for(var i=0;i<PAGES.length;i++) out+='<button data-page="'+PAGES[i].id+'">'+PAGES[i].label+'</button>';
+  tabs.innerHTML=out;
+  var nav=document.getElementById('modnav');
+  nav.parentNode.insertBefore(tabs, nav.nextSibling);
+  for(var p=0;p<PAGES.length;p++){
+    var view=document.createElement('div');
+    view.className='ddb-page'; view.id='ddb-page-'+PAGES[p].id;
+    wrap.insertBefore(view, foot);
+    for(var s=0;s<PAGES[p].secs.length;s++){
+      var el=document.getElementById(PAGES[p].secs[s]);
+      if(el) view.appendChild(el);
+    }
+  }
+  var bs=tabs.querySelectorAll('button');
+  for(var b=0;b<bs.length;b++) bs[b].onclick=(function(id){ return function(){ page(id); }; })(bs[b].getAttribute('data-page'));
+  page('setup');
+}
+function start(){
+  buildPages(); wire(); renderBanked(); DD.render();
+  if(!storageOk){
+    var el=document.getElementById('ddb-banked');
+    if(el) el.innerHTML='<div class="ddb-room">Local storage is not available here, so the log lives only until the page is closed. Copy it as Markdown before you leave.</div>'+el.innerHTML;
+  }
+}
+window.ddb={state:state, toMd:toMd, page:page, save:save};
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', start); }
+else { start(); }
+})();
+</script>
+
+</body>
+</html>
