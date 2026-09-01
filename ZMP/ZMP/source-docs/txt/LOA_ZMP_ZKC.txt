@@ -1,0 +1,148 @@
+VATUSA KANSAS CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+LETTER OF AGREEMENT
+
+                                                                                                            EFFECTIVE: 04/03/2021
+
+SUBJECT: INTERFACILITY COORDINATION
+
+1. PURPOSE: This agreement establishes coordination procedures and defines delegation of airspace
+     between VATUSA Kansas City ARTCC (ZKC) and VATUSA Minneapolis ARTCC (ZMP). This
+     agreement is supplemental to procedures contained within FAA Order 7110.65.
+
+2. DISCLAIMER: Information contained herein is designed and specifically for use in a virtual air traffic
+     control environment. It is not applicable, nor should it be referenced for live operations in the National
+     Airspace System (NAS).
+
+3. CANCELLATION: VATUSA Kansas City ARTCC and VATUSA Minneapolis ARTCC Letter of
+     Agreement dated June 8, 2020.
+
+4. PROCEDURES:
+
+     a. Each ARTCC must route/restrict aircraft in accordance with Attachment B.
+
+     b. The receiving ARTCC may assume control for beacon code changes and control for turns, on
+          aircraft at or above 10,000 feet MSL, when aircraft are within 20 nautical miles of the common
+          ZMP/ZKC ARTCC boundary. The maximum turn must not exceed 20 degrees and must not affect
+          another sector without proper coordination.
+
+c. Aircraft landing within 60 miles of the boundary must enter the receiving ARTCC's airspace AOB
+     FL230, and the receiving ARTCC must have control for descent and turns.
+
+d. Data Block Coordination and Interim Altitude Procedures.
+
+     (1) Data blocks must reflect the aircraft's assigned altitude at the time of handoff.
+
+     (2) Handoffs must be directed to the appropriate sector for the aircraft's altitude assignment.
+          Acceptance of a radar handoff constitutes approval coordination for that aircraft to climb or
+          descend to the displayed altitude.
+
+     (3) Use of interim (temp) altitudes is authorized between Kansas City ARTCC and Minneapolis
+          ARTCC and must represent valid altitude coordination. Use of interim altitudes must not be
+          authorized to coordinate Inappropriate Altitude for Direction of Flight (IAFDOF), or to
+          supersede altitude restrictions established within this Letter of Agreement.
+
+     (4) When unable to approve the automated altitude, the receiving controller must verbally
+          coordinate with the transferring controller prior to acceptance of the handoff.
+
+e. Aircraft unable to comply with required routes or altitudes must be coordinated with the receiving
+     ARTCC on an individual basis.
+
+5. ATTACHMENTS:                                               /s/
+                                                    Kyle Kaestner
+     a. Attachment A ­ Radar Sectors                Air Traffic Manager
+                                                    VATUSA Kansas City ARTCC
+     b. Attachment B ­ Route/Altitude Restrictions
+
+          /s/
+Dhruv Kalra
+Air Traffic Manager
+VATUSA Minneapolis ARTCC
+
+For VATSIM Use Only
+VATUSA KANSAS CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                               LETTER OF AGREEMENT
+
+                      ATTACHMENT A ­ RADAR SECTORS
+                               HIGH ALTITUDE (FL240+)
+
+                                  For VATSIM Use Only
+VATUSA KANSAS CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                               LETTER OF AGREEMENT
+
+                            LOW ALTITUDE (SFC-FL230)
+
+                                  For VATSIM Use Only
+VATUSA KANSAS CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                 LETTER OF AGREEMENT
+
+                 ATTACHMENT B ­ ROUTES/ALTITUDE RESTRICTIONS
+
+                 FROM ZKC TO ZMP
+
+     Arrival           Qualifier                  Route Via          Altitude
+   Airport(s)          Turbojets                               (Cross ZKC/ZMP
+                      Turboprops     ROKKK.NITZR STAR (RNAV)   Boundary, unless
+      MSP        All STL Departures       or FOD.KASPR STAR    otherwise noted)
+
+MSP Satellites              All       FOD..KASPR.KASPR STAR
+  (ANE FCM                               MNOSO.BLUEM STAR
+                  AOA 16,000 MSL
+LVN MIC STP)                         (RNAV) or ALO.KASPR STAR
+                  AOA 16,000 MSL
+              1   AOA 11,000 MSL     FOD.TWOLF STAR
+
+   OMA/OFF                           PWE or MARWI STARs 2      East of BACNN:
+                                                                 AOB FL320 3
+       LNK
+                                                               West of BACNN:
+      DSM                                                        AOB FL280 4
+
+                                                               East of BACNN:
+                                                                 AOB FL320 3
+
+                                                               West of BACNN:
+                                                                 AOB FL280 4
+
+                                                                 AOB FL280 4
+
+1 MSP satellite arrivals must enter ZMP either in-trail with or below MSP arrivals
+2 MARWI STAR arrivals may be routed direct MARWI without coordination.
+3 ZKC releases control for descent to FL240 20NM from the ZMP/ZKC common boundary.
+4 Aircraft must be descending to FL240 at pilot's discretion.
+
+                 For VATSIM Use Only
+            VATUSA KANSAS CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                           LETTER OF AGREEMENT
+
+                           FROM ZMP TO ZKC
+
+  Arrival       Qualifier              Route Via                         Altitude
+Airport(s)                 JSONN STAR or BQS STAR                  (Cross ZKC/ZMP
+                                                                   Boundary, unless
+MCI 1           All                                                otherwise noted)
+
+                                                                     JSONN STAR
+                                                                           cross
+
+                                                                  ASIIX/DPEAK AOB
+                                                                          FL230
+
+MCI Satellites                                                    ASIIX/DPEAK AOB
+                                                                          FL230
+(MKC OJC FLV    All        ASIIX/DPEAK JSONN JUDAA or BQS STAR 2
+
+IXD) 1
+
+STL             All        RIVRS/LORLE STAR 3
+
+1 ZKC must have control for descent of all MCI TRACON arrival aircraft 20NM from the ZMP/ZKC
+
+common boundary.
+2 Turboprops may be cleared via direct JUDAA or direct BQS.
+3 STL arrivals entering ZKC west of J21 may be cleared via ANX.KOOOP/KAYLA STAR
+
+                           For VATSIM Use Only
+

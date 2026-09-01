@@ -1,0 +1,104 @@
+       FOR SIMULATION USE ONLY
+
+ORDER                             OMA ATCT
+                                7110.4A CHG 1
+
+SUBJ: STANDARD OPERATING PROCEDURES
+    1. PURPOSE. This order prescribes air traffic control procedures and defines operation
+         responsibilities for personnel providing ATC services within Omaha ATCT designated
+         airspace.
+
+    2. DISTRIBUTION. This order shall be distributed to all vZMP personnel.
+
+    3. CANCELLATION. vZMP OMA ATCT 7110.4A.
+
+    4. DESCRIPTIONS.
+
+         a. South profile describes traffic flow conditions where aircraft are landing and/or
+             departing Runways 14R, 14L, and Runway 18.
+
+         b. North Profile describes traffic flow conditions where aircraft are landing and/or
+             departing runways 32L, 32R, and Runway 36.
+
+         c. Designated area of jurisdiction.
+
+             1. Ground Control's area of responsibility includes all movement areas excluding the
+                  runways.
+
+             2. Local Control's area of responsibility includes all runways and the airspace within a
+                  5nm radius of Omaha Eppley Airfield, at and below 3000' MSL.
+
+    5. PROCEDURES
+
+         a. Clearance Delivery (CD). CD is primarily responsible for the following:
+
+             1. Use primary frequency 119.9.
+
+             2. Process and forward flight plan information to GC and LC.
+
+             3. Issue clearances and ensure accuracy of pilot read back.
+
+       FOR SIMULATION USE ONLY  Page 1
+                             FOR SIMULATION USE ONLY
+    4. Issue the following initial altitudes, or filed altitude if lower:
+
+         a. IFR Turbojet: 5,000' MSL
+         b. IFR prop-driven: 4,000' MSL
+         c. VFR/SVFR turbojet: 5,000' MSL
+         d. VFR/SVFR prop-driven: 3,500' MSL.
+    5. Issue the OMA departure procedure to all departing IFR aircraft.
+b. Ground Control (GC). GC is primarily responsible for the following:
+    1. Use primary frequency 121.9.
+    2. Issue taxi instructions to all inbound/outbound aircraft.
+    3. Coordinate runway crossings with LC, as appropriate.
+c. Local Control (LC). LC is primarily responsible for the following:
+    1. Use primary frequency 132.1.
+    2. Determine active runway(s) in use.
+         a. When winds are less than 5 knots from any direction, north profile is the
+
+             preferred operation. When winds are 5 knots or greater, select the profile most
+             closely aligned with the winds.
+    3. Provide Class C services to aircraft operating in OMA Class C airspace.
+    4. Assign following headings to departing IFR aircraft:
+         a. North profile:
+             1. Turbojet heading 320 for R90 West sector and 360 for East sector.
+             2. Prop-driven heading 300 clockwise through 020.
+
+FOR SIMULATION USE ONLY  Page 2
+                        FOR SIMULATION USE ONLY
+    b. South profile:
+
+         1. Turbojet heading 180 for R90 West sector and 140 for East sector.
+
+         2. Prop-driven heading 120 clockwise through 200.
+
+    c. Appropriate headings shall:
+
+         1. Provide separation from prior departures, and;
+
+         2. Allow TRACON to turn the aircraft on course reference prior departures.
+
+         3. Prop-driven aircraft with on-course heading in the fan area shall be assigned
+             the on-course headings.
+
+5. Coordinate taxi movements as required with GC.
+
+6. Assign missed approaches 3,000' MSL and heading 360 on north profile or heading
+    140 on south profile.
+
+6. ATCT POSITIONS AND FREQUENCIES
+
+Controllers operating OMA ATCT positions must utilize the following radar client frequencies.
+
+Position Name             Frequency  Callsign
+Clearance Delivery        119.900    OMA_DEL
+Ground Control            121.900    OMA_GND
+Local Control             132.100    OMA_TWR
+ATIS                      120.400    KOMA_ATIS
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+FOR SIMULATION USE ONLY                         Page 3
+

@@ -1,0 +1,2057 @@
+ORDER                                               MSP ATCT
+                                                     7110.26G
+
+                                                       CHG 1
+
+              MINNEAPOLIS ATCT
+STANDARD OPERATING PROCEDURES
+
+                               March 31, 2026
+
+          VATUSA MINNEAPOLIS ARTCC
+
+       VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+                           FOR SIMULATION USE ONLY
+                             VIRTUAL AIR TRAFFIC SIMULATION NETWORK        MSP
+                                            UNITED STATES DIVISION     7110.26G
+                                                   Minneapolis ATCT
+                                                                     Effective date:
+SUBJ: Minneapolis ATCT Standard Operating Procedures                 March 31, 2026
+
+    This order prescribes standard operating procedures for use by Air Traffic Control Specialists at Minneapolis
+ATCT on the VATSIM network. Controllers are required to be familiar with the provisions of this order that
+pertain to their operational responsibilities and to exercise their best judgment if they encounter situations not
+covered by it.
+
+    It is emphasized that information contained herein is designed and specifically for use in a virtual controlling
+environment. It is not applicable, nor should be referenced for live operations in the National Airspace System
+(NAS). The procedures contained within this order document how the positions are to be operated and, in
+conjunction with FAA Orders 7110.10, 7110.65, and 7210.3, will be the basis for performance evaluations,
+training, and certification.
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                          FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMULATION USE ONLY                                       MSP 7110.26G CHG 1
+
+           Order Record of Changes
+
+                         Description                     Effective Date  Issued By
+                                                          Jun 11, 2010       LG
+                     Original Publication                 Sep 30, 2010       LG
+                                                           Jan 1, 2012       DK
+              Amendment of TIPH to LUAW                    Jul 15, 2015      DK
+                                                          Apr 27, 2020       DE
+                Delegated airspace changes.
+Addition of M98 P-ACP and AIT. Amendment of M98            Jul 1, 2023       DE
+
+    Voice Channels. Addition of MSP Voice ATIS            Nov 8, 2023        DE
+                          Templates.                      Jan 19, 2024       DE
+                                                           Jul 28, 2024      DE
+     Major rewrite and reorganization of document.
+                                                        March 31, 2026      DE
+    Airspace stratification update. Rewrite to better
+incorporate OPD arrivals into SOP. Added 30/35 CRO
+
+                            sections.
+
+ Go-around procedure update. Updated scratchpads to
+  MSP for visual/instrument approaches. Added STP
+coordination when MSP is landing Runway 22. Added
+
+                 4-13. Formatting cleanup.
+
+  Removal of references to legacy controlling clients.
+  Rewrite of Chapter 7. Removal of Appendices H/I.
+Chapter 9 rewrite. Update of far-gate Feeder airspace.
+
+     Added scratchpad rules for untowered airports.
+  Airspace diagram refresh. Heading diagram update.
+
+        Addition of 1-13. Minor typo corrections.
+
+Removal of M98 sections for placement into new SOP
+  and MSP-M98 coordination for placement into new
+                    LOA. Major rewrite.
+
+      Update to IFR initial altitudes/departure
+frequencies. GC must switch to LC for crossing an
+active runway. Minor verbiage changes in Chapter
+
+  7, LUAW. Formatting change in 30/35 CRDA
+ section. Tower airspace and departure split map
+
+                         updates.
+
+           FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+Paragraph                           Page
+
+CHAPTER 1 ­ INTRODUCTION ............................................................................................................1-1
+   Section 1 ­ General................................................................................................................................1-1
+      1-1-1 PURPOSE OF THIS ORDER. ................................................................................................1-1
+      1-1-2 AUDIENCE.............................................................................................................................1-1
+      1-1-3 WHERE CAN I FIND THIS ORDER?...................................................................................1-1
+      1-1-4 WHAT THIS ORDER CANCELS..........................................................................................1-1
+      1-1-5 SOFTWARE UTILIZATION. ................................................................................................1-1
+      1-1-6 GLOBAL RATINGS...............................................................................................................1-1
+      1-1-7 EMERGENCIES. ....................................................................................................................1-1
+
+CHAPTER 2 ­ AIR TRAFFIC CONTROL ..............................................................................................2-1
+   Section 1 ­ General................................................................................................................................2-1
+      2-1-1 AIRSPACE JURISDICTION..................................................................................................2-1
+      2-1-2 CLASS BRAVO AIRSPACE..................................................................................................2-1
+      2-1-3 MSP TOWER POSITIONS AND FREQUENCIES. ..............................................................2-1
+      2-1-4 OBSTRUCTIONS. ..................................................................................................................2-1
+      2-1-5 MINIMUM VECTORING ALTITUDES (MVA). .................................................................2-1
+      2-1-6 DISTANCE BETWEEN PARALLEL RUNWAYS...............................................................2-1
+   Section 2 ­ Runway Use, Noise Abatement, and Midnight Operations................................................2-2
+      2-2-1 GENERAL...............................................................................................................................2-2
+      2-2-2 RUNWAY SELECTION. .......................................................................................................2-2
+      2-2-3 RUNWAY USE SYSTEM (RUS)...........................................................................................2-2
+      2-2-4 MENDOTA HEIGHTS/EAGAN PROCEDURES (RUNWAY 12R AND 12L
+      DEPARTURES). ............................................................................................................................... 2-3
+      2-2-5 RUNWAY 30L AND 30R ARRIVALS AND DEPARTURES. ............................................2-3
+      2-2-6 RUNWAY 4 AND 22 DEPARTURES. ..................................................................................2-3
+      2-2-7 RUNWAY 17 DEPARTURES................................................................................................2-4
+      2-2-8 INTERSECTION DEPARTURES ­ TURBOJET ONLY......................................................2-4
+      2-2-9 QUIET HOURS PROCEDURES............................................................................................2-4
+      2-2-10 LAND 12S, LAND 35 PROHIBITED. .................................................................................2-5
+   Section 3 ­ Airport Surface Detection (ASDE-X) Procedures..............................................................2-6
+      2-3-1 POSITION DETERMINATION. ............................................................................................2-6
+      2-3-2 SCRATCH PAD ENTRIES. ...................................................................................................2-6
+      2-3-3 SYSTEM OPERATIONS........................................................................................................2-6
+   Section 4 ­ Standard Terminal Automation Replacement System........................................................2-7
+      2-4-1 USE OF TOWER RADAR DISPLAYS. ................................................................................2-7
+      2-4-2 STARS POSITION SYMBOLS..............................................................................................2-7
+   Section 5 ­ Airport Movement Area Procedures...................................................................................2-8
+      2-5-1 RUNWAY CROSSING PROCEDURES AND COORDINATION. .....................................2-8
+      2-5-2 SPECIAL TAXI CONSIDERATIONS. ..................................................................................2-8
+
+CHAPTER 3 ­ CLEARANCE DELIVERY .............................................................................................3-1
+   Section 1 ­ Position Information ...........................................................................................................3-1
+      3-1-1 CLEARANCE DELIVERY (CD) DUTIES AND RESPONSIBILITIES. .............................3-1
+   Section 2 ­ Standard Operating Procedures ..........................................................................................3-2
+
+           FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+      3-2-1 STRIP MARKING. .................................................................................................................3-2
+      3-2-2 PDC/CPDLC CLEARANCES. ...............................................................................................3-2
+      3-2-3 IFR ALTITUDE ASSIGNMENTS. ........................................................................................3-2
+      3-2-4 IFR ROUTING ASSIGNMENTS. ..........................................................................................3-3
+      3-2-5 IFR DEPARTURE FREQUECY ASSIGNMENTS. ..............................................................3-3
+      3-2-6 VFR DEPARTURES...............................................................................................................3-4
+CHAPTER 4 ­ GROUND METERING....................................................................................................4-1
+   Section 1 ­ Position Information ...........................................................................................................4-1
+      4-1-1 GROUND METERING (GH) POSITION DUTIES AND RESPONSIBILITIES. ................4-1
+   Section 2 ­ Standard Operating Procedures ..........................................................................................4-2
+      4-2-1 FLIGHT PROGRESS STRIP REVIEW. ................................................................................4-2
+      4-2-2 METERING OF OUTBOUND AIRCRAFT. .........................................................................4-2
+CHAPTER 5 ­ GROUND CONTROL .....................................................................................................5-1
+   Section 1 ­ General................................................................................................................................5-1
+      5-1-1 GCN POSITION DUTIES AND RESPONSIBILITIES.........................................................5-1
+      5-1-2 GCS POSITION DUTIES AND RESPONSIBILTIES...........................................................5-1
+      5-1-3 GCW POSITION DUTIES AND RESPONSIBILITIES. .......................................................5-2
+      5-1-4 COMBINING/DECOMBINING POSITIONS. ......................................................................5-2
+   Section 2 ­ STANDARD OPERATING PROCEDURES ....................................................................5-3
+      5-2-1 TAXI OPERATIONS..............................................................................................................5-3
+      5-2-2 GROUND CONTROL DEPARTURE TAXI PROCEDURES. .............................................5-3
+      5-2-3 CROSSOVER OPERATIONS................................................................................................5-4
+      5-2-4 RESTRICTED OR DELAYED AIRCRAFT TAXI OPERATIONS......................................5-4
+      5-2-5 FLIGHT PROGRESS STRIPS................................................................................................5-4
+CHAPTER 6 ­ LOCAL CONTROL .........................................................................................................6-1
+   Section 1 ­ General................................................................................................................................6-1
+      6-1-1 LCN POSITION DUTIES AND RESPONSIBILITIES. ........................................................6-1
+      6-1-2 LCS POSITION DUTIES AND RESPONSIBILITIES. .........................................................6-1
+      6-1-3 LCW POSITION DUTIES AND RESPONSIBILITIES. .......................................................6-2
+      6-1-4 COMBINING/DECOMBINING POSITIONS. ......................................................................6-2
+   Section 2 ­ Standard Operating Procedures ­ Arrivals .........................................................................6-3
+      6-2-1 SCRATCH PAD ENTRIES. ...................................................................................................6-3
+      6-2-2 GO-AROUNDS.......................................................................................................................6-3
+   Section 3 ­ Standard Operating Procedures ­ Departures.....................................................................6-4
+      6-3-1 DEPARTURE HEADINGS. ...................................................................................................6-4
+      6-3-2 VISUAL SEPARATION BETWEEN SUCCESSIVE DEPARTURES. ................................6-4
+      6-3-3 TRANSFER OF CONTROL...................................................................................................6-4
+      6-3-4 SPLIT LOCAL CONTROL PROCEDURES. ........................................................................6-5
+      6-3-5 VERBAL COORDINATION BETWEEN LOCAL CONTROLS. ........................................6-5
+      6-3-6 LOCAL CONTROL CROSSOVER PROCEDURES.............................................................6-6
+      6-3-7 RUNWAY 17 LINE UP AND WAIT AND/OR TAKEOFF CLEARANCE. ........................6-6
+   Section 4 ­ Standard Operating Procedures ­ Class B ..........................................................................6-7
+      6-4-1 VFR DEPARTURES...............................................................................................................6-7
+      6-4-2 HELICOPTERS.......................................................................................................................6-7
+
+           FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+CHAPTER 7 ­ SPECIAL OPERATIONS ................................................................................................7-1
+   Section 1 ­ Land and Hold Short Operations (LAHSO) .......................................................................7-1
+      7-1-1 DESCRIPTION. ......................................................................................................................7-1
+      7-1-2 LAHSO REQUIREMENTS. ...................................................................................................7-1
+      7-1-3 RUNWAY 22 LAHSO AND RUNWAY 17 ARRIVALS AND DEPARTURES
+      PROCEDURES ................................................................................................................................. 7-2
+      7-1-4 ADDITIONAL PROCEDURES FOR RUNWAY 17/22 OPERATIONS..............................7-2
+      7-1-5 LAHSO DISTANCE REMAINING DIAGRAM. ..................................................................7-3
+   Section 2 ­ Line Up and Wait Procedures.............................................................................................7-4
+      7-2-1 LINE UP AND WAIT (LUAW) PROCEDURES. .................................................................7-4
+      7-2-2 RESPONSIBILITIES. .............................................................................................................7-4
+      7-2-3 LUAW AND INTERSECTION DEPARTURES WAIVERS. ...............................................7-5
+   Section 3 ­ Converging Runway Operations.........................................................................................7-6
+      7-3-1 RUNWAYS 30L/30R AND RUNWAY 35 CONVERGING RUNWAY OPERATIONS
+      (CRO). ...............................................................................................................................................7-6
+      7-3-2 IMPLEMENTATION. ............................................................................................................7-6
+      7-3-3 USE OF THE ARRIVAL DEPARTURE WINDOW. ............................................................7-6
+      7-3-4 PROCEDURES. ......................................................................................................................7-7
+      7-3-5 MANAGEMENT OF BALKED LANDINGS DURING SIMULTANEOUS OPERATIONS
+      ON CONVERGING RUNWAYS 35, 30L, AND 30R.....................................................................7-9
+   Section 4 ­ Opposite Direction Operations .........................................................................................7-11
+      7-4-1 DEFINITION.........................................................................................................................7-11
+      7-4-2 RESPONSIBILITIES. ...........................................................................................................7-11
+      7-4-3 PROCEDURES FOR AIRCRAFT RECEIVING IFR SERVICES. .....................................7-11
+      7-4-4 PROCEDURES FOR AIRCRAFT RECEIVING VFR SERVICES.....................................7-12
+      7-4-5 ADDITIONAL PROCEDURES FOR MIDNIGHT OPERATIONS....................................7-12
+   Section 5 ­ SWAP and TMU ..............................................................................................................7-13
+      7-5-1 SWAP Responsibilities..........................................................................................................7-13
+      7-5-2 Traffic Management Unit. .....................................................................................................7-13
+
+Appendix A MSP Tower Airspace .............................................................................................................. 1
+Appendix B Bravo Airspace Map............................................................................................................... 12
+Appendix C MVA Chart and Obstruction Data.......................................................................................... 13
+Appendix D Position Relief Briefing Checklists ........................................................................................ 14
+Appendix E Scratch Pad Entries ................................................................................................................. 15
+Appendix F Runway Intersection Distance Remaining Chart .................................................................... 16
+Appendix G Runway Use Wind Charts ...................................................................................................... 17
+Appendix H Departure Configurations ....................................................................................................... 29
+Appendix I Satellite Airspace Split............................................................................................................. 34
+Appendix J Preferential Tower Assigned Headings ................................................................................... 35
+
+           FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+             CHAPTER 1­ INTRODUCTION
+
+                               Section 1 ­ General
+
+1-1-1 PURPOSE OF THIS ORDER. This order establishes standard operating procedures for the
+VATSIM Minneapolis ATCT, and supplements FAA JO 7110.65, Air Traffic Control.
+
+1-1-2 AUDIENCE. All VATSIM Minneapolis ARTCC personnel.
+
+1-1-3 WHERE CAN I FIND THIS ORDER? You can find this order on the Documents page of the
+vZMP website.
+
+1-1-4 WHAT THIS ORDER CANCELS. The following notices are cancelled, and their content has
+been added to this SOP:
+
+    a. MSP/M98 Order 7110.26G, eff. Jul 28, 2024.
+
+1-1-5 SOFTWARE UTILIZATION. vZMP has standardized the Consolidated Radar Client (CRC) as
+its operating software of choice for all control positions. Any references to software in this and other
+Facility Orders are written with CRC in mind. Controllers utilizing alternative VATSIM radar clients
+must consult with the vZMP Facility Engineering department regarding the applicability of software
+settings to their client of choice.
+
+1-1-6 GLOBAL RATINGS. All positions of operation outlined within this order must be staffed in
+compliance with VATSIM Global Controller Administration Policy (GCAP).
+
+    a. Minneapolis-St. Paul International (KMSP) is designated by GCAP as a TIER I facility, and all
+         controllers staffing MSP ATCT and M98 TRACON positions must either possess or be in
+         training for the appropriate rating and/or facility endorsements.
+
+1-1-7 EMERGENCIES. Controllers must reference VATSIM CoC and CoR policies regarding
+emergencies at all times and have the right to request the termination of an emergency should it interfere
+with operations. Non-compliant pilots should be referred to a VATSIM supervisor IAW with the CoC.
+
+           FOR SIMULATION USE ONLY  1-1
+3/31/2026  FOR SIMUATION USE ONLY                                     MSP 7110.26G CHG 1
+
+           CHAPTER 2 ­ AIR TRAFFIC CONTROL
+
+           Section 1 ­ General
+
+2-1-1 AIRSPACE JURISDICTION.
+
+         MSP delegated airspace is depicted in Appendix A of this order and applicable Letters of
+         Agreement. MSP airspace includes:
+
+a. The airspace from the surface up to and including 3,000 ft. within 6 NM of the MSP Runway
+    30L DME.
+
+b. The airspace within 1.5 NM either side of the localizer(s) for which approach(es) are active,
+    from the 6-mile ring to final approach fix(es).
+
+c. When landing Runways 30L/R and Runway 35, the airspace within 6 NM of the MSP
+    Runway 30L DME between the eastern boundary of the satellite "corridor" over MSP west to
+    the departure dispersal area, from the surface up to and including 4,000 ft.
+
+2-1-2 CLASS BRAVO AIRSPACE.
+         Minneapolis Class Bravo airspace is depicted in Appendix B.
+
+2-1-3 MSP TOWER POSITIONS AND FREQUENCIES.
+
+           Position Designation/Abbreviation       Frequency          Callsign
+           Clearance Delivery (CD)                 133.200            MSP_DEL
+           Ground Metering (GH)                    133.575            MSP_H_GND
+           Ground Control South (GCS)              121.900            MSP_S_GND
+           Ground Control North (GCN)              121.800            MSP_N_GND
+           Ground Control West (GCW)               127.925            MSP_W_GND
+           Local Control North (LCN)               123.950            MSP_N_TWR
+           Local Control South (LCS)               126.700            MSP_S_TWR
+           Local Control West (LCW)                123.675            MSP_W_TWR
+           Arrival ATIS                            135.350            MSP_A_ATIS
+           Departure ATIS                          120.800            MSP_D_ATIS
+
+NOTE ­ Bold indicates the primary combined frequency to be connected first.
+
+2-1-4 OBSTRUCTIONS.
+         Obstructions are depicted in Appendix C.
+
+2-1-5 MINIMUM VECTORING ALTITUDES (MVA).
+         MVAs are depicted in Appendix C.
+
+2-1-6 DISTANCE BETWEEN PARALLEL RUNWAYS.
+         The distance between the centerlines of Runways 12L/30R and 12R/30L is 3,380 ft.
+
+           FOR SIMULATION USE ONLY                                                                 2-1
+3/31/2026                FOR SIMUATION USE ONLY            MSP 7110.26G CHG 1
+
+Section 2 ­ Runway Use, Noise Abatement, and Midnight
+                             Operations
+
+2-2-1 GENERAL.
+
+a. The guidelines for the issuance of air traffic control instructions relating to noise abatement
+    for all turbojet aircraft and all other Group IV and V aircraft must be according to the
+    procedures stated in this chapter.
+
+b. Controllers are required to be thoroughly knowledgeable with the provisions of this chapter
+    and to exercise their best judgment if they encounter situations not covered by it.
+
+c. Whenever the normal landing pattern is over Highland or the South Minneapolis area, a noise
+    sensitive message must be added to the ATIS.
+
+d. Runway 35 should not be used for departures to the north, and Runway 17 should not be used
+    for arrivals from the north by any type of aircraft except when weather conditions require its
+    use.
+
+2-2-2 RUNWAY SELECTION.
+
+a. Runway selection must be determined in accordance with JO 8400.9, National Safety and
+    Operational Criteria for Runway Use Program.
+
+b. Parallel runway selection must be based on, but not limited to, wind, weather, and traffic
+    conditions.
+
+2-2-3 RUNWAY USE SYSTEM (RUS).
+
+a. Departures are considered noisier than arrivals and must be considered first when selecting a
+    runway configuration. Departure runway/runways should be considered in descending
+    preference from the chart below based on, but not limited to, wind, weather, and airport
+    demand.
+
+b. Once a departure runway configuration has been selected, a corresponding arrival runway
+    configuration must be selected in descending preference from the chart below based on, but
+    not limited to wind, weather, and airport demand.
+
+           Departure Preference:   Arrival Preference:
+           Runways 12L/12R         Runways 30L/30R
+           Runway 17               Runway 35
+           Either Runway 22 or 04  Either Runway 22 or 04
+           Runways 30L/30R         Runways 12L/R
+
+                         FOR SIMULATION USE ONLY                                               2-2
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+2-2-4 MENDOTA HEIGHTS/EAGAN PROCEDURES (RUNWAY 12R AND 12L
+DEPARTURES).
+
+         a. Whenever possible, under non simultaneous departure conditions:
+
+              1. Aircraft departing Runway 12R will be assigned a heading to maintain an approximate
+                   ground track of 105° magnetic.
+
+              2. Aircraft departing Runway 12L will be assigned a heading to maintain a ground track
+                   along the extended centerline, approximately 119° magnetic.
+
+         b. When diverging separation is used, it must be based upon the following criteria:
+
+              1. Runway 12R: a heading to maintain a track on or north of the Runway 30L localizer.
+
+              2. Runway 12L: between a 090° track and 15° north of the Runway 12R assigned heading.
+
+         c. LC must instruct all turbojet aircraft departing Runway 12L that will make a left turn, to
+              maintain runway heading. LC must issue the assigned heading after the departure is beyond
+              the departure end of Runway 12L and prior to transfer of communications.
+
+         d. Proceed on the assigned heading until at least 3 miles from the departure end of the runway,
+              then assign on-course headings as soon as practical after the 3-mile point.
+
+2-2-5 RUNWAY 30L AND 30R ARRIVALS AND DEPARTURES.
+
+         a. LC must instruct all turbojet aircraft departing Runway 30L that will make a left turn, to
+              maintain runway heading. LC must issue the assigned heading after the departure is beyond
+              the departure end of Runway 30L and prior to the transfer of communications.
+
+         b. Runway 30L/R Straight Out Procedure. To the extent possible, when not operationally
+              required, avoid assigning runway heading off Runways 30L and 30R to noise sensitive
+              aircraft. Controllers may assign any other heading within the tower primary departure
+              dispersal areas.
+
+NOTE - This procedure requires use of controller provided visual separation. If conditions do not allow
+the use of controller provided visual separation, another form of approved separation must be used.
+
+2-2-6 RUNWAY 4 AND 22 DEPARTURES.
+
+         a. Aircraft departing Runway 22 and making a right turn must:
+
+              1. Be instructed to remain on runway heading until leaving 1,500 ft. MSL.
+
+              2. Not be issued a heading greater than 350° until past the Runway 12L localizer course.
+
+         b. Aircraft departing Runway 4 must be issued headings that avoid overflying the Veterans'
+              Administration Hospital as much as possible.
+
+           FOR SIMULATION USE ONLY  2-3
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+2-2-7 RUNWAY 17 DEPARTURES.
+
+         a. Westbound Turns:
+
+              1. All turbojet aircraft and all other Group IV and V aircraft departing Runway 17 that will
+                   be assigned a heading west of runway heading must initially be instructed to fly runway
+                   heading.
+
+              2. LC must issue the appropriate westbound heading after the aircraft is observed reaching
+                   the 3.03 DME CTRD marking.
+
+         b. When traffic situations permit, assign aircraft departing Runway 17 a heading of 230°.
+
+NOTE ­ The intent of the 230° heading is to allow aircraft to follow the river. It is intended for use
+during low demand periods and not intended to unduly delay aircraft by taking them off course. There are
+no noise restrictions preventing departure control from assigning a different heading when traffic
+conditions permit.
+
+2-2-8 INTERSECTION DEPARTURES ­ TURBOJET ONLY.
+
+         Controllers must ensure that intersection departures for turbojet aircraft are not initiated, unless
+         the aircraft can comply with published climb restrictions, when the departure path is over a noise
+         sensitive area (e.g., departing Runways 4, 30L, and 30R.)
+
+2-2-9 QUIET HOURS PROCEDURES.
+
+         During quiet hours (2230 until 0600 local) maximize the use of the Mendota Heights/Eagan
+         corridor as much as feasible by departing Runways 12L and 12R, and landing Runways 30L and
+         30R.
+
+         a. The RUS preferences for midnight operations are as follows:
+
+              1. Land 30s ­ Depart 12s (opposite direction).
+
+              2. Land 35 ­ Depart 12s or Land 30s ­ Depart 17.
+
+              3. Straight 12s.
+
+              4. Straight 30s.
+
+         b. Runway 17 south and westbound departures must be assigned runway heading to 3.03 DME
+              (MSP VOR) then assigned heading 230°.
+
+              1. This procedure should typically be used between 0015 and 0530 local (daily).
+
+              2. Departure control may turn aircraft on course on initial contact.
+
+         c. If Runway 4/22 usage is required, give equal priority to either end.
+
+         d. Quiet hours procedures should be applied to all aircraft when feasible, and must be applied to
+              all aircraft with noise characteristics similar to or greater than a C-130 or turbojet aircraft
+
+         e. Departures with noise characteristics may be issued a heading to remain over the river basin
+              until leaving 3,000 ft. or higher before proceeding on course.
+
+           FOR SIMULATION USE ONLY  2-4
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+2-2-10 LAND 12S, LAND 35 PROHIBITED.
+
+         Due to increased concerns about go-around procedures, the land Runway 12s and 35 ­ Departure
+         Runway 12s configuration is prohibited.
+
+           FOR SIMULATION USE ONLY  2-5
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+     Section 3 ­ Airport Surface Detection (ASDE-X) Procedures
+
+2-3-1 POSITION DETERMINATION.
+         ASDE-X system derived information may be used to:
+         a. Formulate clearances and control instructions to aircraft on the movement area.
+
+EXAMPLE ­ An aircraft is observed on the ASDE-X display exiting the runway; the next aircraft can be
+cleared for takeoff.
+
+         b. Position aircraft using the movement areas.
+         c. Determine the exact location of aircraft, or spatial relationship to other aircraft on the
+
+              movement area.
+NOTE ­ A standard icon size is used to represent all aircraft sizes. Controllers are cautioned to be aware
+that the icon position may not be a true representation of the actual aircraft position.
+2-3-2 SCRATCH PAD ENTRIES.
+
+         a. GC and LC may display pertinent information (e.g. gate information) in the aircraft's
+              ASDEX scratch pad.
+
+         b. LC and/or GC must not use the ASDE-X scratch pad data to effect any coordination.
+2-3-3 SYSTEM OPERATIONS.
+
+         a. When a runway becomes unavailable for aircraft arrivals or departures for 30 minutes or
+              more, the runway must be entered as "Closed" in the Safety Logic System.
+
+           FOR SIMULATION USE ONLY  2-6
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+Section 4 ­ Standard Terminal Automation Replacement System
+
+2-4-1 USE OF TOWER RADAR DISPLAYS.
+
+         a. MSP Tower personnel are authorized to use STARS for all terminal radar functions.
+         b. Controllers must ensure the correct configuration-specific airspace map is displayed
+         c. Controllers must ensure an adequate area outside of MSP delegated airspace is displayed.
+
+2-4-2 STARS POSITION SYMBOLS.
+
+           Position  Symbol
+           LCN       T
+           LCS       V
+           LCW       Y
+           GCN/S/W   2Y
+           CD        6
+
+           FOR SIMULATION USE ONLY                                                                    2-7
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+             Section 5 ­ Airport Movement Area Procedures
+
+2-5-1 RUNWAY CROSSING PROCEDURES AND COORDINATION.
+
+         a. General Runway Crossing Procedures.
+
+              1. Aircraft runway crossing: GC and/or LC must not initiate a runway crossing until the
+                   aircraft to cross is within 1,000 ft. of the appropriate runway.
+
+              2. To the extent possible, runway crossings must be accomplished by LC on the appropriate
+                   LC frequency.
+
+         b. Runway Crossing Coordination and Phraseology.
+
+              1. LC and GC must not use conditional phrases, such as "Beat SWA252", "Behind
+                   DAL551", "Behind the departing King Air."
+
+              2. In accordance with JO 7110.65 Chapter 2, Runway crossing coordination between GCS,
+                   GCN, GCW, LCN, LCS and LCW may utilize an abbreviated message format by
+                   omitting both the caller and receiver operating position and omitting operating initials.
+
+              3. Coordination must include the runway, the point at which the crossing will be conducted
+                   and what type of aircraft.
+
+EXAMPLE ­ GC -"Cross Runway 30L at Charlie with the Airbus."
+                 LC - "Cross Runway 30L at Charlie."
+
+              4. GC must advise LC when the runway crossing has been completed.
+
+         c. Multiple Runway Crossing. MSP ATCT is authorized to provide multiple runway crossings
+              at the following areas:
+
+              1. Cross Runway 12R/30L at Taxiway C and cross Runway 4/22 at Taxiway W. The
+                   distance between centerlines is 894 feet.
+
+              2. Cross Runway 17/35 at Taxiway L3 and cross Runway 4/22 at Taxiway L. The distance
+                   between centerlines is 903 feet.
+
+              3. Cross Runway 12R/30L at Taxiway M and cross Runway 4/22 at Taxiway A. The
+                   distance between centerlines is 970 feet.
+
+              4. Cross Runway 12R/30L at Taxiway D and cross Runway 4/22 at Taxiway W. The
+                   distance between centerlines is 1,221 feet.
+
+2-5-2 SPECIAL TAXI CONSIDERATIONS.
+
+         a. Avoid amending a runway hold short point when the aircraft is between Taxiway D and
+              Taxiway M as much as practicable. If the hold short point is amended in this area, use
+              phraseology that will better convey the change to the pilot.
+
+EXAMPLE - "DAL2132 amend your hold short point. Taxi via Alpha, hold short of Runway 12R at
+Mike."
+
+         b. Except when required by JO 7110.65 Chapter 3, do not use the word "cross" when amending a taxi
+
+                route.
+
+           FOR SIMULATION USE ONLY  2-8
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+       CHAPTER 3 ­ CLEARANCE DELIVERY
+
+                       Section 1 ­ Position Information
+
+3-1-1 CLEARANCE DELIVERY (CD) DUTIES AND RESPONSIBILITIES.
+         CD Must:
+         a. Mark IFR flight progress strips with proper frequency and appropriate restrictions.
+         b. Formulate and transmit MSP Class B Airspace departure clearances.
+         c. Formulate and transmit departure clearances via the appropriate frequency to local IFR
+              aircraft.
+         d. Issues IFR clearances to outbound IFR aircraft either verbally or electronically via PDC or
+              CPDLC.
+         e. Writes flight progress strips on VFR aircraft departing the Class B Airspace. Information on
+              these strips should include information as outlined in vZMP Order N7110.101 ­ Flight
+              Progress Strips.
+         f. Writes specific gate number or location on all flight progress strips, as applicable
+         g. After issuing IFR or Class B Airspace clearance, passes the flight progress strip to the
+              appropriate GC position.
+         h. Broadcast departure ATIS code changes.
+
+           FOR SIMULATION USE ONLY  3-1
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                Section 2 ­ Standard Operating Procedures
+
+3-2-1 STRIP MARKING.
+         FD and CD must mark flight progress strips in accordance with procedures in vZMP Order
+         N7110.101 ­ Flight Progress Strips.
+
+3-2-2 PDC/CPDLC CLEARANCES.
+         a. vTDLS is the primary method of issuing aircraft clearances at MSP.
+         b. TDLS Procedures.
+              1. Review proposed clearances received via vTDLS for accuracy and route integrity.
+              2. Ensure all fields have the correct information before transmitting.
+
+3-2-3 IFR ALTITUDE ASSIGNMENTS.
+         Assign the following altitude to IFR aircraft:
+         a. Jet aircraft:
+              1. Requesting 9,000 feet or higher final altitude ­ 7,000 feet
+              2. Requesting 8,000 feet or lower final altitude ­ 4,000 feet
+         b. Turboprop aircraft:
+              1. Requesting 9,000 feet or higher final altitude ­ 5,000 feet
+              2. Requesting 8,000 feet or lower final altitude ­ 4,000 feet
+         c. Any piston propeller aircraft, regardless of final requested altitude ­ 4,000 feet
+
+           FOR SIMULATION USE ONLY                                                                3-2
+3/31/2026                 FOR SIMUATION USE ONLY            MSP 7110.26G CHG 1
+
+3-2-4 IFR ROUTING ASSIGNMENTS.
+
+Departure Name   Preferred Runway(s) Direction Initial Fix  Transition(s)
+
+COULT            17, 12L/30R                   SE  TAXEE    DLL
+
+KBREW (Kay-Brew) 12L/30R                       NW  HRBEK    FAR
+
+ORSKY (Or-skee) 17, 12R/30L                    S   RUMLE    ONTIJ
+
+RST (Rochester)  17, 12R/30L                   SE  FOBUG/DOKTR ALO
+
+SCHEP (Shepp)    17, 12R/30L                   SW  MCONL    RXANN
+
+WLSTN (Wellstone) 12L/30R                      NE  SNINE    GRB
+
+ZMBRO (Zumbro) 17, 12R/30L                     SE  JEDET    ODI
+
+SMERF (Smurf)    12L/30R                       W   ZOGAP    None
+
+LEINY (Line-ee)  12L/30R                       W   BOTNE    None
+
+a. Ensure IFR aircraft are routed via a SID.
+
+b. Those aircraft who do not file a SID issue the Minneapolis Nine Departure (MSP9), or the
+    most current version. The Minneapolis Nine Departure or most current version does not need
+    to be amended into the route string.
+
+c. Aircraft unable SIDs:
+
+           1. Aircraft unable to accept an assigned SID must be issued MSP 9 Departure, or the most
+               current version, to first filed fix (Ensure the first filed fix is located within ZMP airspace.
+
+           2. Aircraft unable to accept an assigned SID and unable to accept the MSP 9 Departure, or
+               the most current version, must be issued radar vectors to first filed fix (Ensure the first
+               filed fix is located within ZMP airspace). Ensure appropriate coordination with affected
+               M98 sectors to maintain obstacle and airspace clearance.
+
+3-2-5 IFR DEPARTURE FREQUECY ASSIGNMENTS.
+
+When Departure and/or Satellite Control are split, assign departure frequencies as follows:
+
+a. Turbojet and Turboprop Aircraft ­ Assign departure frequencies as follows:
+
+           1. 30s; 12s; 30s/17; and 30s/35:
+
+           (a) SIDs: COULT, WLSTN, MSP to BRNRD Intersection, KBREW, SMERF,
+               LEINY ­ 125.75.
+
+           (b) SIDs: ZMBRO, RST, ORSKY, SCHEP ­ 124.7.
+
+           2. 12s/17; Land 17/22, Depart 12s:
+
+           (a) SIDs: WLSTN, MSP to BRNRD Intersection, KBREW, SMERF, LEINY ­
+               125.75.
+
+           (b) SIDs: COULT, ZMBRO, RST ­ 132.97.
+
+           (c) SIDs: ORSKY, SCHEP ­ 124.7.
+
+                          FOR SIMULATION USE ONLY                                            3-3
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+             3. Land 35, Depart 12s:
+                  (a) SIDs: WLSTN, MSP to BRNRD Intersection, KBREW, SMERF, LEINY,
+                      SCHEP, ORSKY ­ 125.75.
+                  (b) SIDs: COULT, ZMBRO, RST ­ 124.7.
+
+             4. Land 35, Depart 35, 30s or 4; Land 17, Depart Any; Land 22, Depart Any; Lnd 4,
+                  Depart Any:
+                  (a) SIDs: WLSTN, COULT, ZMBRO, RST ­ 124.7.
+                  (b) SIDs: ORSKY, SCHEP, LEINY, SMERF, KBREW, MSP to BRNRD
+                      Intersection ­ 125.75.
+
+             5. For any aircraft not on a SID listed above, determine the fix pair in STARS
+                  utilizing the keyboard entry "MULTI FUNC, D, BEACON CODE, <enter>".
+                  Compare the fix to APPENDIX H, Departure Configurations, and issue the
+                  frequency as noted on the Satellite Airspace Split Map.
+
+3-2-6 VFR DEPARTURES.
+         a. Requesting Flight Following:
+              1. Manually enter the flight into STARS/vNAS.
+              2. Issue a clearance in accordance with JO 7110.65, Chapter 7, including:
+                   (a) An altitude restriction at or below 3,500 feet.
+                   (b) A departure frequency as per the Satellite Airspace Split Map (Appendix I).
+         b. Not requesting flight following:
+
+              1. Issue a VFR clearance per JO 7110.65, Chapter 7, including:
+                   (a) An altitude restriction at or below 2,700 feet.
+                   (b) A departure frequency corresponding to the correct tower frequency for route of
+                        flight and runway configuration.
+
+EXAMPLE ­ 123.95 for northbound departures.
+                   (c) A transponder code between 0341-0346, excluding any other currently issued codes
+                        from that list.
+
+           FOR SIMULATION USE ONLY  3-4
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         CHAPTER 4 ­ GROUND METERING
+
+                       Section 1 ­ Position Information
+
+4-1-1 GROUND METERING (GH) POSITION DUTIES AND RESPONSIBILITIES.
+         GH must:
+         a. Maintain an awareness of the airport operations/traffic flow.
+         b. When instructed by the CIC, reissue ATC clearances as necessary.
+         c. When necessary, reassign departure control frequencies and indicate such on flight progress
+              strips.
+         d. Broadcast departure ATIS code changes.
+
+           FOR SIMULATION USE ONLY  4-1
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                Section 2 ­ Standard Operating Procedures
+
+4-2-1 FLIGHT PROGRESS STRIP REVIEW.
+         a. Upon accepting position responsibility, review flight progress strips posted for correct strip
+              marking and clearance issuance
+
+4-2-2 METERING OF OUTBOUND AIRCRAFT.
+         When an aircraft contacts the metering frequency requesting push or taxi:
+         a. Ensure the aircraft has the appropriate ATIS code and write it on the flight progress strip
+         b. Instruct the aircraft to monitor the appropriate ground control frequency.
+
+EXAMPLE ­ "DAL1234 monitor ground one two one point niner" or, when working Metering and
+Ground Control combined, "DAL1234 Minneapolis Metering/Ground, push approved, monitor ground
+.8/.9"
+
+         c. Should not issue pushback clearance or issue taxi instructions.
+         d. After instructing an aircraft to monitor GC, move the corresponding flight progress strip into
+
+              the appropriate GC bay.
+         e. Unless special circumstances warrant, such as ESP/EDCTs, SWAP, deicing, etc., release
+
+              aircraft to GC on a first come, first served basis.
+
+           FOR SIMULATION USE ONLY  4-2
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+          CHAPTER 5 ­ GROUND CONTROL
+
+                               Section 1 ­ General
+
+5-1-1 GCN POSITION DUTIES AND RESPONSIBILITIES.
+         GCN must:
+         a. Issue taxi instructions to all aircraft operating in the movement area on the airport as they taxi
+              to and from the active runways, to and from gates and hangars, etc. on the following surfaces:
+              1. Taxiways north and east of Taxiway Q, including Taxiway Q.
+              2. Runways as coordinated or assigned by LCN and east of Taxiway Q, including the
+                   intersection with Taxiway Q.
+              3. Runway 12L Deice Pad and/or Runway 30R Deice Pad.
+              4. All gates at Concourses A, B, C, D.
+              5. Gates E12, E10, E8, E6, E4, E2.
+         b. Coordinate crossing of active runways with LC.
+         c. Ensure departing aircraft have the appropriate ATIS code and are apprised of the latest field
+              conditions, weather, and RVR values when required.
+         d. Pass the flight progress strip to LC before the departing aircraft reaches the takeoff runway,
+              making sure that the proper sequence of strips/aircraft is maintained in case of multiple
+              departures.
+         e. Broadcast departure ATIS code changes.
+
+5-1-2 GCS POSITION DUTIES AND RESPONSIBILTIES.
+         GCS must:
+         a. Issue taxi instructions to all aircraft operating in the movement area on the airport as they taxi
+              to and from the active runways, to and from gates and hangars, etc. on the following surfaces:
+              1. Taxiways between Taxiway Q and Runway 12R/30L, excluding Taxiway Q and
+                   excluding Runway 12L/30R.
+              2. Runways as coordinated or assigned by LC between Taxiway Q and Runway 12L/30R,
+                   excluding the intersections with Taxiway Q and including the intersections with Runway
+                   12L/30R.
+              3. Runway 12R Deice Pad and/or Runway 30L Deice Pad.
+              4. All gates at Concourses F and G.
+              5. Gates E14, E16, E15, E13, E11, E9, E7, E5, E3, E1.
+         b. Coordinate crossing of active runways with LC.
+
+           FOR SIMULATION USE ONLY  5-1
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         c. Ensure departing aircraft have the appropriate ATIS code and are apprised of the latest field
+              conditions, weather, and RVR values when required.
+
+         d. Pass the flight progress strip to LC before the departing aircraft reaches the takeoff runway,
+              making sure that the proper sequence of strips/aircraft is maintained in case of multiple
+              departures.
+
+         e. Broadcast departure ATIS code changes.
+
+5-1-3 GCW POSITION DUTIES AND RESPONSIBILITIES.
+
+         GCW must:
+
+         a. Issue taxi instructions to all aircraft operating in the movement area on the airport as they taxi
+              to and from the active runways, to and from gates and hangars, etc. on the following surfaces:
+
+              1. Taxiways and movement areas south of Runway 12R/30L including Taxiways W, C, D,
+                   L, K S, T, N, M, Z, Y, and 17 de-ice pad.
+
+              2. All Terminal 2 (Humphrey) Gates unless otherwise coordinated.
+
+         b. Coordinate crossing of active runways with LC.
+
+         c. Ensure departing aircraft have the appropriate ATIS code and are apprised of the latest field
+              conditions, weather, and RVR values when required.
+
+         d. Pass the flight progress strip to LC before the departing aircraft reaches the takeoff runway,
+              marking sure that the proper sequence of strips/aircraft is maintained in case of multiple
+              departures.
+
+         e. Broadcast departure ATIS code changes.
+
+5-1-4 COMBINING/DECOMBINING POSITIONS.
+
+         a. GCW is normally combined with GCS.
+
+         b. GCN is normally combined to GCS.
+
+           FOR SIMULATION USE ONLY  5-2
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+        Section 2 ­ STANDARD OPERATING PROCEDURES
+
+5-2-1 TAXI OPERATIONS
+
+         GC must:
+
+         a. Operate independently on assigned taxiways, runways, and ramp areas.
+
+         b. Coordinate standard direction of taxi on Taxiways C, D, H, M, and Runway 4/22.
+
+         c. Accomplish frequency changes between aircraft transferring from one GC jurisdiction to
+              another prior to the aircraft entering the other GC's area of jurisdiction. This should be done
+              to allow the receiving GC time to sequence or issue appropriate taxi instructions.
+
+         d. Coordinate runway crossings with the appropriate LC.
+
+         e. Ensure that departing aircraft have the correct departure ATIS code and record it.
+
+         f. Execute appropriate strip marking procedures as described in vZMP Order N7110.101 ­
+              Flight Progress Strips.
+
+         g. Regulate, to the extent practical, the sequence of departure traffic so that routing and/or tracks
+              differ between successive departures.
+
+         h. GC must normally switch an aircraft to LC for crossing an active runway.
+
+         i. Must ensure an unrestricted pathway for an arriving aircraft to taxi clear of an active runway.
+
+5-2-2 GROUND CONTROL DEPARTURE TAXI PROCEDURES.
+
+         GC must taxi aircraft to the appropriate departure runway based upon the initial departure
+         fix/SID, direction of flight, and noise abatement procedures, as listed below.
+
+         When operationally beneficial, the CIC may authorize temporary changes to this procedure.
+
+NOTE ­ The intent of this procedure is to prevent crossover fixes from causing excessive coordination
+between LC positions.
+
+         a. 30s and 30s/35 Configurations:
+
+              1. Runway 30R ­ LEINY, DWN, SMERF, KBREW, DLH, BRD, WLSTN, COULT or any
+                   other traffic that will enter "D", "K" or "G" airspace.
+
+              2. Runway 30L ­ ZMBRO, RST, ORSKY, SCHEP or any other traffic that will enter "R" or
+                   "E" airspace.
+
+              3. When departing Runways 30L or 30R, straight out operations, i.e. LEINY, DWN,
+                   SMERF, departing 30L are not considered "crossover operations'' and may be taxied to
+                   either runway at ground control's discretion. When operationally beneficial, ground
+                   control may seek authorization from the CIC for KBREW departures to be taxied to
+                   Runway 30L. Proper runway balance must be maintained.
+
+           FOR SIMULATION USE ONLY  5-3
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         b. 12/17 Configuration
+
+              1. Runway 12R ­ WEIGHT OR OPERATIONAL REQUIREMENT ONLY.
+
+              2. Runway 12L ­ LEINY, DWN, SMERF, KBREW, DLH, BRD, WLSTN or any traffic
+                   that will enter "D", "K" or "G" airspace.
+
+              3. Runway 17 - COULT, ZMBRO, RST, ORSKY, SCHEP or any traffic that will enter "R",
+                   "L" or "E" airspace.
+
+         c. 12s Configuration.
+
+              1. Runway 12R ­ ZMBRO, RST, ORSKY, SCHEP or any traffic that will enter "R" or "E"
+                   airspace.
+
+              2. Runway 12L ­ LEINY, DWN, SMERF, KBREW, DLH, BRD, WLSTN, COULT or any
+                   traffic that will enter "D", "K" or "G" airspace.
+
+         d. 30s/17 Configuration:
+
+              1. Runway 30L ­ WEIGHT OR OPERATIONAL REQUIREMENT ONLY.
+
+              2. Runway 30R ­ LEINY, DWN, SMERF, KBREW, DLH, BRNRD, WLSTN, COULT or
+                   traffic that will enter "D", "K" or "G" airspace.
+
+              3. Runway 17 ­ ZMBRO, RST, ORSKY, SCHEP or any traffic that will enter "R" or "E"
+                   airspace.
+
+         e. 30/17 Configuration (Quiet Hours 2230-0600 local time). All aircraft depart Runway 17
+              unless an operational requirement exists.
+
+5-2-3 CROSSOVER OPERATIONS.
+
+         Operations that require departing aircraft to enter the airspace assigned to another LC, are
+         considered "crossover operations." All crossover operations require CIC approval prior to taxi,
+         and must be approved only when there is an operational requirement.
+
+5-2-4 RESTRICTED OR DELAYED AIRCRAFT TAXI OPERATIONS.
+
+         When aircraft are delayed due to abnormal in-trail restrictions, TMC initiatives, pilot request, or
+         otherwise, GC may stage aircraft in such a manner so as to minimize the impact of movement of
+         other aircraft.
+
+5-2-5 FLIGHT PROGRESS STRIPS.
+
+         a. GC must mark flight progress strips in accordance with vZMP Order N7110.101 ­ Flight
+              Progress strips.
+
+           FOR SIMULATION USE ONLY  5-4
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           CHAPTER 6 ­ LOCAL CONTROL
+
+                               Section 1 ­ General
+
+6-1-1 LCN POSITION DUTIES AND RESPONSIBILITIES.
+
+         a. LCN is responsible for arrivals and departures on Runway 30R/12L.
+
+         b. Issues air traffic control instructions, clearances, and traffic information, ensuring the
+              separation of arriving and departing aircraft and all those operating within MSP delegated
+              airspace.
+
+         c. Is cognizant of MSP Class B Airspace procedures and assumes responsibility for the
+              separation standards for traffic under the controller's jurisdiction. Utilizes the CTRD to
+              his/her advantage. Issues radar advisories and provides other services as workload permits.
+
+         d. Transmits weather, field conditions, NOTAMs, PIREPs, RVR values, and other required data
+              to arriving and departing aircraft as necessary.
+
+         e. Is cognizant of and applies noise abatement procedures with regard to runway use and
+              departure headings.
+
+         f. Uses proper control techniques to avoid delays.
+
+         g. Forwards flight progress strips to M98 in time for the radar controller to have the strip before
+              the frequency change is made, and prior to 1 mile from the departure end of the runway.
+
+         h. Broadcast Arrival and Departure ATIS code changes.
+
+         i. Advise departures to contact M98 departure when separation is established.
+
+         j. Advise arrivals to contact appropriate GC frequency after landing roll.
+
+6-1-2 LCS POSITION DUTIES AND RESPONSIBILITIES.
+
+         a. LCS is responsible for arrivals and departures on Runway 30L/12R and Runway 4/22.
+
+         b. Issues air traffic control instructions, clearances, and traffic information, ensuring the
+              separation of arriving and departing aircraft and all those operating within MSP delegated
+              airspace.
+
+         c. Is cognizant of MSP Class B Airspace procedures and assumes responsibility for the
+              separation standards for traffic under the controller's jurisdiction. Utilizes the CTRD to
+              his/her advantage. Issues radar advisories and provides other services as workload permits.
+
+         d. Transmits weather, field conditions, NOTAMs, PIREPs, RVR values, and other required data
+              to arriving and departing aircraft as necessary.
+
+         e. Is cognizant of and applies noise abatement procedures with regard to runway use and
+              departure headings.
+
+         f. Uses proper control techniques to avoid delays.
+
+         g. Forwards flight progress strips to M98 in time for the radar controller to have the strip before
+              the frequency change is made, and prior to 1 mile from the departure end of the runway.
+
+           FOR SIMULATION USE ONLY  6-1
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         h. Broadcast Arrival and Departure ATIS code changes.
+         i. Advise departures to contact M98 departure when separation is established.
+         j. Advise arrivals to contact appropriate GC frequency after landing roll.
+6-1-3 LCW POSITION DUTIES AND RESPONSIBILITIES.
+         a. LCW is responsible for arrivals and departures on Runway 17/35.
+         b. Issues air traffic control instructions, clearances, and traffic information, ensuring the
+
+              separation of arriving and departing aircraft and all those operating within MSP delegated
+              airspace.
+         c. Is cognizant of MSP Class B Airspace procedures and assumes responsibility for the
+              separation standards for traffic under the controller's jurisdiction. Utilizes the CTRD to
+              his/her advantage. Issues radar advisories and provides other services as workload permits.
+         d. Transmits weather, field conditions, NOTAMs, PIREPs, RVR values, and other required data
+              to arriving and departing aircraft as necessary.
+         e. Is cognizant of and applies noise abatement procedures with regard to runway use and
+              departure headings.
+         f. Uses proper control techniques to avoid delays.
+         g. Forwards flight progress strips to M98 in time for the radar controller to have the strip before
+              the frequency change is made, and prior to 1 mile from the departure end of the runway.
+         h. Broadcast Arrival and Departure ATIS code changes.
+         i. Advise departures to contact M98 departure when separation is established.
+         j. Advise arrivals to contact appropriate GC frequency after landing roll.
+6-1-4 COMBINING/DECOMBINING POSITIONS.
+         a. LCW combines to and decombines from LCS.
+         b. LCN combines to and decombines from LCS.
+
+           FOR SIMULATION USE ONLY  6-2
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         Section 2 ­ Standard Operating Procedures ­ Arrivals
+
+6-2-1 SCRATCH PAD ENTRIES.
+
+         Scratch pad entries are located in Appendix E.
+
+6-2-2 GO-AROUNDS.
+
+         In the event of a go-around, LC must:
+
+         a. Issue headings as necessary to ensure separation from other aircraft within MSP delegated
+              airspace.
+
+         b. Determine if the aircraft will be vectored to the departure dispersal area or into satellite
+              airspace and coordinate with the appropriate M98 position.
+
+              1. If the aircraft will enter the dispersal area, climb to 6,000 ft. and issue an "inside"
+                   heading if possible.
+
+              2. If the aircraft will enter satellite airspace, coordinate an altitude and heading with the
+                   satellite controller.
+
+NOTE - Under normal circumstances, the go-around aircraft should be vectored to the dispersal area.
+Satellite airspace may be used if the dispersal area is not available due to traffic. If necessary, an aircraft
+may be vectored in the ACDA if it will not enter satellite or departure airspace, or back to the ACDA with
+a point out to satellite if special circumstances warrant. If the aircraft will be vectored within or back to
+the ACDA, a heading and altitude must be coordinated with the appropriate ACDA controller.
+
+         c. Make a handoff to the receiving controller.
+
+EXAMPLE - The go-around aircraft is issued a heading of 260°, an altitude of 6,000 ft., and handed off
+to Departure.
+(CC) "R, CC, Handoff."
+(R) "R."
+(CC) "One mile west MSP, DAL123, go-around, heading 260 climbing to 6,000."
+(R) "DAL123, Radar Contact. MA."
+(CC) "JB."
+
+EXAMPLE - The go-around aircraft is issued a 040° heading, an altitude of 4,000 ft., and handed off to
+Satellite.
+(CC) "G, CC, Handoff."
+(G) "G."
+(CC) "One mile north MSP, DAL123, go-around, heading 040 climbing to 4,000."
+(G) "DAL123, Radar Contact. MA."
+(CC) "JB."
+
+         d. Assign the go-around aircraft the receiving controller's frequency.
+
+           FOR SIMULATION USE ONLY  6-3
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+       Section 3 ­ Standard Operating Procedures ­ Departures
+
+6-3-1 DEPARTURE HEADINGS.
+
+REFERENCE ­ MSP/M98 LOA.
+         a. Runways 30L and 30R Turbojet Dispersal Procedures.
+              Unless otherwise required by other traffic or weather, assign initial departure headings to
+              approximate the tracks listed below for aircraft on the following departure SIDs:
+              1. KBREW Departure ­ Assign headings that will approximate a 320° track.
+
+              2. WLSTN Departure ­ Assign headings that will approximate a 340° track.
+              3. COULT Departure ­ Assign headings that will approximate a 360° track.
+              4. MINNEAPOLIS Nine (MSP9) or subsequent versions of this SID with initial fixes as
+
+                   follows:
+
+                   (a) Fargo (FAR) ­ Assign headings that will approximate a 320° track.
+                   (b) Brainerd (BRNRD), Duluth (DLH), Hayward (HYR), Eau Claire (EAU) or Green
+
+                        Bay (GRB) ­ Assign headings that will approximate a 340° track.
+                   (c) Dells (DLL) ­ Assign headings that will approximate a 360° track.
+         b. Automatic Releases.
+
+              MSP has automatic releases for departures from advertised departure runways to airspace
+              within the MSP dispersal area unless otherwise specified.
+
+6-3-2 VISUAL SEPARATION BETWEEN SUCCESSIVE DEPARTURES.
+
+Flight conditions must allow the aircraft to remain in sight until other separation exists.
+
+6-3-3 TRANSFER OF CONTROL.
+         Prior to LC instructing an aircraft to contact departure, LC must:
+         a. Confirm the correct STARS auto-acquisition of departing aircraft. If aircraft does not
+              correctly acquire, LC must perform a radar handoff to the appropriate M98 departure
+              controller within 2 NM of the runway end. The handoff must include position, aircraft
+              identification, type, and SID or, if landing within M98 airspace, destination airport, and any
+              other pertinent information.
+
+NOTE ­ Approval to enter the departure controller's airspace is based on release status of the aircraft
+(e.g. "automatic releases"). Any handoff performed under this section is to ensure correct data block
+acquisition only.
+
+         b. Transfer of communications constitutes transfer of control on departure aircraft subject to
+              limits set forth in MSP/M98 LOA.
+
+           FOR SIMULATION USE ONLY  6-4
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+6-3-4 SPLIT LOCAL CONTROL PROCEDURES.
+
+         a. LCN must:
+
+              1. When on Runway 30s or 30s/35 configuration, assign headings off of Runway 30R from
+                   300° track clockwise through 360° track.
+
+              2. When on Runway 12s or 12s/17 configuration, assign headings off of Runway 12L
+                   between a 090° track and 15° north of the Runway 12R heading.
+
+REFERENCE ­ 2-2-4 MENDOTA HEIGHTS/EAGAN PROCEDURES for noise abatement procedures.
+
+         b. LCS must:
+
+              1. When on Runway 30s or 30s/35 configuration, issue headings off of Runway 30L from
+                   260° track clockwise through 285° track.
+
+              2. When on Runway 12s configuration, issue a heading to maintain a track on or north of
+                   the 30L localizer.
+
+              3. When on Runway 12s/17 configuration, issue heading as coordinated with LCW and
+                   LCN.
+
+              4. When on Runway 30s/17 configuration, issue headings as coordinated with LCW and
+                   LCN.
+
+              5. When on any other configuration, issue headings as coordinated with LCW and/or LCN.
+
+NOTE ­ The above headings may need to be altered based upon various conditions. In all cases, issue
+headings which ensure aircraft remain within the lateral bounds of the dispersal area.
+
+         c. LCW must:
+
+              1. When on Runway 30s/17 configuration, issue headings from 170° track clockwise
+                   through 285° track.
+
+              2. When on Runway 12s/17 configuration, issue headings from 120° track clockwise
+                   through 215° track (or 15° divergence from LCN).
+
+              3. When on any other configuration, issue headings as coordinated with LCW and/or LCN.
+
+REFERENCE ­ 2-2-7 RUNWAY 17 DEPARTURES for noise abatement procedures.
+
+6-3-5 VERBAL COORDINATION BETWEEN LOCAL CONTROLS.
+
+         a. In accordance with JO 7110.65, Chapter 2, abbreviated standard coordination procedures are
+              authorized between LCN, LCS, and LCW whereas each position may omit both the caller and
+              receiver operating position and omit operating initials.
+
+         b. LC must state the runway number when coordinating departures off of Runways 04, 17, and
+              22.
+
+           FOR SIMULATION USE ONLY  6-5
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+6-3-6 LOCAL CONTROL CROSSOVER PROCEDURES.
+
+         When the LC positions are split and operations require a departing aircraft to enter the airspace
+         assigned to another LC, these operations are considered crossover operations.
+
+         The exception to this is SMERF and LEINY departures off of Runway 30L which are not
+         considered crossovers under any situation. Also, when operationally beneficial, the CIC may
+         authorize KBREW departures off of Runway 30L to maintain proper runway balance. These fixes
+         remain northbound fixes, however LCS must coordinate these departures with LCN prior to
+         clearing the aircraft onto the runway. LCS must assign a heading on, or west of, the coordinated,
+         straight-out heading (normally 300°).
+
+         When instituting a crossover operation, the following procedures must apply:
+
+         a. Crossover Coordination Procedures:
+
+              1. Coordination between LC positions must be made when the aircraft is number one or two
+                   for departure.
+
+              2. Coordination must state departure fix and type of aircraft.
+
+EXAMPLE ­ (LCN) "ORSKY CRJ."
+                 (LCS) "260 approved."
+
+         b. Local Control Delegation of Airspace. When a LC delegates the use of their airspace to
+              another LC position the following procedures must apply:
+
+              1. The LC position delegating the use of their airspace must ensure all traffic pertaining to
+                   the operation is exchanged.
+
+EXAMPLE ­ (LCN) "ORSKY CRJ"
+                 (LCS) "280 approved, I'll be 260 with the B737 rolling."
+
+              2. The controller accepting restrictions must be responsible to ensure that approved
+                   separation is maintained between the aircraft.
+
+              3. Diverging course or lateral/vertical separation must be ensured prior to turning aircraft
+                   off of runway heading.
+
+              4. Departure Divergence and Communication Transfer. LC must retain communication with
+                   departure aircraft until divergence or other applicable separation is established. When the
+                   conditions are IFR, LC must issue a diverging departure heading with the takeoff
+                   clearance.
+
+              5. LC must state the runway number when coordinating departures off Runways 04, 17 and
+                   22.
+
+6-3-7 RUNWAY 17 LINE UP AND WAIT AND/OR TAKEOFF CLEARANCE.
+
+         Runway 17 departures taxiing on Taxiway W must not be issued a LUAW clearance or a takeoff
+         clearance until they have passed Taxiway W10.
+
+           FOR SIMULATION USE ONLY  6-6
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         Section 4 ­ Standard Operating Procedures ­ Class B
+
+6-4-1 VFR DEPARTURES.
+
+         a. Requesting flight following. Assign heading, as necessary, to remain as close to on course
+              while staying within the dispersal area.
+
+         b. Not requesting flight following:
+
+              1. If VFR aircraft will depart on a heading inside the dispersal area, terminate radar service
+                   upon exiting MSP Class B airspace and allow for frequency change with enough time to
+                   allow frequency change to FCM, STP, or MIC if appropriate.
+
+              2. If VFR aircraft will depart on a heading outside of the dispersal area, point out with
+                   appropriate satellite controller, terminate radar service upon exiting MSP Class B
+                   airspace, and allow frequency change with enough time to allow frequency change to
+                   FCM, STP, or MIC if appropriate.
+
+6-4-2 HELICOPTERS.
+
+         a. Landing or Departing MSP. LC must coordinate with GC for the use of an area for takeoff or
+              landing if not using an active runway.
+
+           FOR SIMULATION USE ONLY  6-7
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+        CHAPTER 7 ­ SPECIAL OPERATIONS
+
+        Section 1 ­ Land and Hold Short Operations (LAHSO)
+
+7-1-1 DESCRIPTION.
+
+         a. LAHSO are authorized at the Minneapolis-St. Paul International Airport on Runway 30L to
+              hold short of Taxiways A9 and W9, and on Runway 22 to hold short of Taxiway K, subject to
+              the provisions of JO 7110.118.
+
+         b. Aircraft landing Runway 30L, in LAHSO Groups 1 through 9, may be issued a landing
+              clearance to hold short of Taxiways A9 and W9 for traffic crossing downfield. The Available
+              Landing Distance (ALD) from the threshold on Runway 30L to the LAHSO lights, located
+              northwest of Taxiways A8 and W8 is 8,150 feet.
+
+         c. Aircraft landing Runway 22, in LAHSO Groups 1 through 9, may be issued a landing
+              clearance to hold short of Taxiway K with Runway 17 arrivals and departures. The ALD
+              from the displaced threshold on Runway 22 to the LAHSO lights, located near the southwest
+              edge of Taxiway S is 8,550 feet.
+
+7-1-2 LAHSO REQUIREMENTS.
+
+         a. Ceiling and visibility:
+
+              1. Runway 30L: Ceiling 1000 ft. or greater and visibility 3 miles or greater.
+
+              2. Runway 22: Ceiling 1400 ft. or greater and visibility 4 miles or greater.
+
+         b. LAHSO runway must be dry and not contaminated.
+
+         c. The tailwind on the hold short runway must be calm (less than 3 knots).
+
+         d. No reported wind shear.
+
+         e. When LAHSO operations are expected to be utilized, an announcement must be made on the
+              ATIS.
+
+         f. A LAHSO clearance must not be issued to any aircraft that is not listed in JO 7360.1.
+
+         g. Traffic information must be exchanged and a read back must be obtained from a landing
+              aircraft with a LAHSO clearance.
+
+         h. LAHSO must be terminated for any situation or weather condition, which in the judgment of
+              the CIC would adversely affect LAHSO.
+
+           FOR SIMULATION USE ONLY  7-1
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+7-1-3 RUNWAY 22 LAHSO AND RUNWAY 17 ARRIVALS AND DEPARTURES
+         PROCEDURES
+
+         a. When converging/LAHSO operations on Runways 17 and 22 are expected to be utilized,
+              make an announcement on the ATIS.
+
+         b. Aircraft landing Runway 22 issued LAHSO instructions to hold short of Taxiway K must be
+              advised of traffic landing or departing Runway 17.
+
+         c. Aircraft landing or departing Runway 17 must be advised of traffic landing Runway 22 to
+              hold short of Taxiway K.
+
+         d. LC must issue Rejected Landing Procedures (RLP)/control instructions based on known and
+              observed aircraft at the time of rejected landing on Runway 22.
+
+         e. The approved RLP for LAHSO aircraft landing Runway 22 when used in conjunction with
+              the Departure Decision Area (DDA) is a climbing right turn to a 260° heading until any
+              potential conflicts have been resolved with the Runway 17 departure, and then proceed with
+              normal M98 coordination for go-around aircraft.
+
+         f. Departure Decision Area (DDA):
+
+              1. The DDA is defined as an area from one-quarter (1/4) mile final on Runway 22 to a point
+                   where the LAHSO arrival on Runway 22 has landed, as indicated by the nose wheel
+                   touching down on the runway. Aircraft departing Runway 17 may not be cleared for
+                   takeoff while the LAHSO arrival on Runway 22 is in the DDA.
+
+              2. LC must ensure that aircraft cleared for takeoff on Runway 17 begin takeoff roll prior to
+                   the LAHSO arrival on Runway 22 reaching a one-quarter (1/4) mile final.
+
+              3. The Highway 62 (Crosstown) / Highway 55 (Hiawatha Avenue) interchange is a viable
+                   visual landmark to determine a ¼ mile final for Runway 22
+
+7-1-4 ADDITIONAL PROCEDURES FOR RUNWAY 17/22 OPERATIONS.
+
+         a. When combining LC positions, Runways 17 and 22 must be worked at the same LC position.
+
+         b. Traffic departing Runway 12R must be rolling by the time Runway 22 traffic is 1.5 miles
+              from the runway end.
+
+         c. Taxi procedures:
+
+              1. Normal Runway 22 crossing points:
+
+                   (a) Aircraft from the Terminal 1 (Lindbergh): Taxiways P, Q, C6/M6, B and A.
+
+                   (b) Aircraft from Terminal 2 (Humphrey): Taxiway S.
+
+              2. GCS must maintain heightened awareness to keep runway turnoffs clear of traffic.
+
+           FOR SIMULATION USE ONLY  7-2
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+7-1-5 LAHSO DISTANCE REMAINING DIAGRAM.
+         The land and hold short distance remaining diagram for Runway 30L to hold short of Taxiways
+         A9 and W9 and Runway 22 to hold short of Taxiway K is shown below.
+
+                                     Figure 7-1. LAHSO Distance Remaining.
+
+           FOR SIMULATION USE ONLY  7-3
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                 Section 2 ­ Line Up and Wait Procedures
+
+7-2-1 LINE UP AND WAIT (LUAW) PROCEDURES.
+
+         a. Requirements. The following requirements must be fulfilled in order to perform LUAW
+              operations at Minneapolis-St. Paul International Airport.
+
+              1. Performing LUAW in conjunction with a landing clearance, the Airport Surface
+                   Detection Equipment X (ASDE-X) must be operating at full core alert runway
+                   configuration.
+
+         b. Procedures.
+
+              1. LUAW may be issued to any aircraft in accordance with 7110.65, Chapter 3 and JO
+                   7210.3.
+
+              2. LUAW may be issued on any runway if the departure point is visible from the Tower, or
+                   if the position of the aircraft can be identified by the ASDE-X.
+
+              3. When issuing LUAW to an aircraft for traffic landing or departing on an intersecting
+                   runway, issue traffic to the LUAW aircraft as well as the aircraft cleared to land or take
+                   off on the intersecting runway.
+
+              4. LUAW between sunset and sunrise is prohibited at any intersection.
+
+              5. LUAW is prohibited at an intersection that is not visible from the Tower, unless the
+                   position of the aircraft can be verified by the ASDE-X.
+
+              6. Withhold landing clearance for aircraft inbound to a runway where an aircraft has been
+                   issued a LUAW clearance, until the LUAW aircraft begins takeoff roll if:
+
+                   (a) Conditions are less than a reported ceiling of 800 feet AGL or visibility less than 2
+                        miles.
+
+7-2-2 RESPONSIBILITIES.
+
+         a. LC must:
+
+              1. Correlate the aircraft position utilizing the ASDE-X before issuing a LUAW clearance if
+                   the departure point is not visible from the Tower.
+
+              2. State the full call sign, runway, and intersection, if applicable, when issuing a LUAW
+                   clearance.
+
+              3. Ensure a pilot read back for accuracy when issuing LUAW.
+
+              4. Inform aircraft that are issued a LUAW clearance of the closest traffic on final approach
+                   to the same runway or landing/departing intersecting runways
+
+EXAMPLE - "EDV5634, Runway 12L line up and wait, B737 three mile final."
+EXAMPLE - "SKW3025, Runway 22 at Charlie 6, line up and wait, traffic will depart Runway 12R."
+
+              5. When simultaneously holding aircraft on intersecting runways, issue a traffic advisory to
+                   each aircraft.
+
+           FOR SIMULATION USE ONLY  7-4
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+EXAMPLE ­ "DAL1844, Runway 12R, line up and wait, traffic holding on Runway 22."
+
+              6. Inform the closest aircraft on final approach of aircraft holding in position on the same or
+                   intersecting runway.
+
+EXAMPLE ­ "SKW3027, Runway 12L, cleared to land, traffic holding in position."
+
+7-2-3 LUAW AND INTERSECTION DEPARTURES WAIVERS.
+
+         Personnel are authorized to taxi aircraft to line up and wait on Runway 12R at Taxiways M,
+         A8/W8 and A9/W9; and Runway 4 at Taxiways K, S, T, and M2/C2, between sunset and sunrise.
+         The following special provisions apply:
+
+         a. MSP must not issue a LUAW clearance when the subject intersection is not visible from the
+              Tower
+
+         b. The runway must be used as a departure-only runway
+
+         c. MSP must not authorize multiple aircraft to LUAW on the same runway simultaneously.
+
+         d. Do not authorize aircraft to LUAW simultaneously on intersecting runways during the
+              periods of sunset to sunrise.
+
+           FOR SIMULATION USE ONLY  7-5
+3/31/2026          FOR SIMUATION USE ONLY              MSP 7110.26G CHG 1
+
+           Section 3 ­ Converging Runway Operations
+
+7-3-1 RUNWAYS 30L/30R AND RUNWAY 35 CONVERGING RUNWAY OPERATIONS
+         (CRO).
+
+         Simultaneous operations to converging runways are authorized for Runways 30L/R and Runway
+         35. Exceptions to these procedures are authorized for emergency and unusual situations only.
+7-3-2 IMPLEMENTATION.
+         The CIC must ensure that the ATIS message includes the configuration option in use prior to
+         implementing simultaneous operations to converging runways.
+         a. ILS V 35, ILS/LOC/RNAV 30L, ILS/LOC/RNAV 30R.
+         b. Visual approaches to Runways 35, 30L and 30R.
+         c. ILS V 35 and Visual approaches to Runway 30L and/or 30R.
+
+d. Visual approaches to Runway 35 and ILS/LOC/RNAV approaches to Runways 30L/R.
+e. RNAV (RNP) Y/RNAV (GPS) Z Runway 35 and ILS/LOC/RNAV Z Runways 30L/R.
+f. RNAV (RNP) Y/RNAV (GPS) Z Runway 35 and Visual Approaches Runways 30L/R
+g. RNAV (RNP) Y approaches to Runways 30L and 30R are NOT AUTHORIZED in
+
+    conjunction with RNAV (RNP) Y approaches to Runway 35.
+
+7-3-3 USE OF THE ARRIVAL DEPARTURE WINDOW.
+
+         Arrival Departure Window: a depiction presented on an air traffic control display, used by the
+         controller to prevent possible conflicts between arrivals to, and departures from, a runway. The
+         ADW identifies the point on the final approach course by which a departing aircraft must have
+         begun takeoff.
+
+           Runway Pair Front Gate (NM) Rear Gate (NM)
+
+           35/30L  2.26  .39
+
+           35/30R  2.35  .32
+
+a. Definitions.
+
+    1. Converging Runway Display Aid (CRDA). A STARS tool which projects an aircraft's
+         position on final onto another final using a "ghost" target.
+
+    2. No Departure Zone (NDZ). The area not within the ADW. If an arrival to RWY 35 is in
+         this area while an aircraft departs RWY 30L/R, the risk of collision should a RWY 35
+         arrival go-around increases exponentially. SEE FIGURE 7-2.
+
+                   FOR SIMULATION USE ONLY                                       7-6
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+7-3-4 PROCEDURES.
+          FIGURE 7-2. No Departure Zone and Virtual Runway Intersection Points (VRIPs)
+
+         a. GCS/GCW:
+
+              1. Coordinate with LCS/LCW to determine where to stage Runway 30L crossers when
+                   LAHSO is not available.
+
+         b. LCN:
+
+              1. Issue takeoff clearances that will ensure a Runway 30R aircraft starts departure roll when
+                   converging aircraft is outside of the NDZ.
+
+NOTE ­ The CRO procedure is designed for aircraft to depart Runway 30R prior to the Runway 35
+arrival entering the NDZ. Wake turbulence applicable aircraft should wait to begin takeoff roll until the
+Runway 35 arrival is landing assured.
+
+              2. Runway 30R headings:
+
+                   (a) LCN owns headings 315° clockwise through 360° inclusive.
+
+                   (b) Assign an initial heading of 320° to all aircraft.
+
+                   (c) Once the Runway 35 arrival is landing assured, further turns on course should be
+                        issued.
+
+           FOR SIMULATION USE ONLY                                                      7-7
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                   (d) LEINY, DWN, and SMERF departures should remain on a 320° heading.
+
+                   (e) Do not issue turns that will track south of runway heading prior to the departing
+                        aircraft passing the Virtual Runway Intersection Point (30R VRIP). SEE FIGURE 7-
+
+              3. In the event that an aircraft will not be or is not compliant with the ADW take one of the
+                   following steps:
+
+                   (a) If takeoff clearance has not been issued, continue to hold in position or vacate the
+                        runway.
+
+NOTE ­ This option may require RWY 30R arrival to go-around.
+
+                   (b) If takeoff clearance has been issued, cancel takeoff clearance and then hold in
+                        position or vacate the runway.
+
+NOTE ­ This option may require RWY 30R arrival to go-around.
+
+                   (c) If an aircraft is not able to comply with steps above inform LCW of the
+                        noncompliance and the need to take corrective action.
+
+              4. Inform tower cab of all go-arounds and intentions.
+
+         c. LCS:
+              1. Issue takeoff clearances that will ensure a Runway 30L aircraft starts departure roll when
+                   converging aircraft is outside of the NDZ.
+
+NOTE ­ The CRO procedure is designed for aircraft to depart Runway 30L when the Runway 35 arrival
+exits the NDZ. Wake turbulence applicable aircraft should wait to begin takeoff roll until the Runway 35
+arrival is landing assured.
+
+              2. Runway 30L headings:
+
+                   (a) LCS owns headings 260° through 300° inclusive
+
+                   (b) Do not issue turns that will track south of runway heading prior to the departing
+                        aircraft passing the Virtual Runway Intersection Point (30L VRIP). SEE FIGURE 7-
+                        2.
+
+                   (c) LEINY, DWN, and SMERF aircraft must be coordinated with LCN and may be
+                        assigned a 300° heading.
+
+              3. In the event that an aircraft will not be or is not compliant with the ADW take one of the
+                   following steps:
+
+                   (a) If takeoff clearance has not been issued, continue to hold in position or vacate the
+                        runway.
+
+NOTE ­ This option may require RWY 30L arrival to go-around.
+
+                   (b) If takeoff clearance has been issued, cancel takeoff clearance and then hold in
+                        position or vacate the runway.
+
+NOTE ­ This option may require RWY 30L arrival to go-around.
+
+           FOR SIMULATION USE ONLY  7-8
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                   (c) If an aircraft is not able to comply with steps above inform LCW of the
+                        noncompliance and the need to take corrective action.
+
+              4. Inform tower cab of all go-arounds and intentions.
+
+         d. LCW:
+
+              1. LCW owns the heading of 040° and an altitude of 4,000 feet ("40 and 4") within tower
+                   airspace. Other headings/altitudes must be coordinated with LCS/LCN.
+
+              2. Solicit parking information for aircraft landing Runway 35.
+
+              3. Issue a wake turbulence traffic advisory when a heavy aircraft is landing or departing
+                   Runway 30L or Runway 30R.
+
+EXAMPLE ­ "Runway 35 cleared to land, caution wake turbulence, heavy A350
+departing/landing/holding in position Runway 30L."
+
+              4. When LAHSO is available, instruct all aircraft exiting Runway 35 needing to cross
+                   Runway 30L, to hold short of Runway 30L at W10 and monitor LCS.
+
+              5. When LAHSO is not available, instruct all aircraft exiting Runway 35 needing to cross
+                   Runway 30L, to hold short of Runway 30L as coordinated with GCS/LCS and monitor
+                   LCS.
+
+              6. When informed by LCN/LCS of ADW noncompliance the correlating Runway 35 arrival
+                   should be sent around and issued heading(s) and altitude(s) as coordinated with
+                   LCN/LCS.
+
+              7. Inform the entire tower cab when an aircraft is executing a missed approach and
+                   intentions. Follow the procedures as outlined in paragraph 7-3-4.
+
+EXAMPLES ­ Going around, Runway 35. 40 and 4.
+                  Going around, Runway 35. I want to go 350 at 6.
+
+7-3-5 MANAGEMENT OF BALKED LANDINGS DURING SIMULTANEOUS OPERATIONS
+         ON CONVERGING RUNWAYS 35, 30L, AND 30R.
+
+         Runway 35 aircraft executing a go-around/balked landing inside of the missed approach point,
+         based on known and observed traffic, must be issued an initial altitude at or above 2,500' and
+         issued a turn as follows:
+
+              a. Take IMMEDIATE action to resolve traffic conflicts if there are departures on or
+                   departing Runway 30L/30R (traffic alerts, traffic advisories, and/or control instructions).
+
+NOTE ­ When appropriate, issue a climbing right turn and assign a heading to take the aircraft over the
+center of the airport. When the aircraft is over the center of the airport, assign a northeasterly heading of
+approximately 040º, and coordinate with the appropriate TRACON operational positions.
+
+           FOR SIMULATION USE ONLY  7-9
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+              b. If traffic permits, issue control instructions to direct the go-around/balked landing aircraft
+                   into the dispersal airspace and coordinate with the appropriate TRACON operational
+                   position(s)
+
+NOTE ­ It is imperative the West Local Controller be prepared to comply with this paragraph by having
+a keen awareness of not only the Runway 35 arrivals, but the entirety of the operations, including where
+the departing aircraft off Runways 30L/30R are in relation to the Runway 35 arrival should that aircraft
+execute a go-around/balked landing.
+
+           FOR SIMULATION USE ONLY  7-10
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                 Section 4 ­ Opposite Direction Operations
+
+7-4-1 DEFINITION.
+
+         a. Opposite Direction Operations (ODO): IFR/VFR Operations conducted to the same or
+              parallel runway where an aircraft is operating in a reciprocal direction of another aircraft
+              arriving, departing, or conducting an approach.
+
+         b. Cutoff Point: The Cutoff Point is 10 NM from the threshold of the Runway of intended
+              landing.
+
+NOTE ­ Aircraft on a downwind or a vector away from the airport are not considered within the Cutoff
+Point until established on a base leg that falls within the Cutoff Point.
+
+7-4-2 RESPONSIBILITIES.
+
+         a. MSP and M98 share the responsibilities to coordinate ODO and issue traffic advisories as
+              prescribed in this agreement.
+
+         b. MSP is responsible to apply the cutoff point(s) between arriving and departing aircraft.
+
+         c. M98 is responsible to apply the cutoff point(s) between successive ODO arrivals.
+
+7-4-3 PROCEDURES FOR AIRCRAFT RECEIVING IFR SERVICES.
+
+         a. General. These procedures apply when there are two aircraft receiving IFR services.
+
+              1. ODO procedures in this paragraph are applicable when two aircraft will execute
+                   approaches to opposite ends of the same runway, or an aircraft will depart prior to an
+                   arrival on an opposite direction approach to the same or parallel runway.
+
+              2. Traffic advisories must be issued to both the arriving and departing aircraft.
+
+EXAMPLES ­ "OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft)."
+"OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type aircraft)."
+"OPPOSITE DIRECTION TRAFFIC (position), (type aircraft)."
+
+              3. Do not allow opposite direction same runway operations with opposing traffic inside the
+                   cutoff point unless an emergency situation exists.
+
+              4. Use of visual separation is not authorized for aircraft receiving IFR services that are
+                   conducting ODO to the same runway.
+
+              5. Ensure that ODO conducted from parallel runways provide for a turn away from the
+                   opposing traffic when inside of the cutoff point to the other runway. Visual separation
+                   may be applied after the turn away from conflicting traffic is issued.
+
+         b. Coordination.
+
+              1. MSP and M98 are responsible for initiating coordination required to accomplish an
+                   opposite direction arrival or departure.
+
+              2. MSP must verbally request opposite direction departures with M98.
+
+              3. M98 must verbally request opposite direction arrivals with MSP.
+
+           FOR SIMULATION USE ONLY  7-11
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+         c. Cutoff Procedures: For aircraft receiving IFR services and conducting opposite direction
+              same runway operations:
+
+              1. A departing aircraft must be airborne and issued a turn to avoid conflict prior to an
+                   aircraft reaching the Cutoff Point.
+
+              2. An aircraft performing a go-around, low approach, or missed approach must be issued a
+                   turn to avoid conflict prior to an aircraft reaching the Cutoff Point.
+
+              3. An arriving aircraft must cross the runway threshold prior to an aircraft reaching the
+                   Cutoff Point.
+
+              4. If the above conditions are not met, action must be taken to ensure control instructions
+                   are issued to protect the integrity of the Cutoff Points.
+
+7-4-4 PROCEDURES FOR AIRCRAFT RECEIVING VFR SERVICES.
+
+         a. Ensure VFR/IFR aircraft are issued a turn to avoid conflict with opposing IFR/VFR traffic.
+
+         b. If coordination with another position is required, MSP must state the phrase "Opposite
+              Direction".
+
+         c. MSP must issue traffic to both aircraft and indicate the direction that the departure will turn
+              (arrival/departure) or the location of the opposing aircraft on final (arrival/arrival).
+
+         d. If the above conditions are not met, action must be taken to ensure control instructions are
+              issued to protect the integrity of the Cutoff Points.
+
+7-4-5 ADDITIONAL PROCEDURES FOR MIDNIGHT OPERATIONS.
+
+         The following requirements apply to opposite-direction midnight operations when landing
+         Runways 30L/30R and departing Runways 12L/12R.
+
+         a. Arrival ATIS should advertise Runway 30s; Departure ATIS should advertise Runway 12s.
+
+         b. MSP must APREQ all Runway 12 departures with
+
+           FOR SIMULATION USE ONLY  7-12
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                         Section 5 ­ SWAP and TMU
+
+7-5-1 SWAP Responsibilities
+
+Severe Weather Avoidance Procedures (SWAP) are initiated between Minneapolis Tower and
+Minneapolis Center on an as-needed basis. Coded Departure Routes (CDR) are used for aircraft able to
+accept SWAP routings, otherwise full route clearances must be used. For further information, refer to the
+ZMP Traffic Management Coordinator/Traffic Management Specialists.
+
+    a. When Minneapolis Center (ZMP) has issued a SWAP, the Local Control position (LC) will
+         become the primary person responsible for identifying aircraft that require a SWAP.
+
+    b. Flight Data/Clearance Delivery (FD/CD) must identify subsequent flight strips by indicating the
+         appropriate SWAP route in the remarks section of the flight strip.
+
+    c. During a SWAP event there may be a TMU position open. This position is responsible for
+         coordinating within ZMP, modifying flight plans, and issuing rerouted clearances to pilots as
+         coordinated with the position responsible for Clearance Delivery.
+
+    d. When the aircraft begins taxiing, Ground Control (GC) will advise LC of the aircraft to be
+         rerouted. LC will then advise the SWAP person to change the route of the affected aircraft.
+
+    e. Ground Control will instruct the aircraft to contact the appropriate frequency to receive the
+         reroute. Reroutes must be handled by positions in the following order of preference:
+
+         (1) Clearance Delivery
+
+         (2) Ground Control
+
+         (3) Local Control
+
+7-5-2 Traffic Management Unit.
+
+ZMP TMU will be utilized during periods of heavy traffic, severe weather, or any other situations
+requiring the presence of a Traffic Management Specialist/Coordinator. Traffic Management duties must
+be limited to those personnel who have completed the VATUSA National Traffic Flow Management
+Course and are appropriately briefed and certified to act in a Traffic Management role.
+
+           FOR SIMULATION USE ONLY  7-13
+3/31/2026  FOR SIMUATION USE ONLY         MSP 7110.26G CHG 1
+
+           Appendix A MSP Tower Airspace
+
+           FOR SIMULATION USE ONLY        1
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  2
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  3
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  4
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  5
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  6
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  7
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  8
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  9
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  10
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  11
+3/31/2026           FOR SIMUATION USE ONLY  MSP 7110.26G CHG 1
+
+           Appendix B Bravo Airspace Map
+
+           FOR SIMULATION USE ONLY          12
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           Appendix C MVA Chart and Obstruction Data
+
+           FOR SIMULATION USE ONLY                    13
+3/31/2026  FOR SIMUATION USE ONLY                MSP 7110.26G CHG 1
+
+           Appendix D Position Relief Briefing Checklists
+
+        MSP TOWER CAB CHECKLIST                         RUNWAY CHANGE CHECKLIST
+
+SELF-BRIEF ITEMS (#1-3a via IDS)                 1. As instructed by the TRACON CIC,
+                                                     coordinate with Tower and all TRACON
+    A. STATUS INFORMATION AREAS                      positions the last arrival and departure
+    B. ESTABLISH COMMS                               on the current runway and the first
+    C. RUNWAY INFORMATION                            arrival on new runway. Coordinate with
+                                                     Departure and Satellite positions to
+              a. Configuration                       establish resolution of conflicting
+              b. Verbally State Runway               traffic situations in new ACDA
+                                                     airspace during transition.
+                   Status: unavailable, closed,
+                   occupied                      2. Advise Arrival Controllers when the
+    D. FLOW CONTROL                                  new ACDA is available.
+    E. AIRPORT ACTIVITIES
+    F. TRAFFIC                                   3. Coordinate with Tower and all
+              a. Aircraft Cleared For                TRACON positions to begin departing
+                   Takeoff/To Land                   on new runway.
+              b. Diverging Headings in Use
+              c. Primary Target Only             4. When changing from a parallel runway
+              d. Point Outs                          configuration to a parallel and 17/35
+              e. VFR Advisories (Class B)            runway configuration, coordinate with
+                   Aircraft                          Departure and Satellite positions to
+              f. Special Activity Aircraft           obtain/release airspace.
+                   Landing or Departing, Off
+                   Duty Runways, Practice        5. When changing to 30/17, remind
+                   Approaches                        Feeder and Arrival, if staffed, of 8,000
+              g. Aircraft Standing By or             ft. airspace base.
+                   Holding
+              h. Coordination Agreements
+                   With Other Positions
+              i. Special Problems, Requests
+                   or Instructions
+
+           FOR SIMULATION USE ONLY                         14
+3/31/2026               FOR SIMUATION USE ONLY                     MSP 7110.26G CHG 1
+
+                        Appendix E Scratch Pad Entries
+
+MSP Arrivals
+
+For aircraft executing a visual approach, instrument approach, and for VFR arrival aircraft, use the
+following scratch pad entries:
+
+              RUNWAY    RNAV(GPS)       RNAV(RNP)         ILS/LOC  VISUAL
+              12L       ZL1             YL1               12L      VL1
+              12R       ZR1             YR1               12R      VR1
+              30L       ZL3             YL3               30L      VL3
+              30R       ZR3             YR3               30R      VR3
+              17                                          L17      V17
+              35        Z35             Y35               I35      V35
+              4         G04                               L04      V04
+              22        G22                               L22      V22
+
+Visual Separation
+
+When an aircraft has been cleared for a visual approach, and the pilot has assumed responsibility for
+separation from the preceding aircraft, the letters "VV" must be entered as follows:
+
+                                            MSP Arrivals  VVN
+                        Runways 12L and 30R               VVS
+                        Runways 12R and 30L               VV4
+                        Runway 4                          VV2
+                        Runway 22                         VV5
+                        Runway 35                         VV7
+                        Runway 17
+
+Other Approved Entries
+
+                        Air Work                          A/W
+                        Holding                           HLD
+                        Photo Flight                      PIX
+                        Holding at GEP                    GEP
+                        Holding at FGT                    FGT
+                        Tour                              2ER
+
+                        FOR SIMULATION USE ONLY                                                       15
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           Appendix F Runway Intersection Distance Remaining Chart
+
+           FOR SIMULATION USE ONLY                                  16
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                         Appendix G Runway Use Wind Charts
+
+Note: These wind charts created in accordance with FAA Order 8400.9, National Safety and Operational
+Criteria for Runway Use Programs.
+
+           FOR SIMULATION USE ONLY  17
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  18
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  19
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  20
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  21
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  22
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  23
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  24
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  25
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  26
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  27
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           FOR SIMULATION USE ONLY  28
+3/31/2026  FOR SIMUATION USE ONLY                    MSP 7110.26G CHG 1
+
+           Appendix H Departure Configurations
+
+                             Land and Depart 12s
+                             Land and Depart 30s
+                       Land 30s and 35 ­ Depart 30s
+                       Land 30s ­ Depart 30s and 17
+
+           FOR SIMULATION USE ONLY                   29
+3/31/2026  FOR SIMUATION USE ONLY        MSP 7110.26G CHG 1
+
+           Land 12s ­ Depart 12s and 17
+               Three Departure Split
+
+           FOR SIMULATION USE ONLY       30
+3/31/2026  FOR SIMUATION USE ONLY    MSP 7110.26G CHG 1
+
+                Land 35 ­ Depart 12
+                 (Configuration #3)
+
+           FOR SIMULATION USE ONLY   31
+3/31/2026  FOR SIMUATION USE ONLY       MSP 7110.26G CHG 1
+
+            Land 35 ­ Depart 35, 30, 4
+              Land 17 ­ Depart Any
+              Land 22 ­ Depart Any
+               Land 4 ­ Depart Any
+
+           FOR SIMULATION USE ONLY      32
+3/31/2026  FOR SIMUATION USE ONLY    MSP 7110.26G CHG 1
+
+                   Land 17 and 22
+               Depart 17, 22, 12L/R
+
+           FOR SIMULATION USE ONLY   33
+3/31/2026  FOR SIMUATION USE ONLY               MSP 7110.26G CHG 1
+
+           Appendix I Satellite Airspace Split
+
+           FOR SIMULATION USE ONLY              34
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+           Appendix J Preferential Tower Assigned Headings
+
+                                             Runway 12
+
+           FOR SIMULATION USE ONLY                          35
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                    Runway 12-17
+
+           FOR SIMULATION USE ONLY  36
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+               Runway 30 and 30/35
+
+           FOR SIMULATION USE ONLY  37
+3/31/2026  FOR SIMUATION USE ONLY   MSP 7110.26G CHG 1
+
+                    Runway 30-17
+
+           FOR SIMULATION USE ONLY  38
+

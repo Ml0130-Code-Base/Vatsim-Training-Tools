@@ -1,0 +1,252 @@
+11/30/2025  M98-SAT ATCT Letter of Agreement
+
+        Minneapolis Terminal Radar Approach Control ­ Satellite Towers LOA
+
+                                           (ANE, FCM, MIC, STP)
+
+                                        LETTER OF AGREEMENT
+
+                                                                                    EFFECTIVE: 11/30/2025
+
+SUBJECT: TERMINAL OPERATIONS
+
+1. PURPOSE. To prescribe procedures for the control of IFR and VFR air traffic at Anoka,
+    Flying Cloud, Crystal, St. Paul Airports.
+
+2. CANCELLATION. Initial Release.
+3. SCOPE. This agreement between Minneapolis Terminal Radar Approach Control (M98) and
+
+    its outlying Satellite (ANE, FCM, MIC, STP) ATCTs establishes responsibilities and
+    procedures for handling IFR and VFR air traffic at the ANE, FCM, MIC, and STP Airports.
+    These procedures are supplementary to FAA Order JO 7110.65, Air Traffic Control.
+4. DEFINITIONS. Hereafter certain terms in this LOA shall be defined by abbreviations.
+
+ATCT or ATCTs shall be defined as ANE, FCM, MIC, and STP ATCTs.
+
+5. RESPONSIBILITIES.
+
+    a. M98 must be responsible for providing approach control services to IFR arrivals,
+         departures, and practice instrument approaches to ATCT airports in accordance with
+         procedures contained herein.
+
+    b. ATCTs must be responsible for designated IFR and SVFR operations in accordance with
+         the procedures contained herein.
+
+    c. Deviations from the procedures contained herein must be approved only after
+         coordination between the facilities is effected which specifically defines responsibility
+         and intent.
+
+6. PROCEDURES.
+
+    a. M98 must:
+
+         1) Departures.
+
+             (a) Issue departure releases via the Run-Down Tab List. Verbally coordinate
+                  nonstandard headings and altitudes. (Standard headings and keyboard entries are
+                  listed in Attachment 2.)
+
+1           FOR SIMULATION USE ONLY
+11/30/2025                       M98-SAT ATCT Letter of Agreement
+
+   2) Arrivals.
+       (a) Ensure that full data blocks for arriving traffic contain the following data, unless
+            verbal coordination with the appropriate ATCT is effected:
+            1. Scratch pad entry data as listed in Attachment 1.
+            2. Type aircraft in field four.
+
+   3) Missed Approaches.
+       (a) Issue IFR aircraft planning a missed approach the following instructions:
+
+                ANE: Heading 360° and 2,500 ft.
+                FCM: Heading 230° and 2,500 ft.
+                MIC: Heading 320° and 2,500 ft.
+                STP: Heading 060° and 2,500 ft.
+            (b) Advise ATCTs of heading and altitude assigned to IFR and VFR aircraft
+                executing a missed approach if different from (a) above.
+       4) Overflights must be authorized to transit ATCT airspace at or above 3000 ft. MSL
+            without prior coordination. Overflight traffic not displayed (automatically or
+            manually) to ATCT CTRDs must be verbally coordinated:
+   b) ATCTs must:
+       1) Departures.
+            (a) Assign the following initial altitudes to IFR departures from ATCT airports:
+
+            Airport Runway(s) Altitude
+
+            ANE All     3,000
+
+            FCM 10L/R, 36 2,500
+
+            28L/R, 18 3,000
+
+            MIC All     3,000
+
+            STP 13, 14  2,500
+
+            32          3,000
+
+            (b) Use Run-Down Tab List procedures in Attachment 2 to obtain IFR departure
+                releases from M98.
+
+2           FOR SIMULATION USE ONLY
+11/30/2025  M98-SAT ATCT Letter of Agreement
+
+       (c) Place aircraft in Run-Down Tab List, in the order they will depart, using STARS
+            entries listed in Attachment 2.
+
+       (d) Verbally coordinate any changes that have been made in the Run-Down Tab List
+            whether or not the flash has been recalled.
+
+       (e) Verbally coordinate all departures from non-advertised runways and any non-
+            standard heading and/or altitude.
+
+   2) Arrivals
+
+       (a) FCM may change an aircraft's runway (side-step or circle) to any non-opposite
+            direction runway without coordination. FCM assumes separation responsibility
+            with any preceding and succeeding aircraft.
+
+       (b) STP is authorized to interchange Runway 31 with 32 or Runway 13 with 14 when
+            issuing landing instructions.
+
+   3) Missed Approaches.
+
+       (a) ATCTs must instruct any IFR aircraft executing an unplanned missed approach to
+            fly the following headings and altitudes:
+
+            ANE: Heading 360° and maintain 2,500 ft.
+
+            FCM: Heading 230° and maintain 2,500 ft.
+
+            MIC: Heading 320° and maintain 3,000 ft.
+
+            STP: Heading 060° and maintain 2,500 ft.
+
+       (b) Advise M98 when an IFR aircraft executes an unplanned missed approach.
+
+3           FOR SIMULATION USE ONLY
+11/30/2025                                 M98-SAT ATCT Letter of Agreement
+
+7. ATTACHMENTS.
+Attachment 1 Scratch Pad Entries
+Attachment 2 Run-Down Tab List Procedures
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+Lance Harry
+Deputy Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+4  FOR SIMULATION USE ONLY
+11/30/2025                                                       M98-SAT ATCT Letter of Agreement
+
+                     Attachment 1: Scratch Pad Entries
+
+   1) Scratch Pad 1 must have airport of intended landing for IFR or VFR aircraft.
+
+            Example-
+            STP, FCM, ANE, MIC, LVN, 21D, SGS
+
+   2) Scratch Pad 2
+
+   a) 1st character indicates type of instrument approach for IFR and VFR aircraft.
+   b) 2nd/3rd character(s) indicates how the approach will terminate.
+
+   c) VV ­ Aircraft has been cleared for a visual approach, and the pilot has assumed
+       responsibility for separation (including wake turbulence separation) from the
+       preceding aircraft. (Note: the scratchpad will look like VV+, the + is just an
+       indication that the scratchpad is time-sharing).
+
+   d) The following approach abbreviations must be entered in scratch pad 2:
+
+            1st Character ­ TYPE of 2nd and 3rd Character ­ Full Stop or
+
+            APPROACH                            Missed Approach
+
+            I = ILS                             F = Full Stop
+
+            G = RNAV (GPS)                      M = Missed Approach
+
+            L = Localizer                       PM = Published Missed
+
+            N = NDB                             VV = Pilot provided visual separation
+
+            V = VOR
+
+   Example ­ N12345 requesting ILS 30 to a Published Missed at LVN: STARS entry will
+
+   be <+IPM, slew, enter>.
+
+Other Approved Entries                                         A/W
+                                                               HLD
+                                Air Work                       PIX
+                                Holding                        GEP
+                                Photo Flight                   FGT
+                                Holding at GEP                 2ER
+                                Holding at FGT
+                                Tour
+
+5                          FOR SIMULATION USE ONLY
+11/30/2025                                                M98-SAT ATCT Letter of Agreement
+
+                         Attachment 2: Run-Down Tab List Procedures
+Standard IFR departure headings and altitudes:
+
+            Airport Runway(s) Heading(s)                  Altitude(s)
+
+            ANE 18            Right turn 270° clockwise to 090° 3,000
+
+                9, 27, 36     270° clockwise to 090°
+
+            FCM 28L, 28R, 18 180° clockwise to 300°       3,000
+
+                10L, 10R, 36                              2,500
+
+            MIC All           320°                        3,000
+
+            STP 32            030° clockwise to 045°      3,000
+
+                14, 13        010° clockwise to 080°      2,500
+
+STARS Entries:
+
+Assume that commas in STARS entries represent a space or new line in STARS. Shift+F3 may be
+used in lieu of F13 for keyboards that do not have an F13 key.
+
+   a. ATCT requests a release via the Run-Down Tab List:
+
+Airport     Format                                STARS Entry
+ANE         Departure direction (N, S, W, or E),  F13, ACID, (N, S, W, or E) (270-090)
+            Heading                               <enter>
+FCM         Note: N: Runway 36
+            S: Runway 18                          F13, ACID, (N, S, W, or E) (180-300)
+MIC         W: Runway 27                          <enter>
+STP         E: Runway 09
+            Departure direction, heading          F13, ACID, (320) <enter>
+            Note: N: Runway 36                    F13, ACID, (010-080) <enter>
+            S: Runway 18
+            W: Runway 28
+            E: Runway 10
+            Standard heading
+            Standard heading
+
+6                          FOR SIMULATION USE ONLY
+11/30/2025                                               M98-SAT ATCT Letter of Agreement
+
+   b. M98 Issue release: F13, <list ID>, ACID, <enter>
+   c. ATCT change departure sequence: F13, ACID, <new sequence #>, <enter>
+   d. ATCT cancel release request: F13, ACID, <enter>
+   e. ATCT or M98 move the Run-Down Tab List: F7, <list ID>, <slew>
+   f. ATCT or M98 quicklook Run-Down Tab List header: F7, <list ID>, E, <enter>
+
+M98 Run-Down Tab List ID Quick Reference:       List ID
+                                          ATCT  PO
+                                          ANE   PF
+                                          FCM   PM
+                                          MIC   PP
+                                          STP
+
+7           FOR SIMULATION USE ONLY
+

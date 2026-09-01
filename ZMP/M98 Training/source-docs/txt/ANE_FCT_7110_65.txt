@@ -1,0 +1,189 @@
+ANE 7110.65 CHG 1                           11/30/2025
+
+ANE FCT ORDER 7110.65
+
+STANDARD OPERATING PROCEDURES
+
+               VIRTUAL MINNEAPOLIS ARTCC
+    VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+                         November 30, 2025
+
+                   FOR SIMULATION USE ONLY  1
+ANE 7110.65 CHG 1                                               11/30/2025
+
+                   Order Record of Changes                     Issued By
+                                                                   DE
+Change                 Description             Effective Date      DE
+                                                29 Sep 2022
+                  Original Publication
+                                                30 Nov 2025
+        Update for CRC STARS rundown list
+           procedures. Addition of standard
+
+         departure headings for IFR aircraft.
+
+                   FOR SIMULATION USE ONLY                     2
+ANE 7110.65 CHG 1                           11/30/2025
+
+Table of Contents
+
+CHAPTER 1. GENERAL ............................................................................................................ 4
+   1-1. PURPOSE....................................................................................................................... 4
+   1-2. DISTRIBUTION ............................................................................................................... 4
+   1-3. CANCELLATION............................................................................................................. 4
+   1-4. EFFECTIVE DATE .......................................................................................................... 4
+   1-5. EXPLANATION OF CHANGES ....................................................................................... 4
+   1-6. POSITIONS..................................................................................................................... 4
+
+CHAPTER 2. GROUND CONTROL/CLEARANCE DELIVERY .................................................. 5
+   2-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 5
+   2-2. CLEARANCE DELIVERY ................................................................................................ 5
+   2-3. AREA OF JURISDICTION............................................................................................... 5
+
+CHAPTER 3. LOCAL CONTROL ............................................................................................... 6
+   3-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 6
+   3-2. ACTIVE RUNWAY SELECTION ..................................................................................... 6
+   3-3. MISSED APPROACHES ................................................................................................. 6
+   3-4. DEPARTURES................................................................................................................ 6
+
+APPENDIX 1. INTERSECTION TAKEOFF CHART ................................................................... 7
+APPENDIX 2. POSITION RELIEF BRIEFING CHECKLISTS ..................................................... 8
+APPENDIX 3. STANDARD DEPARTURE HEADINGS .............................................................. 9
+
+                   FOR SIMULATION USE ONLY  3
+ANE 7110.65 CHG 1                                                     11/30/2025
+
+                     CHAPTER 1. GENERAL
+
+1-1. PURPOSE
+
+This order prescribes Standard Operating Procedures required for use by vZMP controllers
+providing air traffic control services at ANE FCT. These procedures are in addition to those
+required by other FAA and VATUSA Directives. All vZMP controllers shall be familiar with the
+provisions of this Order and apply them when performing their operational duties and
+responsibilities.
+
+1-2. DISTRIBUTION
+
+All vZMP personnel.
+
+1-3. CANCELLATION
+
+ANE FCT 7110.65, dated September 29, 2022.
+
+1-4. EFFECTIVE DATE
+
+This order is effective November 30, 2025.
+
+1-5. EXPLANATION OF CHANGES
+
+Update for CRC STARS rundown list procedures. Addition of standard departure headings for
+IFR aircraft.
+
+1-6. POSITIONS
+
+The following positions are in use at ANE FCT:
+
+Position Name                                   Frequency  Callsign
+Local Control (LC)                              132.4      ANE_TWR
+Ground Control/Clearance Delivery (GC/CD)       121.85     ANE_GND
+ATIS                                            120.625    KANE_ATIS
+
+                     FOR SIMULATION USE ONLY                                                  4
+ANE 7110.65 CHG 1                           11/30/2025
+
+  CHAPTER 2. GROUND CONTROL/CLEARANCE DELIVERY
+
+2-1. POSITION DUTIES AND RESPONSIBILITIES
+a. Issue instructions to taxiing aircraft operating on taxiways and inactive runways.
+b. Initiate control instructions.
+c. Issue clearances and ensure the accuracy of the pilot read back.
+d. Coordinate with LC when operations will infringe on an active runway.
+e. Coordinate with LC on intersection departures.
+2-2. CLEARANCE DELIVERY
+a. Issue 3000 ft. to all IFR aircraft, and expect filed altitude 10 minutes after departure.
+b. Advise VFR aircraft to remain outside the Minneapolis Class B airspace.
+2-3. AREA OF JURISDICTION
+GC/CD is responsible for aircraft operations on airport movement areas with the exception of
+active runway(s). When one runway is closed, it may be delegated to GC/CD by LC for use.
+
+                   FOR SIMULATION USE ONLY                                                    5
+ANE 7110.65 CHG 1                           11/30/2025
+
+                     CHAPTER 3. LOCAL CONTROL
+
+3-1. POSITION DUTIES AND RESPONSIBILITIES
+a. Ensure separation to include immediate response to all valid MSAW alarms.
+b. IFR releases, coordinating missed approaches, and SVFR clearances/coordination.
+c. Ensure prior coordination with GC to use portions of the movement area either owned by
+
+    GC or released to that position.
+d. Initiate control instructions.
+e. Ensure that pilots read back issued clearances correctly.
+f. Coordinate with M98 as follows:
+
+    1. Departing IFR.
+    2. Instrument runway change.
+    3. Unplanned missed approaches.
+g. Coordination with GC is required as follows:
+    1. A helicopter landing on any movement or non-movement area other than an active
+
+         runway.
+    2. Retaining communications and control of a landing aircraft for taxi to the ramp.
+    3. Use of any runway that has not been previously designated as active.
+3-2. ACTIVE RUNWAY SELECTION
+There is no designated calm wind runway at ANE. Use the runway(s) most aligned with the
+wind.
+3-3. MISSED APPROACHES
+Assign heading 360 degrees and 2500 ft. to all missed approaches, unless otherwise
+coordinated. Advise M98 of unplanned missed approaches. Visual approaches may be retained
+in the pattern.
+3-4. DEPARTURES
+Use the Run-Down Tab List in STARS to obtain IFR releases from M98. Standard headings are
+listed in appendix 3.
+
+                   FOR SIMULATION USE ONLY  6
+ANE 7110.65 CHG 1                           11/30/2025
+
+APPENDIX 1. INTERSECTION TAKEOFF CHART
+
+                   FOR SIMULATION USE ONLY  7
+ANE 7110.65 CHG 1                           11/30/2025
+
+   APPENDIX 2. POSITION RELIEF BRIEFING CHECKLISTS
+
+POSITION RELIEF CHECKLIST ­ GC/CD
+1. SIA
+2. Verbally state runway status
+3. Altimeter/weather trends
+4. Airport activities
+5. Special instructions/restrictions/activities
+6. Flow Control
+7. Pertinent operational NOTAMs
+8. Traffic
+POSITION RELIEF CHECKLIST ­ LC
+1. SIA
+2. Verbally state runway status
+3. Altimeter/Weather trends
+4. Airport activities
+5. Special instructions/restrictions/activities
+6. Flow control
+7. Pertinent operational NOTAMs
+8. Traffic
+
+                   FOR SIMULATION USE ONLY          8
+ANE 7110.65 CHG 1                           11/30/2025
+
+       APPENDIX 3. STANDARD DEPARTURE HEADINGS
+
+Standard departure headings and altitudes:
+
+Runway(s) Climbing to 3,000 ft.
+
+18  Right turn 270° clockwise to 090°
+
+9, 27, 36 270° clockwise to 090°
+
+                   FOR SIMULATION USE ONLY      9
+

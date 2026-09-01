@@ -1,0 +1,81 @@
+MINNEAPOLIS ARTCC/SIOUX FALLS TOWER
+
+                                        LETTER OF AGREEMENT
+                                                                                 Effective: September 10, 2022
+
+SUBJECT: Terminal Area Control Service
+1. PURPOSE. This letter of agreement governs approach control service within airspace
+
+    delegated to Sioux Falls Tower and is supplementary to procedures contained in Air Traffic
+    Handbooks.
+2. CANCELLATION. vZMP Minor ATCT/TRACON LOA, "Sioux Falls (FSD)
+    ATCT/TRACON"
+3. RESPONSIBILITIES. During published hours of operation, Sioux Falls Tower is delegated
+    responsibility for control of IFR and Special VFR aircraft in the area depicted on Attachment
+    "A" at and below 10,000 feet MSL.
+4. PROCEDURES. Unless otherwise coordinated, the following procedures shall apply:
+    a. Arrivals.
+
+         1) The clearance limit fix for arrivals shall be the destination airport.
+         2) Arrivals shall be descending to or level at 8,000 feet MSL, except when a higher
+
+             altitude is required for separation of traffic (example: multiple arrivals).
+             a) Arriving traffic from over Sioux City Approach Control delegated airspace shall
+
+                  be descending to 11,000 feet MSL.
+         3) After receiving a radar handoff and frequency change from Minneapolis Center,
+
+             Sioux Falls Approach Control may descending and/or alter an arrival's route of flight.
+             The maximum turn shall not exceed 30 degrees either side of the aircraft's
+             heading/route. Either or both of these actions shall not be initiated if the results will
+             affect another sector or approach control facility.
+         4) When automated handoffs are used:
+             a) Acceptance of a handoff by approach control of an aircraft with Mode C readout,
+
+                  in level flight at or below 10,000 feet MSL, constitutes altitude approval.
+             b) The altitude of arrivals with no Mode C shall be coordinated at or prior to
+
+                  handoff.
+    b. Departures.
+
+         1) After receiving a handoff from Sioux Falls Approach Control, Minneapolis Center
+             may alter a departure's heading and/or route. The maximum turn shall not exceed 30
+             degrees either side of the aircraft's heading/route. This action shall not be initiated if
+             the result will affect another sector or approach control facility.
+
+                                     FOR SIMULATION USE ONLY
+ZMP/FSD LOA                                                                                        2
+
+         2) When automated handoffs are used, Sioux Falls Approach Control shall issue the
+             requested altitude or FL230 (whichever is lower) to departures after the Center has
+             accepted the handoff. The Center shall, before accepting a handoff, advise Approach
+             Control verbally when an altitude different from the requested altitude is to be
+             assigned.
+
+         3) Minneapolis Center Sectors 33 and 37 shall accomplish all necessary coordination,
+             for aircraft climbing above 10,000 feet MSL, prior to acceptance of a radar handoff.
+
+5. GENERAL.
+
+    a. The Tower shall:
+
+         1) Assign Center Frequencies as depicted on Attachment "A".
+
+         2) Inform departures restricted to altitudes below their requested altitude to, "Expect
+             (filed altitude) 10 minutes after departure."
+
+         3) Accomplish required coordination if a transfer of control has been made and/or the
+             route is changed to affect a Center sector.
+
+    b. Accomplish required coordination for arrivals which cross Center sector boundaries
+         within Center altitudes.
+
+6. ATTACHMENTS.
+
+Attachment "A" Sioux Falls Approach Control Area
+
+             FOR SIMULATION USE ONLY
+ZMP/FSD LOA                           3
+
+             FOR SIMULATION USE ONLY
+

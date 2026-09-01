@@ -1,0 +1,473 @@
+ZMP/M98 LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+                         VATSIM MINNEAPOLIS ARTCC ­ MINNEAPOLIS TRACON
+
+                                                LETTER OF AGREEMENT
+
+                                                                                          EFFECTIVE: March 31, 2026
+
+  SUBJECT: TERMINAL AREA CONTROL SERVICE
+
+  1. PURPOSE. This agreement delegates authority and establishes procedures for the control of
+       IFR and Special VFR traffic on the VATSIM network within the terminal area described
+       herein and is supplementary to FAA Order 7110.65, Air Traffic Control Handbook and
+       VATSIM Network Policies and Procedures.
+
+  2. SCOPE. Minneapolis ARTCC (ZMP) delegates to Minneapolis Approach Control (M98) the
+       airspace described in Attachment A for the control of IFR traffic at and below 17,000 ft MSL.
+
+  3. WORD MEANINGS. As used in this Letter of Agreement:
+
+  a. Altitudes are Mean Sea Level (MSL) and are written in hundreds of feet (110 = 11,000 feet).
+
+  b. Course, Track and Heading are magnetic values.
+
+  4. RADAR PROCEDURES. Unless otherwise coordinated, the following procedures shall apply:
+
+  a. Handoffs. Aircraft entering ZMP from M98 airspace shall have at least 5 nautical miles (NM)
+       constant or increasing radar separation when radar vectored for the same fix on similar
+       tracks.
+
+  b. ZMP releases control for descent and turns ± 30 degrees from assigned heading/course to
+       M98 when aircraft are within 10NM of the ZMP/M98 boundary. M98 must make any
+       necessary point outs to other affected ZMP sectors or RST approach.
+
+  c. M98 releases control of departing aircraft to ZMP when the aircraft is at least 25 NM from
+       the MSP DME or leaving 110. ZMP must make any necessary point outs to other affected
+       M98 sectors.
+
+  d. M98 may apply procedures specified in FAA Order 7110.65 paragraph 5-5-4 to aircraft
+       transitioning from M98 to ZMP provided that:
+
+            (1) The minima are applied only to aircraft on courses/routes that diverge. In-trail aircraft
+                 are not included.
+
+            (2) M98 maintains communications with at least one of the aircraft until 3-miles lateral
+                 separation is attained, and divergence is ensured.
+
+e. Beacon Code Assignments. Normal beacon codes, as assigned by vNAS, shall be used at all
+    times except when vNAS is out of service.
+
+f. Departures
+ZMP/M98 LOA       FOR SIMULATION USE ONLY                                     3/31/2026
+
+(1) Standard Instrument Departure (SID) routes are depicted in Attachment B.
+
+(2) M98 shall issue enroute clearance provided:
+
+    (a) Aircraft are cleared at 170 or below.
+
+    (b) Departures filed 060 and below are cleared as filed and assigned an altitude
+         appropriate for direction of flight.
+
+    (c) Departures filed 070 or 080 must be on a heading or a course to clear MSP and
+         satellite STAR arrival areas at an altitude appropriate for direction of flight.
+
+(3) M98 must establish departing aircraft filed for 090 above in the appropriate ZMP
+    sector, clear of STAR arrival areas on:
+
+     (a) The appropriate MSP/Satellite Airport SID, or
+
+     (b) A heading to join the appropriate SID within 60 NM of the MSP DME, or
+
+     (c) M98 Satellite departures previously routed via the DWN SID must be routed via
+         INUNE GENEO DKOTA.
+
+     (d) For non-SID qualified aircraft, an assigned heading as depicted in Table 1.
+
+                             TABLE 1. Non-SID headings to ZMP.
+                                West of the GEP/BAINY STAR 290° - 300°
+
+                Sector 10
+                                 East of the GEP/BAINY STAR 350° - 020°
+
+             Sector 09 North of the ENCEE STAR 265° - 285°
+
+             Sector 08 South of the TORGY STAR 210° - 240°
+
+             Sector 07 East of the KASPR/BLUEM 140° - 160°
+
+             RWA  South of the KKILR STAR 100° - 130°
+
+             Sector 06 North of the AGUDE STAR 040° - 060°
+
+           (4) Prop aircraft requesting 120 or higher must be climbed to or level at 120.
+g. Arrivals
+
+           (1) MSP and Satellite Standard Terminal Arrival Routes (STARs) are depicted in
+                 Attachment C
+
+           (2) The clearance limit fix for arrivals shall be the destination airport.
+
+                  -2-
+ZMP/M98 LOA         FOR SIMULATION USE ONLY                                           3/31/2026
+
+(3) RNAV STAR Procedures:
+
+             (a) MSP RNAV STARs and M98 airspace are depicted in Attachments D and D-1
+                  through D-11.
+
+             (b) ZMP "Descend Via" phraseology must include a runway transition. ZMP will
+                  normally assign runway transitions as depicted in Table 2.
+
+                  TABLE 2. Runway Transitions assigned by ZMP.
+
+             BAINY  MUSCL          KKILR                NITZR   BLUEM                TORGY
+
+12           12L              12L  12R                  12R     12R                   12R
+
+12/17        12L              12L  12R                  12R     12R                   12R
+
+30           30R              30R  30L                  30L     30L                   30L
+
+30/17        30R              30R  30L                  30L     30L                   30L
+
+30/35        30R              30R  30L                  30L1    30L1                  30L
+
+17/22        17               22   N/A                  22      22                    17
+
+1 ­ M98 and ZMP CIC/TMU will collaborate which aircraft will be issued the runway 35
+
+transition.
+
+             (c) Heavy Jet arrivals must be assigned the Runway 12R/30L transition.
+
+             (d) Transfer of communications of aircraft entering M98 airspace on an RNAV STAR
+                  must be accomplished no later than the following fixes:
+
+             STAR TORGY BAINY MUSCL KKILR BLUEM NITZR
+              FIX OFSON LUCCY BAYKS KKILR BLUEM NITZR
+
+             (c) ZMP must verbally coordinate any turbojet aircraft cleared via a conventional
+                 STAR with the appropriate M98 Sector and cross the boundary at LOA altitudes
+                 and de-conflicted with Optimized Profile Descent (OPD) traffic.
+
+             (d) ZMP must verbally coordinate any assigned speed that deviates from those
+                 published on the RNAV STAR, except those speeds that are part of a TMU
+                 initiative.
+
+             (e) When MSP is on Runway 30/17 configuration, Knock It Off procedures will be
+                 implemented on the NITZR and BLUEM arrivals. No "Descend Via" instructions
+                 will be issued. Runway transitions will be issued. Any speed other than published
+                 speed must be coordinated.
+
+             1 NITZR Arrival       X WRSAW at and maintain 110
+
+             2 BLUEM Arrival X HHAMR at and maintain 100
+
+             NOTE - M98 will verify assigned altitude.
+
+                                   -3-
+ZMP/M98 LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+    (f) ZMP Sector 7 must provide M98 with a minimum of 5 miles in trail between
+         arrivals on the same STAR, and 7 miles staggered spacing between arrivals on
+         parallel STARs.
+
+    (g) "Knock It Off" OPD Procedures. When MSP is landing Runway 4, 22, 17, 17/22,
+         22 or anytime either facility has an operational necessity to discontinue the OPD
+         portion of the STAR, ZMP must issue crossings as depicted in Table 3.
+
+                          TABLE 3. Knock It Off Crossing altitudes
+                  MUSCL Arrival Cross BAYKS at and maintain 120
+                   KKILR Arrival Cross HUGGI at and maintain 100
+                  BLUEM Arrival Cross HHAMR at and maintain 100
+                   NITZR Arrival Cross WRSAW at and maintain 110
+                  TORGY Arrival Cross OFSON at and maintain 110
+                   BAINY Arrival Cross LUCCY at and maintain 110
+
+         1 Cross the M98 boundary at the published speed of 280kts unless otherwise
+              coordinated.
+
+         2 Coordination must be accomplished through M98 CIC/TMU and ZMP
+              CIC/TMU.
+
+         3 ZMP/M98 may invoke "Knock It Off" OPD procedures at individual gates
+              regardless of runway configuration when operational necessity dictates.
+
+(4) Non-RNAV Arrival Procedures. To the extent practical, all turbojet and turboprop
+    aircraft must be routed via STARs.
+
+    (a) Turbojet aircraft that will not be on a conventional STAR for equipment or route of
+         flight reasons must be coordinated. These aircraft must be on a heading through
+         an arrival gate to approximate direct MSP airport and at the appropriate "knock it
+         off" altitude for the gate.
+
+    (b) Turboprop aircraft that will not be on a conventional STAR for equipment or route
+         of flight reasons must be coordinated. These aircraft must be routed direct MSP
+         through an arrival gate, or on a heading through an arrival gate to approximate
+         direct MSP at 070.
+
+(5) All turbojet and turboprop aircraft must be routed via STAR routings. The appropriate
+    crossing altitude restriction must be issued as depicted in Table 4.
+
+             -4-
+ZMP/M98 LOA  FOR SIMULATION USE ONLY                                            3/31/2026
+
+             TABLE 4. Conventional STAR Crossing Altitudes.
+
+             Aircraft  STAR Crossing Restriction
+
+MSP Arrivals Turbojets GEP OLLEE at 110
+
+                       KASPR DELZY at 100
+
+             Turboprops GEP Landing 12s OLLEE at 702
+
+                                              Landing 30s or 30/35 OLLEE at 90
+
+Satellite Arrivals Turbojets AGUDE AGUDE at 80
+
+                       ENCEE RIXIE at 80
+
+                       GEP OLLEE at 701
+
+                       TWOLF TRGET at 70
+
+             Turboprops AGUDE AGUDE at 60
+
+                       ENCEE RIXIE at 70
+
+                       GEP OLLEE at 702
+
+                       TWOLF TRGET at 70
+
+1 ­ 6,000 ft. when MSP is landing Runway 17.
+
+2 ­ 5,000 ft. when MSP is landing Runway 17.
+
+(6) STP, ANE, and FCM arrivals routed over BITLR must be assigned direct GEP and
+    cross BITLR at 060.
+
+(7) FCM and LVN arrivals entering M98 south of RGK may be routed direct FGT direct
+    destination without coordination at the following altitudes:
+
+(a) MSP landing 30's, 30/17, 30/35 at 040.
+
+(b) Any other runway configuration at 040 or 060.
+
+(8) FCM and LVN arrivals from ZMP Sectors 08 and 09 may be cleared direct
+    destination at 5,000 ft. Aircraft may still be cleared via the TWOLF Arrival or the
+    ENCEE Arrival.
+
+(9) FCM arrivals from ZMP sector 10 may be issued direct to FCM west of the GEP
+    arrival gate at or below 050.
+
+(10) All piston engine aircraft terminating in M98 airspace must enter M98 Satellite
+    Airspace at or below 060 at an altitude appropriate for direction of flight.
+
+(11) STC departures landing MSP and M98 satellite airports must enter M98 airspace at
+    050. When Runways other than 12L/R are in use, turbojet and turboprop aircraft
+    departing STC and landing MSP must be on a STAR arrival at the appropriate
+    altitude
+
+(12) MKT departures landing M98 satellite airports must enter M98 airspace cleared as
+    filed at 050.
+
+(13) ZMP must have control for descent to 100 on aircraft exiting M98 airspace and
+    landing RST Airport when the aircraft are 25 NM from the MSP DME.
+
+                       -5-
+ZMP/M98 LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+             (14) Aircraft landing OEO, RNH, or RGK from the east (through Sector 5) must be level
+                   at, or descending to 040. M98 must have control when aircraft are within 10 NM of
+                   the M98 boundary.
+
+             (15) Aircraft landing STC or MKT will enter ZMP airspace at or descending to 040. ZMP
+                   has control on contact.
+
+             (16) During time periods outside of normal operating hours in which ZMP assumes
+                   Rochester Approach Control (RST) airspace, unless otherwise coordinated, all
+                   turboprop aircraft routed via the KASPR STAR must cross the DELZY intersection at
+                   070, and all piston engine aircraft terminating in M98 airspace must exit RST
+                   airspace at 060.
+
+             (17) Frequencies. ZMP must assign frequencies to arrivals/overflights as depicted in
+                   Attachments D-1 through D-11.
+
+(5) RUNWAY 17-22 LANDING CONFIGURATION PROCEDURES. When the Minneapolis-St.
+    Paul Airport is in a runway 17/22 landing configuration, unless otherwise coordinated, the
+    following procedures must apply:
+
+        a. Departures. All existing departure routes and procedures remain unchanged except:
+
+             (1) Jet aircraft filed for the WLSTN SID must be vectored north of the AGUDE gate and
+                   assigned a heading to join the WLSTN SID. Normal altitudes apply.
+
+             (2) Turboprop aircraft filed for the WLSTN SID or over EAU, 7,000 MSL or higher, must
+                   be cleared via the COULT SID to the COULT intersection, direct EAU, direct next
+                   flight planned fix.
+
+             (3) Jet and Turboprop aircraft filed to, or over, DLH, EVM, RZN, and HIB must be
+                   vectored west of the AGUDE gate to enter Sector 6 established on an assigned
+                   heading between 020 and 040 degrees. Normal altitudes apply.
+
+             (4) Jet and Turboprop aircraft filed to, or over, BRD must enter Sector 10 west of the
+                   OLLEE intersection established on a heading between 290 and 310 degrees. Normal
+                   altitudes apply.
+
+             (5) STP, ANE, and MIC north bound departures are exempt from the above restrictions
+                   and must exit M98 airspace established on a heading between 350 and 010
+                   degrees.
+
+             (6) Departures filed at 5,000 or 6,000 feet MSL must be on a heading to clear the
+                   GOPHER and AGUDE satellite STAR arrival areas.
+
+             (7) M98 may clear KBREW SID traffic direct to KBREW from positions south of the SID.
+
+        b. MSP Arrivals. Knock It Off Procedures are in effect for MSP arrivals.
+
+             -6-
+ZMP/M98 LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+         (1) Turboprops cross OLLEE at 5,000 feet MSL.
+         (2) Turboprops cross TWINZ at 6,000 feet MSL.
+         (3) KKILR/WILDD Arrivals: All KKILR/WILDD arrivals are prohibited.
+    c. Satellite Arrivals.
+         (1) GOPHER Satellite Arrivals:
+
+              (a) Jets cross OLLEE at 6,000 feet MSL.
+              (b) Turboprops cross OLLEE at 5,000 feet MSL.
+              (c) M98 must have control for descent of GEP STAR satellite traffic within 10NM of
+
+                   the M98/ZMP airspace boundary.
+         (2) AGUDE Satellite Arrivals:
+
+              (a) STP traffic must be assigned the AGUDE STAR.
+              (b) FCM traffic normally routed over AGUDE must be routed over BITLR and
+
+                   assigned direct FGT direct FCM and cross BITLR at 6,000 feet MSL. APREQ is
+                   not necessary.
+              (c) Jets cross AGUDE at 6,000 feet MSL.
+              (d) Turboprops cross AGUDE at 5,000 feet MSL.
+              (e) Stacks at AGUDE for aircraft landing the same airport are not authorized.
+              (f) M98 must have control for descent of AGUDE traffic within 10NM of the
+                   M98/ZMP airspace boundary.
+    d. Overflights. The triangular airspace north of the MSP airport between and including
+         Runways 17 and 22 ACDAs must be avoided from all directions below 13,000 feet MSL.
+5. MIDNIGHT OPERATIONS. When coordinated (between the hours of 2230 and 0530 local):
+    a. ZMP shall clear all traffic landing at airports within M98 as follows:
+        (1) Direct to the destination airport.
+        (2) Via pilot discretion descent to 10,000 feet to all aircraft at altitudes at and above
+              10,000 feet.
+        (3) Arrivals at and below 10,000 feet shall remain at altitude.
+        (4) ZMP shall assign all aircraft entering M98 airspace frequency 124.7 (MSP_R_APP)
+    b. M98 shall:
+
+             -7-
+ZMP/M98 LOA  FOR SIMULATION USE ONLY                                        3/31/2026
+
+(1) Clear departure aircraft via the first fix in the route.
+(2) Point out departures to any affected Center position.
+(3) Climb turboprops/props to 17,000 feet, or lower altitude if requested.
+
+             -8-
+ZMP/M98 LOA  FOR SIMULATION USE ONLY                                 3/31/2026
+
+6. ATTACHMENTS
+
+    Attachment "A" -- ZMP Area/Sector Map and Frequencies.
+    Attachment "B" -- SIDs.
+     Attachment "C" -- Conventional STARs
+     Attachment "D" -- MSP RNAV STARs
+     Attachment D1-D11 -- Approach Control Airspace and Frequencies
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+Lance Harry
+Deputy Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                            -9-
+ZMP/M98 LOA          FOR SIMULATION USE ONLY      3/31/2026
+
+                          ATTACHMENT "A"
+             ZMP Area/Sector Map and Frequencies
+ZMP/M98 LOA  FOR SIMULATION USE ONLY   3/31/2026
+
+                       ATTACHMENT "B"
+                                 SIDs
+
+             - 11 -
+ZMP/M98 LOA  FOR SIMULATION USE ONLY       3/31/2026
+
+                       ATTACHMENT "C"
+                       Conventional STARs
+
+             - 12 -
+ZMP/M98 LOA  FOR SIMULATION USE ONLY    3/31/2026
+
+                       ATTACHMENT "D"
+                        MSP RNAV STARs
+
+             - 13 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-1
+             Approach Control Airspace and Frequencies
+
+             - 14 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-2
+             Approach Control Airspace and Frequencies
+
+             - 15 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-3
+             Approach Control Airspace and Frequencies
+
+             - 16 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-4
+             Approach Control Airspace and Frequencies
+
+             - 17 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-5
+             Approach Control Airspace and Frequencies
+
+             - 18 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-6
+             Approach Control Airspace and Frequencies
+
+             - 19 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-7
+             Approach Control Airspace and Frequencies
+
+             - 20 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-8
+             Approach Control Airspace and Frequencies
+
+             - 21 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                                Attachment D-9
+             Approach Control Airspace and Frequencies
+
+             - 22 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                               Attachment D-10
+             Approach Control Airspace and Frequencies
+
+             - 23 -
+ZMP/M98 LOA        FOR SIMULATION USE ONLY              3/31/2026
+
+                               Attachment D-11
+             Approach Control Airspace and Frequencies
+
+             - 24 -
+

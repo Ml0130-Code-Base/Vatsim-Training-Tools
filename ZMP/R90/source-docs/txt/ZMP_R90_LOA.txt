@@ -1,0 +1,145 @@
+  VATSIM Minneapolis Air Route Traffic Control Center (ZMP), and
+              Omaha Terminal Radar Approach Control (R90)
+
+                                LETTER OF AGREEMENT
+
+                                                                             EFFECTIVE: November 6, 2023
+SUBJECT: Terminal Area Control Service
+
+1. PURPOSE. This agreement delegates authority and establishes procedures for the control of
+IFR and special VFR traffic within the terminal area described herein and is supplementary to
+FAA Order 7110.65, Air Traffic Control Handbook, and VATSIM/VATUSA guidelines and
+directives.
+2. CANCELLATION. VATSIM ZMP ­ OMA R90 LETTER OF AGREEMENT Effective
+December 26, 2018
+3. SCOPE. ZMP delegates to R90 that airspace depicted in Attachment "A" for the control of
+IFR traffic at and below 15,000 feet MSL over R90 East and West, and at or below 10,000 feet
+MSL over R90 LNK.
+4. RADAR PROCEDURES. Unless otherwise coordinated, the following procedures shall
+apply:
+
+    a. R90 shall notify ZMP of the following:
+
+         1. Runway in Use
+
+    b. Arrival Procedures
+
+         1. All Arrivals
+
+             a. R90 shall have control for code changes.
+
+             b. R90 may level all R90 arrivals at ZMP assigned altitude without coordination.
+                  ZMP is responsible for necessary coordination with other ZMP sectors, provided
+                  the aircraft is left on course.
+
+             c. R90 sector accepting the handoff must be responsible for internal sector point
+                  outs.
+ZMP/R90 LOA  FOR SIMULATION USE ONLY  11/6/2023
+
+2. STAR Arrivals
+
+    a. From 0730 to 2130 LCL Monday through Friday, all aircraft at or above 16,000
+         feet landing OMA or OFF must be assigned a STAR.
+
+    b. STAR arrivals shall be level at or descending to 16,000 feet (or 17,000 feet
+         stacked on the STARs).
+
+    c. Arrivals routed over SUX/MZEEE must be level or descending to 11,000 feet.
+
+    d. R90 has control on all STAR arrivals at or below FL230 for descent and turns up
+         to 30 degrees on initial contact provided the aircraft will not enter another
+         controller's airspace.
+
+    e. ZMP assigned speeds on STAR inbounds do not need to be coordinated with R90.
+
+3. All other Arrivals (satellite airports, as well as OMA & OFF during non-star
+    periods.)
+
+    a. All other R90 arrivals must be direct destination or a destination approach fix.
+         Aircraft descending over R90 East/West must be at or descending to 16,000 feet
+         or in level flight at or below 15,000 feet, and aircraft over R90 LNK must be at or
+         descending to 11,000 feet or in level flight below 11,000 feet. Acceptance of the
+         handoff of an aircraft in level flight by R90 constitutes approval of inappropriate
+         altitude for direction of flight.
+
+    b. Arrivals routes over SUX Approach Control must be level or descending to
+         11,000 feet.
+
+    c. R90 has control on all arrivals at or below FL230 on initial contact for descent
+         and turns up to 30 degrees provide the aircraft will not enter another controller's
+         airspace.
+
+    d. Lincoln sector arrivals from the east above 15,000 feet must be handed off to
+         Omaha Radar West Sector. ZMP 27 is responsible for coordination with ZMP
+         sector 26 (i.e. point out or flash through automated information transfer).
+ZMP/R90 LOA  FOR SIMULATION USE ONLY  11/6/2023
+
+c. Over-flights. R90 sector accepting the handoff shall be responsible for internal sector
+    point outs.
+
+d. Departures Procedures.
+
+    1. R90 must climb all R90 departures to requested altitude or the top of R90's airspace,
+         whichever is lower (as defined in Attachment "A").
+
+    2. While the STARs are active all aircraft filed off OMA and OFF, that have requested
+         altitudes above 15,000 must be vectored clear of the STAR arrival areas, and nearest
+         to their flight plan route on a heading as follows.
+
+         a. Between 360° and 030° for aircraft between the ZMP Sector 26/27 boundary and
+             LANTK STAR.
+
+         b. Between 090° and 110° for aircraft between LANTK and MARWI STARs.
+
+         c. Between 150° and 185° for aircraft between MARWI and TIMMO STARs,
+             except that aircraft filed on the RBA arrival or J41 shall be established on course.
+
+         d. Between 220° and 250° for aircraft between TIMMO and HOWRY STARs.
+
+         e. Between 280° and 320° for aircraft between the HOWRY STAR and the ZMP
+             Sector 26/27 boundary.
+
+         f. OBH/LBF departures shall go north of the HOWRY STAR when Omaha Eppley
+             is in a north flow and south of the HOWRY STAR when in a south flow.
+
+         g. SLN/PWE/ICT departures shall go west of the TIMMO STAR when Omaha
+             Eppley is in a north flow and east of the TIMMO STAR when in a south flow.
+
+    3. All satellite departures with requested altitudes above 15,000 feet departing airports
+         in R90 East and West must be assigned headings to miss the STARs.
+
+    4. All aircraft departing R90 LNK sectors must be cleared on course.
+
+    5. ZMP has control to climb R90 LNK sector departures with a requested altitude above
+         10,000 feet, that will traverse, or be within 2.5 miles of, the R90 west shelf over R90
+         LNK. R90 LNK sector is responsible to ensure coordination is completed with R90
+         West.
+
+    6. When STARs are off all R90 aircraft must be on course.
+ZMP/R90 LOA  FOR SIMULATION USE ONLY                  11/6/2023
+
+7. ZMP acceptance of a handoff of a R90 satellite departure constitutes approval for
+    climb to requested altitude or the top of R90's airspace, whichever is lower (15,000
+    feet for R90 East and R90 West or 10,000 feet for R90 LNK) provided the aircraft is
+    established within R90's airspace. If a R90 departure is within 2.5 miles of the
+    common ZMP/R90 boundary or in ZMP airspace an approval request is required.
+
+8. ZMP must have control for turns up to 30 degrees on aircraft exiting R90's airspace.
+    R90 is responsible for internal point outs necessitated by these turns.
+
+9. ZMP must have control for code changes.
+
+10. ZMP may level all R90 departures at R90 assigned altitudes without coordination.
+    R90 is responsible for internal point outs.
+
+5. ATTACHMENTS.
+         a. Attachment "A" ­ R90 delegated airspace.
+         b. Attachment "B" ­ Omaha STARs.
+ZMP/R90 LOA  FOR SIMULATION USE ONLY                  11/6/2023
+
+             ATTACHMENT "A" ­ R90 DELEGATED AIRSPACE
+ZMP/R90 LOA  FOR SIMULATION USE ONLY  11/6/2023
+
+                       ATTACHMENT "B" ­ OMAHA STARs
+*Sioux City/Pawnee City Arrivals replaced by AANDY/TIMMO Arrivals.
+

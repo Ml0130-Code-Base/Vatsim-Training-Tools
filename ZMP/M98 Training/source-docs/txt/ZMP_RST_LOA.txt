@@ -1,0 +1,114 @@
+          MINNEAPOLIS ARTCC/ROCHESTER APPROACH/ATCT
+
+                                LETTER OF AGREEMENT
+
+                                                                            EFFECTIVE: December 27, 2023
+
+SUBJECT: TERMINAL AREA CONTROL SERVICE
+
+1. PURPOSE. This agreement governs approach control service within airspace delegated to
+Rochester Tower and is supplementary to procedures contained in Air Traffic Handbooks.
+
+2. CANCELLATION. vZMP ZMP-Minor ATCT/TRACON LOA, Rochester (RST)
+ATCT/TRACAB, dated 1/1/2015, is cancelled.
+
+3. ALTITUDE DEFINITION. All altitudes in this letter of agreement are expressed in terms of
+feet MSL.
+
+4. RESPONSIBILITIES. During published hours of operation, Rochester Tower is delegated
+the responsibility for the control of IFR and special VFR aircraft in the area depicted on
+Attachment "A" of this agreement.
+
+5. RADAR PROCEDURES. Unless otherwise coordinated, the following procedures shall
+apply:
+
+    A. Rochester Approach Area Arrivals.
+
+         (1) The clearance limit for arrivals must be the destination airport.
+
+         (2) Arrivals at or above 10,000 must be descending to or level at 10,000, with the
+             exception of arrivals over Waterloo Approach must be descending to or level at
+             11,000.
+
+         (3) Rochester Approach may descend and/or alter the route of flight of an arrival by no
+             more than 30 degrees either side of the aircraft's heading provided the change does
+             not affect another Center sector or Approach Control. Approach may issue the
+             descent at pilot's discretion.
+
+         (4) When automated handoffs are used:
+
+             (a) Acceptance of a handoff by Rochester Approach of an aircraft in level flight
+                  constitutes altitude approval for Mode C equipped aircraft. This does not
+                  constitute approval for wrong altitude for direction of flight.
+
+             (b) The altitude of arrivals with no Mode C readout must be coordinated at or prior to
+                  handoff.
+
+    B. Departures.
+
+         (1) Upon leaving 5,000, the Center may alter an aircraft's heading up to 30 degrees either
+             side of course and/or climb to a higher altitude, provided the change does not affect
+             another center sector or another approach control.
+         (2) En route departure clearance to aircraft departing airports within Rochester
+             Approach's delegated airspace may be issued without Center approval provided the
+             following conditions are met:
+
+             (a) Departures requesting an altitude at or below Rochester Approach's vertical limits
+                  must be cleared to their requested altitude. Departures requesting a higher altitude
+                  must be cleared to 9,000, or 15,000 as appropriate;
+
+                  1. When Rochester Approach departures into ZMP Sector 05 filed above 15,000
+                      feet require a point out to ZMP Sector 21, Sector 05 is responsible for making
+                      the point out to Sector 21.
+
+    C. MSP Arrivals.
+
+         (1) If a turbo jet filed to MSP is handed off to ZMP sector 7 then assign the BLUEM
+             STAR to all RNAV capable turbojet aircraft. Assign the KASPR STAR to all non-
+             RNAV turbojet aircraft.
+
+             NOTE ­ If RST points out the aircraft to ZMP sector 07, RST must verbally
+             coordinate with M98 all turbojet aircraft on the KASPR STAR.
+
+         (2) M98 area turbo prop arrivals at or above 10,000 that will not transition the 15,000-
+             foot shelf will be at or descending to 10,000. All aircraft filed through the lateral
+             limits of the shelf at or above 14,000 will be at or descending to 14,000. All other
+             aircraft will be at their flight plan altitude.
+
+         (3) Rochester Approach may have control for descent of M98 Turbo Prop arrivals when
+             the aircraft is within 10 miles of the Approach boundary.
+
+    D. M98 Departures.
+
+         (1) For all M98 area departures filed for 15,000 or below, climbing to requested altitude
+             is approved by Rochester Approach without further coordination.
+
+    E. MCW Traffic.
+
+         (1) Rochester Approach releases control for descent and turns of ±30 degrees on those
+             aircraft landing MCW.
+
+         (2) Rochester Approach approves aircraft departing MCW climbing to the requested
+             altitude posted on the Flight Progress Strip.
+
+6. GENERAL.
+
+    A. Approach must inform departures restricted to altitudes below their requested altitude, to
+         expect further clearance to their filed altitude 10 minutes after departure.
+
+    B. During the time period when Rochester Approach/Tower is not operational, delegated
+         airspace and control responsibility therein shall revert to the Center, Sector 07.
+
+ZMP/RST LOA  2
+7. ATTACHMENT.
+         Attachment "A" ­ Rochester Approach Delegated Airspace
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+ZMP/RST LOA  3
+Attachment A:
+
+ZMP/RST LOA    4
+

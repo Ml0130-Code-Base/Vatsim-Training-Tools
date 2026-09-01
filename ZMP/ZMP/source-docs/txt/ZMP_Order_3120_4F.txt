@@ -1,0 +1,2058 @@
+Minneapolis ARTCC                                       Air Traffic Operations Manual
+                                    Air Traffic Control Specialist Training Manual
+ORDER
+                                                          ATCSTM
+                                                           3120.4F
+
+            AIR TRAFFIC OPERATIONS MANUAL
+
+            AIR TRAFFIC CONTROL SPECIALIST
+                        TRAINING MANUAL
+
+                      July 1, 2019
+
+                       VATUSA MINNEAPOLIS ARTCC
+
+                      VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+Revision 6
+
+Effective 01 JULY 19                                          i
+Minneapolis ARTCC                         Air Traffic Operations Manual
+                      Air Traffic Control Specialist Training Manual
+
+                      LIST OF EFFECTIVE PAGES (LEP)
+
+ Page Number                          Subject Matter                   Effective Date
+
+             1                                Cover Page                   01 JULY 19
+             2                                                             01 JULY 19
+             3                                     LEP                     01 JULY 19
+             4                                                             01 JULY 19
+             5                               Revision Log                  01 JULY 19
+             6                                                             01 JULY 19
+             7                                Bulletin Log                 01 JULY 19
+           8-30                                                            01 JULY 19
+                                                  TOC                      01 JULY 19
+          31-44                                                            01 JULY 19
+          45-54                                 Preface                    01 JULY 19
+          55-67        Section 1 ­ Controller Ratings Guidelines and       01 JULY 19
+Separate documents                                                         01 JULY 19
+                                            Competencies
+                           Section 2 ­ Major Airport Training Plans
+                         Section 3 ­ Student 1 (S1) Rating Training
+
+                                                Syllabus
+                         Section 4 ­ Student 2 (S2) Rating Training
+
+                                                Syllabus
+                      Section 5 ­ Senior Student (S3) Rating Training
+
+                                                Syllabus
+                         Section 6 ­ Controller (C1) Rating Training
+
+                                                Syllabus
+                                              Appendices
+
+Revision 6
+
+Effective 01 JULY 19                                                   ii
+Minneapolis ARTCC                                          Air Traffic Operations Manual
+                                       Air Traffic Control Specialist Training Manual
+     Revision Date
+                      REVISION LOG     Initials
+         23 APRIL 08
+          23 MAY 08   Revision Number    KMP
+       01 AUGUST 09                      KMP
+       09 JANUARY 10               A     TGB
+       01 AUGUST 10                B     TGB
+          01 JULY 19               C     AAZ
+                                   D     CLB
+                                   E
+                                    F
+
+Revision 6
+
+Effective 01 JULY 19                             iii
+Minneapolis ARTCC                                       Air Traffic Operations Manual
+                                    Air Traffic Control Specialist Training Manual
+  Bulletin
+  Number              BULLETIN LOG
+
+                      Subject  Initials    Date      Date
+                                         Entered  Removed
+
+Revision 6
+
+Effective 01 JULY 19                              iv
+Minneapolis ARTCC                                                                      Air Traffic Operations Manual
+                                                                   Air Traffic Control Specialist Training Manual
+
+                      TABLE OF CONTENTS
+
+LIST OF EFFECTIVE PAGES (LEP)                           II
+
+REVISION LOG                                            III
+
+BULLETIN LOG                                            IV
+
+TABLE OF CONTENTS                                       V
+
+PREFACE
+
+SECTION 1 ­ CONTROLLER RATINGS GUIDELINES AND           1
+
+COMPETENCIES
+
+SECTION 2 ­ MAJOR AIRPORT TRAINING PLANS                2
+
+SECTION 3 ­ STUDENT 1 RATING (S1) TRAINING SYLLABUS     9
+
+SECTION 4 ­STUDENT 2 RATING (S2) TRAINING SYLLABUS      19
+
+SECTION 5 ­ SENIOR STUDENT RATING (S3) TRAINING SYLLABUS 26
+
+SECTION 6 ­ CONTROLLER RATING (C1) TRAINING SYLLABUS    36
+
+APPENDIX A ­ STUDENT PROGRESS FORM                      49
+
+APPENDIX B ­ STUDENT 1 AND 2 RATING TRAINING MATERIALS  50
+
+APPENDIX C ­ SR. STUDENT RATING TRAINING MATERIALS      51
+
+APPENDIX D ­ CONTROLLER RATING TRAINING MATERIALS       52
+
+AUTHORIZATIONS                                          53
+
+Revision 6
+
+Effective 01 JULY 19                                         v
+                                                Preface
+
+The Air Traffic Control Specialist Training Manual (ATCSTM) is Volume 3 of the ZMP Air Traffic
+Operations Manual ­ a library of controlled documents which contain all administrative and
+operational policies and procedures for the Virtual Minneapolis Air Route Traffic Control Center
+(ZMP).
+
+The ATCSTM will be used as the local ARTCC reference concerning the training, testing, and
+evaluation of the air traffic controllers with membership privileges at the Virtual Minneapolis Air
+Route Traffic Control Center (ZMP). Oversight of the ATCSTM is the responsibility of the Director
+of Training/Training Administrator.
+
+Controlled documents are publications that have certain procedures for distribution and record
+keeping. The object is to keep all persons who have a copy of this document current with any
+ongoing changes and revisions. This is accomplished through a revision and bulletin system.
+
+Revisions: Periodically, a number of changes to the document will require the addition,
+subtraction, or replacement of several sections of the document. To accomplish this, a revision
+will be issued. With the revision, each person possessing a copy will be given instructions on how
+to revise their copy. Each person receiving a revision to this controlled document will record the
+revision in the revision log.
+
+Bulletins: On a regular basis, new information which is of high importance may be added to the
+document without having to wait for the next revision to be published. Such information will be
+disseminated with a bulletin which will supplement the document in specific areas or subject
+matter. With the bulletin, each person possessing a copy will be given instructions on how to
+insert the bulletin into the document. Each person receiving a bulletin will record the bulletin in the
+bulletin log.
+
+Should any questions arise out of the use of this document, please address them to:
+
+Christopher L. Bright
+Training Administrator
+Minneapolis ARTCC, VATSIM
+                                              SECTION 1
+
+          CONTROLLER RATINGS GUIDELINES AND COMPETENCIES
+
+1.1 General
+
+ZMP ARTCC shall at all times observe controller rating guidelines and competencies as set forth
+in applicable VATSIM and VATUSA policies. As such, all content and direction of the ZMP
+ATCSTM shall be utilized in the context of the governing VATSIM and VATUSA policies.
+
+1.2 Applicability
+
+All controllers belonging to ZMP ARTCC as members shall be trained to proficiency using the
+content and materials contained herein. Visiting controllers shall be subject to general
+competency guidelines and shall be trained in local procedures (Major facility certification) using
+the content and materials contained herein.
+
+1.3 Training Scheduling
+
+All training shall be scheduled via the ZMP ARTCC website at least 12 hours in advance unless
+otherwise initiated by a member of the training staff. The standard process for scheduling training
+must be as follows:
+
+           1. The student shall list his/her availability periods on the ZMP scheduling system.
+                Availability periods should, but may not be, at least 2 hours in length.
+
+           2. The training staff member shall initiate a session offer to the student based upon the
+                listed period(s) of availability.
+
+           3. The student shall respond to the session offer with either an acceptance or refusal
+                based upon his/her readiness to conduct the session. Confirmation must be recorded
+                at least 2 hours prior to the scheduled session start time.
+
+           4. Unless the training staff is otherwise notified, a No-Show Session occurrence shall be
+                recorded if a student cancels a scheduled session within 2 hours of the scheduled
+                start time, or if the student confirms a session and fails to report within 15 minutes of
+                the scheduled start time.
+
+           5. Unless the training staff is otherwise notified, a Failure to Confirm Session
+                occurrence shall be recorded if the student fails to respond to an offered training
+                session with either an acceptance or refusal by a point 2 hours prior to the proposed
+                session time.
+
+           6. No-Show/Failure to Confirm occurrences shall not be punitive in nature, rather used
+                as an indicator of student progress and to identify trends in successful or
+                unsuccessful training scheduling.
+
+1.4 Training Expectations
+           1. The student shall take responsibility for the progress of his/her own training and
+                allocate availability accordingly.
+           2. The student shall abide by the ZMP Training Scheduling process as outlined above.
+           3. The student shall prepare for sessions to the best of his/her ability, including self-
+                study of ATC Orders, VATUSA CBI materials, and ZMP Facility Orders, and any
+                other applicable reference resources.
+           4. The student shall be an active participant in his/her training, and seek out clarification
+                on material where it is not immediately understood.
+           5. The student shall be provided a record of every training session for review via a
+                3120-25 training session report.
+
+                       END OF SECTION
+
+Revision 6
+
+Effective: 01 JULY 19                  1
+                                  SECTION 2
+
+                       MAJOR AIRPORT TRAINING PLANS
+
+2.1 General
+
+All controllers at ZMP shall meet the additional training standards of a Major facility before
+working positions at that facility. Under VATSIM's Global Ratings Policy, a controller must meet
+the standards at the Ground, Tower, and Approach levels. Currently Minneapolis (KMSP) is the
+sole Major airport under ZMP's jurisdiction.
+
+2.1.1 Major facility certification Evaluation/Examination Requirements
+
+Written Examinations and Quizzes
+
+Written exams and/or quizzes will be administered for certification of controllers at MAJOR
+facilities. KMSP is the single MAJOR facility at ZMP.
+
+Over-the-Shoulder Examinations
+
+Over-the-Shoulder Exams (OTS) will be required for certification at Major facilities for each of the
+Ground, Tower, and Approach levels.
+
+There is no major certification for ZMP CTR, however, transfer and visiting controllers who are C1
+rated or higher must complete the requirements of all ZMP MAJOR facilities before they are
+considered certified on Minneapolis Center.
+
+Oral Examinations
+
+As a routine part of training and evaluation, the instructor administering a MAJOR facility
+certification test.(MFC) may use oral exam techniques to evaluate an applicants' knowledge.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                                 2
+2.3 Major Certification for KMSP Ground
+
+I.          Objective
+
+            To establish a uniform set of standards for controller competency at the positions
+            listed in this document.
+
+II.         Applicability
+
+            This Local Competency Training Plan (Major facility certification) applies to the
+            following positions and/or facilities:
+
+            KMSP (Minneapolis/St. Paul International Airport)
+            MSP_DEL
+            MSP_X_GND
+
+            (Note: X in the above position callsigns is a placeholder for any variation of the
+            position, i.e. MSP_S_GND, MSP_N_GND)
+
+III.        Certification Standards
+
+            Controllers shall demonstrate competency in the following subject areas to attain
+            certification:
+            1. Competency standards as defined by VATUSA for the rating of the controller.
+
+            2. Knowledge and usage of the ZMP ATCSOP sections that apply to the positions
+                 covered in this Major facility certification.
+
+            3. Written test/quiz score(s) for positions covered in this Major facility certification of
+                 70% or greater.
+
+            4. Successful oral examination of Knowledge Areas listed in this Major facility
+                 certification.
+
+            5. Appropriate/commensurate logged time spent in OJT with a mentor or instructor
+                 working all positions covered in this Major facility certification.
+
+            6. Successful OTS examination for MSP_DEL and MSP_GND.
+
+IV. Knowledge Areas
+          1. Positions
+          2. Intra-facility coordination (between tower cab positions)
+          3. Inter-facility coordination (between tower cab positions and external positions)
+          4. Airport Layout
+          5. Airspace Layout
+          6. Jurisdiction and responsibilities of each position
+
+Revision 6
+
+Effective: 01 JULY 19                                                                           3
+            7. Communications and Frequencies
+            8. Flight Plan/Strip Management
+            9. SIDs and STARs
+            10. Common/Preferred Routings
+            11. LAHSO Operations
+            12. Special Operations
+
+V.          Certification Rules
+
+            1. Upon successful certification under this Major facility certification, the examining
+                 controller (typically an instructor, the Director of Training/Training Administrator,
+                 DATM, or ATM, or another controller designated by the ATM) shall make
+                 arrangements to have the Major facility certification certification posted on the
+                 ZMP website.
+
+            2. A controller may only exercise the privileges of the Major facility certification
+                 certification to extent their controller rating allows.
+
+            3. A controller who has previously attained certification under this Major facility
+                 certification is subject to competency review at any time. Should the controller's
+                 skills not meet the competency standards outlined in this Major facility
+                 certification, his/her certification may be revoked by the Director of
+                 Training/Training Administrator, DATM, or ATM.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                                   4
+2.4 Major Certification for KMSP Tower
+
+     VI. Objective
+
+                To establish a uniform set of standards for controller competency at the positions
+                listed in this document.
+
+     VII. Applicability
+
+                This Major facility certification applies to the following positions and/or facilities:
+
+                KMSP (Minneapolis/St. Paul International Airport)
+                MSP_X_TWR
+
+                (Note: X in the above position callsigns is a placeholder for any variation of the
+                position, i.e. MSP_S_TWR, MSP_N_TWR)
+
+     VIII. Certification Standards
+
+                Controllers shall demonstrate competency in the following subject areas to attain
+                certification:
+                7. Competency standards as defined by VATUSA for the rating of the controller.
+
+                8. Knowledge and usage of the ZMP ATCSOP sections that apply to the positions
+                     covered in this Major facility certification.
+
+                9. Written test/quiz score(s) for positions covered in this Major facility certification of
+                     70% or greater.
+
+                10. Successful oral examination of Knowledge Areas listed in this Major facility
+                     certification.
+
+                11. Appropriate/commensurate logged time spent in OJT with a mentor or instructor
+                     working all positions covered in this Major facility certification.
+
+                12. Successful OTS examination for MSP_TWR
+
+IX. Knowledge Areas
+
+            1. Positions
+
+            2. Intra-facility coordination (between tower cab positions)
+
+            3. Inter-facility coordination (between tower cab positions and external positions)
+
+            4. Airport Layout
+
+            5. Airspace Layout
+
+            6. Jurisdiction and responsibilities of each position
+
+            7. Communications and Frequencies
+
+            8. Flight Plan/Strip Management
+
+Revision 6
+
+Effective: 01 JULY 19                                                                            5
+            9. SIDs and STARs
+            10. Common/Preferred Routings
+            11. LAHSO Operations
+            12. Special Operations
+
+X.          Certification Rules
+
+            1. Upon successful certification under this Major facility certification, the examining
+                 controller (typically an instructor, the Director of Training/Training Administrator,
+                 DATM, or ATM, or another controller designated by the ATM) shall make
+                 arrangements to have the Major facility certification certification posted on the
+                 ZMP website.
+
+            2. A controller may only exercise the privileges of the Major facility certification
+                 certification to extent their controller rating allows.
+
+            3. A controller who has previously attained certification under this Major facility
+                 certification is subject to competency review at any time. Should the controller's
+                 skills not meet the competency standards outlined in this Major facility
+                 certification, his/her certification may be revoked by the Director of
+                 Training/Training Administrator, DATM, or ATM.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                                   6
+2.5 M98 TRACON Major facility certification
+
+I.          Objective
+
+            To establish a uniform set of standards for controller competency at the positions
+            listed in this document.
+
+II.         Applicability
+
+            This (Major facility certification) applies to the following positions and/or facilities:
+
+            M98 TRACON (Minneapolis TRACON)
+            MSP_X_DEP
+            MSP_X_APP
+
+            (Note: X in the above position callsigns is a placeholder for any variation of the
+            position, i.e. MSP_S_TWR, MSP_N_TWR)
+
+III.        Certification Standards
+
+            Controllers shall demonstrate competency in the following subject areas to attain
+            certification:
+            1. Competency standards as defined by VATUSA for the rating of the controller.
+
+            2. Knowledge and usage of the M98/MSP TWRATCSOP sections that apply to the
+                 positions covered in this Major facility certification.
+
+            3. Written test/quiz score(s) for positions covered in this Major facility certification of
+                 70% or greater.
+
+            4. Successful oral examination of Knowledge Areas listed in this Major facility
+                 certification.
+
+            5. Appropriate/commensurate logged time spent in OJT with a mentor or instructor
+                 working all positions covered in this Major facility certification.
+
+            6. Successful OTS examination for MSP_APP.
+
+IV. Knowledge Areas
+          1. TRACON Positions of Operation
+          2. Intra-facility coordination (between TRACON positions)
+          3. Inter-facility coordination (between TRACON positions and external positions)
+          4. TRACON Functions
+          5. Airspace Layout
+          6. Jurisdiction and responsibilities of each position
+          7. Communications and Frequencies
+
+Revision 6
+
+Effective: 01 JULY 19                                                                                  7
+            8. Flight Plan/Strip Management
+            9. SIDs and STARs
+            10. Common/Preferred Routings
+            11. Simultaneous Parallel Approach Vectoring
+            12. Flows and Sequencing
+            13. Satellite Airport Operations
+            14. Class B Airspace Operations
+
+V.          Certification Rules
+
+            1. Upon successful certification under this Major facility certification, the examining
+                 controller (typically an instructor, the Director of Training/Training Administrator,
+                 DATM, or ATM, or another controller designated by the ATM) shall make
+                 arrangements to have the Major facility certification posted on the ZMP website.
+
+            2. A controller may only exercise the privileges of the Major facility certification to
+                 extent their controller rating allows.
+
+            A controller who has previously attained certification under this Major facility
+            certification is subject to competency review at any time. Should the controllers
+            skills not meet the competency standards outlined in this Major facility
+            certification, his/her certification may be revoked by the Training Administrator,
+            DATM, or ATM.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                                   8
+                                    SECTION 3
+
+            STUDENT RATING (S1) TRAINING SYLLABUS
+
+3.1         Lesson Plans and Syllabus Outline
+
+3.1.1       Overview
+
+The lesson plans included in this section are intended to give students, mentors, and instructors
+guidance on training for the VATSIM/VATUSA Student rating (S1). The lesson plans contained
+herein shall include the minimum training elements needed to meet controller ratings guidelines
+and competency standards. Additional material may be covered on a case-by-case basis, so long
+that the material is within the scope of controller duties as contemplated by FAA orders, VATSIM
+and VATUSA policies, and the ZMP ARTCC Air Traffic Operations Manual. Times noted in the
+"Schedule" section of each lesson plan indicate the estimated time necessary to cover all
+elements, and should be used as a guideline only.
+
+3.1.2       Syllabus Outline
+
+Lesson General Subjects
+
+S1.1        Introduction to VATSIM/VATUSA Air Traffic Control
+
+S1.2        Radar Client/Controller Workspace Setup
+
+S1.3        Basic ATC Concepts and Regulations
+
+S1.4        Basic ATC Communications and Phraseology
+
+S1.5        Clearance Delivery
+
+S1.6        Ground Control
+
+S1.7        S1 Practical Exam Prep
+
+Revision 6
+
+Effective: 01 JULY 19                                          9
+3.2         S1 Rating Lesson Plans
+
+S1.1        Introduction to VATSIM/VATUSA Air Traffic Control
+
+Objective:  To introduce the observer (OBS) rated controller to the functionality of air traffic
+            control services in the VATSIM/VATUSA simulation environment.
+
+Elements:   + Basic radar client setup (login and sector file loading)
+            + Review of VATSIM/VATUSA governance and organization
+            + Review of VATUSA certification regulations
+            + Review of types of ATC facilities and functions
+            + Observation of radar environments and VATSIM ATC communications
+
+Schedule: 30-90 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall assist the OBS controller in basic Teamspeak setup (if not already
+accomplished) so that the lesson can be conducted via Teamspeak.
+
+The instructor or mentor shall assist the OBS controller in setting up an approved radar client
+(preferably VRC) for the purpose of observation. Proper login protocols shall be taught, and the
+OBS controller shall load the appropriate sector files to view all of ZMP's airspace features and
+facilities.
+
+The instructor or mentor shall cover the elements of this lesson plan with verbal instruction while
+the OBS controller observes the live ATC environment on the network.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. This lesson is mainly observation-based.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered and the student understands how
+to log onto the VATSIM network as an OBS controller on his own.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                              10
+3.2         S1 Rating Lesson Plans (continued)
+S1.2        Radar Client/Controller Workspace Setup
+
+Objective:  This lesson shall instruct the student on how to best set up the radar client
+            environment for work in a controller position
+
+Elements:   + Basic radar client setup (login and sector file loading)
+            + Login to SWEATBOX servers
+            + Position callsigns
+            + VRC radar modes
+            + Use of flight strips
+            + Understanding of VRC functions used by tower cab controllers
+
+Schedule: 30-90 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites,
+                     TWRTrainer, sector files that cover the KMSP tower cab environment.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall assist the OBS controller in basic Teamspeak setup (if not already
+accomplished) so that the lesson can be conducted via Teamspeak.
+
+The instructor or mentor shall assist the OBS controller in setting up an approved radar client
+(preferably VRC) on an appropriate SWEATBOX server. Proper login protocols shall be taught,
+and the OBS controller shall load the appropriate sector files to view all of ZMP's airspace
+features and facilities.
+
+The instructor shall run a basic ground/tower scenario with ACSim or TWRTrainer to generate
+example traffic at KMSP.
+
+The instructor or mentor shall cover the elements of this lesson plan with verbal instruction while
+the OBS controller observes and responds to instructor actions. *No part of the lesson shall be
+conducted "live" on the VATSIM network.*
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall also work on developing
+practical skill and technique using the radar client software to interact with aircraft.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. This includes successful
+demonstration of:
+
+- Proper login procedures and basic radar client setup
+- Understanding how to select, view, and interpret basic radar modes o simulate ASDE
+
+     radar. Both basic and ground modes..
+- How to aircraft "radio select" in the radar client
+- How to access the flight strips and flight plans for aircraft
+- How to use function keys and menus in the client to change aircraft data and tag
+
+     information
+- How to access weather information
+
+Revision 6
+
+Effective: 01 JULY 19                                                                            11
+3.2         S1 Rating Lesson Plans (continued)
+
+S1.3        Basic ATC Concepts and Regulations
+
+Objective:  To understand basic ATC concepts, regulations, and function in the real-world
+            and VATSIM environments. This includes covering relevant areas of FAA Order
+            7110.65 and CFR 14 FAR Part 91.
+
+Elements:   + Access to, and understanding of, FAA Order 7110.65
+
+                       - Chapter 2: General Control
+
+            + Access to, and understanding of, FAR Part 91
+
+                       - 91.113  Right-of-way rules: Except water operations.
+
+                       - 91.115  Right-of-way rules: Water operations.
+
+                       - 91.117  Aircraft speed.
+
+                       - 91.119  Minimum safe altitudes: General.
+
+                       - 91.121  Altimeter settings.
+
+                       - 91.123  Compliance with ATC
+
+                       - 91.127  Operating on or in the vicinity of an airport in Class E
+
+                                 airspace.
+
+                       - 91.129  Operations in Class D airspace.
+
+                       - 91.130  Operations in Class C airspace.
+
+                       - 91.131  Operations in Class B airspace.
+
+                       - 91.135  Operations in Class A airspace.
+
+                       - 91.153  VFR flight plan: Information required.
+
+                       - 91.155  Basic VFR weather minimums.
+
+                       - 91.159  VFR cruising altitude or flight level.
+
+                       - 91.169  IFR flight plan: Information required.
+
+                       - 91.173  ATC clearance and flight plan required.
+
+                       - 91.175  Takeoff and landing under IFR.
+
+                       - 91.177  Minimum altitudes for IFR operations.
+
+                       - 91.179  IFR cruising altitude or flight level.
+
+                       - 91.181  Course to be flown.
+
+Schedule: 90-120 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites. Online
+                     reference to FAA Order 7110.65 and FAR Part 91
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall conduct this lesson on Teamspeak. The student may be logged
+onto the VATSIM network as an observer, and it may be helpful to use the radar environment to
+help explain the regulations covered in this lesson.
+
+The instructor or mentor shall endeavor to cover as much of the regulations listed in the elements
+as possible. They shall instruct the student to the point of general comprehension. The student
+does not need to "memorize" these regulations, per se, but does need to be instructed on how to
+access them. The student shall be encouraged to study the regulations on their own time to
+further understanding.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. This lesson is mainly observation-based.
+
+Completion Standards:
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          12
+The lesson shall be completed when all elements are covered and the student understands how
+to access the regulations covered. In addition, the student shall demonstrate general
+comprehension of the regulations listed in italic font.
+
+Revision 6
+
+Effective: 01 JULY 19  13
+3.2         S1 Rating Lesson Plans (continued)
+
+S1.4        Basic ATC Communications and Phraseology
+
+Objective: To introduce and practice basic ATC communications and phraseologies.
+
+Elements:   + Basic radio operating technique (listen, think, transmit)
+            + ICAO Phonetic Alphabet
+            + Basic ATC phraseology
+
+                       - identification and response
+                       - clearances vs. instructions
+
+Schedule: 30-60 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall demonstrate for the student proper communications skills covered
+in the lesson elements. This may be conducted over Teamspeak alone, or in conjunction with a
+SWEATBOX session to practice radar client radio techniques.
+
+The student shall be taught basic radio operating techniques which include the ability to "listen,
+then think about what to say, and THEN transmit". The instructor/mentor shall also provide
+instruction on basic phraseologies, taking care to differentiate between ATC clearances and
+instructions.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate the ability to use proper ATC communications skills.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. This includes the student
+demonstrating basic ATC communications skill and phraseology. The student shall be able to
+respond as a controller should to aircraft queries, give basic instructions using appropriate
+phraseology and phonetics, and differentiate between clearances and instructions.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                               14
+3.2         S1 Rating Lesson Plans (continued)
+
+S1.5        Clearance Delivery
+
+Objective:  To introduce and practice the functions of the clearance delivery controller
+            position
+
+Elements:   + Referencing the ZMP M98/MSP TWR SOP for MSP_DEL
+            + Appropriate client setup/login for position
+            + Understanding flight plans
+            + ATC Clearances ­ general
+            + KMSP standard clearances and routings
+            + Transponder code allocations
+            + Altitude assignment
+            + Intra-facility coordination
+            + Clearance phraseology (CRAFT method)
+            + Flight plan management / Flight Progress Strips
+            + Clearance delivery communications
+
+Schedule: 60 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, TWRTrainer, reference to VATUSA, VATSIM, and ZMP
+                     websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student set up in the SWEATBOX environment. The
+instructor/mentor shall utilize TWRTrainer to simulate traffic at KMSP. The instructor/mentor shall
+demonstrate the lesson elements to the student, as well as play the role of aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate the ability to operate as a clearance delivery controller.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. The student will be able to
+conduct themselves with competency as a clearance delivery controller. This lesson shall be
+repeated as necessary to achieve completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          15
+3.2         S1 Rating Lesson Plans (continued)
+
+S1.6        Ground Control
+
+Objective: To introduce and practice the functions of a ground controller
+
+Elements:   + Referencing the ZMP M98/MSP TWR SOP for ground positions at KMSP
+            + Airport layout
+            + Ground movement areas and operations
+            + Difference between movement and non-movement area
+            + Following procedures and sequencing to runway
+            + Selection of runway based on winds/traffic flow
+            + Sequencing aircraft for departure
+            + Basic movement instructions
+            + Intra-facility coordination
+            + Ground controller communications
+
+Schedule: 60 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, TWRTrainer, reference to VATUSA, VATSIM, and ZMP
+                     websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student set up in the SWEATBOX environment. The
+instructor/mentor shall utilize TWRTrainer to simulate traffic at KMSP. The instructor/mentor shall
+demonstrate these elements to the student, as well as play the role of aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate the ability to operate as a ground controller.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. The student will be able to
+
+conduct themselves with competency as a ground controller. This lesson shall be repeated as
+necessary to achieve completion standards. Upon successful demonstration of Clearance
+Delivery/Ground Control tasks, the student must be endorsed for non-major Clearance
+Delivery/Ground, and may be awarded a solo certification for Major Clearance
+Delivery/Ground at the discretion of the instructor.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          16
+3.2         S1 Rating Lesson Plans (continued)
+
+S1.7        S1 Major Practical Exam Preparation
+
+Objective: To prepare the student to take the S1 written and practical exams successfully
+
+Elements:   + Pre-Control Setup and Configuration
+                       - Configuration of sector file and appropriate overlays
+                       - Setup and selection of proper communications frequencies
+                       - Selection and Activation of ATIS Information
+
+            + Network Procedures
+                       - Uses appropriate callsign and credentials
+                       - Selection of appropriate visibility range settings based on
+                       recommended settings for position
+
+            + Position Relief Briefing
+            + Accessing Flight Strip Data
+            + Flight Plan Amendments
+            + Preferred Routing Procedures
+            + Non-Standard Routing Procedures
+            + VFR and IFR Clearance Procedures
+            + Squawk Code Assignments
+            + Clearance Issuance
+            + Movement and Non-Movement Areas
+            + Taxi and Ground Movement Operations
+            + Helicopter Taxi Operations
+            + Runway Selection
+            + ATIS Issuance
+            + Basic aviation weather
+            + Controller communications
+            + Intra-facility coordination
+
+Schedule: 60-120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, TWRTrainer, reference to VATUSA, VATSIM, and ZMP
+                     websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student set up in the SWEATBOX environment. The
+instructor/mentor shall utilize TWRTrainer to simulate traffic at KMSP. The instructor/mentor shall
+instruct and drill the student to proficiency and competency on all elements. Upon successful
+completion of the lesson, the instructor/mentor shall recommend the student for the S1 written
+and OTS Practical exams.
+
+Student Actions:
+
+The student shall work to attain proficiency and competency as an S1-rated controller. Upon
+recommendation of an instructor, the student shall take and pass the S1 written exam.
+
+Completion Standards:
+
+Revision 6
+
+Effective: 01 JULY 19                                                                        17
+The lesson shall be completed when the student passes the MSP Ground Control written exam
+and is prepared to take the S1 MAJOR OTS practical exam. This lesson shall be repeated as
+necessary to achieve completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                      18
+                                   SECTION 4
+
+                       STUDENT 2 RATING (S2) TRAINING SYLLABUS
+
+4.1         Lesson Plans and Syllabus Outline
+
+4.1.1       Overview
+
+The lesson plans included in this section are intended to give students, mentors, and instructors
+guidance on training for the VATSIM/VATUSA Student rating (S1). The lesson plans contained
+herein shall include the minimum training elements needed to meet controller ratings guidelines
+and competency standards. Additional material may be covered on a case-by-case basis, so long
+that the material is within the scope of controller duties as contemplated by FAA orders, VATSIM
+and VATUSA policies, and the ZMP ARTCC Air Traffic Operations Manual. Times noted in the
+"Schedule" section of each lesson plan indicate the estimated time necessary to cover all
+elements, and should be used as a guideline only.
+
+4.1.2       Syllabus Outline
+
+Lesson General Subjects
+
+S2.1        Radar Client/Controller Workspace Setup
+
+S2.2        Basic ATC Concepts and Regulations
+
+S2.3        Basic ATC Communication and Phraseology
+
+S2.4        Local Control (Tower)
+
+S2.5        Student 2 (S2) Practical Test Prep
+
+Revision 6
+
+Effective: 01 JULY 19                                           19
+S2.1        Radar Client/Controller Workspace Setup
+
+Objective:  This lesson shall instruct the student on how to best set up the radar client
+            environment for work in a controller position
+
+Elements:   + Basic radar client setup (login and sector file loading)
+            + Login to SWEATBOX servers
+            + Position callsigns
+            + VRC radar modes
+            + Use of flight strips
+            + Understanding of VRC functions used by tower cab controllers
+
+Schedule: 30-90 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites,
+                     TWRTrainer, sector files that cover the KMSP tower cab environment.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall assist the S1 controller in setting up an approved radar client
+(preferably VRC) on an appropriate SWEATBOX server. Proper login protocols shall be taught,
+and the OBS controller shall load the appropriate sector files to view all of ZMP's airspace
+features and facilities.
+
+The instructor shall run a basic ground/tower scenario with ACSim or TWRTrainer to generate
+example traffic at KMSP.
+
+The instructor or mentor shall cover the elements of this lesson plan with verbal instruction while
+the OBS controller observes and responds to instructor actions. *No part of the lesson shall be
+conducted "live" on the VATSIM network.*
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall also work on developing
+practical skill and technique using the radar client software to interact with aircraft.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. This includes successful
+demonstration of:
+
+     - Proper login procedures and basic radar client setup
+     - Understanding how to select, view, and interpret basic radar modes o simulate ASDE
+
+           radar and tower modes.
+     - How to aircraft "radio select" in the radar client
+     - How to access the flight strips and flight plans for aircraft
+     - How to use function keys and menus in the client to change aircraft data and tag
+
+           information
+     - How to access weather information
+
+Revision 6
+
+Effective: 01 JULY 19                                                                      20
+S2.2        Basic ATC Concepts and Regulations
+
+Objective:  To understand basic ATC concepts, regulations, and function in the real-world
+            and VATSIM environments. This includes covering relevant areas of FAA Order
+            7110.65.
+
+Elements:   + Access to, and understanding of, FAA Order 7110.65
+            + Review Tower separation techniques for arrival/departure sequencing (at a
+            glance)
+            + Wake Turbulence Separation Application (at a glance)
+            + Separation Minima (at a glance)
+            + MSP/Airport Departure/Arrival Separation Procedures (at a glance)
+
+Schedule: 90-120 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites. Online
+                     reference to FAA Order 7110.65.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall conduct this lesson on Teamspeak. The student may be logged
+onto the VATSIM network as an observer, and it may be helpful to use the radar environment to
+help explain the regulations covered in this lesson.
+
+The instructor or mentor shall endeavor to cover as much of the regulations listed in the elements
+as possible. They shall instruct the student to the point of general comprehension. The student
+does not need to "memorize" these regulations, per se, but does need to be instructed on how to
+access them. The student shall be encouraged to study the regulations on their own time to
+further understanding.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. This lesson is mainly observation-based.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered and the student understands how
+to access the regulations covered. In addition, the student shall demonstrate general
+comprehension of the regulations listed in italic font.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          21
+S2.3        Basic ATC Communications and Phraseology
+
+Objective: To introduce and practice basic ATC communications and phraseologies.
+
+Elements:   + Basic radio operating technique (listen, think, transmit)
+            + ICAO Phonetic Alphabet
+            + Basic ATC phraseology
+
+                       - identification and response
+                       - clearances vs. instructions
+
+Schedule: 30-60 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+The instructor or mentor shall demonstrate for the student proper communications skills covered
+
+in the lesson elements. This may be conducted over Teamspeak alone, or in conjunction with a
+SWEATBOX session to practice radar client radio techniques.
+
+The student shall be taught basic radio operating techniques which include the ability to "listen,
+then think about what to say, and THEN transmit". The instructor/mentor shall also provide
+instruction on basic phraseologies, taking care to differentiate between ATC clearances and
+instructions.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate the ability to use proper ATC communications skills.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. This includes the student
+demonstrating basic ATC communications skill and phraseology. The student shall be able to
+respond as a controller should to aircraft queries, give basic instructions using appropriate
+phraseology and phonetics, and differentiate between clearances and instructions.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                               22
+S2.4        Local Control (tower)
+
+Objective: To introduce and practice the functions of a local controller (tower positions)
+
+Elements:   + Referencing the M98/MSP TWR ATCSOP for tower positions at KMSP
+            + Basic aviation weather
+
+                       - METAR reports (decoding/understanding)
+                       - Cloud and precipitation types
+                       - FAR Part 91 weather minima review
+            + Airport layout and runway configuration
+            + Airspace, jurisdiction, and responsibility
+            + Departure operations
+            + Selection of runway based on winds/traffic flow
+            + Sequencing aircraft for departure
+            + Arrival operations
+            + Traffic pattern operations
+            + VTOL operations
+            + Traffic sequencing and separation
+            + Wake turbulence
+            + LAHSO operations
+            + Missed Approaches
+            + Emergencies
+            + Runway incursion avoidance
+                       - TIPH operations
+            + Local controller communications
+                       - Appropriate phraseologies
+                       - ATIS management
+            + Intra-facility coordination
+
+Schedule: 60-120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, TWRTrainer, reference to VATUSA, VATSIM, and ZMP
+                     websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student set up in the SWEATBOX environment. The
+instructor/mentor shall utilize TWRTrainer to simulate traffic at KMSP. The instructor/mentor shall
+demonstrate these elements to the student, as well as play the role of aircraft.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                       23
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate the ability to operate as a local controller.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. The student will be able to
+conduct themselves with competency as a ground controller. This lesson shall be repeated as
+necessary to achieve completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19  24
+S2.5        S2 Practical Exam Preparation
+
+Objective: To prepare the student to take the S2 written and practical exams successfully
+
+Elements:
+
+            + Spacing and Sequencing
+            + Taxi Into Position and Hold (TIPH)
+            + Land and Hold Short (LAHSO)
+            + VFR Traffic Pattern
+            + Wake Turbulence Separation
+            + Converging or Parallel Runway Operations
+            + Missed Approach Procedures
+            + Emergency Procedures
+            + Referencing the ZMP ATCSOP for tower positions at KMSP
+
+Schedule: 60-120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, TWRTrainer, reference to VATUSA, VATSIM, and ZMP
+                     websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall observe the student in the MSP_TWR position. The
+instructor/mentor shall instruct and drill the student to proficiency and competency on all
+elements. The instructor or mentor may also elect to utilize TWRTrainer to simulate additional
+traffic for the student. Upon successful completion of the lesson, the instructor/mentor shall
+recommend the student for the S2 written and OTS Practical exams.
+
+Student Actions:
+
+The student shall work to attain proficiency and competency as an S2-rated controller. Upon
+recommendation of an instructor, the student shall take and pass the S2 written exam.
+
+Completion Standards:
+
+The lesson shall be completed when the student passes the S2 written exam and is prepared to
+take the S2 OTS practical exam. This lesson shall be repeated as necessary to achieve
+completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                           25
+                                    SECTION 5
+
+            SENIOR STUDENT RATING (S3) TRAINING SYLLABUS
+
+5.1         Lesson Plans and Syllabus Outline
+
+5.1.1       Overview
+
+The lesson plans included in this section are intended to give students, mentors, and instructors
+guidance on training for the VATSIM/VATUSA Senior Student rating (S3). The lesson plans
+contained herein shall include the minimum training elements needed to meet controller ratings
+guidelines and competency standards. Additional material may be covered on a case-by-case
+basis, so long that the material is within the scope of controller duties as contemplated by FAA
+orders, VATSIM and VATUSA policies, and the ZMP ARTCC Air Traffic Operations Manual.
+Times noted in the "Schedule" section of each lesson plan indicate the estimated time necessary
+to cover all elements, and should be used as a guideline only.
+
+5.1.2       Syllabus Outline
+
+Lesson General Subjects
+
+S3.1        Radar Systems and Functions
+
+S3.2        TRACON Facility Positions and Duties
+
+S3.3        Departure Control
+
+S3.4        Arrival Flows and Sequencing
+
+S3.5        Instrument Approach Procedures
+
+S3.6        Final Approach
+
+S3.7        Holding Procedures
+
+S3.8        S3 Practical Exam Prep
+
+Revision 6
+
+Effective: 01 JULY 19                                     26
+5.2         S3 Rating Lesson Plans
+
+S3.1        Radar Systems and Functions
+
+Objective:  In this lesson the student will learn about different TRACON radar systems and
+            the functionality of the radar client that is utilized as a radar position controller
+
+Elements:   + ARTS/CARTS
+            + STARS
+            + VRC Radar Modes
+            + Aircraft Data Tags
+            + Tracking Aircraft
+            + Radar Tag Handoffs
+            + Pointouts and Coordination
+            + Conflict Alerts / Separation Rings
+            + Airspace Filters
+            + Video Map Review / Diagram Functions
+
+Schedule: 60 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_DEP position. This may be done
+"live" on the VATSIM network or in the SWEATBOX environment. The instructor/mentor shall
+demonstrate and instruct the lesson elements to the student.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                              27
+5.2         S3 Rating Lesson Plans (continued)
+
+S3.2        TRACON Facility Positions and Duties
+
+Objective:  In this lesson the student will learn about different TRACON controller positions
+            and their duties.
+
+Elements:   + Departure Control
+            + Feeder/Arrival Approach Control
+            + Final Approach Control
+            + Satellite Approach Control
+            + Reference to M98 TRACON ATCSOP
+            + Intra-facility coordination
+
+Schedule: 30 minutes
+
+Equipment: Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall conduct this as a "classroom" lesson, where the student is not
+logged into a live controlling position. The instructor/mentor shall demonstrate and instruct the
+lesson elements to the student.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                              28
+5.2         S3 Rating Lesson Plans (continued)
+
+S3.3        Departure Control
+
+Objective: In this lesson the student will train "on the job" as a Departure Controller
+
+Elements:   + Position Setup and Login
+            + Radar Identification
+            + Use of Departure Gates
+            + Vectoring onto departure routing/SIDs
+            + Airspace management
+            + Traffic conflicts and advisories
+            + Spacing and sequencing
+            + Coordination with adjacent TRACON positions
+            + Coordination with Tower
+            + Coordination with Center
+            + Handoffs
+            + Proper phraseology and communications
+
+Schedule: 60-90 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_DEP position. This may be done
+"live" on the VATSIM network or in the SWEATBOX environment. The instructor/mentor shall
+demonstrate and instruct the lesson elements to the student, and if necessary, play the role of
+aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate the ability to operate as a departure controller.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements and show
+
+competency as a departure controller. This lesson shall be repeated as necessary to achieve
+completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          29
+5.2         S3 Rating Lesson Plans (continued)
+
+S3.4        Arrival Flows and Sequencing
+
+Objective:  In this lesson the student will learn proper techniques for the efficient flow and
+            sequencing of aircraft from enroute airspace, into the terminal area, and
+            arrangement for final approach vectors. This shall be done through "on the job"
+            training.
+
+Elements:   + Reference of M98 TRACON ATCSOP
+            + Arrival Gates
+            + STARs
+            + Traffic flows
+            + Spacing and sequencing towards finals airspace
+            + Coordination with adjacent TRACON positions
+
+Schedule: 60-120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_H_APP position. This may be
+done "live" on the VATSIM network or in the SWEATBOX environment. The instructor/mentor
+should log into the MSP_N_APP position. The instructor/mentor shall demonstrate and instruct
+the lesson elements to the student.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+
+the student shall be able to demonstrate knowledge of the lesson elements. The student shall
+successfully demonstrate the ability to operate as a feeder/arrival approach controller. This
+lesson shall be repeated as necessary to achieve completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                           30
+5.2         S3 Rating Lesson Plans (continued)
+
+S3.5        Instrument Approach Procedures
+
+Objective:  In this lesson the student will learn about instrument approach procedures, how
+            to read IAP charts, and the function of terminal instrument procedures (TERPS).
+
+Elements:   + Reference of M98 TRACON ATCSOP
+            + Reference of IAP charts for KMSP, KFCM, KMIC, KANE, KSTP
+            + ILS Approaches
+            + Non-Precision Approaches
+            + Missed Approach Procedures
+            + Equipment failure/out of service equipment
+
+Schedule: 60 minutes
+
+Equipment: Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall conduct this as a "classroom" lesson, where the student is not
+logged into a live controlling position. The instructor/mentor shall demonstrate and instruct the
+lesson elements to the student.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                              31
+5.2         S3 Rating Lesson Plans (continued)
+
+S3.6        Final Approach
+
+Objective: In this lesson the student will train "on the job" as a Final Approach controller
+
+Elements:   + Reference of M98 TRACON ATCSOP
+            + Proper sequencing and spacing, use of speed restrictions
+            + Vectors to final approach
+            + Approach clearance terminology (PTAC)
+
+Schedule: 60-120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_N_APP position. This may be
+done "live" on the VATSIM network or in the SWEATBOX environment. The instructor/mentor
+shall demonstrate and instruct the lesson elements to the student.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements. The student shall
+successfully demonstrate the ability to operate as a final approach controller with supervision.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                             32
+5.2         S3 Rating Lesson Plans (continued)
+
+S3.7        Holding Procedures
+
+Objective:  In this lesson the student will train "on the job" as a Final Approach controller
+            while learning the appropriate use of holding procedures
+
+Elements:   + Review/practice as final approach controller
+            + Missed Approach procedures - review
+            + Holding procedures
+
+Schedule: 60-120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_N_APP position. This may be
+done "live" on the VATSIM network or in the SWEATBOX environment. Observation of the
+student on final approach shall include instruction to refine skills, as well as new instruction on
+missed approach and holding procedures.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+
+the student shall be able to demonstrate knowledge of the lesson elements. The student shall
+successfully demonstrate the ability to operate as a final approach controller. This lesson shall
+be repeated as necessary to achieve completion standards.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                                33
+5.2         S3 Rating Lesson Plans (continued)
+S3.8        S3 Practical Exam Prep
+
+Objective: In this lesson the student will prepare for the S3 practical exams
+
+Elements:   + Proper knowledge and use of radar systems
+            + Radar identification
+            + Tracking aircraft
+            + Handoffs
+            + Coordination and Pointouts
+            + Traffic conflicts and advisories
+            + Flight data management
+            + Radar Vectoring
+            + Sequencing and Separation of Departures
+            + Sequencing and Separation of Arrivals
+            + Traffic Flow
+            + Speed Restrictions
+            + Approach Vectoring
+            + Precision Approaches
+            + Non Precision Approaches
+            + Missed Approach Procedures
+            + Holding Procedures
+
+Schedule: 120 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall observe the student in the MSP_N_APP position. The
+instructor/mentor shall instruct and drill the student to proficiency and competency on all
+elements. Upon successful completion of the lesson, the instructor/mentor shall recommend the
+student for the S3 written and OTS Practical exams.
+
+Student Actions:
+
+The student shall work to attain proficiency and competency as an S3-rated controller. Upon
+recommendation of an instructor, the student shall take and pass the S3 written exam.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                        34
+Completion Standards:
+
+The lesson shall be completed when the student passes the S3 written exam and is prepared to
+take the S3 OTS practical exam. This lesson shall be repeated as necessary to achieve
+completion standards.
+
+                                                    END OF SECTION
+
+Revision 6
+
+Effective: 01 JULY 19                                                                         35
+                                    SECTION 6
+
+            CONTROLLER RATING (C1) TRAINING SYLLABUS
+
+6.1         Lesson Plans and Syllabus Outline
+
+6.1.1       Overview
+
+The lesson plans included in this section are intended to give students, mentors, and instructors
+guidance on training for the VATSIM/VATUSA Controller rating (C1). The lesson plans contained
+herein shall include the minimum training elements needed to meet controller ratings guidelines
+and competency standards. Additional material may be covered on a case-by-case basis, so long
+that the material is within the scope of controller duties as contemplated by FAA orders, VATSIM
+and VATUSA policies, and the ZMP ARTCC Air Traffic Operations Manual. Times noted in the
+"Schedule" section of each lesson plan indicate the estimated time necessary to cover all
+elements, and should be used as a guideline only.
+
+6.1.2       Syllabus Outline
+
+Lesson General Subjects
+
+C1.1        ARTCC Radar Systems and Functions
+
+C1.2        ARTCC Airspace Sectors and Positions
+
+C1.3        Enroute Operations
+
+C1.4        Uncontrolled Airport Operations
+
+C1.5        Military Operations
+
+C1.6        Enroute Weather, NOTAMS, Advisories, TMU
+
+C1.7        C1 Practical Exam Prep
+
+Revision 6
+
+Effective: 01 JULY 19                                 36
+6.2         C1 Rating Lesson Plans
+
+C1.1        ARTCC Radar Systems and Functions
+
+Objective: To introduce the student to the DSR radar system and its functions.
+
+Elements:   + Login as ARTCC observer
+            + Set up VRC with appropriate settings for CTR
+
+                  Visibility centers and settings
+                  Sector file settings
+
+            + Observe differences in DSR (Display System Replacement) display and
+            understanding data tags
+
+Schedule: 60 minutes
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student set up as an observer on the VATSIM network,
+viewing the ZMP ARTCC using the CTR Sector file. The instructor/mentor shall log in as a CTR
+controller and demonstrate different uses of the DSR system.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          37
+6.2         C1 Rating Lesson Plans (continued)
+
+C1.2        ARTCC Airspace Sectors and Positions
+
+Objective: To acquaint the student with the ZMP ARTCC airspace sectors and positions
+
+Elements:   + Reference to the ZMP ATCSOP
+            + ARTCC Airspace ­ general boundaries and geographic location
+            + Airspace Responsibility and Delegation
+            + High Enroute Sectors
+            + Low Enroute Sectors
+            + Positions and Staffing
+            + Inter-facility Coordination (LOAs)
+
+Schedule: 60 minutes
+
+Equipment: Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall conduct this as a "classroom" lesson, where the student is not
+logged into a live controlling position. The instructor/mentor shall demonstrate and instruct the
+lesson elements to the student.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                              38
+6.2         C1 Rating Lesson Plans (continued)
+
+C1.3        Enroute Operations
+
+Objective: In this lesson the student will train "on the job" as a Center Controller
+
+Elements:   + Position Setup and Login
+            + Radar Identification
+            + Inter-facility Coordination (ARTCC to ARTCC)
+            + Intra-facility Coordination (with other ZMP controllers)
+            + Enroute Vectoring
+            + Airspace management
+            + Traffic conflicts and advisories
+            + Spacing and sequencing
+            + Enroute Holding
+            + Handoffs
+            + Proper phraseology and communications
+            + "Pop-Up" IFR Flights
+            + VFR Flight Following
+            + VFR On Top
+            + Diversions (divert to alternate)
+
+Schedule: 60-90 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_11_CTR (or equivalent)
+position. This may be done "live" on the VATSIM network or in the SWEATBOX environment. The
+instructor/mentor shall demonstrate and instruct the lesson elements to the student, and if
+necessary, play the role of aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate a basic ability to operate as a center controller.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          39
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                        40
+6.2         C1 Rating Lesson Plans (continued)
+
+C1.4        Uncontrolled Airport Operations
+
+Objective:  In this lesson the student will train "on the job" as a Center Controller, and focus
+            on uncontrolled airport operations
+
+Elements:   + Position Setup and Login
+            + Radar Identification
+            + Inter-facility Coordination (ARTCC to ARTCC)
+            + Intra-facility Coordination (with other ZMP controllers)
+            + Enroute Vectoring
+            + Airspace management
+            + Traffic conflicts and advisories
+            + Spacing and sequencing
+            + Enroute holding
+            + Handoffs
+            + Proper phraseology and communications
+            + IFR clearances from uncontrolled airports
+
+                  Clearance void times and EDCTs
+                  One-in-One-out Rule
+            + Vectors to approaches
+            + Approach clearances
+            + IFR Cancellations
+
+Schedule: 60-90 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_11_CTR (or equivalent)
+position. This may be done "live" on the VATSIM network or in the SWEATBOX environment. The
+instructor/mentor shall demonstrate and instruct the lesson elements to the student, and if
+necessary, play the role of aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate a basic ability to operate as a center controller.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          41
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                        42
+6.2         C1 Rating Lesson Plans (continued)
+
+C1.5        Military Operations
+
+Objective:  In this lesson the student will continue to train "on the job" as a Center Controller,
+            and learn about military operations
+
+Elements:   + Position Setup and Login
+            + Radar Identification
+            + Inter-facility Coordination (ARTCC to ARTCC)
+            + Intra-facility Coordination (with other ZMP controllers)
+            + Enroute Vectoring
+            + Airspace management
+            + Traffic conflicts and advisories
+            + Spacing and sequencing
+            + Enroute holding
+            + Handoffs
+            + Proper phraseology and communications
+            + IFR clearances from uncontrolled airports
+            + Vectors to approaches
+            + Approach clearances
+            + IFR Cancellations
+            + Military Operations Areas (MOAs)
+            + Restricted Areas
+            + In-Flight Military Operations and Manuevers
+
+Schedule: 60-90 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_11_CTR (or equivalent)
+position. This may be done "live" on the VATSIM network or in the SWEATBOX environment. The
+instructor/mentor shall demonstrate and instruct the lesson elements to the student, and if
+necessary, play the role of aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate a basic ability to operate as a center controller.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                          43
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements and show
+competency as a departure controller.
+
+Revision 6
+
+Effective: 01 JULY 19                                                                        44
+6.2         C1 Rating Lesson Plans (continued)
+C1.6
+Objective:  Enroute Weather, NOTAMS, Advisories, TMU
+Elements:
+            In this lesson the student will continue to train "on the job" as a Center Controller
+Schedule:
+Equipment:  + Position Setup and Login
+            + Radar Identification
+            + Inter-facility Coordination (ARTCC to ARTCC)
+            + Intra-facility Coordination (with other ZMP controllers)
+            + Enroute Vectoring
+            + Airspace management
+            + Traffic conflicts and advisories
+            + Spacing and sequencing
+            + Enroute holding
+            + Handoffs
+            + Proper phraseology and communications
+            + IFR clearances from uncontrolled airports
+            + Vectors to approaches
+            + Approach clearances
+            + IFR Cancellations
+            + Enroute Weather:
+
+                  METARs
+                  TAFs
+                  AIRMETs/SIGMETs
+                  Convective SIGMETs
+                  Center Weather Advisories
+                  Weather Deviation Procedures
+                  Turbulence Reports
+                  PIREPs
+            + NOTAMs
+                  NOTAM Classes
+                  NOTAM decoding/readback
+            + TFRs
+            + Gate Holds/Ground Stops/Delay Programs
+            + ZMP "TMU" Procedures
+
+            60-120 minutes
+
+            VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Revision 6
+
+Effective: 01 JULY 19  45
+Instructor/Mentor Actions:
+
+The instructor or mentor shall have the student log into the MSP_11_CTR (or equivalent)
+position. This may be done "live" on the VATSIM network or in the SWEATBOX environment. The
+instructor/mentor shall demonstrate and instruct the lesson elements to the student, and if
+necessary, play the role of aircraft.
+
+Student Actions:
+
+The student shall work to understand the lesson elements, take notes, ask questions, and work
+with the instructor/mentor to meet the lesson objective. The student shall successfully
+demonstrate an ability to operate as a center controller.
+
+Completion Standards:
+
+The lesson shall be completed when all elements are covered. Upon completion of the lesson,
+the student shall be able to demonstrate knowledge of the lesson elements and show
+competency as a center controller.
+
+Revision 6
+
+Effective: 01 JULY 19  46
+6.2         C1 Rating Lesson Plans (continued)
+
+C1.7        C1 Practical Exam Prep
+
+Objective: In this lesson the student will continue to train "on the job" as a Center Controller
+
+Elements:   + Position Setup and Login
+            + Radar Identification
+            + Inter-facility Coordination (ARTCC to ARTCC)
+            + Intra-facility Coordination (with other ZMP controllers)
+            + Enroute Vectoring
+            + Airspace management
+            + Traffic conflicts and advisories
+            + Spacing and sequencing
+            + Enroute holding
+            + Handoffs
+            + Proper phraseology and communications
+            + IFR clearances from uncontrolled airports
+            + Vectors to approaches
+            + Approach clearances
+            + IFR Cancellations
+            + "Pop-Up" IFR Flights
+            + VFR Flight Following
+            + VFR On Top
+            + Diversions (divert to alternate)
+            + Enroute Weather
+            + NOTAMs
+
+Schedule: 60-90 minutes per instance of the lesson
+
+Equipment: VRC, Teamspeak, reference to VATUSA, VATSIM, and ZMP websites.
+
+Instructor/Mentor Actions:
+
+The instructor or mentor shall observe the student in the MSP_11_CTR (or equivalent) position.
+The instructor/mentor shall instruct and drill the student to proficiency and competency on all
+elements. Upon successful completion of the lesson, the instructor/mentor shall recommend the
+student for the C1 written, ZMP CTR Major facility certification written, and OTS Practical exams.
+
+Revision 6
+
+Effective: 01 JULY 19                                                      47
+Student Actions:
+
+The student shall work to attain proficiency and competency as an C1-rated controller. Upon
+recommendation of an instructor, the student shall take and pass the C1 and ZMP CTR Major
+facility certification written exams.
+
+Completion Standards:
+
+The lesson shall be completed when the student passes the written exams and is prepared to
+take the C1/ZMP CTR Major facility certification OTS practical exam. This lesson shall be
+repeated as necessary to achieve completion standards.
+
+                                                    END OF SECTION
+
+Revision 6
+
+Effective: 01 JULY 19                                                                        48
+                               Appendix A
+                       Student Progress Sheet
+
+             NAME:
+LESSON COMP NOTES
+
+S1.1
+S1.2
+
+S1.3
+
+S1.4
+
+S1.5
+
+S1.6
+S1.7
+
+S1.8
+TEST
+
+S3.1
+
+S3.2
+S3.3
+
+S3.4
+
+S3.5
+
+S3.6
+
+S3.7
+
+S3.8
+
+TEST
+C1.1
+C1.2
+C1.3
+C1.4
+C1.5
+C1.6
+C1.7
+TEST
+
+Revision 6
+
+Effective: 01 JULY 19                          49
+                                              Appendix B
+                       Student Rating Training Handouts/Materials
+
+Revision 6
+
+Effective: 01 JULY 19                                              50
+                                        Appendix C
+            Senior Student Rating Training Handouts/Materials
+
+Revision 6
+
+Effective: 01 JULY 19                                          51
+                                               Appendix D
+                       Controller Rating Training Handouts/Materials
+
+Revision 6
+
+Effective: 01 JULY 19                                                 52
+                           AUTHORIZATIONS
+
+AUTHORIZATIONS
+
+/s/                                        /s/
+
+Christopher L. Bright                      Richard M. Rump
+Training Administrator                     Training Director
+Minneapolis ARTCC, VATSIM                  VATUSA
+01 JULY 19                                 01 JULY 19
+
+Revision 6
+
+Effective: 01 JULY 19                                         53
+

@@ -1,0 +1,42 @@
+VATSIM Minneapolis TRACON (M98) Satellite ATCT Ops Reference Guide
+
+FCM ATCT                                                          Class D SFC-3,400
+ Delegated Airspace:
+ IFR Initial Altitudes (Jets/Props):                                 10L/R, 36: 2,500
+                                                                     28L/R, 18: 3,000
+ IFR Departure Headings:
+ Hours of Operation:                                                   180° CW 300°
+                                      1200-0300Z 1st Sun in Nov-2nd Sat in Mar,
+                                      1200-0400Z 2nd Sun in Mar-1st Sat in Nov
+
+ANE ATCT                                                            Class D SFC-3,400
+ Delegated Airspace:                                                        3,000 (ALL)
+ IFR Initial Altitudes (Jets/Props):
+ IFR Departure Headings:                                        18: RT 270° CW 090°
+                                                              9, 27, 36: 270° CW 090°
+ Hours of Operation:                  1300-0300Z Oct-Apr, 1300-0400Z May-Sep
+
+MIC ATCT                                        Class D SFC-3,400
+ Delegated Airspace:                                    3,000 (ALL)
+ IFR Initial Altitudes (Jets/Props):                             320°
+ IFR Departure Headings:
+ Hours of Operation:                   1300-0300Z Oct 1-Apr 30,
+                                      1300-0400Z May 1- Sep 30
+
+STP ATCT                                                      Class D SFC-3,200
+ Delegated Airspace:                                                  14/13: 2,500
+ IFR Initial Altitudes (Jets/Props):                                      32: 3,000
+
+ IFR Departure Headings:                                   14/13: 010° CW 080°
+                                                               32: 030° CW 045°
+ Hours of Operation:
+                                      1200-0400Z M-F, 1300-0400Z Sat/Sun
+
+Notes: All M98 SAT ATCTs are required to use the Run-Down Tab List in
+STARS for all IFR departures. ATCT will propose an initial heading, then M98
+will either approve the release or call the tower to coordinate a different heading
+and release.
+
+Advise VFR aircraft requesting flight following to remain outside the Minneapolis
+Class B Airspace before instructing them to contact Departure Control.
+

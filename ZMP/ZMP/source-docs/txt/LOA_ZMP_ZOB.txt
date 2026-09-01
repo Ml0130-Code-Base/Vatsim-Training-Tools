@@ -1,0 +1,256 @@
+VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                       LETTER OF AGREEMENT
+
+                                     EFFECTIVE: MARCH 30, 2021
+
+SUBJECT: INTERFACILITY COORDINATION
+
+1. PURPOSE
+This Letter of Agreement defines inter-facility responsibilities and communication procedures
+between VATUSA Cleveland ARTCC (ZOB) and VATUSA Minneapolis ARTCC (ZMP). This
+agreement is supplemental to procedures contained within FAA Order 7110.65. Controllers
+must coordinate and resolve, in a practical manner that provides the smoothest experience
+to the pilot, all deviations from, and situations not addressed by, this document (e.g.,
+non-standard sectorization, holding, pilots unable to accept LOA routes, aircraft above/below
+LOA altitudes, etc.).
+
+2. DISCLAIMER
+Information contained herein is designed and specifically for use in a virtual air traffic control
+environment. It is not applicable, nor should it be referenced for live operations in the National
+Airspace System (NAS).
+
+3. CANCELLATION
+VATUSA Cleveland ARTCC and Minneapolis ARTCC Letter of Agreement dated June 18, 2020
+is hereby cancelled.
+
+4. RESPONSIBILITIES
+    a. LAN Approach Control airspace, including those portions underlying ZMP, is delegated
+         to ZOB, whenever LAN Approach Control is closed.
+
+5. RESTRICTIONS
+    a. Each ARTCC must route/restrict aircraft in accordance with Attachment 3 of this
+         document.
+    b. The receiving ARTCC has control for beacon code changes and turns, when aircraft are
+         within 20 nautical miles of the common ZOB/ZMP boundary. The maximum turn must
+         not exceed 20 degrees off course and must not affect another sector without proper
+         coordination.
+
+6. KDTW ARRIVALS THAT WILL ENTER ECK SECTOR. Unless otherwise coordinated:
+    a. ZMP must:
+             i. Input a hard altitude of FL240. Issue a clearance to cross the boundary AOB
+                   FL280, pilot discretion to FL240.
+            ii. Initiate a handoff to ECK sector. ECK sector will redirect the handoff to FNT
+                   sector.
+            iii. Transfer communications to FNT sector upon acceptance of handoff by FNT
+
+                                                           PAGE 1
+                      VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                                             LETTER OF AGREEMENT
+
+                   sector. In the event that FNT sector has not accepted the handoff at the time the
+                   aircraft is crossing the ZOB/ZMP boundary, transfer communications to ECK
+                   sector.
+    b. ZOB must:
+             i. If traffic is not a factor, re-direct handoff to FNT sector.
+            ii. If traffic is a factor requiring communications with the aircraft, verbally coordinate
+                   with ZMP.
+
+7. KBAX PROCEDURES
+    a. ZOB shall be the controlling authority for departure clearances off KBAX.
+    b. All bases, tops, and visibility reports in the vicinity of KBAX must be coordinated
+         between ZOB and ZMP for use in providing approach control services.
+
+8. DATA BLOCK COORDINATION
+    a. Acceptance of a handoff constitutes authorization for the aircraft to climb/descend to the
+         displayed altitude.
+    b. Interim Altitude (ITAL):
+             i. ITAL may be used for transitioning aircraft not assigned the final requested
+                   altitude as indicated in the flight plan.
+            ii. Handoffs shall be directed to the appropriate sector for the aircraft altitude
+                   assignment, including an assigned interim `T' altitude when the ITAL is not in the
+                   same sector as the final requested "hard" altitude.
+            iii. The receiving controller approves an altitude by accepting the handoff. When
+                   unable to approve the altitude indicated in the data block, the receiving controller
+                   must verbally coordinate with the transferring controller, prior to accepting the
+                   handoff.
+
+NOTE: These procedures shall not be authorized to override other altitude restrictions
+specifically spelled out in this Letter of Agreement, nor be authorized to coordinate inappropriate
+altitude for direction of flight (IAFDOF).
+
+    c. Ensure the data block is formatted as follows:
+             i. Data blocks must reflect the aircraft's assigned altitude at the time of handoff.
+            ii. Handoffs must be directed to the appropriate sector for the aircraft's altitude
+                   assignment. Acceptance of a radar handoff constitutes approval coordination for
+                   that aircraft to climb or descend to the displayed altitude.
+            iii. Use of interim (temp) altitudes is authorized between Cleveland ARTCC and
+                   Minneapolis ARTCC and must represent valid altitude coordination. Use of
+                   interim altitudes must not be authorized to coordinate Inappropriate Altitude for
+                   Direction of Flight (IAFDOF), or to supersede altitude restrictions established
+                   within this Letter of Agreement.
+            iv. No scratchpad/ERAM 4th line data, except if specific control instructions that
+                   differ from LOA procedures have been issued. In these cases, the alternate
+                   instruction shall be verbally or textually included as well as included in the
+                   scratchpad. Scratchpad entries may include:
+
+                                                           PAGE 2
+                      VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                                             LETTER OF AGREEMENT
+
+                        1. Indicated speed restrictions (e.g., "S210", "S270+"). Clients only capable
+                             of 4-characters remove the "S" if needed (e.g., "270+")
+
+                        2. "M" for Mach speed restrictions (e.g., "M81", "M78+")
+                        3. "H" for heading assignments (e.g., "H230")
+                        4. "D" and direction for deviations (e.g., "D15L" for 15 degrees left of track)
+
+6. ATTACHMENTS
+    a. Attachment 1 ­ AZO/LAN Approach Control Delegated Airspace
+    b. Attachment 2 ­ Detroit Satellite & Cleveland Area Airport
+    c. Attachment 3 ­ Routing, Restrictions, & Control Table
+    d. Attachment 4 ­ Airspace
+
+Nicholas Lascko         Dhruv Kalra
+Air Traffic Manager     Air Traffic Manager
+VATSIM Cleveland ARTCC  VATSIM Minneapolis ARTCC
+
+                        PAGE 3
+            VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                                   LETTER OF AGREEMENT
+
+ATTACHMENT 1 - AZO/LAN APPROACH CONTROL DELEGATED AIRSPACE
+
+                                                 PAGE 4
+         VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                                 LETTER OF AGREEMENT
+
+ATTACHMENT 2 - DETROIT SATELLITE & CLEVELAND AREA AIRPORTS
+
+Area                             Satellite Airport Codes
+Detroit Satellite (D21)
+                                 DET, PTK, ARB, YIP, TTF, MTC, CYQG,
+Cleveland Area (CLE)             ONZ, OZW, D98, VLL
+
+                                 CLE, BKL, CGF, LNN, 2G1, 1G1, LPR,
+                                 7G8, 1G5
+
+                         PAGE 5
+                   VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                                           LETTER OF AGREEMENT
+
+ATTACHMENT 3 - PERMANENT ROUTE/ALTITUDE RESTRICTIONS FROM ZMP TO ZOB
+
+                                      ZMP Provides for ZOB
+
+#  Arrival     If Via           Aircraft  Route                Altitude            Notes
+   Airport                        Type
+                                                             Unless otherwise
+                                                            specified, altitude
+                                                            restriction is at the
+
+                                                                  boundary
+
+1  KCLE        FRYYE                      BRWNZ STAR          AOB FL310
+               OLYEE                                        .
+
+                   Airports        RNAV   PNNTO GRAYT STAR   AOB FL280              ZOB has control to
+               departing from   Non-RNAV             or       with pilot           issue the appropriate
+                Michigan and                                discretion to
+                                          PNNTO LAYKS STAR                                    OPD.
+                   Overseas                                     FL240
+                     flights                 MBS FNT DXO                                The receiving
+                                                                                    controller approves
+
+                                                                                   IAFDOF altitudes by
+
+                                                                                   accepting the
+
+2 KDTW                                    HOOTA KKISS STAR                             handoff. When
+                                                     or                              unable to approve
+                                                                                   the altitude indicated
+                                          PORZL KKISS STAR                         in the data block, the
+
+               All Others                                                          receiving controller
+                                                                                      must verbally
+
+                                                                                   coordinate with the
+
+                                          HOOTA RKCTY STAR                         transferring
+
+                                          or                                       controller prior to
+
+                                          PORZL RKCTY STAR                         accepting the
+
+                                                                                   handoff.
+
+     KDTW                       RNAV      OREYO RRALF STAR
+   Satellites
+3                                                           AOB FL200
+
+                                Non-RNAV  MBS FNT SVM
+
+4  KTOL        Recovering                 GNZOE HHRNT
+                 Military                 WASPP BURDZ
+                 Aircraft
+                                              RPTER or
+                                          COMDR HHRNT
+                                          WASPP BURDZ
+
+                                                RPTER
+
+5  CYYZ                                   YZEMN NUBER STAR
+
+6  CYXU        When                                         AOB FL270
+                                                            AOB FL270
+               Steelhead                  HOCKE
+
+               ATCAA is active
+
+7  CYZR
+
+                                          PAGE 6
+            VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                                   LETTER OF AGREEMENT
+
+                 ZOB Provides for ZMP
+
+#  Arrival  Via  Aircraft  Route          Altitude            Notes
+   Airport         Type
+                                        Unless otherwise
+                                       specified, altitude
+                                       restriction is at the
+
+                                             boundary
+
+   KACB                                 AOB FL280
+                                         with pilot
+8  KGLR                                discretion to
+
+   KTVC                                    FL240
+
+   KAPN                                 AOB FL230
+                                         with pilot
+9  KCAD                                discretion to
+
+   KOSC                                   11,000'
+
+                           PAGE 7
+VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                       LETTER OF AGREEMENT
+
+                     ATTACHMENT 4 ­ AIRSPACE
+
+                                    PAGE 8
+VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                       LETTER OF AGREEMENT
+
+                                    PAGE 9
+VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                       LETTER OF AGREEMENT
+
+                                    PAGE 10
+VATUSA CLEVELAND ARTCC AND MINNEAPOLIS ARTCC
+                       LETTER OF AGREEMENT
+
+                                    PAGE 11
+

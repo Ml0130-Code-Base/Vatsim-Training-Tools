@@ -1,0 +1,73 @@
+                          VATSIM MINNEAPOLIS CENTER/FARGO TOWER
+                                         LETTER OF AGREEMENT
+                                                                                 EFFECTIVE: January 17, 2021
+
+SUBJECT: Terminal Area Control Service
+1. PURPOSE. This agreement governs approach control airspace within airspace delegated to
+
+    Fargo Tower and is supplementary to procedures contained in Air Traffic Control Handbooks.
+
+2. CANCELATION. ZMP ­ Minor ATCT/TRACON LOA, "Fargo (FAR) ATCT/TRACON."
+
+3. RESPONSIBILITY. Fargo Tower has been delegated responsibility for control of IFR and
+    Special VFR aircraft at 10,000 feet MSL and below within Minneapolis Center's airspace as
+    depicted on Attachment "A". The airspace northwest of Detroit Lakes, at and below 4,000 feet
+    MSL, is retained by Minneapolis Center for IFR approaches into Detroit Lakes. The 4,000-foot
+    shelf is depicted by "hash marks" on Attachment "A."
+
+4. RADAR/CENRAP PROCEDURES. Unless otherwise coordinated, the following procedures
+    shall apply:
+
+    a. Arrivals/Over flights.
+
+         1. The clearance limit for arrivals shall be the destination airport.
+
+         2. Arrivals shall be descending to or level at 8,000 feet MSL with the following
+             exception: Arrivals from the north over Grand Forks Approach Control's airspace shall
+             be descending to or level at 11,000 feet MSL, unless otherwise coordinated.
+
+         3. When automated handoffs are in use:
+                  a. Acceptance of a handoff by Approach Control of an over flight aircraft with
+                      Mode C readout in level flight at or below 10,000 feet MSL constitutes altitude
+                      approval.
+
+                  b. The altitude of non-mode C arrival aircraft at and below 10,000 feet MSL shall
+                      be manually coordinated.
+
+         4. Approach control may descend and/or alter an arrival's route of flight no more than 30
+             degrees either side of the aircraft's heading, provided the following conditions are met:
+
+                  a. The arrival must be within 10 miles of the lateral limits of Approach Control's
+                      airspace.
+
+                  b. The alteration of course or altitude shall not affect Grand Fork's approach
+                      Control without coordination.
+
+         5. Manual radar handoffs shall be made with reference to FAR VORTAC or other
+             commonly displayed radar fixes.
+ZMP/FAR ATCT LOA                                                                           2
+
+b. Departures.
+
+1. En route departure clearance to aircraft departing airports within Approach Control's
+    delegated airspace may be issued without Center approval provided the following
+    conditions are met:
+
+a. Departures are cleared at 10,000 feet MSL or below.
+
+b. Inform departures restricted to altitudes below their requested altitude to "expect
+    (filed altitude) 10 minutes after departure."
+
+2. When automated or manual handoffs are used, the Approach Control shall issue FL230
+    or the requested altitude, whichever is lower, to departures after the Center has
+    accepted the handoff. The Center shall, before accepting the handoff, advise Approach
+    Control verbally when an altitude different from that stated above is to be assigned.
+
+3. After leaving 8,000 feet MSL, the Center shall have control of departures for turns up
+    to 30 degrees either side of course.
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+ZMP/FAR ATCT LOA  3
+

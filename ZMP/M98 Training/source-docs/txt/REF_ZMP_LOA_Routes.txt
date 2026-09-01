@@ -1,0 +1,151 @@
+01/27/2022   FOR SIMULATION USE ONLY               ZMP Tier 1 Routes
+
+                                        VATSIM MINNEAPOLIS ARTCC
+                              TIER 1 ARTCC LOA ROUTING REFERENCE
+
+NOTE: Severe Weather, TMU restrictions, or coordination may override these routes on an
+individual basis.
+
+                                               KMSP DEPARTURES
+
+Airport      Route                                 Notes
+KORD         RST SID RST ZZIPR FYTTE STAR          RNAV
+(AOB FL310)  RST SID RST JVL JVL STAR              Non-RNAV
+             RST RST153 SUZYQ JVL OBK              No SID/STAR
+KMDW         RST SID RST OHHMY ENDEE STAR          RNAV
+(AOB FL310)  RST SID RST CVA MOTIF STAR            Non-RNAV
+             RST DBQ RFD JOT                       No SID/STAR
+KDEN         SCHEP SID ONL PORDR AALLE STAR        RNAV
+             SCHEP SID ONL J114 YANKI LANDR STAR   Non-RNAV
+KDTW         ONL SNY DVV                           No SID/STAR
+             COULT SID DLL PORZL RKCTY/KKISS STAR  RNAV
+KMCI         WLSTN SID GRB HOOTA RKCTY/KKISS STAR
+             COULT SID DLL BAE FNT CRL DXO         Non-RNAV
+CYWG         WLSTN SID GRB MBS FNT CRL DXO         No SID/STAR
+             ORSKY SID FOD ASIIX JSONN STAR        ALL
+             ORSKY SID FOD STJ MCI                 Non-RNAV
+             FOD STJ MCI                           No SID/STAR
+             BRNRD GOVIT NORAK STAR                RNAV
+             GEP BIPKU NORAK STAR
+             GEP FAR HML YWG                       Non-RNAV
+                                                   No SID/STAR
+01/27/2022                      FOR SIMULATION USE ONLY        ZMP Tier 1 Routes
+
+ Airport                KOMA/KLNK/KSUX DEPARTURES        Notes
+ KMSP                                                    RNAV
+ KORD       Route                                        Non-RNAV
+ KMDW       ROKKK NITZR STAR                             No SID/STAR
+ KDEN       FOD MCW KASPR STAR                           RNAV
+            MCW FGT                                      Non-RNAV
+ KMCI       FOD MYRRS FYTTE STAR                         No SID/STAR
+            FOD DBQ JVL JVL STAR                         RNAV
+            FOD DBQ JVL OBK                              Non-RNAV
+            DSM KAMBL ENDEE STAR                         No SID/STAR
+            JALAP ENDEE STAR                             RNAV
+            LMN MOTIF STAR                               Non-RNAV
+            LMN BDF JOT                                  No SID/STAR
+            ONL PORDR AALLE STAR
+            BRWRY LAWGR STAR                             No SID/STAR
+            ONL J114 YANKI PORDR STAR
+            OBH SNY SAYGE STAR
+            ONL SNY DVV
+            OBH SNY DVV
+            DPEAK JSONN JUDAA MCI
+            PWE JSONN MCI
+01/27/2022   FOR SIMULATION USE ONLY                     ZMP Tier 1 Routes
+
+             KDSM DEPARTURES                       Notes
+                                                   RNAV
+Airport      Route                                 Non-RNAV
+KMSP         ROKKK NITZR STAR                      No SID/STAR
+KORD         MCW KASPR STAR                        RNAV
+KMDW         MCW FGT                               Non-RNAV
+KDEN         MYRRS FYTTE STAR                      No SID/STAR
+             DBQ JVL JVL STAR                      RNAV
+             DBQ JVL OBK                           Non-RNAV
+             JALAP ENDEE STAR                      No SID/STAR
+             BDF MOTIF STAR                        RNAV
+             BDF JOT                               Non-RNAV
+             OBH BRWRY LAWGR STAR                  No SID/STAR
+             OBH SNY SAYGE STAR
+             OBH SNY DVV                           Notes
+                                                   RNAV
+                                  KGRB DEPARTURES  Non-RNAV
+                                                   No SID/STAR
+Airport      Route                                 RNAV
+KMSP         SHEAY MUSCL STAR                      Non-RNAV
+             GRB EAU STAR                          ALL
+KORD         GRB EAU MSP
+(AOB 13000)  FAALZ MADII/ERNNY STAR                RNAV
+KMDW         FAH BJB OBK                           Non-RNAV
+(AOB 13000)  FAH BJB OBK
+KDTW
+             HOOTA RKCTY/KKISS STAR
+             MBS FNT CRL DXO
+01/27/2022  FOR SIMULATION USE ONLY                ZMP Tier 1 Routes
+
+ Airport    KFAR/KBIS/KGFK/KMOT DEPARTURES
+ KMSP
+ KORD       Route                                  Notes
+ KMDW       TTAIL BAINY STAR                       RNAV
+ KDEN       FAR GEP STAR                           Non-RNAV
+            AXN V2 GEP                             No SID/STAR
+ Airport    HSTIN Q156 ZZIPR FYTTE STAR            RNAV
+ KMSP       RWF RST RST153 SUZYQ JVL STAR          Non-RNAV
+ KORD       RWF RST RST153 SUZYQ JVL OBK           No SID/STAR
+ KMDW       HSTIN OHHMY ENDEE STAR                 RNAV
+ KDTW       RWF RST CVA MOTIF STAR                 Non-RNAV
+            RWF RST DBQ CVA RFD JOT                No SID/STAR
+            NYTRO AALLE STAR                       RNAV
+            BFF LANDR STAR                         Non-RNAV
+            BFF DVV                                No SID/STAR
+
+                                  KDLH DEPARTURES
+
+            Route                                  Notes
+            COLDD BAINY STAR                       RNAV
+            RV GEP333 GEP STAR                     Non-RNAV
+            RV GEP333 GEP                          No SID/STAR
+            WISCN FGHRN ERRNY/MADII STAR           RNAV
+            GRB BJB OBK                            Non-RNAV
+                                                   No SID/STAR
+            OHHMY ENDEE STAR                       RNAV
+            GRB BJB OBK                            Non-RNAV
+                                                   No SID/STAR
+            HOOTA RKCTY/KKISS STAR                 RNAV
+            GRB MBS CRL DXO                        Non-RNAV
+                                                   No SID/STAR
+01/27/2022   FOR SIMULATION USE ONLY                      ZMP Tier 1 Routes
+
+             KFSD DEPARTURES                        Notes
+                                                    RNAV
+Airport      Route                                  Non-RNAV
+KMSP         SSWAN TORGY STAR                       No SID/STAR
+KORD         RWF SKETR STAR                         RNAV
+             RWF
+KMDW         ZZIPR FYTTE STAR                       Non-RNAV
+KDEN         FOD MYRRS FYTTE STAR
+             MCW JVL STAR                           No SID/STAR
+             FOD DBQ JVL JVL STAR
+             MCW JVL OBK                            RNAV
+             FOD DBQ JVL OBK                        Non-RNAV
+             OHHMY ENDEE STAR                       No SID/STAR
+             RST DBQ CVA MOTIF STAR                 RNAV
+             RST DBQ RFD JOT                        Non-RNAV
+             ONL PORDR AALLE STAR                   No SID/STAR
+             ONL J114 YANKI LANDR STAR
+             ONL SNY DVV                            Notes
+                                                    RNAV
+                                   KRST DEPARTURES  Non-RNAV
+                                                    No SID/STAR
+Airport      Route                                  RNAV
+KMSP         BLUEM BLUEM STAR                       Non-RNAV
+             RST V24 KASPR KASPR STAR               No SID/STAR
+KORD         RST V24 KASPR FGT                      RNAV
+(AOB FL230)  ZZIPR FYTTE STAR                       Non-RNAV
+             RST RST153 SUZYQ JVL STAR              No SID/STAR
+KMDW         RST RST153 SUZYQ JVL OBK
+(AOB FL230)  OHHMY ENDEE STAR
+             RST DBQ CVA MOTIF STAR
+             RST DBQ RFD JOT
+

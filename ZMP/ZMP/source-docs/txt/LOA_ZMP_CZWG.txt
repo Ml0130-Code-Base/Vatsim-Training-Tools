@@ -1,0 +1,154 @@
+              LETTER OF AGREEMENT (LOA) BETWEEN
+         WINNIPEG AREA CONTROL CENTRE (CZWG) AND
+MINNEAPOLIS AIR ROUTE TRAFFIC CONTROL CENTER (KZMP)
+
+LOA Between     Minneapolis ARTCC (KZMP) Winnipeg ACC (CZWG)
+Effective Date  18 Jun 2020, 0900z
+Concerning      Joint and Independent Operational Air Traffic Control
+                Procedures and Primary and Secondary Ownership of High and
+                Low sectors
+
+                                                                                                  1
+ SECTION 1 - PURPOSE
+
+This agreement establishes coordination procedures and defines delegation of airspace
+between VATUSA Minneapolis ARTCC (ZMP) and VATCAN Winnipeg FIR (ZWG). This
+agreement is supplemental to procedures contained within FAA Order 7110.65, Nav
+Canada Air Traffic MANOPS/MATS, VATUSA/VATCAN Policy, and VATSIM Policy.
+
+ SECTION 2 - DISCLAIMER
+
+Information contained herein is designed specifically for use in a virtual air traffic control
+environment. It is not applicable, nor should it be referenced for live operations in the
+National Airspace System (NAS).
+
+ SECTION 3 - CANCELLATION
+
+VATUSA Minneapolis ARTCC and VATCAN Winnipeg FIR Letter of Agreement dated
+October 1, 2015.
+
+ SECTION 4 - RESPONSIBILITIES:
+
+As defined by aeronautical chart or approved, government issued, or endorsed
+aeronautical publication/document; unless coordinated by written or verbal methods,
+facilities listed with a controlling agency will be controlled by said agency regardless of
+location relative to ARTCC/FIR outlined boundaries. Required coordination must be
+completed and approved prior to aircraft entering/exiting said airspace.
+
+ SECTION 5 - PROCEDURES
+
+    1. Each ARTCC/FIR must route/restrict aircraft in accordance with Attachment A,
+         unless coordinated.
+
+    2. Controllers must coordinate any route, altitude, speed, or discrete code changes
+         that are different from those listed on the flight plan if the aircraft is within 20 NM
+         (Nautical Miles) of the ZMP ARTCC / ZWG FIR common boundary.
+
+    3. Flights originating less than 5 minutes flying time from the adjacent ARTCC/FIR's
+         boundary must be coordinated by the transferring ARTCC/FIR.
+
+Letter of Agreement LOA Between KZMP and CZWG  Page 2 of 7
+4. The transferring facility/agency must obtain approval for incorrect altitudes for
+    direction of flight, block altitudes, and Negative RVSM flights prior to transfer of
+    control.
+
+5. Transfer of control shall occur at the common control boundary except each
+    facility may assume control for transponder code changes and turns of no more
+    than 20 degrees when the aircraft are 20nm or less from the common control
+    boundary.
+
+6. Sector boundaries and FIR boundaries are as indicated in Attachments A and B.
+
+7. Non-automated (manual} radar handoffs shall be accomplished prior to the
+    common boundary using the handoff points shown on Attachments A and B or any
+    other points depicted on the radar displays in both Winnipeg ACC and Minneapolis
+    ARTCC using the following format:
+
+         a. State Facility ID Calling (i.e. Winnipeg Sector 1)
+         b. State Your Facility ID (i.e. Minneapolis Sector 11)
+         c. State Intent/Request (i.e. Manual Hand-Off)
+         d. (Await Response from Receiving Sector)
+         e. State Intent/Request again for clarification (i.e. Manual Hand-Off)
+         f. State Distance from known NAVAID/Coordination Fix (i.e. 5 NM East of
+
+             YQT VOR)
+         g. State Aircraft Callsign and Squawk Code (i.e. UAL451 Squawking 4231)
+         h. State Altitude (state descending or climbing if appropriate) (i.e. FL240
+
+             Descending 10000)
+         i. State Destination (i.e. Enroute to CYWG)
+         j. Receiving controller will respond accordingly (RADAR
+
+             CONTACT/NEGATIVE RADAR CONTACT)
+         k. End coordination with operating initials from each controller involved.
+
+8. Communications transfer must be completed prior to the ZMP ARTCC/ZWG FIR
+    Boundary, unless coordinated.
+
+9. 10 NM (Nautical Mile) In-Trail Spacing is required between aircraft on the same
+    route/course unless another form of approved separation is being applied or if
+    coordinated.
+
+10. ZMP ARTCC shall handoff arrivals inbound to CYQT and CYWG to ZWG FIR
+    (Center) Low Sector (if in operation) or ZWG FIR Combined (Center) sector (if in
+    operation). If YQT Arrival is staffed, handoff all YQT arrivals to YQT Arrival.
+
+11. ZWG FIR (Center), when split, is divided High/Low by altitude:
+    High: FL290 to FL600
+
+Letter of Agreement LOA Between KZMP and CZWG  Page 3 of 7
+Low: SFC to FL280
+
+12. ZWG FIR shall notify ZMP ARTCC of changes to sector splits if they differ from the
+    current LOA. Information provided shall include: Details of airspace stratification
+    (altitudes), area of coverage, and frequencies in use.
+
+13. ZMP ARTCC (Center), when split, is divided High/Low by altitude:
+    High: FL240+
+    Low: SFC to FL230
+
+14. ZMP ARTCC will define sector splits to ZWG FIR if in operation/use. Information
+    provided shall include:
+
+Details of airspace stratification (altitudes), area of coverage, and frequencies in
+use.
+
+15. RADAR handoffs should be made with reference to the ZMP ARTCC/ZWG FIR
+    boundary and along regularly used routes. In addition to the following designated
+    points may be used for RADAR handoffs:
+
+         a. TRI CENTRE     N49.00.00.000 W103.10.00.000
+         b. ARCHIE         N49.00.00.000 W101.00.00.000
+         c. BALDWYN        N49.00.00.000 W99.00.00.000
+         d. CARL           N49.00.00.000 W98.00.00.000
+         e. DONNA          N49.00.00.000 W95.10.00.000
+         f. YQT & INL VOR  As depicted on prescribed video maps
+
+SECTION 6 - ROUTE/ALTITUDE RESTRICTIONS
+
+ARRIVAL  QUALIFIER              ROUTE VIA                               ALTITUDE
+AIRPORT
+             RNAV           NORAK ARRIVAL                               AOB FL280
+  CYWG   NON-RNAV                HML..YWG                               AOB FL240
+
+  CYQT       RNAV            TIGAG ARRIVAL                             AOB 10000
+         NON-RNAV              DLH V13 YQT                             AOB 10000
+  KMSP
+             RNAV          GGULL.BAINY STAR                               NO ALT
+         NON-RNAV             BRD.GEP STAR                            RESTRICTION
+
+NOTE: Pilot's discretion of descent is approved unless otherwise coordinated.
+
+Letter of Agreement LOA Between KZMP and CZWG                                  Page 4 of 7
+AUTHORIZING SIGNATURES
+
+Dhruv Kalra               Nate Power
+Air Traffic Manager       FIR Chief
+Minneapolis ARTCC (KZMP)  Winnipeg FIR (CZWG)
+
+Date: June 18, 2020       Date: June 18, 2020
+
+Letter of Agreement LOA Between KZMP and CZWG  Page 5 of 7
+Letter of Agreement LOA Between KZMP and CZWG  Page 6 of 7
+Letter of Agreement LOA Between KZMP and CZWG  Page 7 of 7
+

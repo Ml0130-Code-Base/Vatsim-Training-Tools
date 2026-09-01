@@ -1,0 +1,112 @@
+                   VATUSA SALT LAKE CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                                                    LETTER OF AGREEMENT
+                                                                                                            EFFECTIVE: 02/15/2017
+
+SUBJ: INTERFACILITY COORDINATION
+     1. PURPOSE: This agreement establishes coordination procedures and defines delegation of
+          airspace between Salt Lake City ARTCC (ZLC) and Minneapolis ARTCC (ZMP). This
+          agreement is supplemental to procedures contained within FAA JO 7110.65.
+
+     2. DISCLAIMER: Information contained herein is designed and specifically for use in a virtual
+          air traffic control environment. It is not applicable, nor should it be referenced for live
+          operations in the National Airspace System (NAS).
+
+     3. CANCELLATION: All previous agreements are cancelled.
+
+     4. RESPONSIBILITIES: Unrelated
+
+     5. PROCEDURES:
+
+          a. Each ARTCC must route/restrict aircraft in accordance with Attachment A.
+
+          b. The receiving controller must have control for turns up to 30 degrees left or right of
+               course for aircraft within 30NM of the ZLC/ZMP ARTCC common boundary.
+
+          c. Aircraft whose destination airports lie within 60 miles of the common boundary must
+               enter the receiving ARTCC's airspace AOB FL230, and the receiving ARTCC must have
+               control for descents and turns.
+
+          d. Altitude changes must be verbally coordinated for aircraft within 5 minutes flying time of
+               the ZLC/ZMP common boundary.
+
+          e. Flights originating less than 5 minutes flying time from the adjacent ARTCC's boundary must
+                be coordinated by the transferring ARTCC.
+
+          f. Data Block Coordination and Interim Altitude Procedures.
+
+               (1) Data blocks must reflect the aircraft's assigned altitude at the time of handoff.
+
+               (2) Acceptance of a radar handoff constitutes approval coordination for that aircraft to
+                    climb or descend to the displayed altitude.
+
+               (3) Use of interim (temp) altitudes is authorized between ZLC and ZMP and must
+                    represent valid altitude coordination. Use of interim altitudes is not authorized to
+                    coordinate Inappropriate Altitude for Direction of Flight (IAFDOF), or to supersede
+                    altitude restrictions established within this agreement.
+
+               (4) When unable to approve the automated altitude, the receiving controller must verbally
+                     coordinate with the transferring controller prior to acceptance of the handoff.
+
+                                                       For VATSIM Use Only
+        VATUSA SALT LAKE CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                                         LETTER OF AGREEMENT
+
+g. Aircraft unable to comply with the required routes or altitudes must be coordinated with
+     the receiving ARTCC on an individual basis.
+
+h. In addition to the authorized radar handoff points, the following fixes may be used to
+     accomplish a radar handoff:
+
+(1) SULFUR                44°57'30"N, 103°10'00"W
+
+(2) RALPH                 45°42'00"N, 103°10'00"W
+
+(3) GRASSY                47°34'00"N, 103°10'00"W
+
+(4) WHEELOCK              48°16'00"N, 103°10'00'W
+
+6. ATTACHMENTS:
+
+a. Attachment A ­ Route/Altitude Restrictions
+
+                     /s/                       /s/
+Shane VanHoven            Kaylan Fullerton
+Air Traffic Manager       Air Traffic Manager
+VATUSA Minneapolis ARTCC  VATUSA Salt Lake City ARTCC
+
+                          For VATSIM Use Only
+     VATUSA SALT LAKE CITY ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                           LETTER OF AGREEMENT
+
+            ATTACHMENT A ­ ROUTE/ALTITUDE RESTRICTIONS
+                                    FROM ZLC TO ZMP
+
+  Arrival       Qualifier          Route Via                                    Altitude
+Airport(s)  Through ZMP11                                                 (Cross ZLC/ZMP
+            Through ZMP17   TTAIL.BAINY STAR                              Boundary, unless
+   MSP                        FAR.GEP STAR1                               otherwise noted)
+
+                           UFFDA.TORGY STAR
+                            RWF.SKETR STAR1
+
+MOT/MIB     ALL                                                           AOB FL2302
+
+DIK         ALL                                                           AOB 11,0002
+
+                           FROM ZMP TO ZLC
+
+  Arrival    Qualifier             Route Via                                    Altitude
+Airport(s)                                                                (Cross ZLC/ZMP
+            10 AND 11      KUSTR STAR (RNAV)                              Boundary, unless
+    BIL      SECTOR           or BIL VORTAC1                              otherwise noted)
+                                       ISN
+    ISN         ALL3                                                          AOB 50002
+
+1 Non-RNAV capable routing.
+2 Pilot's discretion descent authorized.
+3 ZMP must release control to ZLC of ISN arrivals within 45NM of ISN VOR
+
+                           For VATSIM Use Only
+

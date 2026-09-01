@@ -1,0 +1,85 @@
+                     VIRTUAL MINNEAPOLIS CENTER/GREEN BAY TOWER
+                                         LETTER OF AGREEMENT
+                                                                                EFFECTIVE: MARCH 17, 2020
+
+SUBJECT: TERMINAL AREA CONTROL SERVICE
+1. PURPOSE. This agreement governs approach control service within airspace delegated to
+
+    Green Bay Tower and is supplementary to procedures contained in Air Traffic handbooks and
+    VATUSA/VATSIM directives.
+
+2. CANCELLATION. ZMP ­ Minor ATCT/TRACON LOA, "Green Bay (GRB)/Appleton
+    (ATW) ATCT/Green Bay TRACON
+
+3. RESPONSIBILITIES. During published hours of operation, Green Bay Tower has been
+    delegated responsibility for control of IFR and special VFR aircraft at 13,000 feet MSL and
+    below, within the Minneapolis Center airspace, and 4,000 feet MSL and below for that portion
+    which underlies Minneapolis Center's Sectors 03 and 04, as depicted on Attachment "A."
+
+4. RADAR PROCEDURES
+Unless otherwise coordinated, the following procedures shall apply:
+
+    a. Arrivals.
+
+         1. The clearance limit for arrivals shall be the destination airport.
+
+         2. Arrivals, at or above 14,000 feet MSL, shall be descending to or level at 14,000 feet
+             MSL. Arrivals, at or below 13,000 feet MSL, landing at Green Bay or satellite airports
+             shall be handed off to the satellite controllers.
+
+         3. Transfer of control of all aircraft shall be within 10 nm of the boundary unless
+             otherwise stated, providing the following conditions are met:
+
+             a. Approach control may alter an arrival's route of flight no more than 30 degrees
+                  either side of course:
+
+             b. Approach control shall ensure that any course change does not affect any other
+                  facility's airspace, unless otherwise coordinated.
+
+         4. When automated handoffs are used:
+
+             a. Acceptance of a handoff by approach control of an aircraft with mode C readout in
+                  level flight at or below 13,000 feet MSL constitutes altitude approval.
+ZMP/GRB TWR               FOR SIMULATION USE ONLY                                               2
+
+b. Departures.
+
+1. En route departure clearance to aircraft departing airports within approach control
+    delegated airspace may be issued without Center approval provided the following
+    conditions are met:
+
+a. Departures are cleared at 13,000 feet MSL or below, except MNM departures are
+    cleared at 4,000 feet MSL or below.
+
+b. Approach control confines all departures to within approach control delegated
+    airspace until a radar handoff is completed.
+
+5. GENERAL
+
+a. Aircraft exiting Green Bay Approach Control and landing at Central Wisconsin, Wausau,
+    and Stevens Point shall be the control of Minneapolis Center once the aircraft has crossed
+    V191.
+
+b. Unless otherwise coordinated, the Center shall assign radio frequencies as follows:
+
+1. Arrivals/overflights at or below 13,000 feet MSL.
+
+126.3 for aircraft landing at Appleton.
+120.2 for aircraft landing at Manitowoc, Menominee, and Sturgeon Bay.
+
+2. Green Bay arrivals, at or above, 14,000 feet MSL.
+
+119.4 for aircraft landing at Green Bay.
+
+6. ATTACHMENT.
+    Attachment "A".
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                          FOR SIMULATION USE ONLY
+ZMP/GRB TWR  FOR SIMULATION USE ONLY  3
+
+             FOR SIMULATION USE ONLY
+

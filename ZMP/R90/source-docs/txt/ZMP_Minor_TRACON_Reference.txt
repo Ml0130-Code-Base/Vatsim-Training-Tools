@@ -1,0 +1,342 @@
+ZMP-Minor ATCT/TRACON               FOR SIMULATION USE ONLY              01/01/2015
+
+Delegated Airspace:                 Alpena (APN) ANG RAPCON
+Arrivals Descend To:                                                                                            SFC-12,000
+Departures Climb To:                                                                                                   13,000
+IFR Initial Altitude (Jets/Props):                                                                                     12,000
+Local Squawk Codes (VFR/IFR):                                                                                   4,000/4,000
+Hours of Operation:
+                                                                                                  0201-0277/0301-0377
+                                                                        0800-1600 LCL (Weekdays ex. Holidays)
+
+                                    Waterloo (ALO) ATCT [ZAU]
+
+Delegated Airspace:                                                                              SFC-10,000
+Arrivals Descend To:                                                                                    11,000
+Departures Climb To:
+IFR Initial Altitude (Jets/Props):                                                                    Per ZAU
+Local Squawk Codes (VFR/IFR):                                                                         Per ZAU
+Hours of Operation:                                                                                   Per ZAU
+                                                                  0600-2000 LCL (ZAU when closed)
+
+                                    Bismarck (BIS) ATCT
+
+Delegated Airspace:                                                      SFC-15,000
+
+Arrivals Descend To:                                                     8,000
+
+Departures Climb To:                                                     15,000
+
+IFR Initial Altitude (Jets/Props):                                       15,000
+
+Local Squawk Codes (VFR/IFR):                                     0101-0177/0301-0377
+
+Hours of Operation:                                                      0600-2400 LCL
+
+   Note: Climb aircraft to FL230 or requested altitude, whichever is lower, upon ZMP accepting handoff
+
+                                    Central Wisconsin (CWA) ATCT
+
+Delegated Airspace:                                               Class D SFC-3,800
+Arrivals Descend To:                                               APP/DEP by ZMP
+Departures Climb To:                                               APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                  3,000
+Local Squawk Codes (VFR/IFR):                                      APP/DEP by ZMP
+Hours of Operation:                                                    0600-2200 LCL
+
+                                    Duluth (DLH) ATCT/TRACON
+
+Delegated Airspace:                                               SFC-12,000 (HIB SFC-8,000)
+
+Arrivals Descend To:                                              13,000 (9,000 over HIB Shelf)
+
+Departures Climb To:                                              12,000 (8,000 in HIB shelf)
+
+IFR Initial Altitude (Jets/Props):                                       6,000
+
+Local Squawk Codes (VFR/IFR):                                     0301-0377/0401-0477
+
+Hours of Operation:                                                      24h
+
+   Note: Climb aircraft to FL230 or requested altitude, whichever is lower, upon ZMP accepting handoff
+
+                                    Des Moines (DSM) ATCT/TRACON
+
+Delegated Airspace:                                                      SFC-10,000
+
+Arrivals Descend To:                                                     11,000
+
+Departures Climb To:                                                     10,000
+
+IFR Initial Altitude (Jets/Props):                                       5,000/3,000
+
+Local Squawk Codes (VFR/IFR):                                     0301-0377/0401-0477
+
+Hours of Operation:                                                      24h
+
+   Note: Coordination with ZAU may be required for eastbound departures
+
+1                                   FOR SIMULATION USE ONLY              01/01/2015
+ZMP-Minor ATCT/TRACON               FOR SIMULATION USE ONLY                 01/01/2015
+
+                                    Eau Claire (EAU) ATCT
+
+Delegated Airspace:                                                         Class D SFC-3,500
+Arrivals Descend To:                                                         APP/DEP by ZMP
+Departures Climb To:                                                         APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                            5,000
+Local Squawk Codes (VFR/IFR):                                                APP/DEP by ZMP
+Hours of Operation:                                                              0530-2030 LCL
+
+                                    Fargo (FAR) ATCT/TRACON
+
+Delegated Airspace:                                                         SFC-10,000
+
+Arrivals Descend To:                                                                        8,000
+
+Departures Climb To:                                                        10,000
+
+IFR Initial Altitude (Jets/Props):                                                          4,000
+
+Local Squawk Codes (VFR/IFR):                                0201-0277/0401-0477
+
+Hours of Operation:                                                                         24h
+
+   Note: Climb aircraft to FL230 or requested altitude, whichever is lower, upon ZMP accepting handoff
+
+Delegated Airspace:                 Sioux Falls (FSD) ATCT/TRACON
+Arrivals Descend To:                                                                                               SFC-10,000
+Departures Climb To:
+IFR Initial Altitude (Jets/Props):                                                   8,000 (11,000 over SUX airspace)
+Local Squawk Codes (VFR/IFR):                                                                                             10,000
+Hours of Operation:                                                                                                         5,000
+
+                                                                                                     0101-0177/0201-0277
+                                                                                                               0500-2400 LCL
+
+                     Green Bay (GRB) /Appleton (ATW) ATCT/Green Bay TRACON
+
+Delegated Airspace:                                                         SFC-13,000
+
+Arrivals Descend To:                                                        14,000
+
+Departures Climb To:                                                        13,000
+
+IFR Initial Altitude (Jets/Props):                           3,000 (GRB), 3,000 (ATW)
+
+Local Squawk Codes (VFR/IFR):                                0101-0177/0201-0277
+
+Hours of Operation:                 ATW & GRB ATCT/TRACON 0530-2330 LCL
+
+   Note: Coordination with ZAU may be required for southbound departures and KATW arrivals
+
+   Grand Forks (GFK) ATCT/Grand Forks AFB (RDR) ATCT & RAPCON
+
+Delegated Airspace:                                                         SFC-10,000
+
+Arrivals Descend To:                                                        11,000
+
+Departures Climb To:                                                        10,000
+
+IFR Initial Altitude (Jets/Props):                           3,000 (GFK), 5,000 (RDR)
+
+Local Squawk Codes (VFR/IFR):                                0101-0177/0301-0377
+
+Hours of Operation:                 GFK ATCT 0600-2330 LCL, RDR ATCT 0600-2300
+
+                                    LCL ex. Holidays, RDR RAPCON 24h ex. Holidays
+
+   Note: Climb aircraft to FL230 or requested altitude, whichever is lower, upon ZMP accepting handoff
+
+                                    Grand Island (GRI) ATCT
+
+Delegated Airspace:                                                         Class D SFC-4,300
+Arrivals Descend To:                                                         APP/DEP by ZMP
+Departures Climb To:                                                         APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                            5,000
+Local Squawk Codes (VFR/IFR):                                                APP/DEP by ZMP
+Hours of Operation:                                                              0700-2000 LCL
+
+2                                   FOR SIMULATION USE ONLY                 01/01/2015
+ZMP-Minor ATCT/TRACON               FOR SIMULATION USE ONLY                     01/01/2015
+
+                       Grand Rapids (GRR) ATCT/TRACON [ZAU]
+
+Delegated Airspace:                                                             SFC-10,000
+
+Arrivals Descend To:                                                            11,000
+
+Departures Climb To:                                                            13,000
+
+IFR Initial Altitude (Jets/Props):                                              Per ZAU
+
+Local Squawk Codes (VFR/IFR):                                                   Per ZAU
+
+Hours of Operation:                                          0530-2400 LCL (ZAU when closed)
+
+                                    Grayling (GOV) ATCT
+
+Delegated Airspace:                                                    Class D SFC-3,700
+Arrivals Descend To:                                                    APP/DEP by ZMP
+Departures Climb To:                                                    APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                       5,000
+Local Squawk Codes (VFR/IFR):                                           APP/DEP by ZMP
+Hours of Operation:                                                              By NOTAM
+
+                                    La Crosse (LSE) ATCT
+
+Delegated Airspace:                                                    Class D SFC-3,700
+Arrivals Descend To:                                                    APP/DEP by ZMP
+Departures Climb To:                                                    APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                       5,000
+Local Squawk Codes (VFR/IFR):                                           APP/DEP by ZMP
+Hours of Operation:                                                         0600-2100 LCL
+
+   Magic City (MOT)/Minot AFB (MIB) ATCT & Dakota ATC Facility RAPCON
+
+Delegated Airspace:                                                             SFC-FL230
+
+Arrivals Descend To:                                                            11,000
+
+Departures Climb To:                                                            FL230
+
+IFR Initial Altitude (Jets/Props):                                              FL230
+
+Local Squawk Codes (VFR/IFR):                                          0270-0277/0401-0477
+
+Hours of Operation:                                                    0600-2100 LCL
+
+                                    Milwaukee (MKE) ATCT/TRACON [ZAU]
+
+Delegated Airspace:                                                             SFC-13,000
+
+Arrivals Descend To:                                                            14,000
+
+Departures Climb To:                                                            Per ZAU
+
+IFR Initial Altitude (Jets/Props):                                              Per ZAU
+
+Local Squawk Codes (VFR/IFR):                                                   Per ZAU
+
+Hours of Operation:                                                             24h
+
+   Notes: Descend OSH/FLD/SBM/8D1 arrivals to 7,000 or as coordinated with ZAU
+
+   MKE descends arrivals to ATW/STE/ISW to 4,000 or as coordinated with ZMP
+
+                                    Muskegon (MKG) ATCT/TRACON [ZAU]
+
+Delegated Airspace:                                                             SFC-10,000
+
+Arrivals Descend To:                                                            11,000
+
+Departures Climb To:                                                            Per ZAU
+
+IFR Initial Altitude (Jets/Props):                                              Per ZAU
+
+Local Squawk Codes (VFR/IFR):                                                   Per ZAU
+
+Hours of Operation:                                          0600-2300 LCL (ZAU when closed)
+
+3                                   FOR SIMULATION USE ONLY                     01/01/2015
+ZMP-Minor ATCT/TRACON               FOR SIMULATION USE ONLY      01/01/2015
+
+   Omaha (OMA)/Offutt AFB (OFF)/Lincoln (LNK) ATCT & R90 TRACON
+
+Delegated Airspace:                                        SFC-15,000 (LNK Sector SFC-10,000)
+
+Arrivals Descend To:                                             16,000 (LNK 11,000)
+
+Departures Climb To:                                             15,000 (OMA/OFF), 10,000 (LNK)
+
+IFR Initial Altitude (Jets/Props):                               5,000 (OMA/OFF), 4,000 (LNK)
+
+Local Squawk Codes (VFR/IFR):                                    0201-0277/0101-0177
+
+Hours of Operation:                 OMA/OFF ATCTs 24h, LNK ATCT 0530-2400 LCL
+
+                                                                 R90 24h
+
+                                    Rochester (RST) ATCT/TRACAB
+
+Delegated Airspace:                                        SFC-15,000 (East), SFC-9,000 (West)
+
+Arrivals Descend To:                                             10,000 (11,000 over ALO airspace)
+
+Departures Climb To:                                             15,000 (East), 9,000 (West)
+
+IFR Initial Altitude (Jets/Props):                                                         5,000
+
+Local Squawk Codes (VFR/IFR):                                    0451-0477/0251-0277
+
+Hours of Operation:                                              0500-2300 LCL
+
+   Note: Coordination with ZAU may be required for southbound departures or KALO arrivals
+
+Delegated Airspace:                 Saginaw (MBS) ATCT/TRACON
+Arrivals Descend To:                                                                SFC-10,000 (Shelves SFC-3,000)
+Departures Climb To:                                                                                                     11,000
+IFR Initial Altitude (Jets/Props):                                                                                    Per ZOB
+Local Squawk Codes (VFR/IFR):                                                                                         Per ZOB
+Hours of Operation:                                                                                                   Per ZOB
+
+                                                                                  0600-2300 LCL (ZAU when closed)
+
+                                    Sioux City (SUX) ATCT
+
+Delegated Airspace:                                              SFC-10,000
+
+Arrivals Descend To:                                                                       11,000
+
+Departures Climb To:                                                                       10,000
+
+IFR Initial Altitude (Jets/Props):                                                         5,000
+
+Local Squawk Codes (VFR/IFR):                                    0301-0377/0401-0477
+
+Hours of Operation:                                              0600-2130 LCL
+
+   Note: Climb aircraft to FL230 or requested altitude, whichever is lower, upon ZMP accepting handoff
+
+                                    Camp Ripley (RYM) AAF
+
+Delegated Airspace:                                                                Class D SFC-3,700
+Arrivals Descend To:                                                                APP/DEP by ZMP
+Departures Climb To:                                                                APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                                   3,000
+Local Squawk Codes (VFR/IFR):                                                       APP/DEP by ZMP
+Hours of Operation:
+                                                                 1400-2200Z M-F (or by NOTAM)
+
+                                    Sawyer/Marquette (SAW) ATCT
+
+Delegated Airspace:                                              Class D SFC-3,700
+Arrivals Descend To:                                              APP/DEP by ZMP
+Departures Climb To:                                              APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                 5,000
+Local Squawk Codes (VFR/IFR):                                     APP/DEP by ZMP
+Hours of Operation:                                                   0600-2200 LCL
+
+4                                   FOR SIMULATION USE ONLY      01/01/2015
+ZMP-Minor ATCT/TRACON               FOR SIMULATION USE ONLY  01/01/2015
+
+                                    St. Cloud (STC) ATCT
+
+Delegated Airspace:                                          Class D SFC-3,500
+Arrivals Descend To:                                          APP/DEP by ZMP
+Departures Climb To:                                          APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                             5,000
+Local Squawk Codes (VFR/IFR):                                 APP/DEP by ZMP
+Hours of Operation:                                               0700-2300 LCL
+
+Delegated Airspace:                 Traverse City (TVC) ATCT
+Arrivals Descend To:                                                                                Class D SFC-3,100
+Departures Climb To:                                                                                  APP/DEP by ZMP
+IFR Initial Altitude (Jets/Props):                                                                    APP/DEP by ZMP
+Local Squawk Codes (VFR/IFR):                                                                                          5,000
+Hours of Operation:                                                                                   APP/DEP by ZMP
+
+                                                                0700-2100 LCL (STD), 0700-2200 LCL (DST)
+
+5                                   FOR SIMULATION USE ONLY  01/01/2015
+

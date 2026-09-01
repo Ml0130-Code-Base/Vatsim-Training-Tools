@@ -1,0 +1,471 @@
+FCM 7110.1A CHG 1                       11/30/2025
+
+             FLYING CLOUD ATCT
+                 ORDER 7110.1A
+
+     STANDARD OPERATING PROCEDURES
+           VIRTUAL MINNEAPOLIS ARTCC
+
+VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+FOR SIMULATION USE ONLY                 1
+FCM 7110.1A CHG 1                                               11/30/2025
+
+                   Order Record of Changes                     Issued By
+                                                                   DE
+Change             Description                 Effective Date      DE
+                                                29 Sep 2022
+                   Original Publication
+                                                30 Nov 2025
+        Update for CRC STARS rundown list.
+         Updated initial altitude assignments
+             and initial departure headings.
+
+                   FOR SIMULATION USE ONLY                     2
+FCM 7110.1A CHG 1                           11/30/2025
+
+TABLE OF CONTENTS
+
+CHAPTER 1. GENERAL ............................................................................................................ 4
+   1-1. PURPOSE....................................................................................................................... 4
+   1-2. DISTRIBUTION ............................................................................................................... 4
+   1-3. CANCELLATION............................................................................................................. 4
+   1-4. EFFECTIVE DATE .......................................................................................................... 4
+   1-5. EXPLANATION OF CHANGES ....................................................................................... 4
+   1-6. POSITIONS..................................................................................................................... 4
+
+CHAPTER 2. GROUND CONTROL/CLEARANCE DELIVERY .................................................. 5
+   2-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 5
+   2-2. FREQUENCY INFORMATION ........................................................................................ 5
+   2-3. AREA OF JURISDICTION............................................................................................... 5
+   2-4. CLEARANCES ................................................................................................................ 5
+   2-5. COORDINATION PROCEDURES................................................................................... 5
+   2-6. GROUND MOVEMENT PROCEDURES ......................................................................... 6
+
+CHAPTER 3. LOCAL CONTROL (NORTH, SOUTH)................................................................. 7
+   3-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 7
+   3-2. FREQUENCY INFORMATION ........................................................................................ 7
+   3-3. AREA OF JURISDICTION............................................................................................... 7
+   3-4. AIRSPACE INFORMATION ............................................................................................ 7
+   3-5. SPLIT LOCALS ............................................................................................................... 8
+   3-6. COORDINATION PROCEDURES................................................................................... 8
+   3-7. TRAFFIC MANAGEMENT............................................................................................... 9
+   3-8. APPROACH IN USE ......................................................................................................10
+
+APPENDIX 1. POSITION RELIEF CHECKLIST........................................................................11
+APPENDIX 2. TAXIWAYS, RUNWAYS/LENGTH REMAINING ................................................12
+APPENDIX 3. HELICOPTER PRACTICE AREA/HANGAR LANES/PERIMETER ROADS .......13
+APPENDIX 4. SVFR AREAS OF OPERATION.........................................................................14
+APPENDIX 5. MULTIPLE RUNWAY CROSSING AREAS ........................................................15
+
+                   FOR SIMULATION USE ONLY  3
+FCM 7110.1A CHG 1                                                 11/30/2025
+
+                       CHAPTER 1. GENERAL
+
+1-1. PURPOSE
+
+This standard operating procedures order contains the body of local knowledge for Flying Cloud
+(FCM) Air Traffic Control Tower (ATCT). It contains descriptions of local procedures and the
+area environment. This SOP should be used in conjunction with other vZMP, VATUSA, and
+VATSIM directives.
+
+1-2. DISTRIBUTION
+
+All vZMP controllers.
+
+1-3. CANCELLATION
+
+FCM ATCT 7110.1A, dated September 29, 2022.
+
+1-4. EFFECTIVE DATE
+
+This order is effective November 30, 2025.
+
+1-5. EXPLANATION OF CHANGES
+
+Update for CRC STARS rundown list. Updated initial altitude assignments and initial departure
+headings.
+
+1-6. POSITIONS
+
+The following positions are in use at FCM ATCT:
+
+Position Name                               Frequency  Callsign
+Ground Control/Clearance Delivery (GC/CD)   121.7      FCM_GND
+Local Control South (LCS)*                  119.15     FCM_S_TWR
+Local Control North (LCN)*                  125.2      FCM_N_TWR
+ATIS                                        124.9      KFCM_ATIS
+
+NOTE ­ LCS is the combined Local Control position. When combined, Local may be worked
+under the callsign FCM_TWR. LC may be used to refer to Local Control in other sections of this
+order.
+
+                       FOR SIMULATION USE ONLY                                                 4
+FCM 7110.1A CHG 1                           11/30/2025
+
+  CHAPTER 2. GROUND CONTROL/CLEARANCE DELIVERY
+
+2-1. POSITION DUTIES AND RESPONSIBILITIES
+
+a. Relay IFR clearances.
+
+b. Ensure separation.
+
+c. Initiate control instructions.
+
+d. Scan the airport environment.
+
+e. Monitor and operate communications equipment.
+
+2-2. FREQUENCY INFORMATION
+
+Frequency 121.7 is assigned to GC/CD.
+
+2-3. AREA OF JURISDICTION
+
+GC is responsible for all aircraft activity on the movement areas of the airport, except for the
+active runways and taxiways between active runways.
+
+2-4. CLEARANCES
+
+a. Initial departure altitude for runways 28L, 28R, 18 is 3,000 ft. and runways 10R, 10L, 36 is
+    2,500 ft.
+
+b. Clear SVFR aircraft to conduct operations at or below 2500 ft. MSL. SVFR operations in the
+    area east of the MSP Class B 8.5-NM boundary shall be at or below 2000 ft. MSL (See
+    appendix 4).
+
+2-5. COORDINATION PROCEDURES
+
+a. With LC
+
+    1. General Crossings. Request crossings in a timely manner.
+
+         (a) Be aware of LC's traffic to the maximum extent possible. If feasible reference LC's
+              traffic for efficiency.
+
+         (b) Specify the intersection of crossing.
+
+         (c) If multiple crossings request the runway or make separate requests.
+
+         (d) Advise LC when crossings are complete.
+
+    2. Taxiway Alpha. Due to the close proximity of taxiway alpha to runway 10L/28R (only 30
+         feet between runway hold short lines and taxiway edge, larger aircraft cannot clear
+         runway without encroaching on taxiway alpha) GC shall ensure that aircraft taxiing on
+         taxiway alpha give way to aircraft exiting the runway. GC must be aware of LC's traffic to
+         the maximum extent possible in an effort to better plan ground operations.
+
+                   FOR SIMULATION USE ONLY  5
+FCM 7110.1A CHG 1                           11/30/2025
+
+    3. Aircraft Larger than 50ft. and Jets. Generally these aircraft will require the longer
+         runway. When the parallel runways are active aircraft over 50 feet in length and all jet
+         aircraft cannot hold between the parallel runways without encroaching on runway safety
+         areas. GC shall coordinate as appropriate.
+
+         (a) When Runway 28L and Runway 28R are active: Aircraft parked on the north side of
+              the airport and requesting to depart runway 28L should:
+
+              (1) Be held short of runway 28R at taxiway C.
+
+              (2) It may be advantageous to cross both parallel runways at any intersection and
+                   approach runway 28L from taxiway B.
+
+         (b) When Runway 10L and Runway 10R are active, it may be advantageous to cross
+              runway 10L from other than taxiway G to avoid traffic congestion.
+
+    4. Intersection departures. Coordinate intersection departures with LC.
+
+    5. Other than active runway operations. LC may request a runway or taxiway for a single
+         aircraft operation. In this case, once the operation is observed, the runway reverts back
+         to GC without verbal coordination.
+
+         PHRASEOLOGY:
+
+         LC: "REQUEST (runway # or taxiway) FOR ONE (departure or arrival)".
+
+         GC: "(runway # or taxiway) IS YOURS FOR ONE (departure or arrival), (state
+         restrictions if necessary)".
+
+*NOTE: You MUST OBSERVE the operation before utilizing the runway. If operation is not
+observed, you shall coordinate for the return or use of the taxiway or runway.
+
+    6. When utilizing Split Locals. GC shall be aware of the direction of flight of aircraft and
+         taxi to the appropriate runway i.e. northbound aircraft to the north parallel runway,
+         southbound aircraft to the south parallel runway.
+
+         (a) Aircraft over 50 feet in length and all jet aircraft shall be handled as in section 3 of
+              this chapter and shall be assigned the LC frequency for the runway it will departure.
+              Non-jet aircraft and those able to hold between the parallel runways should be
+              crossed by GC.
+
+         (b) Aircraft holding short of a parallel runway, departing the other parallel runway, should
+              be issued the appropriate LC frequency for the runway of departure.
+
+         (c) Aircraft departing Runway 18 will be assigned LCS frequency.
+
+         (d) Aircraft departing Runway 36 will be assigned LCN frequency.
+
+2-6. GROUND MOVEMENT PROCEDURES
+
+a. Multiple Runway Crossings. Flying Cloud Tower is authorized to provide multiple runway
+    crossings at the following locations: Taxiways C, D, E, F, and G (See appendix 5).
+
+                   FOR SIMULATION USE ONLY  6
+FCM 7110.1A CHG 1                                                                   11/30/2025
+
+CHAPTER 3. LOCAL CONTROL (NORTH, SOUTH)
+
+3-1. POSITION DUTIES AND RESPONSIBILITIES
+
+a. Scan the airport and its environment for anomalies which may affect operations.
+
+3-2. FREQUENCY INFORMATION
+
+Frequencies 119.15 and 125.2 are assigned to LC. 119.15 is the primary frequency when LC is
+combined. During periods when dual local control positions are operated. 119.15 will be
+designated as LCS and 125.2 will be designated as LCN.
+
+3-3. AREA OF JURISDICTION
+
+LC is responsible for all airborne aircraft in the FCM Delta surface area and all activity on
+designated active runway(s), and taxiways between active runway(s).
+
+3-4. AIRSPACE INFORMATION
+
+a. Calm Wind Runway. Determining factors during periods of calm wind should be:
+
+1. Weather.
+
+2. Use of runway 28L & 28R for easier taxi purposes (crossing fewer runways)
+
+3. The direction of the sun.
+
+b. Bravo Airspace. The local controller is required to be familiar with and to pass information
+    to a pilot who may be violating the MSP Bravo airspace without a clearance. Advise the pilot
+    of the situation and suggest a course of action to prevent a Bravo incursion.
+
+c. Aircraft Departing from Non-Movement Areas. Coordination only needs to be made with
+    GC if his/her traffic may be affected.
+
+d. Other landing areas in Delta Airspace. Occasional floatplane operations are conducted at
+    Lake Riley and at Bryant Lake. Pilots are required to establish radio contact with the tower
+    to advise of their intentions. Neither lake is an official seaplane base. No clearance or
+    separation is necessary, however, traffic advisories and other pertinent information is
+    exchanged (e.g. FCM winds and altimeter).
+
+e. Visual Reporting Points. Commonly used checkpoints are portrayed on the local airport
+    chart. Knowledge of the following checkpoints is necessary to maintain an efficient flow of
+    traffic in the local area. * Indicates VFR Checkpoint
+
+Chaska             Chanhassen      Eden Prairie Center  Excelsior
+Hazeltine (Stubr)  Hopkins         Lake Minnetonka      Lake Minnewashta
+Lake Riley         Lake Victoria   Lake Waconia*        Mound
+Prior Lake*        Radisson South  Savage               Shakopee*
+Spring Lake        Staring Lake    Wayzata*
+
+                              FOR SIMULATION USE ONLY                                            7
+FCM 7110.1A CHG 1                           11/30/2025
+
+3-5. SPLIT LOCALS
+
+The local control position has the capability of being split into two separate operating positions
+when the traffic volume is heavy enough and the parallel runways are in use.
+
+a. Local Control North (LCN). LCN operates on frequency 125.2. LCN is responsible for the
+    portion of the Flying Cloud Delta Surface Area that lies north of an east-west line running
+    halfway between runway 10R/28L and runway 10L/28R. All inbound traffic north of the line
+    shall be instructed to contact LCN. This will include departing traffic on runway 36.
+
+b. Local Control South (LCS). LCS operates on frequency 119.15. LCS is responsible for the
+    portion of the Flying Cloud Delta Surface Area that lies south of an east-west line running
+    halfway between runway 10R/28L and runway 10L/28R. All inbound traffic south of the line
+    shall be instructed to contact LCS. This will include departing traffic on runway 18.
+
+c. Position Location and Runway Assignment:
+
+    1. Runway 10L and Runway 10R
+
+         1) LCN assigned runway 10L, LCS assigned runway 10R.
+
+    2. Runway 28L and Runway 28R
+
+         1) LCN assigned runway 28R, LCS assigned runway 28L.
+
+    3. Runway 18/36
+
+         1) Landing runway 18 or departing runway 36 assigned to LCN.
+
+         2) Landing runway 36 or departing runway 18 assigned to LCS.
+
+3-6. COORDINATION PROCEDURES
+
+a. GC. Coordinate as needed and as included in Section 2-5.
+
+b. M98.
+
+    1. Use the Run-Down Tab List in STARS to obtain IFR departure releases from M98.
+
+         a) Standard departure headings for all runways are 180° clockwise to 300°. Runway 10
+              departures must be issued right turns unless verbally coordinated.
+
+         b) Initial departure altitude for runways 28L, 28R, 18 is 3,000 ft. and runways 10R, 10L,
+              36 is 2,500 ft.
+
+         c) LC may clear IFR arrival aircraft to sidestep to land either parallel runway without
+              coordination when the parallel runways are active.
+
+    2. Instruct any IFR aircraft executing an unplanned missed approach to turn left or right, as
+         appropriate, to heading 230º and maintain 2500 ft. unless otherwise instructed by M98.
+
+                   FOR SIMULATION USE ONLY  8
+FCM 7110.1A CHG 1                           11/30/2025
+
+c. Split Locals. LCN and LCS shall verbally coordinate prior to any aircraft entering the other
+    LC's area of jurisdiction. This includes, but is not limited to:
+
+    1. Aircraft using Runway 18/36
+
+    2. Aircraft on missed approach.
+
+    3. Overflights
+
+    4. Aircraft larger than 50 ft. or jet aircraft holding short of the other LC's runway that may be
+         assigned your frequency by GC. As described in Section 2-5.
+
+    5. If GC did not, it may be advantageous to transfer departing aircraft across your assigned
+         runway to the other LC's runway for management of flow for direction of flight.
+
+    6. Holding aircraft larger than 50ft. or jet aircraft between the parallels. It would be
+         advantageous to keep the other LC apprised of landing aircraft over 50ft. that will be
+         intending to cross their runway to access parking.
+
+    7. Departures taking off that will enter the area of responsibility of the other Local Control
+         should be coordinated prior to take off roll or as soon as possible when airborne.
+
+         PHRASEOLOGY: "REQUEST (left or right) TURN (direction or heading) FOR (acid)
+         (give location)".
+
+    8. Aircraft that call you in the other LC's jurisdiction should be given a frequency change
+         and if able, advise the other LC.
+
+    9. Advise when pertinent intersections are blocked.
+
+3-7. TRAFFIC MANAGEMENT
+
+a. Holding Aircraft between Runway 10R/28L and Runway 10L/28R. If aircraft larger than
+    50 feet or jet aircraft are held between the Parallel Runways, only the runway these aircraft
+    are holding short of may be utilized. The exited runway may not be used for arrivals or
+    departures until that aircraft has moved forward to clear the runway safety area. Propeller
+    driven aircraft smaller than 50 feet may be held between the parallel runways with both still
+    in use.
+
+b. Arrival Procedures.
+
+    1. Assign a landing runway and traffic pattern (if other than standard left turns).
+
+    2. Keep aircraft on your frequency when they are between the parallel runways and are
+         unable to cross the runway due to traffic.
+
+         PHRASEOLOGY: "(acid), HOLD SHORT OF RUNWAY (#) (reason), REMAIN THIS
+         FREQUENCY!"
+
+c. Departure Procedures
+
+    1. Line Up And Wait (LUAW). This procedure shall be exercised with discretion.
+         Whenever an aircraft is issued a LUAW instruction, all procedures and phraseologies in
+         FAAO 7110.65 and FAAO 7210.3 shall apply.
+
+                   FOR SIMULATION USE ONLY  9
+FCM 7110.1A CHG 1                           11/30/2025
+
+d. Helicopter Procedures. There are no helicopter pads at FCM however, there are
+    designated practice areas. Refer to Appendix 3 for map.
+
+e. Overflights and Transitions
+
+    1. Approve to the maximum extent possible all overflights and transitions through the FCM
+         Delta airspace.
+
+    2. Issue current altimeter setting.
+
+    3. When unable to authorize transitions because altitude requested would allow the aircraft
+         to enter the MSP Bravo airspace, state:
+
+         PHRASEOLOGY: "THE BASE OF THE MSP BRAVO AIRSPACE OVER FCM
+         AIRPORT IS 3000 FEET MSL. SUGGEST YOU DESCEND BELOW 3000 OR
+         CONTACT MSP APPROACH ON FREQUENCY (FREQUENCY). ADVISE."
+
+3-8. APPROACH IN USE
+
+Advertise visual approaches only when the visibility is at or above 7 miles and the ceiling is at or
+above 2100 ft. AGL. When instrument approaches are in use, advertise the following instrument
+approaches on the FCM ATIS:
+
+a. When Runways 10L/R or 36 are in use, advertise a straight-in approach procedure for the
+    active runway(s).
+
+b. When Runway 28 is active, advertise the RNAV (GPS) Runway 28L and 28R Approaches
+    and/or the VOR Runway 36 Approach circle to Runway 28L.
+
+c. When Runway 18 is active, advertise an instrument approach procedure for Runway 10R
+    circle to Runway 18.
+
+                   FOR SIMULATION USE ONLY  10
+FCM 7110.1A CHG 1                                  11/30/2025
+
+            APPENDIX 1. POSITION RELIEF CHECKLIST
+
+1. SIA
+2. Weather Information
+
+    a. Current weather
+    b. ATIS
+    c. SIGMETs
+    d. AIRMETs
+    e. PIREPs
+    f. ILS CRITICAL
+    g. NOTAMs
+3. Field Condition Report
+    a. Braking action
+    b. Airport activities
+4. Weather and Altimeter Trends
+5. Verbally State Runway Use Status
+    a. Local Control Owned
+    b. Ground Control Owned
+    c. Unavailable, Closed, Occupied
+6. Coordination Agreements
+    a. With other positions
+    b. With other facilities
+7. Traffic
+    a. Aircraft standing by for service
+    b. Special activity
+    c. Point out A/C
+    d. Inbound A/C
+    e. Outbound A/C
+
+                   FOR SIMULATION USE ONLY         11
+FCM 7110.1A CHG 1                           11/30/2025
+
+APPENDIX 2. TAXIWAYS, RUNWAYS/LENGTH REMAINING
+
+                   FOR SIMULATION USE ONLY      12
+FCM 7110.1A CHG 1                           11/30/2025
+
+APPENDIX 3. HELICOPTER PRACTICE AREA/HANGAR
+                   LANES/PERIMETER ROADS
+
+                   FOR SIMULATION USE ONLY   13
+FCM 7110.1A CHG 1                           11/30/2025
+
+APPENDIX 4. SVFR AREAS OF OPERATION
+
+                   FOR SIMULATION USE ONLY  14
+FCM 7110.1A CHG 1                           11/30/2025
+
+APPENDIX 5. MULTIPLE RUNWAY CROSSING AREAS
+
+                   FOR SIMULATION USE ONLY  15
+

@@ -1,0 +1,1342 @@
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+ORDER                              ARTCCAM
+                                      7210.1F
+
+   AIR TRAFFIC OPERATIONS MANUAL
+
+AIR ROUTE TRAFFIC CONTROL CENTER
+         ADMINISTRATIVE MANUAL
+
+                                            September 1, 2019
+
+                         VATUSA MINNEAPOLIS ARTCC
+
+                        VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+Effective: 01 SEP 2019                                          Page 1
+Minneapolis ARTCC, VATSIM                                              Air Traffic Operations Manual
+Order 7210.1F                                                         ARTCC Administrative Manual
+
+Page Number                LIST OF EFFECTIVE PAGES (LEP)              Effective Date
+        1                                                              01 SEP 2019
+        2                                     Subject Matter           01 SEP 2019
+        3                                       Cover Page             01 SEP 2019
+        4                                            LEP               01 SEP 2019
+        5                                      Revision Log            01 SEP 2019
+        6                                       Bulletin Log           01 SEP 2019
+       7-9                                           TOC               01 SEP 2019
+                                                   Preface             01 SEP 2019
+     10-12                                                             01 SEP 2019
+     13-22                        Section 1 ­ ARTCC Organization       01 SEP 2019
+     23-24                           Section 2 ­ General Conduct       01 SEP 2019
+     25-30                                                             01 SEP 2019
+                            Section 3 ­ Administration and Personnel
+        31                             Section 4 ­ Crew Rosters
+
+                                 Section 5 ­ Positions and Staffing
+                                              Authorizations
+
+Effective: 01 SEP 2019                                                Page 2
+Minneapolis ARTCC, VATSIM  REVISION LOG      Air Traffic Operations Manual
+Order 7210.1F                               ARTCC Administrative Manual
+                           Revision Number
+      Revision Date                    1               Initials
+       16 FEB 2007                     2                 ZMP
+       01 SEP 2019                     3                 ZMP
+       02 FEB 2009                     4                 ZMP
+        01 JUL 2010                    5                 ZMP
+       27 AUG 2010                     6                 ZMP
+       01 SEP 2019                                       ZMP
+
+Effective: 01 SEP 2019                      Page 3
+Minneapolis ARTCC, VATSIM                          Air Traffic Operations Manual
+Order 7210.1F                                     ARTCC Administrative Manual
+
+   Bulletin                         BULLETIN LOG
+  Number
+                           Subject  Initials        Date      Date
+                                                  Entered  Removed
+
+Effective: 01 SEP 2019                                     Page 4
+Minneapolis ARTCC, VATSIM                      Air Traffic Operations Manual
+Order 7210.1F                                 ARTCC Administrative Manual
+
+                           TABLE OF CONTENTS
+
+LIST OF EFFECTIVE PAGES (LEP)................................................................................................2
+REVISION LOG ................................................................................................................................3
+BULLETIN LOG ................................................................................................................................4
+TABLE OF CONTENTS ...................................................................................................................5
+PREFACE ......................................................................................................................................... 6
+SECTION 1 - ARTCC ORGANIZATION ..........................................................................................7
+SECTION 2 - GENERAL CONDUCT .............................................................................................10
+SECTION 3 - ADMINISTRATION AND PERSONNEL...................................................................14
+SECTION 4 - CREW ROSTERS ....................................................................................................24
+SECTION 5 - POSITIONS AND STAFFING ..................................................................................26
+AUTHORIZATIONS ........................................................................................................................33
+
+Effective: 01 SEP 2019                        Page 5
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+                                                 Preface
+
+The Air Route Traffic Control Center Administrative Manual (ARTCCAM) is Volume 1 of the
+Minneapolis ARTCC Air Traffic Operations Manual ­ a library of controlled documents which
+contain all administrative and operational policies and procedures for the Virtual Minneapolis Air
+Route Traffic Control Center (ZMP).
+
+The ARTCCAM will be used as the sole reference concerning the administration of the
+Minneapolis Air Route Traffic Control Center. Topics contained herein include general conduct,
+personnel, staffing, training, events, and facilities subject matter. Oversight of the ARTCAMM is
+the sole responsibility of the Air Traffic Manager, and his designee(s).
+
+Controlled documents are publications that have certain procedures for distribution and record
+keeping. The object is to keep all persons who have a copy of this document current with any
+ongoing changes and revisions. This is accomplished through a revision and bulletin system.
+
+Revisions: Periodically, a number of changes to the document will require the addition,
+subtraction, or replacement of several sections of the document. To accomplish this, a revision
+will be issued. With the revision, each person possessing a copy will be given instructions on how
+to revise their copy. Each person receiving a revision to this controlled document will record the
+revision in the revision log.
+
+Bulletins: On a regular basis, new information which is of high importance may be added to the
+document without having to wait for the next revision to be published. Such information will be
+disseminated with a bulletin which will supplement the document in specific areas or subject
+matter. With the bulletin, each person possessing a copy will be given instructions on how to
+insert the bulletin into the document. Each person receiving a bulletin will record the bulletin in the
+bulletin log.
+
+Dhruv Kalra
+Air Traffic Manager
+Minneapolis ARTCC, VATSIM
+
+Effective: 01 SEP 2019     Page 6
+Minneapolis ARTCC, VATSIM                      Air Traffic Operations Manual
+Order 7210.1F                                 ARTCC Administrative Manual
+
+                                SECTION 1
+                          ARTCC Organization
+
+1.1 VATSIM
+1.2 VATUSA
+1.3 Minneapolis ARTCC Airspace
+1.4 Minneapolis ARTCC Facilities
+
+1.1 VATSIM
+
+          The VATSIM (Virtual Air Traffic Simulation) network is an online community
+          created for enthusiasts of flight simulation and air traffic control. The VATSIM
+          Board of Governors BoG), and Executive Directors have governing power of the
+          network and the organization. The VATSIM Founders have ownership rights and
+          operational privileges over the VATSIM network.
+
+          All policies in the ZMP Air Traffic Operations Manual (including the ARTCCAM,
+          the ATCSOP volumes and ATCSTM) shall be in compliance with the VATSIM
+          Code of Conduct (CoC), and the VATSIM Code of Regulations (CoR), in addition
+          to the VATSIM Global Ratings Policy.
+
+1.2 VATUSA
+
+          VATUSA (VATSIM United States) is a division of the VATNA (VATSIM North
+          America) region of the VATSIM network. VATUSA policies govern the day-to-day
+          operation of the United States domestic airspace and associated air traffic
+          facilities.
+
+          VATUSA is broken down into separate airspaces, each having its own staff and
+          membership. These airspaces are known as Air Route Traffic Control Centers
+          (ARTCCs). ARTCCs may be further subdivided to provide service to airports of
+          varying size within the airspace.
+
+          All policies in the Minneapolis ARTCC Air Traffic Operations Manual (including
+          the ARTCCAM, the ATCSOP volumes and ATCSTM) shall be in compliance with
+          all VATUSA policies.
+
+Effective: 01 SEP 2019                        Page 7
+Minneapolis ARTCC, VATSIM                  Air Traffic Operations Manual
+Order 7210.1F                             ARTCC Administrative Manual
+
+          1.3 Minneapolis ARTCC Airspace
+
+The geographic area indicated on the map is designated as airspace under the control of
+ Minneapolis ARTCC. Certain sectors of this airspace may be under shared control with
+
+                Neighboring ARTCC's as contemplated by Letters of Agreement.
+
+Effective: 01 SEP 2019                                                                   Page 8
+Minneapolis ARTCC, VATSIM                          Air Traffic Operations Manual
+Order 7210.1F                                     ARTCC Administrative Manual
+
+1.4 Minneapolis ARTCC Facilities
+          The following table lists the air traffic control facilities under the administration of
+
+          the Minneapolis ARTCC:
+
+             Facility Name      Unit Number/ICAO                Location
+Alpena DoD RAPCON/ATCT      KAPN                  Alpena, MI
+Anoka ATCT                  KANE                  Blaine, MN
+Appleton ATCT               KATW                  Appleton, WI
+Bismarck TRACON/ATCT        KBIS                  Bismarck, ND
+Central Wisconsin ATCT      KCWA                  Mosinee, WI
+Crystal ATCT                KMIC                  Crystal, MN
+Des Moines TRACON/ATCT      KDSM                  Des Moines, IA
+Duluth TRACON/ATCT          KDLH                  Duluth, MN
+Eau Claire ATCT             KEAU                  Eau Claire, WI
+Fargo TRACON/ATCT           KFAR                  Fargo, ND
+Flying Cloud ATCT           KFCM                  Eden Prairie, MN
+Grand Forks ATCT            KGFK                  Grand Forks, ND
+Grand Island ATCT           KGRI                  Grand Island, NE
+Grayling DoD ATCT           KGOV                  Grayling, MI
+Green Bay TRACON/ATCT       KGRB                  Green Bay, WI
+La Crosse ATCT              KLSE                  La Crosse, WI
+Lincoln TRACON/ATCT         KLNK                  Lincoln, NE
+Minneapolis Center          KZMP                  Farmington, MN
+Minneapolis TRACON/ATCT     M98/KMSP              Minneapolis, MN
+Minot DoD RAPCON/ATCT       KMIB                  Minot AFB, ND
+Omaha TRACON/ATCT           R90/KOMA/KOFF         Omaha, NE
+Ray S Miller DoD ATCT       KRYM                  Camp Ripley, MN
+Red River DoD RAPCON/ATCT   KRDR                  Grand Forks AFB, ND
+Rochester TRACON/ATCT       KRST                  Rochester, MN
+Sawyer ATCT                 KSAW                  Gwinn, MI
+Sioux City TRACON/ATCT      KSUX                  Sioux City, IA
+Sioux Falls TRACON/ATCT     KFSD                  Sioux Falls, SD
+Saint Cloud ATCT            KSTC                  St. Cloud, MN
+Saint Paul ATCT             KSTP                  St. Paul, MN
+Traverse City ATCT          KTVC                  Traverse City, MI
+
+                           END OF SECTION
+
+Effective: 01 SEP 2019                            Page 9
+Minneapolis ARTCC, VATSIM                      Air Traffic Operations Manual
+Order 7210.1F                                 ARTCC Administrative Manual
+
+                                SECTION 2
+                             General Conduct
+
+2.1 Conduct Policy
+2.2 Use of VATSIM Network
+2.3 Use of ARTCC website
+2.4 Use of TeamSpeak
+2.5 Online Web Forums and Message Boards
+
+2.1 Crew Interaction and Professionalism Conduct Policy
+
+          2.1.1 VATSIM Code of Conduct
+
+                     The VATSIM Code of Conduct (CoC) will apply to all members of the
+                     VATSIM network operating within the Minneapolis ARTCC.
+
+          2.1.2 VATNA Policies
+
+                     All VATNA Policies will apply to all members of the VATSIM network
+                     operating within the Minneapolis ARTCC.
+
+          2.1.3 VATUSA Policies
+
+                     All VATUSA Policies will apply to all members of the VATSIM network
+                     operating within the Minneapolis ARTCC.
+
+          2.1.4 Minneapolis ARTCC Code of Conduct
+
+                     All controllers will follow and adhere to the Minneapolis ARTCC Air
+                     Traffic Operations Manual. Failure to do so will result in disciplinary
+                     action and/or may result in removal from the Minneapolis ARTCC Roster.
+
+                     All controllers are expected to give consideration to other ARTCC's
+                     Standard Operating Procedures and Policies. If a pilot or controller is
+                     new, give him respect, and help him through the process of his flight or
+                     session.
+
+2.2 Use of VATSIM Network
+
+          The VATSIM Network is made possible by the hard work and resource donation
+          of the VATSIM founders and other volunteers. The structure of VATSIM is a non-
+          profit, hobby organization, and membership does not require monetary
+          consideration. In respect of that, use of the VATSIM network is a privilege, not a
+          right granted to members and participants. The Minneapolis ARTCC Code of
+          Conduct requires that this privilege is respected by all members.
+
+Effective: 01 SEP 2019                        Page 10
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+2.3 Use of ARTCC Website
+
+          Minneapolis ARTCC maintains a website at www.minniecenter.org. This website
+          domain name, the website content, administration, and operation is proprietary to
+          the Minneapolis ARTCC Board of Directors. Use of the website by members on
+          the active and visiting controller rosters is granted by invitation only. Access may
+          be denied or suspended at any time.
+
+          www.minniecenter.org is used as a central point for information sharing and
+          administration of the ARTCC. Members of Minneapolis ARTCC are encouraged
+          to log in frequently to check on NOTAMS, announcements, events, etc.
+
+2.4 Use of TeamSpeak 3 (TS3)
+
+          Minneapolis ARTCC will maintain access to a TeamSpeak 3 Communications
+          Server. The TeamSpeak 3 server will be administrated by the Air Traffic Manger,
+          or his designee.
+
+          All controllers will be required to obtain TeamSpeak 3 client software to
+          participate in TeamSpeak 3 sessions. The software can be found at
+          www.goteamspeak.com. The participation in TeamSpeak 3 sessions are
+          recommended, but not required.
+
+          Users of the Minneapolis ARTCC TeamSpeak 3 server will be monitored. The Air
+          Traffic Manager, his designee, or the TeamSpeak 3 server host has the right to
+          block users who do not follow proper rules of conduct. Teamspeak 3 usage and
+          conduct is subject to conditions equal or similar to those of section 2.5 Online
+          Web Forums and Message Boards. Members must access the server using their
+          First and Last name (i.e. John Smith). Visitors must access the server using their
+          First and Last names in addition to home facility 3 letter identifier (i.e. John Smith
+          - ZAB).
+
+          The TeamSpeak 3 server is be broken down into several Lounge, Operational,
+          Administrative, and Training channels. Controllers actively logged onto the
+          VATSIM network in any ZMP enroute or terminal position and/or while actively
+          monitoring a student on a live network position will retain control over their
+          operations channel. Controllers who are conducting sweatbox/training sessions
+          will retain control over their training channel. Staff and Training members will
+          retain control of their respective administrative channels. All other channels not
+          listed herein are referred to a lounge channels and may be used as such for
+          general discussion.
+
+          Any conduct violations on the TeamSpeak 3 server will result in disciplinary
+          action. First infraction, 48 hour suspension. Second Infraction, 7 day suspension.
+          Third/Final infraction, indefinite removal.
+
+          Connections to the Primary Minneapolis ARTCC TeamSpeak 3 server shall be
+          made to ts.minniecenter.org:9987
+
+2.5 Online Web Forums and Message Boards
+
+          Minneapolis ARTCC members are provided access to computer message
+          bulletin boards sponsored by the Minneapolis ARTCC Board of Directors,
+          VATUSA, VATSIM, and their respective structures of governance. Member
+          access to message bulletin boards is contingent upon your acceptance of the
+          following terms and conditions:
+
+Effective: 01 SEP 2019     Page 11
+Minneapolis ARTCC, VATSIM                                             Air Traffic Operations Manual
+Order 7210.1F                                                        ARTCC Administrative Manual
+
+1. Users of web forums and message boards should be governed by their
+obligations under the VATSIM Code of Conduct. In keeping with that Code, users
+should ensure that their participation at all times brings credit to the hobby of
+online flight and ATC simulation and to VATSIM/VATUSA and Minneapolis
+ARTCC as well as to themselves, and users should neither falsely nor
+maliciously injure the professional reputation, prospects, or job security of any
+other member.
+
+2. Material placed on Minneapolis ARTCC's Web Forum shall:
+
+                           A.  not include any political, religious, or other propaganda literature;
+
+                           B.  not be obscene or use profanity;
+
+                           C.  be consistent with VATSIM/VATUSA's legal obligations,
+
+                               including statutory obligations, court orders and contractual
+
+                               agreements;
+
+                           D.  not be used for commercial purposes;
+
+                           E.  not include personal threats.
+
+3. Copyrighted material may not be placed on Minneapolis ARTCC Web
+Forum without the permission of the owner(s).
+
+4. A Minneapolis ARTCC Member who places material on any Message
+Bulletin Board is individually responsible for that material. Accordingly, the views
+expressed in any messages are solely those of the individual writers, and are not
+necessarily the views of the ARTCC, VATUSA, or VATSIM.
+
+5. Material that does not conform to these terms and conditions may be
+removed, and the individuals who place such non-conforming material on
+Minneapolis ARTCC's Web Forum may be subject to discipline under VATSIM's
+disciplinary procedures.
+
+6. Information that is posted on Minneapolis ARTCC, VATUSA, and VATSIM
+Message Bulletin Boards is not secure, and may be viewed by persons who are
+not VATSIM members.
+
+7. All members must register to the Minneapolis ARTCC forum using their First
+and Last names. Accounts not utilizing this format will be subject to immediate
+removal. (i.e. John Smith)
+
+2.6 Crew Interaction and Professionalism
+
+In order to preserve the safety of all operations, all controllers are responsible for
+conducting their duties on the scopes with the utmost professionalism. This
+includes interactions with fellow controllers as well as the interactions with the
+pilots we serve.
+
+Controllers are highly encouraged to reach out to neighboring controllers who are
+online and active, not only to coordinate operations, but also to develop a sense
+of rapport, teamwork, and camaraderie.
+
+Any controller or pilot operating within the Minneapolis ARTCC's jurisdiction who
+does not conform with proper etiquette, respect, and professionalism standards
+as determined by the Air Traffic Manager or his designee may be subject to
+discipline under VATSIM's disciplinary procedures.
+
+Effective: 01 SEP 2019                                                                Page 12
+Minneapolis ARTCC, VATSIM                   Air Traffic Operations Manual
+Order 7210.1F                              ARTCC Administrative Manual
+
+2.6.1 Position Notification
+
+          All controllers shall, prior to logging onto and/or off of any position,
+          contact the CIC or most senior ZMP controller online or staff member on
+          VATSIM and/or TeamSpeak to see where needed staffing requirements
+          exist and/or to notify them of a pending position opening and/or closing.
+
+2.6.2 Position Relief Briefings
+
+          All controllers must utilize Position Relief Briefings as written into the
+          appropriate facility Standard Operating Procedures.
+
+                           END OF SECTION
+
+Effective: 01 SEP 2019                     Page 13
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+                                SECTION 3
+
+                     Administration and Personnel
+
+3.1 Administrative Positions
+          3.1.1 Air Traffic Manager
+          3.1.2 Deputy Air Traffic Manager
+          3.1.3 Training Administrator
+          3.1.4 Events Coordinator
+          3.1.5 Facility Engineer
+          3.1.6 Webmaster
+          3.1.7 TeamSpeak Server Administrator
+
+3.2 Chain of Command
+
+3.3 Staff Positions
+          3.3.1 Facilities Leads
+                3.3.1.1 M98
+                3.3.1.2 Sioux Empire
+                3.3.1.3 Dakota
+                3.3.1.4 Gopher State
+                3.3.1.5 Badger State
+                3.3.1.6 Wolverine State
+          3.3.2 Instructors
+          3.3.3 Mentors
+
+3.4 Board of Directors
+
+3.5 Administrative Vacancies
+
+3.6 Staff Vacancies
+
+3.7 New Controllers ­ Admission
+
+3.8 Visiting Controllers ­ Admission
+
+          3.1 Administrative Positions
+
+                          3.1.1 Air Traffic Manager
+
+                                      The Air Traffic Manager (ATM) is the Chief Executive and in charge
+                                      of all oversight and administration of the ARTCC. Per VATUSA
+                                      policy, the ATM's duties and responsibilities include, but are not
+                                      limited to the following:
+
+                                      - Reports to the VATUSA Central Region Air Traffic Director and
+                                      oversees operations and management for the ARTCC.
+
+                                      - Maintains an on line presence on the VATSIM server.
+
+                                      - Functions as VATUSA HQ staff member. Attends periodic meetings
+                                      to report on ARTCC activities and to stay abreast of VATUSA issues
+                                      and policies.
+
+Effective: 01 SEP 2019     Page 14
+Minneapolis ARTCC, VATSIM       Air Traffic Operations Manual
+Order 7210.1F                  ARTCC Administrative Manual
+
+                        3.1.2  - Establishes an ARTCC web page and oversees its maintenance.
+
+                               - Initiates, obtains Air Traffic Director approval for, and maintains
+                               ARTCC Standard Operating Procedures.
+
+                               - Provides for coordination of position assignments and position
+                               restrictions when necessary.
+
+                               - Provides guidance and help to assigned controllers or guests.
+                               Optionally, establishes a staff of "Mentors" to assist new controllers
+                               and guests.
+
+                               - Works with Region Events Coordinator on events that may affect
+                               the ARTCC's operations.
+
+                               - Conducts testing and training as defined, and in accordance with,
+                               the VATUSA Training SOP.
+
+                               - Optionally, conducts additional training and testing on area-specific
+                               subjects.
+
+                               - Establishes an Assistant ATM position and defines the duties of
+                               that position.
+
+                               - Submits selection of Assistant ATM to the region Air Traffic Director
+                               for final approval and announcement.
+
+                               - Nominates Center Instructor candidates to the ATM Instructor or
+                               Training Director for Training Department approval and
+                               announcement
+
+                               - Recommends disciplinary actions to the region Air Traffic Director.
+
+                               In addition to VATUSA policy, the following Minneapolis ARTCC
+                               ARTCC-specific duties are charged to the ATM:
+
+                               - Management and maintenance of the Air Traffic Operations Manual
+
+                               - Overall promotion of the ARTCC and VATSIM
+
+                               - Strategic planning for the ARTCC
+
+                               - The ATM will strive to be available on the network either as a staff
+                               observer or in an ATC position for no less than 15 hours per month.
+
+                               - The ATM will use the callsign ZMP_ATM when on the VATSIM
+                               network as an observer, or while conducting staff duties.
+
+                               Deputy Air Traffic Manager
+
+                               The Deputy Air Traffic Manager (DATM) is Second in Command of
+                               the oversight and administration of the ARTCC. The DATM shall take
+                               over operation of the ARTCC in the absence of the ATM.
+
+                               In addition, the DATM is the direct supervisor of all Facilities and
+
+Effective: 01 SEP 2019         Page 15
+Minneapolis ARTCC, VATSIM       Air Traffic Operations Manual
+Order 7210.1F                  ARTCC Administrative Manual
+
+                        3.1.3  Facility Groups, and web site. The DATM shall be responsible for
+                               operational oversight at the facility level.
+
+                               The DATM will report directly to the ATM on a regular basis.
+
+                               The DATM will strive to be available on the network either as a staff
+                               observer or in an ATC position for no less than 15 hours per month.
+
+                               The DATM will use the callsign ZMP_DATM when on the VATSIM
+                               network as an observer, or while conducting staff duties.
+
+                               Training Administrator
+
+                               The Training Administrator (TA) is responsible for overseeing the
+                               development of Training Procedures and Instructor/Mentor core of
+                               the facility. Per VATUSA policy, duties and responsibilities include,
+                               but are not limited to the following:
+
+                               - Reports to the facility's assigned Air Traffic Manger; collaterally
+                               responsible to the VATUSA Training Director and is responsible for
+                               the efficiency and effectiveness of the Center's individual training
+                               program.
+
+                               - Functions as a VATUSA Training staff member. Attends periodic
+                               meetings to report on training activities and issues and to stay
+                               abreast of issues which may involve VATUSA Training.
+
+                               - Provides the VATUSA Training Director with reports on the general
+                               state of the training department of the ARTCC.
+
+                               - Establishes a Training web page for the ARTCC and oversees its
+                               maintenance.
+
+                               - Recruits and nominates Center Instructor candidates to the
+                               VATUSA Training Department.
+
+                               - Assists the VATUSA Training Director in monitoring the
+                               performance and activity of Center Instructors.
+
+                               - Conducts controller testing and training as defined, and in
+                               accordance with, the VATUSA Training Department.
+
+                               - Works in conjunction with the Air Traffic Manger to establish a staff
+                               of "Mentors" to assist new controllers and guests, and to monitor
+                               their performance.
+
+                               - Maintains close communication with the VATUSA Training Director
+                               on all training matters.
+
+                               - Performs Center Instructor duties when necessary.
+
+                               - Maintains an on line presence on the VATSIM Network.
+
+                               - File a departmental monthly report to the ATM or upon request
+
+Effective: 01 SEP 2019         Page 16
+Minneapolis ARTCC, VATSIM       Air Traffic Operations Manual
+Order 7210.1F                  ARTCC Administrative Manual
+
+                        3.1.4  - The Training Administrator will use the callsign ZMP_TA when on
+                        3.1.5  the VATSIM network as an observer, or while conducting staff duties.
+
+                               Events Coordinator
+
+                               The Events Coordinator is primarily responsible for scheduling and
+                               promoting events at the ARTCC. The duties and responsibilities
+                               include, but are not limited to the following:
+
+                               - Reports directly to the ATM on a regular basis
+
+                               - Administrate events on a regular basis under the following
+                               structure:
+
+                                    A. ARTCC-sponsored events
+                                               1. Recurring single facility events
+                                               2. Recurring multi facility events
+                                               3. Special "feature" or "themed" events
+
+                                    B. VATUSA-sponsored events
+                                               1. Friday Night Ops
+                                               2. Other VATUSA events as needed
+
+                                    C. Virtual Airlines-sponsored events
+                                    D. Neighboring ARTCC-sponsored events
+                                    E. Events which aid the Training Department
+
+                               - Promote events via all communications methods available,
+                               including, but not limited to:
+
+                                    A. www.minniecenter.org (internal/external ARTCC website)
+                                    B. VATUSA Website
+                                    C. VATUSA Events Calendar**
+                                    D. VATSIM Website
+                                    E. Web forums
+
+                               ** Posting of events on the VATUSA events calendar is required and is governed by
+                               VATUSA events policy
+
+                               - Supervise events by having online presence, or by assigning
+                               appropriate Controllers-In-Charge for events as needed
+
+                               - Ensure events are appropriately staffed
+
+                               - File a departmental monthly report to the ATM or upon request
+
+                               - The Events Coordinator will use the callsign ZMP_EC when on the
+                               VATSIM network for event duties. The Events Coordinator shall use
+                               the normal observation callsign (ZMP_XX_OBS) when online for
+                               observation.
+
+                               Facility Engineer
+
+                               The Facility Engineer is responsible for the upkeep and maintenance
+                               of the following technical resources for the ARTCC:
+
+Effective: 01 SEP 2019         Page 17
+Minneapolis ARTCC, VATSIM                                      Air Traffic Operations Manual
+Order 7210.1F                                                 ARTCC Administrative Manual
+
+                               - Sector files for use in approved VATSIM radar controller clients and
+                               associated Alias and Position (POF) files.
+
+                               - The Facility Engineer shall work closely with the ATM and DATM to
+                               ensure that the needs of all facilities are met in order to provide ATC
+                               services per standard operating procedures.
+
+                               - The Facility Engineer will use the callsign ZMP_FE when on the
+                               VATSIM network conducting facility work (i.e. testing sector files,
+                               etc). The Facility Engineer shall use the normal observation callsign
+                               (ZMP_XX_OBS) when online for observation.
+
+                        3.1.6 Webmaster
+
+                               The Air Traffic Manager or designee shall either serve as, or appoint
+                               and supervise the webmaster under the direction of the ATM and
+                               shall be responsible for:
+
+                               - The external/internal website for the ARTCC
+
+                               - The Webmaster will use the normal observation callsign
+                               (ZMP_XX_OBS) when online.
+
+                        3.1.7 TeamSpeak Server Administrator
+
+                               The Air Traffic Manager or designee shall either serve as, or appoint
+                               and supervise the webmaster under the direction of the ATM and
+                               shall be responsible for:
+
+                               - TeamSpeak 3 server access
+
+                               - The TeamSpeak Server Administrator will use the normal
+                               observation callsign (ZMP_XX_OBS) when online.
+
+3.2 Chain of Command
+
+The ARTCC shall always employ a chain of command hierarchy of administrative
+positions. All personnel shall be familiar with and abide by the established chain
+of command to allow the ARTCC to operate efficiently while building an
+organization that can meet the needs of the VATSIM environment.
+
+                           6.  Facilities Leads
+
+                           5.  Deputy Air Traffic Manager
+
+                           4.  Air Traffic Manager
+
+                           3.  VATUSA
+
+                           2.  VATNA
+
+                           1.  VATSIM
+
+It should be understood that other administrative positions on the Board of
+Directors do not have operational or administrative control per this chain of
+command.
+
+The chain is listed in "inverse seniority order" in this manual to illustrate the use
+of the chain. Should an operational control question arise, a controller's first point
+of contact is a facilities lead.
+
+Effective: 01 SEP 2019                                                                   Page 18
+Minneapolis ARTCC, VATSIM                                            Air Traffic Operations Manual
+Order 7210.1F                                                       ARTCC Administrative Manual
+
+3.3 Staff Positions
+
+3.3.1 Facilities Leads
+
+                           When necessary, Facilities Lead positions are granted to controllers who
+                           possess a rating of with a C1 or higher, who are specifically familiar with
+                           the operation of facilities within their group. Each Facility Lead will be
+                           responsible for the following:
+
+                           - Keeping up-to-date on real-world operational changes at their facilities
+                           and passing on that information to Minneapolis ARTCC controllers,
+                           modifying specific facility SOP with oversight from the DATM, and ATM
+                           as needed.
+
+                           - Development and enforcement of SOP for their facilities
+
+                           - Answering operational control questions for their facilities group and the
+                           ARTCC as a whole
+
+                           - Regular reporting to the DATM, or ATM
+
+                           Facilities Leads may have oversight of more than one facilities group, as
+                           listed below:
+
+                           3.3.1.1 M98 Facility Group
+
+                           M98 TRACON/ATCT (KMSP)
+                           KMIC ATCT
+                           KSTP ATCT
+                           KFCM ATCT
+                           KANE ATCT
+
+                           3.3.1.1.1  The M98 facility group is to be overseen by the
+                                      Minneapolis ARTCC Board of Directors and
+                                      shall have not appointed lead position.
+
+                           3.3.1.2 Sioux Empire Facility Group
+
+                           R90 TRACON and ATCT's (KOMA, KOFF, KLNK)
+                           KDSM TRACON/ATCT
+                           KFSD TRACON/ATCT
+                           KGRI ATCT
+                           KSUX TRACON/ATCT
+
+                           3.3.1.3 Dakota Facility Group
+
+                           KBIS TRACON/ATCT
+                           KFAR TRACON/ATCT
+                           KGFK ATCT
+                           KMIB RAPCON/ATCT
+                           KMOT ATCT
+                           KRDR RAPCON/ATCT
+
+Effective: 01 SEP 2019                                                                Page 19
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+          3.3.1.4 Gopher State Facility Group
+
+                           KDLH TRACON/ATCT
+                           KRST TRACON/ATCT
+                           KSTC ATCT
+                           KRYM ATCT
+
+          3.3.1.5 Badger State Facility Group
+
+                           KCWA ATCT
+                           KEAU ATCT
+                           KGRB TRACON/ATCT
+                           KLSE ATCT
+
+          3.3.1.6 Wolverine State Facility Group
+
+                           KAPN RAPCON/ATCT
+                           KSAW ATCT
+                           KTVC ATCT
+                           KGOV ATCT
+
+3.3.2 Instructors
+
+          Controllers appropriately granted an instructor rating by VATUSA and
+          who are assigned to Minneapolis ARTCC by VATUSA shall be part of
+          the Training Department as staff members. They shall report directly to
+          the Training Administrator and the ATM. All appropriate policies
+          regarding instructor duties and responsibilities under VATUSA and
+          VATSIM policy shall apply to Minneapolis ARTCC Staff Instructors,
+          including:
+
+          * Reports to the assigned Training Administrator; collaterally responsible
+          to the VATUSA Training Director and is responsible for the assistance in
+          the development and maintenance of the Center's Training Program.
+
+          * Establishes a training syllabus for each student in the ARTCC in
+          conjunction with the Training Administrator.
+
+          * Conducts controller testing and training as defined, and in accordance
+          with, the VATUSA Training Department.
+
+          * Assess controllers' abilities and makes recommendations for
+          promotions as necessary.
+
+          * Provides the Training Administrator with reports on the performance of
+          controller training and development when requested.
+
+          * Maintains an on line and active presence on the VATSIM Network.
+
+          * Provides a minimum 3 hours of student instruction per month unless
+          arrangements are made with the Training Administrator.
+
+          * Must have previously held a position of Minneapolis ARTCC Mentor for
+          30 calendar days.
+
+Effective: 01 SEP 2019     Page 20
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+          3.3.3 Mentors
+
+                     Controllers appropriately granted as a Mentor by Minneapolis ARTCC
+                     shall be part of the Training Department as staff members. They shall
+                     report directly to the Training Administrator. All appropriate policies
+                     regarding mentor duties and responsibilities under VATUSA and
+                     VATSIM policy shall apply to Minneapolis ARTCC Mentors, including:
+
+                     * Conducts controller training as defined, and in accordance with, the
+                     VATUSA and Minneapolis ARTCC Training Department.
+
+                     * Assess controllers' abilities and makes recommendations to Staff
+                     Instructors as necessary.
+
+                     * Provides the Training Administrator with reports on the performance of
+                     controller training and development when requested.
+
+                     * Maintains an on line and active presence on the VATSIM Network.
+
+                     Requirements for controllers becoming a Mentor are:
+
+                     * Must be rated S3 for 30 calendar days.
+
+                     * Must be recommended to the Training Administrator by a Staff
+                     Instructor.
+
+3.4 Board of Directors
+
+          The Minneapolis ARTCC Board of Directors (BOD) is an advisory board of
+          administrative personnel who are charged with overall policy making decisions.
+
+          They also set the Mission and Strategic Plan goals and initiatives for the ARTCC.
+
+          *The BOD will serve as an appeal board of review for any disciplinary measures
+          taken by the administration.
+
+          The composition of the BOD is as follows:
+
+                     Air Traffic Manager
+                     Deputy Air Traffic Manager
+                     Training Administrator
+                     Events Coordinator
+                     Facility Engineer
+                     Webmaster
+
+          Each member of the BOD (with the exception of the Air Traffic Manager) has one
+          vote to cast in matters before the board requiring a vote.
+
+          Three members present at any meeting of the BOD shall constitute a quorum.
+
+          In the event of a tie vote, the Air Traffic Manager will cast one vote.
+
+          Advisory members to the BOD may be appointed by the Air Traffic Manager at
+          his discretion and a Bulletin shall be issued.
+
+Effective: 01 SEP 2019     Page 21
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+          All communications between the BOD members will be done on the Minneapolis
+          ARTCC TeamSpeak 3 server.
+
+          All meetings completed on the TeamSpeak 3 server will be memorialized into
+          meeting minutes, and will be posted on the Minneapolis ARTCC Website.
+
+3.5 Administrative Vacancies
+
+          Once an administrative position becomes available, internal application will be
+          accepted before external applications. A vacancy message will be posted in the
+          Minneapolis ARTCC Forums and on the News Section of the website. The
+          message shall include job description, requirements, and request applications.
+          The deadline for applications shall not be any earlier than seven (7) calendar
+          days from post date.
+
+          When the deadline passes, the Air Traffic Manager will have fourteen (14)
+          calendar days to recommend his choice for the position to the BOD. The BOD
+          will convene and vote to confirm the ATM's appointment. For the purposes of the
+          confirmation, the ATM will not vote. This confirmation vote will take place no later
+          than seven (7) calendar days after the ATM indicates his choice
+
+          In any event of a tie vote among members of the BOD, the BOD will re-ballot until
+          a confirmation is made. If no confirmation can be made within thirty (30) calendar
+          days of the initial vacancy posting, the vacancy will be posted externally to the
+          VATUSA community.
+
+          Once a confirmation has been made, an announcement on the forum and the
+          website shall be posted stating who was selected for the position.
+
+3.6 Staff Vacancies
+
+          The Air Traffic Manager will have full authority to fill staff position vacancies. Any
+          decision made by the ATM in this regard can be appealed to the BOD.
+
+3.7 New Controllers ­ Admission
+
+          New controllers will be admitted to become members of Minneapolis ARTCC
+          under applicable and current VATSIM/VATUSA policies.
+
+3.8 Visiting Controllers ­ Admission
+
+          The Minneapolis ARTCC Air Traffic Manager and Webmaster shall maintain a list
+          of visiting controllers on the Minneapolis ARTCC Website.
+
+          If a controller wishes to become a Minneapolis ARTCC visiting controller, they
+          must send an **email to the Air Traffic Manager with their request of visiting
+          status (include name, rating, home ARTCC and CID).
+
+             **The Minneapolis ARTCC Website shall waive this step if an application is available to visitors.
+
+          The controller must not have a negative disciplinary record within VATSIM within
+          the last six (6) months. Disciplinary records include the following:
+
+                 Suspension by VATSIM or VATUSA for 1 month or more.
+                 Banned from an ARTCC/FIR
+
+Effective: 01 SEP 2019     Page 22
+Minneapolis ARTCC, VATSIM                   Air Traffic Operations Manual
+Order 7210.1F                              ARTCC Administrative Manual
+
+      More than 3 conflict resolution submissions within a 1 year period.
+
+Additionally, the Air Traffic Manager or his designee may accept or reject
+applicants at his own discretion, subject to VATSIM and VATUSA policies.
+
+Once listed on the Minneapolis ARTCC Visiting Controller Roster, the visiting
+controller must undergo a competency evaluation. The evaluation will be to judge
+the visiting controller's adherence to standards as set forth in the VATUSA
+Controller Rating Guidelines and Standards. The visiting controller will be
+removed from the roster if they are unable to pass the evaluation at the level they
+are rated for, and referred back to their home ARTCC for retraining.
+
+Any active visiting controller shall comply with "Section 5 ­ Positions and
+Staffing" of this volume in determining which positions they are eligible to staff at
+Minneapolis ARTCC.
+
+The following special rules of conduct apply to all visiting controllers:
+
+- All visiting controllers must abide to all Minneapolis ARTCC SOPs.
+
+- The visiting controller must relinquish his logged in ATC position to any
+Minneapolis ARTCC "home controller" member as soon as practical when
+requested by a Minneapolis ARTCC Staff Instructor for the purposes of training
+
+- All visiting controllers that hold the rank of Staff Instructor (I1) or Senior
+Instructor (I3) at their respective "home" ARTCC are required to login under the
+Controller (C1) rank while controlling in Minneapolis ARTCC.
+
+                           END OF SECTION
+
+Effective: 01 SEP 2019                     Page 23
+Minneapolis ARTCC, VATSIM                     Air Traffic Operations Manual
+Order 7210.1F                                ARTCC Administrative Manual
+
+                                SECTION 4
+
+                               Crew Rosters
+
+4.1 Roster Status Designations
+
+4.2 Currency Requirements
+          4.2.1 All Controllers
+          4.2.2 Administration and Staff
+
+4.3 Removal from Roster
+          4.3.1 Inactivity
+          4.3.2 Disciplinary
+
+4.4 Leaves of Absence (LOA)
+
+4.5 Transfer Requests
+
+4.1 Roster Status Designations
+
+Controllers, listed on either the member roster or visiting roster, shall be denoted with one
+of the following status designations:
+
+          Active ­ the controller has met currency requirements for active status
+          membership.
+
+          Inactive ­ the controller has not met currency requirements for active status
+          membership.
+
+          LOA ­ the controller is on an approved leave of absence.
+
+4.2 Currency Requirements
+
+          4.2.1 Non-Rated Controllers
+
+                     Controllers not rated to control a position must complete a minimum of
+                     two training sessions per quarter to be considered current.
+
+          4.2.2 Rated Controllers
+
+                     To be considered current, controllers holding a rating to control any
+                     position in Minneapolis ARTCC airspace must log a minimum of three
+                     hours on position every quarter.
+
+Effective: 01 SEP 2019                       Page 24
+Minneapolis ARTCC, VATSIM                   Air Traffic Operations Manual
+Order 7210.1F                              ARTCC Administrative Manual
+
+4.3 Removal from Roster
+
+          Minneapolis ARTCC will follow the overall VATUSA policy, and remove
+          controllers from the Minneapolis ARTCC membership roster under the following
+          situations:
+
+          4.3.1 Inactivity
+
+                     Quarterly roster audits will take place on the first day of the months of
+                     January, April, July, and October. Controllers who have not met the
+                     currency requirements specified above will be subject to removal from
+                     the roster.
+
+          4.3.2 Disciplinary
+
+                     If a controller does not comply with standard operating procedure(s), or
+                     any policy as contemplated by this manual, or does not comply with any
+                     order given by the administration, they may be subject to disciplinary
+                     action up to and including removal from the roster.
+
+4.4 Leaves of Absence (LOAs)
+
+          A Leave Of Absence (LOA) may be granted by the Air Traffic Manager or Deputy
+          Air Traffic Manager to any member on the crew roster for a defined amount of
+          time. If a LOA is in effect for that controller, all currency requirements are waived
+          until the specified date of the LOA expires.
+
+          Should an LOA be requested for more than 90 calendar days, the controller will
+          be removed from the crew roster unless extreme unforeseen circumstances are
+          the reason for the request. In such extreme cases, the LOA will be subject to
+          approval by a vote of the BOD.
+
+4.5 Transfer Requests
+
+          Transfer requests will be handled by the Air Traffic Manager per VATUSA policy.
+          In accordance with the VATUSA ARTCC policy, the Minneapolis ARTCC ATM
+          reserves the right to refuse transfer requests with cause. Such cause may
+          include but is not limited to:
+
+          - Disciplinary record
+          - Activity (hours logged) history
+          - Recommendation by past ARTCC ATMs
+          - Recommendation by VATUSA Staff
+          - Recommendation by the Minneapolis ARTCC BOD
+
+                           END OF SECTION
+
+Effective: 01 SEP 2019                     Page 25
+Minneapolis ARTCC, VATSIM                                             Air Traffic Operations Manual
+Order 7210.1F                                                        ARTCC Administrative Manual
+
+                                SECTION 5
+
+                          Positions and Staffing
+
+5.1 Positions ­ General
+          5.1.1 Clearance Delivery
+          5.1.2 Ground
+          5.1.3 Tower
+          5.1.4 Departure
+          5.1.5 Approach
+          5.1.6 Center
+          5.1.7 TMU
+          5.1.8 Observation
+
+5.2 Position Restrictions
+          5.2.1 Application of VATSIM/VATUSA Global Ratings Policy
+          5.2.2 Major and Local Competency Training Plan Facilities
+          5.2.3 Local Competency Training Plans - Standards
+
+5.3 Staffing Requirements
+          5.3.1 General/Non-Event Staffing
+          5.3.2 ARTCC Sponsored Events
+          5.3.3 Neighboring ARTCC Events
+          5.3.4 VA Events
+
+5.1 Positions ­ General
+
+          Note: In all position callsign examples contained herein, "XXX" will stand for the
+          location identifier
+
+          5.1.1 Delivery
+
+                     Minimum Rating Required: S1 (Student)
+
+                     Delivery positions will be established at any facility where Clearance
+                     Delivery services are required. The callsign XXX_DEL will be utilized.
+                     Delivery positions may not be required when adequate staffing is
+                     established with either Ground or Tower positions at the facility. SOP for
+                     Delivery positions will be contained within a facility or facilities group
+                     Tower Cab (ATCT) SOP.
+
+          5.1.2 Ground
+
+                     Minimum Rating Required: S1 (Student 2)
+
+                     Ground positions will be established at all ATCT facilities. The callsign
+                     designator XXX_GND will be utilized. For multiple Ground positions at a
+                     single ATCT facility, unique callsigns will be added for each position, or
+                     combined position per the facility's SOP (i.e. XXX_S_GND). SOP for
+                     Ground positions will be contained within a facility or facilities group
+
+Effective: 01 SEP 2019                                               Page 26
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+          Tower Cab (ATCT) SOP.
+
+5.1.3 Tower
+
+          Minimum Rating Required: S2 (Student 2)
+
+          Tower positions will be established at all ATCT facilities. The callsign
+          designator XXX_TWR will be utilized. For multiple Tower positions at a
+          single ATCT facility, unique callsigns will be added for each position, or
+          combined position per the facility's SOP (i.e. XXX_S_TWR). SOP for
+          Tower positions will be contained within a facility or facilities group Tower
+          Cab (ATCT) SOP.
+
+5.1.4 Departure
+
+          Minimum Rating Required: S3 (Senior Student)
+
+          Departure positions will be established at TRACON and RAPCON
+          facilities. The callsign designator XXX_DEP will be utilized. For multiple
+          Departure positions at a single TRACON or RAPCON facility, unique
+          callsigns will be added for each position, or combined position per the
+          facility's SOP (i.e. XXX_N_DEP). SOP for Departure positions will be
+          contained within a facility or facilities group TRACON or RAPCON SOP.
+
+5.1.5 Approach
+
+          Minimum Rating Required: S3 (Senior Student)
+
+          Approach positions will be established at TRACON and RAPCON
+          facilities. The callsign designator XXX_APP will be utilized. For multiple
+          Approach positions at a single TRACON or RAPCON facility, unique
+          callsigns will be added for each position, or combined position per the
+          facility's SOP (i.e. XXX_N_APP). SOP for Approach positions will be
+          contained within a facility or facilities group TRACON or RAPCON SOP.
+
+5.1.6 Center
+
+          Minimum Rating Required: C1 (Controller)
+
+          Center positions will be established for the ARTCC utilizing the callsign
+          designator MSP_NN_CTR where "NN" indicates the airspace sector
+          number the controller is controlling. When all of the Minneapolis ARTCC
+          ARTCC airspace is under the control of a combined center position, the
+          callsign MSP_11_CTR will be used (primary combined position). SOP for
+          Center positions will be contained within the ARTCC Center Operations
+          SOP.
+
+5.1.7 TMU
+
+          Minimum Rating Required: C1 (Controller)
+
+          A Traffic Management Unit position or positions will be established
+          during events where high volumes of traffic flow necessitate a TMU. The
+          callsign ZMP_TMU will be utilized. The TMU is only to be used per
+          approval by VATUSA.
+
+Effective: 01 SEP 2019     Page 27
+Minneapolis ARTCC, VATSIM   Air Traffic Operations Manual
+Order 7210.1F              ARTCC Administrative Manual
+
+5.1.8 Observation
+
+          Observation positions are governed by VATSIM policy. Any controller on
+          the Minneapolis ARTCC controller roster who logs onto the VATSIM
+          network in an Observation position shall use the callsign ZMP_II_OBS,
+          where "II" are the controller's operating initials.
+
+5.2 Position Restrictions
+
+          5.2.1 Application of VATSIM/VATUSA Global Ratings Policy
+
+                     The VATSIM Global Ratings Policy, vis-à-vis the VATUSA Global
+                     Ratings Policy is applied to the Minneapolis ARTCC in the following
+                     manner:
+
+                     Ratings
+                     Observer (OBS) ­ A member with no ATC ratings or certifications
+                     Student (S1) ­ Delivery and Ground Controller
+                     Student (S2) ­ Tower Controller
+                     Senior Student (S3) ­ APP/DEP Controller
+                     Controller (C1) ­ Center Controller
+                     Senior Controller (C3) (available per VATSIM/VATUSA guidelines)
+
+                     Restrictions
+
+                     1. No controller shall be permitted to operate/control at a facility
+                           position for which he is not rated without the supervision of a mentor
+                           or instructor.
+
+                     2. No controller shall be permitted to operate/control at a Major Facility
+                           without first completing the requirements and evaluations necessary.
+
+Effective: 01 SEP 2019     Page 28
+Minneapolis ARTCC, VATSIM                           Air Traffic Operations Manual
+Order 7210.1F                                      ARTCC Administrative Manual
+
+5.2.2 Major Facilities
+
+              Facility Name      Unit Number/ICAO  Major
+Alpena DoD RAPCON/ATCT       KAPN                   Yes
+Anoka ATCT                   KANE
+Appleton ATCT                KAPN
+Bismarck TRACON/ATCT         KBIS
+Central Wisconsin ATCT       KCWA
+Crystal ATCT                 KMIC
+Des Moines TRACON/ATCT       KDSM
+Duluth TRACON/ATCT           KDLH
+Eau Claire ATCT              KEAU
+Fargo TRACON/ATCT            KFAR
+Flying Cloud ATCT            KFCM
+Grand Forks ATCT             KGFK
+Grand Island ATCT            KGRI
+Grayling DoD ATCT            KGOV
+Green Bay TRACON/ATCT        KGRB
+La Crosse ATCT               KLSE
+Lincoln TRACON/ATCT          KLNK
+Minneapolis Center           KZMP
+Minneapolis TRACON/ATCT      M98/KMSP
+Minot DoD RAPCON/ATCT        KMIB
+Omaha TRACON/ATCT            R90/KOMA
+Red River DoD RAPCON/ATCT    KRDR
+Rochester TRACON/ATCT        KRST
+Ray S. Miller DoD ATCT       KRYM
+Sawyer ATCT                  KSAW
+Sioux City TRACON/ATCT       KSUX
+Sioux Falls TRACON/ATCT      KFSD
+Saint Cloud ATCT             KSTC
+Saint Paul ATCT              KSTP
+Traverse City ATCT           KTVC
+
+5.2.3 Major Fields - Standards
+
+                           Each facility designated as "Major" utilizes the following standards:
+
+                           1. The training on, and evaluation of knowledge and performance
+                                using, standard operating procedures for the facility as outlined in
+                                appropriate sections of the Air Traffic Control Procedures volume of
+                                this manual.
+
+                           2. The observation of VATUSA Controller Rating Guidelines and the
+                                Global Ratings Policy.
+
+                           3. Final certification evaluation utilizing a written test or quiz, and an
+                                online over-the-shoulder evaluation. Evaluation may be done in a live
+                                VATSIM environment or in a simulated "Sweatbox" environment.
+                                Sweatbox evaluations shall be done only with prior permission from
+
+Effective: 01 SEP 2019                                                                            Page 29
+Minneapolis ARTCC, VATSIM                   Air Traffic Operations Manual
+Order 7210.1F                              ARTCC Administrative Manual
+
+                           the Minneapolis ARTCC Training Administrator.
+
+5.3 Staffing Requirements
+
+     5.3.1 General/Non-Event Staffing
+
+                General staffing for the ARTCC promotes the following staffing philosophy:
+
+                - Staff CTR positions first if certified
+                - Staff ATCT positions after CTR positions are adequately staffed
+                - Staff TRACON positions only if CTR positions feel the need for local
+                Approach and Departure control assistance
+                - A controller who is not certified for Center should work the highest possible
+                position available to them.
+
+                A Minneapolis ARTCC controller in any Center position may treat Class C
+                and Class D facilities as uncontrolled (except when staffed) when it is not
+                operationally practical to do so.
+
+     5.3.2 ARTCC Sponsored Events
+
+                For ARTCC Sponsored events, the Events Coordinator, ATM, or the
+                Controller-in-Charge for the event shall determine staffing requirements for
+                the event.
+
+     5.3.3 Neighboring ARTCC Events
+
+                The Events Coordinator or ATM will strive to fill all requested staffing
+                requirements for events hosted by neighboring ARTCC's. At the minimum,
+                Minneapolis ARTCC will staff a CTR position in support of a neighboring
+                ARTCC event and will staff up additional positions at the request of the Air
+                Traffic Manager, Events Coordinator, a VATUSA administrator, or the
+                neighboring ARTCC administration.
+
+     5.3.4 VA Events
+
+                The Events Coordinator or ATM will strive to fill all requested staffing
+                requirements for events hosted or sponsored by virtual airlines. At the
+                minimum, Minneapolis ARTCC will staff a TWR position in support of VA
+                events.
+
+                           END OF SECTION
+
+Effective: 01 SEP 2019                     Page 30
+Minneapolis ARTCC, VATSIM                 Air Traffic Operations Manual
+Order 7210.1F                           ARTCC Administrative Manual
+
+AUTHORIZATIONS             /s/
+                           Manuel Manigault
+/s/                        Air Traffic Director
+Dhruv Kalra                Northeast Region, VATUSA
+Air Traffic Manager        01 SEP 2019
+Minneapolis ARTCC, VATSIM
+01 SEP 2019
+
+Effective: 01 SEP 2019     Page 31
+

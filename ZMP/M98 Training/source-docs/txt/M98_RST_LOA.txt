@@ -1,0 +1,133 @@
+                                               FOR SIMULATION USE ONLY
+
+                              Minneapolis Terminal Radar Approach Control (TRACON)
+                                           Rochester Airport Traffic Control Tower
+
+                                                     LETTER OF AGREEMENT
+
+                                                                                                         EFFECTIVE: March 31, 2026
+
+SUBJECT: TOWER ENROUTE SERVICE
+
+1. PURPOSE. To prescribe procedures for the inter-facility control of IFR and VFR air traffic.
+
+2. CANCELLATION. Minneapolis Terminal Radar Approach Control (TRACON) and
+    Rochester Airport Traffic Control Tower Letter of Agreement dated December 27, 2023 is
+    cancelled.
+
+3. SCOPE. This agreement between Minneapolis TRACON (M98) and Rochester Airport Traffic
+    Control Tower (RST) establishes responsibilities and procedures for handling IFR and VFR air
+    traffic. The procedures contained herein are supplementary to FAA Order JO 7110.65, Air
+    Traffic Control, and VATUSA policies and procedures.
+
+4. RESPONSIBILITIES.
+
+    a. Minneapolis ARTCC (ZMP) Sector 7 controls the RST delegated airspace when the
+approach facility is closed.
+
+    b. Transfer of control and frequency change shall take place after completion of radar
+handoff. Transfer of control and frequency change for aircraft on the BLUEM Arrival must take
+place prior to the aircraft crossing BLUEM.
+
+    c. Upon transfer of control, the receiving facility may alter the aircraft's course up to 30
+degrees either side of the aircraft's track.
+
+    d. Upon transfer of control, RST may descend and/or alter the course of Owatonna arrivals.
+
+    e. The receiving facility may request a VFR aircraft to change beacon codes while in the
+transferring facility's airspace.
+
+5. RADAR PROCEDURES.
+
+    a. Rochester Airport Traffic Control tower shall:
+
+         (1) Assign the BLUEM STAR to all capable turbojet aircraft landing MSP Airport. Assign
+the KASPR STAR to all other turbojet aircraft landing MSP Airport. RST must verbally
+coordinate all turbojet aircraft on the KASPR arrival.
+
+         (2) Assign the KASPR STAR to all turboprop aircraft capable of 200 knots or greater
+indicated airspeed (IAS) landing MSP Airport.
+
+         (3) Assign the following altitudes (and frequencies) to BLUEM/KASPR STAR arrivals:
+
+             (a) Landing Runways 12L/R ­ at 9,000 ft. (Feeder) Jets/Props
+
+             (b) Landing Runways 30L/R ­ at 7,000 ft. (Satellite) Props
+
+             (c) Landing Runway 30L/R ­ At 9,000 ft. (Feeder). Jets
+
+             (d) Landing Runway 30L/R and when departing 17 ­ at 9,000 ft. (Feeder) Jets/Props
+
+             (e) Landing Runway 35 ­ at 7,000 feet. (35 Arrival) Jets/Props
+
+                                               FOR SIMULATION USE ONLY
+M98/RST LOA              FOR SIMULATION USE ONLY                               3/31/2026
+
+(f) Landing Runway 4 ­ at 8,000 feet. (Feeder) All aircraft capable of 200 kts>
+
+(g) Landing Runway 17 or 22 ­ at 9,000 feet (Feeder) All aircraft capable of 200 kts>
+
+(h) Any other Runway configurations as coordinated.
+
+NOTE-
+The KASPR STAR airspace is considered 4 NM wide each side of the STAR centerline. When MSP
+is landing Runway 35, the eastern side of the KASPR airspace shall be considered 7 NM wide.
+
+         (4) Have aircraft landing in M98 airspace that RST has worked through ZMP sector 5
+airspace at 4,000 ft.
+
+         (5) Have all other aircraft landing in M98 airspace exit RST airspace or ZMP sector 8
+airspace at 6,000 ft.
+
+(6) Have overflight aircraft enter M98 airspace at 4,000, 6,000, or 8,000 ft.
+
+         (7) Individually coordinate aircraft that will transit M98 airspace (overflights) at 7,000 ft.
+or above at least 5 minutes before the time they are estimated to enter M98 airspace.
+
+         (8) Assign M98 frequencies and coordinate with positions as listed below and depicted in
+Attachment A.
+
+             (a) 135.47 ­ "Feeder" for MSP arrivals on the BLUEM/KASPR STAR, excluding
+Runway 35 traffic.
+
+(b) 118.72 ­ "35 Arrival" for Runway 35 traffic on the BLUEM/KASPR STAR.
+
+(c) 132.975 ­ "East Departure"
+
+(d) 134.7 ­ "Satellite"
+
+(e) Advise M98 Satellite and Departure positions when RST airspace is split.
+
+b. Minneapolis Approach Control shall:
+
+(1) Have aircraft entering RST airspace at 3,000, 5,000, 7,000, or 9,000 ft.
+
+         (2) Ensure that aircraft at 7,000 and 9,000 ft. are clear of (parallel to or diverging from)
+the KASPR STAR.
+
+         (3) Assign aircraft entering RST Approach airspace frequency 119.8 or 119.2 as
+appropriate.
+
+6. ATTACHMENT. M98/RST Approach Control Airspace.
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                                               FOR SIMULATION USE ONLY
+M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+             FOR SIMULATION USE ONLY
+M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+             FOR SIMULATION USE ONLY
+M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+             FOR SIMULATION USE ONLY
+M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+             FOR SIMULATION USE ONLY
+M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+
+             FOR SIMULATION USE ONLY
+

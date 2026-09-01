@@ -1,0 +1,1429 @@
+ORDER                                               M98 TRACON
+                                                       7110.26A
+
+           MINNEAPOLIS TRACON
+STANDARD OPERATING PROCEDURES
+
+                               March 31, 2026
+
+          VATUSA MINNEAPOLIS ARTCC
+
+       VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+                           FOR SIMULATION USE ONLY
+                        VIRTUAL AIR TRAFFIC SIMULATION NETWORK           M98
+                                        UNITED STATES DIVISION       7110.26A
+                                              Minneapolis ATCT
+                                                                Effective date:
+SUBJ: Minneapolis TRACON Standard Operating Procedures          March 31, 2026
+
+         This order prescribes standard operating procedures for use by Air Traffic Control
+Specialists at Minneapolis TRACON on the VATSIM network. Controllers are required to be
+familiar with the provisions of this order that pertain to their operational responsibilities and to
+exercise their best judgment if they encounter situations not covered by it.
+
+         It is emphasized that information contained herein is designed and specifically for use in
+a virtual controlling environment. It is not applicable, nor should be referenced for live
+operations in the National Airspace System (NAS). The procedures contained within this order
+document how the positions are to be operated and, in conjunction with FAA Orders 7110.10,
+7110.65, and 7210.3, will be the basis for performance evaluations, training, and certification.
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                          FOR SIMULATION USE ONLY
+3/31/2026               FOR SIMULATION USE ONLY                       M98 7110.26A
+
+                        Order Record of Changes
+
+           Description                             Effective Date     Issued By
+                                                                          DE
+      Split out from old MSP/M98 7110.26.          July 28, 2024          DE
+Replacement of AIT procedures with APO and
+update to P-ACP section. Addition of section for                          DE
+
+    concurrent approaches at MSP and SGS.
+
+Update to M98 satellite scratchpad entries.        November 30, 2025
+
+ Land 35/12 ­ Depart 12 configuration no longer    March 31, 2026
+prohibited. Updates to applicability of P-ACP and
+automated point-outs. Feeder to ACDA altitudes
+
+    updated. Satellite practice approaches IFR
+separation requirement. Updates to airspace maps
+ (mostly configurations involving 17-35), MVA
+
+        map, relief checklists in appendices.
+
+                        FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+Paragraph                           Page
+
+Chapter 1. General Information ................................................................................................... 1-1
+   1-1. Purpose of This Order....................................................................................................... 1-1
+   1-2. Audience. .......................................................................................................................... 1-1
+   1-3. Where Can I Find This Order? ......................................................................................... 1-1
+   1-4. What This Order Cancels. ................................................................................................ 1-1
+   1-5. Software Utilization.......................................................................................................... 1-1
+   1-6. Global Ratings. ................................................................................................................. 1-1
+   1-7. Emergencies...................................................................................................................... 1-1
+   1-8. Delegated Airspace........................................................................................................... 1-2
+   1-9. Distance Between Parallel Runways. ............................................................................... 1-2
+
+Chapter 2. M98 Operating Positions and Duties ......................................................................... 2-1
+   2-1. M98 TRACON Positions.................................................................................................. 2-1
+   2-2. Departure Control (DR).................................................................................................... 2-1
+   2-3. Satellite Control (SR). ...................................................................................................... 2-2
+   2-4. Arrival Control (AR). ....................................................................................................... 2-2
+   2-5. Feeder Control (FR).......................................................................................................... 2-3
+
+Chapter 3. M98 General Operating Procedures ........................................................................... 3-1
+   3-1. Control for Turns. ............................................................................................................. 3-1
+   3-2. Pre-Arranged Coordination Procedures (P-ACPs). .......................................................... 3-1
+   3-3. Automated Point Outs (APO)........................................................................................... 3-2
+   3-4. Concurrent Approaches at MSP and SGS. ....................................................................... 3-3
+   3-5. MSP Runway 35 and FCM RNAV Runway 28L/28R Simultaneous Approaches. ......... 3-3
+
+Chapter 4. Arrivals....................................................................................................................... 4-1
+   4-1. General.............................................................................................................................. 4-1
+   4-2. Approach Control Descent Area....................................................................................... 4-1
+   4-3. Feeder Airspace. ............................................................................................................... 4-1
+   4-4. Feeder/Arrival Control. .................................................................................................... 4-1
+   4-5. Arrival Crossover Traffic. ................................................................................................ 4-4
+   4-6. Runway 30L RNAV (RNP) Y Approach Restrictions. .................................................... 4-5
+   4-7. Visual and Instrument Approaches................................................................................... 4-5
+   4-8. Noise. ................................................................................................................................ 4-6
+
+Chapter 5. Departures .................................................................................................................. 5-1
+   5-1. General.............................................................................................................................. 5-1
+   5-2. Departure Configurations. ................................................................................................ 5-1
+   5-3. Noise. ................................................................................................................................ 5-1
+
+Chapter 6. Satellite....................................................................................................................... 6-2
+   6-1. General.............................................................................................................................. 6-2
+   6-2. Airspace. ........................................................................................................................... 6-2
+   6-3. STP Runway 14 Departures. ............................................................................................ 6-2
+
+           FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+   6-4. STP Shelf. ......................................................................................................................... 6-3
+   6-5. ACDA Entry Procedures. ................................................................................................. 6-3
+   6-6. IFR Separation for VFR Practice Approach Aircraft. ...................................................... 6-3
+Chapter 7. Runway 17-22 Configuration..................................................................................... 7-1
+   7-1. Weather Criteria. .............................................................................................................. 7-1
+   7-2. Delegated Airspace........................................................................................................... 7-1
+   7-3. LAHSO Procedures. ......................................................................................................... 7-1
+   7-4. Converging Runway Display Aid (CRDA) Procedures. .................................................. 7-1
+   7-5. Position Responsibilities .................................................................................................. 7-2
+Chapter 8. Equipment and TMU.................................................................................................. 8-1
+   8-1. Obstructions...................................................................................................................... 8-1
+   8-2. Traffic Management Unit. ................................................................................................ 8-1
+Appendix A. Delegated Airspace Diagrams ................................................................................... 1
+Appendix B. Departure Configurations ........................................................................................ 54
+Appendix C. Satellite Airspace Split ............................................................................................ 59
+Appendix D. Position Relief Briefing Checklists ......................................................................... 61
+Appendix E. MVA Chart and Obstruction Data ........................................................................... 62
+Appendix F. Runway Use Wind Charts........................................................................................ 63
+Appendix G. Scratch Pad Entries.................................................................................................. 75
+
+           FOR SIMULATION USE ONLY
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                                    Chapter 1. General Information
+
+1-1. Purpose of This Order. This order establishes standard operating procedures for the
+VATSIM Minneapolis ATCT, and supplements FAA JO 7110.65, Air Traffic Control.
+
+1-2. Audience. All VATSIM Minneapolis ARTCC personnel.
+
+1-3. Where Can I Find This Order? You can find this order on the Documents page of the vZMP
+website.
+
+1-4. What This Order Cancels. M98 Order 7110.26 CHG 1, eff. Nov 30, 2025.
+
+1-5. Software Utilization. ZMP has standardized the Consolidated Radar Client (CRC) as its
+operating software of choice for all control positions. Any references to software in this and
+other Facility Orders are written with CRC in mind. Controllers utilizing alternative VATSIM
+radar clients must consult with the ZMP Engineering/AeroNav Unit regarding the applicability
+of software settings to their client of choice.
+
+1-6. Global Ratings. All positions of operation outlined within this order must be staffed in
+compliance with VATSIM Global Controller Administration Policy (GCAP).
+
+    a. Minneapolis-St. Paul International (KMSP) is designated by GCAP as a TIER I facility,
+         and all controllers staffing MSP ATCT and M98 TRACON positions must either possess
+         or be in training for the appropriate rating and/or facility endorsements.
+
+    b. M98 Satellite Tower positions are designated as UNRESTRICTED facilities. Any
+         controller holding a Tower Controller Rating (S2) must be allowed to staff Tower Cab
+         positions at the following:
+         (1) St. Paul Downtown-Holman Field (KSTP)
+         (2) Minneapolis Flying Cloud (KFCM)
+         (3) Anoka County-Blaine (KANE)
+         (4) Minneapolis Crystal (KMIC)
+
+1-7. Emergencies. Controllers must reference VATSIM CoC and CoR policies regarding
+emergencies at all times, and have the right to request the termination of an emergency should it
+interfere with operations. Non-compliant pilots should be referred to a VATSIM supervisor IAW
+the CoC.
+
+           FOR SIMULATION USE ONLY  1-1
+3/31/2026              FOR SIMULATION USE ONLY                      M98 7110.26A
+
+1-8. Delegated Airspace. Delegated airspace is defined throughout the order and depicted in
+Appendices A, B, and C.
+
+a. Altitudes are shown in hundreds of feet MSL.
+
+EXAMPLE-
+Floor-Ceiling: 90-170
+
+Ceiling:   100
+
+Floor      70
+
+           __
+
+At and below: 70
+
+b. Delegated airspace diagrams depict IFR altitudes, unless noted.
+
+c. For VFR operations, each TRACON position is delegated VFR altitudes to the base of
+    overlying airspace and down to 500 feet above Tower airspace.
+
+EXAMPLE -
+On a Runway 30/35 configuration, over MSP Airport, Satellite is delegated 5,000 feet with VFR
+altitudes of 5,500 feet and 4,500 feet.
+
+d. The underlying position must ensure appropriate separation from the overlying airspace
+    within Class B boundaries.
+
+e. Each position is responsible to ensure wake turbulence separation from super and heavy
+    jets when vectoring VFR aircraft less than 1,000 feet below overlying airspace.
+
+1-9. Distance Between Parallel Runways. The distance between the centerlines of Runways
+12L/30R and 12R/30L is 3,380 feet.
+
+                       FOR SIMULATION USE ONLY                                               1-2
+3/31/2026                  FOR SIMULATION USE ONLY                   M98 7110.26A
+
+           Chapter 2. M98 Operating Positions and Duties
+
+2-1. M98 TRACON Positions
+
+           Position Name             Frequency  STARS ID  Callsign
+           North Departure           125.750         D    MSP_D_DEP
+           South Departure           124.700         R    MSP_R_DEP
+           East Departure            132.975         L    MSP_L_DEP
+           North Feeder              126.350         I    MSP_I_APP
+           South Feeder              135.475         H    MSP_H_APP
+           North Final/Arrival       119.300         N    MSP_N_APP
+           South Final/Arrival       126.950         S    MSP_S_APP
+           17/35 West Final/Arrival  118.725         J    MSP_J_APP
+           Flying Cloud Satellite    134.700         E    MSP_E_APP
+           St. Paul Satellite        121.200         G    MSP_G_APP
+           Crystal Satellite         126.500         K    MSP_K_APP
+
+NOTE 1-
+Bold in the above table indicates the primary combined frequency to be connected first.
+NOTE 2-
+In the case of a position split, M98 controllers must staff TRACON positions in the following
+order:
+
+    1. South Feeder
+    2. South Departure
+    3. North Final/Arrival
+    4. South Final/Arrival
+    5. Further connections at CIC discretion
+
+2-2. Departure Control (DR).
+    a. Is responsible for controlling and separating IFR/VFR air traffic within that airspace
+         depicted in facility directives.
+    b. Provides appropriate altitude restrictions and ensures in-trail spacing as described in the
+         MSP/M98/ZMP Letters of Agreement.
+    c. Issues radar advisories to IFR/VFR aircraft as time and workload permit
+    d. Performs inter/intrafacility coordination as required
+    e. Initiates and accepts inter/intrafacility handoffs.
+    f. Ensures STARS is functioning normally and is responsible for entries made therein.
+
+                           FOR SIMULATION USE ONLY                                             2-1
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+2-3. Satellite Control (SR).
+    a. Is responsible for controlling and separating IFR/VFR air traffic within that airspace
+         depicted in facility directives.
+    b. IFR/VFR clearances and restrictions as appropriate.
+    c. Issues radar advisories to IFR/VFR aircraft as time and workload permit.
+    d. Performs inter/intrafacility coordination as required.
+    e. Initiates and accepts inter/intrafacility handoffs.
+    f. Ensures STARS is functioning normally and is responsible for entries made therein
+    g. Ensures aircraft landing in M98 airspace have current arrival information.
+
+2-4. Arrival Control (AR).
+    a. Is responsible for controlling and separating IFR/VFR air traffic within that airspace
+         depicted in facility directives.
+    b. Provides vectors and sequencing to IFR/VFR aircraft landing at MSP.
+    c. Issues radar advisories to IFR/VFR aircraft as time and workload permit.
+    d. Utilizes proper approach aids for runways in use.
+    e. Issues approach clearances to aircraft landing MSP.
+    f. Performs inter/intrafacility coordination as required.
+    g. Initiates and accepts inter/intrafacility handoffs.
+    h. Issues weather information and RVR values as required.
+    i. Ensures STARS is functioning normally and is responsible for entries made therein.
+
+           FOR SIMULATION USE ONLY                                                             2-2
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+2-5. Feeder Control (FR).
+    a. Is responsible for controlling and separating IFR/VFR air traffic within that airspace
+         depicted in facility directives
+    b. Assigns runways to arrival aircraft and establishes sequences for handoff to the
+         appropriate Arrival Controller.
+    c. Initiates crossover traffic.
+    d. Issues radar advisories to IFR/VFR aircraft as time and workload permit.
+    e. Performs inter/intrafacility coordination as required.
+    f. Initiates and accepts inter/intrafacility handoffs.
+    g. Issues weather and airport information as required.
+    h. Ensures the STARS is functioning normally and is responsible for entries made therein.
+
+           FOR SIMULATION USE ONLY  2-3
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                         Chapter 3. M98 General Operating Procedures
+
+3-1. Control for Turns. A receiving controller who has communications with an aircraft, for
+which a handoff has been accepted, may turn that aircraft within the previous controller's
+airspace under the following conditions:
+
+    a. The turn must not exceed 30 degrees from the heading assigned by the previous control
+         position.
+
+    b. The turns may only be made if the aircraft remains within the airspace belonging to the
+         control position from which the handoff was made.
+
+3-2. Pre-Arranged Coordination Procedures (P-ACPs). Prearranged coordination procedures
+("look and go") are authorized under the following conditions:
+
+    a. P-ACPs are authorized only within M98 airspace.
+
+    b. In the event P-ACPs are not practicable, standard point-out procedures must be applied
+
+    c. P-ACPs are authorized for use by the Arrival Controller to descend through Departure
+         airspace to 6,000 feet in Area F on a 30/17 configuration only. Departure and Satellite
+         Controllers must notify the Arrival Controller of any non-STARS tracked targets within
+         Area F.
+
+    d. P-ACPs are authorized for use by the departure positions D, R and L to climb through the
+         ACDA shelves, commonly called the "Bat Wings," described in Chapter 4 of this order.
+
+    e. P-ACPs are authorized for use by departure positions D, R, and L, and satellite positions
+         E, G, and K. Departure and Satellite controllers may climb tracked aircraft through
+         Feeder airspace, North/South Arrival airspace (6,000-7,000 feet) over-the-top of MSP,
+         and through Runway 35 Arrival airspace.
+
+    f. Satellite may transit tracked MSP departures at/assigned 4,000 feet through Departure
+         airspace that is adjacent to the dispersal area and between 10 and 15 miles of MSP.
+
+    g. P-ACPs are authorized between Feeder Positions when crossing near gate arrivals at
+         9,000 feet over the ACDA.
+
+           FOR SIMULATION USE ONLY  3-1
+3/31/2026  FOR SIMULATION USE ONLY   M98 7110.26A
+
+3-3. Automated Point Outs (APO).
+
+    a. APO is authorized between all positions when the following conditions are met:
+
+         (1) The aircraft will not transit the ACDA, except through J airspace when on a 30s/35
+             configuration.
+
+         (2) Scratchpad #1 indicates either:
+
+             (a) The first letter of the departure gate (as indicated below) through which the
+                  aircraft will exit M98 airspace followed by the two-digit requested altitude in
+                  thousands of feet if other than the aircraft's present altitude
+
+           E ­ EAU      R ­ RST
+           D ­ DLL      F ­ FAR
+           N ­ ODI      A ­ ABR
+           B ­ BRD/DLH  O ­ ONL/FOD
+
+EXAMPLE-
+"B12" indicates BRD/DLH as the departure fix and the aircraft is assigned 12,000 feet.
+
+             (b) The three letter departure gate.
+
+             (c) The arrival airport.
+
+         (3) The assigned altitude field (field 7) indicates the requested altitude if other than the
+             aircraft's present altitude, unless that information is conveyed in scratchpad #1.
+
+         (4) Aircraft whose scratchpad indicates landing at STC or MKT are considered to be
+             descending to 4,000 feet. Any altitude other than 4,000 feet must be displayed in the
+             assigned altitude field.
+
+    b. APO is authorized between Arrival Control and Satellite Control to descend to 3,000 feet
+         within the lateral confines of the ACDA when the following conditions are met:
+
+         (1) The aircraft is tagged for an approach to MSP.
+
+         (2) The aircraft is within 20NM of the runway and on a heading not greater than 90°
+             from the final approach course.
+
+         (3) The aircraft will not fly through the final and will not turn away from the final
+             approach course.
+
+    c. The controller who initiates an APO is responsible for removing APO specific datablock
+         information prior to initiating a handoff to another M98 position or switching the aircraft
+         to a tower. If the controller receiving an APO elects to take radar on the aircraft, he or she
+         is responsible for removing APO specific datablock information.
+
+           FOR SIMULATION USE ONLY                                                                 3-2
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+3-4. Concurrent Approaches at MSP and SGS. The SGS Localizer Runway 34 and RNAV
+(GPS) Runway 34 approaches may be conducted concurrently with MSP ILS Runway 30L/R
+approaches only under the following conditions:
+
+    a. SGS Runway 34 traffic must be pointed out to Arrival Control prior to being cleared for
+         the approach.
+
+    b. SGS Runway 34 LOC traffic must be at 2500' MSL and established on the localizer by 5
+         NM prior to HINZZ.
+
+    c. SGS Runway 34 RNAV (GPS) traffic must be at 2500' MSL and established on the FAC
+         by 5NM prior to AVBAF.
+
+    d. Arrival Control must ensure aircraft maintain 4000 feet to AABEZ/SAMMZ when
+         protecting for traffic on the SGS localizer/FAC.
+
+    e. SGS traffic must be issued missed approach instructions that include 2500 feet as the
+         initial missed approach altitude.
+
+    f. Approach Control must keep the 30R traffic on their frequency until the aircrafts' paths
+         have crossed.
+
+3-5. MSP Runway 35 and FCM RNAV Runway 28L/28R Simultaneous Approaches. The
+FCM RNAV Runway 28L and 28R approach and the MSP Runway 35 instrument approach may
+be conducted simultaneously under the following conditions:
+
+    a. FCM RNAV Runway 28L/28R approaches must be pointed out to Arrival Control and
+         Local Control.
+
+    b. FCM RNAV Runway 28L/28R traffic must be at 3,000 feet MSL or lower and
+         established on the approach by FGT.
+
+    c. Arrival Control must ensure Runway 35 instrument approach aircraft are established on
+         the final approach course and cross ROZEE at 4,000 feet.
+
+    d. These procedures do not preclude the use of other sequencing and separation techniques.
+
+           FOR SIMULATION USE ONLY  3-3
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                                             Chapter 4. Arrivals
+
+4-1. General.
+
+    a. Arrival Control has control for descent of aircraft in Feeder Control airspace.
+
+    b. STARS scratch pad entries for MSP approaches are located in Appendix G.
+
+4-2. Approach Control Descent Area. The Approach Control Descent Area (ACDA) is that
+airspace designated for descending arrival aircraft to the Minneapolis-St. Paul International
+Airport (MSP), excluding Tower delegated airspace. Airspace and altitude designations are
+depicted in Appendix A.
+
+    a. Runways 30 and 12. The ACDA area must be divided into north and south sectors.
+         North Arrival will control the area north of the 12L/30R localizer. South Arrival will
+         control the area south of the 12R/30L localizer.
+
+    b. Runway 35. Delegated airspace for Runway 35 Arrival Controller in concert with the
+         parallel runways is depicted in Appendix A.
+
+    c. Runways 4, 22, 17, and 35. The ACDA must be divided into north and south sectors.
+         North Arrival will control the area west of the localizer. South Arrival will control the
+         area east of the localizer.
+
+    d. Land Runway 35-Depart 12s. The ACDA must be divided into north and south sectors.
+
+         (1) North Arrival must control the area west of the localizer, including NITZR/TRGET
+             and BLUEM/DELZY traffic.
+
+         (2) South Arrival must control the area east of the localizer.
+
+    e. ACDA Shelves. ACDA Shelves, as depicted in Appendix A, are delegated to Arrival
+         Control at 6,000 feet.
+
+    f. Area R. During heavy traffic periods or unusual situations, the CIC has the authority to
+         coordinate possession of Area R as depicted in Appendix A.
+
+    g. Area F. On a 30/17 configuration only, the Arrival Controller may descend to 6,000' in
+         Area F as depicted in Appendix A using P-ACP (look and go).
+
+4-3. Feeder Airspace. Feeder Airspace is comprised of near-gate and far-gate routes. Ingress
+routes and Ingress route altitudes are depicted in Appendix A.
+
+4-4. Feeder/Arrival Control.
+
+    a. Feeder Control must provide an evenly distributed flow of traffic to arrival positions.
+
+    b. Feeder Control must advise the Arrival Coordinator and Departure Control of any non-
+         STARS tracked target or of any previously tagged target that goes into coast. The Arrival
+         Coordinator must advise any other concerned positions of the non-STARS tracked target.
+
+           FOR SIMULATION USE ONLY  4-1
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+c. Feeder/Arrival Control must handoff to the appropriate Feeder/Arrival Controller as
+    follows:
+    (1) Runways 4/22.
+         (a) Near Gates assigned 8,000 feet.
+         (b) Far Gates assigned 9,000 feet.
+    (2) Runway 17.
+         (a) BAINY will be worked straight in by 17 Arrival Controller.
+         (b) KKILR and MUSCL assigned 8,000 feet.
+         (c) TORGY, NITZR and BLUEM assigned 9,000 feet.
+    (3) Runway 12s and Runway 12s­Depart 17.
+         (a) Near Gates assigned 7,000 feet.
+         (b) Far Gates assigned 8,000 feet.
+    (4) Runway 35.
+         (a) NITZR and BLUEM will be worked straight in by 35 Arrival Controller.
+         (b) TORGY assigned 8,000 feet.
+         (c) BAINY assigned 9,000 feet.
+         (d) KKILR and MUSCL assigned 9,000 feet.
+    (5) Runway 30s.
+         (a) Near Gates assigned 7,000 feet.
+         (b) Far Gates assigned 8,000 feet.
+    (6) Runway 30s ­ Depart 17.
+         (a) Near Gates assigned 7,000 feet.
+         (b) Far Gates assigned 8,000 feet.
+    (7) Land Runway 30s and 35.
+         (a) NITZR and BLUEM will be worked straight in by 35 Arrival Controller.
+         (b) KKILR and MUSCL assigned 7,000 feet.
+         (c) KKILR and MUSCL to 35 Arrival assigned 9,000 feet.
+         (d) Far Gates assigned 8,000 feet.
+         (e) NITZR and BLUEM handed off to South Arrival assigned 7,000 feet.
+
+           FOR SIMULATION USE ONLY                                                      4-2
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+         (8) Land Runway 35 ­ Depart 12s.
+
+             (a) NITZR and BLUEM will be worked straight in by 35 Arrival Controller.
+
+             (b) All other arrivals assigned 8,000 feet.
+
+    d. The Feeder position may be divided into north and south sectors and normally assigned
+         traffic as follows:
+
+         (1) Runways 12 and Runway 12s­Depart 17: North Feeder is assigned BAINY, MUSCL
+             and KKILR. South Feeder is assigned NITZR, BLUEM and TORGY.
+
+         (2) Runways 30 and Runway 30s­Depart 17: North Feeder is assigned BAINY, MUSCL
+             and KKILR. South Feeder is assigned NITZR, BLUEM and TORGY.
+
+         (3) Runways 4/22: North Feeder is assigned BAINY and TORGY. South Feeder is
+             assigned MUSCL, KKILR, NITZR and BLUEM.
+
+         (4) Runway 30s and Landing 35: North Feeder is assigned BAINY, MUSCL and
+             KKILR. South Feeder is assigned TORGY.
+
+         (5) Runway 35 (including Land 35-Depart 12s): North Feeder is assigned BAINY and
+             TORGY. South Feeder is assigned MUSCL and KKILR.
+
+         (6) Runway 17: North feeder is assigned TORGY. South Feeder is assigned MUSCL,
+             KKILR, NITZR and BLUEM.
+
+NOTE-
+The North and South Feeder boundaries are the Runway 30L/12R or Runway 4/22 localizers, as
+appropriate for the configuration in use.
+
+NOTE-
+Individual arrival gates may be reassigned to another Feeder position to balance workload.
+
+    e. Feeder Control must provide an evenly distributed flow of traffic to Arrival positions.
+
+           FOR SIMULATION USE ONLY  4-3
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+4-5. Arrival Crossover Traffic.
+
+    a. Crossover traffic may be initiated by the Feeder controllers.
+
+    b. Crossover traffic must be transferred to Arrival Control on the downwind heading for the
+         runway in use.
+
+    c. Near Gate Crossovers
+
+         (1) Near Gate Crossovers must be coordinated with the appropriate ACDA controller(s).
+
+NOTE-
+KKILR arrivals landing Runway 30L are not considered a Near Gate Crossover for coordination
+purposes
+
+         (2) Near Gate Crossovers on an OPD STAR must be handed off to the arrival controller
+             whose airspace the aircraft will enter first.
+
+EXAMPLE-
+A BAINY Arrival aircraft on the OPD STAR going to Runway 12R must be handed off to the `N'
+Controller
+
+         (3) Near Gate Crossovers that are assigned a heading should be assigned 9,000 feet and
+             handed off to the appropriate controller for the runway assignment.
+
+NOTE-
+The assigned heading should aim for the 25-mile range ring to avoid conflicts with the OPD
+traffic in the ACDA.
+
+EXAMPLE-
+A KKILR arrival aircraft going to Runway 30L is handed off to the `S' Controller at 9,000' and
+heading 220°
+
+    d. Far Gate Crossovers:
+
+NOTE-
+KKILR arrivals landing Runway 12R are not considered a Far Gate Crossover for coordination
+purposes.
+
+         (1) Far Gate crossovers must be handed off to the appropriate Feeder Control position
+             and communication transferred as soon as practicable but not later than 15 NM from
+             MSP.
+
+         (2) The receiving controller has control for speed on contact, and control for turns within
+             the 15-mile range ring and remain in the confines of Feeder airspace.
+
+         (3) Aircraft that are not descending via the RNAV STAR must be coordinated with the
+             receiving feeder controller.
+
+           FOR SIMULATION USE ONLY  4-4
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+4-6. Runway 30L RNAV (RNP) Y Approach Restrictions. When MSP is on a 30/17 runway
+configuration the Runway 30L RNAV (RNP) Y approach must not be issued without
+coordination with MSP Tower due to descents into the Runway 17 departure corridor.
+
+4-7. Visual and Instrument Approaches. The procedures contained in this section must be
+utilized during periods of moderate to heavy traffic on final approach. Due to traffic fluctuations
+at other times, there may be insufficient traffic to apply these SOPs. During these periods, good
+controller judgment must be exercised and proper coordination accomplished.
+
+    a. Parallel Visual Approach Turn-on Procedures.
+
+         (1) Arrival controllers must designate "LOW" and "HIGH" turn-on altitudes and "sides"
+             for approach aircraft.
+
+         (2) "Low-Side" aircraft must be level at the designated "low-side" altitude prior to 3 NM
+             from the associated localizer.
+
+         (3) Aircraft must remain at least 3 NM from the associated extended final approach
+             course and turn-on altitudes must be maintained until aircraft have acknowledged a
+             visual approach clearance.
+
+         (4) The "high-side" controller is responsible for separation from "low" turn-on altitude
+             aircraft.
+
+         (5) To the extent possible, aircraft conducting a visual approach should not join final
+             side-by-side with an aircraft on an approach to the parallel runway.
+
+NOTE ­
+This applies to all visual approaches, including when conducting a visual approach to one
+runway and an instrument approach (ILS, RNAV, etc.) to the parallel runway.
+
+         (6) To the extent possible, do not allow an aircraft to pass another aircraft on approach to
+             the parallel runway, when outside the Final Approach Fix.
+
+         (7) When able, intercept the finals at less than a 30° intercept.
+
+NOTE ­
+5., 6., and 7. are considered best practices and do not supersede the provisions of JO 7110.65.
+
+    b. Simultaneous Dependent Approaches.
+
+         (1) Arrival controllers must designate "LOW" and "HIGH" turn-on altitudes for
+             approach aircraft.
+
+         (2) Aircraft assigned to "LOW" turn-on altitudes must be level at the designated altitude
+             prior to 3 NM from the associated localizer.
+
+         (3) Altitude separation must be maintained until aircraft are established on parallel final
+             approach courses and required lateral separation is attained.
+
+           FOR SIMULATION USE ONLY  4-5
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+4-8. Noise.
+
+    a. Vector arriving aircraft at or above 4,000 feet MSL until intercepting the glidepath unless
+         a particular situation dictates otherwise
+
+    b. Runway 17 should not be used for arrivals from the north by any type of aircraft except
+         when weather or operational conditions may require its use.
+
+           FOR SIMULATION USE ONLY  4-6
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                                           Chapter 5. Departures
+
+5-1. General. Departure Control must coordinate with the appropriate Arrival or Feeder Control
+position before vectoring all non-STARS tracked targets through the ingress routes.
+
+5-2. Departure Configurations. Departure configurations are depicted in Appendix B.
+
+5-3. Noise. Runway 35 should not be used for departures to the north by any type of aircraft
+except when weather or operational conditions may require its use.
+
+           FOR SIMULATION USE ONLY  5-1
+3/31/2026              FOR SIMULATION USE ONLY                         M98 7110.26A
+
+                       Chapter 6. Satellite
+
+6-1. General.
+
+    a. The M98 TRACON has control over IFR aircraft and VFR aircraft requesting services
+         arriving and departing satellite airports around the Minneapolis/St. Paul Metropolitan
+         Area:
+
+           Airport ID  Location                            Towered IAP
+           10D         Winsted, MN                                       Yes
+           21D         Lake Elmo, MN
+           25D         Forest Lake, MN                     Yes         Yes
+           7Y7         ARS Sport Strip (Belle Plaine, MN)
+           KANE        Anoka County/Blaine, MN                         Yes
+           KCFE        Buffalo, MN
+           KFBL        Faribault, MN                                   Yes
+           KFCM        Flying Cloud (Eden Prairie, MN)
+           KLVN        Airlake (Lakeville, MN)             Yes         Yes
+           KMGG        Maple Lake, MN
+           KMIC        Crystal, MN                                     Yes
+           KOEO        Osceola, WI
+           KRGK        Red Wing, MN                                    Yes
+           KRNH        New Richmond, WI
+           KSGS        South St. Paul, MN                  Yes         Yes
+           KSTP        St. Paul Downtown-Holman Field
+           KSYN        Stanton, MN                                     Yes
+
+                                                                       Yes
+
+                                                                       Yes
+
+                                                                       Yes
+
+                                                           Yes         Yes
+
+b. When MSP is making instrument approaches to Runway 22, STP Satellite Control must
+    coordinate all STP IFR approaches or departures with the Arrival Controller.
+
+c. Satellite Control may transition VFR aircraft through the ACDA without coordination
+    provided the aircraft remains beneath the Class B airspace and is tagged with the reported
+    altitude (if Mode C is not available).
+
+d. Satellite specific scratch pad entries are depicted in Appendix G.
+
+6-2. Airspace. Satellite airspace must be divided into three sectors as depicted in Appendix C.
+
+6-3. STP Runway 14 Departures. STP Runway 14 departures must be restricted to 2,500 feet
+and assigned headings no greater than 080°.
+
+                       FOR SIMULATION USE ONLY                                                   6-2
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+6-4. STP Shelf. During periods of time when both MIC Satellite and STP Satellite positions are
+open, and MSP is landing Runway 12L/R, Satellite airspace is modified as depicted in Appendix
+A, Runway 12 and 12/17 STP Shelf.
+
+6-5. ACDA Entry Procedures. Traffic landing MSP and worked by Satellite should be handed
+off to Arrival Control on a heading that ensures the aircraft will enter the ACDA and at the low
+or high turn-on altitude in use for the assigned runway.
+
+    a. 5,000 feet or above to the "high" side.
+
+    b. 4,000 feet to the "low" side.
+
+6-6. IFR Separation for VFR Practice Approach Aircraft. IFR separation is afforded to VFR
+aircraft conducting practice approaches at the following airports:
+
+Airlake (LVN)
+Anoka Blaine (ANE)
+Buffalo (CFE)
+Crystal (MIC)
+Faribault (FBL)
+Lake Elmo (21D)
+Flying Cloud (FCM)
+Glencoe (GYL)
+Maple Lake (MGG)
+New Richmond (RNH)
+Osceola (OEO)
+Red Wing (RGK)
+Saint Paul Downtown (STP)
+South Saint Paul (SGS)
+
+           FOR SIMULATION USE ONLY  6-3
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                              Chapter 7. Runway 17-22 Configuration
+
+7-1. Weather Criteria. Weather must be 1400 and 4 or greater.
+
+7-2. Delegated Airspace. Delegated airspace is depicted in Appendices A and B.
+
+7-3. LAHSO Procedures. LAHSO is authorized for Runway 22 landing traffic to hold short of
+Taxiway KILO for Runway 17 arrivals and departures. Available distance is 8,550 feet For
+aircraft unable to LAHSO:
+
+    a. The position that initially works an aircraft unable to LAHSO must coordinate with other
+         positions as required, and advise the appropriate Arrival controller that the aircraft is
+         unable to LAHSO.
+
+    b. The aircraft should be assigned Runway 17. If traffic conditions do not permit these
+         aircraft to use Runway 17, they should be assigned Runway 22 as follows:
+
+         (1) A sequence (gap) must be coordinated with the Runway 17 arrival controller, and
+             advise the Runway 22 Arrival controller of the sequence (gap).
+
+         (2) The Runway 22 Arrival Controller should provide 2-mile spacing at the runway
+             threshold with the preceding Runway 17 arrival.
+
+         (3) The Runway 17 Arrival Controller should provide 2-mile spacing at the runway
+             threshold with the preceding Runway 22 arrival.
+
+NOTE-
+The use of ghost targets for Runway 17 and Runway 22 aircraft that are part of the non-LAHSO
+sequence may be coordinated.
+
+7-4. Converging Runway Display Aid (CRDA) Procedures.
+
+    a. CRDA procedures must be applied when LAHSO is not used.
+
+    b. Ghost targets must be displayed on the Runway 22 final approach course at all times and
+         may be displayed on the Runway 17 final approach course at the controller's discretion.
+
+    c. Runway 17 arrival spacing should provide 6 miles spacing at touchdown. This spacing is
+         not required when there is no traffic landing Runway 22.
+
+    d. Runway 22 arrival spacing should provide 6 miles spacing at touchdown. Upon reaching
+         the final approach fix, Runway 22 traffic should be within ½ NM (ahead or behind) of the
+         middle of the gap between ghost targets.
+
+           FOR SIMULATION USE ONLY  7-1
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+7-5. Position Responsibilities
+    a. Arrivals:
+         (1) Runway 22 is normally a left-traffic flow.
+         (2) Runway 17 is normally a right-traffic flow.
+         (3) Runway 22 arrivals should be assigned North Local frequency 123.95, if split.
+         (4) Runway 17 arrivals should be assigned West Local frequency 123.67, if split.
+    b. Feeder:
+         (1) Normal Feeder/Arrival Gate Assignments:
+             (a) KKILR and MUSCL ­ North Feeder.
+             (b) BLUEM and NITZER ­ South Feeder.
+             (c) BAINY ­ South Arrival.
+             (d) TORGY ­ South Feeder.
+
+NOTE-
+South Feeder is delegated the BLUEM and NITZR ingress route airspace to the 10-mile range
+ring.
+
+         (2) Feeder Handoff Procedures:
+             (a) South Feeder should handoff to Runway 17 Arrival TORGY traffic at 8,000 feet.
+                  and BLUEM/NITZR traffic at 9,000 feet.
+             (b) North Feeder should handoff MUSCL traffic to Runway 22 Arrival at 8,000 feet.
+             (c) North Feeder should handoff TORGY, BLUEM, and NITZR traffic to Runway 22
+                  Arrival at 9,000 feet.
+             (d) TORGY, BLUEM and NITZR aircraft assigned Runway 22 are far-gate
+                  crossovers. Normally, South Feeder should hand off these aircraft to North Feeder
+                  as follows:
+                I. NITZR: Depart SAVVG heading 020°. Jets at 11,000 feet. Turboprops at
+                      9,000 feet.
+               II. DELZY: Depart SAVVG heading 020°. Jets at 10,000 feet. Turboprops at
+                      9,000 feet.
+              III. TORGY: Depart HDEEE heading 090°. Jets at 11,000 feet. Turboprops at
+                      9,000 feet.
+
+           FOR SIMULATION USE ONLY  7-2
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+         IV. If an aircraft needs to be taken off an RNAV STAR, issue a heading that will
+                  place the aircraft within 10 NM of MSP Airport.
+
+                i. NITZR: Jets at 11,000 feet.
+
+               ii. BLUEM: Jets at 10,000 feet.
+              iii. TORGY: Jets at 11,000 feet.
+         (e) Communication transfer, control for turns/speed, and strip movement must be
+             accomplished in accordance with the SOP.
+
+c. Satellite:
+    (1) STP satellite must coordinate with M98 to organize the flow of traffic to/from STP
+         that will affect the MSP Runway 22 final.
+    (2) All MIC IFR arrivals that will operate east of MIC Airport, and Runway 06 and 14
+         departures must be coordinated with M98.
+
+           FOR SIMULATION USE ONLY  7-3
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                                    Chapter 8. Equipment and TMU
+
+8-1. Obstructions. Except where noted, these obstructions are depicted on video maps and the
+Minimum Vectoring Altitude chart/map. (See Appendix E)
+*Not depicted on video maps.
+
+    a. Big Lake Tower: MSP 323036; 2454 feet.
+    b. Nowthen Tower: MSP 343028; 2048 feet.
+    c. Arden Hills/Shoreview Antennas: MSP 018011; 2438 feet.
+    d. St. Paul Tower: MSP 013007; 1539 feet.*
+    e. Meriden Tower: MSP 184051; 1830 feet.*
+    f. Rosemont Tower: MSP 144014; 1753 feet.
+    g. IDS Building: MSP 338005; 1743 feet.
+
+8-2. Traffic Management Unit. ZMP TMU will be utilized during periods of heavy traffic,
+severe weather, or any other situations requiring the presence of a Traffic Management
+Specialist/Coordinator. Traffic Management duties must be limited to those personnel who have
+completed the VATUSA National Traffic Flow Management Course and are appropriately
+briefed and certified to act in a Traffic Management role.
+
+           FOR SIMULATION USE ONLY  8-1
+3/31/2026                 FOR SIMULATION USE ONLY   M98 7110.26A
+
+           Appendix A. Delegated Airspace Diagrams
+
+                                RUNWAY 12
+                                   FEEDER
+
+           FOR SIMULATION USE ONLY                  1
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 12
+                        ACDA
+
+           FOR SIMULATION USE ONLY  2
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 12
+                   DEPARTURE
+
+           FOR SIMULATION USE ONLY  3
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 12
+           DEPARTURE CLOSE IN
+
+           FOR SIMULATION USE ONLY  4
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 12
+                    SATELLITE
+
+           FOR SIMULATION USE ONLY  5
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+            RUNWAY 12 and 12-17
+                      AREA `R'
+
+           FOR SIMULATION USE ONLY  6
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+            RUNWAY 12 and 12-17
+                     STP Shelf
+
+           FOR SIMULATION USE ONLY  7
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 12s ­ DEPART 12s and 17
+                            FEEDER
+
+           FOR SIMULATION USE ONLY        8
+3/31/2026       FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 12 ­ DEPART 12s and 17
+                             ACDA
+
+           FOR SIMULATION USE ONLY       9
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 12s ­ DEPART 12s and 17
+                        DEPARTURE
+
+           FOR SIMULATION USE ONLY        10
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 12s ­ DEPART 12s and 17
+                 DEPARTURE CLOSE IN
+
+           FOR SIMULATION USE ONLY        11
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 12s ­ DEPART 12s and 17
+                         SATELLITE
+
+           FOR SIMULATION USE ONLY        12
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 30
+                      FEEDER
+
+           FOR SIMULATION USE ONLY  13
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 30
+                        ACDA
+
+           FOR SIMULATION USE ONLY  14
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 30
+                   DEPARTURE
+
+           FOR SIMULATION USE ONLY  15
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 30
+           DEPARTURE CLOSE IN
+
+           FOR SIMULATION USE ONLY  16
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 30
+                    SATELLITE
+
+           FOR SIMULATION USE ONLY  17
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s ­ DEPART 30s and 17
+                            FEEDER
+
+           FOR SIMULATION USE ONLY        18
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s ­ DEPART 30s and 17
+                             ACDA
+
+           FOR SIMULATION USE ONLY        19
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s ­ DEPART 30s and 17
+                        DEPARTURE
+
+           FOR SIMULATION USE ONLY        20
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s ­ DEPART 30s and 17
+                 DEPARTURE CLOSE IN
+
+           FOR SIMULATION USE ONLY        21
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s ­ DEPART 30s and 17
+                         SATELLITE
+
+           FOR SIMULATION USE ONLY        22
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s ­ DEPART 30s and 17
+                            AREA F
+
+           FOR SIMULATION USE ONLY        23
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s and 35 ­ DEPART 30s
+                            FEEDER
+
+           FOR SIMULATION USE ONLY        24
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s and 35 ­ DEPART 30s
+                          30s ACDA
+
+           FOR SIMULATION USE ONLY        25
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s and 35 ­ DEPART 30s
+                           35 ACDA
+
+           FOR SIMULATION USE ONLY        26
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s and 35 ­ DEPART 30s
+                        DEPARTURE
+
+           FOR SIMULATION USE ONLY        27
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s and 35 ­ DEPART 30s
+                 DEPARTURE CLOSE IN
+
+           FOR SIMULATION USE ONLY        28
+3/31/2026        FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 30s and 35 ­ DEPART 30s
+                         SATELLITE
+
+           FOR SIMULATION USE ONLY        29
+3/31/2026       FOR SIMULATION USE ONLY  M98 7110.26A
+
+           LAND 35 ­ DEPART 35, 30 or 4
+                          FEEDER
+
+           FOR SIMULATION USE ONLY       30
+3/31/2026       FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 35 ­ DEPART 35, 30, or 4
+                             ACDA
+
+           FOR SIMULATION USE ONLY        31
+3/31/2026       FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 35 ­ DEPART 35, 30, or 4
+                        DEPARTURE
+
+           FOR SIMULATION USE ONLY        32
+3/31/2026       FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 35 ­ DEPART 35, 30, or 4
+                         SATELLITE
+
+           FOR SIMULATION USE ONLY        33
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+            LAND 35 ­ DEPART 12
+                      FEEDER
+
+           FOR SIMULATION USE ONLY  34
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+            LAND 35 ­ DEPART 12
+                        ACDA
+
+           FOR SIMULATION USE ONLY  35
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+            LAND 35 ­ DEPART 12
+                   DEPARTURE
+
+           FOR SIMULATION USE ONLY  36
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+            LAND 35 ­ DEPART 12
+                    SATELLITE
+
+           FOR SIMULATION USE ONLY  37
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                    RUNWAY 4
+                      FEEDER
+
+           FOR SIMULATION USE ONLY  38
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                    RUNWAY 4
+                        ACDA
+
+           FOR SIMULATION USE ONLY  39
+3/31/2026         FOR SIMULATION USE ONLY    M98 7110.26A
+
+           LAND 4 ­ DEPART 4, 12, 30, or 35
+                         DEPARTURE
+
+           FOR SIMULATION USE ONLY           40
+3/31/2026         FOR SIMULATION USE ONLY    M98 7110.26A
+
+           LAND 4 ­ DEPART 4, 12, 30, or 35
+                          SATELLITE
+
+           FOR SIMULATION USE ONLY           41
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                 LAND 17 and 22
+            DEPART 17, 22, 12L/R
+
+                      FEEDER
+
+           FOR SIMULATION USE ONLY  42
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                 LAND 17 and 22
+            DEPART 17, 22, 12L/R
+
+                        ACDA
+
+           FOR SIMULATION USE ONLY  43
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                 LAND 17 and 22
+            DEPART 17, 22, 12L/R
+
+                   DEPARTURE
+
+           FOR SIMULATION USE ONLY  44
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                 LAND 17 and 22
+            DEPART 17, 22, 12L/R
+
+                    SATELLITE
+
+           FOR SIMULATION USE ONLY  45
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 22
+                      FEEDER
+
+           FOR SIMULATION USE ONLY  46
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                   RUNWAY 22
+                        ACDA
+
+           FOR SIMULATION USE ONLY  47
+3/31/2026  FOR SIMULATION USE ONLY   M98 7110.26A
+
+                      LAND 22
+           DEPART 22, 12, 17, or 30
+
+                   DEPARTURE
+
+           FOR SIMULATION USE ONLY   48
+3/31/2026  FOR SIMULATION USE ONLY   M98 7110.26A
+
+                      LAND 22
+           DEPART 22, 12, 17, or 30
+
+                    SATELLITE
+
+           FOR SIMULATION USE ONLY   49
+3/31/2026         FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                             FEEDER
+
+           FOR SIMULATION USE ONLY          50
+3/31/2026         FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                              ACDA
+
+           FOR SIMULATION USE ONLY          51
+3/31/2026         FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                         DEPARTURE
+
+           FOR SIMULATION USE ONLY          52
+3/31/2026         FOR SIMULATION USE ONLY   M98 7110.26A
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                          SATELLITE
+
+           FOR SIMULATION USE ONLY          53
+3/31/2026             FOR SIMULATION USE ONLY    M98 7110.26A
+
+           Appendix B. Departure Configurations
+
+                       Land and Depart 12s
+                       Land and Depart 30s
+                 Land 30s and 35 ­ Depart 30s
+                 Land 30s ­ Depart 30s and 17
+
+           FOR SIMULATION USE ONLY               54
+3/31/2026      FOR SIMULATION USE ONLY   M98 7110.26A
+
+           Land 12s ­ Depart 12s and 17
+                Three Departure Split
+
+           FOR SIMULATION USE ONLY       55
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+              Land 35 ­ Depart 12
+               (Configuration #3)
+
+           FOR SIMULATION USE ONLY  56
+3/31/2026   FOR SIMULATION USE ONLY    M98 7110.26A
+
+           Land 35 ­ Depart 35, 30, 4
+               Land 17 ­ Depart 17
+              Land 22 ­ Depart Any
+              Land 4 ­ Depart Any
+
+           FOR SIMULATION USE ONLY     57
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+                 Land 17 and 22
+              Depart 17, 22, 12L/R
+
+           FOR SIMULATION USE ONLY  58
+3/31/2026           FOR SIMULATION USE ONLY      M98 7110.26A
+
+           Appendix C. Satellite Airspace Split
+
+           FOR SIMULATION USE ONLY               59
+3/31/2026      FOR SIMULATION USE ONLY   M98 7110.26A
+
+           Class D Airspace Dimensions
+                  (Ceiling in Feet MSL)
+
+           FOR SIMULATION USE ONLY       60
+3/31/2026  FOR SIMULATION USE ONLY                          M98 7110.26A
+
+           Appendix D. Position Relief Briefing Checklists
+
+                  M98 CHECKLIST                      RUNWAY CHANGE CHECKLIST
+
+SELF-BRIEF ITEMS (#1-7 via IDS)               1. As instructed by the TRACON CIC,
+                                                  coordinate with Tower and all TRACON
+    1. TRACON SIAs                                positions the last arrival and departure
+    2. PIREPs                                     on the current runway and the first
+    3. NOTAMs                                     arrival on new runway. Coordinate with
+    4. Forecast                                   Departure and Satellite positions to
+    5. SIGMETs/AIRMETs                            establish resolution of conflicting
+    6. Special Ops                                traffic situations in new ACDA
+    7. Tower SIA                                  airspace during transition.
+
+VERBAL BRIEFING                               2. Advise Arrival Controllers when the
+                                                  new ACDA is available.
+    1. Pertinent items not in IDS
+    2. Position/Airspace configuration        3. Coordinate with Tower and all
+    3. Coordination agreements                    TRACON positions to begin departing
+    4. Communication Status and Traffic           on new runway.
+
+         a. Special Activity Aircraft         4. When changing from a parallel runway
+         b. Point-outs                            configuration to a parallel and 17/35
+         c. Holding aircraft                      runway configuration, coordinate with
+         d. Primary only targets                  Departure and Satellite positions to
+         e. Handed off aircraft still in          obtain/release airspace.
+
+              airspace                        5. When changing to 30/17, remind
+         f. Releases                              Feeder and Arrival, if staffed, of 8,000
+         g. VFR aircraft receiving services       ft. airspace base.
+         h. Aircraft standing by for service
+         i. Remaining traffic
+
+           FOR SIMULATION USE ONLY                          61
+3/31/2026                    FOR SIMULATION USE ONLY   M98 7110.26A
+
+           Appendix E. MVA Chart and Obstruction Data
+
+           FOR SIMULATION USE ONLY                     62
+3/31/2026             FOR SIMULATION USE ONLY  M98 7110.26A
+
+           Appendix F. Runway Use Wind Charts
+
+           FOR SIMULATION USE ONLY             63
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  64
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  65
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  66
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  67
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  68
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  69
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  70
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  71
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  72
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  73
+3/31/2026  FOR SIMULATION USE ONLY  M98 7110.26A
+
+           FOR SIMULATION USE ONLY  74
+3/31/2026             FOR SIMULATION USE ONLY                              M98 7110.26A
+
+                      Appendix G. Scratch Pad Entries
+
+MSP Arrivals
+
+For aircraft executing a visual approach, instrument approach, and for VFR arrival aircraft,
+use the following scratch pad entries:
+
+              RUNWAY  RNAV(GPS)  RNAV(RNP)                ILS/LOC  VISUAL
+              12L     ZL1        YL1                      12L      VL1
+              12R     ZR1        YR1                      12R      VR1
+              30L     ZL3        YL3                      30L      VL3
+              30R     ZR3        YR3                      30R      VR3
+              17                                          L17      V17
+              35      Z35        Y35                      I35      V35
+              4       G04                                 L04      V04
+              22      G22                                 L22      V22
+
+Visual Separation
+
+When an aircraft has been cleared for a visual approach, and the pilot has assumed
+responsibility for separation from the preceding aircraft, the letters "VV" must be entered as
+follows:
+
+                                        MSP Arrivals      VVN
+                      Runways 12L and 30R                 VVS
+                      Runways 12R and 30L                 VV4
+                      Runway 4                            VV2
+                      Runway 22                           VV5
+                      Runway 35                           VV7
+                      Runway 17
+                                                          +VV
+                                      Satellite Arrivals
+                      All Satellite Airports
+
+                      FOR SIMULATION USE ONLY                                                 75
+3/31/2026           FOR SIMULATION USE ONLY                                            M98 7110.26A
+
+Satellite Airports
+
+1) Scratch Pad 1 must have airport of intended landing for IFR or VFR aircraft.
+
+           Example-
+           STP, FCM, ANE, MIC, LVN, 21D, SGS
+
+2) Scratch Pad 2
+
+a) 1st character indicates type of instrument approach for IFR and VFR aircraft.
+
+b) 2nd/3rd character(s) indicates how the approach will terminate.
+
+c) VV ­ Aircraft has been cleared for a visual approach, and the pilot has assumed
+    responsibility for separation (including wake turbulence separation) from the
+    preceding aircraft. (Note: the scratchpad will look like VV+, the + is just an
+    indication that the scratchpad is time-sharing).
+
+d) The following approach abbreviations must be entered in scratch pad 2:
+
+           1st Character ­ TYPE of              2nd and 3rd Character ­ Full Stop or
+           APPROACH                             Missed Approach
+           I = ILS                              F = Full Stop
+           G = RNAV (GPS)                       M = Missed Approach
+           L = Localizer                        PM = Published Missed
+           N = NDB                              VV = Pilot provided visual separation
+           V = VOR
+
+Example ­ N12345 requesting ILS 30 to a Published Missed at LVN: STARS entry will
+be <+IPM, slew, enter>.
+
+Other Approved Entries                          A/W
+                                                HLD
+                                Air Work        PIX
+                                Holding         GEP
+                                Photo Flight    FGT
+                                Holding at GEP  2ER
+                                Holding at FGT
+                                Tour
+
+                    FOR SIMULATION USE ONLY                                            76
+

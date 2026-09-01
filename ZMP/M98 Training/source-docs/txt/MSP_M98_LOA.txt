@@ -1,0 +1,1242 @@
+3/31/2026     MSP-M98 Letter of Agreement
+
+       Minneapolis Airport Traffic Control Tower ­ Minneapolis Terminal Radar
+                                              Approach Control
+
+                                        LETTER OF AGREEMENT
+
+                                                                                    EFFECTIVE: 03/31/2026
+
+SUBJECT: TERMINAL OPERATIONS
+
+1. PURPOSE. To prescribe procedures for the control of IFR and VFR air traffic at
+    Minneapolis Saint Paul International Airport.
+
+2. CANCELLATION. Minneapolis Airport Traffic Control Tower ­ Minneapolis Terminal
+    Radar Approach Control Letter of Agreement dated 7/28/2024, is cancelled.
+
+3. SCOPE. This agreement between Minneapolis Airport Traffic Control Tower (MSP) and
+    Minneapolis Terminal Radar Approach Control (M98) establishes responsibilities and
+    procedures for handling IFR and VFR air traffic at MSP Airport. These procedures are
+    supplementary to FAA Order JO 7110.65, Air Traffic Control.
+
+4. POSITION IDENTIFIERS.
+
+    a. LC: Local Control.
+
+    b. CIC: Controller-in-Charge.
+
+    c. TMU: Traffic Management Unit.
+
+5. GENERAL.
+
+    a. MSP Airspace is delegated by M98 as follows, and it depicted in Attachment 4 of this
+         letter.
+
+         1) The airspace from the surface up to and including 3,000 ft. within the 6-mile ring of
+             the Minneapolis Class B Airspace, including, where applicable, the airspace within
+             1.5 NM either side of the localizer(s) from the 6-mile ring to final approach fix(es).m
+
+         2) When landing Runways 30L/R and Runway 35, the airspace within the 6-mile Class
+             B ring between the eastern boundary of the satellite "corridor" over MSP west to the
+             departure dispersal area, from the surface up to and including 4,000 ft.
+
+         3) In the Departure Dispersal Area (DDA), the airspace from the surface up to and
+             including 7,000 ft., and over the FCM and MIC satellite cutouts from 3,500 ft. up to
+             and including 7,000 ft.
+
+         4) The airspace within DDA extensions from 4,000 ft. up to and including 7,000 ft.
+
+         5) The airspace within the Runway 35-12 configuration ACDA cutout from the surface
+             up to and including 5,000 ft.
+
+           1
+3/31/2026     MSP-M98 Letter of Agreement
+
+         6) For VFR operations, each M98 position is delegated VFR altitudes to the base of
+             overlying airspace and down to 500 feet above MSP airspace.
+
+         7) M98 may transition VFR aircraft not cleared for an instrument approach through the
+             DDA outside of the Class B Airspace without coordination. Aircraft that will loiter in
+             the DDA (e.g. photo missions, tours, surveys, etc.) must be coordinated on an
+             individual basis. M98 assumes separation responsibility with MSP departure traffic.
+
+    b. Visual Separation.
+
+         1) MSP and M98 are authorized to apply visual separation between aircraft under the
+             control of either facility in order to maintain efficiency at MSP Airport. Both facilities
+             must ensure that visual separation is applied only when weather conditions do not
+             obscure visibility affecting the application of visual separation.
+
+         2) MSP is authorized to utilize pilot applied visual separation for successive departures
+             provided no more than 2 successive aircraft via the same SID.
+
+    c. Traffic Management Initiatives (TMIs). Both MSP and M98 must adhere to posted
+         TMIs.
+
+6. COORDINATION.
+
+    a. Flying Cloud Runway 28 RNAV Arrivals When MSP is Departing Runway 17.
+
+         1) M98 must verbally point out the aircraft to MSP in a timely manner.
+
+         2) MSP must transfer communication of departure aircraft after separation is ensured.
+
+    b. Runway Change Procedures. The following coordination procedures must be used
+         during runway changes at MSP:
+
+         1) M98 and MSP must use the appropriate runway change checklists.
+
+         2) M98 and MSP CICs must coordinate a runway change time and a new runway
+             configuration in accordance with section 8 of this letter.
+
+         3) Arrivals and departures must be handled in the following manner:
+
+             a) A time must be coordinated between M98 TMU/CIC and MSP TMU/CIC when
+                  the last departure is estimated to be airborne. MSP CIC must notify M98 CIC of
+                  the call sign on the last departure off the former runway configuration.
+
+             b) A time must be coordinated between M98 TMU/CIC and MSP TMU/CIC when
+                  the last arrival is estimated at the Final Approach Fix. M98 CIC must notify MSP
+                  CIC of the call sign of the last arrival to the former runway configuration.
+
+NOTE-
+If practicable, the last aircraft to use the former runway configuration should be an arrival.
+
+           2
+3/31/2026     MSP-M98 Letter of Agreement
+
+         4) When runway 17/35 is used in conjunction with 30s or 12s, departure headings may
+             be restricted to accommodate the new configuration.
+
+    c. Runway Closure/Opening Procedures.
+
+         1) Runway closures and openings must be verbally coordinated between MSP and M98
+             CICs.
+
+         2) M98 must not allow aircraft to continue past the transfer-of-control point unless the
+             runway has been verbally coordinated open.
+
+7. ARRIVALS.
+
+    a. Arrival Scratch Pad Entries are listed in Attachment 8 of this letter.
+
+    b. To facilitate automatic data transfer, LC must quick look the appropriate Arrival Control
+         full data blocks.
+
+    c. M98 must coordinate with MSP on all non-STARS tracked aircraft landing at MSP
+         airport.
+
+    d. M98 delegates control and responsibility to MSP for separation of aircraft within MSP
+         delegated airspace on same, parallel, and/or converging finals.
+
+    e. The Transfer of Control Point for MSP Arrivals must be as follows:
+
+         1) Instrument Approach: the Final Approach Fix.
+
+         2) Visual Approach: the point at which the aircraft on final enters the MSP airspace
+             lateral boundary.
+
+    f. Communications Transfer. M98 must instruct aircraft to contact MSP on the
+         appropriate LC frequency between 6 and 8 miles from the runway.
+
+    g. Short Approaches. To mitigate ASDE-X Taxiway Arrival Prediction (ATAP) initiated
+         go-arounds, instruct all aircraft turning inside the FAF to join at or outside a 2 mile final.
+
+Example:
+"BMJ47 make at least a 2 mile final."
+
+    h. Missed Approach and Go-Around Procedures. MSP must:
+
+         1) Issue headings as necessary to ensure separation from other arriving and departing
+             aircraft within MSP delegated airspace.
+
+         2) Traffic permitting, climb to an initial altitude of 3,000 ft. and scan the over-the-top
+             corridor.
+
+         3) Determine if the aircraft will be vectored to the departure dispersal area or into
+             satellite airspace.
+
+           3
+3/31/2026     MSP-M98 Letter of Agreement
+
+             (a) If the aircraft will enter the dispersal area, climb to 6,000 ft. and issue an "inside"
+                  heading if possible.
+
+             (b) If the go-around will not be on an "inside" heading, subsequent departures must
+                  not be assigned a heading/fix "inside" the go-around aircraft to allow the go-
+                  around to return to the downwind.
+
+             (c) If the aircraft will enter satellite airspace coordinate a heading and altitude with
+                  the satellite controller.
+
+NOTE-
+Under normal circumstances, the go-around aircraft should be vectored to the dispersal area.
+Satellite airspace may be used if the dispersal area is not available due to traffic. If necessary,
+an aircraft may be vectored in the ACDA if it will not enter satellite or departure airspace, or
+back to the ACDA with a point out to satellite if special circumstances warrant. If the aircraft
+will be vectored within or back to the ACDA, a heading and altitude must be coordinated with
+AO.
+
+         4) Make a handoff to the receiving controller. An automated hand off may be used.
+
+EXAMPLES-
+The go-around aircraft is issued a heading of 260°, an altitude of 6,000 ft., and handed off to
+Departure.
+
+(CC) "R, CC, Handoff."
+(R) "R"
+(CC) "One mile west MSP, DAL123, go-around, heading 260 climbing to 6,000."
+(R) "DAL123, Radar Contact. FQ"
+(CC) "OE"
+
+The go-around aircraft is issued a 040° heading, an altitude of 4,000 ft., and handed off to
+Satellite.
+
+(CC) "G, CC, Handoff."
+(G) "G"
+(CC) "One mile north MSP, DAL123, go-around, heading 040 climbing to 4,000."
+(G) "DAL123, Radar Contact. MA"
+(CC) "JB"
+
+         5) Assign the go-around aircraft the receiving controller's frequency.
+
+    i. Runways 30L/R and 35 Converging Runway Operations (CRO). Simultaneous
+         operations to converging runways are authorized for Runways 30L/R and Runway 35.
+
+         1) Definitions.
+
+           4
+3/31/2026                                                  MSP-M98 Letter of Agreement
+
+           (a) Arrival Departure Window (ADW). A depiction presented on an air traffic control
+               display, used by the controller to prevent possible conflicts between arrivals to,
+               and departures from, a runway. The ADW identifies the point on the final
+               approach course by which a departing aircraft must have begun takeoff.
+
+Runway Pair     Front Gate (NM)                            Rear Gate (NM)
+35/30L          2.26                                       .39
+35/30R          2.35                                       .32
+
+           (b) Converging Runway Display Aid (CRDA). A STARS tool which projects an
+               aircraft's position on final onto another final using a "ghost" target.
+
+           (c) No Departure Zone (NDZ). The area not within the ADW. If an arrival to RWY
+               35 is in this area while an aircraft departs RWY 30L/R, the risk of collision
+               should a RWY 35 arrival go-around increases exponentially.
+
+           (d) CRO is defined as landing Runway 35 while departing Runway 30L/R.
+
+2) Criteria for Runways 30L/R and Runway 35 CRO.
+
+           (a) The MSP and M98 CICs, with input from TMU, must determine if traffic needs
+               dictate the application of Converging Runway Procedures.
+
+           (b) The ceiling must be 2,200 ft. or higher.
+
+NOTE ­ A ceiling refers to cloud coverage of 4/8s or greater. Clouds may hinder the viability of
+CRO while not qualifying as a ceiling, or being reported higher than 2,200 ft.
+
+           (c) The visibility must be 5 miles or greater.
+
+           (d) Wind requirements for Runway 35.
+
+           (1) Tailwind: Wind gusts must be included when referencing the wind charts. If
+               the runway is contaminated, there will be no tailwind.
+
+REFERENCE ­ Pilot/Controller Glossary "Contaminated Runway."
+
+           (2) Crosswind: Wind gusts must be included when referencing the wind charts for
+               Runway 35 only. The crosswind component (including gust values) must be
+               within the parameters of the Attachment 7 wind chart.
+
+3) Procedures.
+
+           (a) When weather is forecast to be conducive for a 30s/35 configuration, MSP and
+               M98 must advertise 30s/35 on the ATIS as live as the weather remains conducive.
+               The configuration must not alternate between 30s/35 and 30s/17.
+
+           (b) Heavy aircraft and props must land the parallels unless otherwise coordinated.
+
+           (c) CRDA must be used at the J Position to ghost 30L aircraft onto the 35 final.
+
+                5
+3/31/2026     MSP-M98 Letter of Agreement
+
+NOTE ­ Runway 35 traffic may be ghosted on the Runway 30L final, this may be useful to S and
+N controllers.
+
+             (d) M98 must provide balanced arrivals to RWY 30L, RWY 30R, and RWY 35.
+                  Balanced is defined as matched sets to RWY 30R, RWY 30L, RWY 35, without
+                  creating undue delay to arriving aircraft.
+
+             (e) Aircraft landing RWY 35 must be within 0.5NM of the ghost target when 30L
+                  traffic reaches 2 mile final. The ghost target is automatically offset 1.5NM behind
+                  the aircraft on 30L. In the event there is no 30L ghost available, the 35 arrival
+                  must be 5NM behind the preceding 35 arrival at 170 KTS or less assigned
+                  airspeed, when the preceding 35 arrival touches down.
+
+             (f) Aircraft landing RWY 30R should be as close to 1NM behind aircraft landing
+                  30L as practicable.
+
+             (g) Required spacing to RWY 30L/30R must be no less than 5NM at touchdown, 170
+                  KTS or less assigned airspeed. MSP CIC/TMU will advise M98 CIC/TMU when
+                  increased spacing is required.
+
+         4) Transitioning from the use of CRO:
+
+             (a) When converging runway operations are no longer conducive due to the criteria
+                  listed above, a transition period is needed to allow M98 to safely evolve to an
+                  alternate runway configuration. M98 may continue arriving on the Runways
+                  30L/30R and 35 configuration with the traffic currently within the confines of
+                  M98 airspace while actively emphasizing the transition to the alternate
+                  configuration.
+
+             (b) Coordination must be made between MSP and M98 TMU regarding the urgency
+                  of the transition period.
+
+EXAMPLE ­ During low ceiling conditions.
+
+             (c) During this transition period, LC must comply with Arrival Departure Window
+                  (ADW), or stop departing Runway 30L and 30R until there are no more arrivals
+                  on Runway 35.
+
+    j. Runway 35 Reduced Separation on Final is approved when Runway 35 is the only
+         advertised landing runway at MSP. Separation between aircraft may be reduced to
+         2.5NM in-trail on the final approach course within 10NM of the runway.
+
+8. DEPARTURES.
+
+    a. Departure Data Block Display. LC must ensure that the correct full STARS data block
+         is displayed on the CTRD on all departures receiving radar services. LC must ensure that
+         Departure Control is advised of any departure that has not auto acquired within two miles
+         from the airport.
+
+           6
+3/31/2026     MSP-M98 Letter of Agreement
+
+    b. Departure/Satellite Control must be responsible for ensuring that auto-acquisition of the
+         departure tracks has occurred.
+
+    c. Departure and Satellite may alter the initial heading of any MSP departure provided
+         separation from any preceding/succeeding departure is ensured.
+
+    d. Departure Control may climb MSP departures (initially assigned 5,000 ft. or higher)
+         within the dispersal area provided separation from any preceding/succeeding traffic is
+         ensured.
+
+    e. MSP must inform the affected Satellite position of any departing aircraft unable to meet a
+         published crossing restriction or climb gradient.
+
+EXAMPLES-
+A Runway 12R departure will not be able to meet the published climb gradient.
+(CC) "G, CC, Info."
+(G) "G."
+(CC) "DAL123 Heavy departing 12R in about 5 minutes unable to make the climb gradient."
+(G) "Roger, JR."
+(CC) "OX."
+
+    f. MSP Departures Landing FCM or STP. MSP must advise the appropriate M98
+         Satellite controller prior to departing an IFR aircraft landing at FCM or STP.
+
+    g. Departure Headings. LC must issue initial headings that ensure departures remain in the
+         appropriate Departure Delegated Airspace as depicted in Attachment 1, and in
+         accordance with the following procedures.
+
+         1) Depart Runways 12L/R. Regardless of landing runways, coordination must be
+             completed when departing Runway 12L or 12R during the following conditions:
+
+             (a) If LC issues "R" traffic departing Runway 12L/R a heading that tracks on or north
+                  of 105°, LC must coordinate with "D."
+
+             (b) If LC issues "D" traffic departing Runway 12L/R a heading that tracks south of a
+                  105°, LC must coordinate with "R."
+
+         2) Land Runways 12L/R, Depart Runways 12L/R and 17.
+
+             (a) LC must assign Runway 12L/R departures (FOD or ONL) a 230° heading for a
+                  turn at three miles from the departure end of the runway. LC must ensure 3 Miles-
+                  in-Trail (MIT) for same fix with departures off different runways.
+
+             (b) M98 has control for left turns of "D" traffic (ABR, FAR, WLSTN, etc.) off
+                  Runway 17 regardless of assigned heading.
+
+             (c) When a Runway 12/17 configuration is in use, the maximum Runway 17
+                  departure track must be 215°.
+
+           7
+3/31/2026     MSP-M98 Letter of Agreement
+
+    (d) When landing Runways 12L/R and departing Runways 12L/R and 17, the
+         common (joint-use) track for Runways 12L/R departures must be 105°.
+
+         (1) If LC issues "L" traffic departing Runway 12L/R a heading that tracks north
+             of 105° LC must coordinate the traffic with "D".
+
+         (2) If LC issues "D" traffic departing Runway 12L/R a heading that tracks south
+             of 105° LC must coordinate the traffic with "L".
+
+3) Depart Runway 30L/R. Regardless of landing runways, coordination must be
+    completed when departing Runway 30L/R during the following conditions:
+
+    (a) If LC issues "R" traffic departing Runway 30L/R a heading that tracks on or north
+         of 300º, LC must coordinate with "D."
+
+    (b) If LC issues "D" traffic departing Runway 30L/R a heading that tracks south of
+         300°, LC must coordinate with "R."
+
+4) Land Runways 30L/R, Depart Runways 30L/R and 17.
+
+    (a) When a Runway 17 departure will depart simultaneously with a same-fix Runway
+         30L/R departure, the aircraft must be 3 MIT, no visual separation, and no
+         divergence. Visual separation or divergence may be used under unusual
+         circumstances.
+
+    (b) M98 has control for right turns of "D" traffic (ABR, FAR, WLSTN, etc.) off
+         Runway 17 regardless of assigned heading. MSP ensures separation between
+         subsequent Runway 30L/R departures and the Runway 17 departure turning
+         north.
+
+    (c) On a Runway 30/17 Configuration, all Runway 17 departures must be issued a
+         heading to track no less than 170°.
+
+5) Runway 17 Same-Fix Departure Spacing. When landing 12L/R or 30L/R and
+    departing Runway 17, LC must provide 3 MIT turbojet-to-turbojet and turboprop-to-
+    turboprop spacing over the same fix, no divergence. Under unusual circumstances,
+    LC may use divergence provided the third aircraft is 3 MIT of the second aircraft.
+
+6) Land Runway 30L/R and 35, Depart Runway 30L/R. Turboprop aircraft assigned
+    ODI and RST filed for 110 and above must be issued a 260° track and treated as one
+    fix, 3 MIT, and no visual separation.
+
+7) Land Runway 35, Depart Runways 12L/R.
+
+    (a) The maximum departure track southeast of MSP must be 135° from Runway 12R
+         departure end.
+
+    (b) Non-turbojet aircraft assigned routings into Sector 8 (FOD, ONL) airspace that
+         are turned right must be assigned to "E".
+
+           8
+3/31/2026                                     MSP-M98 Letter of Agreement
+
+           (c) SCHEP and ORSKY turbojet departures must be assigned a heading to track at or
+               north of 105°.
+
+h. Initial Departure Altitudes. MSP must use the following procedures when assigning
+    initial departure altitudes:
+
+Requested Altitude  Jets          Turboprops  Piston
+9,000 or above      7,000 DRL     5,000 DRL   4,000 EGK
+8,000 or below      4,000 EGK     4,000 EGK   4,000 EGK
+
+i. MSP CIC must coordinate departures from non-advertised runways with all affected M98
+    positions.
+
+    1) Aircraft departing Runway 4 must be coordinated with the G Satellite controller. The
+         aircraft must be assigned 4,000 ft., heading 040, and frequency 121.2. MSP ATCT
+         must coordinate with STP ATCT.
+
+    2) Aircraft departing Runway 22 must be assigned a DDA heading and an initial altitude
+         of 3,000 ft. Once the aircraft within the DDA the aircraft must be climbed to the
+         appropriate altitude in the table in para. h.
+
+j. VFR Departures:
+
+    1) Aircraft requesting VFR clearance to leave the Class B airspace, without additional
+         traffic advisories, must be issued an altitude at or below 2,700 ft.
+
+    2) VFR aircraft requesting radar advisory service within M98 airspace must be issued
+         "at or below 3,500 ft." and assigned to the appropriate satellite position on a discrete
+         beacon code.
+
+k. Automated Point Outs (APOs). Automated Point Outs are approved between MSP and
+    M98 as follows:
+
+    1) APOs must be flashed to all staffed MSP LC positions.
+
+    2) The following operations are eligible for APO:
+
+         a) Aircraft descending in the North Pie EXCEPT when MSP is landing Runway 35
+             while departing Runways 30L/R.
+
+         b) Aircraft descending in the South Pie EXCEPT when MSP is landing Runway 35
+             while departing Runways 30L/R.
+
+         c) Aircraft conducting RNAV approaches to RWYs 28L or 28R at FCM EXCEPT
+             when MSP is departing Runway 17.
+
+         d) Aircraft transiting the DDA while conducting the RNAV RWY 32 approach to
+             MIC.
+
+         e) Aircraft transiting the DDA while conducting RNAV or ILS approaches to STP.
+
+                               9
+3/31/2026                                                    MSP-M98 Letter of Agreement
+
+           f) Aircraft transiting the DDA while conducting RNAV or ILS approaches to STP.
+
+           g) Aircraft conducting visual approaches to FCM.
+
+9. RUNWAY USE, NOISE ABATEMENT, AND MIDNIGHT OPERATIONS.
+
+a. The guidelines for the issuance of air traffic control instructions relating to noise
+    abatement for all turbojet aircraft and all other Group IV and V aircraft must be
+    according to the procedures stated in this section.
+
+b. Runway Selection. Runway selection must be determined in accordance with FAA
+    Order 8400.9, National Safety and Operational Criteria for Runway Use Program.
+
+1) Parallel runway selection must be based on, but not limited to, wind, weather, and
+    traffic conditions.
+
+2) The M98 and MSP CICs must collaboratively determine the arrival and departure
+    runways.
+
+c. The RUS gives ATC guidance on noise-sensitive runway selection.
+
+1) Departures are considered noisier than arrivals and must be considered first when
+    selecting a runway configuration. Departure runway/runways should be considered in
+    descending preference from the chart below based on wind, weather, and airport
+    demand.
+
+2) Once a departure runway configuration has been selected, a corresponding arrival
+    runway configuration must be selected in descending preference from the chart below
+    based on wind, weather, and airport demand.
+
+           Departure Preference:  Arrival Preference:
+           Runways 12L/12R        Runways 30L/30R
+           Runway 17              Runway 35
+           Either Runway 4 or 22  Either Runway 22 or 4
+           Runways 30L/30R        Runways 12L/12R
+
+d. Runway 30L/R Arrivals. Aircraft south of Runway 30L localizer arriving on 30L and
+    30R must be vectored to at least a 4 mile final. When issuing a visual approach clearance
+    to these arrivals, the pilot must also be advised to make at least a 4 mile final.
+
+EXAMPLE-
+"Cleared visual approach Runway 30L, make at least a 4 mile final for noise abatement."
+
+e. Runway 30L/R Turbojet Dispersal Procedures. Unless otherwise required by other
+    traffic or weather, MSP must assign initial departure headings to approximate the tracks
+    listed below for aircraft on the following departure SIDs:
+
+1) KBREW Departure ­ Assign headings that will approximate a 320° track.
+
+2) WLSTN Departure ­ Assign headings that will approximate a 340° track.
+
+                                  10
+3/31/2026      MSP-M98 Letter of Agreement
+
+    3) COULT Departure ­ Assign headings that will approximate a 360° track.
+    4) MINNEAPOLIS Nine or subsequent versions of this SID with initial fixes as follows:
+
+         (a) FAR ­ Assign headings that will approximate a 320° track.
+         (b) BRD, DLH, HYR, EAU or GRB ­ Assign headings that will approximate a 340°
+
+             track.
+         (c) DLL ­ Assign headings that will approximate a 360° track.
+f. Runway 4 and 22 Departures.
+    1) Aircraft departing Runway 22 and making a right turn must:
+         (a) Be instructed to remain on runway heading until leaving 1,500 ft. MSL.
+         (b) Not be issued a heading greater than 350° until past the 12L localizer course.
+    2) Aircraft departing Runway 4 must be issued headings that avoid overflying the
+         Veterans' Administration Hospital as much as possible.
+g. Quiet Hours Procedures. During quiet hours (2230 until 0600 local) maximize the use
+    of the Mendota Heights/ Eagan corridor as much as feasible by departing Runways
+    12L/R, and landing Runways 30L/R.
+    1) The RUS preferences for midnight operations are as follows:
+         (a) Land 30L/R­ Depart 12L/R (opposite direction).
+         (b) Land 35­ Depart 12L/R or Land 30L/R­ Depart 17.
+         (c) 12L/R.
+         (d) 30L/R.
+    2) If Runway 4/22 usage is required, give equal priority to either end.
+    3) Quiet hour procedures should be applied to all aircraft when feasible, and must be
+         applied to all aircraft with noise characteristics similar to or greater than a C130 or
+         turbojet aircraft.
+    4) Departures with noise characteristics may be issued a heading to remain over the river
+         basin until leaving 3,000 ft. or higher before proceeding on course.
+h. Midnight Operations.
+    1) Opposite-Direction operations.
+         (a) Opposite direction operations will be utilized when wind and weather permit as
+
+             per FAA Order 8400.9 and local runway use and noise abatement procedures.
+
+           11
+3/31/2026      MSP-M98 Letter of Agreement
+
+             (b) When MSP is in a land 30L/R-depart 12L/R configuration, for opposite direction
+                  purposes, the advertised landing runway must be considered the configuration.
+
+             (c) MSP must ensure that all noise sensitive departures will remain within the noise
+                  corridor.
+
+             (d) If MSP anticipates more than a 15-minute total relay or 5-minute delay at the
+                  runway for departure aircraft, coordinate with M98 as necessary for possible
+                  change to the preferred cross runway operation.
+
+10. OPPOSITE DIRECTION OPERATIONS (ODO).
+
+    a. Definitions.
+
+         1) Opposite Direction Operations: IFR/VFR Operations conducted to the same or
+             parallel runway where an aircraft is operating in a reciprocal direction of another
+             aircraft arriving, departing, or conducting an approach.
+
+         2) Cutoff Point: The Cutoff Point is 10 NM from the threshold of the runway of
+             intended landing.
+
+NOTE- Aircraft on a downwind or on a vector away from the airport are not considered within
+the Cutoff Point until established on a base leg that falls within the Cutoff Point.
+
+    b. Responsibilities.
+
+         1) MSP and M98 share the responsibilities to coordinate ODO and issue traffic
+             advisories as prescribed in this agreement.
+
+         2) MSP is responsible to apply the cutoff point(s) between arriving and departing
+             aircraft.
+
+         3) M98 is responsible to apply the cutoff point(s) between successive ODO arrivals.
+
+    c. Procedures for Aircraft Receiving IFR Services. These procedures apply when there
+         are two aircraft receiving IFR services.
+
+         1) ODO procedures in this paragraph are applicable when two aircraft will execute
+             approaches to opposite ends of the same runway, or an aircraft will depart prior to an
+             arrival on an opposite direction approach to the same or parallel runway.
+
+         2) Traffic advisories must be issued to both aircraft.
+
+         3) Do not allow opposite direction same runway operations with opposing traffic inside
+             the cutoff point unless an emergency situation exists.
+
+         4) Use of visual separation is not authorized for aircraft receiving IFR services that are
+             conducting ODO to the same runway.
+
+           12
+3/31/2026      MSP-M98 Letter of Agreement
+
+         5) Ensure that ODO conducted from parallel runways provide for a turn away from the
+             opposing traffic when inside of the cutoff point to the other runway. Visual separation
+             may be applied after the turn away from conflicting traffic is issued.
+
+    d. Coordination.
+
+         1) The MSP Controller and the M98 Controller are responsible for initiating
+             coordination required to accomplish an opposite direction arrival or departure.
+
+         2) The MSP Controller must verbally request opposite direction departures with the
+             M98 Controller.
+
+         3) The M98 Controller must verbally request opposite direction arrivals with the MSP
+             Controller.
+
+    e. Cutoff Procedures for aircraft receiving IFR services and conducting opposite direction
+         same runway operations:
+
+         1) A departing aircraft must be airborne and issued a turn to avoid conflict prior to an
+             aircraft reaching the Cutoff Point.
+
+         2) An aircraft performing a go-around, low approach, or missed approach must be issued
+             a turn to avoid conflict prior to an aircraft reaching the Cutoff Point.
+
+         3) An arriving aircraft must cross the runway threshold prior to an aircraft reaching the
+             Cutoff Point.
+
+         4) If the above conditions are not met, action must be taken to ensure control
+             instructions are issued to protect the integrity of the cut off points.
+
+    f. Procedures for VFR/VFR and VFR/IFR Operations.
+
+         1) Ensure VFR aircraft are issued a turn to avoid conflict with opposing IFR/VFR
+             traffic.
+
+         2) If coordination with another position is required, LC must state the phrase
+             "OPPOSITE DIRECTION."
+
+         3) LC must issue traffic to both aircraft and indicate the direction that the departure will
+             turn (arrival/departure) or the location of the opposing aircraft on final
+             (arrival/arrival).
+
+         4) If the above conditions are not met, action must be taken to ensure control
+             instructions are issued to protect the integrity of the cut off points.
+
+11. DEPART RUNWAY 17-ARRIVE RUNWAY 17/22 PROCEDURES.
+
+    a. Weather Criteria. The weather must be at least 1400 ft. ceilings and 4 miles visibility.
+
+    b. LAHSO PROCEDURES.
+
+           13
+3/31/2026                                                                MSP-M98 Letter of Agreement
+
+         1) Runway 17 arrival spacing must provide 4 miles spacing at touchdown. This spacing
+             is not required when there is no traffic landing Runway 22.
+
+         2) Runway 22 arrival spacing must provide 6 miles spacing at touchdown. This spacing
+             is not required when there is no departure traffic.
+
+         3) M98 must advise MSP of aircraft landing Runway 22 that will not LAHSO.
+
+    c. Departures.
+
+         1) LEINY, DWN, and SMERF traffic must be treated as one fix and provided 3 MIT
+             initial departure spacing (jet-jet/prop-prop).
+
+         2) FAR and BRD traffic must be treated as one fix and provided 3 MIT initial departure
+             spacing (jet-jet/prop-prop).
+
+         3) Tower must turn DLH/WLSTN traffic east and provide a minimum 3 MIT initial
+             departure spacing (jet-jet/prop-prop).
+
+    d. Go Arounds. Traffic permitting, all Runway 17 or Runway 22 go around traffic should
+         make a right turn and return to Runway 17 regardless of the initially assigned landing
+         runway.
+
+12. ATTACHMENTS.
+
+Attachment 1 M98 Airspace
+Attachment 2 Departure Configurations
+
+Attachment 3 Satellite Airspace Split and Class D Airspace
+
+Attachment 4 MSP Airspace
+
+Attachment 5 MVA Chart
+Attachment 6 Preferential Tower Assigned Headings
+
+Attachment 7 Runway Use Wind Charts
+
+Attachment 8 Scratch Pad Entries
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+Lance Harry
+Deputy Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                                                                     14
+3/31/2026                                                        MSP-M98 Letter of Agreement
+
+           Attachment 1: M98 Airspace
+                      RUNWAY 12
+                         FEEDER
+
+           15
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 12
+               ACDA
+
+           16
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 12
+           DEPARTURE
+
+           17
+3/31/2026                      MSP-M98 Letter of Agreement
+
+                   RUNWAY 12
+           DEPARTURE CLOSE IN
+
+           18
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 12
+           SATELLITE
+
+           19
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           RUNWAY 12 and 12-17
+                    AREA `R'
+
+           20
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           RUNWAY 12 and 12-17
+                    STP Shelf
+
+           21
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 12s ­ DEPART 12s and 17
+                            FEEDER
+
+           22
+3/31/2026                                                          MSP-M98 Letter of Agreement
+
+           LAND 12 ­ DEPART 12s and 17
+                             ACDA
+
+           23
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 12s ­ DEPART 12s and 17
+                        DEPARTURE
+
+           24
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 12s ­ DEPART 12s and 17
+                 DEPARTURE CLOSE IN
+
+           25
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 12s ­ DEPART 12s and 17
+                         SATELLITE
+
+           26
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 30
+             FEEDER
+
+           27
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 30
+               ACDA
+
+           28
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 30
+           DEPARTURE
+
+           29
+3/31/2026                      MSP-M98 Letter of Agreement
+
+                   RUNWAY 30
+           DEPARTURE CLOSE IN
+
+           30
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 30
+           SATELLITE
+
+           31
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s ­ DEPART 30s and 17
+                            FEEDER
+
+           32
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s ­ DEPART 30s and 17
+                             ACDA
+
+           33
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s ­ DEPART 30s and 17
+                        DEPARTURE
+
+           34
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s ­ DEPART 30s and 17
+                 DEPARTURE CLOSE IN
+
+           35
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s ­ DEPART 30s and 17
+                         SATELLITE
+
+           36
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s ­ DEPART 30s and 17
+                            AREA F
+
+           37
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s and 35 ­ DEPART 30s
+                            FEEDER
+
+           38
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s and 35 ­ DEPART 30s
+                          30s ACDA
+
+           39
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s and 35 ­ DEPART 30s
+                           35 ACDA
+
+           40
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s and 35 ­ DEPART 30s
+                        DEPARTURE
+
+           41
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s and 35 ­ DEPART 30s
+                 DEPARTURE CLOSE IN
+
+           42
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 30s and 35 ­ DEPART 30s
+                         SATELLITE
+
+           43
+3/31/2026                                                          MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 35, 30 or 4
+                          FEEDER
+
+           44
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 35, 30, or 4
+                             ACDA
+
+           45
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 35, 30, or 4
+                        DEPARTURE
+
+           46
+3/31/2026                                                           MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 35, 30, or 4
+                         SATELLITE
+
+           47
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 12
+                     FEEDER
+
+           48
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 12
+                      ACDA
+
+           49
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 12
+                 DEPARTURE
+
+           50
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           LAND 35 ­ DEPART 12
+                   SATELLITE
+
+           51
+3/31/2026            MSP-M98 Letter of Agreement
+
+           RUNWAY 4
+            FEEDER
+
+           52
+3/31/2026            MSP-M98 Letter of Agreement
+
+           RUNWAY 4
+              ACDA
+
+           53
+3/31/2026                                                             MSP-M98 Letter of Agreement
+
+           LAND 4 ­ DEPART 4, 12, 30, or 35
+                         DEPARTURE
+
+           54
+3/31/2026                                                             MSP-M98 Letter of Agreement
+
+           LAND 4 ­ DEPART 4, 12, 30, or 35
+                          SATELLITE
+
+           55
+3/31/2026                        MSP-M98 Letter of Agreement
+
+               LAND 17 and 22
+           DEPART 17, 22, 12L/R
+
+                    FEEDER
+
+           56
+3/31/2026                        MSP-M98 Letter of Agreement
+
+               LAND 17 and 22
+           DEPART 17, 22, 12L/R
+
+                      ACDA
+
+           57
+3/31/2026                        MSP-M98 Letter of Agreement
+
+               LAND 17 and 22
+           DEPART 17, 22, 12L/R
+
+                 DEPARTURE
+
+           58
+3/31/2026                        MSP-M98 Letter of Agreement
+
+               LAND 17 and 22
+           DEPART 17, 22, 12L/R
+
+                  SATELLITE
+
+           59
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 22
+             FEEDER
+
+           60
+3/31/2026             MSP-M98 Letter of Agreement
+
+           RUNWAY 22
+               ACDA
+
+           61
+3/31/2026                                                     MSP-M98 Letter of Agreement
+
+                      LAND 22
+           DEPART 22, 12, 17, or 30
+
+                   DEPARTURE
+
+           62
+3/31/2026                                                     MSP-M98 Letter of Agreement
+
+                      LAND 22
+           DEPART 22, 12, 17, or 30
+
+                    SATELLITE
+
+           63
+3/31/2026                                                             MSP-M98 Letter of Agreement
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                             FEEDER
+
+           64
+3/31/2026                                                             MSP-M98 Letter of Agreement
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                              ACDA
+
+           65
+3/31/2026                                                             MSP-M98 Letter of Agreement
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                         DEPARTURE
+
+           66
+3/31/2026                                                             MSP-M98 Letter of Agreement
+
+           LAND 17 ­ DEPART 12s, 22, or 17
+                          SATELLITE
+
+           67
+3/31/2026                                                                  MSP-M98 Letter of Agreement
+
+           Attachment 2: Departure Configurations
+
+                        Land and Depart 12s
+                        Land and Depart 30s
+                  Land 30s and 35 ­ Depart 30s
+                  Land 30s ­ Depart 30s and 17
+
+           68
+3/31/2026                                                         MSP-M98 Letter of Agreement
+
+           Land 12s ­ Depart 12s and 17
+                Three Departure Split
+
+           69
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           Land 35 ­ Depart 12
+            (Configuration #3)
+
+           70
+3/31/2026                                                      MSP-M98 Letter of Agreement
+
+           Land 35 ­ Depart 35, 30, 4
+               Land 17 ­ Depart 17
+              Land 22 ­ Depart Any
+              Land 4 ­ Depart Any
+
+           71
+3/31/2026                        MSP-M98 Letter of Agreement
+
+              Land 17 and 22
+           Depart 17, 22, 12L/R
+
+           72
+3/31/2026      MSP-M98 Letter of Agreement
+
+           Attachment 3: Satellite Airspace Split and Class D Airspace
+
+           73
+3/31/2026                                                         MSP-M98 Letter of Agreement
+
+           Class D Airspace Dimensions
+                 (Ceiling in Feet MSL)
+
+           74
+3/31/2026                                                              MSP-M98 Letter of Agreement
+
+           Attachment 4: MSP Tower Airspace
+
+           75
+3/31/2026      MSP-M98 Letter of Agreement
+
+           76
+3/31/2026      MSP-M98 Letter of Agreement
+
+           77
+3/31/2026      MSP-M98 Letter of Agreement
+
+           78
+3/31/2026      MSP-M98 Letter of Agreement
+
+           79
+3/31/2026      MSP-M98 Letter of Agreement
+
+           80
+3/31/2026      MSP-M98 Letter of Agreement
+
+           81
+3/31/2026      MSP-M98 Letter of Agreement
+
+           82
+3/31/2026      MSP-M98 Letter of Agreement
+
+           83
+3/31/2026      MSP-M98 Letter of Agreement
+
+           84
+3/31/2026      MSP-M98 Letter of Agreement
+
+           85
+3/31/2026                                                     MSP-M98 Letter of Agreement
+
+           Attachment 5: MVA Chart
+
+           86
+3/31/2026                                                                              MSP-M98 Letter of Agreement
+
+           Attachment 6: Preferential Tower Assigned Headings
+                                         Runway 12
+
+           87
+3/31/2026                MSP-M98 Letter of Agreement
+
+           Runway 12-17
+
+           88
+3/31/2026                       MSP-M98 Letter of Agreement
+
+           Runway 30 and 30/35
+
+           89
+3/31/2026                MSP-M98 Letter of Agreement
+
+           Runway 30-17
+
+           90
+3/31/2026                                                                  MSP-M98 Letter of Agreement
+
+           Attachment 7: Runway Use Wind Charts
+
+           91
+3/31/2026      MSP-M98 Letter of Agreement
+
+           92
+3/31/2026      MSP-M98 Letter of Agreement
+
+           93
+3/31/2026      MSP-M98 Letter of Agreement
+
+           94
+3/31/2026      MSP-M98 Letter of Agreement
+
+           95
+3/31/2026      MSP-M98 Letter of Agreement
+
+           96
+3/31/2026      MSP-M98 Letter of Agreement
+
+           97
+3/31/2026      MSP-M98 Letter of Agreement
+
+           98
+3/31/2026      MSP-M98 Letter of Agreement
+
+           99
+3/31/2026       MSP-M98 Letter of Agreement
+
+           100
+3/31/2026       MSP-M98 Letter of Agreement
+
+           101
+3/31/2026       MSP-M98 Letter of Agreement
+
+           102
+3/31/2026                                                            MSP-M98 Letter of Agreement
+
+                      Attachment 8: Scratch Pad Entries
+
+MSP Arrivals
+
+For aircraft executing a visual approach, instrument approach, and for VFR arrival aircraft,
+use the following scratch pad entries:
+
+              RUNWAY  RNAV(GPS)       RNAV(RNP)                 ILS/LOC  VISUAL
+              12L     ZL1             YL1                       12L      VL1
+              12R     ZR1             YR1                       12R      VR1
+              30L     ZL3             YL3                       30L      VL3
+              30R     ZR3             YR3                       30R      VR3
+              17                                                L17      V17
+              35      Z35             Y35                       I35      V35
+              4       G04                                       L04      V04
+              22      G22                                       L22      V22
+
+Visual Separation
+
+When an aircraft has been cleared for a visual approach, and the pilot has assumed
+responsibility for separation from the preceding aircraft, the letters "VV" must be entered as
+follows:
+
+                                                  MSP Arrivals  VVN
+                                Runways 12L and 30R             VVS
+                                Runways 12R and 30L             VV4
+                                Runway 4                        VV2
+                                Runway 22                       VV5
+                                Runway 35                       VV7
+                                Runway 17
+
+Other Approved Entries
+
+                      Air Work                                  A/W
+                      Holding                                   HLD
+                      Photo Flight                              PIX
+                      Holding at GEP                            GEP
+                      Holding at FGT                            FGT
+                      Tour                                      2ER
+
+                                      103
+

@@ -1,0 +1,226 @@
+                         VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                                                    LETTER OF AGREEMENT
+
+                                                                                                           EFFECTIVE: 12/01/2022
+
+SUBJECT: INTERFACILITY COORDINATION
+
+1. PURPOSE: This agreement establishes coordination procedures and defines delegation of airspace
+     between VATUSA Denver ARTCC (ZDV) and VATUSA Minneapolis ARTCC (ZMP). This agreement
+     is supplemental to procedures contained within FAA Order 7110.65.
+
+2. DISCLAIMER: Information contained herein is designed and specifically for use in a virtual air traffic
+     control environment. It is not applicable, nor should it be referenced for live operations in the National
+     Airspace System (NAS).
+
+3. CANCELLATION: VATUSA Denver ARTCC and VATUSA Minneapolis ARTCC Letter of Agreement
+     dated June 18, 2020
+
+4. RESPONSIBILITIES:
+
+     a. Denver ARTCC delegates control responsibility and jurisdiction of airspace at 7,000 feet MSL and
+          below to Minneapolis ARTCC as depicted on Attachment B. Minneapolis ARTCC must have
+          control of aircraft landing at Kearney, Nebraska, Municipal Airport (EAR) for descent and turns
+          not to exceed 45 degrees left or right of course within a 30NM radius of the EAR VOR. The
+          Denver ARTCC controller must coordinate all approaches to Holdrege (Nebraska)/Brewster Field
+          (HDE).
+
+5. PROCEDURES:
+
+     a. Each ARTCC must route/restrict aircraft in accordance with Attachment C.
+
+     b. Aircraft landing within 60 miles of the boundary must enter the receiving ARTCC's airspace AOB
+          FL230, and the receiving ARTCC must have control for descent and turns.
+
+     c. Inappropriate altitude for direction of flight may be assigned IAW FAA JO 7110.65 and with prior
+          approval from the receiving facility.
+
+     d. Transponder codes may be changed without coordination in an area 30NM either side of the
+          ZDV/ZMP ARTCC common boundary.
+
+     e. The receiving controller must have control for turns 20 degrees left or right of course, and speed
+          adjustments for aircraft within 20NM of the ZDV/ZMP ARTCC common boundary.
+
+     f. Flights originating less than 5 minutes flying time from the adjacent ARTCC's boundary must be
+          coordinated by the transferring ARTCC.
+
+     g. Data Block Coordination and Interim Altitude Procedures.
+
+          (1) Data blocks must reflect the aircraft's assigned altitude at the time of handoff.
+
+          (2) Handoffs must be directed to the appropriate sector for the aircraft's altitude assignment.
+                Acceptance of a radar handoff constitutes approval coordination for that aircraft to climb or
+                descend to the displayed altitude.
+
+          (3) Use of interim (temp) altitudes is authorized between Denver ARTCC and Minneapolis
+                ARTCC and must represent valid altitude coordination. Use of interim altitudes must not be
+                authorized to coordinate Inappropriate Altitude for Direction of Flight (IAFDOF), or to
+                supersede altitude restrictions established within this Letter of Agreement.
+
+                                                       For VATSIM Use Only
+          VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                           LETTER OF AGREEMENT
+
+(4) When unable to approve the automated altitude, the receiving controller must verbally
+     coordinate with the transferring controller prior to acceptance of the handoff.
+
+h. Radar handoffs should be made with reference to the Denver ARTCC/Minneapolis ARTCC
+     boundary and along regularly used routes. In addition, the following designated points may be
+     used for radar handoffs:
+
+(1) CHAUX                  43°42'30"N, 101°24'30"W
+
+(2) WHITE                  43°17'20"N, 100°06'00"W
+
+(3) RESERVOIR 44°42'00"N, 101°29'00"W
+
+(4) LOOP                   41°21'00"N, 99°03'00'W
+
+(5) NATOMA                 39°28'30"N, 98°41'00"W
+
+(6) LOGAN                  39°51'00"N, 98°57'00"W
+
+i. Sector Stratification.
+
+(1) Minneapolis ARTCC sectors are stratified at FL230 and below for low altitude sectors and
+     FL240 and above for high altitude sectors.
+
+(2) Denver ARTCC sectors are stratified at FL260 and below for low altitude sectors and FL270
+     and above for high altitude sectors.
+
+     j. Aircraft unable to comply with required routes or altitude must be coordinated with the receiving
+          ARTCC on an individual basis.
+
+6. ATTACHMENTS:
+     a. Attachment A ­ Radar Sectors and Handoff Points
+     b. Attachment B ­ EAR Shelf Delegated Airspace
+     c. Attachment C ­ Route/Altitude Restrictions
+
+          /s/                                                 /s/
+Dhruv Kalra                                         Austin Wilkins
+Air Traffic Manager                                 Air Traffic Manager
+VATUSA Minneapolis ARTCC                            VATUSA Denver ARTCC
+
+                           For VATSIM Use Only
+VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                           LETTER OF AGREEMENT
+
+ ATTACHMENT A ­ RADAR SECTORS AND HANDOFF POINTS
+                     ZDV LOW SECTORS (SFC-FL260)
+
+                       ZDV HIGH SECTORS (FL270+)
+
+                              For VATSIM Use Only
+VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                           LETTER OF AGREEMENT
+
+                     ZMP LOW SECTORS (SFC-FL230)
+
+                       ZMP HIGH SECTORS (FL240+)
+
+                              For VATSIM Use Only
+     VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                                LETTER OF AGREEMENT
+
+ZMP/ZDV BOUNDARY MANUAL COORDINATION REFERENCE POINTS
+
+                                   For VATSIM Use Only
+VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+                           LETTER OF AGREEMENT
+
+     ATTACHMENT B ­ EAR SHELF DELEGATED AIRSPACE
+
+                              For VATSIM Use Only
+                VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                               LETTER OF AGREEMENT
+
+                ATTACHMENT C ­ ROUTE/ALTITUDE RESTRICTIONS
+
+                               FROM ZDV TO ZMP
+
+  Arrival       Qualifier                      Route Via                                     Altitude
+Airport(s)                                                                             (Cross ZDV/ZMP
+                               J114.FSD..SSWAN.TORGY STAR                              Boundary, unless
+       MSP      RNAV Jet         J114.FSD..RWF.SKETR STAR                              otherwise noted)
+                All Others
+ MSP Satellite                   HANKI..ENCEE.ENCEE STAR                            AOB FL350 (HOWRY)
+(ANE FCM LVN        All          GRI/OBH/ONL.HOWRY STAR                                  or AOB FL370
+                                                                                         (PWE/TIMMO)
+   MIC STP) 1                         HTHWY.TIMMO STAR                                     AOB FL330
+                                 PWE.PWE STAR (Non-RNAV)
+OMA, OFF        AOA 11,000
+
+LNK             All
+
+EAR, HSI, GRI   All                                                                 AOB FL230
+
+ORD              AOA FL240                ZZIPR.FYTTE STAR or
+                                     FOD..MYRRS.FYTTE STAR or
+                 AOA FL240       PWE..IRK.BENKY/SHAIN/BDF STAR
+                Acft S of PWE  No radar vectors or direct routing beyond
+
+                                             MCW, FOD, or IRK
+                                     IRK.BENKY/SHAIN/BDF STAR
+                               MCW/FOD..DBQ..JVL.JVL STAR (Non-
+
+                                                     RNAV)
+
+1 MSP satellite arrivals must enter ZMP either in-trail with or below MSP arrivals
+
+                               For VATSIM Use Only
+             VATUSA DENVER ARTCC AND VATUSA MINNEAPOLIS ARTCC
+
+                                 LETTER OF AGREEMENT
+
+                                 FROM ZMP TO ZDV
+
+  Arrival           Qualifier                           Route Via           Altitude
+Airport(s)                                                            (Cross ZDV/ZMP
+               North of HUTEP              RNAV: NYTRO.AALLE STAR     Boundary, unless
+    DEN                               Non-RNAV: BFF/SNY.LANDR STAR    otherwise noted)
+ (Turbojet)     S of HUTEP to
+             ZMP29/39 Boundary            RNAV: PORDR.AALLE STAR
+    APA      South of ZMP29/39   Non-RNAV: ONL.J114.YANKI.LANDR STAR
+ (Turbojet)
+                    Boundary              RNAV: BRWRY.LAWGR STAR
+    BJC       North of ZMP29/39                      SAYGE..FQF
+ (Turbojet)
+                    Boundary                   SHRPE.BRNKO STAR
+BKF, CFO     South of ZMP29/39       SNY..YOKES..GLL..BJC (Non-RNAV)
+ (Turbojet)
+                    Boundary                   FRAAY.DUNNN STAR
+FNL, GXY,                                          BRK (Non-RNAV)
+    LMO               RNAV
+                                               SHRPE.BRNKO STAR
+ (Turbojet)
+                  Non-RNAV       SNY..YOKES..GLL..BJC
+RAP Area
+(49B, EFC,            RNAV              SAYGE..FQF
+RAP, RCA,                           GLD.DANDD STAR
+                  Non-RNAV
+    SPF)                               DANDD STAR
+                      RNAV
+                                  SHRPE.BRNKO STAR
+                  Non-RNAV          GLD.DANDD STAR
+                                    SNY..YOKES..GLL
+                 Above 16,000          DANDD STAR
+             between SULPHUR
+                                                                       AOB FL260
+              and RESERVOIR                                           descending to
+                    Between
+                                                                         17,000 1
+              RESERVOIR and
+                     CHAUX                                             AOB FL270
+                                                                      descending to
+
+                                                                           FL240
+
+1 Denver ARTCC must have control for descent to 12,000 feet MSL and control for turns of 30 degrees
+left or right of course on Rapid City area arrivals from 20NM north of the common Denver/Minneapolis
+ARTCC boundary.
+
+                                 For VATSIM Use Only
+

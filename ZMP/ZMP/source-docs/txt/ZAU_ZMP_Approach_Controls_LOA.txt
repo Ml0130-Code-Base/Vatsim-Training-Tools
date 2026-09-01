@@ -1,0 +1,248 @@
+7/8/2026  VATSIM ZAU ZMP APPROACH CONTROLS LOA
+
+VATSIM CHICAGO ARTCC AND MINNEAPOLIS ARTCC APPROACH CONTROLS
+
+          LETTER OF AGREEMENT
+
+                                                           Effective Date: 7/8/2026
+
+Subject: Interfacility Procedures and Airspace Delegation
+
+1. PURPOSE. This agreement delegates airspace and establishes air traffic procedures
+         between VATSIM Chicago ARTCC (ZAU), VATSIM Minneapolis ARTCC (ZMP), and the
+         following approach controls: Des Moines TRACON (DSM), Great Lakes TRACON (AZO),
+         Green Bay TRACON (GRB), Milwaukee TRACON (MKE), Rochester TRACON (RST), and
+         Volk RAPCON (VOK).
+
+2. CANCELLATION. VATUSA Chicago ARTCC and VATUSA Minneapolis ARTCC Letter of
+         Agreement, dated 3/8/2025.
+
+3. SCOPE. This Letter of Agreement is supplemental to current air traffic procedures,
+         handbooks, and directives relating to enroute and terminal procedures.
+
+4. AIRSPACE DELEGATION. ZAU delegates airspace to ZMP, and ZMP delegates airspace to
+         ZAU, for air traffic services as depicted in Appendix A.
+
+5. GENERAL
+         a. The destination airport must be the clearance limit.
+         b. Aircraft must be cleared via their filed or amended flight plan route.
+         c. The transferring controller releases control to the receiving controller for:
+                  1. Turns not to exceed 30°.
+                  2. Transponder code change.
+                  3. Descent, except:
+                           a. GRB may not descend below 4,000 ft. MSL within 5 NM of KOSH.
+                           b. MKE may not descend below 4,000 ft. MSL within 5 NM of KATW.
+         d. The transferring controller must provide 5 NM in-trail separation, constant or
+             increasing, to aircraft assigned the same altitude.
+         e. Facilities must coordinate opening/closing with adjacent operational facilities.
+         f. When multiple positions within facility are operational, facilities must:
+                  1. Coordinate frequency assignment(s).
+                  2. Only coordinate with a single sector for inter-facility coordination. Each
+                      facility must be responsible for any additional intra-facility coordination.
+
+              Page 1 of 7
+          VATSIM USE ONLY
+7/8/2026              VATSIM ZAU ZMP APPROACH CONTROLS LOA
+
+6. ARRIVALS FROM ZAU OR ZMP AIRSPACE
+         a. ZAU must clear aircraft landing within ALO and DSM in accordance with Appendix B.
+         b. ZMP must clear aircraft landing within AZO, CID, MKE, and VOK in accordance with
+             Appendix B.
+
+7. DEPARTURES TO ZAU OR ZMP AIRSPACE
+         a. DSM, VOK, and MKE must apply restrictions in accordance with Appendix C.
+         b. Instructed aircraft to expect filed altitude 10 minutes after departure.
+
+8. TOWER ENROUTE CONTROL (TEC)
+         a. Aircraft within and entering GRB and MKE airspace must be cleared in accordance
+             with Appendix D.
+         b. Aircraft within DSM and RST airspace must:
+                  1. Enter adjacent approach control airspace in this Letter of Agreement on
+                      course on their flight plan route.
+                  2. Be level at their assigned altitude, correct for direction of flight, at least 5 NM
+                      prior to the facility boundary.
+         c. GRB must:
+                  1. Amend the final altitude of aircraft departing KGRB/KATW/KMTW and
+                      landing at MKE or C90 Terminal Area airports to at or below 13,000 ft. MSL.
+                      See Appendix E.
+                  2. Notify MKE when KATW is using ILS/LOC RWY 3 Approach.
+
+Appendix A ­ Airspace Depiction and Delegation
+Appendix B ­ Arrival Restrictions
+Appendix C ­ Departure/Overflight Restrictions
+Appendix D ­ Tower En-Route Control (TEC) Between GRB and MKE TRACONs
+
+Zakery Husk                                           Dhruv Kalra
+Air Traffic Manager                                   Air Traffic Manager
+VATSIM Chicago ARTCC                                  VATSIM Minneapolis ARTCC
+
+                          Page 2 of 7
+                      VATSIM USE ONLY
+7/8/2026                                           VATSIM ZAU ZMP APPROACH CONTROLS LOA
+                   Appendix A ­ Airspace Depiction and Delegation
+
+      MSP                                ZMP 04         GRB
+                                                GRB
+                                                        AOB                TVC
+                   ZMP 05                       KGRB 130         ZMP 02
+                                         OSH
+   RST KRST       RST ODI          VOK                                 AZO *CHIPPEWA
+AOB 090                      KVOK AOB       KOSH MKE                                           (ZOB)
+           RST AOB 150
+                                    100  ZAU AOB                    AOB 100
+                                         64 130
+ZMP 36                     ZAU        MSN LNR                                                            *
+                            63            KMSN     BAE
+                                                                                                       *
+                           DBQ                         KMKE  LUMBERTOWN WHITECAP
+
+             ALO                 DBQ                             KMKG KGRR
+                                                              ZAU 26
+           KALO         DSM KDBQ                              KUBBS VIO
+                      AOB 100
+KDSM
+
+              ZAU 55
+
+DSM           BRL
+
+      ZMP 27
+
+                  Area                Description
+
+                   ZAU Delegates to ZMP At or Below 10,000
+                        (ZMP Re-Delegates to DSM When Operational)
+
+                   ZMP Delegates to ZAU At or Below 10,000
+                         (ZAU Re-Delegates to VOK When Operational)
+
+                                          Page 3 of 7
+                                      VATSIM USE ONLY
+7/8/2026                       VATSIM ZAU ZMP APPROACH CONTROLS LOA
+
+                               Appendix B ­ Arrival Restrictions
+
+                               From ZAU
+
+          Arriving  Qualifier                   Altitude
+           KALO
+                     AOA       At/Descending to 11,000
+           KDSM     11,000
+
+                     AOA       At/Descending to 11,000
+                    11,000
+
+                    4,000 to   At Assigned Altitude 5 NM from ZAU/DSM Boundary
+                    10,000
+
+                               From ZMP
+
+Arriving            Qualifier  Altitude                                         Special
+
+ KGRR                AOA       Descending to 11,000
+ KMKG               11,000
+
+ KFLD                AOB       At Assigned Altitude 5 NM from ZMP/AZO Boundary
+ KSBM               10,000
+ KOSH
+ KVOK                From                      Level AOB 13,000
+                    ZMP 04        Descending to 7,000 or Level AOB 7,000
+                               Cross Lateral Limit of VOK Airspace at 11,000
+                     AOA
+                    11,000
+
+                                   Page 4 of 7
+                               VATSIM USE ONLY
+7/8/2026                       VATSIM ZAU ZMP APPROACH CONTROLS LOA
+
+             Appendix C ­ Departure/Overflight Restrictions
+
+             From MKE/VOK Approach Controls to ZMP
+
+  Departing                Qualifier                        Altitude
+MKE TRACON     Landing KCWA/KAUW/KMFI    Descending to 8,000 or level AOB 8,000
+
+   Airspace         Landing KISW KSTE        AOB 6,000 Descending to 4,000
+                                                          AOB 4,000
+VOK RAPCON              Landing KPCZ
+   Airspace                                         Descending to 6,000
+                        Landing KLSE
+                         AOA 6,000                  Descending to 8,000
+
+                           Landing
+             KCWA/KAUW/KMFI/KSTE/KISW
+
+                         AOA 8,000
+
+             From ALO/DSM Approach Control to ZAU
+
+Departing Qualifier Route Via  Altitude                          Special
+
+DSM TRACON                     Climbing to 10,000  ZAU must coordinate with ZMP
+   Airspace                    or lower requested  before initiating a climb above
+
+                                     altitude         10,000 ft. MSL west of the
+                                                          ZAU/ZMP Boundary
+
+                 Page 5 of 7
+             VATSIM USE ONLY
+7/8/2026                                 VATSIM ZAU ZMP APPROACH CONTROLS LOA
+
+Appendix D ­ Tower En-Route Control (TEC) Between GRB and MKE TRACONs
+
+Arriving Qualifier                   From MKE to GRB                    Altitude
+ KATW                                                         At/Descending to 4,000
+ KGRB AOA 10,000                        Route Via
+                             When Using ILS/LOC RWY 3:        At/Descending to 10,000
+             AOB 9,000  Heading to Intercept or On Localizer    At Assigned Altitude
+
+                        Direct or Radar Vector Toward KGRB
+
+                        From GRB Overflying MKE RIPON Sector
+
+Departing    Qualifier          Route Via                             Altitude
+           West of OSH        Heading 220°                           AOB 5,000
+                                                                If 130°: AOB 9,000
+KATW       Over/Via OSH Heading 130° or 220°                    If 220°: AOB 5,000
+                                                                     AOB 9,000
+               East of OSH    Heading 130°
+                                                                    AOA 11,000
+KGRB           Requesting
+           11,000 to 13,000                                           At 9,000
+           Requesting 10,000                                  At Correct Altitude for
+
+           AOB 9,000                                            Direction of Flight
+
+                        From GRB Landing MKE RIPON Sector Airports
+
+           Arriving           Route Via                       Altitude
+
+          KOSH KSBM KFLD Direct or Radar Vectors AOB 7,000 Descending to 5,000
+
+                                  Page 6 of 7
+                              VATSIM USE ONLY
+7/8/2026                            VATSIM ZAU ZMP APPROACH CONTROLS LOA
+
+          Appendix E ­ Terminal Area Airports
+
+          Milwaukee (MKE) Airports                   Chicago (C90) Terminal Area
+
+KMKE      General Mitchell Int'l    KORD             Chicago O'Hare Int'l
+
+KBUU      Burlington Muni           KMDW             Chicago Midway Int'l
+
+KENW      Kenosha Reg'l             KARR             Aurora Muni
+
+KETB      West Bent Muni            KDPA             Dupage
+
+KHXF      Hartford Muni             KGYY             Gary/Chicago Int'l
+
+KMWC      Lawrence J Timmerman      KLOT             Lewis University
+
+KRAC      Batten Int'l              KPWK             Chicago Exec
+
+KUES      Waukesha Co               KUGN             Waukegan Ntl
+
+                                        Page 7 of 7
+                                    VATSIM USE ONLY
+

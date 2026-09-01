@@ -1,0 +1,143 @@
+ORDER                                                              LNK ATCT
+                                                                     7110.6A
+
+SUBJ: STANDARD OPERATING PROCEDURES (SOP)
+
+1. PURPOSE. This order prescribes procedures and defines operational responsibilities for
+    personnel providing ATC services within the Lincoln Tower designated airspace.
+
+2. DISTRIBUTION. This order is distributed to all vZMP personnel.
+
+3. CANCELLATION. vZMP ATCSOP Rev. 7, Section 4.6 Lincoln Municipal Airport, Lincoln,
+    NE (KLNK).
+
+4. DESCRIPTIONS.
+
+a. A "north configuration" describes traffic flow conditions when aircraft are landing and/or
+    departing runways 36, 35, and 32.
+
+b. A "south configuration" describes traffic flow conditions when aircraft are landing and/or
+    departing runways 18, 17, and 14.
+
+c. Designated Areas of Jurisdiction.
+
+1. Arrival Areas ­ Area "A" ­ Airspace delegated to Local Control from the surface up to
+    and including 3000 MSL. Lateral limits are determined by a North or South
+    configuration (Appendices 1 and 2).
+
+2. Departure Areas ­ Area "B" ­ Airspace delegated to LC from the surface up to and
+    including 4000 MSL. Lateral limits determined by a north or south configuration
+    (Appendices 1 and 2).
+
+3. Class C Airspace ­ Airspace surrounding Lincoln Airport in which Class C Radar
+    Service is provided to VFR aircraft.
+
+5. PROCEDURES.
+
+a. Positions of operation must resolve all potential conflicts between arrivals/departures and
+    other aircraft within their own areas of jurisdiction prior to transferring the aircraft's radio
+    communication.
+
+b. Standard departure points for runways 18/36, 17/35, and 14/32 are the ends. The East
+    helipad is a standard helicopter departure point for civilian helicopters.
+
+c. When simultaneous visual approaches are being conducted to multiple runways, it must be
+    included in the ATIS.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY            Initiated by: ZMP
+LNK ATCT 7110.6A                FOR SIMULATION USE ONLY            12/26/18
+
+6. RESPONSIBILITIES.
+
+a. Local Control (LC). This position is responsible for the sequencing and separation of
+    aircraft operating within LC's delegated airspace. LC shall:
+
+1. Use primary frequency 118.5.
+
+2. Monitor and ensures radar separation is maintained between successive IFR or practice
+    instrument approaches until visual separation can be provided. LC shall advice
+    TRACON when Local is unable to provide visual separation.
+
+3. Select and notify TRACON of runway(s) in use.
+
+a. The preferred calm wind operating is a north configuration. When winds are 6
+    knots or greater, select the configuration most closely aligned with the wind.
+
+4. Provide Class C services to aircraft in LNK Class C airspace.
+
+5. Issue the following missed approach instructions:
+
+a. In a north configuration.
+
+1. Heading 300/030 degrees and 3000' MSL.
+
+b. In a south configuration.
+
+1. Heading 210/140 and 3000' MSL.
+
+6. Tower must assign headings to departures within the fan areas:
+
+a. North profile ­ heading 300 clockwise through 030.
+
+b. South profile ­ Heading 140 clockwise through 210.
+
+c. Aircraft with an on course heading that falls between the fan areas will be assigned
+    a heading closest to an on course heading.
+
+d. Headings must:
+
+1. Provide separation from prior departures, and;
+
+2. Allow TRACON to turn the aircraft on course at the earliest opportunity
+    reference prior departures.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY            Initiated by: ZMP
+LNK ATCT 7110.6A                FOR SIMULATION USE ONLY                          12/26/18
+
+b. Ground Control (GC). This position is responsible for all traffic operating on the
+
+movement areas, excluding the active runways. GC shall:
+
+1. Use primary frequency 121.9.
+
+2. Issue taxi instructions to all inbound and outbound aircraft.
+
+3. Coordinate runway crossings with LC, when required.
+
+c. Clearance Delivery (CD). CD shall:
+
+1. Use primary frequency 120.7.
+
+2. Issue IFR/VFR/SVFR clearances to all aircraft.
+
+3. Forward flight progress strips to GC when CD functions are complete.
+
+4. Issue 4000' MSL initially to all outbound IFR/VFR/SVFR aircraft, or lower if
+    requested.
+
+7. ATCT POSITIONS AND COMMUNICATIONS
+
+Controllers operating LNK ATCT positions must utilize the following radar client frequencies and
+voice channels.
+
+Position Name                   Frequency  Callsign               Voice Channel
+Clearance Delivery              120.700    LNK_DEL                LNK_120.70
+Ground Control                  121.900    LNK_GND                LNK_121.90
+Local Control                   118.500    LNK_TWR                LNK_118.500
+ATIS                            118.050    KLNK_ATIS
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY           Initiated by: ZMP
+LNK ATCT 7110.6A                           FOR SIMULATION USE ONLY  12/26/18
+
+                                APPENDIX 1. LNK TOWER AIRSPACE
+
+                                        NORTH CONFIGURATION
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY             Initiated by: ZMP
+LNK ATCT 7110.6A                           FOR SIMULATION USE ONLY  12/26/18
+
+                                APPENDIX B. LNK TOWER AIRSPACE
+                                        SOUTH CONFIGURATION
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY             Initiated by: ZMP
+

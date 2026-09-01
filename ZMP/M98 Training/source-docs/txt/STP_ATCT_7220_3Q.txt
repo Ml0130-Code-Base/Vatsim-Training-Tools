@@ -1,0 +1,461 @@
+STP 7220.3Q CHG 1                                       11/30/2025
+
+STP 7220.3Q
+vZMP
+11/30/2025
+
+STANDARD OPERATING PROCEDURES
+
+                     St Paul Air Traffic Control Tower
+                    VIRTUAL MINNEAPOLIS ARTCC
+        VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+                   FOR SIMULATION USE ONLY              1
+STP 7220.3Q CHG 1                                             11/30/2025
+
+                   Order Record of Changes                   Issued By
+                                                                 DE
+Change                Description            Effective Date      DE
+                                              29 Sep 2022
+                 Original Publication
+                                              30 Nov 2025
+        Updated for CRC STARS rundown
+          list procedures. Updated missed
+
+        approach heading, initial departure
+         headings and altitudes, and added
+
+              corresponding appendix.
+
+                   FOR SIMULATION USE ONLY                   2
+STP 7220.3Q CHG 1                           11/30/2025
+
+Table of Contents
+
+Chapter 1. GENERAL ................................................................................................................ 4
+   1-1. PURPOSE....................................................................................................................... 4
+   1-2. DISTRIBUTION ............................................................................................................... 4
+   1-3. CANCELLATION............................................................................................................. 4
+   1-4. EFFECTIVE DATE .......................................................................................................... 4
+   1-5. EXPLANATION OF CHANGES ....................................................................................... 4
+   1-6. DEFINITIONS.................................................................................................................. 4
+   1-7. POSITIONS..................................................................................................................... 4
+   1-8. MULTIPLE RUNWAY CROSSINGS ................................................................................ 4
+   1-9. SPECIAL USE AND PROCEDURES .............................................................................. 5
+
+Chapter 2. GROUND CONTROL/CLEARANCE DELIVERY ...................................................... 6
+   2-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 6
+   2-2. CLEARANCE DELIVERY ................................................................................................ 6
+   2-3. AREA OF JURISDICTION............................................................................................... 6
+   2-4. FREQUENCY INFORMATION ........................................................................................ 7
+   2-5. DEPARTURE PROCEDURES ........................................................................................ 7
+   2-6. COORDINATION PROCEDURES................................................................................... 7
+   2-7. HELICOPTER OPERATIONS ......................................................................................... 7
+   2-8. POTENTIAL PROBLEM AREAS ..................................................................................... 8
+
+Chapter 3. LOCAL CONTROL ................................................................................................... 9
+   3-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 9
+   3-2. AREA OF JURISDICTION............................................................................................... 9
+   3-3. FREQUENCY INFORMATION ........................................................................................ 9
+   3-4. ARRIVAL PROCEDURES ............................................................................................... 9
+   3-5. DEPARTURE PROCEDURES ........................................................................................ 9
+   3-6. COORDINATION PROCEDURES..................................................................................10
+   3-7. HELICOPTER OPERATIONS ........................................................................................10
+   3-8. MISSED APPROACH/GO-AROUND OPERATIONS......................................................10
+   3-9. VISUAL REPORTING POINTS ......................................................................................10
+   3-10. SPECIAL FLIGHT HANDLING/PROCEDURES ...........................................................10
+
+Appendix A GROUND CONTROL/CLEARANCE DELIVERY CHECKLIST ...............................11
+Appendix B LOCAL CONTROL CHECKLIST ............................................................................12
+Appendix C MOVEMENT AREAS/NON-MOVEMENT AREAS..................................................13
+Appendix D RUNWAY LENGTH AND INTERSECTION DEPARTURE LENGTHS ...................14
+Appendix E RUNWAY 13 CLEAR ZONE ..................................................................................15
+Appendix F STANDARD DEPARTURE HEADINGS .................................................................16
+
+                   FOR SIMULATION USE ONLY  3
+STP 7220.3Q CHG 1                                                         11/30/2025
+
+Chapter 1. GENERAL
+
+1-1. PURPOSE
+
+This order specifies the required procedures for maintaining a safe and efficient operation and
+defines the jurisdictional boundaries for each operational position at St. Paul Air Traffic Control
+Tower (STP).
+
+1-2. DISTRIBUTION
+
+All vZMP personnel.
+
+1-3. CANCELLATION
+
+STP ATCT 7220.3Q, dated September 29, 2022.
+
+1-4. EFFECTIVE DATE
+
+This order is effective November 30, 2025.
+
+1-5. EXPLANATION OF CHANGES
+
+Updated for CRC STARS rundown list procedures. Updated missed approach heading, initial
+departure headings and altitudes, and added corresponding appendix.
+
+1-6. DEFINITIONS
+
+Hereafter certain terms in this order shall be defined by abbreviations.
+
+Positions: Local Control shall be defined as "LC", Ground Control shall be defined as "GC",
+Clearance Delivery shall be defined as "CD".
+
+1-7. POSITIONS.
+
+The following positions are in use at STP ATCT:
+
+Position Name                               Frequency  Callsign
+Ground Control/Clearance Delivery (GC/CD)   121.675    STP_GND
+Local Control (LC)                          119.1      STP_TWR
+ATIS                                        118.35     KSTP_ATIS
+
+1-8. MULTIPLE RUNWAY CROSSINGS
+In accordance with FAA Order JO 7210.3, St. Paul Air Traffic Control Tower is authorized to
+provide multiple runway crossings to aircraft as established below.
+1. Runway 27 and Runway 31 on Taxiway G.
+2. Runway 31 and Runway 32 on Taxiway D.
+
+                     FOR SIMULATION USE ONLY                                                         4
+STP 7220.3Q CHG 1                           11/30/2025
+
+1-9. SPECIAL USE AND PROCEDURES
+
+1. West Staging Area The west staging area is located between taxiways W, L, A, and D. This
+    is normally owned by GC, and used for helicopter operations.
+
+2. Guard Maltese Cross The guard cross is a cross painted on taxiway A abeam the guard
+    ramp, and is normally owned by GC. When LC has control of the guard cross, GC must
+    restrict aircraft from taxiing on TWY L and TWY A north of TWY D.
+
+                   FOR SIMULATION USE ONLY  5
+STP 7220.3Q CHG 1                           11/30/2025
+
+Chapter 2. GROUND CONTROL/CLEARANCE DELIVERY
+
+2-1. POSITION DUTIES AND RESPONSIBILITIES
+
+1. Process and forward flight plan information.
+
+2. Ensure positive control of all traffic on GC designated movement areas.
+
+3. Obtain verbal approval from LC prior to authorizing an aircraft to cross or use any portion of
+    an active runway.
+
+4. Ensure departing aircraft have received current ATIS or wind/altimeter, assigned runway,
+    pertinent NOTAMs and other pertinent STP airport condition information.
+
+5. Issue instructions, clearances, and ensure pilot read back for accuracy.
+
+6. Issue IFR, SVFR, VFR, and VFR-on-Top beacon codes and clearances.
+
+7. Conduct a position relief briefing IAW FAAO 7110.65, FAAO 7210.3, and local orders.
+
+2-2. CLEARANCE DELIVERY
+
+1. Issue all IFR departures maintain 2,500 feet MSL and expect filed altitude 10 minutes after
+    departure. Assign aircraft departing Runway 32 an initial altitude of 3,000 feet MSL.
+
+         Note: Runway 31 is not available for IFR departures.
+
+2. Issue IFR and SVFR clearances according to FAAO 7110.65. SVFRs must be restricted to
+    at or below 2,500.
+
+3. When issuing VFR Bravo airspace instructions, include phraseology that instructs aircraft to
+    remain outside Class B airspace.
+
+         Example: "N12345, remain outside the Bravo airspace."
+
+2-3. AREA OF JURISDICTION
+
+1. GC is responsible for all aircraft operations on airport movement area under GC jurisdiction.
+    This area consists of the west staging area, all taxiways except that portion of Taxiway D
+    between Runway 13/31 and Runway 14/32, when both runways are active. GC is
+    responsible for all grass island areas. Grass areas may be delegated to LC for helicopter
+    operations (See Appendix C).
+
+2. Multiple runway crossings are authorized for aircraft only while crossing Runway 27 and
+    Runway 31 on Taxiway G, and Runway 31 and Runway 32 on Taxiway D per waiver to
+    FAAO 7210.3.
+
+                   FOR SIMULATION USE ONLY  6
+STP 7220.3Q CHG 1                           11/30/2025
+
+2-4. FREQUENCY INFORMATION
+
+Frequency 121.675 is the standard frequency for GC/CD.
+
+2-5. DEPARTURE PROCEDURES
+
+1. All intersection departures shall be verbally coordinated with LC.
+
+2. When issuing beacon codes to departing VFR aircraft requesting traffic advisories or Bravo
+    airspace entry: use the following phraseology:
+
+         "Callsign ­ Remain outside of Bravo Airspace unless advised to enter, Departure
+         frequency ______, Squawk _____."
+
+2-6. COORDINATION PROCEDURES
+
+1. Required Coordination with LC
+
+    a. Approval must be granted by LC prior to GC utilizing any area under LC jurisdiction.
+
+    b. To cross or proceed onto active runways, coordinate the operation when the aircraft is
+         reaching the crossing intersection.
+
+    c. Inform LC when a runway operation has been completed.
+
+    d. Inform LC is GC is unable to complete any operation as previously coordinated.
+
+    e. Inform LC when authorizing helicopters to operate in the grass areas near (but not on)
+         active runways.
+
+    f. Intersection Departures: All intersection departures need to be verbally coordinated with
+         LC.
+
+2-7. HELICOPTER OPERATIONS
+
+1. Helicopters use taxiways, runways and grass areas. LC must obtain approval from GC to
+    land any surface other than active runways. Once coordination for landing area is
+    accomplished, LC may taxi arriving helicopters to adjacent parking areas without further
+    coordination. When the operation is complete, LC must coordinate returning the surface to
+    GC. GC must protect the full length of a taxiway for helicopter landing, unless otherwise
+    coordinated. When the Guard Maltese Cross is being used by a helicopter, GC must restrict
+    aircraft and vehicles from using Taxiway L and Taxiway A north of Taxiway D.
+
+2. Helicopters may be taxied to any movement or grass area for departure.
+
+3. When GC taxis a helicopter to a movement area and hands the aircraft off to LC, LC may
+    depart the assigned movement area without any further coordination.
+
+4. All movement areas are authorized for helicopter operations.
+
+                   FOR SIMULATION USE ONLY  7
+STP 7220.3Q CHG 1                           11/30/2025
+
+2-8. POTENTIAL PROBLEM AREAS
+
+1. Read Backs: Many errors occur due to incorrect read backs. Maintain a high level of
+    awareness during all read backs of taxi instructions, clearances, and hold short
+    requirements.
+
+2. Runway 9/27: Maintain added awareness to ensure taxiing aircraft hold short of this runway
+    when in use.
+
+3. Taxiway D: Ensure pilots holding between Runway 13/31 and Runway 14/32 on Taxiway D
+    observe the correct hold short line.
+
+                   FOR SIMULATION USE ONLY  8
+STP 7220.3Q CHG 1                           11/30/2025
+
+Chapter 3. LOCAL CONTROL
+
+3-1. POSITION DUTIES AND RESPONSIBILITIES
+
+1. Issue traffic advisories and safety alerts.
+
+2. Initiate control instructions and ensure pilot read back.
+
+3. Issue control instructions to IFR, VFR and SVFR aircraft operating on the active runway(s)
+    and to airborne aircraft within STP Class D surface area.
+
+4. Scan tower cab/airport environment.
+
+5. Receive authorization from GC before using any surface delegated to the position.
+
+6. Obtain IFR releases from M98.
+
+7. Determine active runway(s) in use. Visual approaches may only be advertised when the
+    visibility is at or above 7 miles and the ceiling is at or above 2300 ft. AGL. Advise M98 when
+    visibility or ceiling increase to these minima or greater or decrease to less than these
+    minima.
+
+3-2. AREA OF JURISDICTION
+
+The STP Class D surface area consists of the airspace within a 4.1 nm radius of STP (except
+for a cut out for SGS), up to 2500 AGL and below the vertical limits, adjacent to and outside the
+lateral limits of the MSP Class B airspace.
+
+The LC movement area of jurisdiction consists of the STP Class D surface area, Runways 9/27,
+13/31, 14/32, and the portion of Taxiway D between Runway 14/32 and 13/31 when both
+runways are active. LC may delegate the control of any runway to GC when not in use.
+
+3-3. FREQUENCY INFORMATION
+
+Frequency 119.1 is the standard frequency for the LC position.
+
+3-4. ARRIVAL PROCEDURES
+
+1. Runway 31 and 32 operations: Separate aircraft simultaneously utilizing runways 31 and 32
+    according to 7110.65 3-9-9 Non intersecting Converging Runway Operations.
+
+2. Advise helicopters utilizing the Guard Maltese Cross of traffic on the field.
+
+3-5. DEPARTURE PROCEDURES
+
+1. IFR releases ­ LC obtains departure releases from M98 via the Run-Down Tab List.
+    Standard departure headings are in Appendix F.
+
+2. STP has no formal runway use or noise abatement program.
+
+3. Runway lengths and intersection distances are depicted in Appendix D.
+
+4. Runway 31 shall not be used for IFR departures.
+
+                   FOR SIMULATION USE ONLY  9
+STP 7220.3Q CHG 1                                                         11/30/2025
+
+3-6. COORDINATION PROCEDURES
+
+1. LC shall coordinate with GC:
+
+a. Use of any inactive runway, movement, or non-movement areas under the GC
+    jurisdiction. GC shall grant approval prior to LC utilizing any area under the GC
+    jurisdiction.
+
+2. LC shall coordinate with M98:
+
+a. IFR aircraft executing an unplanned missed approach.
+
+b. Pilot requests, other than those already coordinate with M98.
+
+3-7. HELICOPTER OPERATIONS
+
+1. LC may depart helicopters from assigned movement areas without verbal coordination when
+    GC taxis the helicopter and hands the aircraft off to LC.
+
+2. Advise helicopters of any conflicting traffic on the airfield.
+
+3. If a helicopter requests to land on GC's movement area, LC must coordinate with GC prior
+    to landing. LC shall have the authority to taxi the helicopter into parking adjacent to the
+    surface requested. The area shall be returned to GC when the operation has ended.
+
+3-8. MISSED APPROACH/GO-AROUND OPERATIONS
+
+1. Instruct IFR aircraft executing an unplanned missed approach to fly heading 060 degrees
+    and to maintain 2500 ft. unless an alternate heading is required due to traffic.
+
+2. Advise M98 when an IFR aircraft executes an unplanned missed approach and if a
+    nonstandard heading is required.
+
+3-9. VISUAL REPORTING POINTS
+
+Commonly used checkpoints are:
+
+3M                  3.5 E         Hudson                           16 E
+Shoreview Antennas  7 NW          Stillwater                       15 NE
+State Capital       2 NW          Lake Elmo (21D)                  11 NE
+White Bear Lake     11 NNE        South St. Paul                   5 SE
+State Fair Grounds  6 NW          Pine Bend                        12 S
+
+3-10. SPECIAL FLIGHT HANDLING/PROCEDURES
+
+Runway 13 Clear Zone: The Runway 13 clear zone must be clear of aircraft when an aircraft is
+on approach to Runway 13. See Appendix E.
+
+                                  FOR SIMULATION USE ONLY                                        10
+STP 7220.3Q CHG 1                           11/30/2025
+
+Appendix A GROUND CONTROL/CLEARANCE DELIVERY CHECKLIST
+
+1. Complete Pre-Duty Weather Brief
+2. SIA
+3. Equipment
+4. Airport Conditions/Status
+
+    a. Closed/Restricted areas
+    b. Braking Action reports
+5. Airport activities
+6. Weather/Trends
+    a. Present & Forecast conditions
+    b. SIGMETs/PIREPs
+    c. Wind/Altimeter
+7. Flow Control/SWAPs/Metering to MSP
+8. Special activites/instructions/restrictions
+9. ATIS Information and Code
+10. Verbally state the status of each runway
+    a. Unavailable
+    b. Closed
+    c. Occupied
+11. Pertinent NOTAMs
+12. Traffic. INCLUDE:
+    a. Special activity aircraft
+    b. Aircraft standing by for service
+    c. Coordination agreements with other positions
+    d. Special problems, requests, or instructions
+13. Two minute monitor by relieved controller
+
+                   FOR SIMULATION USE ONLY  11
+STP 7220.3Q CHG 1                                          11/30/2025
+
+Appendix B LOCAL CONTROL CHECKLIST
+
+1. Complete Pre-Duty Weather Brief
+2. SIA
+3. Equipment
+4. Airport conditions/Status
+
+    a. Closed/Restricted areas
+    b. Braking Action reports
+5. Airport activities
+6. Weather/Trends
+    a. Present & Forecast conditions
+    b. SIGMETs/PIREPs
+    c. Wind/Altimeter
+7. Flow Control/SWAPS/Metering to MSP
+8. Special Activities/Instructions/restrictions
+9. ATIS Information and Code
+10. Verbally State the Operational status of each runway.
+    a. Unavailable
+    b. Closed
+    c. Occupied
+11. Pertinent NOTAMs
+12. Traffic, INCLUDE:
+    a. Special Activity Aircraft
+    b. Point Out Aircraft
+    c. Holding Aircraft
+    d. Primary Targets
+    e. Aircraft released but not yet airborne
+    f. Aircraft standing by for service
+    g. Coordination agreements with other positions
+    h. Special problems, requests, or instructions
+13. Two minute monitor by relieved controller
+
+FOR SIMULATION USE ONLY                                    12
+STP 7220.3Q CHG 1                             11/30/2025
+
+Appendix C MOVEMENT AREAS/NON-MOVEMENT AREAS
+
+                   FOR SIMULATION USE ONLY    13
+STP 7220.3Q CHG 1                           11/30/2025
+
+Appendix D RUNWAY LENGTH AND INTERSECTION DEPARTURE
+LENGTHS
+
+                   FOR SIMULATION USE ONLY           14
+STP 7220.3Q CHG 1                11/30/2025
+
+Appendix E RUNWAY 13 CLEAR ZONE
+
+FOR SIMULATION USE ONLY          15
+STP 7220.3Q CHG 1                                                 11/30/2025
+
+Appendix F STANDARD DEPARTURE HEADINGS
+
+Standard departure headings:
+
+Runway(s) Initial departure altitude Standard departure headings
+
+32      3,000 feet MSL  030° clockwise to 045°
+
+13, 14  2,500 feet MSL  010° clockwise to 080°
+
+                        FOR SIMULATION USE ONLY                   16
+

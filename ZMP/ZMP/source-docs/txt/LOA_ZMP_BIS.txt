@@ -1,0 +1,104 @@
+                            OPERATIONAL LETTER OF AGREEMENT
+                                                     Between
+
+                 MINNEAPOLIS AIR ROUTE TRAFFIC CONTROL CENTER
+                                                        and
+
+                          BISMARCK AIR TRAFFIC CONTROL TOWER
+                                           Effective: 4 August 2020
+
+I. Purpose:
+         This agreement governs procedures between Minneapolis ARTCC (ZMP) and Bismarck
+         ATCT (BIS) on the VATSIM Network. This agreement is supplemental to each facilities
+         Standard Operating Procedures and policies, FAAO 7110.65, VATSIM Code of Conduct,
+         VATSIM Code of Regulations, VATSIM User Agreement, and applicable division
+         policies.
+
+II. Cancellation:
+         This LOA cancels any and all previous LOAs between ZMP and BIS prior to the above
+         effective date.
+
+III. Responsibilities:
+         During published hours of operation, Bismarck Tower is delegated control responsibility
+         for IFR and SVFR aircraft at 15,000 feet MSL and below within the confines of the
+         airspace depicted on Attachment "A."
+
+IV. Open/Close Procedures:
+
+         a. Bismarck ATCT shall verbally coordinate with ZMP when opening and closing.
+                  (ref. 7110.65 Ap. D Transfer of Position Responsibility, BIS 7110.65A Ap. B).
+
+         b. During scheduled closures or in the event that control services cannot be
+                  provided, delegated airspace and responsibilities shall revert to ZMP.
+
+         c. The facility assuming control responsibilities shall obtain the status of equipment,
+                  conditions, and procedures (including NOTAM's and weather) via the appropriate
+                  Status Information systems.
+
+         d. The facility divesting responsibilities shall brief the relieving controller on the
+                  status of items not available via automated Status Information systems, and any
+                  items of special interest calling for explanation, including airport conditions,
+                  approach in use, equipment status, TMU initiatives, special activities, and traffic.
+
+         e. Upon completion of the briefing, transfer control of all aircraft and release the
+                  airspace to the receiving facility.
+V. Radar Procedures:
+         Unless otherwise coordinated, the following procedures shall apply:
+
+         a. Radar handoffs between facilities are mandatory as depicted on Attachment "A."
+
+         b. Arrivals/Over-flights:
+
+                  (1) The clearance limit for arrivals shall be the destination airport.
+
+                  (2) Arrivals shall be descending to or level at 8,000 feet MSL.
+
+                  (3) When automated handoffs are in use:
+
+                           (a) Acceptance of a handoff by BIS of an aircraft with Mode C
+                                    readout in level flight at or below 15,000 feet MSL constitutes
+                                    altitude approval on over-flight traffic and arrivals 7,000 feet MSL
+                                    and below.
+
+                  (4) After receiving a handoff from ZMP, BIS shall have control for descent
+                           and/or control to alter the heading/route of an aircraft. The maximum turn
+                           shall not exceed 30 degrees either side of the aircraft's ground track.
+
+         c. Departures:
+
+                  (1) BIS may issue en route departure clearances to aircraft without ZMP
+                           approval provided the following conditions are met:
+
+                           (a) Departures are cleared to 15,000 feet MSL or below.
+
+                           (b) BIS shall inform aircraft restricted below their requested altitude
+                                    to, "Expect (requested altitude) 10 minutes after departure."
+
+                           (c) After ZMP has accepted the handoff, BIS shall ensure the aircraft
+                                    is at or climbing to the requested altitude or FL230, whichever is
+                                    lower. (ZMP shall advise BIS when an altitude different from that
+                                    stated above is to be assigned before accepting the handoff.)
+
+                           (d) After receiving a handoff from BIS, ZMP may alter the
+                                    heading/route of the aircraft. The maximum turn shall not exceed
+                                    30 degrees either side of the aircraft's ground track.
+VI. General:
+         Unless otherwise coordinated, the following procedures shall apply:
+         a. When BIS is not operational or conditions render it incapable of providing Air
+                  Traffic service, delegated control and airspace shall revert to ZMP.
+
+VII. Military Training Routes:
+         a. Aircraft using IR644, depicted on Attachment "A", shall be transferred using non-
+                  radar procedures. Radar handoffs may be used if non-radar is deemed
+                  unnecessary.
+         b. BIS and ZMP need not advise the other when the aircraft is in/out of the
+                  respective facility's assigned airspace, as would normally be expect in accordance
+                  with non-radar procedures.
+         c. ZMP shall forward to Bismarck Approach an estimated time for Point "R."
+         d. BIS shall make the frequency change to Minneapolis Center at Point "V."
+
+Dhruv Kalra
+Air Traffic Manager
+Minneapolis ARTCC, VATSM
+ATTACHMENT "A"
+

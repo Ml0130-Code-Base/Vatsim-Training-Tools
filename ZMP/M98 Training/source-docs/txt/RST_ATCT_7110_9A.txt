@@ -1,0 +1,897 @@
+ORDER                                                    RST ATCT
+                                                          7110.9A
+
+               ROCHESTER ATCT
+STANDARD OPERATING PROCEDURES
+
+                      December 27, 2023
+
+   VATUSA MINNEAPOLIS ARTCC
+
+VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+VIRTUAL AIR TRAFFIC SIMULATION NETWORK                   RST ATCT
+               UNITED STATES DIVISION                     7110.9A
+
+                                Rochester ATCT              Effective date:
+                                Northeast Region         December 27, 2023
+
+SUBJ: Rochester Air Traffic Control Tower Standard Operating Procedures
+
+         This order establishes standard operating procedures (SOP) for the tower cab positions at
+Rochester Air Traffic Control Tower on the VATSIM network. Where national orders specify what is to
+be done, this order details how the job is done at this facility. Care has been taken to avoid duplication of
+other directives, but they are referenced, where necessary for clarity. Controllers are required to be
+familiar with the provisions of this order that pertain to their operational responsibilities and to exercise
+their best judgment if they encounter situations not covered by it.
+
+         This order also serves as a reference for information unique to the facility, unique to this airport,
+and unique to the control environment.
+
+         It is emphasized that information contained herein is designed, and specifically for use, in a
+virtual controlling environment. It is not applicable, nor should be referenced for live operations in the
+National Airspace System (NAS). The procedures contained within this order document how the
+positions are to be operated and, in conjunction with FAA Orders JO 7110.10, JO 7110.65, and JO
+7210.3, will be the basis for performance evaluations and training.
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+12/27/23                        FOR SIMULATION USE ONLY                  RST 7110.9A
+
+ Change                              Order Record of Changes
+
+              Description                                Effective Date  Issued By
+          Original Publication                            Dec 27, 2023       DE
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY                  Initiated By: ZMP
+12/27/23                        FOR SIMULATION USE ONLY  RST 7110.9A
+
+                                               Table of Contents
+
+CHAPTER 1. GENERAL ...............................................................................................................5
+  1-1. PURPOSE OF THIS ORDER. ............................................................................................5
+  1-2. AUDIENCE.........................................................................................................................5
+  1-3. WHERE CAN I FIND THIS ORDER. ...............................................................................5
+  1-4. WHAT THIS ORDER CANCELS. ....................................................................................5
+  1-6. ACRONYMS. ....................................................................................................................5
+  1-7. DEFINITIONS. ..................................................................................................................5
+
+CHAPTER 2. GENERAL CONTROL ..........................................................................................6
+  2-1. POSITION RESPONSIBILITY...........................................................................................6
+  2-2. CALLSIGN USAGE AND FREQUENCY DELEGATION. ................................................6
+
+CHAPTER 3. GROUND CONTROL ............................................................................................7
+  3-1. SUMMARY OF DUTIES AND RESPONSIBILITIES .........................................................7
+  3-2. AIRPORT SURFACES AND THEIR USAGE..................................................................7
+  3-3. GC/LC COORDINATION. ....................................................................................................8
+  3-4. CLEARANCE PHRASEOLOGY. ......................................................................................8
+
+CHAPTER 4. LOCAL CONTROL..............................................................................................10
+  4-1. SUMMARY OF DUTIES AND RESPONSIBILITIES. ......................................................10
+  4-2. AREA INFORMATION. ......................................................................................................10
+  4-3. RESTRICTED LOW APPROACHES. ................................................................................12
+  4-4. LC/GC COORDINATION.................................................................................................12
+  4-5. LC/ARDR COORDINATION..............................................................................................12
+  4-6. LINE UP AND WAIT (LUAW). .......................................................................................14
+  4-7. RUNWAY SELECTION. .....................................................................................................14
+
+CHAPTER 5. APPROACH CONTROL .....................................................................................15
+  5-1. SUMMARY OF DUTIES AND RESPONSIBILITIES. ......................................................15
+  5-2. EQUIPMENT........................................................................................................................15
+  5-3. NOISE ABATEMENT. ........................................................................................................16
+  5-4. OBSTRUCTIONS AND MVA's..........................................................................................16
+  5-5. DISPLAYING DATA BLOCKS. .........................................................................................16
+  5-6. TURNS TO FINAL FROM OPPOSING BASES. ...............................................................16
+  5-7. VISUAL APPROACH MINIMA. ........................................................................................17
+  5-8. CHANGING RST ARRIVALS TO TOWER FREQUENCY..............................................17
+  5-9. CLIMBOUT/MISSED APPROACH INSTRUCTIONS. .....................................................17
+  5-10. VECTORING RST DEPARTURES...................................................................................17
+  5-11. COORDINATION BETWEEN LC/ARDR FOR VISUAL SEPARATION BY
+  AIRCRAFT. .................................................................................................................................17
+
+APPENDIX 1. ROCHESTER AIRPORT DIAGRAM...............................................................18
+APPENDIX 2. CTRD VIDEO MAPS ..........................................................................................19
+
+  FIGURE 1. VIDEO MAP 1: ASR APPROACHES/VFR CHECKPOINTS ...............................19
+  FIGURE 2. VIDEO MAP 2: SATELLITE ..................................................................................20
+  FIGURE 3. VIDEO MAP 3: ROCHESTER APPROACH..........................................................21
+  FIGURE 4. VIDEO MAP 4: 3NM MVA CHART ......................................................................22
+  FIGURE 5. VIDEO MAP 5: GEOGRAPHIC FEATURES ........................................................23
+  FIGURE 6. VIDEO MAP 6: 5NM MVA CHART ......................................................................24
+APPENDIX 3. POSITION CHECKLISTS..................................................................................25
+APPENDIX 4. SCRATCH PAD PROCEDURES.......................................................................27
+  A4-1. GENERAL. ........................................................................................................................27
+  A4-2. PROCEDURES. .................................................................................................................27
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                                                12/27/23
+
+                                CHAPTER 1. GENERAL
+
+1-1. PURPOSE OF THIS ORDER.
+
+This handbook contains the body of local knowledge with which an air traffic controller at
+Rochester ATCT must be familiar. It contains descriptions of local procedures and of the area
+environment.
+
+1-2. AUDIENCE.
+
+This order is distributed to all VATSIM Minneapolis ARTCC controllers.
+
+1-3. WHERE CAN I FIND THIS ORDER.
+
+You can find this order on the Repository website: Documents & Procedures
+
+1-4. WHAT THIS ORDER CANCELS.
+
+vZMP ZMP-Minor ATCT/TRACON LOA, Rochester (RST) ATCT/TRACAB, dated
+1/1/2015.
+
+1-5. TERMS OF REFERENCE.
+
+This order conforms to the style conventions specified in FAAH 7110.65, Air Traffic
+Control, Terms of Reference, in its word usage, notes, definitions, references, and
+abbreviations. Interpretation of this order is subject to the same Terms of Reference.
+
+1-6. ACRONYMS.
+
+Ground Control                     GC
+
+Local Control                      LC
+
+Approach Control                   AP or ARDR
+
+Controller-In-Charge               CIC
+
+Status Information Area            SIA
+
+1-7. DEFINITIONS.
+
+Advertised:
+         The approach and runway(s) indicated on the Automation, SIA, and broadcast
+         on the ATIS.
+
+Mileage:
+         Mileage referred to in this Order is nautical unless otherwise specified.
+
+Automation:
+         The controller client being used by the controller.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY                    Initiated By: ZMP
+RST 7110.9A                                                         12/27/23
+
+                  CHAPTER 2. GENERAL CONTROL
+
+2-1. POSITION RESPONSIBILITY.
+    a. Controllers opening the facility shall utilize the Opening Watch Checklist.
+         Controllers closing the facility shall utilize the Close Of Business Checklist. (Located
+         in Appendix B).
+
+    b. Controllers shall use the pre-relief checklist prior to relieving a position.
+
+    c. Controllers shall use the relief checklist when being relieved of a position.
+
+    d. GC and LC are regularly combined to LC.
+
+2-2. CALLSIGN USAGE AND FREQUENCY DELEGATION.
+
+    a. The following callsigns and frequencies shall be used when working positions at RST
+         ATCT. Bold table entries denote the primary position.
+
+             Position           Frequency  STARS ID      Callsign
+             Ground Control     121.900    T             RST_GND
+             Local Control      118.300    T             RST_TWR
+             ATIS               120.500                  KRST_ATIS
+             RST Approach (RA)  119.800    A             RST_A_APP
+             RST West (RW)      119.200    W             RST_W_APP
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+                   CHAPTER 3. GROUND CONTROL
+
+3-1. SUMMARY OF DUTIES AND RESPONSIBILITIES.
+
+    a. GC has primary responsibility for the following duties:
+
+    b. Controlling aircraft on the airport movement areas, except active runways.
+
+    c. Issuing IFR, SVFR, and VFR-On-Top clearances to departing aircraft. See paragraph
+         3-4, Clearance Phraseology
+
+    d. Coordinating outbound traffic's intentions with LC using flight progress strips, half
+         strips, or verbally, as appropriate.
+
+3-2. AIRPORT SURFACES AND THEIR USAGE.
+
+    a. Runway data. Runways are concrete.
+
+             1. RY 13/31 9034' x 150' (center 130' grooved). Precision markings.
+
+             2. RY 3/21 7301' x 150' (wire combed). Non-precision markings.
+
+    b. Taxiway data.
+
+             1. All high-speed (angled) taxiways exiting runway 13/31 are 75 feet wide.
+                  Others are at least 60 feet wide. Hold lines are painted 200 feet from runway
+                  centerlines. Unlike runways, taxiways are not level. Opposite direction
+                  aircraft may not be visible to one another.
+
+             2. Taxiways leading to the thresholds of runway 21 (F, and G) are too narrow to
+                  allow aircraft to pass. To expedite the departure of turboprop or jet aircraft,
+                  consider directing smaller aircraft to other areas for run-up. For example, with
+                  coordination, an aircraft can be taxied across the approach end of runway 21
+                  for run-up on the opposite taxiway, thereby allowing a subsequent aircraft to
+                  depart ahead.
+
+    c. Ramp data. Ramps are non-movement areas, thus ATC control jurisdiction does not
+         include them. Instructions to aircraft operating on ramps are advisory in nature.
+
+    d. Helicopter operations. There are no helipads, designated helicopter landing areas, or
+         designated helicopter parking areas at RST. Takeoffs and landings from the ramp are
+         discouraged, though not forbidden. Unless the pilot specifically requests a takeoff
+         from the ramp, air taxi helicopters to any taxiway or runway for departure.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+3-3. GC/LC COORDINATION.
+
+Before coordinating or authorizing any activity on a runway, scan the runway surface and both
+final approach areas for traffic.
+
+    a. Coordinate a specific activity at a specific point.
+
+EXAMPLE-
+"Cross Runway 31 at Alpha 6 behind FLG3168."
+"Cross the approach end of runway 21."
+
+NOTE 1 ­ Approval for a specific crossing does not constitute approval for other activities
+or crossings elsewhere on the same runway. Each crossing must be coordinated
+individually.
+
+NOTE 2 ­ If GC requests and LC approves "Request clearance on runway ##..." Or
+"Request clearance on the Airport..." GC can now utilize the runway or field at their
+discretion without further coordination.
+
+    b. Either GC or LC may make a runway "hot." A runway becomes hot when either of
+         the following happens:
+
+             1. GC advises LC that the runway is "hot" because an aircraft has been taxied to it
+                  for departure. After this coordination, GC may not cross the runway without new
+                  coordination.
+
+             2. LC advises GC that the runway is "hot" due to inbound traffic.
+
+3-4. CLEARANCE PHRASEOLOGY.
+
+    a. Itinerant VFR departures. When a departing VFR aircraft has requested flight
+         following to a destination outside RST approach control airspace, issue 119.8 as
+         departure frequency and vNAS-assigned transponder code.
+
+PHRASEOLOGY-
+DEPARTURE FREQUENCY (frequency). SQUAWK (code).
+
+    b. Itinerant IFR departures. Clear departing itinerant IFR aircraft to an initial altitude
+         of 5000, unless the pilot requested a lower final altitude. When appropriate, advise
+         pilot to expect requested final altitude ten minutes after departure.
+
+PHRASEOLOGY-
+MAINTAIN (initial altitude).
+EXPECT (requested final altitude) ONE ZERO MINUTES AFTER DEPARTURE.
+DEPARTURE FREQUENCY (frequency). SQUAWK (code).
+
+    c. Local-area clearances. When aircraft requesting radar services will remain within
+         RST approach control airspace, issue one of the following clearances.
+
+             1. VFR departures requesting Basic Radar Service, or requesting practice
+                  instrument approaches:
+
+PHRASEOLOGY-
+
+DEPARTURE FREQUENCY (frequency). SQUAWK (code).
+
+             2. Departures requesting practice instrument approaches under IFR:
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+PHRASEOLOGY-
+CLEARED TO (destination) AIRPORT VIA RADAR VECTORS. MAINTAIN 4000
+DEPARTURE FREQUENCY (frequency). SQUAWK (code).
+
+             3. SVFR departures:
+
+PHRASEOLOGY-
+CLEARED OUT OF CLASS DELTA SURFACE AREA (direction) OF THE ROCHESTER
+AIRPORT. MAINTAIN SPECIAL V-F-R CONDITIONS (and if required, AT OR BELOW
+2500). DEPARTURE FREQUENCY (frequency). SQUAWK (code).
+
+             4. IFR departures requesting clearance to VFR conditions on top (VFR OTP):
+
+PHRASEOLOGY-
+CLEARED TO ROCHESTER VOR VIA RADAR VECTORS. CLIMB TO AND REPORT
+REACHING V-F-R ON TOP. TOPS REPORTED (altitude) or NO TOPS REPORTS. IF
+NOT ON TOP AT 5000, MAINTAIN 5000 AND ADVISE. DEPARTURE FREQUENCY
+(frequency). SQUAWK (code).
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+                    CHAPTER 4. LOCAL CONTROL
+
+4-1. SUMMARY OF DUTIES AND RESPONSIBILITIES.
+
+    a. LC has primary responsibility for the following duties:
+
+             1. Runway separation and advisory control of VFR traffic operating within RST
+                  Class D airspace.
+
+             2. Assigning runway heading to IFR departures.
+
+PHRASEOLOGY-
+FLY RUNWAY HEADING.
+
+             3. Separation between arriving and departing IFR aircraft.
+
+             4. Initial separation between two or more IFR departures. IFR aircraft that execute a
+                  go-around or missed approach must be issued control instructions, as necessary,
+                  to establish separation.
+
+             5. Resolving traffic conflicts between departures and local traffic before telling a
+                  pilot to change frequencies.
+
+NOTE 1 - RST Approach may vector, climb, or restrict any aircraft upon contact. RST Approach
+is responsible for issuing any necessary restriction to subsequent IFR departures except when
+the preceding aircraft is released on runway heading and turned by less than 15 degrees. See
+Paragraph
+
+NOTE 2 ­ The LC/RST Approach transfer of control point is 1800 MSL.
+
+             6. Assigning landing runways.
+
+             7. Issuing landing sequence.
+
+             8. Specifying approach interval.
+
+4-2. AREA INFORMATION.
+
+LC must be familiar with the following area facilities, features, and information:
+
+    a. RST Class D Airspace is defined as "[t]hat airspace extending upward from the surface
+         to and including 3800 feet MSL within a 4.3-mile radius of the Rochester International
+         Airport." FAR 91.129(c) states that no person may operate an aircraft within this area
+         except for the purpose of landing or taking off from an airport within that area, unless
+         otherwise authorized. Therefore, any aircraft operating in this area for any purpose must
+         obtain prior authorization from RST ATCT either via radio or telephone.
+
+    b. RST Class E Airspace is defined as "[t]hat airspace extending upward from 700 feet
+         above the surface within a 6.8-mile radius of the Rochester International Airport and
+         within 3.2 miles each side of the RST VOR/DME 028 radial extending from the 6.8-
+         mile radius to 7.9 miles southwest of the airport, within 5.3 miles southwest and 4
+         miles northeast of the Rochester northwest localizer course extending from the 6.8-
+         mile radius to 20 miles northwest of the airport, within 5.3 miles northeast and 4
+         miles southwest of the Rochester southeast localizer course extending from the 6.8-
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                                              12/27/23
+
+    mile radius to 17.3 miles southeast of the airport and within a 6.4-mile radius of St.
+    Marys Helipad."
+
+c. The Departure Corridor is airspace three miles either side of the extended
+    centerline of the advertised runway from the departure end to ten miles from the
+    radar antenna, from the surface to 5000' MSL. LC may release IFR aircraft on
+    runway heading, climbing to 5000 feet or below without coordination with ARDR. If
+    traffic warrants, ARDR may require LC to issue a lower altitude to departures.
+
+d. Published instrument approach procedures for RST.
+
+e. Obstructions. The highest obstruction on the airport is the control tower (1361
+    MSL). The highest obstruction within RST Class D airspace is a cable TV tower four
+    statute miles south (1528 MSL).
+
+f. Satellite airports.
+
+                                          Satellite Airports
+
+        LOCATION                     AIRPORT NAME         LOCATION IDENTIFIER
+          Albert Lea               Albert Lea Municipal                  AEL
+            Austin                                                      AUM
+          Cresco, IA                  Austin Municipal                    CJJ
+            Preston                  Ellen Church Field                  FKA
+                                                                         TOB
+       Dodge Center                    Fillmore County                   2C4
+          Chatfield                     Dodge Center                     55Y
+          Rushford                                                       D02
+          Osage, IA              Flying A ("Anderson's")                 5D2
+                                       Rushford Muni                    OWA
+       Northwood, IA                     Osage Muni                     99MN
+          Owatonna                    Northwood Muni                    MN56
+                                                                        86MN
+  Rochester (downtown)          Owatonna Degner Regional                 None
+  Rochester (downtown)                St. Marys Helipad
+   Rochester (N of city)             Methodist Helipad
+Rochester (2 W of airport)            MN DOT Helipad
+                                      Deans ­ Westfield
+
+g. VFR checkpoint video map (#1). All markings as listed in Appendix 2.
+
+h. Towns not depictured on video maps and their positions:
+
+1. Chester: 10 NE
+
+2. Dover: 18 NE
+
+3. Simpson: 4 ENE
+
+4. Marion: 8 ENE
+
+5. Fillmore: 17 SE
+
+6. Ostrander: 21 SSE
+
+7. Stewartville: 4 S
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY     Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+    i. Prominent local landmarks.
+
+             1. Listed on sectional charts
+
+                  (a) Ostrander Tower
+
+                  (b) Interstate 90
+
+             2. In common usage
+
+                  (a) IBM (northwest edge of Rochester)
+
+                  (b) Silver Lake (downtown Rochester)
+
+                  (c) Lake Zumbro
+
+    j. Noise-sensitive areas.
+
+             1. City of Stewartville.
+
+4-3. RESTRICTED LOW APPROACHES.
+
+Use an altitude no lower than 1900 MSL when authorizing an altitude restricted low
+approach over any runway.
+
+4-4. LC/GC COORDINATION.
+
+    a. Before authorizing any activity on a "hot" runway, scan the runway surface, both
+         final approach areas, the traffic board, and the TDW for traffic. Respond to GC
+         requests using specific phraseology. Generally, LC will repeat the information in
+         GC's request, or issue other instructions when the request cannot be approved.
+
+EXAMPLE-
+"Cross the approach end of runway 21."
+"Hold short of runway 21. Traffic landing."
+
+    b. While either GC or LC can declare an unadvertised runway "hot," only LC can
+         approve coordination of it being "cold." Tell GC that a runway is "cold" (i.e. activity
+         on that runway may be approved by GC without further coordination) when aircraft
+         are no longer using the runway, or when the next operation is not imminent.
+
+PHRASEOLOGY-
+RUNWAY (number) IS COLD.
+
+4-5. LC/ARDR COORDINATION.
+
+Silent (data block) and verbal (RDVS) coordination are used.
+
+    a. Silent coordination. Determine the intentions of all aircraft displayed on the LC
+         TDW by analyzing their data blocks as referenced in Appendix 4. Any itinerant IFR
+         or vNAS VFR aircraft without a special designator will be making a full stop landing
+         on the advertised runway. Unless verbally coordinated otherwise.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+    b. Expect ARDR to coordinate the following verbally:
+
+             1. SVFR inbounds.
+
+             2. Non-STARS inbounds.
+
+             3. Any arrival to an unadvertised runway.
+
+             4. Restrictions to departing IFR aircraft as follows:
+
+                  (a) "CALL FOR RELEASE": LC must coordinate any IFR departures,
+                      including those departing the advertised runway.
+
+                  (b) "RELEASE REFERENCE (aircraft call sign)": LC must provide visual
+                      separation between this aircraft and any IFR departures unless another
+                      means of separation is coordinated with ARDR> Approval by LC of an
+                      IFR arrival to other than the active runway does not apply an automatic
+                      release reference departure restriction.
+
+                  (c) "RESTRICT DEPARTURES TO (altitude)": LC may release IFR aircraft
+                      on runway heading, climbing no higher than the altitude specified in the
+                      restriction.
+
+             5. Transfer of control for aircraft maintaining visual separation.
+
+                  (a) Local control may transfer control of aircraft maintaining visual separation
+                      to Approach control.
+
+                  (b) Approach control may transfer control of aircraft maintaining visual
+                      separation to Local control.
+
+                  (c) The transferring controller must notify the receiving controller that the
+                      aircraft are maintaining visual separation prior to issuing a frequency
+                      change to the participating aircraft via the following approved methods:
+
+                      1. Verbal coordination via landline.
+
+                           Ex. N350MC has N912TL in sight and will maintain visual separation.
+
+                      2. Enter "VA" into secondary scratchpad of aircraft maintaining visual
+                           separation.
+
+    c. Coordinate verbally with ARDR the following:
+
+             1. SVFR departures.
+
+PHRASEOLOGY-
+REQUEST RELEASE ON RUNWAY (number).
+
+             2. IFR departures from any runway other than the advertised runway, except
+                  when the aircraft is climbing out after a practice approach.
+
+             3. Any pattern aircraft operating beyond 5 NM from the radar site.
+
+             4. Unplanned missed approaches of IFR inbounds.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+4-6. LINE UP AND WAIT (LUAW).
+
+    a. Do not issue a clearance to an aircraft requesting a full stop, touch-and-go, stop-and-go,
+         option or unrestricted low approach on the same runway with an aircraft that is holding in
+         position, taxiing into position or that has been cleared to line up and wait until the aircraft
+         in position starts takeoff roll.
+
+    b. Do not clear an aircraft to line up and wait if an aircraft has been cleared to land, touch-
+         and-go, stop-and-go, option or unrestricted low approach on the same runway.
+
+    c. LUAW may be issued on any runway IAW FAAO 7110.65, 7210.3, and other associated
+         facility or agency directives, unless otherwise prohibited, if the departure point is visible
+         from the tower.
+
+    d. LUAW is prohibited for aircraft to hold simultaneously on the same runway.
+
+    e. LUAW is prohibited at any intersection from sunset to sunrise.
+
+    f. LUAW is prohibited for aircraft to hold simultaneously on intersecting runways.
+
+4-7. RUNWAY SELECTION.
+
+    a. Controllers are encouraged to maximize the use of runway 13 and/or runway 3 for
+         departures, consistent with safety and operational considerations.
+
+    b. Controllers are encouraged to maximize the use of runway 31 and/or runway 21 for
+         arrivals, consistent with safety and operational considerations.
+
+    c. This runway use program should be utilized with crosswinds of up to 15 knots and
+         tailwinds of up to 5 knots for clear and dry runways. No tailwind component should exist
+         if runways are other than clear and dry.
+
+    d. This runway use program is primarily intended for aircraft over 12,500 pounds and pilot
+         participation is voluntary.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+                 CHAPTER 5. APPROACH CONTROL
+
+5-1. SUMMARY OF DUTIES AND RESPONSIBILITIES.
+RST Approach has primary responsibility for the following duties:
+
+    a. Ensuring separation between IFR and SVFR aircraft operating within RST approach
+         control airspace, except where separation responsibility is delegated to LC. ARDR must
+         monitor the interval of all radar arrivals and initiate action to correct any deterioration of
+         separation, regardless of cause.
+
+    b. Providing Basic Radar Service to participating VFR aircraft.
+             1. Issue a downwind pattern entry to all VFR RST arrivals receiving flight following
+                  when practicable prior to transfer of control to LC.
+             2. When not practicable, issue the most appropriate pattern entry to the aircraft when
+                  the sequence will be obvious.
+             3. In all other situations, manually coordinate the sequence with LC.
+
+    c. Establishing a reasonable approach sequence using standard separation.
+    d. Choosing which approach to advertise on the ATIS.
+5-2. EQUIPMENT.
+ARDR equipment includes, but is not limited to:
+    a. TDW. Each controller may set his/her TDW according to personal preference, in
+
+         accordance with Paragraph 5-5, Displaying Data Blocks, and subject to the following
+         restrictions:
+
+             1. Display enough adjacent airspace to ensure timely acceptance of handoffs.
+             2. Display Video map 3. Refer to other maps as necessary. Available video maps
+
+                  are:
+                  (a) Video map 1: ASR approaches/VFR checkpoints
+                  (b) Video map 2: Satellite
+                  (c) Video map 3: Rochester Approach
+                  (d) Video map 4: 3NM MVA Chart
+                  (e) Video map 5: Geographical features.
+                  (f) Video map 6: 5NM MVA Chart
+                  (g) Video map 7: Stadiums
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                                                            12/27/23
+
+5-3. NOISE ABATEMENT.
+
+While no formal noise abatement program is in effect at RST, consider the possible impact of
+repetitive or unusual activity in any area. Avoid populated areas as circumstances permit by the
+following methods:
+
+a. Vector large or noisy aircraft at or above 4000 MSL until base leg.
+
+b. Alternate left and right traffic patterns for aircraft flying practice approaches.
+
+c. Adjust traffic patterns.
+
+d. Avoid vectoring runway 13 jet departures toward the west or northwest below 3000
+    MSL.
+
+5-4. OBSTRUCTIONS AND MVA's.
+
+The minimum vectoring altitude (MVA) within 40 miles of RST is 2900 MSL, except as listed in
+Figure 6-2. An MVA chart is shown in Appendix 4.
+
+                                          Obstructions and MVA's
+          MVA1 AZIMUTH/RANGE OBSTRUCTION ELEVATION (MSL)
+
+          3200                  039/011  KLSE/KNXR antenna              2239
+
+          34002                 074/52   WKBT antenna                   2449
+
+          3500                  182/16   KXLT antenna                   2549
+
+          3600                  168/21   KTTC antenna                   2642
+
+          3800                  201/35   KIMT antenna                   2799
+
+          3800                  190/19   Antenna                        2828
+
+   3300                         236/33   KAAL antenna                   2321
+2600/29003                      110/009      Antenna                    1719
+
+                 Clockwise through
+
+                                310/09
+
+1All MVA's apply within 3 NM of the obstruction, except as noted.
+2This MVA applies within 5 NM of the obstruction.
+3MVA in this area is 2600, except within 3 NM of an antenna at 310/10, where a 2900 MVA
+
+applies.
+
+5-5. DISPLAYING DATA BLOCKS.
+
+Display a full data block (aircraft type optional) on all transponder-equipped aircraft under
+ARDR responsibility, and on all pointouts. Retain the full data block until the aircraft has left
+RST approach control airspace.
+
+NOTE 1 - RST Approach may inhibit LC's data blocks, provided control position symbols are
+enabled on RST Approach's TDW.
+
+5-6. TURNS TO FINAL FROM OPPOSING BASES.
+
+Aircraft being vectored for an instrument approach shall not be turned to base with the same
+assigned altitude as an aircraft on the opposite downwind or base leg unless weather factors such
+as ice or turbulence would render this procedure unsafe. If weather necessitates that the aircraft
+must use the same altitude, aircraft shall not be turned on converging bases.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY                 Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+5-7. VISUAL APPROACH MINIMA.
+
+RST Approach may vector aircraft for visual approaches at RST when the measured ceiling is
+2100 (AGL) or greater, or if no ceiling exists, when lower cloud layers do not interfere with the
+pilot's ability to fly visually to the airport.
+
+5-8. CHANGING RST ARRIVALS TO TOWER FREQUENCY.
+
+Advise arriving aircraft to contact the tower within ten miles of the airport and prior to entering
+RST Class D airspace, or prior to the Final Approach Fix.
+
+5-9. CLIMBOUT/MISSED APPROACH INSTRUCTIONS.
+
+Whenever an IFR aircraft is cleared for a practice approach, whether straight-in or circling, RST
+Approach is responsible for ensuring that the aircraft will not conflict with other IFR traffic
+during its climbout. LC need not coordinate with RST Approach for release of the aircraft if the
+aircraft will depart from the same runway to which the approach was made, or from the runway
+to which RST Approach approved a circling maneuver. Issue any necessary restrictions to the
+aircraft through LC if different than the following routine climbout instructions:
+
+    a. IFR aircraft: Assign runway heading and an altitude of 4000 MSL.
+
+    b. Aircraft that will climb out VFR: Assign runway heading. Altitude assignment as above
+         may simplify coordination, but is not mandatory.
+
+5-10. VECTORING RST DEPARTURES.
+
+RST Approach may vector, climb, or restrict any aircraft upon initial contact, but assumes
+responsibility for separation between vectored IFR departures and subsequent IFR departures.
+RST Approach is responsible for issuing any necessary restriction to subsequent IFR departures
+except when the preceding aircraft is released on runway heading and turned by less than 15
+degrees. LC advises departures to contact RST Approach after all conflicts with pattern traffic
+have been resolved, but unless otherwise coordinated, LC provides only initial separation to IFR
+departures.
+
+5-11. COORDINATION BETWEEN LC/ARDR FOR VISUAL SEPARATION BY
+AIRCRAFT.
+
+When aircraft are assigned to maintain visual separation with another aircraft, LC or ARDR must
+notify the receiving controller by one of the following approved methods:
+
+    a. Local or Radar may transfer control of aircraft after verbal coordination (via landline) is
+         accomplished.
+
+         Ex: N350MC has N912TL in sight and will maintain visual separation.
+
+    b. Enter "VA" into secondary scratchpad of aircraft maintaining visual separation.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                                     12/27/23
+
+        APPENDIX 1. ROCHESTER AIRPORT DIAGRAM
+
+NOTE ­ Runway 3/21 is depicted as Runway 2/20 in this diagram.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+          APPENDIX 2. CTRD VIDEO MAPS
+
+FIGURE 1. VIDEO MAP 1: ASR APPROACHES/VFR CHECKPOINTS
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                                       12/27/23
+
+                                FIGURE 2. VIDEO MAP 2: SATELLITE
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY           Initiated By: ZMP
+RST 7110.9A                                                      12/27/23
+
+                      FIGURE 3. VIDEO MAP 3: ROCHESTER APPROACH
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY          Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+             FIGURE 4. VIDEO MAP 4: 3NM MVA CHART
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                                      12/27/23
+
+                     FIGURE 5. VIDEO MAP 5: GEOGRAPHIC FEATURES
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY          Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+             FIGURE 6. VIDEO MAP 6: 5NM MVA CHART
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+               APPENDIX 3. POSITION CHECKLISTS
+
+GROUND CONTROL
+
+    1. STATUS INFORMATION AREA
+    2. EQUIPMENT
+    3. AIRPORT CONDITIONS/STATUS
+    4. AIRPORT ACTIVITIES
+    5. ALTIMTER/TRENDS
+    6. WEATHER TRENDS
+    7. FLOW CONTROL
+    8. SPECIAL ACTIVITIES
+    9. SPECIAL INSTRUCTIONS/RESTRICTIONS
+    10. VERBALLY STATE RUNWAY STATUS
+    11. PERTINENT OPERATIONAL NOTAMS
+    12. TRAFFIC
+
+LOCAL CONTROL
+
+    1. STATUS INFORMATION AREA
+    2. EQUIPMENT
+    3. AIRPORT CONDITIONS/STATUS
+    4. AIRPORT ACTIVITIES
+    5. ALTIMETER/TRENDS
+    6. WEATHER TRENDS
+    7. FLOW CONTROL
+    8. SPECIAL ACTIVITIES
+    9. SPECIAL INSTRUCTIONS/RESTRICTIONS
+    10. VERBALLY STATE RUNWAY STATUS
+    11. PERTINENT OPERATIONAL NOTAMS
+    12. TRAFFIC
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+RST 7110.9A                                               12/27/23
+
+ROCHESTER APPROACH (RA)/RADAR WEST(RW)
+
+    1. STATUS INFORMATION AREA
+    2. EQUIPMENT
+    3. AIRPORT CONDITIONS/STATUS
+    4. AIRPORT ACTIVITIES
+    5. ALTIMETER TRENDS
+    6. WEATHER TRENDS
+    7. FLOW CONTROL
+    8. SPECIAL ACTIVITIES
+    9. SPECIAL INSTRUCTIONS/RESTRICTIONS
+    10. VERBALLY STATE RUNWAY STATUS
+    11. PERTINENT OPERATIONAL NOTAMS
+    12. TRAFFIC
+
+         a. SPECIAL ACTIVITY AIRCRAFT
+         b. POINT OUT AIRCRAFT
+         c. HOLDING AIRCRAFT
+         d. PRIMARY TARGETS
+         e. AIRCRAFT RELEASED BUT NOT YET AIRBORNE
+         f. NONRADAR OPERATIONS
+         g. VFR ADVISORY AIRCRAFT
+         h. AIRCRAFT STANDING BY FOR SERVICE
+         i. COORDINATION AGREEMENTS WITH OTHER POSITIONS
+         j. SPECIAL PROBLEM/REQUESTS/INSTRUCTIONS
+         k. A/C COMMUNICATION STATUS
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY   Initiated By: ZMP
+RST 7110.9A                                              12/27/23
+
+           APPENDIX 4. SCRATCH PAD PROCEDURES
+
+A4-1. GENERAL.
+
+Silent coordination of pilot intentions between RA and LC may be accomplished through the use
+of the scratch pad available through STARS. This may be accomplished through either scratch
+pad leaving the other available for other non-standard coordination such as approach type.
+
+A4-2. PROCEDURES.
+
+RST Approach shall enter a scratchpad on the appropriate aircraft. Make entries as described
+below.
+
+    a. The following letter/number combinations in the following order should be used in the
+         scratch pad of the data block in lieu of verbal coordination:
+
+             A = VOR-A
+             C = Contact approach
+             G = GPS or RNAV approach
+             I = ILS approach
+
+             L = Low approach
+             M = Missed approach
+             O = Option
+             S = Stop and go
+             T = Touch and go
+
+             Z = Closed Traffic
+
+             R = Runway
+             13 = Assigned runway 13
+             31 = Assigned runway 31
+             3 = Assigned runway 3
+             21 = Assigned runway 21
+
+NOTE - The letter "R" must precede a runway number if no other letter does.
+
+Distribution: Facility Binders  FOR SIMULATION USE ONLY  Initiated By: ZMP
+

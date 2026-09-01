@@ -1,0 +1,237 @@
+7/8/2026                                                   VATSIM ZAU ZMP LOA
+
+          VATSIM CHICAGO ARTCC AND MINNEAPOLIS ARTCC
+
+                                   LETTER OF AGREEMENT     Effective Date: 7/8/2026
+
+Subject: Interfacility Procedures and Airspace Delegation
+
+1. PURPOSE. This agreement establishes coordination procedures between VATSIM
+         Chicago ARTCC (ZAU) and VATSIM Minneapolis ARTCC (ZMP). This agreement is
+         supplemental to procedures contained within FAA Order 7110.65.
+
+2. CANCELLATION. VATUSA Chicago ARTCC and VATUSA Minneapolis ARTCC Letter of
+         Agreement dated October 23, 2023.
+
+3. SCOPE. This Letter of Agreement is supplemental to current air traffic procedures,
+         handbooks, and directives relating to enroute procedures.
+
+4. GENERAL
+         a. The destination airport must be the clearance limit.
+         b. Apply routes and restrictions in accordance with Appendices C, D, and E.
+         c. Route capable aircraft via RNAV STARs to the maximum extent practicable.
+         d. The transferring controller releases control for:
+                  1. Turns not to exceed 20° within 20 NM of the common boundary.
+                  2. Speed changes.
+                  3. Transponder code change.
+         e. Aircraft landing within 60 NM of the ZAU/ZMP low sector boundary must enter the
+             receiving center at or below FL240.
+         f. Coordinate with affected controllers before opening or closing operational positions
+             and, when not obvious, frequency assignment.
+         g. Data Block Coordination and Interim Altitude Procedures:
+                  1. Data blocks must reflect the aircraft's assigned altitude at the time of hand
+                      off.
+                  2. Hand offs must be directed to the appropriate sector for the aircraft's
+                      assigned altitude. Acceptance of a radar hand off constitutes approval
+                      coordination for that aircraft to climb or descent to the displayed altitude.
+                  3. Use of interim altitudes is authorized between ZAU and ZMP and represents
+                      valid altitude coordination. Use of interim altitudes must not be authorized to
+                      coordinate Inappropriate Altitude for Direction (IAFDOF) or to supersede
+                      altitude restrictions established within this Letter of Agreement.
+
+                                                    Page 1 of 8
+                                               VATSIM USE ONLY
+7/8/2026                               VATSIM ZAU ZMP LOA
+
+                  4. When unable to approve the coordinated altitude, the receiving controller
+                      must verbally coordinate with the transferring controller prior to acceptance
+                      of the handoff.
+
+         h. Aircraft unable to comply with required routes or altitudes must be coordinated with
+             the receiving controller on an individual basis.
+
+         i. Non-RNAV arrivals:
+                  1. without specified LOA routing must be assigned vectors to overfly the RNAV
+                      routing for the destination airport. APREQ with receiving controller.
+
+Appendix A ­ Low and High Sector Airspace Depiction
+Appendix B ­ Route and Altitude Restrictions from ZAU to ZMP
+Appendix C ­ Route and Altitude Restrictions from ZMP to ZAU
+Appendix D ­ Standby Route and Altitude Restrictions
+
+Zakery Husk                            Dhruv Kalra
+Air Traffic Manager                    Air Traffic Manager
+VATSIM Chicago ARTCC                   VATSIM Minneapolis ARTCC
+
+                          Page 2 of 8
+                      VATSIM USE ONLY
+7/8/2026                                                                   VATSIM ZAU ZMP LOA
+          Appendix A ­ Low and High Sector Airspace Depiction
+
+              Page 3 of 8
+          VATSIM USE ONLY
+7/8/2026                   VATSIM ZAU ZMP LOA
+
+          Appendix A ­ Low and High Sector Airspace Depictions, Cont'd
+
+              Page 4 of 8
+          VATSIM USE ONLY
+7/8/2026                                            VATSIM ZAU ZMP LOA
+
+            Appendix B ­ Route and Altitude Restrictions from ZAU to ZMP
+
+Arriving Qualifier Nav Type   Route Via             Altitude                Special
+
+            From ZAU    RNAV  KKILR STAR            AOB FL340
+              60/64
+
+KMSP        From        RNAV  BLUEM STAR            AOB FL320
+                              KASPR STAR
+            ZAU 75 Non-RNAV
+
+             KMSN Jet   RNAV  HENDR KKILR STAR      AOB FL220
+            Departures
+
+  MSP                             BAE AGUDE STAR    AOB FL340 (Must be      Includes:
+Satellites                    ALO TWOLF TWOLF STAR  in-trail with or below    KANE
+                                                                             KFCM
+                                                        KMSP arrivals)        KLVN
+                                                                             KMIC
+                                                         AOB FL320            KSTP
+
+KOMA                             LANTK STAR or      AOB FL340
+KOFF                          MARWI STAR at and
+                              above 16,000 ft. MSL
+
+                                  Page 5 of 8
+                              VATSIM USE ONLY
+7/8/2026                                                           VATSIM ZAU ZMP LOA
+
+          Appendix C ­ Route and Altitude Restrictions from ZMP to ZAU
+
+Arriving Qualifier     Nav               Route Via       Altitude       Special
+                      Type      HOOTA KKISS/RKCTY STAR
+KDTW      Entering                                       AOB
+          ZAU 25      RNAV         UFDUH SVM KDTW        FL310
+                      Non-
+                      RNAV                                               Direct KAMBL
+                                                                    approved over/south
+           Entering   RNAV        JALAP ENDEE STAR or
+            ZAU 94              DSM KAMBL ENDEE STAR                     of DSM VOR
+                      Non-
+KMDW       Entering   RNAV        DSM BDF JOT KMDW
+          ZAU 63/75   RNAV         OHHMY ENDEE STAR
+           Entering   Non-         CVA BDF JOT KMDW      AOB ZMP releases control
+          ZAU 25/26   RNAV
+                                       WYNDE STAR        FL310     for descent
+                      RNAV
+                                                          AOB
+                          RNAV  ERNNY/MADII STAR         FL320     ZMP Releases Control
+           Entering              SHIKY FYTTE STAR         AOB            for Descent
+          ZAU 60/64                                      FL230
+                                                                      No Reroutes via
+                      Non-             BJB OBK KORD       AOB       SHIKY Without ZAU
+                      RNAV        MYRRS FYTTE STAR or    FL280
+                                                                          Approval
+KORD                  RNAV           ZZIPR FYTTE STAR     AOB
+                                (Direct WELCM Approved)  FL230       ZMP 17 Releases
+           Entering   Non-                               ZZIPR      Control for Descent
+          ZAU 63/75   RNAV           DBQ JVL JVL STAR    AOB
+                                     MSN GARTT JVL       FL310     ZMP Releases Control
+          Option for  RNAV        CHMPN FYTTE STAR        AOB            for Descent
+           KCWA                                          FL270
+                                MSN GARTT JVL JVL STAR    AOB
+                                                         FL310
+
+          KDLH
+
+          KEAU KLSE Non-                                 AOB
+                                                         FL310
+          KRST KSTC RNAV
+
+          Departures
+
+                                    Page 6 of 8
+                                VATSIM USE ONLY
+7/8/2026                                             VATSIM ZAU ZMP LOA
+
+                     Appendix D ­ Standby Route and Altitude Restrictions
+ The restrictions below are required only when requested. They should normally only be
+requested for events or other periods of heavy traffic; however, controllers may request or
+voluntarily apply these restrictions at any time an operational advantage would be gained.
+
+                          From ZAU to ZMP
+
+Arriving  Qualifier       Nav   Route Via  Altitude    Special
+                          Type
+
+KGRB      From ZAU 23/24                   AOB FL280
+KTVC                                       Descending
+
+KLSE      VOK RAPCON                        to FL240   Hand off to VOK
+                                              6,000        RAPCON
+          Operational
+                                           AOB FL280    ZAU Releases
+KRST                                       Descending     control for
+
+                                             to AOB    descent within
+                                              FL240     20 NM of the
+
+                                                           ZAU/ZMP
+                                                          Boundary
+
+                              Page 7 of 8
+                          VATSIM USE ONLY
+7/8/2026                                                  VATSIM ZAU ZMP LOA
+
+            Appendix D ­ Standby Route and Altitude Restrictions, Cont'd
+
+                                From ZMP to ZAU
+
+Arriving      Qualifier   Nav   Route Via                  Altitude          Special
+  KCID                    Type                            AOB FL310
+ KGRR         Entering                                    AOB FL240       ZMP Releases
+               ZAU 94     RNAV  DLL BAE KMKE or           Descending       Control for
+ KMKE         Entering           SIBER BAE KMKE            to 11,000         Descent
+               ZAU 75     Non-
+ KMSN                     RNAV         BJB KMKE           AOB FL310          Hand off
+            AOA 11,000          OGECA GOPAC STAR          AOB FL190           to ZAU
+Chicago       Entering          DBQ SIBER BAE KMKE                             ZMP
+ Metro       ZAU 25/26                                    AOB FL230         Releases
+Satellites                           BJB OBK Destination                     Control
+              Entering                                    AOB FL280
+               ZAU 75            DBQ LYSEN KRENA KPWK or                       ZMP
+             East of ALO        DSM LOTTE KRENA KPWK or   AOB FL230         Releases
+              Entering          OGECA GOPAC STAR KUGN or   West ALO          Control
+               ZAU 64                                     AOB FL370         Includes
+                                  DBQ LYSEN KRENA KUGN     East ALO        KARR KDPA
+              Entering                                    AOB FL290        KGYY KLOT
+               ZAU 75               DLL BAE KUGN or                          KMDW
+            West of ALO               BJB OBK KUGN                        KPWK KUGN
+
+             MSP Metro           CID OHLIE GOPAC STAR or
+                Area               DBQ DLL BAE KUGN or
+                                  DBQ LYSEN KRENA KUGN
+             Departure
+
+            Entering ZAU
+                25/26
+
+             Over MKE
+              TRACON
+              Airspace
+
+            KPWK/KUGN
+              Entering
+               ZAU 75
+
+                KUGN
+              Entering
+               ZAU 60
+                KUGN
+              Entering
+               ZAU 94
+
+                                    Page 8 of 8
+                                VATSIM USE ONLY
+

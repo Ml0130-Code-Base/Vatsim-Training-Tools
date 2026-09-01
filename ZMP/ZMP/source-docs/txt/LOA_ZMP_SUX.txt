@@ -1,0 +1,64 @@
+Minneapolis ARTCC/Sioux City Tower
+
+                                        LETTER OF AGREEMENT
+                                                                                 Effective: September 10, 2022
+
+SUBJECT: TERMINAL AREA CONTROL SERVICE
+1. PURPOSE. This agreement governs approach control service within airspace delegated to
+
+    Sioux City Tower and is supplementary to procedures contained in Air Traffic Handbooks.
+2. CANCELLATION. vZMP Minor ATCT/TRACON LOA, "Sioux City (SUX) ATCT"
+3. RESPONSIBILITIES. During published hours of operation, Sioux City Tower is delegated
+
+    the responsibility for control of IFR and Special VFR aircraft at 10,000 feet MSL and below
+    in the area depicted on Attachment "A."
+4. RADAR PROCEDURES. Unless otherwise coordinated, the following procedures shall
+    apply:
+    a. Arrivals.
+
+         1) Arrivals shall be descending to or level at 11,000 feet MSL
+         2) IFR transfer of control for turns of 30 degrees either side of the aircraft's assigned
+
+             routing and descent occurs when the following conditions are met:
+             a) After receipt of a radar handoff and completion of a frequency change; and,
+             b) The course and/or altitude change does not affect another approach control
+
+                  without proper coordination; and,
+             c) The alteration of course or altitude shall not be made within the lateral limits of
+
+                  Center Sectors 26 and 27, as depicted on Attachment "A".
+         3) When automated handoffs are used, the acceptance of a handoff by Approach Control
+
+             of an aircraft with Mode C readout in level flight below 10,000 feet MSL constitutes
+             altitude approval. Aircraft without Mode C shall be verbally coordinated.
+    b. Departures.
+         1) When automated handoffs are in use, the Approach Control shall issue the requested
+             altitude or FL230 (whichever is lower) after the Center has accepted the handoff.
+         2) The Center may alter an aircraft's route of flight no more than 30 degrees either side
+             of the aircraft's heading provided:
+             a) The departure is at or above 9,000 feet MSL; or,
+             b) If below 9,000 feet MSL, is more than 25 NM from the Sioux City Airport.
+
+                                     FOR SIMULATION USE ONLY
+ZMP/SUX LOA                           2
+
+5. GENERAL.
+
+    a. The Tower shall inform departures restricted to altitudes below their requested altitude,
+         "Expect further clearance to (filed altitude) 10 minutes after departure."
+
+    b. The approach control shall coordinate and control arrivals to the Le Mars, Iowa;
+         Mapleton, Iowa; Vermillion, South Dakota; and Wayne, Nebraska, airports, and shall
+         advise the Center when the additional airspace is no longer needed.
+
+    c. The Center shall coordinate and control arrivals to the Yankton, South Dakota (ILS Rwy.
+         31 and NDB Rwy. 31); Ida Grove, Cherokee, and Orange City, Iowa, airports; and shall
+         advise approach control when the additional airspace is no longer needed.
+
+6. ATTACHMENT. Attachment "A" ­ Sioux City Approach Control Area
+
+             FOR SIMULATION USE ONLY
+ZMP/SUX LOA                           3
+
+             FOR SIMULATION USE ONLY
+

@@ -1,0 +1,59 @@
+                        VATSIM MINNEAPOLIS CENTER/DULUTH TOWER
+                                          LETTER OF AGREEMENT
+                                                                                   EFFECTIVE: March 17, 2020
+
+SUBJECT: TERMINAL AREA CONTROL SERVICE
+1. PURPOSE. This agreement governs approach control service within airspace delegated to
+Duluth Tower and is supplementary to procedures contained in Air Traffic Handbooks and
+VATSIM/VATUSA directives.
+
+2. CANCELLATION. ZMP ­ Minor ATCT/TRACON LOA, "Duluth (DLH) ATCT/TRACON."
+
+3. SCOPE. Duluth Tower has been delegated responsibility for control of IFR and special VFR
+aircraft at 12,000 feet MSL and below, and at 8,000 feet MSL and below, within the Minneapolis
+Center airspace as depicted on Attachment "A."
+
+4. RADAR PROCEDURES. Unless otherwise coordinated, the following procedures shall apply:
+
+    a. Arrivals.
+
+         1. The clearance limit for arrivals shall be the destination airport.
+
+         2. Arrivals at or above 13,000 feet MSL shall be descending to or level at 13,000 feet
+             MSL or 9,000 feet MSL over the Hibbing shelf (see shaded area on Attachment "A").
+
+         3. Duluth Approach Control may descend and/or alter an arrival's route of flight no more
+             than 30 degrees to either side of the aircraft's heading provided the aircraft is within 10
+             miles of Duluth Approach Control's airspace, and the alteration of course or altitude
+             does not affect another Center sector's airspace.
+
+         4. When automated handoffs are used, acceptance of a handoff by Approach Control of an
+             aircraft with Mode C readout in level flight at or below 12,000 feet MSL constitutes
+             altitude approval.
+
+    b. Departures.
+
+         1. When automated handoffs are used, issue FL230 or the requested altitude, if lower, to
+             departures after ZMP has accepted the handoff. (Before accepting a handoff, ZMP will
+             advise Approach Control when a different altitude is to be assigned.)
+
+         2. After receiving a handoff and frequency change from Duluth Approach Control and the
+             departure has reached an altitude of 8,000 feet MSL, Minneapolis Center may alter a
+             departure's heading and/or route. The maximum turn shall not exceed 30 degrees either
+             side of the aircraft's heading and/or route.
+5. GENERAL.
+
+    a. Frequencies:
+
+         1. The Center shall assign frequencies 125.45, as appropriate, to arrivals/overflights.
+
+         2. The Tower shall assign frequencies to departures/overflights as depicted on Attachment
+             "A".
+
+    b. All Duluth departures to MSP assigned the BAINY/GEP STAR shall be handed off to
+         Sector 10. Any required pointouts of this traffic to Sector 25 shall be accomplished by
+         Sector 10.
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+

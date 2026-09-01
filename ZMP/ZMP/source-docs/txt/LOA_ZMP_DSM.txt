@@ -1,0 +1,111 @@
+VATSIM Minneapolis Center/Des Moines ATCT
+
+              VATSIM MINNEAPOLIS ARTCC ­ DES MOINES ATCT/TRACON
+                                         LETTER OF AGREEMENT
+                                                                                 EFFECTIVE: August 3, 2026
+
+SUBJECT: Terminal Area Control Service
+1. PURPOSE: This agreement between Minneapolis Center (ZMP) and Des Moines ATCT
+
+    (DSM) delegates airspace and associated air traffic control responsibilities and supplements
+    the procedures in FAA Order 7110.65 and 7210.3.
+
+2. CANCELLATION: vZMP-DSM LOA, dated March 17, 2020.
+
+3. SCOPE: The responsibilities and procedures contained herein and applicable to all aircraft
+    operations controlled by Minneapolis Center and Des Moines ATCT.
+
+4. RESPONSIBILITIES: DSM is delegated responsibility for providing air traffic control
+    services to aircraft operating 10,000 feet MSL and below within ZMP's airspace, as depicted
+    on Attachment `A'.
+
+5. PROCEDURES: Unless otherwise coordinated, the following procedures shall apply:
+    a. Aircraft to DSM Approach Control. ZMP must:
+         (1) Clear arrivals 11,000 MSL and above to descend and/or maintain 11,000 MSL.
+         (2) Ensure arrivals landing within DSM Approach Control Airspace and overflights below
+             10,000 feet MSL, are at or climbing / descending to their final altitude (excluding any
+             aircraft descending through the top of DSM Approach Control Airspace).
+         (3) Release control to DSM Approach Control for:
+             (a) Turns not to exceed 45 degrees from the transferring sector. DSM Approach must
+                  make pointouts resulting from a turn.
+             (b) Descent on aircraft landing within DSM Approach Control airspace.
+             (c) Beacon code changes.
+    b. Aircraft to ZMP. DSM must:
+         (1) Climb departure aircraft to 10,000 feet MSL, or final altitude if lower.
+         (2) Clear IFR overflights to ZMP, below 10,000 feet MSL, to maintain their final altitude.
+             Aircraft may be climbing or descending to their final altitude without manual
+             coordination. Any altitude change after a RADAR handoff is initiated must be
+             manually coordinated.
+         (3) Descend Creston, IA (CSQ), and Jefferson, IA (EFW), arrivals to 4,000 feet MSL.
+         (4) Release control to ZMP for:
+             (a) Turns up to and including 45 on all aircraft. DSM will be responsible for internal
+                  coordination.
+ZMP/DSM LOA                FOR SIMULATION USE ONLY                                 08/03/2026
+
+(b) For descent on arrivals to the following airports:
+
+· Creston, IA (CSQ)
+
+· Jefferson, IA (EFW)
+
+· Mason City, IA (MCW)
+
+· Hampton, IA (HPT)
+
+· Decorah, IA (DEH)
+
+· West Union, IA (3Y2)
+
+· Forest City, IA (FXY)
+
+(c) Beacon code changes.
+
+(5) Ensure that departures exiting DSM airspace south of the DSM230 radial are
+    established on their flight plan route or given a heading to ensure the flight will join the
+    route within the lateral boundaries of DSM airspace. All other departures will be
+    established on their route or be assigned a heading to join their route.
+
+(6) Ensure that successive aircraft entering ZMP airspace have 5NM spacing, constant or
+    increasing.
+
+6. GENERAL:
+    a. In the event ZMP initiates a clearance to DSM Approach Control for a departure east of the
+         ZMP/Chicago ARTCC (ZAU) boundary to climb above 10,000 feet MSL, then ZMP is
+         responsible for coordinating with ZAU. If DSM Approach Control requests a climb
+         approval with ZMP east of the ZAU/ZMP boundary, then DSM Approach Control is
+         responsible for coordinating with ZAU.
+
+b. Transfer of control, in accordance with the limits prescribed in this LOA, occurs at the time
+    a RADAR handoff and frequency change to the receiving controller have been completed.
+
+c. Frequency Assignments:
+
+(1) ZMP: As depicted in Attachments A and B
+
+(2) DSM Approach:
+
+(a) Controller Symbol A ­ 135.2
+
+(b) Controller Symbol D ­ 123.9
+
+(c) Controller Symbol S ­ 120.45
+
+(d) Controller Symbol W ­ 118.9
+
+7. ATTACHMENTS:
+
+1. Attachment A: DSM sector delegated airspace, frequency assignments, and fixes.
+
+2. Attachment B: ALO sector delegated airspace, frequency assignments, and fixes.
+     ZMP/DSM LOA            FOR SIMULATION USE ONLY  08/03/2026
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+Lance Harry
+Deputy Air Traffic Manager
+VATSIM Minneapolis ARTCC
+ZMP/DSM LOA  FOR SIMULATION USE ONLY  08/03/2026
+ZMP/DSM LOA  FOR SIMULATION USE ONLY  08/03/2026
+

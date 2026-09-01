@@ -1,0 +1,333 @@
+MIC 7220.3N CHG 1                           11/30/2025
+
+                 CRYSTAL ATCT
+STANDARD OPERATING PROCEDURES
+
+     STANDARD OPERATING PROCEDURES
+           VIRTUAL MINNEAPOLIS ARTCC
+
+VIRTUAL AIR TRAFFIC SIMULATION NETWORK
+
+                   FOR SIMULATION USE ONLY  1
+MIC 7220.3N CHG 1                                                11/30/2025
+
+                   Order Record of Changes                      Issued By
+                                                                    DE
+Change             Description                 Effective Date       DE
+                                                 29 Sep 2022
+                   Original Publication
+                                             November 30, 2025
+        Update for CRC STARS rundown list.
+           Updated initial departure/missed
+                    approach heading.
+
+                   FOR SIMULATION USE ONLY                      2
+MIC 7220.3N CHG 1                           11/30/2025
+
+TABLE OF CONTENTS
+
+CHAPTER 1. GENERAL ............................................................................................................ 4
+   1-1. PURPOSE....................................................................................................................... 4
+   1-2. DISTRIBUTION ............................................................................................................... 4
+   1-3. CANCELLATION............................................................................................................. 4
+   1-4. EFFECTIVE DATE .......................................................................................................... 4
+   1-5. EXPLANATION OF CHANGES ....................................................................................... 4
+   1-6. OPERATIONAL POSITIONS........................................................................................... 4
+   1-7. MULTIPLE RUNWAY CROSSINGS ................................................................................ 4
+
+CHAPTER 2. GROUND CONTROL/CLEARANCE DELIVERY .................................................. 5
+   2-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 5
+   2-2. AREA OF JURISDICTION............................................................................................... 5
+   2-3. FREQUENCY INFORMATION ........................................................................................ 5
+   2-4. DEPARTURE PROCEDURES ........................................................................................ 5
+   2-5. COORDINATION PROCEDURES................................................................................... 6
+
+CHAPTER 3. LOCAL CONTROL ............................................................................................... 7
+   3-1. POSITION DUTIES AND RESPONSIBILITIES ............................................................... 7
+   3-2. AREA OF JURISDICTION............................................................................................... 7
+   3-3. FREQUENCY INFORMATION ........................................................................................ 7
+   3-4. RUNWAY CROSSING(S)................................................................................................ 7
+   3-5. COORDINATION PROCEDURES................................................................................... 7
+   3-6. HELICOPTER OPERATIONS ......................................................................................... 8
+   3-7. VISUAL REPORTING POINTS ....................................................................................... 8
+   3-8. APPROACHES ............................................................................................................... 8
+
+APPENDIX A. POSITION RELIEF BRIEFING CHECKLIST....................................................... 9
+APPENDIX B. MOVEMENT/NON-MOVEMENT AREAS...........................................................10
+APPENDIX C. MULTIPLE RUNWAY CROSSINGS ..................................................................11
+
+                   FOR SIMULATION USE ONLY  3
+MIC 7220.3N CHG 1                                                11/30/2025
+
+                     CHAPTER 1. GENERAL
+
+1-1. PURPOSE
+
+This order specifies the required procedures for maintaining a safe and efficient operation and
+defines the jurisdictional boundaries for each operational position at Crystal Air Traffic Control
+Tower (MIC).
+
+1-2. DISTRIBUTION
+
+All vZMP personnel.
+
+1-3. CANCELLATION
+
+MIC ATCT 7220.3N, effective September 29, 2022
+
+1-4. EFFECTIVE DATE
+
+This order is effective November 30, 2025
+
+1-5. EXPLANATION OF CHANGES
+
+Update for CRC STARS rundown list. Updated initial departure/missed approach heading.
+
+1-6. OPERATIONAL POSITIONS
+
+The following positions are in use at Crystal ATCT:
+
+Position Name                              Frequency  Callsign
+Ground Control/Clearance Delivery (GC)     121.6      MIC_GND
+Local Control (LC)                         120.7      MIC_TWR
+ATIS                                       124.475    KMIC_ATIS
+
+1-7. MULTIPLE RUNWAY CROSSINGS
+Crystal ATCT is authorized to provide multiple runway crossings as established below and in
+appendix C.
+a. Runway 6L/24R and Runway 6R/24L at the following intersections:
+
+    1. Taxiways C, D, E, and F
+    2. Runway 14/32
+
+                     FOR SIMULATION USE ONLY                                                        4
+MIC 7220.3N CHG 1                           11/30/2025
+
+  CHAPTER 2. GROUND CONTROL/CLEARANCE DELIVERY
+
+2-1. POSITION DUTIES AND RESPONSIBILITIES
+
+a. Ensure positive control of all traffic on GC designated movement areas.
+
+b. Obtain verbal approval from LC prior to authorizing an aircraft to cross or use any portion of
+    an active runway.
+
+c. Verbally inform LC when a previously coordinated operation is complete and clear of the
+    active runway (s).
+
+d. Ensure all departing aircraft have received current ATIS or wind/altimeter, assigned runway,
+    pertinent NOTAMs and other pertinent MIC airport condition information.
+
+e. Issue instructions, clearances, and ensure pilot readback for accuracy.
+
+f. Issue IFR, SVFR, VFR, and VFR-on-top beacon codes and clearances.
+
+g. Note: Local IFR clearances shall be issued "via radar vectors."
+
+h. Establish and maintain positive aircraft identity.
+
+i. Plan and establish taxi traffic flow.
+
+j. Conduct an appropriate position relief briefing IAW FAAO 7110.65, FAAO 7210.3, and local
+    orders.
+
+2-2. AREA OF JURISDICTION
+
+GC is responsible for all aircraft operations on airport movement areas under GC jurisdiction
+(See appendix B). CD is the responsibility of GC and is always combined with GC. The
+helicopter practice area is a movement area under the jurisdiction of GC.
+
+2-3. FREQUENCY INFORMATION
+
+Frequency 121.6 is the standard frequency for GC/CD.
+
+2-4. DEPARTURE PROCEDURES
+
+a. Issue 3000 ft. MSL initially to all IFR departures. Instruct IFR aircraft to expect filed altitude
+    10 minutes after departure.
+
+b. When issuing beacon codes to departing VFR aircraft requesting traffic advisories or Bravo
+    Airspace entry, use the following phraseology:
+
+    "Callsign - Remain Outside Of Bravo Airspace Unless Advised To Enter, Departure
+    Frequency _______, Squawk_______."
+
+                   FOR SIMULATION USE ONLY  5
+MIC 7220.3N CHG 1                           11/30/2025
+
+2-5. COORDINATION PROCEDURES
+
+a. Required coordination with LC
+
+    1. Authorization for aircraft movement on an active runway, for purpose other than
+         crossing, shall be provided on the LC frequency. GC shall hold the aircraft short of the
+         active runway and instruct the aircraft to "contact tower". Inform LC of the aircraft's
+         intentions.
+
+    2. Approval must be granted by LC prior to GC utilizing any area under LC jurisdiction.
+
+         (a) To cross or proceed onto active runways, coordinate the operation when the aircraft
+              is reaching the crossing intersection.
+
+    3. Inform LC when a runway operation has been completed.
+
+         Example: "Runway 6L cross complete."
+
+         (a) Operating on LC jurisdiction: "Clear of runway 14"
+
+         (b) Runway crossing: "Runway 6L cross complete:
+
+    4. Inform LC if GC is unable to complete any operation as previously coordinated.
+
+    5. Inform LC when authorizing helicopters to operate in the grass areas near (but not on)
+         active runways.
+
+    6. Intersection Departures: All intersection departures need to be verbally coordinated with
+         LC.
+
+                   FOR SIMULATION USE ONLY  6
+MIC 7220.3N CHG 1                           11/30/2025
+
+                     CHAPTER 3. LOCAL CONTROL
+
+3-1. POSITION DUTIES AND RESPONSIBILITIES
+a. Issue traffic advisories and safety alerts.
+b. Operations on active runway(s).
+c. Issue landing sequences and clearances.
+d. Issue take-off clearances and control instructions.
+
+e. Issue control instructions to IFR, VFR, and SVFR aircraft operating on the active runway(s)
+    and to airborne aircraft within MIC Class D surface area.
+
+f. Coordinate with M98 and GC as required.
+g. Complete position monitoring and relief briefings.
+h. Obtain and comply with releases from M98.
+
+3-2. AREA OF JURISDICTION
+
+LC is responsible for all vehicle and aircraft operations on the active runway(s) and all aircraft in
+the MIC Class D surface area. The MIC Class D surface area extends to a 3.8 NM radius from
+the center of the airport, and vertically from the surface up to 2500ft AGL (3369ft MSL).
+
+In areas where MSP Class B airspace is less than 2500ft AGL, MIC Class D airspace
+terminates at the base of MSP Class B airspace.
+
+Note: North Memorial Hospital operates a helipad located 3.7 NM SSE of MIC airport. The
+identifier for the helipad is MY77.
+
+3-3. FREQUENCY INFORMATION
+LC is assigned frequency 120.7.
+
+3-4. RUNWAY CROSSING(S)
+
+LC is authorized to cross the parallel runway adjacent to the current active runway at any
+runway or taxiway intersection. No coordination with GC is necessary.
+
+3-5. COORDINATION PROCEDURES
+a. LC shall coordinate with GC:
+
+    1. Use of any inactive runway, movement, or non-movement areas under the GC
+         jurisdiction. GC shall grant approval prior to LC utilizing any area under the GC
+         jurisdiction.
+
+    2. Any operation/situation that may have an effect on GC.
+
+                   FOR SIMULATION USE ONLY  7
+MIC 7220.3N CHG 1                                                         11/30/2025
+
+b. LC shall coordinate with M98:
+
+1. IFR aircraft executing an unplanned missed approach. Instruct aircraft executing an
+    unplanned missed approach to fly heading 320° and to maintain 2500 ft. unless
+    otherwise coordinated with M98. Aircraft on visual approaches may be retained in the
+    pattern.
+
+2. IFR releases. Standard departure heading for all runways is 320°. Use the Run-Down
+    Tab List in STARS to obtain IFR departure releases from M98.
+
+3. Pilot requests, other than those already coordinated with M98.
+
+4. When IFR aircraft cancel IFR.
+
+3-6. HELICOPTER OPERATIONS
+
+Local Helicopter Operations: On occasion, helicopter pilots will call LC requesting to air taxi,
+hover, or ground taxi a helicopter on an airport movement or non-movement area not under LC
+jurisdiction. All of these operations shall first be coordinated with GC: When a helicopter has
+cleared (gone past) any given point in the route, GC automatically resumes control and
+responsibility for the previously coordinated areas; no further coordination is necessary.
+
+3-7. VISUAL REPORTING POINTS
+
+Commonly used checkpoints are:
+
+City of Anoka         10N         Golden Valley                    7S
+Anoka Airport         8NE         Medicine Lake                    5 SW
+Gopher VOR            5N          Lake Minnetonka                  15SSW
+Coon Rapids Dam       6NNE        Bass Lake                        4W
+Shoreview Antennas    10.5E       Rogers                           13NW
+KSTP Antenna          9ESE        N. Maple Grove Tower             6NW
+State Fair Grounds    10SE        Gravel Pits                      4.5NW
+Downtown Minneapolis  7SE         Osseo                            4.5NW
+Fish Lake             5.5NW       S. Maple Grove Tower             4W
+
+3-8. APPROACHES
+
+Advertise visual approaches only when the visibility is at or above 7 miles and the ceiling is at or
+above 2200 ft. Otherwise, advertise the RNAV (GPS) approach to the runway(s) in use.
+
+                                  FOR SIMULATION USE ONLY                                         8
+MIC 7220.3N CHG 1                           11/30/2025
+
+    APPENDIX A. POSITION RELIEF BRIEFING CHECKLIST
+
+1. SIA
+    a. Verbally state runway status
+    b. ATIS code and information
+    c. Equipment
+    d. Airport conditions/status
+    e. Weather conditions
+    f. Flow Control
+    g. NOTAMs
+    h. TFRs
+
+2. SIA items not displayed or unknown to the relieving controller
+3. Airport/Special activities
+
+    a. Coordination/restrictions
+    b. New procedures/other activities
+    c. Solicit PIREP's
+4. Traffic:
+    a. Communication status of each aircraft
+    b. Special activity aircraft
+    c. Coordination with other positions
+    d. IFR/VFR/SVFR and inbound/outbound proposals
+    e. Clearances/codes issued
+    f. M98 coordination
+    g. Aircraft standing by for service
+    h. Problems/requests/instructions
+
+                   FOR SIMULATION USE ONLY                         9
+MIC 7220.3N CHG 1                           11/30/2025
+
+  APPENDIX B. MOVEMENT/NON-MOVEMENT AREAS
+
+NOTE: Runway 14R/32L has been closed and is now Taxiway G. Taxiway G is
+                                         delegated to GC.
+
+                   FOR SIMULATION USE ONLY                               10
+MIC 7220.3N CHG 1                           11/30/2025
+
+         APPENDIX C. MULTIPLE RUNWAY CROSSINGS
+
+Crystal ATCT is authorized to provide multiple runway crossings as follows:
+
+    a. Runway 6L/24R and 6R/24L at the following intersections
+         1. Taxiways C, D, E, F, and G.
+         2. Runway 14/32
+
+NOTE ­ Runway 14R/32L is still depicted in the following graphic. Runway 14R/32L has been
+permanently closed and is now Taxiway G.
+
+                   FOR SIMULATION USE ONLY                                                 11
+

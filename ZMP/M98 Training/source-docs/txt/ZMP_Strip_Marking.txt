@@ -1,0 +1,356 @@
+vZMP N7110.101            FOR SIMULATION USE ONLY  11/02/2023
+
+Subject: vZMP Flight Progress Strips SOP ­ N7110.101
+
+This policy prescribes general procedures and guidance for flight strip marking for controllers
+working ATCT positions in vZMP. All controllers providing ATCT services within vZMP
+airspace must be familiar with and comply with the provisions of this order, and to exercise best
+judgement when encountering a situation not covered by this order.
+
+It is emphasized that information contained herein is designed and specifically for use in a virtual
+controlling environment. It is not applicable, nor should it be referenced for operations in the real
+National Airspace System (NAS). The procedures contained within this order are considered
+supplemental to FAA Order 7110.65 and other vZMP SOPs.
+
+Dhruv Kalra
+Air Traffic Manager
+VATSIM Minneapolis ARTCC
+
+                          FOR SIMULATION USE ONLY  1
+vZMP N7110.101        FOR SIMULATION USE ONLY                11/02/2023
+
+                      Order Record of Changes  Issued By
+                                                   DE
+    Description       Effective Date
+Original Publication  Nov 02, 2023
+
+                      FOR SIMULATION USE ONLY  2
+vZMP N7110.101  FOR SIMULATION USE ONLY  11/02/2023
+
+                                  TABLE OF CONTENTS
+
+CHAPTER 1. INTRODUCTION ................................................................................................... 4
+     1.1 PURPOSE OF THIS ORDER ........................................................................................... 4
+     1.2 AUDIENCE....................................................................................................................... 4
+     1.3 WHERE CAN I FIND THIS ORDER .............................................................................. 4
+     1.4 CANCELLATION ............................................................................................................ 4
+     1.5 EFFECTIVE DATE .......................................................................................................... 4
+     1.6 REVISIONS ...................................................................................................................... 4
+     1.7 EXPLANATION OF CHANGES ..................................................................................... 4
+
+CHAPTER 2. GENERAL............................................................................................................... 5
+     2.1 TOP-DOWN CONTROLLING EXEMPTION ................................................................ 5
+     2.2 COLOR CODING ............................................................................................................. 5
+
+CHAPTER 3. ATCT IFR Departures ............................................................................................. 6
+     3.1 FLIGHT PROGRESS STRIP ............................................................................................ 6
+     3.2 FLIGHT DATA/CLEARANCE DELIVERY STRIP MARKING ................................... 6
+     3.3 GROUND CONTROL STRIP MARKING ...................................................................... 6
+     3.4 LOCAL CONTROL STRIP MARKING .......................................................................... 6
+
+CHAPTER 4. ATCT VFR Departures (vNAS Flightplan) ............................................................ 7
+     4.1 FLIGHT PROGRESS STRIP ............................................................................................ 7
+     4.2 FLIGHT DATA/CLEARANCE DELIVERY STRIP MARKING ................................... 7
+     4.3 GROUND CONTROL STRIP MARKING ...................................................................... 7
+     4.4 LOCAL CONTROL STRIP MARKING .......................................................................... 7
+
+Chapter 5. ATCT VFR Departures (No vNAS Flightplan) ............................................................ 8
+     5.1 FLIGHT PROGRESS STRIP ............................................................................................ 8
+     5.2 FLIGHT DATA/CLEARANCE DELIVERY STRIP MARKING ................................... 8
+     5.3 GROUND CONTROL STRIP MARKING ...................................................................... 8
+     5.4 LOCAL CONTROL STRIP MARKING .......................................................................... 8
+
+CHAPTER 6. ATCT Local VFR Aircraft ...................................................................................... 9
+     6.1 FLIGHT PROGRESS STRIP ............................................................................................ 9
+     6.2 STRIP MARKING ............................................................................................................ 9
+
+CHAPTER 7. ATCT Arrival Aircraft........................................................................................... 10
+     7.1 FLIGHT PROGRESS STRIP .......................................................................................... 10
+     7.2 LOCAL CONTROL STRIP MARKING ........................................................................ 10
+     7.3 GROUND CONTROL STRIP MARKING .................................................................... 10
+
+CHAPTER 8. FLIGHT STRIP EXAMPLES ............................................................................... 11
+     8.1 IFR DEPARTURES ........................................................................................................ 11
+     8.2 VFR DEPARTURE (vNAS FLIGHTPLAN).................................................................. 11
+     8.3 VFR DEPARTURE (NO vNAS FLIGHTPLAN)........................................................... 12
+     8.4 LOCAL VFR ................................................................................................................... 12
+     8.5 ARRIVAL AIRCRAFT................................................................................................... 12
+
+                FOR SIMULATION USE ONLY  3
+vZMP N7110.101  FOR SIMULATION USE ONLY  11/02/2023
+
+                             CHAPTER 1. INTRODUCTION
+
+1.1 PURPOSE OF THIS ORDER
+    This order provides guidance, procedures, instructions, and standards for flight strip marking
+    for controllers working Air Traffic Control Tower (ATCT) positions in vZMP airspace.
+
+1.2 AUDIENCE
+    This order is intended for use by all VATSIM Minneapolis controllers working ATCT
+    positions.
+
+1.3 WHERE CAN I FIND THIS ORDER
+    This order is located electronically within the Documents and Procedures section of the VATSIM
+    Minneapolis ARTCC website located at http://www.minniecenter.org.
+
+1.4 CANCELLATION
+    Initial Release.
+
+1.5 EFFECTIVE DATE
+    This order is effective November 02, 2023.
+
+1.6 REVISIONS
+    Revisions to this order will be made on an as needed basis. Any controller with suggestions to
+    this order shall email changes to the ZMP ATM or DATM.
+
+1.7 EXPLANATION OF CHANGES
+    Initial release.
+
+                FOR SIMULATION USE ONLY  4
+vZMP N7110.101  FOR SIMULATION USE ONLY  11/02/2023
+
+                                 CHAPTER 2. GENERAL
+
+2.1 TOP-DOWN CONTROLLING EXEMPTION
+
+Controllers working ATCT positions "top-down", that is a center or approach controller working
+an underlying ATCT, may opt not to make annotations on flight strips for aircraft under their
+jurisdiction in the interest of lessening controller workload.
+
+2.2 COLOR CODING
+
+The following chapters will contain numbered fields in flight strip fields for referencing in the
+SOP. The position(s) responsible for annotating each field are listed in tables in every chapter.
+Additionally, the fields will be color coded to as follows to denote the position(s) responsible for
+annotating them if not filled by the computer:
+
+    1. Blue ­ Flight Data/Clearance Delivery
+    2. Purple ­ Ground Control
+    3. Red ­ Local Control
+    4. Black ­ Computer-entered/not assigned
+
+                FOR SIMULATION USE ONLY  5
+vZMP N7110.101     FOR SIMULATION USE ONLY                                          11/02/2023
+
+                          CHAPTER 3. ATCT IFR Departures
+
+3.1 FLIGHT PROGRESS STRIP
+
+    1. Aircraft ID
+    2. Revision Number
+    3. Aircraft Type/Equipment
+    4. Computer ID
+    5. Beacon code
+    6. Proposed departure time
+    7. Filed cruise altitude
+    8. Departure Airport
+    9. Arrival Airport
+    10. Route
+    11. Remarks
+
+3.2 FLIGHT DATA/CLEARANCE DELIVERY STRIP MARKING
+
+BLOCK  INFORMATION
+12     Reported ATIS letter/"WX" if local weather reported
+13     Pushback time (last two digits, if gate hold/metering procedures in effect)
+14     Gate number or Ramp location, if reported
+15     "PDC" if PDC issued, or X/Check mark if clearance issued and read back via voice
+17     Departure runway (Can be shortened to L/R if parallel runways in use)
+18     Departure controller STARS ID
+
+3.3 GROUND CONTROL STRIP MARKING
+
+BLOCK  INFORMATION
+12     Reported ATIS letter/"WX" if local weather reported
+13     Pushback time (last two digits, if gate hold/metering procedures in effect)
+14     Gate number or Ramp location
+16     Intersection departure taxiway (if applicable)
+17     Departure runway (can be shortened to L/R if parallel runways in use)
+19     Wheels up/EDCT time (if applicable, last two digits)
+
+3.4 LOCAL CONTROL STRIP MARKING
+
+BLOCK INFORMATION
+
+16     Intersection departure taxiway (if applicable)
+
+20     Assigned departure heading
+
+                   FOR SIMULATION USE ONLY                                               6
+vZMP N7110.101     FOR SIMULATION USE ONLY                                    11/02/2023
+
+             CHAPTER 4. ATCT VFR Departures (vNAS Flightplan)
+
+4.1 FLIGHT PROGRESS STRIP
+
+NOTE ­ Only applicable to aircraft with a vNAS flightplan filed/entered. Typically for aircraft
+exiting B/C/D airspace with flight following.
+
+    1. Aircraft ID
+    2. Revision Number
+    3. Aircraft Type/Equipment
+    4. Computer ID
+    5. Beacon code
+    6. Proposed departure time
+    7. VFR/Cruise altitude if entered
+    8. Departure airport
+    9. Arrival airport
+    10. Route
+    11. Remarks
+
+4.2 FLIGHT DATA/CLEARANCE DELIVERY STRIP MARKING
+
+BLOCK  INFORMATION
+12     Reported ATIS letter/"WX" if local weather reported
+14     Gate number or ramp location, if reported
+15     X/Check mark if clearance issued and read back correctly
+17     Departure runway (can be shortened to L/R if parallel runways in use)
+18     Departure controller STARS ID
+
+4.3 GROUND CONTROL STRIP MARKING
+
+BLOCK  INFORMATION
+12     Reported ATIS letter/"WX" if local weather reported
+14     Gate number or ramp location
+16     Intersection departure taxiway (if applicable)
+17     Departure runway (can be shortened to L/R if parallel runways in use)
+
+4.4 LOCAL CONTROL STRIP MARKING
+
+BLOCK INFORMATION
+
+16     Intersection departure taxiway (if applicable)
+
+20     Assigned departure heading (if applicable)
+
+                   FOR SIMULATION USE ONLY                                                       7
+vZMP N7110.101  FOR SIMULATION USE ONLY                                     11/02/2023
+
+             Chapter 5. ATCT VFR Departures (No vNAS Flightplan)
+
+5.1 FLIGHT PROGRESS STRIP
+
+NOTE ­ For aircraft without a vNAS flightplan entered/filed. Typically for aircraft exiting
+B/C/D airspace without flight following.
+
+5.2 FLIGHT DATA/CLEARANCE DELIVERY STRIP MARKING
+
+BLOCK  INFORMATION
+1      Aircraft ID
+2      Aircraft type (equipment optional)
+10     "VFR" and direction of flight (e.g. "VFR N" for northbound VFR)
+12     Reported ATIS letter or "WX" if local weather reported
+14     Gate/ramp location, if reported
+15     X/Check mark if clearance issued and read back correctly
+17     Departure runway (can be shorted to L/R if parallel runways in use)
+
+5.3 GROUND CONTROL STRIP MARKING
+
+BLOCK  INFORMATION
+12     Reported ATIS letter or "WX" if local weather reported
+14     Gate/ramp location
+16     Intersection departure taxiway (if applicable)
+17     Departure runway (can be shorted to L/R if parallel runways in use)
+
+5.4 LOCAL CONTROL STRIP MARKING
+
+BLOCK  INFORMATION
+16     Intersection departure taxiway (if applicable)
+17     Departure runway (can be shorted to L/R if parallel runways in use)
+20     Assigned departure heading (if applicable)
+
+                FOR SIMULATION USE ONLY                                                      8
+vZMP N7110.101     FOR SIMULATION USE ONLY                 11/02/2023
+
+                       CHAPTER 6. ATCT Local VFR Aircraft
+
+6.1 FLIGHT PROGRESS STRIP
+
+NOTE ­ For aircraft not leaving ATCT airspace, e.g. aircraft in the pattern. Obtain a half strip
+by right clicking the vStrips flight strip bay and selecting "Add half-strip."
+
+6.2 STRIP MARKING
+
+NOTE ­ Not specific to controller position. Some pilots may skip calling clearance and call
+ground for taxi for pattern work.
+
+BLOCK  INFORMATION
+1      Aircraft ID ­ Aircraft Type (e.g. N167DP ­ PRM1)
+2      Intentions (e.g. Pattern work)
+3      Remarks (any extra information deemed necessary e.g. intersection departure,
+       runway, special requests)
+
+                   FOR SIMULATION USE ONLY                                                        9
+vZMP N7110.101                   FOR SIMULATION USE ONLY                     11/02/2023
+
+                          CHAPTER 7. ATCT Arrival Aircraft
+
+7.1 FLIGHT PROGRESS STRIP
+
+NOTE ­ Applies to both IFR and VFR aircraft with a vNAS flightplan entered.
+
+    1. Aircraft ID
+    2. Revision number
+    3. Aircraft type/equipment
+    4. CID
+    5. Beacon code
+    6. Previous fix
+    7. Coordination fix
+    8. Estimated arrival time
+    10. Flight rules
+    11. Destination and remarks
+
+7.2 LOCAL CONTROL STRIP MARKING
+
+BLOCK INFORMATION
+
+14  Gate number/parking location (if reported)
+
+20  "L" if the pilot accepts a LAHSO clearance
+
+7.3 GROUND CONTROL STRIP MARKING
+
+BLOCK INFORMATION
+
+14  Gate number/parking location (if reported)
+
+                                 FOR SIMULATION USE ONLY                     10
+vZMP N7110.101  FOR SIMULATION USE ONLY                11/02/2023
+
+                     CHAPTER 8. FLIGHT STRIP EXAMPLES
+
+8.1 IFR DEPARTURES
+
+UAL2159 has ATIS W, was located at gate E6, received a PDC, departed runway 17, was
+assigned R's frequency as their departure frequency, and was assigned heading 140 on departure.
+
+SKW3869 has ATIS X, was assigned a pushback time of 45 minutes past the hour, was parked at
+C13, was assigned a PDC, departed runway 12L, was assigned R's frequency as their departure
+frequency, and was assigned heading 090 on departure.
+
+SKW3979 has ATIS G, was parked at gate 2, was issued and read back their clearance, departed
+runway 31, and had an EDCT time of 15 minutes past the hour.
+
+8.2 VFR DEPARTURE (vNAS FLIGHTPLAN)
+
+N795HG has ATIS B, was parked at Signature, was issued and read back their clearance,
+departed runway 30L at W5, and was assigned E's frequency as their departure frequency.
+
+                FOR SIMULATION USE ONLY                                                  11
+vZMP N7110.101  FOR SIMULATION USE ONLY                                   11/02/2023
+
+8.3 VFR DEPARTURE (NO vNAS FLIGHTPLAN)
+
+N172SP, a C172, is an eastbound VFR departure with ATIS P. They were parked at Thunderbird
+Aviation, received their clearance, and departed from intersection A3 on runway 10L.
+
+8.4 LOCAL VFR
+
+N484TR is a Piper Comanche doing pattern work. They are a student pilot.
+8.5 ARRIVAL AIRCRAFT
+
+SKW3892 is parking at gate C15 and accepted a LAHSO clearance to hold short of taxiway K
+on runway 22.
+
+                FOR SIMULATION USE ONLY                                                   12
+

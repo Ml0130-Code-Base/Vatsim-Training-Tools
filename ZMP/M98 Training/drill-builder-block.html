@@ -1,0 +1,2297 @@
+<script>
+/* ================================================================
+   DRILL BUILDER + TRAINING NOTEBOOK v1 — additive extension
+   Requires the Drill Deck block (window.DD) earlier in the page.
+
+   Adds three things the deck did not have:
+     1. Authoring — build a drill by hand, or generate one from a seed,
+        and load it straight into the live player. Saved drills persist.
+     2. Response timing — the airplanes keep moving while you think, so
+        the block measures the gap between the trigger and your key-up
+        and grades it against a target you set.
+     3. A notebook — every finished drill banks into the library with
+        the standing items it exercised, so the open-items list stays
+        current instead of going stale.
+
+   No new operational data lives here. Every fix, floor, ladder speed
+   and frequency is read through window.DD.
+   ================================================================ */
+(function(){
+'use strict';
+var DD = window.DD;
+if(!DD){ return; }
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.dd-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;}'
++ '.dd-grid.tight{grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;}'
++ '.dd-field{display:flex;flex-direction:column;gap:4px;min-width:0;}'
++ '.dd-lab{font-family:var(--mono);font-size:9.5px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);}'
++ '.dd-in,.dd-sel,.dd-ta{background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:7px 8px;width:100%;}'
++ '.dd-ta{line-height:1.55;resize:vertical;min-height:66px;}'
++ '.dd-in:focus,.dd-sel:focus,.dd-ta:focus{outline:2px solid var(--green);outline-offset:1px;}'
++ '.dd-btn{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;}'
++ '.dd-btn:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.dd-btn.pri{background:var(--green);color:#062;border-color:var(--green);font-weight:600;}'
++ '.dd-btn.on{color:var(--green);border-color:var(--green);}'
++ '.dd-btn.sm{font-size:10.5px;padding:4px 8px;}'
++ '.dd-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center;}'
++ '.dd-acrow{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:10px 12px;margin:8px 0;}'
++ '.dd-acrow-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;}'
++ '.dd-acrow-head b{font-family:var(--mono);font-size:12px;color:var(--ink);}'
++ '.dd-acrow-head span{font-family:var(--mono);font-size:10.5px;color:var(--dim2);}'
++ '.dd-chk{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--dim);cursor:pointer;padding-top:14px;}'
++ '.dd-chk input{accent-color:var(--green);width:14px;height:14px;}'
++ '.dd-msg{font-family:var(--mono);font-size:11.5px;line-height:1.6;margin-top:10px;}'
++ '.dd-msg div{padding:2px 0;}'
++ '.dd-msg .e{color:var(--red);}'
++ '.dd-msg .w{color:var(--amber);}'
++ '.dd-msg .k{color:var(--green);}'
++ '.dd-item{border-top:1px solid var(--line);padding:11px 0;}'
++ '.dd-item:first-child{border-top:0;}'
++ '.dd-item-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;}'
++ '.dd-item-head b{font-size:14px;color:var(--ink);font-family:var(--body);font-weight:600;}'
++ '.dd-item p{margin:5px 0 0;font-size:12.5px;color:var(--dim);line-height:1.55;}'
++ '.dd-item-meta{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin-top:6px;}'
++ '.dd-saved-row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding:9px 0;font-family:var(--mono);font-size:11.5px;color:var(--dim);}'
++ '.dd-saved-row b{color:var(--ink);font-weight:500;}'
++ '.dd-saved-row .btns{display:flex;gap:6px;}'
++ '.dd-timing{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-family:var(--mono);font-size:11px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:7px 10px;margin-top:10px;}'
++ '.dd-timing b{color:var(--ink);font-weight:500;}'
++ '.dd-timing .hot{color:var(--amber);}'
++ '.dd-timing .late{color:var(--red);}'
++ '.dd-io{margin-top:12px;}'
++ '.dd-hint{font-size:11.5px;color:var(--dim2);line-height:1.55;margin-top:8px;}'
++ '.dd-sub{font-family:var(--mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;}'
++ '.dd-sub.a{color:var(--amber);}'
++ '.dd-view{display:none;}'
++ '.dd-view.on{display:block;}'
++ '.dd-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:sticky;top:53px;background:rgba(10,13,12,0.94);backdrop-filter:blur(6px);z-index:15;}'
++ '.dd-tabs button{font-family:var(--mono);font-size:11.5px;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:3px;padding:7px 14px;cursor:pointer;}'
++ '.dd-tabs button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.dd-tabs button.on{color:var(--green);border-color:var(--green);background:var(--panel);}'
++ '.dd-tabs .sub{font-family:var(--mono);font-size:10.5px;color:var(--dim2);align-self:center;margin-left:auto;}'
++ '.dd-view .dd-section:first-child{margin-top:34px;}'
++ '@media (max-width:600px){.dd-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));}.dd-tabs{position:static;}}';
+var st = document.createElement('style'); st.textContent = css;
+if(document.head && document.head.appendChild) document.head.appendChild(st);
+
+/* ---------- 2. Persistence (offline-safe, degrades to memory) ---------- */
+var KEY = 'm98-drill-deck-v1';
+var state = {v:1, drills:[], entries:[], retired:{}, target:20, seq:11, hot:false,
+ layers:'tracked',
+ pos:{seats:{H:1}, open:{H:1, R:1, N:1, S:1}, towers:'satellite towers open', rstOpen:true}};
+var storeOk = true;
+function store(){
+ try{ return (typeof localStorage!=='undefined') ? localStorage : null; }catch(e){ return null; }
+}
+function save(){
+ var s=store(); if(!s){ storeOk=false; return; }
+ try{ s.setItem(KEY, JSON.stringify(state)); storeOk=true; }catch(e){ storeOk=false; }
+}
+function restore(){
+ var s=store(); if(!s){ storeOk=false; return; }
+ try{
+  var raw=s.getItem(KEY); if(!raw) return;
+  var o=JSON.parse(raw); if(!o||o.v!==1) return;
+  state.drills=o.drills||[]; state.entries=o.entries||[]; state.retired=o.retired||{};
+  state.target=o.target||20; state.seq=o.seq||11; state.hot=!!o.hot;
+  if(o.layers) state.layers=o.layers;
+  if(o.pos && o.pos.open){
+   /* v1 stored a single seat string; carry it forward as a one-seat set */
+   var seats = o.pos.seats || (o.pos.seat ? (function(){ var s={}; s[o.pos.seat]=1; return s; })() : null);
+   if(seats) state.pos={seats:seats, open:o.pos.open, towers:o.pos.towers||state.pos.towers,
+                        rstOpen:(o.pos.rstOpen!==false)};
+  }
+ }catch(e){ storeOk=false; }
+}
+
+/* ---------- 3. Reference lookups (all through DD — no second copy) ---------- */
+var GATES = Object.keys(DD.ROUTES);
+var RWYS = Object.keys(DD.RECEIVER);
+/* the six MSP ladders and the three satellite ones both answer here */
+function routeOf(g){ return DD.ROUTES[g] || DD.SAT_ROUTES[g] || null; }
+function totalOf(g){ var r=routeOf(g); return r?r.total:0; }
+/* the binding published altitude at a point on the ladder, per the STAR reference */
+function capAt(g, dist){
+ var r=routeOf(g); if(!r) return null;
+ for(var i=0;i<r.length;i++){
+  if(r[i].cum>=dist-0.05){ if(r[i].at!=null) return r[i].at; if(r[i].aa!=null) return r[i].aa; }
+ }
+ return DD.FLOORS[g];
+}
+function fixAt(g, dist){
+ var r=routeOf(g), best=null;
+ for(var i=0;i<r.length;i++){ if(r[i].cum>=dist-0.05){ best=r[i].f; break; } }
+ return best||r[r.length-1].f;
+}
+function pubSpdAt(g, dist){
+ var r=routeOf(g), sp=null;
+ for(var i=0;i<r.length;i++){ if(r[i].cum<=dist && r[i].spd) sp=r[i].spd; }
+ if(sp==null){ for(var j=0;j<r.length;j++){ if(r[j].spd){ sp=r[j].spd; break; } } }
+ return sp||280;
+}
+
+/* ---------- 3b. Weather, configuration and voicing ----------
+   Config follows the wind and the weather; it is never a free pick
+   (claude_M98_Config_Reference.md, MSP-M98 LOA 9). Flight-category
+   thresholds are the NWS/AWC set written down in claude_M98_Drill_Format.md.
+   Weather floors: CRO 2,200/5 (MSP-M98 LOA 7.i); 17-22 1,400/4 (SOP 7-1 / LOA 11). */
+function category(ceil, vis){
+ var c=(ceil==null||isNaN(ceil))?99999:ceil, v=(vis==null||isNaN(vis))?99:vis;
+ if(c<500 || v<1) return 'LIFR';
+ if(c<1000 || v<3) return 'IFR';
+ if(c<=3000 || v<=5) return 'MVFR';
+ return 'VFR';
+}
+var TOOLBOX={
+ VFR:'Full toolbox — visual approaches, visual separation, VFR traffic and Bravo transitions.',
+ MVFR:'Marginal — visuals may still hold, but check the floor before you plan on one.',
+ IFR:'Instrument approaches only — no visual approaches, no visual separation, no CRO. Wider spacing.',
+ LIFR:'Instrument approaches only, and watch for below-minimums. No visuals, no visual separation, no CRO.'
+};
+var CONFIGS=[
+ {id:'12',     name:'12 — land 12L/12R, depart 12L/12R', land:['12L','12R'], note:'SE flow; Mendota and Eagan corridor departures; STP shelf active'},
+ {id:'12-17',  name:'12-17 — land 12L/12R, depart 12L/12R and 17', land:['12L','12R'], note:'Maximum runway 17 track 215 degrees; 3 miles in trail same fix'},
+ {id:'30',     name:'30 — land 30L/30R, depart 30L/30R', land:['30L','30R'], note:'NW flow; dependent parallels; heavy jets to 30L'},
+ {id:'30-17',  name:'30-17 — land 30L/30R, depart 30L/30R and 17', land:['30L','30R'], note:'NITZR and BLUEM are always Knock-It-Off in this one; Area F point-out to 6,000'},
+ {id:'30-35',  name:'30-35 CRO — land 30L/30R and 35, depart 30L/30R', land:['30L','30R','35'], min:{ceil:2200, vis:5}, src:'MSP-M98 LOA 7.i', note:'CRDA ghost 30L to 35; matched and balanced sets'},
+ {id:'17-22',  name:'17-22 CRO — land 17 and 22, depart 12R and 17', land:['17','22'], min:{ceil:1400, vis:4}, src:'SOP 7-1 / LOA 11', note:'LAHSO and CRDA; KKILR and WILDD arrivals prohibited'},
+ {id:'4-35',   name:'4-35 — land 35, depart 4', land:['35'], note:'Land 35, depart 4 off the south intersection'},
+ {id:'4',      name:'4 — land 4, depart 4', land:['4'], note:'NE wind; Knock-It-Off arrivals'},
+ {id:'22',     name:'22 — land 22, depart 22', land:['22'], note:'SW wind; Knock-It-Off arrivals'},
+ {id:'30/12',  name:'Land 30s / depart 12s — noise default', land:['30L','30R'], note:'Opposite-direction down the Mendota Heights and Eagan corridor; the quiet-hours default (LOA 9.g)'}
+];
+function configById(id){ for(var i=0;i<CONFIGS.length;i++){ if(CONFIGS[i].id===id) return CONFIGS[i]; } return CONFIGS[0]; }
+
+/* ---------- D-ATIS — roadmap item 3 ----------
+   The tool is offline by architecture, so the path that always works is paste:
+   drop the current KMSP D-ATIS text in and it sets the flow and the weather on
+   the frame. The fetch button is a convenience on top of that — it asks the
+   published sources and falls back to the paste box the moment the browser
+   refuses, which from a file page it usually does, because such a page has no
+   origin for the server to allow. Nothing else in the tool touches the network
+   and nothing here is needed for the rest of it to run. */
+var DATIS_SOURCES = [
+ {name:'atis.info',     url:'https://atis.info/api/KMSP'},
+ {name:'datis.clowd.io', url:'https://datis.clowd.io/api/KMSP'}
+];
+/* the sources return either a bare string or an array of objects with a datis
+   field, so unwrap whichever came back */
+/* MSP runs a split D-ATIS — a separate arrival and departure broadcast with
+   their own information letters — so both come back and both get read. The
+   arrival one carries the approach in use, the departure one the runway being
+   departed, and neither is complete on its own. */
+function datisParts(payload){
+ if(typeof payload==='string') return [payload];
+ if(payload && typeof payload.datis==='string') return [payload.datis];
+ if(payload && Array.isArray(payload)){
+  var out=[]; payload.forEach(function(p){ out=out.concat(datisParts(p)); }); return out;
+ }
+ return [];
+}
+function datisText(payload){ return datisParts(payload).join('\n\n'); }
+/* Sort a payload into the two broadcasts, so each lands in its own box. The
+   sources tag them; where a source does not, the text says which it is in the
+   first few words — "MSP ARR INFO J" against "MSP DEP INFO W". */
+function datisSplit(payload){
+ var out={arr:'', dep:''};
+ if(typeof payload==='string'){ out.arr=payload; return out; }
+ var list=(payload && Array.isArray(payload)) ? payload : (payload ? [payload] : []);
+ list.forEach(function(p){
+  if(!p || typeof p.datis!=='string') return;
+  var ty=String(p.type||'').toLowerCase();
+  var head=p.datis.toUpperCase().slice(0,40);
+  var isDep = (ty.indexOf('dep')===0) || (!ty && /\bDEP\b|\bDEPARTURE\b/.test(head));
+  if(isDep){ if(!out.dep) out.dep=p.datis; }
+  else if(!out.arr) out.arr=p.datis;
+ });
+ return out;
+}
+/* The two boxes are one D-ATIS as far as the parser is concerned — it already
+   reads a split broadcast, and the blank line is what separates them. */
+function datisJoined(d){
+ return [(d&&d.datisArr)||'', (d&&d.datisDep)||''].filter(function(s){ return String(s).trim(); }).join('\n\n');
+}
+/* Everything past the notice to airmen is closures and field condition. It
+   names runways that are SHUT — "RWYS 12L, 30R CLSD" — so it must never be
+   read as a runway in use. */
+function datisClean(seg){ return String(seg).split(/NOTICE TO AIRMEN|NOTAMS?\b/)[0]; }
+function rwyList(s){
+ var out=[], m=String(s||'').toUpperCase().match(/\d{1,2}[LRC]?/g)||[];
+ m.forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
+ return out;
+}
+/* Which configuration the landing and departing runways describe. The landing
+   set picks the candidates and the departures break the tie — a 12s and a
+   12s-Depart-17 land the same runways. */
+function configFromRunways(land, dep){
+ if(!land || !land.length) return null;
+ var key=land.slice().sort().join(',');
+ var pick=function(cands){
+  if(!cands.length) return null;
+  if(cands.length===1) return cands[0].id;
+  var d=' '+(dep||[]).join(' ')+' ';
+  var has=function(id){ return cands.some(function(c){ return c.id===id; }); };
+  if(/ 17 /.test(d) && has('12-17')) return '12-17';
+  if(/ 17 /.test(d) && has('30-17')) return '30-17';
+  if(/ 12[LRC]? /.test(d) && has('30/12')) return '30/12';
+  return cands[0].id;
+ };
+ var exact=pick(CONFIGS.filter(function(c){ return c.land.slice().sort().join(',')===key; }));
+ if(exact) return exact;
+ /* a runway out of service narrows the flow without changing it — landing 30L
+    on its own because 30R is closed is still a 30s. Take the configuration that
+    covers what is landing with the fewest runways left over. */
+ return pick(CONFIGS.filter(function(c){
+   return land.every(function(r){ return c.land.indexOf(r)>=0; });
+  }).sort(function(a,b){ return a.land.length-b.land.length; }));
+}
+/* Tolerant on purpose: D-ATIS comes through as the coded form, the spoken form,
+   or a mix of the two depending on the source. */
+function parseDatis(raw){
+ var src=String(raw||'').trim();
+ if(!src) return null;
+ var segs=src.toUpperCase().split(/\n\s*\n/).map(function(s){ return datisClean(s.replace(/\s+/g,' ')); });
+ var t=segs.join(' ');
+ var o={raw:src, missed:[]}, m;
+ /* one information letter per broadcast */
+ segs.forEach(function(s){
+  var c=s.match(/INFO(?:RMATION)? ([A-Z])\b/);
+  if(!c) return;
+  if(/\bDEP\b|\bDEPARTURE\b/.test(s.slice(0, c.index+12))) o.atisDep=o.atisDep||c[1];
+  else o.atis=o.atis||c[1];
+ });
+ if(!o.atis && o.atisDep) o.atis=o.atisDep;
+ /* wind */
+ if(/\bWIND CALM\b|\b00000KT\b/.test(t)) o.wind='calm';
+ else if((m=t.match(/\b(\d{3}|VRB)(\d{2,3})(?:G(\d{2,3}))?KT\b/)))
+  o.wind=m[1]+'/'+parseInt(m[2],10)+(m[3]?('G'+parseInt(m[3],10)):'');
+ else if((m=t.match(/\bWIND (\d{3}) AT (\d{1,3})(?: GUSTS? (?:TO )?(\d{1,3}))?/)))
+  o.wind=m[1]+'/'+parseInt(m[2],10)+(m[3]?('G'+parseInt(m[3],10)):'');
+ else o.missed.push('wind');
+ /* visibility */
+ if((m=t.match(/\b(\d{1,2}) (\d)\/(\d)SM\b/))) o.vis=parseInt(m[1],10)+parseInt(m[2],10)/parseInt(m[3],10);
+ else if((m=t.match(/\b(\d{1,2})SM\b/))) o.vis=parseInt(m[1],10);
+ else if((m=t.match(/\b(\d)\/(\d)SM\b/))) o.vis=parseInt(m[1],10)/parseInt(m[2],10);
+ else if((m=t.match(/VISIBILITY (\d{1,2})\b/))) o.vis=parseInt(m[1],10);
+ else o.missed.push('visibility');
+ /* ceiling is the lowest broken or overcast layer; few and scattered are not
+    ceilings, so a sky with neither is unlimited rather than unknown */
+ var lows=[], sawSky=false;
+ (t.match(/\b(?:BKN|OVC)\d{3}\b/g)||[]).forEach(function(s){ sawSky=true; lows.push(parseInt(s.slice(3),10)*100); });
+ (t.match(/\b(?:BROKEN|OVERCAST) \d{3,5}\b/g)||[]).forEach(function(s){
+  sawSky=true; var n=parseInt(s.replace(/\D+/g,''),10); lows.push(n<1000?n*100:n); });
+ if(/\b(?:FEW|SCT|SKC|CLR|CAVOK|SCATTERED|FEW)\d*\b/.test(t)) sawSky=true;
+ if(lows.length) o.ceil=Math.min.apply(null, lows);
+ else if(sawSky) o.ceil=12000;
+ else o.missed.push('ceiling');
+ /* altimeter */
+ if((m=t.match(/\bA(\d{4})\b/))) o.altim=m[1];
+ else if((m=t.match(/ALTIMETER ((?:\d ?){4})/))) o.altim=m[1].replace(/\D/g,'');
+ else o.missed.push('altimeter');
+ /* the flow */
+ /* the flow reads either as "landing runways 12L, 12R" or, when a single
+    approach is advertised, as "visual runway 30L approach in use" — the runway
+    sits ahead of the phrase in the second form */
+ if((m=t.match(/(?:LAND(?:ING)?|LNDG) (?:RUNWAYS?|RWYS?) ([^.]*)/))) o.land=rwyList(m[1]);
+ else if((m=t.match(/(?:APPROACHES?|APCHS?) IN USE ([^.]*)/))) o.land=rwyList(m[1]);
+ else if((m=t.match(/([^.]*?) ?(?:APCH(?:ES)?|APPROACH(?:ES)?) IN USE/))) o.land=rwyList(m[1]);
+ if((m=t.match(/(?:DEPART(?:ING)?|DEPTG) (?:RUNWAYS?|RWYS?) ([^.]*)/))) o.dep=rwyList(m[1]);
+ o.cfg=configFromRunways(o.land||[], o.dep||[]);
+ if(o.cfg && configById(o.cfg).land.slice().sort().join(',') !== (o.land||[]).slice().sort().join(','))
+  o.partial=true;   /* matched on a subset — something is out of service */
+ if(!o.land || !o.land.length) o.missed.push('landing runways');
+ else if(!o.cfg) o.missed.push('a configuration matching landing '+(o.land||[]).join(', '));
+ return o;
+}
+/* the arrival ladders the engine actually carries */
+function engineRunways(){ return RWYS; }
+function configCarried(cfg){
+ var c=configById(cfg);
+ for(var i=0;i<c.land.length;i++){ if(RWYS.indexOf(c.land[i])>=0) return true; }
+ return false;
+}
+
+/* Callsign voicing — claude_US_Carrier_Callsigns.md.
+   Flight numbers group in twos; registrations spell straight; zero is
+   always "zero". Shown next to every strip so the drill trains the voice
+   as well as the plan. */
+var CARRIERS={DAL:'Delta', AAL:'American', UAL:'United', ASA:'Alaska', SWA:'Southwest', JBU:'JetBlue',
+ FFT:'Frontier Flight', AAY:'Allegiant', SCX:'Sun Country', MXY:'Moxy', VXP:'Avelo',
+ SKW:'SkyWest', EDV:'Endeavor', RPA:'Brickyard', JIA:'Blue Streak', ENY:'Envoy', PDT:'Piedmont',
+ QXE:'Horizon Air', ASH:'Air Shuttle', GJS:'Lindbergh', UCA:'CommutAir', AWI:'Air Wisconsin',
+ FDX:'FedEx', UPS:'UPS', GTI:'Giant', CKS:'Connie', ABX:'Abex', ATN:'Air Transport'};
+var ONES=['zero','one','two','three','four','five','six','seven','eight','nine'];
+var TEENS=['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+var TENS=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+var PHON={A:'alpha',B:'bravo',C:'charlie',D:'delta',E:'echo',F:'foxtrot',G:'golf',H:'hotel',I:'india',
+ J:'juliet',K:'kilo',L:'lima',M:'mike',N:'november',O:'oscar',P:'papa',Q:'quebec',R:'romeo',S:'sierra',
+ T:'tango',U:'uniform',V:'victor',W:'whiskey',X:'x-ray',Y:'yankee',Z:'zulu'};
+function pair2(n){
+ if(n<10) return ONES[n];
+ if(n<20) return TEENS[n-10];
+ var t=Math.floor(n/10), o=n%10;
+ return TENS[t]+(o?'-'+ONES[o]:'');
+}
+function flightNum(s){
+ if(s.length===4){
+  if(s.slice(2)==='00') return pair2(parseInt(s.slice(0,2),10))+' hundred';
+  if(s.charAt(2)==='0') return pair2(parseInt(s.slice(0,2),10))+' zero '+ONES[+s.charAt(3)];
+  return pair2(parseInt(s.slice(0,2),10))+' '+pair2(parseInt(s.slice(2),10));
+ }
+ if(s.length===3){
+  if(s.slice(1)==='00') return ONES[+s.charAt(0)]+' hundred';
+  if(s.charAt(1)==='0') return ONES[+s.charAt(0)]+' zero '+ONES[+s.charAt(2)];
+  return ONES[+s.charAt(0)]+' '+pair2(parseInt(s.slice(1),10));
+ }
+ return pair2(parseInt(s,10));
+}
+function spoken(cs){
+ cs=(cs||'').toUpperCase();
+ var m=cs.match(/^([A-Z]{3})([0-9]{1,4})$/);
+ if(m && CARRIERS[m[1]]) return CARRIERS[m[1]]+' '+flightNum(m[2]);
+ if(m) return m[1]+' '+flightNum(m[2]);
+ if(/^N[0-9A-Z]{2,5}$/.test(cs)){
+  return cs.split('').map(function(ch){ return /[0-9]/.test(ch)?ONES[+ch]:(PHON[ch]||ch); }).join(' ');
+ }
+ return cs;
+}
+
+/* ---------- 3c. Positions ----------
+   The seat is the trainee's own pick — the drill format is explicit that the
+   student chooses the position they work, and therefore the airspace they
+   own. The table is M98 SOP 2-1. `into` is the position each one folds into
+   when it is not open, from SOP 2-1 NOTE 2: everything collapses to H, and
+   splits open in the order H → R → N → S (R combined Departure, N combined
+   MSP Final, S South Final, E combined Satellite). */
+var POSITIONS=[
+ {id:'D', name:'North Departure',            frq:'125.75',  into:'R', job:'departure'},
+ {id:'R', name:'South Departure',            frq:'124.7',   into:'H', job:'departure', role:'Opens as the combined Departure, taking D and L with it.'},
+ {id:'L', name:'East Departure',             frq:'132.975', into:'R', job:'departure'},
+ {id:'I', name:'North Feeder',               frq:'126.35',  into:'H', job:'feeder'},
+ {id:'H', name:'South Feeder',               frq:'135.475', into:null, job:'feeder', role:'The base radar position — with nothing else open, all of M98 is worked here.'},
+ {id:'N', name:'North Final / Arrival',      frq:'119.3',   into:'H', job:'arrival', role:'Opens as the combined MSP Final, working both parallels until S splits off.'},
+ {id:'S', name:'South Final / Arrival',      frq:'126.95',  into:'N', job:'arrival', role:'The last of the four to open; until it does, its side folds into N.'},
+ {id:'J', name:'17/35 West Final / Arrival', frq:'118.725', into:'N', job:'arrival'},
+ {id:'E', name:'Flying Cloud Satellite',     frq:'134.7',   into:'H', job:'satellite', role:'Opens as the combined Satellite, taking G and K with it.'},
+ {id:'G', name:'St. Paul Satellite',         frq:'121.2',   into:'E', job:'satellite'},
+ {id:'K', name:'Crystal Satellite',          frq:'126.5',   into:'E', job:'satellite'}
+];
+var DUTIES={
+ feeder:'Assigns the landing runway and starts the crossovers (SOP 2-1 / 2-4).',
+ arrival:'Vectors, sequences and issues the approach clearance (SOP 2-1 / 2-5).',
+ departure:'Works the departures off MSP and the satellite fields.',
+ satellite:'Works the satellite fields and the airspace under the arrival shelf.'
+};
+/* what the live player can actually fly today — stated plainly rather than implied */
+var COVERAGE={
+ H:{k:'good', t:'flown by the live player — this is the seat the engine models'},
+ I:{k:'flag', t:'the engine flies the same feeder job, but which gates belong to North rather than South Feeder is SOP 4-4d and is not in the reference set — treat the gate split as yours to confirm'},
+ N:{k:'info', t:'the player hands off to this seat; it does not fly it'},
+ S:{k:'info', t:'the player hands off to this seat; it does not fly it'},
+ J:{k:'info', t:'the 17/35 finals are not in the engine'},
+ D:{k:'info', t:'departures are not in the engine'},
+ R:{k:'info', t:'departures are not in the engine'},
+ L:{k:'info', t:'departures are not in the engine'},
+ E:{k:'info', t:'satellite work is not in the engine'},
+ G:{k:'info', t:'satellite work is not in the engine'},
+ K:{k:'info', t:'satellite work is not in the engine'}
+};
+var PRESETS={
+ single:{label:'Single controller — all of M98 on H', open:{H:1}},
+ standard:{label:'H · R · N · S — the usual split', open:{H:1,R:1,N:1,S:1}},
+ feeders:{label:'Both feeders split — H · I · R · N · S', open:{H:1,I:1,R:1,N:1,S:1}},
+ full:{label:'Everything open', open:{D:1,R:1,L:1,I:1,H:1,N:1,S:1,J:1,E:1,G:1,K:1}}
+};
+function posById(id){ for(var i=0;i<POSITIONS.length;i++){ if(POSITIONS[i].id===id) return POSITIONS[i]; } return null; }
+function isOpen(id){ return !!(state.pos.open && state.pos.open[id]); }
+/* walk the combining chain until something is actually open; the base is H */
+function ownerOf(id){
+ var p=posById(id), seen={};
+ while(p && !seen[p.id]){
+  if(isOpen(p.id)) return p;
+  seen[p.id]=1;
+  p = p.into ? posById(p.into) : null;
+ }
+ return posById('H');
+}
+/* The ACDA split rides the localizers, so 12R is South Arrival's side and
+   12L is North's (SOP 4-2a). Who actually answers depends on what is open. */
+var RWY_ARRIVAL={'12R':'S', '12L':'N'};
+function applyReceivers(){
+ RWYS.forEach(function(r){
+  var owner=ownerOf(RWY_ARRIVAL[r]||'S');
+  if(DD.RECEIVER[r]){ DD.RECEIVER[r].pos=owner.id; DD.RECEIVER[r].frq=owner.frq; }
+ });
+ /* the Feeders fold the same way. A far-gate crossover is handed to a Feeder
+    rather than to Arrival (SOP 4-5), so that seat has to follow whoever is
+    actually open under the combining chain (SOP 2-1 NOTE 2). */
+ ['I','H'].forEach(function(p){
+  var owner=ownerOf(p);
+  if(DD.FEEDER_POS && DD.FEEDER_POS[p]){ DD.FEEDER_POS[p].pos=owner.id; DD.FEEDER_POS[p].frq=owner.frq; }
+ });
+ /* and the satellite seats, which take the arrivals into their own fields */
+ ['E','G','K'].forEach(function(p){
+  var owner=ownerOf(p);
+  if(DD.SAT_POS && DD.SAT_POS[p]){ DD.SAT_POS[p].pos=owner.id; DD.SAT_POS[p].frq=owner.frq; }
+ });
+ syncQuickButtons();
+}
+/* You can work more than one position at once — the drill log has a Combined
+   D + I and a Full M98 Combined, so the seat is a set, not a single choice. */
+function seatIds(){
+ var ids=Object.keys(state.pos.seats||{}).filter(function(id){ return !!posById(id); });
+ return ids.length ? ids : ['H'];
+}
+function isSeat(id){ return seatIds().indexOf(id)>=0; }
+function seatPositions(){ return seatIds().map(posById); }
+function seatPos(){ return seatPositions()[0]; }
+function rstOpen(){ return state.pos.rstOpen!==false; }
+/* the arrival gates the seats being worked own by default, in the configuration
+   currently on the draft — SOP 4-4d */
+function seatGates(){
+ var cfgId=(draft&&draft.cfg)||'12', out=[];
+ GATES.forEach(function(g){
+  var ow=DD.feederFor(cfgId,g);
+  if(ow && seatIds().indexOf(ow)>=0) out.push(g);
+ });
+ return out;
+}
+function seatLabel(){
+ var ps=seatPositions();
+ if(ps.length===1) return ps[0].name+' ('+ps[0].id+' · '+ps[0].frq+')';
+ return 'Combined '+ps.map(function(p){return p.id;}).join(' + ')+' — '+ps.map(function(p){return p.name;}).join(' and ');
+}
+function openLabel(){
+ var others=POSITIONS.filter(function(p){ return isOpen(p.id) && !isSeat(p.id); });
+ if(!others.length) return 'nothing else open — the rest of M98 is combined onto you';
+ return others.map(function(p){ return p.name+' ('+p.id+')'; }).join(', ');
+}
+/* the live player's quick buttons have to follow whoever is actually taking the handoff */
+function syncQuickButtons(){
+ var q=document.querySelector('#mod-live .dd-quick');
+ if(!q || !q.querySelectorAll || !q.appendChild) return;
+ var kill=[];
+ Array.prototype.slice.call(q.querySelectorAll('button')).forEach(function(b){
+  var oc = b.getAttribute && b.getAttribute('onclick');
+  if((oc && oc.indexOf('contact approach')>=0) || (b.dataset && b.dataset.ddb==='switch')) kill.push(b);
+ });
+ kill.forEach(function(b){ if(b.parentNode) b.parentNode.removeChild(b); });
+ RWYS.forEach(function(r){
+  var rec=DD.RECEIVER[r];
+  var b=document.createElement('button');
+  if(b.dataset) b.dataset.ddb='switch';
+  b.textContent='switch '+r+' → '+rec.pos+' '+rec.frq;
+  b.onclick=(function(f){ return function(){ window.ddQuick('contact approach '+f); }; })(rec.frq);
+  q.appendChild(b);
+ });
+}
+
+/* ---------- 4. Standing-item currency ----------
+   Seeded from the prose already in the standing-items list; every drill
+   banked after that moves the numbers. */
+/* The drills that ran before the work moved into Claude Code. They are on
+   record in the practice log and the drill library, and they count exactly
+   the same as anything banked from the player — finished, scrapped or paused
+   makes no difference to what they taught. Only the reading lives here: the
+   date, seat, configuration and headline are read out of DRILL_LOG so there
+   is still one copy of each. Every `why` line quotes the note it came from,
+   so the reading can be checked and argued with. Oldest first. */
+var PRIOR = [
+ {n:'5', source:'docs', state:'complete',
+  tally:{posthandoff:{good:1, flag:0}},
+  why:{posthandoff:'Three departures sorted to ZMP sectors 5, 9 and 10 with direct-to routing and the handoffs completed.'}},
+
+ {n:'6', source:'docs', state:'complete',
+  tally:{},
+  why:{}},
+
+ {n:'7', source:'docs', state:'complete',
+  tally:{sep:{good:0, flag:1}},
+  why:{sep:'"Separation proof: articulate and verify, don\u2019t assert" — the first appearance of the standing item.'}},
+
+ {n:'8', source:'docs', state:'complete',
+  tally:{speed:{good:1, flag:1}},
+  why:{speed:'Caught the live speed exceedance and recovered it with correct phraseology to the FAF — but the watch-for was speed up front, not delete-then-recover.'}},
+
+ {n:'9', source:'docs', state:'complete',
+  tally:{posthandoff:{good:0, flag:1}},
+  why:{posthandoff:'"Once you ship it, it\u2019s gone" — tried to turn N77CM after switching him to ZMP.'}},
+
+ {n:'10', source:'docs', state:'scrapped on saturation',
+  tally:{maintain:{good:0, flag:1}, posthandoff:{good:1, flag:1}, sep:{good:0, flag:1}},
+  why:{maintain:'"Climb and maintain" twice in one drill — the confirmed pattern.',
+       posthandoff:'The EDV sequence went in the right order — direct SNINE while owned, flash before the 4.c gate, then the switch — and the same drill relapsed on no altitudes after the flash and no switch without a flash.',
+       sep:'Named in the standing item alongside drills 7 and 10R as a drill where the proof did not come unprompted.'}},
+
+ {n:'10R', source:'docs', state:'paused mid-tape',
+  tally:{sep:{good:0, flag:1}, speed:{good:0, flag:1}, floors:{good:0, flag:1}, posthandoff:{good:1, flag:0}},
+  why:{sep:'Separation proof spoken unprompted — the model paragraph was given; the next one is yours.',
+       speed:'Published-speed restoration phrase still open, with the 7110.65 speed-adjustment lookup outstanding.',
+       floors:'Floor altitude said aloud with its book — near versus far, Appendix A — still open.',
+       posthandoff:'Runway flip end to end: cheap flip identified, N as the receiver, flash, switch inside the 15 NM far-gate rule.'}}
+];
+/* the card for a documented drill, so its date, seat and headline are not copied twice */
+function priorCard(n){
+ for(var i=0;i<DD.DRILL_LOG.length;i++){ if(DD.DRILL_LOG[i].n===n && !DD.DRILL_LOG[i].user) return DD.DRILL_LOG[i]; }
+ return null;
+}
+/* the whole record, oldest first: what ran before this tool, then what has been banked in it */
+function hist(){ return PRIOR.concat(state.entries); }
+function itemById(id){ for(var i=0;i<DD.STANDING.length;i++){ if(DD.STANDING[i].id===id) return DD.STANDING[i]; } return null; }
+function itemStats(id){
+ var e=hist(), out={exposures:0, good:0, flag:0, streak:0, last:null, lastResult:null, since:0, fromDocs:false, drills:[]};
+ var found=false, gap=0;
+ for(var i=e.length-1;i>=0;i--){
+  var t=e[i].tally && e[i].tally[id];
+  if(t && (t.good||t.flag)){
+   if(!found){ found=true; out.last=e[i].n; out.lastResult=t.flag?'flag':'good'; out.since=gap; out.fromDocs=(e[i].source==='docs'); }
+   out.exposures++; out.good+=t.good||0; out.flag+=t.flag||0;
+   out.drills.unshift(e[i].n);
+  } else if(!found){ gap++; }
+ }
+ for(var j=e.length-1;j>=0;j--){
+  var s=e[j].tally && e[j].tally[id];
+  if(!s || !(s.good||s.flag)) continue;
+  if(s.flag) break;
+  out.streak++;
+ }
+ return out;
+}
+function statusOf(id){
+ var s=itemStats(id);
+ if(state.retired[id]) return {k:'info', label:'retired', s:s};
+ if(!s.last) return {k:'flag', label:'never exercised', s:s};
+ if(s.lastResult==='flag') return {k:'crit', label:'open — flagged last time out', s:s};
+ if(s.streak>=3 && s.since>=3) return {k:'flag', label:'clean '+s.streak+' drills then untouched for '+s.since+' — retire it or re-test it', s:s};
+ if(s.streak>=3) return {k:'good', label:'clean '+s.streak+' drills — ready to retire', s:s};
+ if(s.since>=3) return {k:'flag', label:'stale — '+s.since+' drills untouched', s:s};
+ return {k:'good', label:'working — clean last time out', s:s};
+}
+/* What deserves the next drill, scored across the whole record — the drills
+   that ran before this tool weigh the same as the ones banked in it. A fresh
+   flag dominates; never having been exercised at all is next; drills gone by
+   without touching it add up; a proven clean streak subtracts. */
+function pertinence(id){
+ var s=itemStats(id), sc=0;
+ if(state.retired[id]) return -999;
+ if(s.lastResult==='flag') sc+=120;
+ if(!s.last) sc+=90;
+ sc += Math.min(s.since,6)*10;
+ sc -= s.streak*25;
+ return sc;
+}
+function ranked(){
+ return DD.STANDING.map(function(x){return x.id;}).sort(function(a,b){ return pertinence(b)-pertinence(a); });
+}
+
+/* ---------- 5. Response timing ----------
+   The sim runs on a real-time clock, so the aircraft move while you
+   compose. These are your targets, not book numbers — the acknowledgement
+   target is editable and the 90-second items rule stays the engine's. */
+var TIMING = {events:[], pauses:0, pausedSim:0, txHot:0, txPaused:0, lastTxSim:null, lastTxWall:null, worst:0};
+function resetTiming(){
+ TIMING.events=[]; TIMING.pauses=0; TIMING.pausedSim=0; TIMING.txHot=0; TIMING.txPaused=0;
+ TIMING.lastTxSim=null; TIMING.lastTxWall=null; TIMING.worst=0;
+}
+function lags(){ return TIMING.events.filter(function(e){return e.kind==='ack';}).map(function(e){return e.lag;}); }
+function median(a){ if(!a.length) return null; var s=a.slice().sort(function(x,y){return x-y;}); var m=Math.floor(s.length/2); return s.length%2?s[m]:Math.round((s[m-1]+s[m])/2); }
+function oldestOwed(){
+ var worst=null;
+ DD.sim.ac.forEach(function(a){
+  if(!a.alive||!a.onFreq||a._firstTx!=null||a._ckAt==null) return;
+  var age=DD.sim.t-a._ckAt;
+  if(!worst||age>worst.age) worst={cs:a.cs, age:age};
+ });
+ return worst;
+}
+var activeRec=null, speciFired=false;
+function onTick(sim,dt){
+ sim.ac.forEach(function(a){ if(a.onFreq && a._ckAt==null) a._ckAt=sim.t; });
+ var sp = activeRec && activeRec.speci;
+ if(sp && sp.on && !speciFired && sim.t>=sp.at){
+  speciFired=true;
+  var was=category(activeRec.ceil, activeRec.vis), now=category(sp.ceil, sp.vis);
+  var cfg=configById(activeRec.cfg);
+  var kills = cfg.min && ((sp.ceil!=null && sp.ceil<cfg.min.ceil) || (sp.vis!=null && sp.vis<cfg.min.vis));
+  DD.log(kills?'crit':'flag',
+   '<span class="dd-chip '+(kills?'crit':'flag')+'">SPECI</span>Special observation — ceiling '+Number(sp.ceil).toLocaleString()+', visibility '+sp.vis+', wind '+sp.wind+'. The field goes '+was+' to <b>'+now+'</b>. '+TOOLBOX[now]
+   +(kills?(' <b>'+cfg.id+' is below its floor of '+cfg.min.ceil.toLocaleString()+' and '+cfg.min.vis+' ('+cfg.src+') — the configuration cannot stand.</b> Say what changes: the tools you just lost, what it does to the strips already in, and who you have to coordinate the change with.')
+     :(' Re-plan the toolbox out loud before the next strip checks in.')));
+ }
+ renderTiming();
+}
+DD.hooks.push(onTick);
+function renderTiming(){
+ var box = document.getElementById('ddb-timing');
+ if(!box || typeof box.innerHTML!=='string') return;
+ var owed=oldestOwed(), lg=lags(), med=median(lg);
+ var since = TIMING.lastTxSim==null ? null : Math.round(DD.sim.t-TIMING.lastTxSim);
+ var owedCls = owed ? (owed.age>state.target*2?'late':(owed.age>state.target?'hot':'')) : '';
+ box.innerHTML =
+  '<span>Key-up target <b>'+state.target+'s</b></span>'
+  +'<span>Since last transmission <b>'+(since==null?'—':since+'s')+'</b></span>'
+  +'<span>Median acknowledgement <b>'+(med==null?'—':med+'s')+'</b></span>'
+  +'<span class="'+owedCls+'">Oldest unanswered '+(owed?('<b>'+owed.cs+' '+Math.round(owed.age)+'s</b>'):'<b>none</b>')+'</span>'
+  +(state.hot?'<span class="hot">running hot — pause disabled</span>':'')
+  +(TIMING.txPaused?'<span>'+TIMING.txPaused+' transmission'+(TIMING.txPaused>1?'s':'')+' issued paused</span>':'');
+}
+function timingSummary(){
+ var lg=lags(), med=median(lg), worst=lg.length?Math.max.apply(null,lg):null;
+ return {n:lg.length, median:med, worst:worst, pauses:TIMING.pauses,
+         pausedSim:Math.round(TIMING.pausedSim), txPaused:TIMING.txPaused, txHot:TIMING.txHot,
+         target:state.target, late:lg.filter(function(x){return x>state.target;}).length};
+}
+
+/* ---------- 6. Wrap the player so timing and banking hang off it ---------- */
+var _load=window.ddLoad, _send=window.ddSend, _end=window.ddEnd, _rate=window.ddRate;
+var loading=false;
+window.ddLoad=function(id){
+ loading=true; try{ _load(id); } finally { loading=false; }
+ resetTiming();
+ DD.sim.ac.forEach(function(a){ if(a.onFreq) a._ckAt=0; });
+ var rec = findDrill(id);
+ activeRec = rec; speciFired = false;
+ if(rec && rec.rate){ window.ddRate(rec.rate); }
+ if(window.ddbPage) window.ddbPage('fly');    /* loading a drill puts you on the scope */
+ var top=ranked().slice(0,2).map(function(k){ var it=itemById(k); return it?it.t:k; });
+ if(top.length) DD.log('info','<span class="dd-chip info">notes</span>Carried in from the notebook — most pertinent open items right now: <b>'+top.join('</b> · <b>')+'</b>.');
+ renderTiming(); renderCustomBar();
+};
+window.ddRate=function(r){
+ if(loading){ _rate(r); return; }
+ if(state.hot && r===0 && DD.sim.ac.length && !DD.sim.ended){
+  DD.log('coach','<span class="coach">Running hot — the pause is disabled for this drill. The airplanes do not stop while you think, which is the whole point of the setting.</span>');
+  return;
+ }
+ if(r===0 && DD.sim.rate>0) TIMING.pauses++;
+ _rate(r); renderTiming();
+};
+window.ddSend=function(){
+ var box=document.getElementById('dd-cmd');
+ var raw=(box && typeof box.value==='string') ? box.value : '';
+ var paused = DD.sim.rate===0;
+ var before = DD.sim.feed.length;
+ _send.apply(this, arguments);
+ var a = matchAc(raw);
+ /* the deck echoes every key-up and coaches the ones it could not read;
+    anything else in the feed means the transmission actually did something */
+ var parsed=false, added=DD.sim.feed.length-before;
+ for(var i=0;i<added;i++){ var e=DD.sim.feed[i]; if(e && e.kind!=='info' && e.kind!=='coach') parsed=true; }
+ if(paused) TIMING.txPaused++; else TIMING.txHot++;
+ if(a && parsed){
+  if(a._firstTx==null && a._ckAt!=null){
+   a._firstTx=DD.sim.t;
+   var lag=Math.max(0, DD.sim.t-a._ckAt);
+   TIMING.events.push({cs:a.cs, kind:'ack', t:DD.sim.t, lag:Math.round(lag), paused:paused});
+   if(lag>state.target){
+    DD.log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> waited '+Math.round(lag)+' seconds from check-in for your first word — target is '+state.target+'. The strip moved '+Math.round(lag*(a.ias||250)/3600*10)/10+' NM while you were composing.');
+   } else {
+    DD.log('good','<span class="dd-chip good">good</span>First word to <b>'+a.cs+'</b> in '+Math.round(lag)+' seconds.');
+   }
+  }
+ }
+ TIMING.lastTxSim=DD.sim.t; TIMING.lastTxWall=nowMs();
+ renderTiming();
+};
+window.ddEnd=function(){
+ var already=DD.sim.ended;
+ _end.apply(this, arguments);
+ if(already) return;
+ var box=document.getElementById('dd-debriefbox');
+ if(box && typeof box.innerHTML==='string') box.innerHTML += timingHtml()+captureHtml();
+ renderTiming();
+};
+function nowMs(){ return (typeof Date!=='undefined' && Date.now) ? Date.now() : 0; }
+function matchAc(txt){
+ var up=(txt||'').toUpperCase(), hit=null;
+ DD.sim.ac.forEach(function(a){ if(up.indexOf(a.cs)>=0) hit=a; });
+ if(hit) return hit;
+ return DD.sim.sel ? DD.sim.ac.filter(function(a){return a.cs===DD.sim.sel;})[0] : null;
+}
+
+/* ---------- 7. Generator (seeded, so a drill can be handed over by number) ---------- */
+function lcg(seed){ var s=(seed>>>0)||1; return function(){ s=(Math.imul(s,1664525)+1013904223)>>>0; return s/4294967296; }; }
+function ri(rnd,a,b){ return a+Math.floor(rnd()*(b-a+1)); }
+function pick(rnd,arr){ return arr[Math.floor(rnd()*arr.length)]; }
+/* Carriers from claude_US_Carrier_Callsigns.md, weighted the way MSP actually
+   reads: Delta plus its wholly-owned Endeavor and SkyWest feed, Sun Country
+   (Minneapolis-based), then the rest. Everything is editable in the row below. */
+/* Callsigns from claude_US_Carrier_Callsigns.md; the types are what those
+   carriers actually operate at MSP. Wake class is derived from the type by the
+   engine, never carried alongside it. */
+var FLEET=[
+ {c:'DAL',t:'B738'},{c:'DAL',t:'A321'},{c:'DAL',t:'B739'},{c:'DAL',t:'A339'},
+ {c:'EDV',t:'CRJ9'},{c:'EDV',t:'CRJ7'},{c:'SKW',t:'E175'},{c:'SKW',t:'CRJ9'},
+ {c:'SCX',t:'B738'},{c:'SCX',t:'B38M'},
+ {c:'AAL',t:'B738'},{c:'UAL',t:'B739'},{c:'SWA',t:'B737'},{c:'RPA',t:'E175'},
+ {c:'FDX',t:'B763'}
+];   /* wake class is not carried here — it comes off the type */
+/* Which gates a generated stream draws from. The seat's own gates come out of
+   4-4d and move with the configuration, so the list is built rather than
+   written down — and every one of the six gates has to be reachable on its
+   own, which is what the single-stream entries are for. */
+function mixOptions(){
+ /* one derivation of "the seat's gates", not two — seatGates already walks
+    4-4d for the configuration on the draft */
+ var cfgId=(draft&&draft.cfg)||'12', mine=seatGates(), theirs=[];
+ GATES.forEach(function(g){
+  if(DD.feederFor(cfgId,g) && mine.indexOf(g)<0) theirs.push(g);
+ });
+ /* near and far move with the configuration — a near gate is one that drops
+    onto the final, so the answer reverses between the 12s and the 30s */
+ var near=GATES.filter(function(g){ return DD.nearFarFor(cfgId,g)==='near'; });
+ var far =GATES.filter(function(g){ return DD.nearFarFor(cfgId,g)==='far'; });
+ var opts=[];
+ if(mine.length)   opts.push({id:'mine',   gates:mine,   label:'Gates this seat owns — '+mine.join(', ')});
+ if(theirs.length) opts.push({id:'theirs', gates:theirs, label:'The other Feeder’s gates — '+theirs.join(', ')});
+ opts.push({id:'all',  gates:GATES.slice(), label:'All six gates'});
+ if(near.length) opts.push({id:'near', gates:near, label:'Near gates only — '+near.join(', ')});
+ if(far.length)  opts.push({id:'far',  gates:far,  label:'Far gates only — '+far.join(', ')});
+ GATES.forEach(function(g){
+  opts.push({id:'g:'+g, gates:[g], label:'One stream — '+g+' only'});
+ });
+ return opts;
+}
+function mixGates(id){
+ var o=mixOptions().filter(function(x){ return x.id===id; })[0];
+ return (o && o.gates.length) ? o.gates.slice() : GATES.slice();
+}
+/* Rewrite the gate options whenever the seat or the configuration moves. */
+function syncMixOptions(){
+ var sel=document.getElementById('ddb-mix');
+ if(!sel || typeof sel.innerHTML!=='string') return;
+ var was=sel.value, opts=mixOptions();
+ sel.innerHTML=opts.map(function(o){
+  return '<option value="'+esc(o.id)+'">'+esc(o.label)+'</option>';
+ }).join('');
+ if(opts.some(function(o){ return o.id===was; })) sel.value=was;
+ else sel.value=opts[0].id;
+}
+
+var PRESS={
+ routine:{gap:[11,15], margin:[2200,3200], spawn:[70,100], live:2, label:'routine'},
+ compressed:{gap:[6,9], margin:[1200,2200], spawn:[40,60], live:2, label:'compressed'},
+ saturated:{gap:[4,6], margin:[700,1400], spawn:[22,35], live:3, label:'saturated'}
+};
+var FOCUS={
+ free:{label:'open push', line:'Nothing weighted — everything is owed from the first transmission.'},
+ sep:{label:'Separation proof', line:'Two on the shared trunk closing at the same altitude. Say who is one, say the number at the merge, say the protect move — out loud, before the engine notices.'},
+ maintain:{label:'Climb / descend and maintain', line:'Every live strip starts well above its ladder, so the descent has to come from you. Drop the verb and the crew queries you.'},
+ floors:{label:'Floors cited aloud', line:'Short fuse to the floor handoff. Cite the floor and its book before every switch — near 7,000 / far 8,000 on a 12s, SOP 4-4c(3).'},
+ speed:{label:'Speed-restoration constructs', line:'Everyone arrives on an assigned speed. Restore the ladder before GREAK or the delivery spec breaks.'},
+ posthandoff:{label:'Post-handoff discipline', line:'A runway flip mid-stream. Re-flash to the new receiver, then switch — in that order, and nothing after.'}
+};
+function gen(o){
+ o=o||{};
+ var seed = (o.seed!=null) ? (o.seed|0) : Math.floor(Math.random()*100000);
+ var rnd=lcg(seed);
+ var focus=FOCUS[o.focus]?o.focus:'free';
+ var press=PRESS[o.pressure]||PRESS.compressed;
+ var mix=(o.mixGates && o.mixGates.length) ? o.mixGates.slice() : GATES.slice();
+ /* Shuffle the mix on the seed. The gate is picked by strip index, so without
+    this a three-strip drill off a six-gate mix could only ever see the first
+    three and MUSCL or BAINY would never turn up. Still deterministic — the
+    same seed gives the same order. */
+ for(var mi=mix.length-1; mi>0; mi--){
+  var mj=Math.floor(rnd()*(mi+1)), mt=mix[mi]; mix[mi]=mix[mj]; mix[mj]=mt;
+ }
+ var n=Math.max(1,Math.min(6, o.count|0 || 3));
+ var live=Math.min(n, press.live + (focus==='sep'?1:0));
+ var near = (focus==='floors'||focus==='posthandoff');
+ var band = near ? [6,13] : [17,31];
+ var ac=[], used={}, dtgLive=0, spawnT=ri(rnd,8,22);
+ var sepPair=null;
+ if(focus==='sep'){
+  for(var sx=0; sx<mix.length && !sepPair; sx++)
+   for(var sy=sx+1; sy<mix.length && !sepPair; sy++)
+    if(DD.sharedTail(DD.ROUTES[mix[sx]], DD.ROUTES[mix[sy]])) sepPair=[mix[sx], mix[sy]];
+  if(!sepPair) sepPair=[mix[0], mix[0]];      /* one gate shares its whole ladder */
+ }
+ for(var i=0;i<n;i++){
+  var gate=mix[i%mix.length];
+  /* A separation drill needs the first two on a track they genuinely share,
+     so the pair is chosen out of the mix rather than hardcoded to NITZR and
+     BLUEM — a one-gate mix shares the whole ladder and is a valid pair. */
+  if(focus==='sep' && i<2 && sepPair){ gate = sepPair[i]; }
+  var ft=pick(rnd,FLEET), cs;
+  do{ cs=ft.c+ri(rnd,120,2980); }while(used[cs]);
+  used[cs]=1;
+  var total=totalOf(gate);
+  var r={cs:cs, type:ft.t, gate:gate, rules:'IFR', route:'', radar:'established',
+         from:'', rwy:'', ckdIn:false, altim:false, spawnAt:0,
+         mode:'published', asg:230};
+  if(i<live){
+   dtgLive = (i===0) ? ri(rnd,band[0],band[1]) : dtgLive + ri(rnd,press.gap[0],press.gap[1]);
+   if(focus==='sep' && i===1) dtgLive = ac[0].dtg + ri(rnd,5,8);
+   r.dtg = Math.round(Math.min(dtgLive, Math.max(3, total-1))*10)/10;
+   r.ckdIn = true;
+   r.altim = rnd()<0.6;
+   var margin = ri(rnd,press.margin[0],press.margin[1]);
+   if(focus==='maintain') margin += ri(rnd,2800,4200);
+   var pub = capAt(gate, total-r.dtg);
+   /* never start below the gate floor — that is the altitude the handoff is
+      made at, so beginning under it would hand the trainee a drill that is
+      already wrong (SOP 4-4c(3)) */
+   var base = Math.max(DD.FLOORS[gate], pub==null?0:pub);
+   r.alt = Math.max(DD.FLOORS[gate], Math.min(24000, Math.round((base+margin)/100)*100));
+   r.ias = Math.round(pubSpdAt(gate, total-r.dtg));
+   if(focus==='sep' && i===1){ r.alt=ac[0].alt; r.ias=ac[0].ias+ri(rnd,20,40); }
+   if(focus==='speed'){ r.mode='assigned'; r.asg=pick(rnd,[210,220,230,250]); r.ias=r.asg; }
+   /* heavy jets take the 12R/30L transition in every config — ZMP Table 2c.
+      The class comes off the type, so the flip can only go to one that is not. */
+   if(near){ r.rwy = (focus==='posthandoff' && i===0 && !DD.wakeOf(r.type).heavy) ? '12L' : '12R'; r.altim=true; }
+   else if(rnd()<0.35){ r.rwy='12R'; }
+  } else {
+   r.dtg = Math.round(total*10)/10; r.spawnAt = spawnT; spawnT += ri(rnd,press.spawn[0],press.spawn[1]);
+   r.alt = Math.min(24000, capAt(gate, 0) + ri(rnd,6000,9000));
+   r.alt = Math.max(DD.FLOORS[gate], Math.round(r.alt/1000)*1000);
+   r.ias = 280;
+  }
+  r.route = DD.routeTextFor(r);
+  /* who handed it over follows from where it comes in and how high */
+  var rn = DD.neighbourAt(entryBearing(r), r.alt);
+  r.from = (rn.pos==='RST') ? 'Rochester approach' : ('ZMP Sector '+pick(rnd,['5','9','10']));
+  ac.push(r);
+ }
+ /* departures and an overflight ride alongside whatever the focus asked for */
+ var nDep=Math.max(0, Math.min(3, o.deps|0));
+ for(var d=0; d<nDep; d++){
+  var ftd=pick(rnd,FLEET), dcs;
+  do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
+  used[dcs]=1;
+  var dsid=pick(rnd,SIDS);
+  ac.push({cs:dcs, type:ftd.t, role:'departure', rules:'IFR', radar:'established', from:'MSP tower', sid:dsid,
+           route:DD.routeTextFor({role:'departure', sid:dsid}),
+           fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
+           gate:'NITZR', dtg:20, mode:'free', asg:230, rwy:'',
+           entryR:180, entryD:38, exitR:20, exitD:38,
+           ckdIn:(d===0), altim:false, spawnAt:(d===0?0:ri(rnd,30,90))});
+ }
+ if(o.overflight){
+  var er=ri(rnd,150,240), xr=(er+ri(rnd,120,200))%360;
+  /* an overflight arriving from Rochester comes in at one of the three
+     altitudes the LOA allows; anything else would need coordinating */
+  var oAlt=ri(rnd,40,75)*100, oRadar=(rnd()<0.5?'none':'established');
+  var oNb=DD.neighbourAt(er, oAlt);
+  if(oNb.pos==='RST'){ oAlt=pick(rnd,DD.RST_OVF_ALTS); oNb=DD.neighbourAt(er, oAlt); }
+  ac.push({cs:'N'+ri(rnd,100,999)+pick(rnd,['SP','GT','DP','ER','CM']), type:pick(rnd,['C172','SR22','BE36','PA46']), wake:'',
+           role:'overflight', rules:'VFR', route:'',
+           radar:oRadar, from:(oRadar==='established'?oNb.name:''),
+           entryR:er, entryD:38, exitR:xr, exitD:38,
+           alt:oAlt, ias:ri(rnd,110,180),
+           gate:'NITZR', dtg:20, sid:'WLSTN', fromStart:4, mode:'free', asg:230, rwy:'',
+           ckdIn:false, altim:false, spawnAt:ri(rnd,20,70)});
+ }
+ var fc=FOCUS[focus];
+ return {
+  id:'u'+seed+'-'+focus,
+  name:'Built — '+fc.label+' · seed '+seed,
+  cfg:o.cfg||'12', wind:o.wind||'150/9', ceil:(o.ceil==null?5000:o.ceil), vis:(o.vis==null?10:o.vis),
+  atis:'J', altim:'2980', seat:o.seat||seatLabel(), towers:state.pos.towers,
+  open:openLabel(), rstOpen:rstOpen(),
+  brief:fc.line+' Generated '+press.label+' push, '+n+' strip'+(n>1?'s':'')+', seed '+seed+' — same seed rebuilds the same drill.',
+  focus:focus, seed:seed, rate:1, hot:!!o.hot,
+  speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12'}, ac:ac
+ };
+}
+
+/* ---------- 8. Validation — refuses anything the reference data won't carry ---------- */
+function validate(rec){
+ var errs=[], warns=[], seen={};
+ if(!rec.name || !rec.name.trim()) errs.push('The drill needs a name.');
+ if(!rec.ac || !rec.ac.length) errs.push('A drill needs at least one strip.');
+ (rec.ac||[]).forEach(function(a,i){
+  var tag='Strip '+(i+1)+(a.cs?' ('+a.cs+')':'');
+  if(!a.cs || !/^[A-Z]{1,3}[0-9]{1,4}$|^N[0-9A-Z]{2,5}$/.test(a.cs)) errs.push(tag+': callsign should read like DAL589 or N172ER.');
+  if(seen[a.cs]) errs.push(tag+': duplicate callsign — the parser matches on callsign and would address the wrong strip.');
+  seen[a.cs]=1;
+  var role=roleOf(a);
+  if(!(a.alt>=2000 && a.alt<=24000)) errs.push(tag+': altitude must be between 2,000 and 24,000.');
+  if(role==='departure'){
+   if(SIDS.indexOf(a.sid)<0) errs.push(tag+': '+a.sid+' is not one of the turbojet SIDs in the reference ('+SIDS.join(', ')+').');
+   else {
+    var dt=DD.DEPS[a.sid].total;
+    if(!(a.fromStart>=0)) errs.push(tag+': distance from MSP must be a number.');
+    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' join track ('+dt.toFixed(1)+' NM). M98 only takes a departure to the 60 NM join limit (ZMP-M98 LOA 4.f).');
+    else if(a.fromStart>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM, already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
+   }
+   if(a.alt>=DD.DEP_RELEASE.alt) warns.push(tag+': starts at '+DD.fmtAlt(a.alt)+', at or above the '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' release trigger — the release is already due on the first tick.');
+  }
+  else if(role==='overflight'){
+   [['entryR',a.entryR,'entry radial'],['exitR',a.exitR,'exit radial']].forEach(function(p){
+    if(!(p[1]>=0 && p[1]<=360)) errs.push(tag+': '+p[2]+' must be between 0 and 360.');
+   });
+   [['entryD',a.entryD,'entry distance'],['exitD',a.exitD,'exit distance']].forEach(function(p){
+    if(!(p[1]>=5 && p[1]<=60)) errs.push(tag+': '+p[2]+' must be between 5 and 60 NM of the MSP VOR.');
+   });
+   if(a.entryR===a.exitR && a.entryD===a.exitD) errs.push(tag+': the entry and the exit are the same point — an overflight has to cross something.');
+  }
+  else if(!DD.ARRIVALS[a.gate]) errs.push(tag+': '+a.gate+' is not an arrival in the reference set ('+Object.keys(DD.ARRIVALS).join(', ')+').');
+  else if((function(){
+   /* the gate belongs to a Feeder position — 4-4d. Only worth saying when a
+      Feeder seat is being worked and the other Feeder is actually open. */
+   var owner=DD.feederFor(rec.cfg, a.gate);
+   if(!owner) return false;
+   var working=seatIds();
+   if(working.indexOf('H')<0 && working.indexOf('I')<0) return false;
+   if(working.indexOf(owner)>=0) return false;
+   if(!isOpen(owner)) return false;          /* the other feeder is closed, so it is yours anyway */
+   return owner;
+  })()){
+   var ow=DD.feederFor(rec.cfg, a.gate);
+   if(!warns.some(function(w){ return w.indexOf('SOP 4-4d')>=0; }))
+    warns.push(tag+': '+a.gate+' is a '+(ow==='I'?'North':'South')+' Feeder gate in the '+configById(rec.cfg).id+' configuration (SOP 4-4d) and you are working '+seatIds().join(' + ')+'. Gates do get reassigned between the Feeders to balance, so this is legal — but it is not the default split.');
+  }
+  else if(DD.SAT_DIRECT[a.gate]){
+   /* a direct routing has no published ladder — its length falls out of where
+      it crossed the boundary, so there is nothing to check until that is set */
+   var dr=(a.entryR>=0 && a.entryR<=360 && a.entryD>0)
+     ? DD.satDirectRoute(a.gate, {r:a.entryR, d:a.entryD}, a.dest||'KFCM') : null;
+   if(dr){
+    if(!(a.dtg>=0)) errs.push(tag+': distance to go must be a number.');
+    else if(a.dtg>dr.total+0.5) errs.push(tag+': '+a.dtg.toFixed(1)+' NM to go is longer than the whole '+a.gate+' routing ('+dr.total.toFixed(1)+' NM from the boundary to '+(a.dest||'KFCM')+').');
+    var da=DD.SAT_DIRECT[a.gate];
+    if(a.alt>da.alt+100)
+     warns.push(tag+': starts at '+DD.fmtAlt(a.alt)+' on the '+a.gate+' routing, which the agreement puts at '+da.altNote+' ('+da.src+'). Legal to be higher on the way in, but it has to be down there by the boundary.');
+   }
+  }
+  else {
+   var total=totalOf(a.gate);
+   if(!(a.dtg>=0)) errs.push(tag+': distance to go must be a number.');
+   else if(a.dtg>total+0.5) errs.push(tag+': '+a.dtg.toFixed(1)+' NM to go is past the start of the '+a.gate+' ladder ('+total.toFixed(1)+' NM total).');
+   /* only the six MSP gates have a Feeder-to-Arrival floor; a satellite arrival
+      is held to its own published crossings instead */
+   var floor=DD.FLOORS[a.gate];
+   if(floor!=null && a.alt>=2000 && a.alt<floor) errs.push(tag+': '+DD.fmtAlt(a.alt)+' is below the '+a.gate+' floor of '+DD.fmtAlt(floor)+' — '+(DD.FLOOR_BASIS[a.gate]||'SOP 4-4c')+'. The drill would start below the handoff floor.');
+   else {
+    var cap=capAt(a.gate, Math.max(0,total-a.dtg));
+    if(cap!=null && a.alt<cap-100) warns.push(tag+': starts at '+DD.fmtAlt(a.alt)+', below the published '+DD.fmtAlt(cap)+' binding at '+fixAt(a.gate, Math.max(0,total-a.dtg))+' — legal to fly, but the ladder is already satisfied and there is no descend-via left to work.');
+   }
+  }
+  /* an overflight can be a light single; an arrival or a departure cannot */
+  var loSpd = (role==='overflight') ? 60 : 150;
+  if(!(a.ias>=loSpd && a.ias<=350)) errs.push(tag+': speed must be between '+loSpd+' and 350 knots'+(role==='overflight'?' — a transiting light single sits around 110.':'.'));
+  if(a.mode==='assigned' && !(a.asg>=170 && a.asg<=340)) errs.push(tag+': assigned speed must be between 170 and 340 knots.');
+  if(role==='arrival' && a.rwy && RWYS.indexOf(a.rwy)<0) errs.push(tag+': '+a.rwy+' is not a runway in the receiver table ('+RWYS.join(', ')+').');
+  if(!a.ckdIn && !(a.spawnAt>=0)) errs.push(tag+': check-in time must be zero or more seconds.');
+  if(role==='arrival' && a.alt>=18000 && a.dtg<15) warns.push(tag+': '+DD.fmtAlt(a.alt)+' with '+a.dtg.toFixed(1)+' NM to run — the engine descends about 1,800 feet a minute, so this one cannot make its floor. Deliberate, or a typo?');
+ });
+ /* opening geometry against the in-trail check the engine runs — only for a
+    pair that actually shares a tail, which is what the engine compares */
+ var liveArr=(rec.ac||[]).filter(function(a){ return a.ckdIn && roleOf(a)==='arrival' && DD.ROUTES[a.gate]; });
+ for(var i=0;i<liveArr.length;i++) for(var j=i+1;j<liveArr.length;j++){
+  var A=liveArr[i], B=liveArr[j];
+  var sh=DD.sharedTail(DD.ROUTES[A.gate], DD.ROUTES[B.gate]);
+  if(!sh || A.dtg>sh.len || B.dtg>sh.len) continue;
+  if(Math.abs(A.dtg-B.dtg)<3 && Math.abs(A.alt-B.alt)<900)
+   warns.push(A.cs+' and '+B.cs+' begin '+Math.abs(A.dtg-B.dtg).toFixed(1)+' NM apart co-altitude on the shared '+sh.fix+' tail — the engine logs loss of separation on the first tick. Start them apart and let the closure be the drill.');
+ }
+ /* a departure with nobody working departures is worth saying out loud */
+ var hasDep=(rec.ac||[]).some(function(a){ return roleOf(a)==='departure'; });
+ if(hasDep && !seatPositions().some(function(p){ return p.job==='departure' || p.id==='H'; }))
+  warns.push('This drill has departures in it but the seat you are working is not a departure position and is not the combined H. Deliberate, or does the position setup need a look?');
+ /* configuration follows the weather — MSP-M98 LOA 9; it is not a free pick */
+ var cfg=configById(rec.cfg), cat=category(rec.ceil, rec.vis);
+ if(cfg.min){
+  if(rec.ceil!=null && rec.ceil<cfg.min.ceil) errs.push(cfg.id+' needs a ceiling of at least '+cfg.min.ceil.toLocaleString()+' feet and you have set '+Number(rec.ceil).toLocaleString()+' ('+cfg.src+'). Below the floor this configuration is off the table — fall back to one that the weather supports.');
+  if(rec.vis!=null && rec.vis<cfg.min.vis) errs.push(cfg.id+' needs visibility of at least '+cfg.min.vis+' miles and you have set '+rec.vis+' ('+cfg.src+').');
+ }
+ if(cat!=='VFR') warns.push('Flight category is '+cat+'. '+TOOLBOX[cat]+' Whatever you had planned on a visual, plan again.');
+ if(!configCarried(rec.cfg)) warns.push('The engine only carries the 12s arrival ladders, so the strips will fly NITZR, BLUEM and TORGY to '+RWYS.join(' / ')+' whatever the configuration line says. Everything else about the frame is real — brief it, work it, and know the geometry underneath is the 12s.');
+ (rec.ac||[]).forEach(function(a,i){
+  var rules=(a.rules==='VFR')?'VFR':'IFR';
+  var tag2=(a.cs||'Strip '+(i+1));
+  /* we have to know the rules, and an IFR strip has to have a route */
+  /* A pop-up has not filed anything — the route is what you are about to give
+     it — so only an established IFR strip owes one. */
+  var radarState=DD.normRadar(a.radar, rules, roleOf(a));
+  var isPopup=(radarState==='popup');
+  if(rules==='IFR' && !isPopup && !String(a.route||'').trim())
+   errs.push(tag2+' is IFR with no route. Fill it from the procedure or type the filed one — an IFR strip handed to you is on a clearance, and a clearance has a route.');
+  if(isPopup && roleOf(a)==='arrival')
+   warns.push(tag2+' is a pop-up IFR on the '+a.gate+' ladder. A pop-up comes up airborne asking for a clearance, so it would not already be flying a STAR — check this is the drill you meant.');
+  if(isPopup && String(a.route||'').trim())
+   warns.push(tag2+' is a pop-up IFR with a route already on it. That is what it is asking you for, so the route reads as what it wants rather than what it has.');
+  if(rules==='VFR' && a.alt>=18000)
+   errs.push(tag2+' is VFR at '+DD.fmtAlt(a.alt)+'. Class A starts at 18,000 and it is IFR only.');
+  if(rules==='VFR' && roleOf(a)==='arrival')
+   warns.push(tag2+' is a VFR arrival on the '+a.gate+' ladder. A VFR aircraft is not flying the descend-via, so the engine will hold its altitude until you assign one — deliberate, or should it be IFR?');
+  /* radar service — a handoff should say who from, and a cold call cannot be one */
+  var nb=neighbourOf(a);
+  var st=DD.RADAR_STATES[radarState], noSvc=(!st.code && !st.ident);
+  /* the job settles what the strip can be and who could have handed it over */
+  if(roleOf(a)==='departure'){
+   var dapt=DD.airportOf(a.dep||'KMSP');
+   if((a.dep||'KMSP')!=='KMSP')
+    errs.push(tag2+' departs '+(a.dep||'KMSP')+', and the route data carries only the nine MSP turbojet SIDs — a satellite departure has no track for the engine to fly yet.');
+   if(a.depRwy && dapt.rwys.indexOf(a.depRwy)<0)
+    errs.push(tag2+' departs runway '+a.depRwy+', which is not a runway at '+(a.dep||'KMSP')+'. That field has '+dapt.rwys.join(', ')+'.');
+   if(rules==='IFR' && a.depRwy && dapt.noIfrDep && dapt.noIfrDep.indexOf(a.depRwy)>=0)
+    errs.push(tag2+' is an IFR departure off '+(a.dep||'KMSP')+' runway '+a.depRwy+', and that runway is not available for IFR departures (STP 7220.3Q).');
+  }
+  if(roleOf(a)==='arrival'){
+   var dest=a.dest||'KMSP', dap=DD.airportOf(dest);
+   /* the arrival has to be one that actually ends at that field */
+   var proc=DD.ARRIVALS[a.gate];
+   if(a.gate && !proc)
+    errs.push(tag2+' is on '+a.gate+', which is not an arrival in the reference set.');
+   else if(a.gate && !DD.arrivalServes(a.gate, dest)){
+    var ok=DD.arrivalsFor(dest);
+    errs.push(tag2+' is landing '+dest+' on the '+a.gate+' arrival, and '+a.gate+' does not serve that field — it serves '
+      +proc.serves.join(', ')+'. Into '+dest+' it would be '+(ok.length?ok.join(', '):'nothing in the reference set')+'.'
+      +(proc.kind==='RNAV' ? ' The six RNAV gates are MSP arrivals and nothing else.' : ''));
+   }
+   if(proc && !proc.flies)
+    errs.push(tag2+' is on the '+a.gate+(proc.rev?(' ('+proc.rev+')'):'')+' arrival. The route data carries ladder geometry only for the six MSP RNAV gates, so this one sets the frame and the coordination picture but the engine cannot fly it.');
+   if(dest!=='KMSP' && DD.satSeatFor(dest))
+    warns.push(tag2+' is landing '+dest+', which is '+DD.satSeatFor(dest)+' — '+((POSITIONS.filter(function(p){return p.id===DD.satSeatFor(dest);})[0]||{}).name||'a satellite seat')+'’s field (SOP 6-2). Working it means that seat is open and the arrival is coordinated there, not down the MSP split.');
+   if(a.rwy && !DD.runwaysAt(dest).length)
+    errs.push(tag2+' is assigned runway '+a.rwy+' at '+dest+', and that field’s runway inventory is not in the reference set. Leave the runway unissued.');
+   if(a.rwy && dap.rwys.indexOf(a.rwy)<0)
+    errs.push(tag2+' is assigned runway '+a.rwy+', which is not a runway at '+dest+'. That field has '+dap.rwys.join(', ')+'.');
+   if(a.rwy && String(rec.cfg||'').indexOf(String(a.rwy).replace(/[LRC]$/,''))<0)
+    warns.push(tag2+' is assigned runway '+a.rwy+' in a '+rec.cfg+' configuration, which is not a runway that configuration lands. Configuration follows the wind and is never a free pick (MSP-M98 LOA 9) — check the frame.');
+   if(a.rwy && DD.sideOfRunway(a.rwy)===null)
+    warns.push(tag2+' is assigned runway '+a.rwy+'. SOP 4-2 splits 4, 22, 17 and 35 west and east of the localizer rather than north and south, so the receiver falls back to the side the gate feeds — the frame is right, the vectoring is not modelled.');
+   if(proc && proc.direct && !(a.entryR>=0 && a.entryR<=360 && a.entryD>0))
+    errs.push(tag2+' comes in on '+a.gate+', which is a direct routing rather than a published arrival, so it needs the radial and the DME it crosses the boundary on — the same way an overflight does.');
+   if(a.mode==='assigned' && !(a.asg>=60 && a.asg<=350))
+    errs.push(tag2+' is marked as Center-advised on speed, but the speed reads '+a.asg+'. An arrival on an optimized profile descent flies the published speeds unless Center called with something else — give the number they passed, or put it back on published.');
+  }
+  if(radarState==='established' && !String(a.from||'').trim())
+   warns.push(tag2+' arrives with radar service already established but nothing says who handed it off. On this geometry that would be '+((nb&&nb.name)||'a ZMP sector')+' — '+((nb&&nb.why)||'')+'.');
+  if(radarState==='established' && nb && String(a.from||'').trim()){
+   var says=String(a.from).toLowerCase();
+   var saysRst=/rochester|\brst\b/.test(says), saysZmp=/cent(?:er|re)|\bzmp\b/.test(says);
+   if(!rstOpen() && /rochester|\brst\b/.test(String(a.from||'').toLowerCase()))
+   errs.push(tag2+' is marked as handed off by Rochester, but this drill has Rochester closed. The delegated airspace reverts to '+DD.RST_CLOSED_OWNER+' (M98/RST LOA 4.a), so nobody at Rochester could have handed it to you.');
+  /* what RST hands us, and at what altitude — M98/RST LOA 5.a(6) and 5.a(7) */
+  if(nb && nb.pos==='RST' && rstOpen() && roleOf(a)==='overflight'){
+   var oa=Math.round(a.alt/100)*100;
+   if(DD.RST_OVF_ALTS.indexOf(oa)<0)
+    warns.push(tag2+' comes in from Rochester at '+DD.fmtAlt(a.alt)+'. RST enters overflights into M98 at 4,000, 6,000 or 8,000 (M98/RST LOA 5.a(6)) — anything else was individually coordinated, so brief why.');
+   if(a.alt>=7000)
+    warns.push(tag2+' transits at '+DD.fmtAlt(a.alt)+'. An overflight at 7,000 or above is individually coordinated at least five minutes before it enters M98 (M98/RST LOA 5.a(7)) — that call should be part of the drill, not a surprise.');
+  }
+  if(nb.pos==='RST' && saysZmp && !saysRst)
+    warns.push(tag2+' is marked as handed off by '+a.from+', but it enters '+nb.why+' — that is Rochester\u2019s airspace, so it would have come from RST.');
+   if(nb.pos==='ZMP' && saysRst && !saysZmp)
+    warns.push(tag2+' is marked as handed off by '+a.from+', but it enters where '+nb.why+' — RST would not have had it.');
+  }
+  if(noSvc && roleOf(a)==='arrival')
+   warns.push(tag2+' is an arrival on a published ladder that nobody handed to you. That happens, but it is unusual — an arrival on a STAR is normally a handoff. Check this is the drill you meant to build.');
+  if(noSvc && a.ckdIn)
+   warns.push(tag2+' starts already on your frequency but with no radar service on it. It will read as a cold call the moment the drill opens rather than calling in when it gets to you — set it to check in at a time if you want the call to arrive mid-drill.');
+  if(rules==='VFR' && category(rec.ceil, rec.vis)!=='VFR')
+   warns.push(tag2+' is VFR and the field is '+category(rec.ceil, rec.vis)+'. '+TOOLBOX[category(rec.ceil, rec.vis)]+' Check that this one still works in these conditions.');
+  var wk=DD.wakeOf(a.type);
+  if(roleOf(a)==='arrival' && wk.heavy && a.rwy && a.rwy!=='12R') errs.push((a.cs||'A heavy')+' is a '+wk.label+' ('+a.type+') assigned '+a.rwy+' — heavy jets take the 12R/30L transition in every configuration (ZMP-M98 LOA Table 2c).');
+  if(wk.cls==='nowgt') warns.push((a.cs||'Strip '+(i+1))+': '+a.type+' is not in the weight table, so it tags NOWGT — 10 NM ahead and behind until the weight is verified. Check the type against the facility CWT reference, or use one the table already knows.');
+ });
+ if(rec.speci && rec.speci.on){
+  var after=category(rec.speci.ceil, rec.speci.vis);
+  if(!(rec.speci.at>=0)) errs.push('The special observation needs a time in seconds from the start of the drill.');
+  if(after===cat) warns.push('The special observation does not change the flight category — it stays '+cat+'. Push the ceiling or the visibility across a threshold if you want the drill to force a re-plan.');
+ }
+ return {errors:errs, warnings:warns};
+}
+
+/* ---------- 9. Drill record <-> scenario ---------- */
+/* The frame line the drill format asks for: config · wind · flight category ·
+   seat · towers, with who else is open carried alongside it. */
+function frameOf(rec){
+ var cat=category(rec.ceil, rec.vis);
+ var rst=(rec.rstOpen===false)?' · RST closed':'';
+ var wx=cat+' '+(rec.ceil==null?'':(rec.ceil>=99999?'':(rec.ceil+' broken '))) + (rec.vis==null?'':(rec.vis+' miles'));
+ return [configById(rec.cfg).id, 'wind '+(rec.wind||'150/9'), wx.trim(), (rec.seat||'Split H — South Feeder'),
+         (rec.towers||'towers open')+rst, 'ATIS '+(rec.atis||'J'), 'A'+(rec.altim||'2980')].join(' · ');
+}
+function openLine(rec){ return rec.open ? ('Open around you: '+rec.open) : ''; }
+function toScenario(rec){
+ return {
+  id:rec.id, name:rec.name, frame:frameOf(rec), altim:String(rec.altim||'2980'),
+  brief:[rec.brief||'', openLine(rec), configById(rec.cfg).note+'. '+TOOLBOX[category(rec.ceil, rec.vis)]].filter(Boolean).join(' '),
+  ac:function(){
+   return rec.ac.map(function(a){
+    var role=roleOf(a);
+   var o={cs:a.cs, type:a.type, role:role, rules:(a.rules==='VFR'?'VFR':'IFR'), route:a.route||'',
+          radar:DD.normRadar(a.radar, (a.rules==='VFR'?'VFR':'IFR'), role), from:a.from||'',
+          dep:a.dep||'KMSP', dest:a.dest||'KMSP', depRwy:a.depRwy||null,
+          ctrSpeed:(role==='arrival' && a.mode==='assigned'),
+          alt:a.alt, ias:a.ias,
+          iasAsg:(a.mode==='assigned'?a.asg:null), spdMode:a.mode||'published',
+          ckdIn:!!a.ckdIn, altim:!!a.altim, spawnAt:a.ckdIn?0:(a.spawnAt||0)};
+   if(role==='departure'){ o.sid=a.sid; o.fromStart=a.fromStart; o.spdMode='free'; o.iasAsg=null; }
+   else if(role==='overflight'){ o.entry={r:a.entryR,d:a.entryD}; o.exit={r:a.exitR,d:a.exitD}; o.spdMode='free'; o.iasAsg=null; }
+   else { o.gate=a.gate; o.dtgEnd=a.dtg; o.rwy=a.rwy||null; o.engine=a.engine||'jet';
+          if(DD.SAT_DIRECT[a.gate]) o.entry={r:a.entryR, d:a.entryD}; }
+   return o;
+   });
+  }
+ };
+}
+function findDrill(id){ for(var i=0;i<state.drills.length;i++){ if(state.drills[i].id===id) return state.drills[i]; } return null; }
+function publish(rec){
+ var sc=toScenario(rec);
+ for(var i=0;i<DD.SCENARIOS.length;i++){ if(DD.SCENARIOS[i].id===rec.id){ DD.SCENARIOS[i]=sc; return sc; } }
+ DD.SCENARIOS.push(sc); return sc;
+}
+function saveDrill(rec){
+ var v=validate(rec); if(v.errors.length) return v;
+ var found=false;
+ for(var i=0;i<state.drills.length;i++){ if(state.drills[i].id===rec.id){ state.drills[i]=rec; found=true; } }
+ if(!found) state.drills.push(rec);
+ publish(rec); save(); renderSaved(); renderCustomBar();
+ return v;
+}
+function deleteDrill(id){
+ state.drills=state.drills.filter(function(d){return d.id!==id;});
+ for(var i=DD.SCENARIOS.length-1;i>=0;i--){ if(DD.SCENARIOS[i].id===id) DD.SCENARIOS.splice(i,1); }
+ save(); renderSaved(); renderCustomBar();
+}
+function runDrill(rec){
+ state.hot = !!rec.hot;
+ syncHotBtn();
+ /* a drill carries whether Rochester was open when it was built */
+ if(rec.rstOpen!==undefined){ state.pos.rstOpen = (rec.rstOpen!==false); }
+ DD.setRstOpen(rstOpen());
+ var ro=document.getElementById('ddb-rstopen'); if(ro) ro.checked=rstOpen();
+ publish(rec);
+ activeRec=rec; speciFired=false;
+ window.ddLoad(rec.id);
+ activeRec=rec; speciFired=false;
+ if(rec.rate) window.ddRate(rec.rate);
+}
+
+/* ---------- 10. Draft, tally, bank ---------- */
+function tallyFeed(){
+ var t={};
+ DD.STANDING.forEach(function(s){ t[s.id]={good:0, flag:0}; });
+ DD.sim.feed.forEach(function(e){
+  if(!e.item || !t[e.item]) return;
+  if(e.kind==='good') t[e.item].good++;
+  else if(e.kind==='flag'||e.kind==='crit') t[e.item].flag++;
+ });
+ return t;
+}
+function draftFromSim(){
+ var tally=tallyFeed(), banked=[], open=[], tm=timingSummary(), crit=false, flag=false;
+ DD.sim.feed.forEach(function(e){ if(e.kind==='crit') crit=true; if(e.kind==='flag') flag=true; });
+ DD.sim.ac.forEach(function(a){
+  var rec=DD.RECEIVER[a.rwy||'12R'];
+  if(a.switched && a.flashed) banked.push(a.cs+' flashed to '+rec.pos+' then switched — sequence in order');
+  else if(a.switched) open.push(a.cs+' switched to '+rec.pos+' without a flash on record');
+  else if(!a.alive) open.push(a.cs+' ran off the end of the tail still on frequency');
+  else open.push(a.cs+' left unresolved when the drill was called');
+  if(a.rwyAuto) open.push(a.cs+' took the Table 2 default at SAVVG — the runway word was never said');
+ });
+ if(DD.sim.losFlag) open.push('Loss of separation logged on the shared trunk');
+ DD.STANDING.forEach(function(s){
+  var t=tally[s.id]; if(!t) return;
+  if(t.flag) open.push(s.t+' — '+t.flag+' flag'+(t.flag>1?'s':'')+' this drill');
+  else if(t.good) banked.push(s.t+' — clean, '+t.good+' time'+(t.good>1?'s':''));
+ });
+ if(tm.n){
+  var line='Acknowledgement lag: median '+tm.median+'s, worst '+tm.worst+'s against a '+tm.target+'s target';
+  if(tm.late) open.push(line+' — '+tm.late+' over');
+  else banked.push(line+' — all inside');
+ }
+ if(tm.txPaused) open.push(tm.txPaused+' transmission'+(tm.txPaused>1?'s':'')+' composed with the sim paused ('+tm.pauses+' pause'+(tm.pauses===1?'':'s')+') — free thinking time the real scope does not give you');
+ var sc=DD.sim.scen;
+ return {
+  n:String(state.seq), date:today(), seat:(activeRec&&activeRec.seat)||seatLabel(),
+  cfg:(sc&&sc.frame)||'12s–Depart 17', head:(sc&&sc.name)||'Built drill',
+  banked:banked, open:open, chip:crit?'crit':(flag?'flag':'good'),
+  tally:tally, timing:tm
+ };
+}
+function today(){
+ try{ var d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+ catch(e){ return ''; }
+}
+function bank(entry){
+ entry.id='e'+(state.entries.length+1)+'-'+entry.n;
+ entry.user=true;
+ state.entries.push(entry);
+ var next=parseInt(entry.n,10); if(!isNaN(next)) state.seq=next+1;
+ DD.DRILL_LOG.unshift(entry);
+ save(); refreshLog(); renderItems(); renderEntries();
+ return entry;
+}
+function unbank(id){
+ state.entries=state.entries.filter(function(e){return e.id!==id;});
+ for(var i=DD.DRILL_LOG.length-1;i>=0;i--){ if(DD.DRILL_LOG[i].id===id) DD.DRILL_LOG.splice(i,1); }
+ save(); refreshLog(); renderItems(); renderEntries();
+}
+function refreshLog(){
+ var sec=document.getElementById('mod-log');
+ if(sec && sec.parentNode && typeof sec.outerHTML==='string'){ sec.outerHTML=DD.logHtml(); }
+}
+
+/* ---------- 11. Editor state ---------- */
+var draft = null;
+var SIDS = Object.keys(DD.DEPS);
+var ROLES = [
+ {id:'arrival',    label:'arrival',    hint:'Flies a published STAR ladder to a runway transition and gets handed to Arrival at the floor.'},
+ {id:'departure',  label:'departure',  hint:'Climbs out on a SID join. Released to Center at 25 NM from the MSP DME or leaving 11,000 — ZMP-M98 LOA 4.c, whichever comes first.'},
+ {id:'overflight', label:'overflight', hint:'Crosses the airspace on the radial and distance you give it, level, and has to be handed off or pointed out before the far boundary.'}
+];
+function blankAc(){
+ return {cs:'', type:'B738', role:'arrival', rules:'IFR', route:'',
+         radar:'established', from:'', gate:'NITZR', sid:'WLSTN',
+         entryR:180, entryD:38, exitR:20, exitD:38,
+         dtg:20, fromStart:4, alt:12000, ias:280, mode:'published', asg:230,
+         rwy:'', ckdIn:true, altim:false, spawnAt:0};
+}
+function roleOf(a){ return a.role||'arrival'; }
+/* Where a strip enters M98 from, as a bearing off the MSP VOR — which is what
+   decides whether the neighbour is Rochester or Center. */
+function entryBearing(a){
+ var role=roleOf(a);
+ if(role==='overflight') return ((a.entryR%360)+360)%360;
+ var r = (role==='departure') ? DD.DEPS[a.sid] : DD.ROUTES[a.gate];
+ if(!r) return null;
+ var p = (role==='departure') ? r[r.length-1] : r[0];
+ return (Math.atan2(p.e, p.n)*180/Math.PI+360)%360;
+}
+function neighbourOf(a){
+ var b=entryBearing(a);
+ if(b==null) return null;
+ return DD.neighbourAt(b, a.alt);
+}
+function blankDrill(){
+ return {id:'u'+Math.floor(Math.random()*100000), name:'', cfg:'12', wind:'150/9', ceil:5000, vis:10,
+         atis:'J', altim:'2980', seat:seatLabel(), towers:state.pos.towers,
+         open:openLabel(), rstOpen:rstOpen(),
+         brief:'', datis:'', datisArr:'', datisDep:'', focus:'free', seed:null, rate:1, hot:false,
+         speci:{on:false, at:180, ceil:1800, vis:3, wind:'150/12'}, ac:[blankAc()]};
+}
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function num(v,d){ var n=parseFloat(v); return isNaN(n)?d:n; }
+function readEditor(){
+ if(!draft) return null;
+ var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:''; };
+ var gc=function(id){ var e=document.getElementById(id); return !!(e&&e.checked); };
+ draft.name=g('ddb-name')||draft.name;
+ draft.cfg=g('ddb-cfg')||draft.cfg;
+ draft.wind=g('ddb-wind')||draft.wind;
+ draft.ceil=num(g('ddb-ceil'), draft.ceil);
+ draft.vis=num(g('ddb-vis'), draft.vis);
+ draft.seat=g('ddb-seat')||draft.seat;
+ draft.towers=g('ddb-towers')||draft.towers;
+ draft.open=g('ddb-open')||draft.open;
+ draft.speci=draft.speci||{};
+ draft.speci.on=gc('ddb-speci');
+ draft.speci.at=num(g('ddb-speciat'), draft.speci.at);
+ draft.speci.ceil=num(g('ddb-specic'), draft.speci.ceil);
+ draft.speci.vis=num(g('ddb-speciv'), draft.speci.vis);
+ draft.speci.wind=g('ddb-speciw')||draft.speci.wind;
+ draft.atis=g('ddb-atis')||draft.atis;
+ draft.altim=g('ddb-altim')||draft.altim;
+ draft.brief=g('ddb-brief')||draft.brief;
+ var dtaA=document.getElementById('ddb-datis-arr');
+ if(dtaA && typeof dtaA.value==='string') draft.datisArr=dtaA.value;
+ var dtaD=document.getElementById('ddb-datis-dep');
+ if(dtaD && typeof dtaD.value==='string') draft.datisDep=dtaD.value;
+ /* a drill saved before the boxes were split carries one blob */
+ if(draft.datis && !draft.datisArr && !draft.datisDep){ draft.datisArr=draft.datis; draft.datis=''; }
+ draft.rate=parseInt(g('ddb-rate'),10)||1;
+ draft.hot=gc('ddb-hot');
+ draft.ac.forEach(function(a,i){
+  a.cs=(g('ddb-cs'+i)||a.cs).toUpperCase().replace(/\s+/g,'');
+  a.type=(g('ddb-type'+i)||a.type).toUpperCase();
+  a.role=g('ddb-role'+i)||roleOf(a);
+  a.rules=g('ddb-rules'+i)||a.rules||'IFR';
+  a.radar=DD.normRadar(g('ddb-radar'+i)||a.radar, a.rules, roleOf(a));
+  a.dep=g('ddb-dep'+i)||a.dep||'KMSP';
+  a.depRwy=(document.getElementById('ddb-drwy'+i)) ? g('ddb-drwy'+i) : a.depRwy;
+  a.dest=g('ddb-dest'+i)||a.dest||'KMSP';
+  /* handed off by is derived, not typed, wherever the job settles it */
+  var rst=DD.RADAR_STATES[a.radar];
+  if(rst && !rst.code && !rst.ident) a.from='';
+  else if(roleOf(a)==='departure') a.from=DD.towerHandoffFor(a.dep).name;
+  else a.from=g('ddb-from'+i)||a.from;
+  var rv=document.getElementById('ddb-route'+i);
+  if(rv && typeof rv.value==='string') a.route=rv.value;
+  a.gate=g('ddb-gate'+i)||a.gate;
+  a.sid=g('ddb-sid'+i)||a.sid;
+
+  a.fromStart=num(g('ddb-fs'+i), a.fromStart);
+  a.entryR=num(g('ddb-er'+i), a.entryR); a.entryD=num(g('ddb-ed'+i), a.entryD);
+  a.exitR=num(g('ddb-xr'+i), a.exitR);   a.exitD=num(g('ddb-xd'+i), a.exitD);
+  a.dtg=num(g('ddb-dtg'+i), a.dtg);
+  a.alt=num(g('ddb-alt'+i), a.alt);
+  a.ias=num(g('ddb-ias'+i), a.ias);
+  a.mode=g('ddb-mode'+i)||a.mode;
+  a.engine=g('ddb-eng'+i)||a.engine||'jet';
+  a.asg=num(g('ddb-asg'+i), a.asg);
+  a.rwy=g('ddb-rwy'+i);
+  a.ckdIn=gc('ddb-ck'+i);
+  a.altim=gc('ddb-al'+i);
+  a.spawnAt=num(g('ddb-sp'+i), a.spawnAt);
+ });
+ return draft;
+}
+
+/* ---------- 12. Rendering ---------- */
+/* the line of context under each strip's heading — what the reference data says
+   about where this one actually is */
+function rowContext(a){
+ var role=roleOf(a);
+ if(role==='departure'){
+  var dr=DD.DEPS[a.sid];
+  if(!dr) return '';
+  return a.sid+' join track '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out · released to Center by '
+   +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
+ }
+ if(role==='overflight'){
+  var rt=DD.overflightRoute({r:a.entryR,d:a.entryD},{r:a.exitR,d:a.exitD});
+  return 'crossing '+rt.total.toFixed(1)+' NM, MSP radial '+a.entryR+' at '+a.entryD+' to radial '+a.exitR+' at '+a.exitD
+   +' · handed off or pointed out before the far side';
+ }
+ if(!a.gate) return '';
+ var dest=a.dest||'KMSP', proc=DD.ARRIVALS[a.gate];
+ /* a satellite arrival — published ladder or direct routing — describes itself
+    and names the seat it belongs to rather than the MSP split */
+ if(proc && proc.flies && dest!=='KMSP'){
+  var st=DD.satSeatFor(dest), sr=DD.SAT_ROUTES[a.gate], dr=DD.SAT_DIRECT[a.gate];
+  return a.gate+(proc.rev?(' '+proc.rev):'')+' into '+dest
+   +(sr?(' · ladder '+sr.total.toFixed(1)+' NM'):'')
+   +(dr?(' · '+dr.label+', from '+dr.from+' · '+dr.altNote+' ('+dr.src+')'):'')
+   +(sr?(' · '+sr.filter(function(p){return p.at!=null;}).map(function(p){
+      return p.f+' '+DD.fmtAlt(p.at)+(p.atProp!=null&&p.atProp!==p.at?(' jets / '+DD.fmtAlt(p.atProp)+' turboprops'):'');
+    }).join(', ')):'')
+   +(st?(' · '+dest+' is '+DD.posName(st)+'’s field (SOP 6-2), worked by '
+         +DD.posName(DD.SAT_POS[st].pos)+' on '+DD.SAT_POS[st].frq
+         +(DD.SAT_POS[st].pos!==st?' while that seat is closed':'')):'');
+ }
+ /* an arrival the engine has no ladder for describes itself instead */
+ if(!proc || !proc.flies){
+  var seat=DD.satSeatFor(dest);
+  return a.gate+(proc&&proc.rev?(' '+proc.rev):'')+' into '+dest
+   +(proc?(' · serves '+proc.serves.join(', ')):' · not an arrival in the reference set')
+   +(proc&&proc.note?(' · '+proc.note):'')
+   +(seat?(' · '+dest+' is '+DD.posName(seat)+'’s field (SOP 6-2)'):'')
+   +' · frame only — the route data has ladder geometry for the six MSP RNAV gates and nothing else';
+ }
+ var total=totalOf(a.gate)||0, dist=Math.max(0,total-a.dtg);
+ var cfgId=(draft&&draft.cfg)||'12', ow=DD.feederFor(cfgId, a.gate);
+ var toRwy=DD.runwaysAt(dest).filter(function(rw){ return DD.sideOfRunway(rw); }).map(function(rw){
+  var v=DD.receiverFor({role:'arrival', gate:a.gate, rwy:rw}), x=DD.crossoverFor(a.gate, rw, cfgId);
+  return rw+' → '+v.name+' '+v.frq+(x.type!=='none'?(' ('+x.type+'-gate crossover)'):'');
+ }).join(', ');
+ return a.gate+' ladder '+total.toFixed(1)+' NM · at '+a.dtg+' NM to go the binding published altitude is '
+  +(capAt(a.gate,dist)!=null?DD.fmtAlt(capAt(a.gate,dist)):'—')+' near '+fixAt(a.gate,dist)
+  +' · floor '+DD.fmtAlt(DD.FLOORS[a.gate])+' ('+(DD.FLOOR_BASIS[a.gate]||'')+')'
+  + ' · '+(ow?DD.posName(ow)+' owns this gate (SOP 4-4d)':'not on either Feeder in this configuration')
+  + ' · '+toRwy;
+}
+/* Who handed it to you follows the job, not the typing. A departure is handed
+   off by the tower at the field it left. An arrival or an overflight crosses
+   the boundary out of a radar facility, which is geometry — the bearing it
+   enters on and the altitude it is at. Anything with no service on it was
+   handed off by nobody at all. */
+function handedOffBy(a, role, radar, i){
+ var st=DD.RADAR_STATES[radar];
+ if(st && !st.code && !st.ident)
+  return '<div class="dd-in" style="color:var(--dim2)">nobody — it calls you itself</div>';
+ if(role==='departure'){
+  var t=DD.towerHandoffFor(a.dep||'KMSP');
+  return '<div class="dd-in" style="color:var(--dim)" title="'+esc(t.why)+'">'+esc(t.name)
+   +(t.frq?(' <span style="color:var(--dim2)">'+esc(t.frq)+'</span>'):'')+'</div>';
+ }
+ var nb=neighbourOf(a)||{};
+ return '<input class="dd-in" id="ddb-from'+i+'" value="'+esc(a.from||'')+'" placeholder="'+esc(nb.name||'Minneapolis Center')+'">';
+}
+function acRowHtml(a,i){
+ var role=roleOf(a);
+ var wk=DD.wakeOf(a.type);
+ var wkCol = wk.cls==='nowgt' ? 'var(--amber)' : (wk.heavy ? 'var(--green)' : 'var(--dim)');
+ var rules=(a.rules==='VFR')?'VFR':'IFR';
+ var radar=DD.normRadar(a.radar, rules, role);
+ var common = f('Callsign','<input class="dd-in" id="ddb-cs'+i+'" value="'+esc(a.cs)+'" placeholder="DAL589">')
+  +f('Flight rules','<select class="dd-sel" id="ddb-rules'+i+'" onchange="ddbSync()">'
+    +['IFR','VFR'].map(function(x){return '<option'+(x===rules?' selected':'')+'>'+x+'</option>';}).join('')+'</select>')
+  /* Five states, and only the ones this job and these flight rules can be in:
+     handed off by a radar facility, off a tower and owing a radar contact, a
+     pop-up IFR, a VFR picking up flight following, or a cold call. */
+  +f('Radar service','<select class="dd-sel" id="ddb-radar'+i+'" onchange="ddbSync()">'
+    +DD.radarStatesFor(role, rules).map(function(s){
+      return '<option value="'+s+'"'+(s===radar?' selected':'')+'>'+esc(DD.RADAR_STATES[s].label)+'</option>';
+     }).join('')+'</select>')
+  +f('Handed off by', handedOffBy(a, role, radar, i))
+  +f('Type','<input class="dd-in" id="ddb-type'+i+'" value="'+esc(a.type)+'" onchange="ddbSync()">')
+  +f('Wake class','<div class="dd-in" style="color:'+wkCol+';" title="'+esc(wk.note||('Maximum certificated takeoff weight '+(wk.mtow?wk.mtow.toLocaleString():'—')+' lb'))+'">'
+    +esc(wk.label)+(wk.mtow?(' <span style="color:var(--dim2)">'+Math.round(wk.mtow/1000)+'k lb</span>'):'')+'</div>');
+ var job;
+ if(role==='departure'){
+  var dep=a.dep||'KMSP';
+  job = f('Departed','<select class="dd-sel" id="ddb-dep'+i+'" onchange="ddbSync()">'
+    +Object.keys(DD.AIRPORTS).map(function(k){
+      return '<option value="'+k+'"'+(k===dep?' selected':'')+'>'+k+' — '+esc(DD.AIRPORTS[k].name)+'</option>';
+     }).join('')+'</select>')
+   +f('Runway','<select class="dd-sel" id="ddb-drwy'+i+'" onchange="ddbSync()"><option value=""'+(a.depRwy?'':' selected')+'>not stated</option>'
+    +DD.runwaysAt(dep).map(function(r){return '<option'+(r===a.depRwy?' selected':'')+'>'+r+'</option>';}).join('')+'</select>')
+   +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'+SIDS.map(function(s){return '<option'+(s===a.sid?' selected':'')+'>'+s+'</option>';}).join('')+'</select>')
+   +f('NM from MSP','<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
+ } else if(role==='overflight'){
+  job = f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')
+   +f('Entry DME','<input class="dd-in" id="ddb-ed'+i+'" value="'+esc(a.entryD)+'" onchange="ddbSync()">')
+   +f('Exit radial','<input class="dd-in" id="ddb-xr'+i+'" value="'+esc(a.exitR)+'" onchange="ddbSync()">')
+   +f('Exit DME','<input class="dd-in" id="ddb-xd'+i+'" value="'+esc(a.exitD)+'" onchange="ddbSync()">');
+ } else {
+  var dest=a.dest||'KMSP';
+  job = f('Landing','<select class="dd-sel" id="ddb-dest'+i+'" onchange="ddbSync()">'
+    +Object.keys(DD.AIRPORTS).map(function(k){
+      return '<option value="'+k+'"'+(k===dest?' selected':'')+'>'+k+' — '+esc(DD.AIRPORTS[k].name)+'</option>';
+     }).join('')+'</select>')
+   /* only the arrivals that actually end at the field it is landing at — the
+      six RNAV gates are MSP arrivals and nothing else */
+   +f('Arrival','<select class="dd-sel" id="ddb-gate'+i+'" onchange="ddbSync()">'
+     +DD.arrivalsFor(dest).map(function(g){
+       var p=DD.ARRIVALS[g];
+       return '<option'+(g===a.gate?' selected':'')+'>'+g+(p.rev?(' — '+p.rev):'')+(p.flies?'':' (frame only)')+'</option>';
+      }).join('')+'</select>')
+   +f('NM to go','<input class="dd-in" id="ddb-dtg'+i+'" value="'+esc(a.dtg)+'" onchange="ddbSync()">')
+   +f('Engine','<select class="dd-sel" id="ddb-eng'+i+'" onchange="ddbSync()">'
+     +['jet','turboprop','piston'].map(function(e){return '<option'+(e===(a.engine||'jet')?' selected':'')+'>'+e+'</option>';}).join('')
+     +'</select>')
+   /* a direct routing has no published track, so it needs the boundary crossing
+      the way an overflight does */
+   +(DD.SAT_DIRECT[a.gate]
+     ? (f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')
+       +f('Entry DME','<input class="dd-in" id="ddb-ed'+i+'" value="'+esc(a.entryD)+'" onchange="ddbSync()">'))
+     : '');
+ }
+ var tail = f('Altitude','<input class="dd-in" id="ddb-alt'+i+'" value="'+esc(a.alt)+'" onchange="ddbSync()">')
+  +f('Speed','<input class="dd-in" id="ddb-ias'+i+'" value="'+esc(Math.round(a.ias))+'">');
+ if(role==='arrival'){
+  /* An arrival on an optimized profile descent flies the speeds printed on the
+     arrival. The only reason it is doing anything else is that Center called
+     and said so, which is a coordination event, not a strip setting — so there
+     are two options here and the second one names where it came from. */
+  var amode=(a.mode==='assigned')?'assigned':'published';
+  tail += f('Speed','<select class="dd-sel" id="ddb-mode'+i+'" onchange="ddbSync()">'
+    +'<option value="published"'+(amode==='published'?' selected':'')+'>published — descend via the arrival</option>'
+    +'<option value="assigned"'+(amode==='assigned'?' selected':'')+'>Center advised something other than published</option>'
+    +'</select>')
+   +f('Center advised','<input class="dd-in" id="ddb-asg'+i+'" value="'+esc(a.asg)+'"'+(amode==='assigned'?'':' disabled')+'>')
+   +f('Runway','<select class="dd-sel" id="ddb-rwy'+i+'"><option value=""'+(a.rwy?'':' selected')+'>not yet issued</option>'
+    +DD.runwaysAt(a.dest||'KMSP').map(function(r){return '<option'+(r===a.rwy?' selected':'')+'>'+r+'</option>';}).join('')+'</select>');
+ }
+ tail += f('Checks in at','<input class="dd-in" id="ddb-sp'+i+'" value="'+esc(a.spawnAt)+'"'+(a.ckdIn?' disabled':'')+'>')
+  +'<label class="dd-chk"><input type="checkbox" id="ddb-ck'+i+'"'+(a.ckdIn?' checked':'')+' onchange="ddbSync()">already on frequency</label>';
+ if(role==='arrival') tail += '<label class="dd-chk"><input type="checkbox" id="ddb-al'+i+'"'+(a.altim?' checked':'')+'>altimeter given</label>';
+ /* the route sits on its own line — it is the longest field on the strip */
+ var routeRow = (rules==='IFR')
+  ? '<div class="dd-field" style="margin-top:8px;"><span class="dd-lab">'+(radar==='none'?'Route \u2014 what the pop-up is asking for, optional':'Route \u2014 required on an IFR strip')
+    +' <button class="dd-btn sm" style="margin-left:8px;" onclick="ddbFillRoute('+i+')">fill from the procedure</button></span>'
+    +'<input class="dd-in" id="ddb-route'+i+'" value="'+esc(a.route||'')+'" placeholder="'+esc(DD.routeTextFor(a)||'filed route')+'"></div>'
+  : '<div class="dd-field" style="margin-top:8px;"><span class="dd-lab">Intentions \u2014 optional, this one is VFR</span>'
+    +'<input class="dd-in" id="ddb-route'+i+'" value="'+esc(a.route||'')+'" placeholder="northeast bound, request Bravo transition"></div>';
+ return '<div class="dd-acrow">'
+ +'<div class="dd-acrow-head"><b>Strip '+(i+1)+(a.cs?(' — “'+esc(spoken(a.cs))+'”'):'')+'</b>'
+ +'<span>'+esc(rowContext(a))+'</span>'
+ +'<button class="dd-btn sm" onclick="ddbDropRow('+i+')">remove</button></div>'
+ +'<div class="dd-grid tight">'
+ +f('Job','<select class="dd-sel" id="ddb-role'+i+'" onchange="ddbSync()">'+ROLES.map(function(r){return '<option value="'+r.id+'"'+(r.id===role?' selected':'')+'>'+r.label+'</option>';}).join('')+'</select>')
+ +common+job+tail
+ +'</div>'+routeRow+'</div>';
+}
+function f(lab, ctl){ return '<div class="dd-field"><span class="dd-lab">'+lab+'</span>'+ctl+'</div>'; }
+
+function previewSvg(rec){
+ var s='<svg class="dd-scope" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Drill start positions">';
+ s+='<text x="14" y="20" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="10">START POSITIONS — SAME GEOMETRY AS THE LIVE SCOPE</text>';
+ var bp=DD.BOUNDARY.map(function(b){var p=DD.pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+ s+='<polygon points="'+bp+'" fill="none" stroke="var(--dim2)" stroke-width="1" stroke-dasharray="5 4" opacity="0.8"/>';
+ s+='<line x1="330" y1="232" x2="372" y2="258" stroke="var(--dim)" stroke-width="4"/>';
+ s+='<line x1="318" y1="243" x2="360" y2="269" stroke="var(--dim)" stroke-width="4"/>';
+ s+='<text x="368" y="228" fill="var(--ink)" font-family="IBM Plex Mono" font-size="11">MSP</text>';
+ /* only the geometry this drill actually uses */
+ var gatesUsed={}, sidsUsed={};
+ (rec.ac||[]).forEach(function(a){
+  var role=roleOf(a);
+  if(role==='departure'){ if(a.sid) sidsUsed[a.sid]=1; }
+  else if(role==='arrival'){ if(a.gate) gatesUsed[a.gate]=1; }
+ });
+ Object.keys(gatesUsed).forEach(function(k){
+  var r=DD.ROUTES[k]; if(!r) return;
+  s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.35"/>';
+  s+='<text x="'+(r[0].x+8).toFixed(1)+'" y="'+(r[0].y+14).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
+ });
+ Object.keys(sidsUsed).forEach(function(k){
+  var r=DD.DEPS[k]; if(!r) return;
+  s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
+  var last=r[r.length-1];
+  s+='<text x="'+(last.x+7).toFixed(1)+'" y="'+(last.y+4).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
+ });
+ if(Object.keys(sidsUsed).length){
+  s+='<circle cx="350" cy="255" r="'+(DD.DEP_RELEASE.dme*4.5).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.3" stroke-dasharray="2 5"/>';
+ }
+ (rec.ac||[]).forEach(function(a){
+  var r=routeFor(a); if(!r) return;
+  if(roleOf(a)==='overflight'){
+   s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--dim)" stroke-width="1" opacity="0.5" stroke-dasharray="6 3"/>';
+  }
+  var p=ptOn(r, startDistFor(a,r)); if(!p) return;
+  var col=a.ckdIn?'var(--amber)':'var(--dim2)';
+  s+='<rect x="'+(p.x-4.5).toFixed(1)+'" y="'+(p.y-4.5).toFixed(1)+'" width="9" height="9" fill="'+(a.ckdIn?'var(--green)':'none')+'" stroke="'+col+'" stroke-width="1"/>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="10.5">'+esc(a.cs||'—')+'</text>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.ckdIn?'':' T+'+a.spawnAt)+'</text>';
+ });
+ s+='</svg>';
+ return s;
+}
+function ptOn(r, dist){
+ if(!r || !r.length) return null;
+ for(var i=1;i<r.length;i++){
+  if(dist<=r[i].cum){
+   var d0=r[i-1].cum, d1=r[i].cum, t=(d1===d0)?0:(dist-d0)/(d1-d0);
+   return {x:r[i-1].x+(r[i].x-r[i-1].x)*t, y:r[i-1].y+(r[i].y-r[i-1].y)*t};
+  }
+ }
+ return {x:r[r.length-1].x, y:r[r.length-1].y};
+}
+function posAt(gate, dist){ return ptOn(routeOf(gate), dist); }
+/* the route a built strip will actually fly, and where on it it starts */
+function routeFor(a){
+ var role=roleOf(a);
+ if(role==='departure') return DD.DEPS[a.sid]||null;
+ if(role==='overflight') return DD.overflightRoute({r:a.entryR,d:a.entryD},{r:a.exitR,d:a.exitD});
+ return DD.ROUTES[a.gate]||null;
+}
+function startDistFor(a, r){
+ var role=roleOf(a);
+ if(!r) return 0;
+ if(role==='departure') return Math.min(r.total, a.fromStart||0);
+ if(role==='overflight') return 0;
+ return Math.max(0, r.total-(a.dtg||0));
+}
+function setHtml(id, html){ var e=document.getElementById(id); if(e && typeof e.innerHTML==='string') e.innerHTML=html; }
+
+function renderEditor(){
+ if(!draft) return;
+ setHtml('ddb-rows', draft.ac.map(acRowHtml).join(''));
+ var g=function(id,v){ var e=document.getElementById(id); if(e) e.value=v; };
+ g('ddb-name',draft.name); g('ddb-cfg',draft.cfg); g('ddb-wind',draft.wind);
+ g('ddb-datis-arr',draft.datisArr||draft.datis||''); g('ddb-datis-dep',draft.datisDep||'');
+ g('ddb-ceil',draft.ceil); g('ddb-vis',draft.vis); g('ddb-seat',draft.seat);
+ g('ddb-towers',draft.towers); g('ddb-open',draft.open);
+ g('ddb-atis',draft.atis); g('ddb-altim',draft.altim); g('ddb-brief',draft.brief); g('ddb-rate',String(draft.rate));
+ var sp=draft.speci||{};
+ g('ddb-speciat',sp.at); g('ddb-specic',sp.ceil); g('ddb-speciv',sp.vis); g('ddb-speciw',sp.wind);
+ var sc=document.getElementById('ddb-speci'); if(sc) sc.checked=!!sp.on;
+ var hot=document.getElementById('ddb-hot'); if(hot) hot.checked=!!draft.hot;
+ var cat=category(draft.ceil, draft.vis), cf=configById(draft.cfg);
+ setHtml('ddb-frame','<b>'+esc(frameOf(draft))+'</b><br>'+esc(openLine(draft))
+  +'<br><span style="color:var(--dim2)">'+esc(cf.note)+' — '+esc(TOOLBOX[cat])+'</span>'
+  +(sp.on?('<br><span style="color:var(--amber)">Special observation at T+'+sp.at+'s takes it to '+category(sp.ceil,sp.vis)+' — '+esc(TOOLBOX[category(sp.ceil,sp.vis)])+'</span>'):''));
+ setHtml('ddb-preview', previewSvg(draft));
+ renderCheck();
+}
+function renderCheck(){
+ if(!draft) return;
+ var v=validate(draft);
+ setHtml('ddb-check',
+  v.errors.map(function(e){return '<div class="e">error — '+esc(e)+'</div>';}).join('')
+  + v.warnings.map(function(w){return '<div class="w">note — '+esc(w)+'</div>';}).join('')
+  + (v.errors.length?'':'<div class="k">ready — '+draft.ac.length+' strip'+(draft.ac.length>1?'s':'')+', every gate, altitude and floor checks out against the route data.</div>'));
+ return v;
+}
+function renderPos(){
+ /* seat picker — every position is a toggle, because working two at once is
+    an ordinary thing to do */
+ setHtml('ddb-seatbox',
+  POSITIONS.map(function(p){
+   var c=COVERAGE[p.id]||{k:'info',t:''};
+   var on=isSeat(p.id);
+   var only=(on && seatIds().length===1);
+   return '<div class="dd-item" style="padding:9px 0;"><div class="dd-item-head">'
+    +'<b>'+(on?'▸ ':'')+esc(p.name)+'</b>'
+    +'<span><span class="dd-chip info">'+p.id+' · '+p.frq+'</span>'
+    +'<button class="dd-btn sm'+(on?' on':'')+'"'+(only?' title="you have to be working something"':'')
+    +' onclick="ddbSeat(\''+p.id+'\')">'+(on?(only?'working this seat':'drop this seat'):'add this seat')+'</button></span></div>'
+    +'<div class="dd-item-meta">'+esc(DUTIES[p.job])+(p.role?(' '+esc(p.role)):'')+'</div>'
+    +(on?('<div class="dd-item-meta" style="color:var(--'+(c.k==='good'?'green':(c.k==='flag'?'amber':'dim2'))+')">'+esc(c.t)+'</div>'):'')
+    +'</div>';
+  }).join(''));
+ /* who else is open */
+ setHtml('ddb-openbox',
+  POSITIONS.map(function(p){
+   var locked=isSeat(p.id);
+   return '<label class="dd-chk" style="padding-top:0;"><input type="checkbox"'
+    +(isOpen(p.id)?' checked':'')+(locked?' disabled':'')
+    +' onchange="ddbOpen(\''+p.id+'\', this.checked)">'+p.id+' — '+esc(p.name)+(locked?' (you)':'')+'</label>';
+  }).join(''));
+ /* the resolved picture */
+ var rows=RWYS.map(function(r){
+  var owner=ownerOf(RWY_ARRIVAL[r]||'S');
+  var self=isSeat(owner.id);
+  return '<div>'+r+' arrivals → <b>'+owner.id+'</b>, '+esc(owner.name)+', '+owner.frq
+   +(self?' — <span style="color:var(--amber)">that is you</span>':'')
+   +(owner.id!==(RWY_ARRIVAL[r]||'S')?(' <span style="color:var(--dim2)">('+(RWY_ARRIVAL[r])+' is not open, so it combines here)</span>'):'')
+   +'</div>';
+ });
+ var warn=[];
+ RWYS.forEach(function(r){ if(isSeat(ownerOf(RWY_ARRIVAL[r]||'S').id)) warn.push(r); });
+ var msgs='';
+ if(warn.length===RWYS.length){
+  msgs+='<div class="w">note — you are working both the feeder and the arrival, so the floor handoff is internal. The player will still grade the flash and the switch as if it were a real transfer. Open North or South Arrival if you want the handoff to be a handoff.</div>';
+ } else if(warn.length){
+  msgs+='<div class="w">note — '+warn.join(' and ')+' comes back to you. That leg is an internal transfer, the other one is real.</div>';
+ }
+ var jobs={}; seatPositions().forEach(function(p){ jobs[p.job]=1; });
+ if(!jobs.feeder){
+  msgs+='<div class="w">note — the live player models the feeder job: assign the runway, work the descend-via, make the floor, hand off. Working '+esc(seatLabel())+' sets the frame and the coordination picture, but the arrivals you fly will still be the feeder problem. Departures and overflights you build will fly properly from any seat.</div>';
+ }
+ if(seatIds().length>1){
+  msgs+='<div class="k">working '+seatIds().length+' positions at once — '+esc(seatPositions().map(function(p){return p.id+' on '+p.frq;}).join(', '))+'. Everything either of them owns is yours, and nothing between them needs coordinating.</div>';
+ }
+ if(!isOpen('R') && jobs.feeder){
+  msgs+='<div class="w">note — no Departure position is open, so the departures are yours as well. The player does not fly them; brief them anyway, because the 17 corridor sits under your trunk.</div>';
+ }
+ /* which gates this seat owns by default in the configuration on the frame */
+ if(seatIds().indexOf('H')>=0 || seatIds().indexOf('I')>=0){
+  var cfgId=(draft&&draft.cfg)||'12', sp=DD.FEEDER_SPLIT[cfgId]||DD.FEEDER_SPLIT['12'];
+  var mine=[], theirs=[];
+  GATES.forEach(function(g){
+   var ow=DD.feederFor(cfgId,g);
+   if(!ow) return;
+   if(seatIds().indexOf(ow)>=0) mine.push(g); else theirs.push(g+' ('+ow+')');
+  });
+  msgs+='<div>Gates in a '+esc(cfgId)+' configuration (SOP 4-4d): yours are <b>'+(mine.join(', ')||'none')+'</b>'
+   +(theirs.length?('; '+esc(theirs.join(', '))+' belong to the other Feeder'):'')
+   +'. Individual gates get reassigned to balance workload, so this is the default, not a fence.</div>';
+ }
+ msgs+='<div>'+(rstOpen()
+   ? 'South of the Rochester line — MSP 185/038, 158/041, 149/040 — <b>RST</b> owns 9,000 and below and <b>ZMP</b> owns above it. Everywhere else around M98 is ZMP.'
+   : '<b>Rochester is closed</b>, so ZMP owns that corner top to bottom. Nothing goes to RST while it is shut.')+'</div>';
+ msgs+='<div class="k">frame — '+esc(seatLabel())+' · open around you: '+esc(openLabel())+(rstOpen()?'':' · RST closed')+'</div>';
+ setHtml('ddb-resolved', rows.join('')+msgs);
+ var tw=document.getElementById('ddb-towers'); if(tw && tw.value!==state.pos.towers) tw.value=state.pos.towers;
+ var ro=document.getElementById('ddb-rstopen'); if(ro) ro.checked=rstOpen();
+}
+
+function renderSaved(){
+ if(!state.drills.length){ setHtml('ddb-saved','<div class="dd-hint">Nothing saved yet. Generate one above, or build it strip by strip.</div>'); return; }
+ setHtml('ddb-saved', state.drills.map(function(d){
+  return '<div class="dd-saved-row"><span><b>'+esc(d.name)+'</b> · '+d.ac.length+' strip'+(d.ac.length>1?'s':'')+' · '+esc(frameOf(d))+(d.hot?' · runs hot':'')+'</span>'
+  +'<span class="btns"><button class="dd-btn sm" onclick="ddbRun(\''+d.id+'\')">fly it</button>'
+  +'<button class="dd-btn sm" onclick="ddbEdit(\''+d.id+'\')">edit</button>'
+  +'<button class="dd-btn sm" onclick="ddbDel(\''+d.id+'\')">delete</button></span></div>';
+ }).join(''));
+}
+function renderCustomBar(){
+ var bar=document.getElementById('ddb-custombar');
+ if(!bar || typeof bar.innerHTML!=='string') return;
+ bar.innerHTML = state.drills.map(function(d){
+  return '<button onclick="ddbRun(\''+d.id+'\')">'+esc(d.name)+'</button> ';
+ }).join('');
+}
+function renderItems(){
+ var ids=ranked();
+ setHtml('ddb-items', ids.map(function(id){
+  var it=itemById(id); if(!it) return '';
+  var s=statusOf(id), x=s.s;
+  var meta = x.exposures
+   ? (x.exposures+' drill'+(x.exposures===1?'':'s')+' on record — '+x.drills.join(', ')+' · '+x.good+' clean / '+x.flag+' flagged · last at drill '+x.last
+      +(x.fromDocs?' (from the written record)':'')
+      +(x.since?' · '+x.since+' drill'+(x.since===1?'':'s')+' since':''))
+   : 'no drill on record has exercised this one yet';
+  return '<div class="dd-item"><div class="dd-item-head"><b>'+esc(it.t)+'</b>'
+   +'<span><span class="dd-chip '+s.k+'">'+s.label+'</span>'
+   +'<button class="dd-btn sm" onclick="ddbGenFor(\''+id+'\')">build a drill for this</button> '
+   +'<button class="dd-btn sm" onclick="ddbRetire(\''+id+'\')">'+(state.retired[id]?'reopen':'retire')+'</button></span></div>'
+   +'<p>'+esc(it.d)+'</p><div class="dd-item-meta">'+esc(meta)+'</div></div>';
+ }).join(''));
+}
+function renderPrior(){
+ setHtml('ddb-prior', PRIOR.slice().reverse().map(function(d){
+  var card=priorCard(d.n)||{}, ids=Object.keys(d.tally||{});
+  return '<div class="dd-item"><div class="dd-item-head">'
+   +'<b>Drill '+esc(d.n)+(card.head?(' — '+esc(card.head)):'')+'</b>'
+   +'<span class="dd-log-meta">'+esc(card.date||'')+(card.seat?(' · '+esc(card.seat)):'')+(card.cfg?(' · '+esc(card.cfg)):'')
+   +' · <span class="dd-chip '+(d.state==='complete'?'good':'flag')+'">'+esc(d.state)+'</span></span></div>'
+   +(ids.length
+     ? ids.map(function(id){
+        var it=itemById(id), t=d.tally[id];
+        return '<div class="dd-item-meta" style="margin-top:7px;"><span class="dd-chip '+(t.flag?'flag':'good')+'">'
+         +(t.flag&&t.good?'both':(t.flag?'flagged':'clean'))+'</span><b style="color:var(--dim)">'+esc(it?it.t:id)+'</b> — '
+         +esc((d.why&&d.why[id])||'')+'</div>';
+       }).join('')
+     : '<div class="dd-item-meta" style="margin-top:7px;">Nothing on the five standing items — what this one taught sits outside them.</div>')
+   +'</div>';
+ }).join(''));
+}
+function renderEntries(){
+ if(!state.entries.length){ setHtml('ddb-entries','<div class="dd-hint">Nothing banked from the player yet — until there is, the standing items are scored against the record above. Finish a drill and bank it and it joins the same ledger.</div>'); return; }
+ setHtml('ddb-entries', state.entries.slice().reverse().map(function(e){
+  return '<div class="dd-saved-row"><span><b>Drill '+esc(e.n)+'</b> · '+esc(e.date)+' · '+esc(e.head)+' · '+e.banked.length+' banked / '+e.open.length+' open</span>'
+  +'<span class="btns"><button class="dd-btn sm" onclick="ddbUnbank(\''+e.id+'\')">remove</button></span></div>';
+ }).join(''));
+}
+function timingHtml(){
+ var t=timingSummary();
+ if(!t.n && !t.pauses) return '';
+ return '<div class="dd-panel"><div class="dd-sub a">Response timing — the airplanes kept moving</div><ul style="margin:0;padding-left:18px;">'
+ +(t.n?'<li style="font-size:13.5px;margin-bottom:6px;">Check-in to your first word: median <b>'+t.median+'s</b>, worst <b>'+t.worst+'s</b>, against your <b>'+t.target+'s</b> target — '+(t.late?t.late+' over the line.':'all inside.')+'</li>':'')
+ +'<li style="font-size:13.5px;margin-bottom:6px;">Transmissions with the sim running: <b>'+t.txHot+'</b>'+(t.txPaused?', composed while paused: <b>'+t.txPaused+'</b> across '+t.pauses+' pause'+(t.pauses===1?'':'s')+' — real thinking time the scope does not give you.':'.')+'</li>'
+ +'<li style="font-size:13.5px;">Set the drill to run hot in the builder and the pause goes away entirely.</li>'
+ +'</ul></div>';
+}
+function captureHtml(){
+ var d=draftFromSim();
+ return '<div class="dd-panel"><div class="dd-sub">Bank this drill into the notebook</div>'
+ +'<div class="dd-grid">'
+ +f('Drill number','<input class="dd-in" id="ddb-en" value="'+esc(d.n)+'">')
+ +f('Date','<input class="dd-in" id="ddb-ed" value="'+esc(d.date)+'">')
+ +f('Seat','<input class="dd-in" id="ddb-es" value="'+esc(d.seat)+'">')
+ +f('Configuration','<input class="dd-in" id="ddb-ec" value="'+esc(d.cfg)+'">')
+ +'</div>'
+ +'<div class="dd-field" style="margin-top:10px;"><span class="dd-lab">Headline</span><input class="dd-in" id="ddb-eh" value="'+esc(d.head)+'"></div>'
+ +'<div class="dd-field" style="margin-top:10px;"><span class="dd-lab">Banked — one per line</span><textarea class="dd-ta" id="ddb-eb">'+esc(d.banked.join('\n'))+'</textarea></div>'
+ +'<div class="dd-field" style="margin-top:10px;"><span class="dd-lab">Open — one per line</span><textarea class="dd-ta" id="ddb-eo">'+esc(d.open.join('\n'))+'</textarea></div>'
+ +'<div class="dd-actions"><button class="dd-btn pri" onclick="ddbBank()">Bank to the library</button>'
+ +'<span class="dd-hint" style="margin:0;">Drafted from the deterministic checks. Edit it — the voice items are yours to score.</span></div></div>';
+}
+
+/* ---------- 13. Export ---------- */
+function toCode(rec){
+ var lines = rec.ac.map(function(a){
+  var parts=["cs:'"+a.cs+"'", "type:'"+a.type+"'"];
+  if(a.wake) parts.push("wake:'"+a.wake+"'");
+  parts.push("gate:'"+a.gate+"'", 'dtgEnd:'+(+a.dtg), 'alt:'+(+a.alt), 'ias:'+Math.round(a.ias));
+  if(a.mode==='assigned') parts.push('iasAsg:'+(+a.asg));
+  parts.push("spdMode:'"+a.mode+"'");
+  if(a.rwy) parts.push("rwy:'"+a.rwy+"'");
+  if(a.ckdIn) parts.push('ckdIn:true'); else parts.push('spawnAt:'+(+a.spawnAt));
+  if(a.altim) parts.push('altim:true');
+  return '   {'+parts.join(', ')+'}';
+ }).join(',\n');
+ return " {id:'"+rec.id+"', name:'"+rec.name.replace(/'/g,"\\'")+"', frame:'"+frameOf(rec).replace(/'/g,"\\'")+"',\n"
+ +"  brief:'"+(rec.brief||'').replace(/'/g,"\\'")+"',\n"
+ +"  ac:function(){ return [\n"+lines+"\n  ];}},";
+}
+/* Written in the shape the practice log already uses (§19A): a dated
+   heading, the drills run, strengths shown, watch-fors, suggested next
+   reps. Paste it straight under the last entry in
+   claude_M98_AI_Practice_Log.md. */
+function toMd(){
+ var out=[];
+ var byDate={};
+ state.entries.forEach(function(e){ (byDate[e.date] = byDate[e.date] || []).push(e); });
+ var dates=Object.keys(byDate).sort();
+ if(!dates.length) out.push('*(Nothing banked in the tool yet — finish a drill in the live player and bank it.)*','');
+ dates.reverse().forEach(function(d){
+  var list=byDate[d];
+  out.push('## '+d+' — Drill Deck: '+list.map(function(e){return 'Drill '+e.n;}).join(', '),'');
+  out.push('**Drills run**');
+  list.forEach(function(e){
+   out.push('- **Drill '+e.n+' — '+e.head+'** ('+e.seat+'). Frame: '+e.cfg+'.'
+    +(e.timing && e.timing.n ? ' Acknowledgement lag: median '+e.timing.median+'s, worst '+e.timing.worst+'s against a '+e.timing.target+'s target'
+      +(e.timing.txPaused?'; '+e.timing.txPaused+' transmission'+(e.timing.txPaused>1?'s':'')+' composed with the clock stopped.':'.') : ''));
+  });
+  out.push('');
+  var strengths=[], watch=[];
+  list.forEach(function(e){
+   e.banked.forEach(function(b){ strengths.push(list.length>1?('Drill '+e.n+' — '+b):b); });
+   e.open.forEach(function(o){ watch.push(list.length>1?('Drill '+e.n+' — '+o):o); });
+  });
+  if(strengths.length){ out.push('**Strengths shown**'); strengths.forEach(function(s){ out.push('- '+s); }); out.push(''); }
+  if(watch.length){ out.push('**Watch-fors for next time**'); watch.forEach(function(w){ out.push('- '+w); }); out.push(''); }
+  out.push('**Suggested next reps**');
+  ranked().slice(0,3).forEach(function(id){
+   var it=itemById(id); if(!it) return;
+   out.push('- '+it.t+' — '+statusOf(id).label+'. Build a drill weighted to it in the Drill Builder.');
+  });
+  out.push('');
+ });
+ out.push('### Standing items — currency as of '+today(),'');
+ ranked().forEach(function(id){
+  var it=itemById(id); if(!it) return;
+  var s=statusOf(id), x=s.s;
+  out.push('- **'+it.t+'** — '+s.label
+   +(x.exposures ? ' ('+x.good+' clean / '+x.flag+' flagged across '+x.exposures+' drill'+(x.exposures===1?'':'s')+' on record: '+x.drills.join(', ')+'; last at drill '+x.last+')'
+     : ' (no drill on record has exercised this one yet)'));
+ });
+ out.push('','*Exported from the Drill Deck on '+today()+'. These are deliberate-practice reps with the tool, not OJT evaluations.*');
+ return out.join('\n');
+}
+
+/* ---------- 14. Public handlers ---------- */
+window.ddbSync=function(){ readEditor(); renderEditor(); syncMixOptions(); };
+function datisSay(html){ var b=document.getElementById('ddb-datis-msg'); if(b) b.innerHTML=html; }
+/* Read whatever is in the box onto the frame, and say plainly what it set and
+   what it could not find. */
+window.ddbDatisApply=function(from){
+ readEditor();
+ var have={arr:!!String(draft.datisArr||'').trim(), dep:!!String(draft.datisDep||'').trim()};
+ var o=parseDatis(datisJoined(draft));
+ if(!o){ datisSay('<span class="dd-chip warn">nothing</span> Neither box has any D-ATIS in it. Paste the current KMSP arrival broadcast, the departure one, or both, and press read it.'); return null; }
+ var got=[];
+ if(o.cfg){ draft.cfg=o.cfg; got.push('configuration <b>'+esc(configById(o.cfg).id)+'</b>'); }
+ if(o.wind){ draft.wind=o.wind; got.push('wind '+esc(o.wind)); }
+ if(o.ceil!=null){ draft.ceil=o.ceil; got.push('ceiling '+o.ceil.toLocaleString()); }
+ if(o.vis!=null){ draft.vis=o.vis; got.push('visibility '+o.vis); }
+ if(o.atis){ draft.atis=o.atis; got.push('information '+esc(o.atis)); }
+ if(o.altim){ draft.altim=o.altim; got.push('altimeter '+esc(o.altim)); }
+ renderEditor();
+ var cat=category(draft.ceil, draft.vis);
+ var msg='<span class="dd-chip good">read</span>'+(from?(' from '+esc(from)+' — '):' ')
+  +(got.length?('set '+got.join(', ')+'.'):'nothing was recognised in that text.')
+  +(o.land&&o.land.length?(' Landing '+esc(o.land.join(', '))+(o.dep&&o.dep.length?(', departing '+esc(o.dep.join(', '))):'')+'.'):'')
+  +(o.atisDep&&o.atisDep!==o.atis?(' Split broadcast — arrival information '+esc(o.atis||'?')+', departure information '+esc(o.atisDep)+'.'):'')
+  +' Read from the '+(have.arr&&have.dep?'arrival and departure broadcasts':(have.dep?'departure broadcast alone':'arrival broadcast alone'))+'.'
+  +(!have.dep&&have.arr?' <span style="color:var(--amber)">Without the departure broadcast there is nothing to say which runways are being departed, and that is what separates a 12s from a 12s-Depart-17 or a 30s from a land-30s-depart-12s. Paste it in too if the configuration matters.</span>':'')
+  +(!have.arr&&have.dep?' <span style="color:var(--amber)">Without the arrival broadcast there is no approach in use, so the landing runways had to come out of the departure text if they are in it at all.</span>':'')
+  +(o.partial?(' <span style="color:var(--amber)">Only '+esc((o.land||[]).join(', '))+' is advertised, so this matched '+esc(o.cfg)+' on a subset — something is out of service. Check before you build a full push on it.</span>'):'')
+  +' That is '+cat+' — '+TOOLBOX[cat];
+ if(o.missed.length) msg+=' <span style="color:var(--amber)">Could not read: '+esc(o.missed.join(', '))+'. Set those by hand.</span>';
+ if(o.cfg){
+  var c=configById(o.cfg);
+  if(c.min && (draft.ceil<c.min.ceil || draft.vis<c.min.vis))
+   msg+=' <span style="color:var(--red)">The D-ATIS says '+esc(c.id)+', but that configuration needs '
+     +c.min.ceil.toLocaleString()+' and '+c.min.vis+' ('+esc(c.src||'')+') and the weather it reported is below it. Check the observation before you build on this.</span>';
+ }
+ datisSay(msg);
+ save();
+ return o;
+};
+/* Try the published sources. Anything at all goes wrong and it hands over to
+   the paste box, which is the path that works offline. */
+window.ddbDatisFetch=function(){
+ datisSay('<span class="dd-chip">asking</span> Trying the published D-ATIS sources.');
+ if(typeof fetch!=='function'){
+  datisSay('<span class="dd-chip warn">no</span> This browser gives the page no way to fetch. Paste the D-ATIS text below and press read it.');
+  return;
+ }
+ var i=0;
+ var tryNext=function(){
+  if(i>=DATIS_SOURCES.length){
+   datisSay('<span class="dd-chip warn">no</span> Neither source would answer. That is the usual result from a file page — it has no origin, so the server will not allow it, and the tool is built to work offline anyway. Paste the current KMSP D-ATIS below and press <b>read what is pasted</b>; that path always works.');
+   return;
+  }
+  var s=DATIS_SOURCES[i++];
+  var done=false;
+  var fail=function(){ if(!done){ done=true; tryNext(); } };
+  try{
+   fetch(s.url, {cache:'no-store'}).then(function(r){
+    if(!r || !r.ok) return fail();
+    var ct=(r.headers && r.headers.get && r.headers.get('content-type'))||'';
+    return (/json/i.test(ct) ? r.json() : r.text());
+   }).then(function(p){
+    if(done) return;
+    var sp=datisSplit(p);
+    if(!sp.arr && !sp.dep) return fail();
+    done=true;
+    draft.datisArr=sp.arr; draft.datisDep=sp.dep; draft.datis='';
+    renderEditor();
+    window.ddbDatisApply(s.name);
+   }).catch(fail);
+  }catch(e){ fail(); }
+ };
+ tryNext();
+};
+window.ddbAddRow=function(){ readEditor(); draft.ac.push(blankAc()); renderEditor(); };
+window.ddbDropRow=function(i){ readEditor(); if(draft.ac.length>1) draft.ac.splice(i,1); renderEditor(); };
+window.ddbNew=function(){ draft=blankDrill(); renderEditor(); };
+window.ddbDice=function(){ var e=document.getElementById('ddb-seed'); if(e) e.value=String(Math.floor(Math.random()*100000)); };
+window.ddbGenerate=function(){
+ var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:''; };
+ var seedRaw=g('ddb-seed');
+ draft=gen({seed: seedRaw===''?null:parseInt(seedRaw,10),
+            focus:g('ddb-focus')||'free', mixGates:mixGates(g('ddb-mix')),
+            pressure:g('ddb-pressure')||'compressed', count:parseInt(g('ddb-count'),10)||3,
+            deps:parseInt(g('ddb-deps'),10)||0, overflight:!!g('ddb-ovf')});
+ var sd=document.getElementById('ddb-seed'); if(sd) sd.value=String(draft.seed);
+ renderEditor();
+ var sec=document.getElementById('ddb-editor'); if(sec&&sec.scrollIntoView) sec.scrollIntoView({behavior:'smooth'});
+};
+window.ddbGenFor=function(id){
+ if(window.ddbPage) window.ddbPage('setup');   /* building starts on the setup page */
+ var fo=document.getElementById('ddb-focus'); if(fo) fo.value=id;
+ syncMixOptions();
+ var mx=document.getElementById('ddb-mix');
+ if(mx){ var want=(id==='sep')?'mine':'all';
+  if(mixOptions().some(function(o){return o.id===want;})) mx.value=want; }
+ window.ddbDice(); window.ddbGenerate();
+};
+window.ddbSave=function(){
+ readEditor();
+ var v=saveDrill(draft);
+ if(v.errors.length){ renderCheck(); return; }
+ renderCheck(); renderEditor();
+};
+window.ddbFly=function(){
+ readEditor();
+ var v=validate(draft);
+ if(v.errors.length){ renderCheck(); return; }
+ saveDrill(draft); runDrill(draft);
+};
+window.ddbRun=function(id){ var d=findDrill(id); if(d) runDrill(d); };
+window.ddbEdit=function(id){ var d=findDrill(id); if(!d) return; draft=JSON.parse(JSON.stringify(d)); renderEditor();
+ var sec=document.getElementById('ddb-editor'); if(sec&&sec.scrollIntoView) sec.scrollIntoView({behavior:'smooth'}); };
+window.ddbDel=function(id){ deleteDrill(id); };
+window.ddbRetire=function(id){ state.retired[id]=!state.retired[id]; save(); renderItems(); };
+window.ddbFillRoute=function(i){
+ readEditor();
+ var a=draft && draft.ac[i]; if(!a) return;
+ a.route=DD.routeTextFor(a)||a.route;
+ renderEditor();
+};
+window.ddbSeat=function(id){
+ if(!posById(id)) return;
+ state.pos.seats=state.pos.seats||{};
+ if(isSeat(id)){
+  if(seatIds().length<=1) return;            /* you have to be working something */
+  delete state.pos.seats[id];
+ } else {
+  state.pos.seats[id]=1;
+  state.pos.open[id]=1;                      /* you cannot work a position that is not open */
+ }
+ save(); applyReceivers(); renderPos(); syncDraftFrame();
+};
+window.ddbOpen=function(id, on){
+ if(isSeat(id)) return;                       /* a seat you are working is open by definition */
+ if(on) state.pos.open[id]=1; else delete state.pos.open[id];
+ save(); applyReceivers(); renderPos(); syncDraftFrame();
+};
+window.ddbPreset=function(k){
+ var p=PRESETS[k]; if(!p) return;
+ var was=seatIds();
+ state.pos.open={};
+ Object.keys(p.open).forEach(function(id){ state.pos.open[id]=1; });
+ /* any seat the preset closed falls back to whoever absorbed it */
+ var next={};
+ was.forEach(function(id){ next[ state.pos.open[id] ? id : ownerOf(id).id ] = 1; });
+ state.pos.seats = next;
+ save(); applyReceivers(); renderPos(); syncDraftFrame();
+};
+window.ddbTowers=function(){
+ var e=document.getElementById('ddb-towers');
+ if(e && typeof e.value==='string'){ state.pos.towers=e.value; save(); renderPos(); syncDraftFrame(); }
+};
+window.ddbRst=function(){
+ var e=document.getElementById('ddb-rstopen');
+ state.pos.rstOpen = e ? !!e.checked : true;
+ DD.setRstOpen(state.pos.rstOpen);
+ save(); renderPos(); syncDraftFrame();
+};
+/* keep the drill being edited pointed at the current position setup, unless
+   the trainee has hand-edited those fields for this one drill */
+/* ---------- Pages ----------
+   Each page is a wrapper the sections get moved into, so the existing mount
+   order and every id stay exactly as they were. */
+var PAGES=[
+ {id:'setup', label:'Set up a drill',  sections:['mod-pos','mod-build'], hint:'seat, weather, strips'},
+ {id:'fly',   label:'Fly it',          sections:['mod-live'],            hint:'the scope and the frequency'},
+ {id:'notes', label:'Notes and log',   sections:['mod-notes','mod-log'], hint:'what it taught, and everything before it'}
+];
+var page='setup';
+function buildPages(){
+ var nav=document.getElementById('modnav');
+ if(!nav || !nav.parentNode || !nav.parentNode.insertBefore || !document.createElement) return;
+ var tabs=document.createElement('div');
+ tabs.className='dd-tabs'; tabs.id='ddb-tabs';
+ tabs.innerHTML=PAGES.map(function(p){
+  return '<button data-p="'+p.id+'" onclick="ddbPage(\''+p.id+'\')">'+esc(p.label)+'</button>';
+ }).join('')+'<span class="sub" id="ddb-tabhint"></span>';
+ nav.parentNode.insertBefore(tabs, nav);
+ PAGES.forEach(function(p){
+  var v=document.createElement('div');
+  v.className='dd-view'; v.id='ddb-view-'+p.id;
+  var first=document.getElementById(p.sections[0]);
+  if(first && first.parentNode && first.parentNode.insertBefore) first.parentNode.insertBefore(v, first);
+  else if(nav.parentNode.appendChild) nav.parentNode.appendChild(v);
+  p.sections.forEach(function(id){
+   var sec=document.getElementById(id);
+   if(sec && v.appendChild) v.appendChild(sec);      /* appendChild moves it */
+  });
+ });
+ window.ddbPage(page);
+}
+window.ddbPage=function(id, keepScroll){
+ if(!PAGES.some(function(p){return p.id===id;})) return;
+ page=id;
+ PAGES.forEach(function(p){
+  var v=document.getElementById('ddb-view-'+p.id);
+  if(v && v.classList) v.classList.toggle('on', p.id===id);
+ });
+ var tabs=document.getElementById('ddb-tabs');
+ if(tabs && tabs.querySelectorAll){
+  Array.prototype.slice.call(tabs.querySelectorAll('button')).forEach(function(b){
+   if(b.classList) b.classList.toggle('on', (b.dataset&&b.dataset.p)===id);
+  });
+ }
+ var hint=document.getElementById('ddb-tabhint');
+ if(hint && typeof hint.textContent==='string'){
+  var p=PAGES.filter(function(x){return x.id===id;})[0];
+  hint.textContent=p?p.hint:'';
+ }
+ if(!keepScroll && typeof window.scrollTo==='function'){
+  try{ window.scrollTo({top:0, behavior:'instant'}); }catch(e){ window.scrollTo(0,0); }
+ }
+ if(id==='fly' && DD.render) DD.render();
+};
+function syncDraftFrame(){
+ if(!draft) return;
+ draft.seat=seatLabel(); draft.open=openLabel(); draft.towers=state.pos.towers;
+ renderEditor();
+}
+window.ddbTarget=function(){
+ var e=document.getElementById('ddb-targetin');
+ var v=e?parseInt(e.value,10):NaN;
+ if(!isNaN(v)&&v>=5&&v<=120){ state.target=v; save(); renderTiming(); renderItems(); }
+};
+function syncHotBtn(){ var b=document.getElementById('ddb-hotbtn'); if(b&&b.classList) b.classList.toggle('on', state.hot); }
+window.ddbHot=function(){ state.hot=!state.hot; save(); syncHotBtn(); renderTiming(); };
+window.ddbBank=function(){
+ var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:''; };
+ var d=draftFromSim();
+ var lines=function(s,fb){ var v=(s||'').split('\n').map(function(x){return x.trim();}).filter(Boolean); return v.length?v:fb; };
+ var entry={n:g('ddb-en')||d.n, date:g('ddb-ed')||d.date, seat:g('ddb-es')||d.seat,
+            cfg:g('ddb-ec')||d.cfg, head:g('ddb-eh')||d.head,
+            banked:lines(g('ddb-eb'), d.banked), open:lines(g('ddb-eo'), d.open),
+            chip:d.chip, tally:d.tally, timing:d.timing};
+ bank(entry);
+ var box=document.getElementById('dd-debriefbox');
+ if(box && typeof box.innerHTML==='string') box.innerHTML += '<div class="dd-panel"><span class="dd-chip good">banked</span> Drill '+esc(entry.n)+' is in the library and the standing items have moved. <button class="dd-btn" onclick="ddbPage(\'notes\')">Open the notebook</button></div>';
+};
+window.ddbExport=function(what){
+ var e=document.getElementById('ddb-io'); if(!e) return;
+ if(what==='json') e.value=JSON.stringify({v:1, drills:state.drills, entries:state.entries, retired:state.retired, target:state.target}, null, 1);
+ else if(what==='md') e.value=toMd();
+ else if(what==='code') e.value=draft?toCode(readEditor()):'Build or generate a drill first.';
+};
+window.ddbImport=function(){
+ var e=document.getElementById('ddb-io'); if(!e) return;
+ var msg=function(t,k){ setHtml('ddb-iomsg','<div class="'+k+'">'+esc(t)+'</div>'); };
+ try{
+  var o=JSON.parse(e.value);
+  if(!o||o.v!==1) return msg('That is not a drill-deck export (expected version 1).','e');
+  state.drills=o.drills||[]; state.entries=o.entries||[]; state.retired=o.retired||{}; state.target=o.target||state.target;
+  state.drills.forEach(publish);
+  for(var i=DD.DRILL_LOG.length-1;i>=0;i--){ if(DD.DRILL_LOG[i].user) DD.DRILL_LOG.splice(i,1); }
+  state.entries.forEach(function(en){ DD.DRILL_LOG.unshift(en); });
+  save(); refreshLog(); renderSaved(); renderCustomBar(); renderItems(); renderEntries();
+  msg('Imported '+state.drills.length+' drill'+(state.drills.length===1?'':'s')+' and '+state.entries.length+' notebook entr'+(state.entries.length===1?'y':'ies')+'.','k');
+ }catch(err){ msg('That did not parse as JSON.','e'); }
+};
+
+/* ---------- 15. Sections ---------- */
+function buildHtml(){
+ var focusOpts=Object.keys(FOCUS).map(function(k){
+  return '<option value="'+k+'">'+(k==='free'?'Open push — nothing weighted':FOCUS[k].label)+'</option>';
+ }).join('');
+ return '<section class="module dd-section" id="mod-build" data-mod="build">'
+ +'<div class="modhead"><div><span class="tag">BUILD</span><h2>Drill Builder</h2>'
+ +'<p class="modsub">Author a drill, or let the notebook pick one — every number checked against the route data before it flies</p></div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub a">What your notes want next</div>'
+ +'<div class="dd-hint" style="margin:0 0 12px;">Ordered by what has the strongest claim on the next drill: something that bit you the last time it came up, then something never exercised at all, then the ones the written notes still call open that you keep not testing. A clean run subtracts; three clean runs make it a retirement candidate.</div>'
+ +'<div id="ddb-items"></div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Generate</div>'
+ +'<div class="dd-grid">'
+ +f('Focus','<select class="dd-sel" id="ddb-focus">'+focusOpts+'</select>')
+ +f('Gates','<select class="dd-sel" id="ddb-mix" onchange="ddbSync()"></select>')
+ +f('Pressure','<select class="dd-sel" id="ddb-pressure"><option value="routine">routine</option><option value="compressed" selected>compressed</option><option value="saturated">saturated</option></select>')
+ +f('Strips','<select class="dd-sel" id="ddb-count"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select>')
+ +f('Departures','<select class="dd-sel" id="ddb-deps"><option value="0">none</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>')
+ +f('Overflight','<select class="dd-sel" id="ddb-ovf"><option value="">none</option><option value="1">one crossing</option></select>')
+ +f('Seed','<input class="dd-in" id="ddb-seed" placeholder="any number">')
+ +'</div>'
+ +'<div class="dd-actions"><button class="dd-btn pri" onclick="ddbGenerate()">Generate drill</button>'
+ +'<button class="dd-btn" onclick="ddbDice()">new seed</button>'
+ +'<button class="dd-btn" onclick="ddbNew()">start blank instead</button>'
+ +'<span class="dd-hint" style="margin:0;">Same seed, same drill — write the number in your notes and you can fly it again cold.</span></div></div>'
+
+ +'<div class="dd-panel" id="ddb-editor"><div class="dd-sub">Edit</div>'
+ +'<div class="dd-grid">'
+ +f('Name','<input class="dd-in" id="ddb-name" placeholder="what this drill is for">')
+ +f('Configuration','<select class="dd-sel" id="ddb-cfg" onchange="ddbSync()">'+CONFIGS.map(function(c){return '<option value="'+c.id+'">'+c.name+'</option>';}).join('')+'</select>')
+ +f('Wind','<input class="dd-in" id="ddb-wind" onchange="ddbSync()">')
+ +f('Ceiling (feet)','<input class="dd-in" id="ddb-ceil" onchange="ddbSync()">')
+ +f('Visibility (miles)','<input class="dd-in" id="ddb-vis" onchange="ddbSync()">')
+ +f('Seat','<input class="dd-in" id="ddb-seat" onchange="ddbSync()">')
+ +f('Towers','<input class="dd-in" id="ddb-towers" onchange="ddbSync()">')
+ +f('Open around you','<input class="dd-in" id="ddb-open" onchange="ddbSync()">')
+ +f('ATIS','<input class="dd-in" id="ddb-atis">')
+ +f('Altimeter','<input class="dd-in" id="ddb-altim">')
+ +f('Opening rate','<select class="dd-sel" id="ddb-rate"><option value="0">paused</option><option value="1" selected>1× — real time</option><option value="4">4×</option></select>')
+ +'<label class="dd-chk"><input type="checkbox" id="ddb-hot">run hot — no pausing</label>'
+ +'</div>'
+ +'<div class="dd-field" style="margin-top:12px;"><span class="dd-lab">D-ATIS — sets the flow and the weather from the current one. '
+ +'MSP broadcasts arrival and departure separately, with a letter each; paste whichever you have and it reads what is there. '
+ +'<button class="dd-btn sm" style="margin-left:8px;" onclick="ddbDatisFetch()">fetch the current one</button> '
+ +'<button class="dd-btn sm" onclick="ddbDatisApply()">read what is pasted</button></span></div>'
+ +'<div class="dd-grid" style="margin-top:6px;">'
+ +'<div class="dd-field"><span class="dd-lab">Arrival D-ATIS — the approach in use, and the weather</span>'
+ +'<textarea class="dd-in" id="ddb-datis-arr" rows="3" style="min-height:58px;resize:vertical;font-family:var(--mono);font-size:11.5px;" '
+ +'placeholder="MSP ARR INFO J 0353Z. 22003KT 10SM CLR ... VISUAL RWY 30L APCH IN USE."></textarea></div>'
+ +'<div class="dd-field"><span class="dd-lab">Departure D-ATIS — the runways being departed</span>'
+ +'<textarea class="dd-in" id="ddb-datis-dep" rows="3" style="min-height:58px;resize:vertical;font-family:var(--mono);font-size:11.5px;" '
+ +'placeholder="MSP DEP INFO W 0353Z. ... DEPARTING RWY 30L."></textarea></div>'
+ +'</div>'
+ +'<div class="dd-msg" id="ddb-datis-msg"></div>'
+ +'<div class="dd-msg" id="ddb-frame" style="margin-top:12px;"></div>'
+
+ +'<div class="dd-sub" style="margin-top:16px;">Special observation — the frame changes mid-drill</div>'
+ +'<div class="dd-grid">'
+ +'<label class="dd-chk"><input type="checkbox" id="ddb-speci" onchange="ddbSync()">drop a SPECI</label>'
+ +f('At T-plus (seconds)','<input class="dd-in" id="ddb-speciat" onchange="ddbSync()">')
+ +f('New ceiling','<input class="dd-in" id="ddb-specic" onchange="ddbSync()">')
+ +f('New visibility','<input class="dd-in" id="ddb-speciv" onchange="ddbSync()">')
+ +f('New wind','<input class="dd-in" id="ddb-speciw" onchange="ddbSync()">')
+ +'</div>'
+ +'<div class="dd-hint">A special observation is unscheduled — it lands between the hourly reports when the weather crosses a threshold, and because the configuration follows the weather, a big enough change forces a re-plan. The engine will not re-route the strips already flying; it announces the new observation and the category it produces, and the rep is saying what changes.</div>'
+ +'<div class="dd-field" style="margin-top:14px;"><span class="dd-lab">Brief — what the drill is asking of you</span><textarea class="dd-ta" id="ddb-brief"></textarea></div>'
+ +'<div class="dd-sub" style="margin-top:16px;">Strips</div>'
+ +'<div id="ddb-rows"></div>'
+ +'<div class="dd-actions"><button class="dd-btn" onclick="ddbAddRow()">add a strip</button></div>'
+ +'<div class="dd-msg" id="ddb-check"></div>'
+ +'<div class="dd-scopewrap" style="margin-top:12px;"><div id="ddb-preview"></div></div>'
+ +'<div class="dd-actions"><button class="dd-btn pri" onclick="ddbFly()">Save and fly it</button>'
+ +'<button class="dd-btn" onclick="ddbSave()">Save only</button></div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Saved drills</div><div id="ddb-saved"></div></div>'
+
+ +'<div class="dd-note">Gates belong to a Feeder position by configuration (SOP 4-4d) — in a 12s or 30s that is BAINY, MUSCL and KKILR to North and NITZR, BLUEM and TORGY to South, with the boundary on the 30L/12R localizer. The generator picks gates the seat you are working actually owns, and building one off your own split is allowed but called out, because the order says gates get reassigned to balance workload. The floors themselves are near 7,000 / far 8,000 on a 12s (SOP 4-4c(3)); which gates are near and which are far is derived from 4-4c(7) rather than published, and Appendix A is still unread images. Charted obstructions from SOP 8-1 are plotted on the scope, with Arden Hills / Shoreview at MSP 018/011, 2,438 feet, drawn in red because it is the recurring bust near the St Paul Runway 14 final. The departure dispersal area is drawn too, as the amber dashed sector southeast of the field: MSP Tower owns it from the surface up to and including 7,000 (MSP-M98 LOA 5.a(3)), and anything of yours that is not an MSP departure sitting in there at or below 7,000 gets flagged. Its outline was traced off the chart in the agreement rather than read off a published list of coordinates, so treat the edge as good to about half a mile. Everything around M98 is Center except one stretch of the perimeter: the Rochester boundary runs MSP 185/038, 158/041, 149/040, and south of that line RST owns 9,000 and below while Center owns everything above it. M98 enters RST airspace at 3,000, 5,000, 7,000 or 9,000 and nothing else, on 119.8 or 119.2 (M98/RST LOA 5.b); RST enters overflights into M98 at 4,000, 6,000 or 8,000, and anything at 7,000 or above is individually coordinated five minutes out (5.a(6) and (7)). With Rochester closed the delegated airspace reverts to '+DD.RST_CLOSED_OWNER+' top to bottom (4.a). All of it is in claude_M98_RST_Reference.md, including two conflicts that are named rather than resolved. The tool works out who a strip came from, and who it goes to, from the bearing it crosses on and the altitude it is at \u2014 so the same overflight is Rochester\u2019s at 6,500 and Center\u2019s at 11,000, and naming the wrong one is graded. An IFR aircraft is established unless it is a pop-up: a handoff arrives identified, on a code and on a clearance, and the answer is \u201cradar contact\u201d. A pop-up IFR has none of the three \u2014 it comes up airborne asking for a clearance, and until you issue one it is not an IFR aircraft at all, which is the gap session 7 was about. A VFR aircraft is either handed to you with service already on it or calling cold with nothing. The player grades that order: work an unidentified aircraft and it says so, and \u201cradar contact\u201d with no code assigned is refused. Distance to go is measured to the end of the runway-transition tail, so a strip at 12 NM is twelve miles from the handoff point, not from the airport. Altitudes, published speeds and floors on each strip are read live from the route data, and the builder refuses a start below the gate floor (SOP 4-4c(3) — near 7,000 / far 8,000 on a 12s; which gate is near and which is far is still the working read, unverified against Appendix A). Configuration follows the wind and the weather rather than being picked (MSP-M98 LOA 9), so the weather floors are enforced: CRO needs 2,200 and 5 (LOA 7.i), 17-22 needs 1,400 and 4 (SOP 7-1 / LOA 11). Heavy jets are held to the 12R/30L transition in every configuration (ZMP-M98 LOA Table 2c). The spoken form beside each strip follows the carrier callsign reference — flight numbers grouped in twos, registrations spelled straight, zero never “oh.”</div>'
+ +'</section>';
+}
+function posHtml(){
+ return '<section class="module dd-section" id="mod-pos" data-mod="pos">'
+ +'<div class="modhead"><div><span class="tag">POSITION</span><h2>Position Setup</h2>'
+ +'<p class="modsub">The seat is your pick — say what you are working and what is open around you, and the rest of the tool follows</p></div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Quick setups</div>'
+ +'<div class="dd-actions" style="margin-top:0;">'
+ + Object.keys(PRESETS).map(function(k){ return '<button class="dd-btn" onclick="ddbPreset(\''+k+'\')">'+esc(PRESETS[k].label)+'</button>'; }).join('')
+ +'</div>'
+ +'<div class="dd-hint">M98 collapses to <b>H</b>, South Feeder, and the splits open in the order H → R → N → S — R as combined Departure, N as combined MSP Final, S as South Final, with E as the combined Satellite (SOP 2-1 NOTE 2). Anything you leave closed folds into whoever is still open along that chain.</div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub a">Which seat are you working</div>'
+ +'<div id="ddb-seatbox"></div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Open around you</div>'
+ +'<div class="dd-grid" id="ddb-openbox"></div>'
+ +'<div class="dd-grid" style="margin-top:12px;">'
+ +f("Towers",'<input class="dd-in" id="ddb-towers" onchange="ddbTowers()">')
+ +'<label class="dd-chk"><input type="checkbox" id="ddb-rstopen" onchange="ddbRst()">Rochester approach open</label>'
+ +'</div>'
+ +'<div class="dd-hint">Rochester is not a 24-hour facility. With it closed, the segment below stops mattering and Center owns that corner top to bottom — so the same aircraft that would have gone to RST at 6,000 goes to Center instead. Its hours are not in the reference set, so this is yours to state with the rest of the frame, the same way towers open or closed is.</div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">What that resolves to</div>'
+ +'<div class="dd-msg" id="ddb-resolved"></div>'
+ +'<div class="dd-hint">This drives the live player, not just the paperwork: whoever ends up owning the arrival is who has to take the flash, on their frequency, and the switch button in the player follows it. Close South Arrival and both runways go to N on 119.3 — flash it to S anyway and the player will tell you nobody is there.</div></div>'
+
+ +'<div class="dd-note">Positions, identifiers and frequencies are M98 SOP 2-1; the combining order is NOTE 2 on the same paragraph. Position duties are SOP 2-1 / 2-4 / 2-5 — Feeder assigns the runway and starts crossovers, Arrival vectors, sequences and clears. The arrival split rides the localizers, so 12R is South Arrival\u2019s side and 12L is North\u2019s (SOP 4-2a). Which arrival gates belong to North rather than South Feeder is SOP 4-4d, which is not in the reference set here — if you take the North Feeder seat, confirm that split yourself before you trust the traffic.</div>'
+ +'</section>';
+}
+function notesHtml(){
+ return '<section class="module dd-section" id="mod-notes" data-mod="notes">'
+ +'<div class="modhead"><div><span class="tag">NOTES</span><h2>Training Notebook</h2>'
+ +'<p class="modsub">Drills banked from the player, standing items scored against them, and an export that keeps the written notes honest</p></div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Response target</div>'
+ +'<div class="dd-grid">'
+ +f('Check-in to first word (seconds)','<input class="dd-in" id="ddb-targetin" value="'+state.target+'" onchange="ddbTarget()">')
+ +'</div>'
+ +'<div class="dd-hint">Your target, not a book number. The engine\u2019s own ninety-second rule for owed items is separate and stays where it is. The player grades every first transmission against this and the debrief reports the median.</div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub a">On record before this tool</div>'
+ +'<div id="ddb-prior"></div>'
+ +'<div class="dd-hint">These ran in the earlier project, before the work moved into Claude Code. Some finished, one was scrapped on saturation and one was paused mid-tape — it makes no difference to what they taught, so they are scored exactly like anything banked here and the standing items above count them. Each line names the standing item the drill moved and quotes the note it was read from, so you can check the reading and argue with it.</div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Banked from the player</div><div id="ddb-entries"></div>'
+ +'<div class="dd-hint">Finish a drill in the player and the debrief offers a draft. Banking it adds a card to the library above and moves the standing items — into the same ledger as the drills on record above.</div></div>'
+
+ +'<div class="dd-panel"><div class="dd-sub">Carry it out of the browser</div>'
+ +'<div class="dd-actions" style="margin-top:0;"><button class="dd-btn" onclick="ddbExport(\'md\')">notebook as Markdown</button>'
+ +'<button class="dd-btn" onclick="ddbExport(\'json\')">everything as JSON</button>'
+ +'<button class="dd-btn" onclick="ddbExport(\'code\')">current drill as a SCENARIOS entry</button>'
+ +'<button class="dd-btn" onclick="ddbImport()">import JSON from the box</button></div>'
+ +'<div class="dd-io"><textarea class="dd-ta" id="ddb-io" style="min-height:150px;" placeholder="Export lands here. Paste a JSON export in and press import to restore it on another machine."></textarea></div>'
+ +'<div class="dd-msg" id="ddb-iomsg"></div>'
+ +'<div class="dd-hint">Saved in this browser only \u2014 there is no server. The Markdown export is written to drop into the practice-log reference file; the SCENARIOS entry is written to paste into the drill deck block so a drill becomes permanent, single-file, no build step.</div></div>'
+ +'</section>';
+}
+
+/* ---------- 16. Mount ---------- */
+function mount(){
+ restore();
+ state.drills.forEach(publish);
+ state.entries.forEach(function(e){ DD.DRILL_LOG.unshift(e); });
+
+ /* Three pages rather than one long scroll: set the drill up, fly it, then the
+    notebook and the library. The live player is a page of its own so nothing
+    above it has to be scrolled past while a drill is running. */
+ var wrap=document.querySelector('.wrap')||document.body;
+ var foot=wrap && wrap.querySelector && wrap.querySelector('footer');
+ function put(html, beforeId){
+  var el=document.createElement('div');
+  el.innerHTML=html;
+  var anchor=document.getElementById(beforeId);
+  if(anchor && anchor.parentNode && anchor.parentNode.insertBefore){ anchor.parentNode.insertBefore(el, anchor); return el; }
+  if(wrap && foot && wrap.insertBefore){ wrap.insertBefore(el, foot); return el; }
+  if(wrap && wrap.appendChild) wrap.appendChild(el);
+  return el;
+ }
+ put(posHtml()+buildHtml(), 'mod-live');
+ put(notesHtml(), 'mod-log');
+ buildPages();
+ syncMixOptions();
+ var nav=document.getElementById('modnav');
+ /* the old anchor nav is replaced by the page tabs */
+ if(nav && typeof nav.innerHTML==='string') nav.innerHTML='';
+
+ /* live-player additions: saved-drill buttons, a hot toggle, the timing strip */
+ var bar=document.querySelector('#mod-live .dd-bar');
+ if(bar && bar.insertBefore){
+  var span=document.createElement('span'); span.id='ddb-custombar';
+  var rateBar=document.getElementById('dd-ratebar');
+  if(rateBar && rateBar.parentNode===bar) bar.insertBefore(span, rateBar); else bar.appendChild(span);
+  var hb=document.createElement('button'); hb.id='ddb-hotbtn'; hb.textContent='run hot';
+  hb.onclick=function(){ window.ddbHot(); };
+  if(rateBar && rateBar.nextSibling) bar.insertBefore(hb, rateBar.nextSibling); else bar.appendChild(hb);
+  if(state.hot && hb.classList) hb.classList.add('on');
+ }
+ var feed=document.getElementById('dd-feed');
+ if(feed && feed.parentNode && feed.parentNode.insertBefore){
+  var tm=document.createElement('div'); tm.className='dd-timing'; tm.id='ddb-timing';
+  feed.parentNode.insertBefore(tm, feed);
+ }
+
+ applyReceivers();
+ DD.setRstOpen(rstOpen());
+ if(window.ddLayers) window.ddLayers(state.layers||'tracked');
+ draft=blankDrill();
+ refreshLog();
+ renderPos(); renderEditor(); renderSaved(); renderCustomBar(); renderPrior(); renderItems(); renderEntries(); renderTiming();
+ if(!storeOk) setHtml('ddb-iomsg','<div class="w">This browser is not letting the page save anything locally, so drills and notes will vanish on reload. Use the JSON export to keep them.</div>');
+}
+
+/* ---------- 17. Test surface ---------- */
+window.ddb = {
+ state:state, gen:gen, validate:validate, saveDrill:saveDrill, deleteDrill:deleteDrill,
+ runDrill:runDrill, publish:publish, toScenario:toScenario, toCode:toCode, toMd:toMd,
+ draftFromSim:draftFromSim, bank:bank, tallyFeed:tallyFeed, itemStats:itemStats,
+ statusOf:statusOf, pertinence:pertinence, ranked:ranked, timing:TIMING,
+ PRIOR:PRIOR, hist:hist, priorCard:priorCard,
+ spoken:spoken, category:category, configById:configById, frameOf:frameOf,
+ POSITIONS:POSITIONS, ownerOf:ownerOf, isOpen:isOpen, applyReceivers:applyReceivers,
+ seatLabel:seatLabel, openLabel:openLabel, PRESETS:PRESETS,
+ seatIds:seatIds, isSeat:isSeat, seatPositions:seatPositions,
+ mixOptions:mixOptions, mixGates:mixGates, seatGates:seatGates,
+ parseDatis:parseDatis, datisText:datisText, datisSplit:datisSplit, datisJoined:datisJoined,
+ configFromRunways:configFromRunways, DATIS_SOURCES:DATIS_SOURCES,
+ timingSummary:timingSummary, setDraft:function(d){ draft=d; renderEditor(); }, getDraft:function(){ return draft; }
+};
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>

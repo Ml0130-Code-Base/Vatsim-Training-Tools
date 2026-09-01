@@ -1,0 +1,1826 @@
+<script>
+/* ================================================================
+   DRILL DECK v1 — the live player and the drill library
+   Fully self-contained: injects its own CSS, nav links, and sections.
+   Safe to paste as one block before </body> of any version of this tool.
+   ================================================================ */
+(function(){
+'use strict';
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.dd-section{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}'
++ '.dd-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.dd-mono{font-family:var(--mono);}'
++ '.dd-scopewrap{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}'
++ '.dd-scope{width:100%;height:auto;display:block;}'
++ '.dd-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
++ '.dd-bar button,.dd-quick button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
++ '.dd-bar button:hover,.dd-quick button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.dd-bar button.on{color:var(--green);border-color:var(--green);}'
++ '.dd-clock{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto;}'
++ '.dd-strips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}'
++ '.dd-strip{flex:1 1 190px;min-width:170px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;line-height:1.5;cursor:pointer;}'
++ '.dd-strip.sel{border-color:var(--green);}'
++ '.dd-strip.gone{opacity:0.35;}'
++ '.dd-strip b{color:var(--ink);font-size:12.5px;}'
++ '.dd-strip .warn{color:var(--amber);}'
++ '.dd-cmdrow{display:flex;gap:8px;flex-wrap:wrap;}'
++ '.dd-cmd{flex:1 1 260px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--mono);font-size:12.5px;padding:9px 10px;}'
++ '.dd-cmd:focus{outline:2px solid var(--green);outline-offset:1px;}'
++ '.dd-send{font-family:var(--mono);font-size:12px;background:var(--green);color:#062;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;font-weight:600;}'
++ '.dd-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}'
++ '.dd-feed{max-height:300px;overflow-y:auto;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:12.5px;margin-top:12px;}'
++ '.dd-feed p{margin:0 0 7px;line-height:1.45;}'
++ '.dd-feed .t{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin-right:6px;}'
++ '.dd-feed .crew{font-style:italic;color:var(--ink);}'
++ '.dd-feed .coach{color:var(--dim);}'
++ '.dd-chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:0.06em;border-radius:2px;padding:1px 6px;margin-right:6px;text-transform:uppercase;}'
++ '.dd-chip.good{background:rgba(79,224,160,0.15);color:var(--green);}'
++ '.dd-chip.flag{background:rgba(232,162,61,0.15);color:var(--amber);}'
++ '.dd-chip.crit{background:rgba(232,96,77,0.18);color:var(--red);}'
++ '.dd-chip.info{background:rgba(111,128,121,0.18);color:var(--dim);}'
++ '.dd-note{font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:12px;}'
++ '.dd-debrief{margin-top:14px;}'
++ '.dd-debrief h3{font-family:var(--display);font-size:17px;margin:0 0 10px;}'
++ '.dd-debrief li{margin-bottom:6px;font-size:13.5px;}'
++ '.dd-log-card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin:12px 0;}'
++ '.dd-log-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline;}'
++ '.dd-log-head b{font-family:var(--display);font-size:16px;color:var(--ink);}'
++ '.dd-log-meta{font-family:var(--mono);font-size:11px;color:var(--dim);}'
++ '.dd-log-card ul{margin:8px 0 0;padding-left:18px;}'
++ '.dd-log-card li{font-size:13px;margin-bottom:4px;}'
++ '.dd-log-card .lab{font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;margin-top:10px;color:var(--dim);}'
++ '.dd-log-card .lab.g{color:var(--green);}'
++ '.dd-log-card .lab.o{color:var(--amber);}'
++ '.dd-standing li{margin-bottom:7px;font-size:13.5px;}'
++ '@media (max-width:600px){.dd-strip{flex-basis:100%;}.dd-feed{max-height:240px;}}';
+var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+
+/* ---------- 2. Geometry data (verified 2026-08-30) ---------- */
+/* MSP VOR N44 53.79 / W093 14.19 — the surveyed position from the header of
+   claude_MSP_STAR_Reference.md, which is what every fix below is measured from.
+   (Was an approximate 44.8833 / -93.2250; corrected 2026-08-31.) */
+var MSP0 = {lat:44.89650, lon:-93.23650};
+var COSL = Math.cos(44.5*Math.PI/180);
+var CX=350, CY=255, SC=4.5;                        /* px center + px per NM */
+function nmOf(lat,lon){ return {e:(lon-MSP0.lon)*60*COSL, n:(lat-MSP0.lat)*60}; }
+function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
+function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
+
+/* ---------- Who is on the other side ----------
+   The M98 / Rochester Approach boundary, as MSP radial/DME (owner-supplied
+   2026-08-31): 185/038, 158/041, 149/040. That segment of the M98 perimeter is
+   the only place RST is the neighbour, and only underneath it — south of the
+   line RST owns 9,000 and below, ZMP owns everything above. Everywhere else
+   around M98 the neighbour is ZMP at every altitude. */
+var RST_BOUNDARY = [[185,38],[158,41],[149,40]];
+var RST_ARC = [149,185];      /* the radials the segment spans */
+var RST_CEILING = 9000;       /* RST at and below, ZMP above */
+/* Rochester is not a 24-hour facility. With it closed the delegated airspace
+   reverts to Center — specifically Sector 07 (M98/RST LOA 4.a and ZMP/RST LOA
+   6.B both say so) — and the arc stops mattering. The published hours are in
+   neither agreement, so this is a frame setting the trainee states along with
+   the rest of the frame, like towers open or closed, rather than something the
+   tool works out from a clock. */
+var RST_OPEN = true;
+var RST_CLOSED_OWNER = 'ZMP Sector 07';
+/* M98 hands aircraft into RST airspace at these altitudes and no others
+   (M98/RST LOA 5.b(1)), on 119.8 or 119.2 as appropriate (5.b(3)). */
+var RST_ENTRY_ALTS = [3000, 5000, 7000, 9000];
+var RST_FREQS = ['119.8', '119.2'];
+/* And they hand overflights to us at these (5.a(6)); 7,000 or above is
+   individually coordinated at least five minutes out (5.a(7)). */
+var RST_OVF_ALTS = [4000, 6000, 8000];
+function setRstOpen(v){ RST_OPEN = (v!==false); render(); }
+function neighbourAt(brg, alt){
+ var b=((brg%360)+360)%360;
+ var inArc = (b>=RST_ARC[0] && b<=RST_ARC[1]);
+ var ZMP = {pos:'ZMP', frq:null, name:'Minneapolis Center'};
+ if(!inArc) return {pos:'ZMP', frq:null, name:'Minneapolis Center',
+   why:'ZMP has everything around M98 except the RST segment'};
+ if(!RST_OPEN) return {pos:'ZMP', frq:null, name:RST_CLOSED_OWNER,
+   why:'south of the line, but Rochester is closed \u2014 the delegated airspace reverts to '+RST_CLOSED_OWNER+' top to bottom (M98/RST LOA 4.a)'};
+ if(alt<=RST_CEILING) return {pos:'RST', frq:RST_FREQS[0], alt2:RST_FREQS[1], name:'Rochester approach',
+   why:'south of the line at '+fmtAlt(alt)+', which is RST\u2019s below 9,000'};
+ return {pos:'ZMP', frq:null, name:'Minneapolis Center',
+   why:'south of the line but at '+fmtAlt(alt)+', above RST\u2019s 9,000'};
+}
+
+/* M98 lateral boundary — nine MSP radial/DME points (owner-verified).
+   A ten-point variant splitting the north-west 338/039 into 333/039 and
+   345/038 was offered on 2026-08-31 and set aside by the owner: this
+   single-point north-west corner is the correct one. Do not re-split it. */
+var BOUNDARY = [[295,41],[338,39],[29,40],[77,37],[118,40],[158,40],[196,39],[230,37],[254,40]];
+
+/* 12R runway-transition tails, coordinates + restrictions from claude_MSP_STAR_Reference.md.
+   aa = cross at-or-above (ft), at = cross at (ft), spd = published speed (kt). */
+var TRUNK = [
+ {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+ {f:'SAVVG', lat:44.69167, lon:-93.21933, at:null, spd:null},   /* at set per gate below */
+ {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000,  spd:230},
+ {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000,  spd:230}
+];
+function trunkFor(gate){
+ return TRUNK.map(function(p){ var q={f:p.f,lat:p.lat,lon:p.lon,spd:p.spd};
+  if(p.f==='SAVVG'){ q.at = (gate==='BLUEM')?9000:10000; } else { if(p.aa)q.aa=p.aa; if(p.at)q.at=p.at; }
+  return q; });
+}
+var ROUTES = {
+ NITZR: [
+  {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
+  {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
+  {f:'DAHRL', lat:44.36483, lon:-93.36683},
+  {f:'GDNEE', lat:44.51133, lon:-93.26633}
+ ].concat(trunkFor('NITZR')),
+ BLUEM: [
+  {f:'BLUEM', lat:44.18133, lon:-93.22383, aa:10000, spd:280},
+  {f:'HHAMR', lat:44.28433, lon:-93.21433, aa:10000, spd:280},
+  {f:'FARBO', lat:44.37450, lon:-93.20733}
+ ].concat(trunkFor('BLUEM')),
+ TORGY: [
+  {f:'TORGY', lat:44.64350, lon:-94.37533, aa:13000, spd:280},
+  {f:'OFSON', lat:44.67367, lon:-94.24133, aa:11000, spd:280},
+  {f:'HMBRG', lat:44.70117, lon:-94.11950, aa:10000, spd:280},
+  {f:'CONIA', lat:44.75283, lon:-93.88800},
+  {f:'SPUKI', lat:44.89850, lon:-93.70417, at:7000, spd:230},
+  {f:'KRUGG', lat:44.92333, lon:-93.67283, at:7000, spd:210}
+ ],
+ /* KKILR and MUSCL take the 12R/35 transition and merge onto the same
+    GREAK/TIETN tail as NITZR and BLUEM. BAINY has its own 12L/12R tail
+    ending at KAYQU and never touches the trunk. */
+ KKILR: [
+  {f:'KKILR', lat:44.85283, lon:-92.18567, aa:12000, spd:280},
+  {f:'HUGGI', lat:44.86117, lon:-92.32300, aa:10000, spd:280},   /* 280 or slower cap */
+  {f:'KRISP', lat:44.86917, lon:-92.48683},
+  {f:'AFTYN', lat:44.86450, lon:-92.79700, aa:10000, spd:250},
+  {f:'JONZY', lat:44.84117, lon:-93.00983, aa:9000},
+  {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
+  {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+ ],
+ MUSCL: [
+  {f:'BAYKS', lat:45.06050, lon:-92.21483, aa:12000, spd:280},
+  {f:'WOLVS', lat:45.00417, lon:-92.57300},
+  {f:'LOOON', lat:44.98200, lon:-92.71133, aa:11000},
+  {f:'WDBRY', lat:44.94517, lon:-92.93933, aa:10000, spd:250},
+  {f:'ZASKY', lat:44.93033, lon:-93.03083, aa:9000},
+  {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
+  {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+ ],
+ BAINY: [
+  {f:'BAINY', lat:45.75367, lon:-93.69950, aa:15000, spd:280},
+  {f:'LUCCY', lat:45.58450, lon:-93.60900, aa:11000, spd:280},
+  {f:'SAUGR', lat:45.34850, lon:-93.48117},
+  {f:'OGLVE', lat:45.31483, lon:-93.48200, aa:8000},
+  {f:'KAYQU', lat:45.18000, lon:-93.48600, at:7000, spd:210}
+ ]
+};
+/* Screen position, MSP-relative offsets and cumulative distance for every fix
+   on a route. Used by the arrival ladders, the departure SIDs and the
+   synthesised overflight tracks alike. */
+function finalize(r){
+ var cum=0;
+ for(var i=0;i<r.length;i++){
+  var p=px(r[i].lat,r[i].lon); r[i].x=p.x; r[i].y=p.y;
+  var q=nmOf(r[i].lat,r[i].lon); r[i].e=q.e; r[i].n=q.n;
+  if(i>0){ var de=r[i].e-r[i-1].e, dn=r[i].n-r[i-1].n; cum+=Math.sqrt(de*de+dn*dn); }
+  r[i].cum=cum;
+ }
+ r.total=cum;
+ return r;
+}
+Object.keys(ROUTES).forEach(function(k){ finalize(ROUTES[k]); });
+
+/* Turbojet SID routes, from claude_MSP_SID_Reference.md. Each runs from the
+   MSP VOR out through the fixes that are direct-able inside 60 NM — which is
+   the join limit in ZMP-M98 LOA 4.f, and as far as M98 ever takes them.
+   The initial track off the runway is dispersal (a tower function), not the
+   SID's ultimate direction, so these are the join points after the turn. */
+var DEPS = {
+ COULT: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'TAXEE',lat:44.70250,lon:-92.49267},{f:'COULT',lat:44.55667,lon:-92.20850}],
+ KBREW: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'GEP',lat:45.14567,lon:-93.37317},{f:'HRBEK',lat:45.31450,lon:-93.80700},{f:'HOMUR',lat:45.41817,lon:-94.07683}],
+ LEINY: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'TONCA',lat:44.91600,lon:-93.63383},{f:'BOTNE',lat:44.93417,lon:-94.02533},{f:'KUUGL',lat:44.94833,lon:-94.35467}],
+ ORSKY: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'JURNY',lat:44.60867,lon:-93.47233},{f:'RUMLE',lat:44.42133,lon:-93.62450},{f:'PEDLN',lat:44.20267,lon:-93.80033}],
+ RST:   [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'FGT',lat:44.63100,lon:-93.18200},{f:'FOBUG',lat:44.42217,lon:-93.03633},{f:'DOKTR',lat:44.25800,lon:-92.92250},{f:'CORDY',lat:44.12367,lon:-92.82983}],
+ SCHEP: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'HUGIR',lat:44.70117,lon:-93.61583},{f:'MCONL',lat:44.58350,lon:-93.84233},{f:'ARREX',lat:44.42567,lon:-94.14283}],
+ SMERF: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'ZOGAP',lat:45.08800,lon:-93.87583},{f:'PAGOZ',lat:45.18817,lon:-94.28767}],
+ WLSTN: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'SNINE',lat:45.25183,lon:-92.65083},{f:'DWIYT',lat:45.30333,lon:-92.28750}],
+ ZMBRO: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'JEDET',lat:44.46133,lon:-92.72800},{f:'ZMBRO',lat:44.34167,lon:-92.44850}]
+};
+Object.keys(DEPS).forEach(function(k){ finalize(DEPS[k]); });
+/* The fixes at the head of a SID that are navaids rather than waypoints. They
+   are part of the procedure, not clearance-direct fixes — a turbojet off MSP
+   flies the SID, and "direct MSP" or "direct GEP" is not something you say to
+   it. Marked in one place so the parser can say so rather than accept it. */
+var DEP_VORS = ['MSP','GEP','FGT'];
+Object.keys(DEPS).forEach(function(k){
+ DEPS[k].forEach(function(p){ if(DEP_VORS.indexOf(p.f)>=0) p.vor=true; });
+});
+
+/* ---------- The airports M98 works ----------
+   Runway inventories, towers, and the numbers that go with them. Nothing here
+   is inferred; each field traces to a reference file:
+     - MSP local positions and frequencies — MSP ATCT 7110.26G, table in
+       claude_MSP_Tower_Reference.md.
+     - The satellite towers' frequencies, IFR initial altitudes, standard
+       departure headings and Class D ceilings — M98/Satellite ATCT LOA
+       Attachment 2 and the four tower orders, in
+       claude_M98_Satellite_Towers_Reference.md.
+     - Airport reference points — the primary-five list in
+       claude_M98_Satellite_Reference.md.
+     - MIC is 14/32 plus parallel 6L/24R and 6R/24L. 14R/32L is permanently
+       closed and is now Taxiway G (MIC 7220.3N) — the one runway inventory the
+       older satellite reference had wrong.
+     - STP Runway 31 is not available for IFR departures (STP 7220.3Q).
+   MSP's own reference point is the MSP VOR, which is the anchor every other
+   position in this file is measured from. MSP initial departure altitudes are
+   not a single number — they run off the filed altitude and the engine type
+   (MSP-M98 LOA 8.h) — so MSP deliberately carries no initAlt here. */
+var AIRPORTS = {
+ KMSP:{name:'Minneapolis-St. Paul', lat:MSP0.lat, lon:MSP0.lon,
+       tower:'Minneapolis Tower', twrFrq:['123.95 North Local','126.7 South Local','123.675 West Local'],
+       rwys:['12L','12R','30L','30R','4','22','17','35'], main:true},
+ KANE:{name:'Anoka County-Blaine', lat:45.14500, lon:-93.21133,
+       tower:'Anoka Tower', twrFrq:['132.4'], rwys:['9','27','18','36'],
+       initAlt:{def:3000}, depHdg:'270 clockwise to 090, Runway 18 a right turn',
+       classD:3400, sat:'K'},
+ KFCM:{name:'Flying Cloud', lat:44.82717, lon:-93.45717,
+       tower:'Flying Cloud Tower', twrFrq:['119.15','125.2'], rwys:['10L','10R','28L','28R','18','36'],
+       initAlt:{'28L':3000,'28R':3000,'18':3000,'10L':2500,'10R':2500,'36':2500},
+       depHdg:'180 clockwise to 300; Runway 10 departures get right turns unless coordinated',
+       classD:3400, sat:'E'},
+ KMIC:{name:'Crystal', lat:45.06200, lon:-93.35400,
+       tower:'Crystal Tower', twrFrq:['120.7'], rwys:['6L','6R','24L','24R','14','32'],
+       initAlt:{def:3000}, depHdg:'320, all runways', classD:3400, sat:'K'},
+ KSTP:{name:'St. Paul Downtown', lat:44.93450, lon:-93.06000,
+       tower:'St. Paul Tower', twrFrq:['119.1'], rwys:['14','32','13','31','9','27'],
+       initAlt:{'32':3000,'13':2500,'14':2500},
+       depHdg:'Runway 32 030 clockwise to 045; Runways 13 and 14 010 clockwise to 080',
+       classD:3200, sat:'G', noIfrDep:['31']},
+ KLVN:{name:'Airlake', lat:44.62783, lon:-93.22817,
+       tower:null, twrFrq:null, rwys:null, sat:'E', nonTowered:true}
+};
+/* Which satellite seat owns a field. SOP 6-2 splits satellite airspace into
+   three sectors geographically, and the plotted boundaries in
+   claude_M98_Satellite_Reference.md say plainly which fields fall where:
+   south and south-west of the FCM hinge line is E, and north of it the K↔G
+   line puts the north-west fields with K and the east and south-east ones
+   with G. */
+function satSeatFor(icao){ var ap=AIRPORTS[icao]; return (ap && ap.sat) || null; }
+
+/* ---------- Arrivals, and which field each one actually serves ----------
+   The bug this exists to stop: the six RNAV gates are MSP arrivals and nothing
+   else. A satellite-bound aircraft is on a different procedure entirely.
+
+     - The six RNAV gates — NITZR, BLUEM, TORGY, KKILR, MUSCL, BAINY — and the
+       conventional KASPR SEVEN serve KMSP only. RST tower enroute assigns
+       BLUEM and KASPR to turbojets landing MSP (claude_M98_RST_Reference.md).
+     - AGUDE FIVE from the east and ENCEE THREE from the west both terminate on
+       the GEP VOR, and "GEP VOR is a shared hub — it feeds both MSP and the
+       satellite fields; satellite arrivals funnel to GEP and get fanned out by
+       destination" (claude_MSP_STAR_Reference.md). So those two reach any
+       satellite field.
+     - TWOLF FOUR from the south terminates at KEWTY and feeds the southern
+       satellites. The STAR reference says outright that it does not route to
+       GEP, so it is FCM and LVN and not the northern fields.
+     - GOPHER ONE off the GEP VOR is the one procedure that serves MSP and the
+       satellites both, at different altitudes — MSP jets cross OLLEE at
+       11,000, satellite traffic at 7,000, and 6,000 when MSP is landing 17.
+
+   `flies` marks the ones the engine actually has ladder geometry for. The
+   satellite procedures are carried as data so a drill can be authored and
+   validated honestly; the engine still flies only the six MSP gates. */
+var SAT_FIELDS = ['KANE','KFCM','KMIC','KSTP','KLVN'];
+var ARRIVALS = {
+ NITZR:{serves:['KMSP'], kind:'RNAV', flies:true},
+ BLUEM:{serves:['KMSP'], kind:'RNAV', flies:true},
+ TORGY:{serves:['KMSP'], kind:'RNAV', flies:true},
+ KKILR:{serves:['KMSP'], kind:'RNAV', flies:true},
+ MUSCL:{serves:['KMSP'], kind:'RNAV', flies:true},
+ BAINY:{serves:['KMSP'], kind:'RNAV', flies:true},
+ KASPR:{serves:['KMSP'], kind:'conventional', rev:'KASPR SEVEN', flies:false,
+        note:'RST tower enroute assigns KASPR to turbojets and fast turboprops landing MSP'},
+ GEP:  {serves:['KMSP'].concat(SAT_FIELDS), kind:'conventional', rev:'GOPHER ONE', flies:false,
+        note:'the shared hub — MSP jets cross OLLEE at 11,000, satellite traffic at 7,000, and 6,000 when MSP lands 17'},
+ AGUDE:{serves:SAT_FIELDS.slice(), kind:'satellite', rev:'AGUDE FIVE', flies:false,
+        note:'from the east, terminates on the GEP VOR and fans out by destination — cross AGUDE 8,000 jets, 6,000 turboprops'},
+ ENCEE:{serves:SAT_FIELDS.slice(), kind:'satellite', rev:'ENCEE THREE', flies:false,
+        note:'from the west, terminates on the GEP VOR — cross RIXIE 8,000 jets, 7,000 turboprops'},
+ TWOLF:{serves:['KFCM','KLVN'], kind:'satellite', rev:'TWOLF FOUR', flies:false,
+        note:'from the south, terminates at KEWTY and feeds the southern satellites — it does not route to GEP, so it does not reach ANE, MIC or STP. Cross TRGET 7,000, KEWTY 5,000'}
+};
+/* Every arrival that can legally end at this field. */
+function arrivalsFor(dest){
+ var d=dest||'KMSP';
+ return Object.keys(ARRIVALS).filter(function(k){ return ARRIVALS[k].serves.indexOf(d)>=0; });
+}
+function arrivalServes(proc, dest){
+ var a=ARRIVALS[proc];
+ return !!(a && a.serves.indexOf(dest||'KMSP')>=0);
+}
+
+/* ---------- The satellite STAR ladders ----------
+   Fix coordinates from claude_MSP_STAR_Reference.md, crossings from ZMP-M98
+   LOA Table 4. Kept separate from ROUTES on purpose: ROUTES is the six MSP
+   gates and everything keyed off it — the Feeder split, near and far, the
+   floors, the generator's mixes — is an MSP concept that does not apply here.
+
+   Crossings split by engine, which the order does throughout: `at` is the jet
+   value and `atProp` the turboprop one. AGUDE and ENCEE terminate on the GEP
+   VOR and are fanned out from there by destination; TWOLF terminates at KEWTY
+   and feeds the southern fields directly. The tail therefore ends where the
+   published procedure ends, and the vectoring past it is the seat's problem —
+   the engine grades getting it there and handing it over, not the turn-on. */
+var GEP_FIX = {f:'GEP',  lat:45.145667, lon:-93.373167};
+var FGT_FIX = {f:'FGT',  lat:44.631,    lon:-93.182};
+var SAT_ROUTES = {
+ AGUDE: [
+  {f:'AGUDE', lat:45.129333, lon:-92.392000, at:8000, atProp:6000, spd:280},
+  {f:'STILS', lat:45.134333, lon:-92.644833},
+  {f:'WHISK', lat:45.139833, lon:-92.962167},
+  {f:'GEP',   lat:45.145667, lon:-93.373167}
+ ],
+ ENCEE: [
+  {f:'ENCEE', lat:44.586667, lon:-95.433333, spd:280},
+  {f:'CASNS', lat:44.771500, lon:-94.550833},
+  {f:'MLHOF', lat:44.823000, lon:-94.297667},
+  {f:'RIXIE', lat:44.854833, lon:-94.139500, at:8000, atProp:7000},
+  {f:'MAYER', lat:44.918000, lon:-93.974667},
+  {f:'FUDGE', lat:45.067500, lon:-93.581000},
+  {f:'GEP',   lat:45.145667, lon:-93.373167}
+ ],
+ TWOLF: [
+  {f:'TWOLF', lat:43.316667, lon:-93.548333, spd:280},
+  {f:'KGEEE', lat:43.749000, lon:-93.507833},
+  {f:'TRGET', lat:44.231333, lon:-93.462167, at:7000, atProp:7000},
+  {f:'KEWTY', lat:44.647000, lon:-93.422000, at:5000, atProp:5000}
+ ]
+};
+Object.keys(SAT_ROUTES).forEach(function(k){ finalize(SAT_ROUTES[k]); });
+['AGUDE','ENCEE','TWOLF'].forEach(function(k){ ARRIVALS[k].flies=true; });
+
+/* ---------- Satellite arrivals that do not fly a STAR ----------
+   ZMP-M98 LOA paragraph 3g, plus 4.g(14). There are corners of M98 where
+   putting a satellite arrival on a STAR would fly it well out of its way, and
+   the agreement says so directly: these come in on a direct routing at a
+   stated altitude instead. Each entry names where the aircraft comes from,
+   what it is cleared via, and the altitude the agreement puts it at.
+
+   The entry point itself is geometry the trainee gives — a radial and a DME
+   the way an overflight does — because BITLR and RGK are not in the reference
+   set as coordinates. What is cited here is the routing and the altitude. */
+var SAT_DIRECT = {
+ BITLR:   {label:'over BITLR — direct GEP', via:GEP_FIX, alt:6000, altNote:'cross BITLR at 6,000',
+           serves:['KSTP','KANE','KFCM'], src:'ZMP-M98 LOA 3g(6)',
+           from:'the east, over BITLR'},
+ RGK:     {label:'south of RGK — direct FGT, direct destination', via:FGT_FIX, alt:4000,
+           altNote:'4,000 landing the 30s, 30s-Depart 17 or 30s-and-35; 4,000 or 6,000 in the other configurations',
+           serves:['KFCM','KLVN'], src:'ZMP-M98 LOA 3g(7)',
+           from:'the south-east, south of Red Wing'},
+ SECT0809:{label:'from ZMP Sectors 08 or 09 — direct destination', via:null, alt:5000,
+           altNote:'5,000, or routed via TWOLF or ENCEE instead',
+           serves:['KFCM','KLVN'], src:'ZMP-M98 LOA 3g(8)',
+           from:'the south-west and west'},
+ SECT10:  {label:'from ZMP Sector 10 — direct Flying Cloud, west of the GEP gate', via:null, alt:5000,
+           altNote:'at or below 5,000, kept west of the GEP arrival gate',
+           serves:['KFCM'], src:'ZMP-M98 LOA 3g(9)',
+           from:'the north and north-west'},
+ EASTFLD: {label:'OEO, RNH or RGK from the east via ZMP Sector 5', via:null, alt:4000,
+           altNote:'level at or descending to 4,000; M98 has control within 10 NM of the boundary',
+           serves:['KSTP'], src:'ZMP-M98 LOA 4.g(14)',
+           from:'the east, through Sector 5'}
+};
+Object.keys(SAT_DIRECT).forEach(function(k){
+ var d=SAT_DIRECT[k];
+ ARRIVALS[k]={serves:d.serves.slice(), kind:'direct', flies:true, direct:true,
+              rev:null, note:d.label+' — '+d.altNote+' ('+d.src+')'};
+});
+/* A direct entry is a synthesised track: where it crossed the boundary, the
+   fix it was cleared via if there is one, then the field. */
+function satDirectRoute(key, entry, dest){
+ var d=SAT_DIRECT[key]; if(!d) return null;
+ var p1=rdToLatLon(entry.r, entry.d);
+ var pts=[{f:'entry '+entry.r+'/'+entry.d, lat:p1.lat, lon:p1.lon}];
+ if(d.via) pts.push({f:d.via.f, lat:d.via.lat, lon:d.via.lon});
+ var ap=airportOf(dest);
+ pts.push({f:dest.replace(/^K/,''), lat:ap.lat, lon:ap.lon});
+ return finalize(pts);
+}
+/* Every M98 satellite position, SOP 2-1, as a mutable object the builder folds
+   through the combining chain exactly like RECEIVER and FEEDER_POS. */
+var SAT_POS = {
+ E:{pos:'E', frq:'134.7'},
+ G:{pos:'G', frq:'121.2'},
+ K:{pos:'K', frq:'126.5'}
+};
+/* One place that answers "what track does this arrival fly" for every kind. */
+function routeFor(o){
+ if(o.gate && ROUTES[o.gate]) return ROUTES[o.gate];
+ if(o.gate && SAT_ROUTES[o.gate]) return SAT_ROUTES[o.gate];
+ if(o.gate && SAT_DIRECT[o.gate])
+  return satDirectRoute(o.gate, o.entry||{r:90,d:38}, o.dest||'KFCM');
+ return null;
+}
+function airportOf(icao){ return AIRPORTS[icao] || AIRPORTS.KMSP; }
+/* Airlake is non-towered and its runway inventory is not in the reference
+   set, so it answers with nothing rather than a guess. */
+function runwaysAt(icao){ var r=airportOf(icao).rwys; return r ? r.slice() : []; }
+function initAltAt(icao, rwy){
+ var ia=airportOf(icao).initAlt;
+ if(!ia) return null;
+ return (ia[rwy]!=null) ? ia[rwy] : (ia.def!=null ? ia.def : null);
+}
+
+
+/* An overflight is whatever crosses the airspace, so its track is built from
+   the radial/DME the trainee gives it rather than from any published route. */
+function rdToLatLon(r,d){
+ var a=r*Math.PI/180;
+ return {lat: MSP0.lat + (d*Math.cos(a))/60, lon: MSP0.lon + (d*Math.sin(a))/(60*COSL)};
+}
+function overflightRoute(entry, exit){
+ var p1=rdToLatLon(entry.r, entry.d), p2=rdToLatLon(exit.r, exit.d);
+ return finalize([
+  {f:'entry '+entry.r+'/'+entry.d, lat:p1.lat, lon:p1.lon},
+  {f:'exit '+exit.r+'/'+exit.d,   lat:p2.lat, lon:p2.lon}
+ ]);
+}
+
+/* M98 releases departures to ZMP at 25 NM from the MSP DME or leaving 11,000
+   (ZMP-M98 LOA 4.c) — not a flat 40-mile ring. */
+var DEP_RELEASE = {dme:25, alt:11000};
+
+/* ---------- Feeder north/south gate split — M98 7110.26A 4-4d ----------
+   Which gates belong to North Feeder and which to South, by configuration. The
+   boundary is the Runway 30L/12R or 4/22 localizer as appropriate. The order
+   also says individual gates may be reassigned between the Feeder positions to
+   balance workload, so this is the default split, not a fence. */
+var FEEDER_SPLIT = {
+ '12':      {N:['BAINY','MUSCL','KKILR'], S:['NITZR','BLUEM','TORGY']},
+ '12-17':   {N:['BAINY','MUSCL','KKILR'], S:['NITZR','BLUEM','TORGY']},
+ '30':      {N:['BAINY','MUSCL','KKILR'], S:['NITZR','BLUEM','TORGY']},
+ '30-17':   {N:['BAINY','MUSCL','KKILR'], S:['NITZR','BLUEM','TORGY']},
+ '30/12':   {N:['BAINY','MUSCL','KKILR'], S:['NITZR','BLUEM','TORGY']},
+ '4':       {N:['BAINY','TORGY'], S:['MUSCL','KKILR','NITZR','BLUEM']},
+ '22':      {N:['BAINY','TORGY'], S:['MUSCL','KKILR','NITZR','BLUEM']},
+ '17-22':   {N:['BAINY','TORGY'], S:['MUSCL','KKILR','NITZR','BLUEM']},
+ '30-35':   {N:['BAINY','MUSCL','KKILR'], S:['TORGY']},
+ '4-35':    {N:['BAINY','TORGY'], S:['MUSCL','KKILR']}
+};
+function feederFor(cfg, gate){
+ var sp = FEEDER_SPLIT[cfg] || FEEDER_SPLIT['12'];
+ if(sp.N.indexOf(gate)>=0) return 'I';
+ if(sp.S.indexOf(gate)>=0) return 'H';
+ return null;
+}
+
+/* ---------- Which sector a gate belongs to — SOP 2-1, 4-2, 4-4d, 4-5 ----------
+   Every M98 position, with the frequency from SOP 2-1. Names are the order's,
+   so a message can say who owns the aircraft rather than printing a letter. */
+var POS_NAME = {
+ D:'North Departure', R:'South Departure', L:'East Departure',
+ I:'North Feeder',    H:'South Feeder',
+ N:'North Arrival',   S:'South Arrival',  J:'Runway 35 Arrival',
+ E:'Flying Cloud Satellite', G:'St. Paul Satellite', K:'Crystal Satellite'
+};
+function posName(p){ return POS_NAME[p] || p; }
+/* North and south sides of the split, whichever kind of position holds it —
+   the Feeder split (4-4d) and the ACDA split (4-2) run on the same localizer,
+   so a gate's side is one answer, not two. */
+function sideOfPos(p){
+ if(p==='N'||p==='I'||p==='D') return 'N';
+ if(p==='S'||p==='H'||p==='R') return 'S';
+ return null;
+}
+function arrivalSideFor(cfg, gate){ return sideOfPos(feederFor(cfg, gate)); }
+/* Which side of the localizer a runway sits on — SOP 4-2. The parallels split
+   north and south; 4, 22, 17 and 35 split west and east instead, so those name
+   no side here and the gate decides. */
+var RWY_SIDE = {'12L':'N', '30R':'N', '12R':'S', '30L':'S'};
+function sideOfRunway(rwy){ return RWY_SIDE[rwy] || null; }
+/* The Arrival on a given side, resolved through whoever is actually open. */
+function arrivalReceiver(side){ return RECEIVER[side==='N' ? '12L' : '12R']; }
+/* The Feeder positions as a mutable object, exactly like RECEIVER, so the
+   builder can fold them into whoever is open when positions combine. */
+var FEEDER_POS = {
+ I:{pos:'I', frq:'126.35'},
+ H:{pos:'H', frq:'135.475'}
+};
+/* ---------- Near and far gates — a property of the flow, not of the gate ----------
+   Owner-corrected 2026-08-31.
+
+   **A near gate is one whose arrivals drop onto the final. A far gate is one
+   whose arrivals have to be vectored to it.** That is the whole definition, and
+   it is why the answer moves with the landing direction rather than sitting on
+   the gate: landing the 12s, TORGY and BAINY drop onto the final and the other
+   four have to be turned in, so those two are the near gates; landing the 30s
+   it is the other way round.
+
+   An earlier reading in this file had the 12s inverted, because it generalised
+   4-4c(7) to every configuration — and 4-4c(7) is a 30s paragraph, "Land 30s
+   and 35". Read as a property of the gate it also had no way to be true in both
+   directions at once, which it has to be.
+
+   Two things in the order stop being contradictions once it is read this way,
+   which is the check that it is right:
+     - 4-5 offers "a BAINY OPD to Runway 12R" as its worked example of a NEAR-
+       gate crossover. On a 12s BAINY is near, so it fits.
+     - 4-5's two carve-outs are "KKILR landing 30L is not counted as a near-gate
+       crossover" and "KKILR landing 12R is not counted as a far-gate
+       crossover". KKILR is near on the 30s and far on the 12s, so each carve-out
+       names the class KKILR actually has in that configuration. Both fit. Under
+       the old flat reading one of them was a no-op, which was the tell. */
+var NEAR_GATES = {
+ '12':    ['TORGY','BAINY'],
+ '12-17': ['TORGY','BAINY'],
+ '30':    ['NITZR','BLUEM','KKILR','MUSCL'],
+ '30-17': ['NITZR','BLUEM','KKILR','MUSCL'],
+ '30-35': ['NITZR','BLUEM','KKILR','MUSCL'],  /* 4-4c(7) is this configuration verbatim */
+ '17':    ['KKILR','MUSCL']                   /* 4-4c(2); BAINY is worked straight in by 17 Arrival */
+};
+/* Feeder-to-Arrival handoff altitudes, SOP 4-4c, by configuration. Where the
+   order gives per-gate altitudes instead of the near/far language it is
+   transcribed in claude_M98_SOP_Reference.md and not paraphrased here. */
+var HANDOFF_ALT = {
+ '12':{near:7000, far:8000}, '12-17':{near:7000, far:8000},
+ '30':{near:7000, far:8000}, '30-17':{near:7000, far:8000}, '30-35':{near:7000, far:8000},
+ '4':{near:8000, far:9000},  '22':{near:8000, far:9000},
+ '17':{near:8000, far:9000}
+};
+/* null rather than a guess — 4/22 and the 35 configurations use the near/far
+   altitudes without the order ever naming which gates are which. */
+function nearFarFor(cfg, gate){
+ var n=NEAR_GATES[cfg||'12'];
+ return n ? (n.indexOf(gate)>=0 ? 'near' : 'far') : null;
+}
+function floorFor(cfg, gate){
+ var c=nearFarFor(cfg, gate), a=HANDOFF_ALT[cfg||'12'];
+ return (c && a) ? a[c] : null;
+}
+/* SOP 4-5 names two crossovers that are explicitly not counted as crossovers
+   for coordination. Written out rather than folded into the logic, because
+   they are exceptions to it — and each names the class KKILR actually has in
+   that configuration, which is one of the checks that the near/far reading
+   above is the right way round. */
+var CROSSOVER_EXEMPT = [
+ {gate:'KKILR', rwy:'30L', kind:'near', src:'SOP 4-5'},
+ {gate:'KKILR', rwy:'12R', kind:'far',  src:'SOP 4-5'}
+];
+/* Is this gate-to-runway pairing a crossover, and if so which kind?
+   SOP 4-2 splits the ACDA on the localizer: on a 12s or a 30s, North Arrival
+   owns north of the 12L/30R localizer and South Arrival south of the 12R/30L.
+   The runway therefore decides who takes an aircraft — until the gate and the
+   runway are on opposite sides, which is a crossover, and then 4-5 decides. */
+function crossoverFor(gate, rwy, cfg){
+ var side = arrivalSideFor(cfg||'12', gate);
+ if(!side || !rwy) return {type:'none', side:side};
+ var rwySide = sideOfRunway(rwy);
+ /* 4-2 splits 4, 22, 17 and 35 west and east of the localizer rather than north
+    and south, so a runway on its own does not name a side there. No side means
+    no crossover to work out. */
+ if(!rwySide || side === rwySide) return {type:'none', side:side, rwySide:rwySide};
+ var kind = nearFarFor(cfg||'12', gate)==='far' ? 'far' : 'near';
+ var ex = CROSSOVER_EXEMPT.filter(function(e){
+  return e.gate===gate && e.rwy===rwy && e.kind===kind; })[0];
+ if(ex) return {type:'none', side:side, rwySide:rwySide,
+                note:gate+' landing '+rwy+' is not counted as a '+kind+
+                     '-gate crossover for coordination ('+ex.src+')'};
+ return {type:kind, side:side, rwySide:rwySide};
+}
+
+/* ---------- Which ZMP sector takes a departure ----------
+   ZMP-M98 LOA Table 1 gives non-SID headings to ZMP by receiving sector. It is
+   a heading-band table for aircraft not on a SID, not a sector-ownership map,
+   so reading a SID departure's outbound bearing off it is an inference — the
+   closest one the reference set supports. Bearings between the bands come back
+   as Center with no sector named rather than being rounded into one. */
+var ZMP_SECTORS = [
+ {sector:'Sector 10', lo:290, hi:300, note:'west of the GEP/BAINY arrival'},
+ {sector:'Sector 09', lo:265, hi:285, note:'north of the ENCEE arrival'},
+ {sector:'Sector 08', lo:210, hi:240, note:'south of the TORGY arrival'},
+ {sector:'Sector 07', lo:140, hi:160, note:'east of the KASPR/BLUEM arrivals'},
+ {sector:'RWA',       lo:100, hi:130, note:'south of the KKILR arrival'},
+ {sector:'Sector 06', lo:40,  hi:60,  note:'north of the AGUDE arrival'},
+ {sector:'Sector 10', lo:350, hi:380, note:'east of the GEP/BAINY arrival'}   /* 350 through 020 */
+];
+function zmpSectorFor(brg){
+ var b=((brg%360)+360)%360;
+ for(var i=0;i<ZMP_SECTORS.length;i++){
+  var z=ZMP_SECTORS[i], t=(b<z.lo && z.hi>360) ? b+360 : b;
+  if(t>=z.lo && t<=z.hi) return z;
+ }
+ return null;
+}
+
+/* ---------- Charted obstructions — M98 7110.26A 8-1 ----------
+   MSP radial/DME and top elevation. Arden Hills/Shoreview is the recurring MVA
+   bust near the STP Runway 14 final and is drawn brighter than the rest. */
+var OBSTRUCTIONS = [
+ {name:'Big Lake Tower',            r:323, d:36, ft:2454},
+ {name:'Nowthen Tower',             r:343, d:28, ft:2048},
+ {name:'Arden Hills / Shoreview',   r:18,  d:11, ft:2438, watch:true},
+ {name:'St. Paul Tower',            r:13,  d:7,  ft:1539, noMap:true},
+ {name:'Meriden Tower',             r:184, d:51, ft:1830, noMap:true},
+ {name:'Rosemont Tower',            r:144, d:14, ft:1753},
+ {name:'IDS Building',              r:338, d:5,  ft:1743}
+];
+
+/* ---------- Departure Dispersal Area verticals — MSP-M98 LOA 5.a ----------
+   The altitudes are published in prose. The lateral shape was not, until it
+   was traced off the chart itself — see DDA_AREAS below. */
+var DDA_VERTICALS = [
+ {what:'Dispersal area itself',        lo:0,    hi:7000, src:'MSP-M98 LOA 5.a(3)'},
+ {what:'FCM and MIC cutouts',          lo:3500, hi:7000, src:'MSP-M98 LOA 5.a(3)', note:'satellite owns below 3,500 inside the cutouts — the only legal under-path near those fields'},
+ {what:'Dispersal area extensions',    lo:4000, hi:7000, src:'MSP-M98 LOA 5.a(4)'},
+ {what:'Runway 35-12 ACDA cutout',     lo:0,    hi:5000, src:'MSP-M98 LOA 5.a(5)'}
+];
+
+/* ---------- Departure Dispersal Area — the lateral shape ----------
+   Traced 2026-08-31 from the chart itself. The area is drawn in MSP-M98 LOA
+   Attachment 1 and M98 7110.26A Appendix A, both page images with no text
+   layer, so the polygon was recovered from the pixels rather than read off
+   prose. How, so the number can be argued with:
+
+     - the two concentric range rings on the chart fix the origin, which lands
+       on the airport symbol;
+     - the scale comes from the satellite cutout circles, because their
+       airports have published coordinates — KMIC N45 03.72 / W093 21.24 and
+       KFCM N44 49.63 / W093 27.43 are 14.76 NM apart and 480 pixels apart on
+       the chart, so 32.5 pixels to the mile.
+
+   Three independent checks then fall out of that one scale: the Class B
+   circle measures 5.93 NM against a published 6, the outer range ring
+   measures 15.00, and the close-in satellite arc measures 11.49 against the
+   "~11.5 NM" already in the satellite notes. Good to about half a mile.
+
+   It is a traced chart, not a surveyed boundary, and the interface says so.
+   Only the 12 and 12-17 shape is carried: it is the only configuration the
+   engine flies. The Runway 30 chart traces to an outer arc at 10.0 NM and is
+   left out until the 30s route set exists to use it. */
+var DDA_AREAS = {
+ '12': {
+  cfgs:['12','12-17'],
+  src:'MSP-M98 LOA Attachment 1 / M98 7110.26A Appendix A, sheet "RUNWAY 12/17" — traced, not published as coordinates',
+  arc:11.4,
+  poly:[[74,6.40],[101,11.35],[111,11.40],[120,11.43],[130,11.43],[139,11.43],
+        [148,11.43],[158,11.43],[173,11.43],[189,11.40],[199,11.40],[210,11.40],
+        [218,11.30],[217,2.20],[130,1.72],[108,1.78]]
+ }
+};
+function ddaFor(cfg){
+ for(var k in DDA_AREAS){ if(DDA_AREAS[k].cfgs.indexOf(cfg||'12')>=0) return DDA_AREAS[k]; }
+ return null;
+}
+/* Point in the dispersal area, worked in MSP-relative nautical miles so it
+   uses the same frame as posOf and the route data. */
+function inDDA(e, n, cfg){
+ var a=ddaFor(cfg); if(!a) return false;
+ var pts=a.poly.map(function(p){ var r=p[0]*Math.PI/180;
+  return [p[1]*Math.sin(r), p[1]*Math.cos(r)]; });
+ var inside=false;
+ for(var i=0,j=pts.length-1;i<pts.length;j=i++){
+  var xi=pts[i][0], yi=pts[i][1], xj=pts[j][0], yj=pts[j][1];
+  if((yi>n)!==(yj>n) && e < (xj-xi)*(n-yi)/(yj-yi)+xi) inside=!inside;
+ }
+ return inside;
+}
+
+/* Where each departure gate ultimately runs, from the SID reference's gate
+   table. Used to finish a route string past the join fixes M98 works. */
+var SID_DEST = {COULT:'DLL', KBREW:'FAR', LEINY:'LEINY', ORSKY:'ONTIJ', RST:'ALO',
+                SCHEP:'RXANN', SMERF:'SMERF', WLSTN:'GRB', ZMBRO:'ODI'};
+/* The route as a fix sequence, built from the coordinate data. Deliberately no
+   procedure revision name: the reference set names revisions only for the
+   satellite and conventional arrivals (GOPHER ONE, KASPR SEVEN, AGUDE FIVE,
+   ENCEE THREE, TWOLF FOUR) and gives none for the six mainline RNAV STARs or
+   the nine turbojet SIDs, so inventing "NITZR THREE" is not on. Type the filed
+   route over the top when you want the chart name. */
+function routeTextFor(o){
+ var role=(o&&o.role)||'arrival';
+ if(role==='departure'){
+  var d=DEPS[o.sid]; if(!d) return '';
+  return d.map(function(p){return p.f;}).join(' ')+(SID_DEST[o.sid]?(' '+SID_DEST[o.sid]):'');
+ }
+ if(role==='arrival'){
+  var g=ROUTES[o.gate]; if(!g) return '';
+  return g.map(function(p){return p.f;}).join(' ');
+ }
+ return '';
+}
+
+/* ---------- Wake class ----------
+   Wake class belongs to the aircraft, not to the controller: in the room STARS
+   auto-tags each target's CWT category and the standing instruction is to trust
+   the tag rather than hand-derive it (claude_M98_7110_Reference.md). There is no
+   tag to read here, so the tool carries the legacy weight class keyed by type —
+   Super, Heavy, Large (which includes the B757 class), Small — with the maximum
+   certificated takeoff weight alongside so the call is auditable rather than
+   asserted. Legacy thresholds: Super is specifically designated; Heavy is
+   300,000 lb and above; Large is above 41,000 and below 300,000; Small is
+   41,000 and below.
+   A type the table does not know comes back NOWGT, which the book already has an
+   answer for — 10 NM ahead and behind — rather than a guess.
+   The full CWT A–I matrix is deliberately NOT reproduced: verify it against the
+   facility CWT reference, and trust the STARS tag over anything here. */
+var MTOW = {
+ /* super */
+ A388:1268000, A225:1410958,
+ /* heavy */
+ B744:875000, B748:987000, B77W:775000, B772:656000, B773:660000, B78X:560000,
+ B789:560000, B788:502500, A359:617300, A35K:705500, MD11:630500, A332:533500,
+ A333:533500, A339:553400, B764:450000, B763:412000, B762:395000, A306:375900,
+ DC10:572000, B764F:450000, B77L:766000,
+ /* large */
+ B752:255000, B753:273000,
+ A321:205000, A21N:206100, A320:172000, A20N:174200, A319:166400, A19N:166400,
+ B739:187700, B738:174200, B737:154500, B38M:181200, B39M:194700, B733:138500,
+ B712:121000, MD88:149500, MD90:168000,
+ E190:114200, E195:115280, E175:85500, E170:82000, E145:48500, E135:41888,
+ CRJ9:84500, CRJ7:75000, CRJ2:53000, CRJ1:53000,
+ DH8D:64500, DH8C:43000, AT72:50700, AT452:41000,
+ GLF5:90900, GLF6:99600, GLEX:99500, CL60:47600, CL35:40600, E55P:41005,
+ /* small */
+ C700:39500, C680:30775, C68A:30300, C56X:20200, C25A:12500, C25B:13870,
+ C25C:17110, C525:10400, LJ35:18300, LJ45:21500, LJ75:21500, H25B:28000,
+ E50P:10472, SF50:6000, PC12:10450, TBM9:7394, TBM8:6579,
+ BE20:12500, B350:15000, BE40:16300, BE9L:11000, C208:8750, C441:9925,
+ C172:2450, C182:3100, C206:3600, SR22:3600, SR20:3050, BE36:3650, BE33:3412,
+ PA46:4340, PA34:4570, PA28:2550, DA40:2646, DA42:4189, DA62:5071,
+ M20P:2740, M20T:3374, C310:5500, BE58:5500, AC11:3800
+};
+var B757_CLASS = {B752:1, B753:1};
+function wakeOf(type){
+ var t=(type||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+ if(t==='A388'||t==='A225') return {cls:'super', label:'super', heavy:true, known:true, mtow:MTOW[t]};
+ var w=MTOW[t];
+ if(w==null) return {cls:'nowgt', label:'NOWGT — weight unverified', heavy:false, known:false,
+                     note:'This type is not in the table, so it tags NOWGT: 10 NM ahead and behind until the weight is verified.'};
+ if(w>=300000) return {cls:'heavy', label:'heavy', heavy:true, known:true, mtow:w};
+ if(B757_CLASS[t]) return {cls:'large', label:'large — B757 class', heavy:false, known:true, mtow:w,
+                           note:'A 757 is a Large, so Table 2(c) does not force it to 12R, but it carries its own wake requirement behind it.'};
+ if(w>41000) return {cls:'large', label:'large', heavy:false, known:true, mtow:w};
+ return {cls:'small', label:'small', heavy:false, known:true, mtow:w};
+}
+/* Feeder-to-Arrival handoff floors for the configuration the engine flies,
+   derived from NEAR_GATES and HANDOFF_ALT rather than written out a second
+   time — so correcting near/far corrects the floor with it and the two cannot
+   drift apart. On a 12s that is TORGY and BAINY at 7,000 because they drop onto
+   the final, and NITZR, BLUEM, KKILR and MUSCL at 8,000 because they have to be
+   vectored to it. Running the 30s these reverse; the engine flies the 12s. */
+var FLOORS = {};
+var FLOOR_BASIS = {};
+Object.keys(ROUTES).forEach(function(g){
+ var cls = nearFarFor('12', g);
+ FLOORS[g] = floorFor('12', g);
+ FLOOR_BASIS[g] = cls==='near'
+  ? 'near gate on a 12s — drops onto the final, so 7,000 (SOP 4-4c(3), near/far owner-verified). It becomes a far gate on the 30s.'
+  : 'far gate on a 12s — has to be vectored to the final, so 8,000 (SOP 4-4c(3), near/far owner-verified). It becomes a near gate on the 30s.';
+});
+var RECEIVER = {'12R':{pos:'S', frq:'126.95'}, '12L':{pos:'N', frq:'119.3'}};
+
+/* ---------- 3. Sim state ---------- */
+var sim = {t:0, rate:0, ac:[], feed:[], sel:null, scen:null, losFlag:false, ended:false, timer:null};
+
+function fmtAlt(a){ return (Math.round(a/100)*100).toLocaleString(); }
+function clock(){ var m=Math.floor(sim.t/60), s=Math.floor(sim.t%60); return (m<10?'0':'')+m+':'+(s<10?'0':'')+s; }
+function log(kind, html, item){
+ sim.feed.unshift({t:clock(), kind:kind, html:html, item:item||null, at:sim.t});
+ if(sim.feed.length>140) sim.feed.pop();
+ renderFeed();
+}
+
+/* ---------- Radar service — what already exists when it reaches you ----------
+   Five states, because five different things actually happen on the frequency:
+
+     established  handed off by another radar facility. Identified, on a
+                  discrete code, and on a clearance if it is IFR. Saying "radar
+                  contact" to one of these is redundant and gets called out.
+     departure    just off a tower. It has a clearance and a code the tower
+                  gave it, but nobody has radar identified it yet — that part is
+                  yours, and it is the one IFR case where "radar contact" is the
+                  right call rather than a redundant one.
+     popup        a pop-up IFR: airborne, no code, not identified, not on a
+                  clearance. Until you issue one it is not an IFR aircraft at
+                  all, so it owes a code, an identification and a clearance.
+     following    a VFR asking to pick up flight following. No code, not
+                  identified, and what it wants is radar advisories — code,
+                  identify, then work it, and terminate on the way out.
+     none         a VFR cold call with nothing on it, asking to get through
+                  rather than asking for service.
+
+   identified, squawk and ifrCleared are all derived from this one field. */
+var RADAR_STATES = {
+ established:{ident:true,  code:true,  cleared:true,  label:'established — handed off by another radar facility'},
+ departure:  {ident:false, code:true,  cleared:true,  label:'off the tower — owes a radar contact'},
+ popup:      {ident:false, code:false, cleared:false, label:'pop-up IFR — airborne, asking for a clearance'},
+ following:  {ident:false, code:false, cleared:false, label:'VFR asking for flight following'},
+ none:       {ident:false, code:false, cleared:false, label:'cold call — nothing on it'}
+};
+/* Which states a strip can legally be in, given what it is doing and whether it
+   is IFR. An arrival is never "off the tower"; an IFR aircraft never wants
+   flight following, because it already has a clearance. */
+function radarStatesFor(role, rules){
+ if(rules==='VFR') return (role==='departure')
+   ? ['departure','following','none','established']
+   : ['established','following','none'];
+ return (role==='departure') ? ['departure','established'] : ['established','popup'];
+}
+/* Stored drills predate the five states and carry only established/none, where
+   "none" meant a pop-up on an IFR strip and a cold call on a VFR one. */
+function normRadar(r, rules, role){
+ if(RADAR_STATES[r] && radarStatesFor(role, rules).indexOf(r)>=0) return r;
+ if(r==='none')  return (rules==='VFR') ? 'none' : 'popup';
+ if(RADAR_STATES[r]) return r;
+ return (role==='departure' && rules!=='VFR') ? 'departure' : 'established';
+}
+/* Who hands it to you, worked out from the job rather than typed. A departure
+   is handed off by the tower at the field it left; an arrival or an overflight
+   crosses the boundary from a radar facility, which the builder resolves from
+   the bearing and the altitude it enters on. */
+function towerHandoffFor(icao){
+ var ap=airportOf(icao);
+ return {name:ap.tower, frq:(ap.twrFrq&&ap.twrFrq[0])||null, kind:'tower',
+         why:'a departure is handed off by the tower at the field it left, and '+ap.name+' is '+ap.tower};
+}
+function mkAc(o){
+ var role = o.role || 'arrival';
+ var rad = normRadar(o.radar, (o.rules==='VFR'?'VFR':'IFR'), role);
+ var rs  = RADAR_STATES[rad] || RADAR_STATES.established;
+ var route = role==='departure' ? DEPS[o.sid]
+           : role==='overflight' ? overflightRoute(o.entry||{r:180,d:38}, o.exit||{r:0,d:38})
+           : routeFor(o);
+ if(!route) route = ROUTES.NITZR;
+ var a = {
+  cs:o.cs, type:o.type, gate:o.gate, route:route,
+  role:role, sid:o.sid||null,
+  /* Every strip carries its flight rules, and an IFR one carries its route.
+     Named `filed` and not `route` on purpose: `route` is already this
+     aircraft's geometric track and the two must never collide. */
+  rules:(o.rules==='VFR'?'VFR':'IFR'),
+  /* Radar service is one field with five states and everything else derived
+     from it, so a scenario cannot describe a situation that does not exist. */
+  radar:rad,
+  dep:(role==='departure') ? (o.dep||'KMSP') : null,
+  depRwy:(role==='departure') ? (o.depRwy||null) : null,
+  dest:(role==='arrival')  ? (o.dest||'KMSP') : null,
+  /* An arrival flies published speeds unless Center called and said otherwise;
+     that provenance rides on the strip so the check-in can say where it came
+     from rather than the speed just appearing. */
+  ctrSpeed:!!o.ctrSpeed,
+  /* the satellite crossings split by engine throughout the order, so the strip
+     has to say which it is rather than the tool guessing off a type code */
+  engine:(o.engine==='turboprop'||o.engine==='piston') ? o.engine : 'jet',
+  from:o.from||'',
+  squawk:rs.code ? (o.squawk||null) : null,
+  identified:rs.ident,
+  popup:(rad==='popup'),
+  following:(rad==='following'),
+  ifrCleared:(o.rules!=='VFR') && rs.cleared,
+  svcNoted:false, clrNoted:false,
+  filed:(o.rules==='VFR') ? (o.route||'') : (o.route || routeTextFor(o)),
+  /* derived from the type, never taken from the scenario data */
+  wk:wakeOf(o.type), wake:(wakeOf(o.type).heavy?'H':''),
+  dist: o.dtgEnd!=null ? Math.max(0, route.total - o.dtgEnd)
+      : (o.fromStart!=null ? Math.min(route.total, o.fromStart) : 0),
+  alt:o.alt, ias:o.ias, iasAsg:o.iasAsg!=null?o.iasAsg:null,
+  spdMode:o.spdMode||'published', rwy:o.rwy||null,
+  ckdIn:!!o.ckdIn, altim:!!o.altim, itemsClock:o.ckdIn?0:null,
+  flashed:null, switched:false, alive:true, spawned:o.spawnAt||0,
+  onFreq:!!o.ckdIn, capNoted:false, savvgWarned:false, hoWarned:false
+ };
+ return a;
+}
+function segOf(a){ var r=a.route; for(var i=1;i<r.length;i++){ if(a.dist<=r[i].cum) return i; } return r.length-1; }
+function posOf(a){
+ var r=a.route, i=segOf(a);
+ var d0=r[i-1].cum, d1=r[i].cum, f=(d1===d0)?0:(a.dist-d0)/(d1-d0);
+ return {x:r[i-1].x+(r[i].x-r[i-1].x)*f, y:r[i-1].y+(r[i].y-r[i-1].y)*f,
+         e:r[i-1].e+(r[i].e-r[i-1].e)*f, n:r[i-1].n+(r[i].n-r[i-1].n)*f};
+}
+function pubSpeedAt(a){
+ var r=a.route, sp=null;
+ for(var i=0;i<r.length;i++){ if(r[i].cum<=a.dist && r[i].spd) sp=r[i].spd; }
+ /* upcoming restriction also binds descend-via speed planning: use next published if slower */
+ for(var j=0;j<r.length;j++){ if(r[j].cum>a.dist && r[j].spd){ if(sp===null||r[j].spd<sp) sp=r[j].spd; break; } }
+ return sp;
+}
+function dmeOf(a){ var p=posOf(a); return Math.sqrt(p.e*p.e+p.n*p.n); }
+/* Who takes this one. Arrivals go to the Arrival controller on the far side of
+   the localizer split; departures and overflights leave the facility, and the
+   reference set has no SID-to-ZMP-sector table, so the receiver is Center and
+   what gets graded is the timing of the release, not which sector. */
+/* the bearing an aircraft is leaving on — the far end of its own track */
+function exitBearing(a){
+ var p=a.route[a.route.length-1];
+ return (Math.atan2(p.e, p.n)*180/Math.PI+360)%360;
+}
+function receiverFor(a){
+ if(a.role==='arrival'){
+  /* Who takes an arrival is the gate and the runway together, not the runway
+     alone — SOP 4-2 for the normal case, 4-5 once it is a crossover. */
+  /* Anything landing a satellite field belongs to that field's satellite seat
+     (SOP 6-2), not to the MSP split — there is no Feeder or Arrival in it. */
+  var dst = a.dest || 'KMSP';
+  if(dst !== 'KMSP'){
+   var seat = satSeatFor(dst), sp = seat && SAT_POS[seat];
+   if(sp) return {pos:sp.pos, frq:sp.frq, name:posName(sp.pos), cross:'none',
+     why:dst+' is '+posName(seat)+'’s field, so a '+(a.gate||'satellite')+' arrival into it goes to that seat rather than down the MSP split (SOP 6-2)'};
+  }
+  var rwy = a.rwy || '12R';
+  var x = crossoverFor(a.gate, rwy);
+  var pick, why;
+  if(x.type==='near' && a.hdg==null){
+   /* A near-gate crossover on an OPD STAR goes to the Arrival controller
+      whose airspace the aircraft enters first — its own gate's side. The
+      order's example is a BAINY OPD to Runway 12R going to N. */
+   pick = arrivalReceiver(x.side);
+   why = a.gate+' is a near gate on the '+(x.side==='N'?'north':'south')+' side crossing over to '+rwy
+       +', and a near-gate crossover on an OPD goes to whoever it reaches first (SOP 4-5)';
+  } else if(x.type==='near'){
+   /* Assigned a heading instead: the runway's controller, at 9,000, with the
+      heading aimed at the 25-mile ring. Nothing assigns a heading yet. */
+   pick = arrivalReceiver(sideOfRunway(rwy) || x.rwySide || x.side);
+   why = a.gate+' is a near-gate crossover to '+rwy+' on a heading, which goes to the runway’s'
+       +' controller at 9,000 with the heading aimed at the 25-mile range ring (SOP 4-5)';
+  } else if(x.type==='far'){
+   /* A far-gate crossover is not an Arrival handoff at all — it goes to the
+      Feeder on the far side, communications not later than 15 NM. */
+   pick = FEEDER_POS[x.rwySide==='N' ? 'I' : 'H'];
+   why = a.gate+' is a far gate crossing to '+rwy+', and a far-gate crossover is handed to that side’s'
+       +' Feeder with communications transferred not later than 15 NM from MSP (SOP 4-5)';
+  } else {
+   /* A runway that names no side of its own — 4, 22, 17, 35 — falls back to the
+      side the gate feeds, which is what the west/east split amounts to here. */
+   var useSide = sideOfRunway(rwy) || x.side;
+   pick = arrivalReceiver(useSide);
+   why = sideOfRunway(rwy)
+     ? (a.gate+' feeds the '+(x.side==='N'?'north':'south')+' side and '+rwy+' is on that side of the'
+        +' localizer, so it is a straight handoff down the split (SOP 4-2)'+(x.note?' — '+x.note:''))
+     : (rwy+' splits west and east of the localizer rather than north and south (SOP 4-2), so this one'
+        +' follows the side '+a.gate+' feeds'+(x.note?' — '+x.note:''));
+  }
+  return {pos:pick.pos, frq:pick.frq, name:posName(pick.pos), why:why, cross:x.type};
+ }
+
+ var n = neighbourAt(exitBearing(a), a.alt);
+ /* name the ZMP sector where Table 1 supports one */
+ if(n.pos==='ZMP' && a.role==='departure'){
+  var z = zmpSectorFor(exitBearing(a));
+  if(z) return {pos:'ZMP', frq:n.frq, name:'Minneapolis Center '+z.sector,
+                why:n.why+'; Table 1 puts that bearing with '+z.sector+', '+z.note};
+ }
+ return n;
+}
+function nextAltTarget(a){
+ /* Departures, overflights and anything VFR do not fly a published descent —
+    they hold what they have until you give them something, which is the point.
+    A VFR aircraft is not on the STAR at all, whatever gate it came from. */
+ if(a.role!=='arrival' || a.rules==='VFR') return (a.hardAlt!=null) ? a.hardAlt : a.alt;
+ var r=a.route;
+ for(var i=0;i<r.length;i++){
+  if(r[i].cum>=a.dist-0.05){
+   /* the satellite ladders publish a jet value and a turboprop one */
+   var atv=(a.engine!=='jet' && r[i].atProp!=null) ? r[i].atProp : r[i].at;
+   if(atv!=null) return atv;
+   if(r[i].aa!=null && a.alt>r[i].aa) return r[i].aa; /* descend toward the at-or-above */
+  }
+ }
+ /* only the six MSP gates have a Feeder floor to settle at */
+ return (FLOORS[a.gate]!=null) ? FLOORS[a.gate] : a.alt;
+}
+function tick(dt){
+ sim.t+=dt;
+ sim.ac.forEach(function(a){
+  if(!a.alive) return;
+  if(!a.onFreq && sim.t>=a.spawned){ a.onFreq=true; checkIn(a); }
+  if(!a.onFreq) return;
+  /* speed target */
+  var tgt;
+  if(a.spdMode==='assigned' && a.iasAsg!=null) tgt=a.iasAsg;
+  else if(a.spdMode==='normal') tgt=a.ias;              /* holds current — published NOT reinstated */
+  else if(a.spdMode==='free') tgt=280;
+  else if(a.role==='overflight') tgt=a.ias;             /* holds what it filed; it is only passing through */
+  else if(a.role==='departure') tgt=280;                /* no published ladder to follow */
+  else tgt=pubSpeedAt(a)||280;
+  if(a.alt<10000 && tgt>250){ tgt=250;
+   if(!a.capNoted){ a.capNoted=true;
+    log('crew','<b>'+a.cs+':</b> "'+(a.role==='departure'
+      ? 'two five zero til one zero thousand, '
+      : 'reaching one zero thousand, two five zero, ')+a.cs+'."');
+    if(a.spdMode==='assigned'&&a.iasAsg>250){a.iasAsg=250;} } }
+  var dv=tgt-a.ias; a.ias += Math.max(-1.2*dt, Math.min(1.2*dt, dv));
+  /* altitude — arrivals descend via the ladder, everyone else does what they
+     were told and nothing more */
+  var at=nextAltTarget(a);
+  if(a.alt>at) a.alt=Math.max(at, a.alt-30*dt);         /* ~1,800 fpm down */
+  else if(a.alt<at && a.role!=='arrival') a.alt=Math.min(at, a.alt+33*dt);   /* ~2,000 fpm up */
+  /* movement */
+  var gs=a.ias*(1+0.02*(a.alt/1000));
+  a.dist=Math.min(a.route.total, a.dist+gs/3600*dt);
+  /* departures: the release to Center, ZMP-M98 LOA 4.c */
+  if(a.role==='departure' && !a.relChecked){
+   var dme=dmeOf(a);
+   if(dme>=DEP_RELEASE.dme || a.alt>=DEP_RELEASE.alt){
+    a.relChecked=true;
+    var why = (dme>=DEP_RELEASE.dme) ? (dme.toFixed(0)+' DME') : ('leaving '+fmtAlt(a.alt));
+    if(a.switched) log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> was with Center before '+why+' — the release made 4.c.', 'posthandoff');
+    else if(a.flashed) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> reached '+why+' flashed but not switched. The 4.c release is 25 DME <b>or</b> leaving 11,000, whichever comes first — the flash alone does not stop the clock.', 'posthandoff');
+    else { var nb=receiverFor(a);
+     log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> passed '+why+' with no flash and no switch. M98 releases departures at 25 NM from the MSP DME or leaving 11,000 (ZMP-M98 LOA 4.c) — this one is '+nb.name+'\u2019s airplane and they do not know.'
+      +(nb.pos==='RST'?' (The 4.c timing is the ZMP rule; the M98\u2013RST agreement is not in the reference set.)':''), 'posthandoff'); }
+   }
+  }
+  /* the departure dispersal area is MSP Tower's from the surface up to and
+     including 7,000 (MSP-M98 LOA 5.a(3)). An MSP departure belongs in there —
+     Tower has automatic releases into it and 8.d lets Departure climb it.
+     Anything else down there is standing in somebody else's airspace. */
+  if(!a.ddaFlagged && a.role!=='departure' && a.alt<=7000){
+   var pd=posOf(a);
+   if(inDDA(pd.e, pd.n)){
+    a.ddaFlagged=true;
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is in the departure dispersal area at '+fmtAlt(a.alt)+'. That airspace is MSP Tower’s from the surface up to and including 7,000 (MSP-M98 LOA 5.a(3)) — an '+a.role+' in there is in their airspace and wants coordination. The shape is traced off the chart, so treat the edge as approximate.', 'floors');
+   }
+  }
+  /* SAVVG runway-window check */
+  var savvg=a.route.find(function(p){return p.f==='SAVVG';});
+  if(savvg && !a.rwy && !a.savvgWarned && a.dist>=savvg.cum){
+   a.savvgWarned=true; a.rwy='12R'; a.rwyAuto=true;
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> crossed SAVVG with no runway assigned — Table 2 default 12R applied for you. The 12L option died at the split.');
+  }
+  /* items-owed clock */
+  if(a.itemsClock!=null){ a.itemsClock+=dt;
+   if(a.itemsClock>90 && (!a.altim||!a.rwy)){ a.itemsClock=null;
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> checked on 90 seconds ago — still owed '+(!a.altim?'altimeter':'')+((!a.altim&&!a.rwy)?' + ':'')+(!a.rwy?'runway':'')+'.'); } }
+  /* GREAK delivery-spec check */
+  var greak=a.route.find(function(p){return p.f==='GREAK';});
+  if(greak && !a.greakChecked && a.dist>=greak.cum){
+   a.greakChecked=true;
+   if(a.ias>240) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> crossed GREAK at '+Math.round(a.ias)+' kt — the ladder promises Arrival 230 there. Assigned speeds override published until you restore them.', 'speed');
+   else log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> crossed GREAK at 230 — delivery spec intact.', 'speed');
+  }
+  /* route end — handoff outcome */
+  if(a.dist>=a.route.total-0.05){
+   a.alive=false;
+   var rec=receiverFor(a);
+   var where = a.role==='arrival' ? 'off the end of the tail'
+             : a.role==='departure' ? 'off the end of the departure track'
+             : 'across the boundary and out of your airspace';
+   if(a.switched) log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> '+where+' with '+rec.pos+' — clean.', 'posthandoff');
+   else if(a.role==='overflight') log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> left your airspace still on your frequency — an overflight still has to be handed off or pointed out before the boundary.', 'posthandoff');
+   else log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> reached the end of the tail still on your frequency — the floor handoff never happened. '+rec.pos+' is asking questions.', 'posthandoff');
+  }
+ });
+ /* In-trail check. Two aircraft are only in trail where their routes have
+    actually merged, so compare on the longest tail the pair genuinely shares
+    — which is the whole route for two off the same gate, GREAK inbound for a
+    KKILR against a NITZR, and nothing at all for a TORGY against a BAINY. */
+ var live = sim.ac.filter(function(a){ return a.alive && a.onFreq && a.route && a.route.length>1; });
+ for(var i=0;i<live.length;i++) for(var j=i+1;j<live.length;j++){
+  var A=live[i], B=live[j];
+  var sh=sharedTail(A.route,B.route);
+  if(!sh) continue;
+  var da=A.route.total-A.dist, db=B.route.total-B.dist;
+  if(da>sh.len || db>sh.len) continue;            /* not both onto the common track yet */
+  var gap=Math.abs(da-db);
+  if(gap<3 && Math.abs(A.alt-B.alt)<900 && !sim.losFlag){
+   sim.losFlag=true;
+   log('crit','<span class="dd-chip crit">crit</span>Loss of separation inbound '+sh.fix+' — <b>'+A.cs+'</b> / <b>'+B.cs+'</b>, '+gap.toFixed(1)+' NM, co-altitude. This goes in the log the way session 6 did.', 'sep');
+  }
+ }
+ if(window.DD && DD.hooks) for(var h=0;h<DD.hooks.length;h++){ try{ DD.hooks[h](sim,dt); }catch(e){} }
+ render();
+}
+/* trunk length helper on prototype-ish */
+function trunkLenFor(gate){ var r=ROUTES[gate]; var e=r.find(function(p){return p.f==='ELLKO';}); return e?(r.total-e.cum):0; }
+/* Longest common suffix of two routes, as {fix, len} — the fix the pair merges
+   at and how much track they share from there to the end. Null when they never
+   join, so two aircraft on unrelated tails are never compared in trail. */
+function sharedTail(r1,r2){
+ var n=0;
+ while(n<r1.length && n<r2.length && r1[r1.length-1-n].f===r2[r2.length-1-n].f) n++;
+ if(n<2) return null;                    /* a shared endpoint alone is not a shared track */
+ var merge=r1[r1.length-n];
+ return {fix:merge.f, len:r1.total-merge.cum};
+}
+
+function checkIn(a){
+ a.ckdIn=true; a.itemsClock=0;
+ var lvl = (a.alt>=18000?('flight level '+Math.round(a.alt/100)):(fmtAlt(a.alt)));
+ var where = function(){
+  var p=posOf(a), d=Math.sqrt(p.e*p.e+p.n*p.n), brg=(Math.atan2(p.e,p.n)*180/Math.PI+360)%360;
+  var pts=['north','northeast','east','southeast','south','southwest','west','northwest'];
+  return Math.round(d)+' miles '+pts[Math.round(brg/45)%8]+' of the airport';
+ };
+ /* Nothing on it yet — it tells you everything itself, because nobody has told
+    you anything about it. */
+ if(a.radar==='popup'){
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+a.type+', '+where()+' at '+lvl+', VFR, requesting an IFR clearance."');
+  log('info','<span class="dd-chip info">note</span><b>'+a.cs+'</b> is a pop-up IFR. It is not identified, it has no code, and it is not on a clearance — all three are yours before it is an IFR aircraft at all.');
+  return;
+ }
+ if(a.radar==='following'){
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+a.type+', '+where()+' at '+lvl+', VFR, request flight following'+(a.filed?(' to '+a.filed):'')+'."');
+  log('info','<span class="dd-chip info">note</span><b>'+a.cs+'</b> wants to pick up flight following. There is no service on it yet — a code and a radar identification come before the advisories, and it gets terminated on the way out.');
+  return;
+ }
+ if(a.radar==='none'){
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+a.type+', '+where()+' at '+lvl+', VFR, request transit of the Bravo."');
+  log('info','<span class="dd-chip info">note</span><b>'+a.cs+'</b> is a cold call — nobody has handed it to you, so there is no radar service on it yet. Code, identify, then work it.');
+  return;
+ }
+ /* Off a tower: it has a clearance and the tower's code, but nobody has radar
+    identified it. That part is yours, and it is the one case where "radar
+    contact" is the call rather than a redundancy. */
+ if(a.radar==='departure'){
+  var ap=airportOf(a.dep), rwTxt=(a.depRwy?(' off runway '+sayRunway(a.depRwy)):'');
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing'+rwTxt
+    +(a.sid?(', '+a.sid+' departure'):'')+'."');
+  log('info','<span class="dd-chip info">note</span><b>'+a.cs+'</b> was shipped by '+ap.tower+' on a clearance and a discrete code, but it is not radar identified yet. That is yours before you work it.');
+  return;
+ }
+ if(a.rules==='VFR'){
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+lvl+', VFR'+
+    (a.from?(', with you from '+a.from):'')+', '+
+    (a.role==='departure'?'off the field':'transiting the Bravo')+'."');
+  return;
+ }
+ if(a.role==='departure'){
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing, '+a.sid+' departure."');
+ } else if(a.role==='overflight'){
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+lvl+', requesting transit of your airspace."');
+ } else {
+  var rw = a.rwy? (', runway '+sayRunway(a.rwy)+' transition') : '';
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+lvl+
+    ', descending via the '+a.gate+' arrival'+rw+', with information Juliet."');
+  /* the only reason an optimized profile descent is not on published speeds */
+  if(a.ctrSpeed && a.iasAsg){
+   log('info','<span class="dd-chip info">note</span>Center advised <b>'+a.cs+'</b> is assigned '+Math.round(a.iasAsg)
+     +' knots rather than the published speeds. That came off a landline, not off the arrival — it holds until you do something about it.', 'speed');
+  }
+ }
+}
+
+/* ---------- 4. Command parser ---------- */
+/* Spoken digits — zero is always "zero" and nine is always "niner"
+   (claude_US_Carrier_Callsigns.md). */
+var SAY_DIGIT=['zero','one','two','three','four','five','six','seven','eight','niner'];
+/* Runway designators are spoken out, never read as a number —
+   claude_SID_TTS_Voicing.md. */
+function sayRunway(r){
+ if(!r) return '';
+ var m=String(r).match(/^(\d+)([LRC]?)$/);
+ if(!m) return String(r);
+ var d=m[1].split('').map(function(c){ return SAY_DIGIT[+c]; }).join(' ');
+ return d+(m[2]==='L'?' left':(m[2]==='R'?' right':(m[2]==='C'?' center':'')));
+}
+var HEAR_DIGIT={zero:'0',one:'1',two:'2',three:'3',four:'4',five:'5',six:'6',seven:'7',eight:'8',niner:'9',nine:'9'};
+function sayDigits(s){ return String(s).split('').map(function(c){ return SAY_DIGIT[+c]!==undefined?SAY_DIGIT[+c]:c; }).join(' '); }
+function simAltim(){ return (sim.scen && sim.scen.altim) ? String(sim.scen.altim).replace(/[^0-9]/g,'') : '2980'; }
+/* an altimeter setting in any of the forms it actually gets said */
+function altimIn(t){
+ var m=t.match(/altimeter\s+(\d{2})\.(\d{2})/); if(m) return m[1]+m[2];
+ m=t.match(/altimeter\s+(\d{4})/); if(m) return m[1];
+ m=t.match(/altimeter((?:\s+(?:zero|one|two|three|four|five|six|seven|eight|niner|nine)){4})/);
+ if(m) return m[1].trim().split(/\s+/).map(function(w){ return HEAR_DIGIT[w]; }).join('');
+ return null;
+}
+function findAc(txt){
+ var m=null;
+ sim.ac.forEach(function(a){ if(txt.toUpperCase().indexOf(a.cs)>=0) m=a; });
+ return m || (sim.sel!=null ? sim.ac.find(function(a){return a.cs===sim.sel;}) : null);
+}
+function transmit(){
+ var el=document.getElementById('dd-cmd');
+ var raw=el.value.trim(); if(!raw) return;
+ el.value='';
+ var t=raw.toLowerCase();
+ var a=findAc(raw);
+ log('info','<span class="dd-chip info">you</span><span class="dd-mono">'+raw.replace(/</g,'&lt;')+'</span>');
+ if(!a){ log('coach','<span class="coach">No strip selected and no callsign heard — click a strip or lead with the callsign.</span>'); return; }
+ if(!a.alive){ log('coach','<span class="coach">'+a.cs+' is no longer on your frequency.</span>'); return; }
+ var acted=false;
+ /* One transmission can carry several instructions, the way a real one does on
+    initial contact — runway, altimeter, a descent and a speed all in a breath.
+    Every clause is parsed independently and the readbacks are collected into a
+    single crew response instead of one line per clause. */
+ var acks=[];
+ var control=false;   /* did this transmission actually try to control the aircraft */
+
+ /* runway — the token can sit anywhere, as long as the transmission is about a runway */
+ /* Any runway that exists at the field this one is landing at, digits or spoken
+    — the parallels need their side, and a runway with no parallel must not be
+    matched by something that does have one. Longest designator first so 12L
+    wins over a bare 12. */
+ var mR=null;
+ if(/(expect|runway)/.test(t)){
+  /* look only at the part of the transmission from the word onward, so a
+     digit in the callsign can never be read as a runway */
+  var ixs=[t.indexOf('expect'), t.indexOf('runway')].filter(function(x){ return x>=0; });
+  var seg=t.slice(Math.min.apply(null, ixs));
+  var cands=runwaysAt(a.dest||'KMSP').slice().sort(function(x,y){ return y.length-x.length; });
+  for(var ri=0; ri<cands.length && !mR; ri++){
+   var rr=cands[ri], num=rr.replace(/[LRC]$/,'');
+   var sfx=((rr.match(/[LRC]$/)||[''])[0]).toLowerCase();
+   var word=(sfx==='l'?'left':(sfx==='r'?'right':(sfx==='c'?'center':'')));
+   var spoken=num.split('').map(function(c){ return SAY_DIGIT[+c]; }).join('[ ]+');
+   var tail=word ? ('[ ]*(?:'+sfx+'|'+word+')(?![a-z])') : '(?![a-z0-9])';
+   if(new RegExp('(?:^|[^a-z0-9])(?:'+num+'|'+spoken+')'+tail).test(seg)) mR=rr;
+  }
+ }
+ if(mR){ acted=true; control=true;
+  var prev=a.rwy; a.rwy=mR;
+  acks.push('expect runway '+sayRunway(mR));
+  if(prev&&prev!==mR){
+   /* the receiver follows the gate as well as the runway, so a flip can hand
+      the aircraft to a different sector than the runway alone would suggest */
+   var nowR=receiverFor(a);
+   a.rwy=prev; var wasR=receiverFor(a); a.rwy=mR;
+   log('info','<span class="dd-chip info">note</span>Runway flip — <b>'+a.cs+'</b> now goes to '+nowR.name+' ('+nowR.frq+'): '+nowR.why+'. Any earlier flash to '+wasR.name+' is stale.');
+   a.flashed=null;
+  }
+
+ }
+ /* altimeter — any setting, checked against the one the drill is running */
+ var givenAltim=altimIn(t);
+ if(givenAltim){ acted=true;
+  acks.push(sayDigits(givenAltim));
+  if(givenAltim===simAltim()){ a.altim=true; }
+  else {
+   a.altim=true;
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> was given altimeter '+sayDigits(givenAltim)+' and the field is on '+sayDigits(simAltim())+'. They read back what you said, which is exactly the problem.');
+  }
+ }
+ /* descend via — the standard initial-contact clause; acknowledged, changes nothing */
+ if(/descend via/.test(t)){ acted=true;
+  if(a.rules==='VFR'){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is VFR — there is no descend-via to issue. A VFR aircraft is not on the arrival, and telling it to descend via one leaves everybody guessing which set of rules it is under.');
+  } else if(a.role!=='arrival'){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is a '+a.role+' — descend via belongs to an arrival on a STAR.');
+  } else acks.push('descend via the '+(a.gate||'arrival')+' arrival');
+ }
+ /* speed family — requires the word speed or knots so it can never eat an altitude */
+ var mS=t.match(/(?:speed(?:\s+to)?\s+(\d{2,3})|(\d{2,3})\s*(?:knots|kts))\b/);
+ var spdVal=mS?+(mS[1]||mS[2]):null;
+ if(mS && spdVal>=170 && spdVal<=340){ acted=true; control=true;
+  a.iasAsg=spdVal; a.spdMode='assigned';
+  acks.push(String(spdVal).split('').join(' ')+' on the speed');
+ } else if(/resume published speed/.test(t)){ acted=true;
+  var wasHot=(a.spdMode!=='published');
+  a.spdMode='published'; a.iasAsg=null;
+  acks.push('resume published speed');
+  if(wasHot) log('good','<span class="dd-chip good">good</span>Ladder speeds restored on <b>'+a.cs+'</b> — that is the phrase that hands the STAR its own numbers back.', 'speed');
+ } else if(/resume normal speed/.test(t)){ acted=true;
+  a.spdMode='normal'; a.iasAsg=null;
+  acks.push('resume normal speed');
+  log('flag','<span class="dd-chip flag">flag</span>"Resume normal speed" does <b>not</b> reinstate the published restrictions — '+a.cs+' holds current speed. If you wanted the ladder back, that was "resume published speed."', 'speed');
+ } else if(/delete speed restriction/.test(t)){ acted=true;
+  a.spdMode='free'; a.iasAsg=null;
+  acks.push('speed restrictions deleted');
+  log('flag','<span class="dd-chip flag">flag</span>All published speeds waived for <b>'+a.cs+'</b> — Drill 8 lesson: assign the working speed up front rather than delete-then-recover.', 'speed');
+ } else if(/comply with (published )?speed/.test(t)){ acted=true;
+  a.spdMode='published'; a.iasAsg=null;
+  acks.push('comply with published speeds');
+ }
+ /* altitude family — the signature phraseology check. The speed clause is cut
+    out of the text first so "maintain 250 knots" can never read as an altitude,
+    which is what used to force altitude and speed into separate transmissions. */
+ var tAlt = mS ? t.replace(mS[0],' ') : t;
+ var mAlt=tAlt.match(/(descend and maintain|climb and maintain|maintain)\s+([0-9][0-9,]{1,5})/);
+ if(mAlt){ acted=true; control=true;
+  var val=+mAlt[2].replace(/,/g,''); if(val<1000) val=val*100;
+  if(mAlt[1]==='maintain' && Math.abs(val-a.alt)>400){
+   log('crew','<b>'+a.cs+':</b> "ahh… confirm you want us '+(val<a.alt?'descending':'climbing')+' to '+fmtAlt(val)+'? '+a.cs+'."');
+   log('flag','<span class="dd-chip flag">flag</span>Bare "maintain" to an aircraft '+(val<a.alt?'above':'below')+' the number — the crew has to query it. One word fixes it: "'+(val<a.alt?'descend':'climb')+' and maintain." This is the standing OJT item.', 'maintain');
+  } else {
+   acks.push((val<a.alt?'descend and maintain ':'climb and maintain ')+fmtAlt(val));
+   log('info','<span class="dd-chip info">note</span>Assigned altitudes off a descend-via cancel the ladder below — the sim keeps it simple and flies '+a.cs+' to '+fmtAlt(val)+'.');
+   a.hardAlt=val;
+  }
+ }
+ /* Working an aircraft you have not identified. Said once per strip so it is a
+    correction rather than a drumbeat. */
+ if(control && a.popup && !a.ifrCleared && !a.clrNoted && !/cleared to\b/.test(t)){
+  a.clrNoted=true;
+  log('flag','<span class="dd-chip flag">flag</span>You are working <b>'+a.cs+'</b> as an IFR aircraft and it has never been given a clearance. It called you up VFR asking for one — until you issue it, it is not IFR, and that is the gap session 7 was about.');
+ }
+ if(control && !a.identified && !a.svcNoted){
+  a.svcNoted=true;
+  log('flag','<span class="dd-chip flag">flag</span>You are working <b>'+a.cs+'</b> before radar service exists on it — it came at you with nobody talking to it. A code and a radar identification come before a control instruction, not after.');
+ }
+ /* one readback for the whole transmission */
+ if(acks.length) log('crew','<b>'+a.cs+':</b> "'+acks.join(', ')+', '+a.cs+'."');
+ /* flash */
+ if(/\bflash\b/.test(t)){ acted=true;
+  var recF=receiverFor(a);
+  var due=recF.pos;
+  var side = /(^|\s)(n|north)(\s|$)/.test(t)?'N':(/(^|\s)(s|south)(\s|$)/.test(t)?'S':null);
+  if(a.role!=='arrival'){
+   var wrongWay = (/rochester|\brst\b/.test(t) && due!=='RST') || (/cent(?:er|re)|\bzmp\b/.test(t) && due!=='ZMP');
+   if(wrongWay){
+    log('flag','<span class="dd-chip flag">flag</span>That flash goes to the wrong neighbour — <b>'+a.cs+'</b> is '+recF.name+'\u2019s: '+recF.why+'.', 'posthandoff');
+   } else {
+    a.flashed=due;
+    log('good','<span class="dd-chip good">good</span>'+recF.name+' takes the flash on <b>'+a.cs+'</b> \u2014 '+recF.why+'.', 'posthandoff');
+   }
+  } else if(side && side!==sideOfPos(due)){
+   log('flag','<span class="dd-chip flag">flag</span>'+side+' bounces the flash on <b>'+a.cs+'</b> — it is '+recF.name+'’s: '+recF.why+'. Re-flash.', 'posthandoff');
+  } else {
+   a.flashed=due;
+   log('good','<span class="dd-chip good">good</span>'+recF.name+' takes the flash on <b>'+a.cs+'</b>'
+     +((recF.cross&&recF.cross!=='none')?' — '+recF.why:'')+'.', 'posthandoff');
+  }
+ }
+ /* switch */
+ if(/contact|switch/.test(t) && !/say/.test(t)){ acted=true;
+  var rec=receiverFor(a);
+  /* Center has no published sector frequency in the reference set, so a
+     departure or an overflight is graded on the timing, not the number. */
+  /* Rochester answers on 119.8 or 119.2 — the LOA says "as appropriate" and
+     does not say which is which, so either is accepted (M98/RST LOA 5.b(3)). */
+  var frqList = rec.alt2 ? [rec.frq, rec.alt2] : (rec.frq ? [rec.frq] : []);
+  var frqOk = !frqList.length || !/\d/.test(t) || frqList.some(function(fq){
+   return t.indexOf(fq)>=0 || t.replace(/\s|point/g,'').indexOf(fq.replace('.',''))>=0;
+  });
+  if(a.role!=='arrival'){
+   /* naming the wrong neighbour is its own mistake, separate from the timing */
+   var saidRst=/rochester|\brst\b/.test(t), saidCtr=/cent(?:er|re)|\bzmp\b/.test(t);
+   if(rec.pos==='RST' && saidCtr && !saidRst){
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> goes to Rochester, not Center — '+rec.why+'. Center will not take it.', 'posthandoff');
+   } else if(rec.pos==='ZMP' && saidRst && !saidCtr){
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is Center\u2019s, not Rochester\u2019s — '+rec.why+'.', 'posthandoff');
+   }
+   /* the four altitudes M98 may enter RST airspace at — LOA 5.b(1) */
+   if(rec.pos==='RST' && RST_ENTRY_ALTS.indexOf(Math.round(a.alt/100)*100)<0){
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is going to Rochester at '+fmtAlt(a.alt)+'. M98 enters RST airspace at 3,000, 5,000, 7,000 or 9,000 and nothing else (M98/RST LOA 5.b(1)) \u2014 and at 7,000 or 9,000 it has to be clear of the KASPR arrival, parallel to it or diverging (5.b(2)).', 'floors');
+   }
+   if(!a.flashed){
+    log('flag','<span class="dd-chip flag">flag</span><b>'+rec.pos+':</b> \u201cthere\u2019s a '+a.cs+' checking on that I never got a flash on. Flash it, then switch it \u2014 in that order.\u201d', 'posthandoff');
+   } else {
+    log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> flashed then switched to '+rec.pos+' \u2014 the full sequence, in order.', 'posthandoff');
+   }
+   a.switched=true;
+   log('crew','<b>'+a.cs+':</b> \u201cover to '+(rec.pos==='RST'?('Rochester, '+rec.frq):'Center')+', '+a.cs+', good day.\u201d');
+  }
+  else if(!a.flashed){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+rec.pos+':</b> "there\u2019s a '+a.cs+' on my frequency I never got a flash on. Flash it, then switch it — in that order."', 'posthandoff');
+   a.switched=true; a.alive=true;
+  } else if(!frqOk){
+   log('flag','<span class="dd-chip flag">flag</span>Wrong frequency for '+rec.pos+' — they own '+rec.frq+'. The crew comes back confused.', 'posthandoff');
+  } else if(a.alt>FLOORS[a.gate]+400){
+   a.switched=true;
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> shipped at '+fmtAlt(a.alt)+' — the '+(FLOORS[a.gate]===8000?'far-gate 8,000':'near-gate 7,000')+' floor wasn\u2019t made. '+rec.pos+' has to un-do the altitude.', 'floors');
+   log('crew','<b>'+a.cs+':</b> "over to approach, '+rec.frq+', '+a.cs+', good night."');
+  } else {
+   a.switched=true;
+   log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> switched to '+rec.pos+' at the floor, flashed first — the full sequence, in order.', 'floors');
+   log('crew','<b>'+a.cs+':</b> "over to approach, '+rec.frq+', '+a.cs+', good night."');
+  }
+ }
+ /* queries */
+ if(/say speed/.test(t)){ acted=true; log('crew','<b>'+a.cs+':</b> "'+a.cs+', '+Math.round(a.ias)+'."'); }
+ if(/say altitude/.test(t)){ acted=true; log('crew','<b>'+a.cs+':</b> "'+a.cs+', '+fmtAlt(a.alt)+'."'); }
+ if(/say route|say intentions/.test(t)){ acted=true;
+  log('crew','<b>'+a.cs+':</b> "'+a.cs+' is '+a.rules+(a.rules==='IFR'
+    ? (a.filed?(', '+a.filed):', and we never filed a route with you')
+    : (a.filed?(', '+a.filed):', no IFR route'))+'."'); }
+ /* the IFR clearance a pop-up is waiting on. Session 7's pattern was a Skyhawk
+    given a heading and an altitude but never an actual clearance, so what gets
+    checked here is whether the clearance is complete: where to, how, and how
+    high, with no gap where VFR-or-IFR is ambiguous. */
+ if(/cleared to\b/.test(t)){ acted=true; control=true;
+  var hasWay = /\bvia\b|heading|direct|radar vector/.test(t);
+  var hasHigh = /climb|descend|maintain/.test(t);
+  if(a.rules!=='IFR'){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is VFR — there is no IFR clearance to issue unless it asked for one. If it did, build it as a pop-up.');
+  } else if(a.ifrCleared){
+   log('coach','<span class="coach">'+a.cs+' is already on a clearance — it came to you on one.</span>');
+  } else {
+   a.ifrCleared=true;
+   var missing=[];
+   if(!hasWay) missing.push('how it gets there — via, direct, or a heading');
+   if(!hasHigh) missing.push('an altitude');
+   if(missing.length){
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> has a clearance now, but it is missing '+missing.join(' and ')+'. \u201cCleared to the airport via fly heading two seven zero, climb and maintain four thousand\u201d \u2014 no gap where VFR-or-IFR is ambiguous.');
+   } else {
+    log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> is on a full IFR clearance \u2014 where to, how, and how high, all in one.');
+   }
+   acks.push('cleared as issued');
+  }
+ }
+ /* beacon code, radar identification, and terminating the service */
+ /* The navaids at the head of a departure are part of the procedure, not fixes
+    anybody gets cleared direct to. */
+ var mDir=t.match(/\bdirect\s+([a-z]{3,5})\b/);
+ if(mDir){
+  var want=mDir[1].toUpperCase();
+  var onRt=a.route.filter(function(p){ return p.f===want; })[0];
+  if(a.role==='departure' && onRt && onRt.vor){
+   acted=true;
+   log('flag','<span class="dd-chip flag">flag</span>'+want+' is a navaid at the head of the '
+     +(a.sid?(a.sid+' departure'):'departure')+' — it is there because the procedure starts on it, not because it is a fix you clear anybody direct to. <b>'+a.cs
+     +'</b> flies the departure; if you want it off the procedure, give it a heading or a fix further out.');
+  } else if(onRt){
+   acted=true; acks.push('direct '+want);
+   if(!a.dirNoted){ a.dirNoted=true;
+    log('info','<span class="dd-chip info">note</span>Read back, but the engine does not re-path an aircraft — <b>'+a.cs+'</b> keeps flying its own track. The direct is scored as phraseology, not as a route change.');
+   }
+  }
+ }
+ var mSq=t.match(/squawk\s+(\d{4})/);
+ if(mSq){ acted=true; a.squawk=mSq[1]; acks.push('squawk '+sayDigits(mSq[1])); }
+ if(/radar service terminated/.test(t)){ acted=true;
+  a.identified=false; a.radar='terminated';
+  acks.push('radar service terminated');
+ } else if(/radar contact/.test(t)){ acted=true;
+  if(a.identified){
+   log('coach','<span class="coach">'+a.cs+' was already in radar contact when it reached you — it came as a handoff'+(a.from?(' from '+a.from):'')+'. Saying it again costs nothing but it is not doing anything either.</span>');
+  } else if(!a.squawk){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> has not been given a code and has not been identified, so there is nothing to be in radar contact with. Assign a beacon code first, then identify, then say it.');
+  } else {
+   var wasFollowing=(a.radar==='following'), wasDep=(a.radar==='departure');
+   a.identified=true;
+   log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> is radar contact on '+sayDigits(a.squawk)
+     +(wasDep ? ' — it came off '+airportOf(a.dep).tower+' on the tower’s code and this is the identification it was owed.'
+      : wasFollowing ? ' — flight following established. It gets advisories now, and it gets terminated on the way out.'
+      : ' — radar service established, and now you can work it.'), 'posthandoff');
+  }
+ }
+ if(/disregard/.test(t)) acted=true;
+
+ if(!acted) log('coach','<span class="coach">Nothing parsed. Known verbs: expect runway · speed NNN · descend/climb and maintain · resume published speed · resume normal speed · delete speed restrictions · flash · contact/switch · altimeter 2980 · say speed/altitude. Departures and overflights take the same verbs — climb and maintain, flash, contact center.</span>');
+ render();
+}
+
+/* hardAlt override on descent target */
+var _origNext = nextAltTarget;
+nextAltTarget = function(a){ if(a.hardAlt!=null) return a.hardAlt; return _origNext(a); };
+
+/* ---------- 5. Render ---------- */
+function fixDot(p, big){ return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+(big?3.5:2.2)+'" fill="var(--green)" opacity="'+(big?'0.9':'0.55')+'"/>'; }
+function scopeSvg(){
+ var s='<svg class="dd-scope" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Live drill scope">';
+ s+='<text x="14" y="20" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="10">LIVE SCOPE \u2014 SCHEMATIC, PLOTTED FROM FIX COORDINATES</text>';
+ /* charted obstructions */
+ if(LAYERS!=='off'){
+  OBSTRUCTIONS.forEach(function(o){
+   var p=pxRD(o.r,o.d);
+   var col=o.watch?'var(--red)':'var(--dim2)';
+   s+='<path d="M'+(p.x).toFixed(1)+','+(p.y-4).toFixed(1)+' L'+(p.x-3.5).toFixed(1)+','+(p.y+2.5).toFixed(1)+' L'+(p.x+3.5).toFixed(1)+','+(p.y+2.5).toFixed(1)+' Z" fill="none" stroke="'+col+'" stroke-width="1" opacity="'+(o.watch?'0.95':'0.55')+'"/>';
+   if(o.watch) s+='<text x="'+(p.x+6).toFixed(1)+'" y="'+(p.y+3).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="9">'+o.ft.toLocaleString()+'</text>';
+  });
+ }
+ /* the departure dispersal area — MSP Tower's, surface to 7,000 */
+ var ddaA=ddaFor('12');
+ if(ddaA && LAYERS!=='off'){
+  var dpp=ddaA.poly.map(function(b){var p=pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+  s+='<polygon points="'+dpp+'" fill="var(--amber)" fill-opacity="0.05" stroke="var(--amber)" stroke-width="1" stroke-dasharray="3 3" opacity="0.65"/>';
+  var dlb=pxRD(152,7.6);
+  s+='<text x="'+dlb.x.toFixed(1)+'" y="'+dlb.y.toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity="0.8" text-anchor="middle">DISPERSAL AREA SFC\u20137,000</text>';
+ }
+ /* boundary */
+ var bp=BOUNDARY.map(function(b){var p=pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+ s+='<polygon points="'+bp+'" fill="none" stroke="var(--dim2)" stroke-width="1" stroke-dasharray="5 4" opacity="0.8"/>';
+ /* the RST segment — the one stretch of the perimeter that is not ZMP */
+ var rp=RST_BOUNDARY.map(function(b){var p=pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);});
+ s+='<polyline points="'+rp.join(' ')+'" fill="none" stroke="'+(RST_OPEN?'var(--amber)':'var(--dim2)')+'" stroke-width="1.6" opacity="'+(RST_OPEN?'0.75':'0.4')+'"'+(RST_OPEN?'':' stroke-dasharray="3 4"')+'/>';
+ var rmid=pxRD(RST_BOUNDARY[1][0], RST_BOUNDARY[1][1]+4);
+ if(RST_OPEN){
+  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+rmid.y.toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle" opacity="0.85">RST 9,000 AND BELOW</text>';
+  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+(rmid.y+11).toFixed(1)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">ZMP ABOVE</text>';
+ } else {
+  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+rmid.y.toFixed(1)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle">RST CLOSED</text>';
+  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+(rmid.y+11).toFixed(1)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">ZMP ALL ALTITUDES</text>';
+ }
+ /* runways + 17 corridor */
+ s+='<line x1="330" y1="232" x2="372" y2="258" stroke="var(--dim)" stroke-width="4"/>';
+ s+='<line x1="318" y1="243" x2="360" y2="269" stroke="var(--dim)" stroke-width="4"/>';
+ s+='<text x="312" y="240" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10" text-anchor="end">12L</text>';
+ s+='<text x="300" y="252" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10" text-anchor="end">12R</text>';
+ s+='<line x1="345" y1="268" x2="345" y2="330" stroke="var(--red)" stroke-width="1.4" opacity="0.7"/>';
+ s+='<text x="352" y="322" fill="var(--red)" font-family="IBM Plex Mono" font-size="10">17 deps</text>';
+ s+='<text x="368" y="228" fill="var(--ink)" font-family="IBM Plex Mono" font-size="11">MSP</text>';
+ /* Which published geometry to draw. "All SIDs" still draws the STAR an
+    arrival is actually on, and the other way round — a layer choice should
+    never hide the track under something you are working. Only "off" is bare. */
+ var wantSid = (LAYERS==='sids'||LAYERS==='both') ? 'all' : (LAYERS==='off' ? 'none' : 'tracked');
+ var wantStar= (LAYERS==='stars'||LAYERS==='both') ? 'all' : (LAYERS==='off' ? 'none' : 'tracked');
+ var sidsUp={}, gatesUp={};
+ sim.ac.forEach(function(a){
+  if(a.role==='departure'&&a.sid) sidsUp[a.sid]=1;
+  if((a.role||'arrival')==='arrival'&&a.gate) gatesUp[a.gate]=1;
+ });
+ var sidKeys = wantSid==='all' ? Object.keys(DEPS) : (wantSid==='tracked' ? Object.keys(sidsUp) : []);
+ var starKeys= wantStar==='all' ? Object.keys(ROUTES) : (wantStar==='tracked' ? Object.keys(gatesUp) : []);
+ /* departure tracks, drawn under the arrivals in the warning colour */
+ sidKeys.forEach(function(k){
+  var r=DEPS[k]; if(!r) return;
+  s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
+  var last=r[r.length-1];
+  s+='<text x="'+(last.x+7).toFixed(1)+'" y="'+(last.y+4).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="0.8">'+k+'</text>';
+ });
+ /* the 25 DME release ring — ZMP-M98 LOA 4.c */
+ if(sidKeys.length){
+  s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(DEP_RELEASE.dme*SC).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 5"/>';
+  s+='<text x="'+(CX+DEP_RELEASE.dme*SC*0.72).toFixed(1)+'" y="'+(CY-DEP_RELEASE.dme*SC*0.72).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity="0.7">25 DME</text>';
+ }
+ /* overflight tracks — the aircraft's own crossing, not a published route */
+ sim.ac.forEach(function(a){
+  if(a.role!=='overflight' || LAYERS==='off') return;
+  s+='<polyline points="'+a.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--dim)" stroke-width="1" opacity="0.5" stroke-dasharray="6 3"/>';
+ });
+ /* arrival ladders */
+ starKeys.forEach(function(k){
+  var r=ROUTES[k]; if(!r) return;
+  var pts=r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
+  s+='<polyline points="'+pts+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.45"/>';
+  r.forEach(function(p,i){ s+=fixDot(p, i===0);
+   if(i===0||p.f==='ELLKO'||p.f==='SAVVG'||p.f==='KRUGG'||p.f==='OFSON'){
+    var anch=(p.f==='OFSON'||p.f==='KRUGG')?'end':'start';
+    var dx=(anch==='end')?-7:8, dy=(i===0)?14:4;
+    s+='<text x="'+(p.x+dx).toFixed(1)+'" y="'+(p.y+dy).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10" text-anchor="'+anch+'">'+p.f+'</text>';
+   }});
+ });
+ /* aircraft */
+ sim.ac.forEach(function(a){
+  if(!a.onFreq && sim.t<a.spawned) return;
+  var p=posOf(a);
+  var col = a.alive? (a===selAc()?'var(--amber)':'var(--ink)') : 'var(--dim2)';
+  s+='<rect x="'+(p.x-4.5).toFixed(1)+'" y="'+(p.y-4.5).toFixed(1)+'" width="9" height="9" fill="'+(a.alive?'var(--green)':'var(--dim2)')+'" stroke="'+col+'" stroke-width="1"/>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="10.5">'+a.cs+(a.wake?' H':'')+'</text>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.rwy?' '+a.rwy:'')+'</text>';
+ });
+ s+='</svg>';
+ return s;
+}
+/* Scope layers — what published geometry is drawn behind the traffic. */
+var LAYERS='tracked';
+var LAYER_MODES=[
+ {id:'tracked', label:'tracked traffic'},
+ {id:'stars',   label:'all STARs'},
+ {id:'sids',    label:'all SIDs'},
+ {id:'both',    label:'all SIDs + STARs'},
+ {id:'off',     label:'off'}
+];
+window.ddLayers=function(m){
+ if(!LAYER_MODES.some(function(x){return x.id===m;})) return;
+ LAYERS=m;
+ var bar=document.getElementById('dd-layerbar');
+ if(bar && bar.querySelectorAll){
+  Array.prototype.slice.call(bar.querySelectorAll('button')).forEach(function(b){
+   if(b.classList) b.classList.toggle('on', (b.dataset&&b.dataset.l)===m);
+  });
+ }
+ render();
+};
+function selAc(){ return sim.ac.find(function(a){return a.cs===sim.sel;}); }
+function stripHtml(a){
+ var warn=[], job;
+ if(a.role==='departure'){
+  job = a.sid+' departure \u00b7 '+Math.round(dmeOf(a))+' DME';
+  if(a.alive && !a.flashed && (dmeOf(a)>DEP_RELEASE.dme-8 || a.alt>DEP_RELEASE.alt-2000)) warn.push('release');
+ } else if(a.role==='overflight'){
+  job = 'overflight \u00b7 '+Math.round(a.route.total-a.dist)+' NM to the boundary';
+  if(a.alive && (a.route.total-a.dist)<10 && !a.flashed) warn.push('flash');
+ } else {
+  job = a.gate+' \u2192 '+(a.rwy||'\u2014');
+  if(a.onFreq&&!a.altim) warn.push('altimeter');
+  if(a.onFreq&&!a.rwy) warn.push('runway');
+  if(a.alive&&(a.route.total-a.dist)<10&&!a.flashed) warn.push('flash');
+ }
+ return '<div class="dd-strip '+(a.cs===sim.sel?'sel':'')+' '+(a.alive?'':'gone')+'" onclick="ddSel(\''+a.cs+'\')">'
+  +'<b>'+a.cs+'</b> '+a.type+((a.wk && a.wk.cls!=='large')?(' \u2014 '+a.wk.label):'')
+  +' <span style="color:'+(a.rules==='VFR'?'var(--amber)':'var(--dim2)')+'">'+a.rules+'</span>'
+  +' <span style="color:'+(a.identified?'var(--dim2)':'var(--red)')+'">'
+  +(a.identified?('radar contact'+(a.squawk?' '+a.squawk:'')):(a.radar==='terminated'?'service terminated':'NOT IDENTIFIED'))+'</span>'
+  +((a.popup&&!a.ifrCleared)?' <span style="color:var(--red)">POP-UP · NO CLEARANCE</span>':'')+'<br>'
+  +(a.filed?('<span style="color:var(--dim2)">'+a.filed+'</span><br>'):'')
+  +job+' \u00b7 '+fmtAlt(a.alt)+' \u00b7 '+Math.round(a.ias)+' kt<br>'
+  +(a.alive? (warn.length?'<span class="warn">owes: '+warn.join(' + ')+'</span>':'<span style="color:var(--dim2)">items \u2713'+(a.flashed?' \u00b7 flashed '+a.flashed:'')+'</span>')
+           : (a.switched?'with '+receiverFor(a).pos:'off scope'))
+  +'</div>';
+}
+function renderFeed(){
+ var f=document.getElementById('dd-feed'); if(!f) return;
+ f.innerHTML = sim.feed.map(function(e){ return '<p><span class="t">'+e.t+'</span>'+e.html+'</p>'; }).join('');
+}
+function render(){
+ var sc=document.getElementById('dd-scopebox'); if(sc) sc.innerHTML=scopeSvg();
+ var stw=document.getElementById('dd-strips'); if(stw) stw.innerHTML=sim.ac.map(stripHtml).join('');
+ var ck=document.getElementById('dd-clock'); if(ck) ck.textContent='T+'+clock()+' \u00b7 '+(sim.rate===0?'paused':sim.rate+'\u00d7');
+}
+window.ddSel=function(cs){ sim.sel=cs; render(); };
+window.ddRate=function(r){ sim.rate=r;
+ document.querySelectorAll('#dd-ratebar button').forEach(function(b){b.classList.toggle('on',+b.dataset.r===r);});
+};
+window.ddQuick=function(txt){ var el=document.getElementById('dd-cmd');
+ var a=selAc(); el.value=(a?a.cs+' ':'')+txt; el.focus(); };
+window.ddSend=transmit;
+window.ddEnd=function(){
+ if(sim.ended) return; sim.ended=true; sim.rate=0;
+ var open=[], good=[];
+ sim.ac.forEach(function(a){
+  if(a.switched) good.push(a.cs+' delivered to '+receiverFor(a).name+(a.flashed?' flashed-then-switched':''));
+  else if(!a.alive) open.push(a.cs+' reached the end of the tail unswitched \u2014 the floor handoff never closed');
+  else open.push(a.cs+' still on frequency \u2014 handoff not yet closed');
+  if(a.rwyAuto) open.push(a.cs+'\u2019s runway went by Table 2 default at SAVVG \u2014 the word was never said');
+ });
+ var html='<div class="dd-debrief dd-panel"><h3>Debrief \u2014 deterministic checks</h3><ul>'
+  + (sim.losFlag?'<li><span class="dd-chip crit">crit</span>Loss of separation logged on the trunk.</li>':'<li><span class="dd-chip good">good</span>No loss of separation.</li>')
+  + good.map(function(g){return '<li><span class="dd-chip good">good</span>'+g+'</li>';}).join('')
+  + open.map(function(o){return '<li><span class="dd-chip flag">flag</span>'+o+'</li>';}).join('')
+  + '<li><span class="dd-chip info">standing</span>The separation proof and the floor citation are voice skills \u2014 the sim can\u2019t grade them. Say them out loud anyway; that\u2019s the whole point.</li>'
+  + '</ul></div>';
+ document.getElementById('dd-debriefbox').innerHTML=html;
+};
+window.ddLoad=function(id){
+ var sc=SCENARIOS.find(function(x){return x.id===id;}); if(!sc) return;
+ sim.t=0; sim.rate=0; sim.ac=sc.ac().map(mkAc); sim.feed=[]; sim.sel=null; sim.losFlag=false; sim.ended=false; sim.scen=sc;
+ /* the altimeter the drill is running, so a wrong setting can be caught */
+ if(!sc.altim && sc.frame){ var fa=sc.frame.match(/A(\d{4})/); if(fa) sc.altim=fa[1]; }
+ document.getElementById('dd-debriefbox').innerHTML='';
+ document.getElementById('dd-scentitle').textContent=sc.name+' \u2014 '+sc.frame;
+ log('info','<span class="dd-chip info">frame</span>'+sc.brief);
+ ddRate(0); render();
+ document.getElementById('mod-live').scrollIntoView({behavior:'smooth'});
+};
+
+/* aircraft trunkLen default */
+/* ---------- 6. Scenarios ---------- */
+var SCENARIOS=[
+ {id:'resume10r', name:'Drill 10R \u2014 resume', frame:'12s\u2013Depart 17 \u00b7 wind 150/9 \u00b7 VFR \u00b7 ATIS J/W \u00b7 A2980',
+  brief:'Frozen mid-drill exactly where the live session paused. Open when you unpause: DAL589\u2019s runway word (12L window closes at SAVVG), SCX8127\u2019s published-speed restore, the floor said before every switch \u2014 and the separation proof, out loud, unprompted.',
+  ac:function(){ return [
+   {cs:'DAL589', type:'B738', gate:'NITZR', dtgEnd: trunkLenFor('NITZR')-0+13+ (ROUTES.NITZR.total-ROUTES.NITZR.find(function(p){return p.f==='ELLKO';}).cum), alt:10300, ias:230, iasAsg:230, spdMode:'assigned', ckdIn:true, altim:true},
+   {cs:'SCX8127', type:'B738', gate:'BLUEM', dtgEnd: 8 + (ROUTES.BLUEM.total-ROUTES.BLUEM.find(function(p){return p.f==='ELLKO';}).cum), alt:9800, ias:250, iasAsg:250, spdMode:'assigned', rwy:'12R', ckdIn:true, altim:true},
+   {cs:'DAL158', type:'A339', wake:'H', gate:'TORGY', dtgEnd:24, alt:18000, ias:280, spdMode:'published', rwy:'12R', ckdIn:true, altim:true}
+  ];}},
+ {id:'freshpush', name:'South gates \u2014 fresh push', frame:'12s\u2013Depart 17 \u00b7 wind 150/9 \u00b7 VFR \u00b7 ATIS J/W \u00b7 A2980',
+  brief:'Clean start: four strips staggered off your three gates, everything owed from the first transmission. Check-in items, floors, the ELLKO merge, the 12R imbalance \u2014 all yours to build from zero.',
+  ac:function(){ return [
+   {cs:'DAL589', type:'B738', gate:'NITZR', dtgEnd:ROUTES.NITZR.total, alt:19000, ias:280, spawnAt:4},
+   {cs:'SCX8127', type:'B738', gate:'BLUEM', dtgEnd:ROUTES.BLUEM.total, alt:19000, ias:280, spawnAt:45},
+   {cs:'AAL2716', type:'B738', gate:'TORGY', dtgEnd:ROUTES.TORGY.total, alt:21000, ias:280, spawnAt:75},
+   {cs:'DAL158', type:'A339', wake:'H', gate:'TORGY', dtgEnd:ROUTES.TORGY.total+14, alt:23000, ias:280, spawnAt:250}
+  ];}}
+];
+
+/* dtgEnd fix for resume10r DAL589: 13 NM to ELLKO means dtgEnd = 13 + trunk length */
+SCENARIOS[0].ac=function(){
+ var trunkN=ROUTES.NITZR.total-ROUTES.NITZR.find(function(p){return p.f==='ELLKO';}).cum;
+ var trunkB=ROUTES.BLUEM.total-ROUTES.BLUEM.find(function(p){return p.f==='ELLKO';}).cum;
+ return [
+  {cs:'DAL589', type:'B738', gate:'NITZR', dtgEnd:13+trunkN, alt:10300, ias:230, iasAsg:230, spdMode:'assigned', ckdIn:true, altim:true},
+  {cs:'SCX8127', type:'B738', gate:'BLUEM', dtgEnd:8+trunkB, alt:9800, ias:250, iasAsg:250, spdMode:'assigned', rwy:'12R', ckdIn:true, altim:true},
+  {cs:'DAL158', type:'A339', wake:'H', gate:'TORGY', dtgEnd:24, alt:18000, ias:280, spdMode:'published', rwy:'12R', ckdIn:true, altim:true}
+ ];
+};
+
+/* ---------- 7. Drill library data ---------- */
+var DRILL_LOG=[
+ {n:'10R', date:'2026-08-30', seat:'Split H \u2014 South Feeder', cfg:'12s\u2013Depart 17 \u00b7 live ATIS', head:'South gates, real geometry \u2014 paused mid-tape',
+  banked:['ELLKO merge solved with the right tool: number one held to the fix, number two pulled to 230','Runway flip end-to-end: cheap-flip identified, N as receiver, flash, switch inside the 15 NM far-gate rule','Check-in items now automatic across four strips','True geometry mapped for good: nine-point boundary, parallel NITZR/BLUEM ladders, trunk-versus-17 opposition'],
+  open:['DAL589\u2019s runway word \u2014 five turns','Published-speed restoration phrase + the 7110.65 speed-adjustment lookup','Floor altitude said aloud with its book (near vs far, Appendix A)','Separation proof spoken unprompted \u2014 the model paragraph was given; next one is yours'],
+  chip:'flag'},
+ {n:'10', date:'2026-08-30', seat:'Combined D + I', cfg:'12s \u00b7 live ATIS', head:'North departures + north feeder \u2014 scrapped on saturation, lessons banked',
+  banked:['EDV sequence in the correct order: direct SNINE while owned, flash before the 4.c gate, then the switch','Ownership principle settled: assignment tables answer whose airplane, geometry answers whose airspace, coordination bridges them','N172ER route concept was the schooled one \u2014 over-the-top with the 6,000\u20137,000 look-and-go band'],
+  open:['"Climb and maintain" \u2014 twice in one drill, now the confirmed pattern','Post-handoff discipline: no altitudes after the flash is taken, no switch without a flash','Thread capacity: drops began around four concurrent \u2014 calibration data, not a demerit'],
+  chip:'crit'},
+ {n:'9', date:'2026-08-16', seat:'E \u2014 Satellite combined', cfg:'12s \u00b7 VMC \u00b7 towers closed', head:'Satellite mixed push \u2014 the weak area, worked clean',
+  banked:['Uncontrolled-field ops at FCM and STP: advisories, cancellation instructions, frequency change \u2014 twice, correctly','Ceiling discipline standout: MIC departure climbed to 5,000, point-out to R to climb through, retained, then ZMP at the boundary','Coordination format landed: receiver first, then self, then the full picture'],
+  open:['Voice only what\u2019s earned on the landline \u2014 no approving your own unfinished calls'],
+  chip:'good'},
+ {n:'8', date:'2026-08-16', seat:'Combined', cfg:'Plain 30s', head:'Four-corner descend-via merge to the parallels',
+  banked:['Balanced runway split with the heavy correctly to 30L','Caught a live speed exceedance and recovered with correct phraseology to the FAF','Built the high/low for the dependent parallels before it bit','Self-corrected a risky re-sequence \u2014 knowing when not to force it'],
+  open:['Speed up front, not delete-then-recover','The 1.0 NM dependent diagonal \u2014 deliver matched sets staggered, not abreast'],
+  chip:'good'},
+ {n:'7', date:'2026-08-14', seat:'Full M98 combined', cfg:'30s \u00b7 IMC', head:'Satellite integration under the arrivals',
+  banked:['Departure-versus-satellite deconfliction with vertical and lateral layers','ORSKY/NITZR corridor geometry proven for the 30s'],
+  open:['Separation proof: articulate and verify, don\u2019t assert \u2014 first appearance of the standing item'],
+  chip:'good'},
+ {n:'6', date:'2026-08-14', seat:'Full M98 combined', cfg:'30s', head:'Arrival sequencing, crossover, runway balance',
+  banked:['Caught the 3-1 transition imbalance; used one crossover to balance and split the compression pair','Heavy to 30L per Table 2(c)'],
+  open:[],
+  chip:'good'},
+ {n:'5', date:'2026-08-14', seat:'Full M98 combined', cfg:'30s', head:'Departure sort and sectorization',
+  banked:['Three departures sorted to ZMP sectors 5/9/10 with direct-to routing and completed handoffs'],
+  open:[],
+  chip:'good'}
+];
+var STANDING=[
+ {id:'sep', t:'Separation proof, spoken unprompted', d:'Drills 7 \u00b7 10 \u00b7 10R. The model paragraph exists now \u2014 who\u2019s one, the number at the merge, the protect move. Twenty seconds. Next drill it comes from you or it goes on the OTS-risk list.'},
+ {id:'maintain', t:'"Climb / descend and maintain"', d:'OJT sessions 6\u20137 + Drill 10 twice. One word. The player queries you every time you drop it \u2014 use that.'},
+ {id:'floors', t:'Floors cited aloud', d:'Near 7,000 / far 8,000 on a 12s (SOP 4-4c(3)); which gate is which lives in Appendix A \u2014 verify it, then say it before every floor handoff.'},
+ {id:'speed', t:'Speed-restoration constructs', d:'Resume published vs resume normal vs delete \u2014 three different machines. Drill 8 + 10R. The exact FAA 7110.65 paragraph is still your lookup.'},
+ {id:'posthandoff', t:'Post-handoff discipline', d:'Once it\u2019s shipped, it\u2019s gone: no altitudes after the flash is taken, no switch without a flash. Drill 9\u2019s lesson, Drill 10\u2019s relapse.'}
+];
+
+/* ---------- 8. Sections + nav ---------- */
+function liveHtml(){
+ return '<section class="module dd-section" id="mod-live" data-mod="live">'
+ +'<div class="modhead"><div><span class="tag">LIVE</span><h2>Live Drill Player</h2>'
+ +'<p class="modsub">Real M98 geometry, deterministic engine, fully offline \u2014 the scope moves, the rules grade</p></div></div>'
+ +'<div class="dd-bar">'
+ + SCENARIOS.map(function(s){return '<button onclick="ddLoad(\''+s.id+'\')">'+s.name+'</button>';}).join('')
+ +'<span id="dd-ratebar"><button data-r="0" class="on" onclick="ddRate(0)">pause</button> <button data-r="1" onclick="ddRate(1)">1\u00d7</button> <button data-r="4" onclick="ddRate(4)">4\u00d7</button></span>'
+ +'<button onclick="ddEnd()">End drill + debrief</button>'
+ +'<span class="dd-clock" id="dd-clock">T+00:00 \u00b7 paused</span></div>'
+ +'<div class="dd-mono" id="dd-scentitle" style="font-size:11.5px;color:var(--dim);margin-bottom:8px;">Load a scenario to begin.</div>'
+ +'<div class="dd-bar" id="dd-layerbar" style="margin:6px 0 8px;">'
+ +'<span class="dd-mono" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);">Routes drawn</span>'
+ + LAYER_MODES.map(function(m){return '<button data-l="'+m.id+'"'+(m.id===LAYERS?' class="on"':'')+' onclick="ddLayers(\''+m.id+'\')">'+m.label+'</button>';}).join('')
+ +'</div>'
+ +'<div class="dd-scopewrap"><div id="dd-scopebox"></div></div>'
+ +'<div class="dd-strips" id="dd-strips"></div>'
+ +'<div class="dd-cmdrow"><input class="dd-cmd" id="dd-cmd" placeholder="Transmit \u2014 e.g. DAL589 expect runway 12L \u00b7 resume published speed \u00b7 flash \u00b7 contact approach 126.95" onkeydown="if(event.key===\'Enter\')ddSend()">'
+ +'<button class="dd-send" onclick="ddSend()">Transmit</button></div>'
+ +'<div class="dd-quick">'
+ +'<button onclick="ddQuick(\'expect runway 12R\')">expect 12R</button>'
+ +'<button onclick="ddQuick(\'expect runway 12L\')">expect 12L</button>'
+ +'<button onclick="ddQuick(\'altimeter 2980\')">altimeter</button>'
+ +'<button onclick="ddQuick(\'reduce speed to 230\')">speed 230</button>'
+ +'<button onclick="ddQuick(\'resume published speed\')">resume published</button>'
+ +'<button onclick="ddQuick(\'descend and maintain 8000\')">descend + maintain</button>'
+ +'<button onclick="ddQuick(\'flash\')">flash</button>'
+ +'<button onclick="ddQuick(\'contact approach 126.95\')">switch \u2192 S</button>'
+ +'<button onclick="ddQuick(\'contact approach 119.3\')">switch \u2192 N</button>'
+ +'</div>'
+ +'<div class="dd-feed" id="dd-feed"><p class="coach">Frequency quiet. Load a scenario, set the rate, and key up.</p></div>'
+ +'<div id="dd-debriefbox"></div>'
+ +'<div class="dd-note">Engine notes: descend-via follows the published ladder; assigned speeds override published until you restore them (\u201cresume normal\u201d holds current \u2014 by design, that\u2019s the lesson); below 10,000 the crew self-caps at 250; bare \u201cmaintain\u201d away from current altitude draws a crew query; switching without a flash draws a complaint; floors \u2014 near 7,000 / far 8,000, NITZR/BLUEM near and TORGY far per the working read, verify against Appendix A. Boundary and every fix are plotted from the verified coordinates, anchored on an approximate MSP VOR position \u2014 schematic, not survey.</div>'
+ +'</section>';
+}
+function logHtml(){
+ var cards=DRILL_LOG.map(function(d){
+  return '<div class="dd-log-card"><div class="dd-log-head"><b>Drill '+d.n+' \u2014 '+d.head+'</b>'
+   +'<span class="dd-log-meta">'+d.date+' \u00b7 '+d.seat+' \u00b7 '+d.cfg+' \u00b7 <span class="dd-chip '+d.chip+'">'+(d.chip==='good'?'clean':d.chip)+'</span></span></div>'
+   +(d.banked.length?'<div class="lab g">Banked</div><ul>'+d.banked.map(function(b){return '<li>'+b+'</li>';}).join('')+'</ul>':'')
+   +(d.open.length?'<div class="lab o">Open</div><ul>'+d.open.map(function(o){return '<li>'+o+'</li>';}).join('')+'</ul>':'')
+   +(d.n==='10R'?'<div style="margin-top:10px;"><button class="dd-send" onclick="ddLoad(\'resume10r\')">Resume Drill 10R in the player</button></div>':'')
+   +'</div>';
+ }).join('');
+ return '<section class="module dd-section" id="mod-log" data-mod="log">'
+ +'<div class="modhead"><div><span class="tag">LOG</span><h2>Drill Library</h2>'
+ +'<p class="modsub">Every AI-assisted drill \u2014 what got banked, what stayed open</p></div></div>'
+ +'<div class="dd-note" style="margin-bottom:14px;">The cross-session review of OJT sessions 1\u20137 that used to open this page is now reference: <b>claude_M98_OJT_Session_Review.md</b>. It is where the standing items below came from.</div>'
+ +'<div class="dd-panel dd-standing"><div class="lab" style="font-family:var(--mono);font-size:10.5px;letter-spacing:0.08em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;">Standing items \u2014 open across drills</div><ul>'
+ + STANDING.map(function(s){return '<li><b style="color:var(--ink)">'+s.t+'.</b> '+s.d+'</li>';}).join('')
+ +'</ul></div>'
+ + cards
+ +'</section>';
+}
+/* mount \u2014 resilient to placement and host-page structure */
+function mountAll(){
+ var wrap=document.querySelector('.wrap')||document.body;
+ if(!wrap) return;
+ var mount=document.createElement('div');
+ mount.innerHTML=liveHtml()+logHtml();
+ var foot=wrap.querySelector('footer');
+ if(foot){ wrap.insertBefore(mount, foot); } else { wrap.appendChild(mount); }
+ var nav=document.getElementById('modnav');
+ if(nav){ nav.innerHTML += '<a href="#mod-live">LIVE</a><a href="#mod-log">LOG</a>'; }
+ document.title='M98 Drill Deck';
+ var tb=document.querySelector('.topbar div:last-child'); if(tb) tb.textContent='DRILL DECK';
+ sim.timer=setInterval(function(){ if(sim.rate>0 && !sim.ended) tick(sim.rate); }, 1000);
+ render();
+}
+/* ---------- 9. Extension bridge ----------
+   Additive blocks read the engine through this object. Nothing downstream
+   keeps its own copy of the geometry or the reference numbers: a fix, a
+   floor or a frequency is written down in exactly one place. */
+window.DD = {
+ version:1, hooks:[],
+ ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
+ SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
+ DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, receiverFor:receiverFor, dmeOf:dmeOf,
+ POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
+ FEEDER_POS:FEEDER_POS, NEAR_GATES:NEAR_GATES, HANDOFF_ALT:HANDOFF_ALT,
+ AIRPORTS:AIRPORTS, airportOf:airportOf, runwaysAt:runwaysAt, initAltAt:initAltAt,
+ RADAR_STATES:RADAR_STATES, radarStatesFor:radarStatesFor, normRadar:normRadar,
+ ARRIVALS:ARRIVALS, arrivalsFor:arrivalsFor, arrivalServes:arrivalServes,
+ SAT_ROUTES:SAT_ROUTES, SAT_DIRECT:SAT_DIRECT, SAT_POS:SAT_POS,
+ satDirectRoute:satDirectRoute, routeFor:routeFor,
+ SAT_FIELDS:SAT_FIELDS, satSeatFor:satSeatFor,
+ towerHandoffFor:towerHandoffFor, DEP_VORS:DEP_VORS, RWY_SIDE:RWY_SIDE, sideOfRunway:sideOfRunway,
+ nearFarFor:nearFarFor, floorFor:floorFor, CROSSOVER_EXEMPT:CROSSOVER_EXEMPT, crossoverFor:crossoverFor,
+ RST_BOUNDARY:RST_BOUNDARY, RST_ARC:RST_ARC, RST_CEILING:RST_CEILING,
+ FEEDER_SPLIT:FEEDER_SPLIT, feederFor:feederFor, ZMP_SECTORS:ZMP_SECTORS, zmpSectorFor:zmpSectorFor,
+ OBSTRUCTIONS:OBSTRUCTIONS, DDA_VERTICALS:DDA_VERTICALS,
+ DDA_AREAS:DDA_AREAS, ddaFor:ddaFor, inDDA:inDDA,
+ RST_ENTRY_ALTS:RST_ENTRY_ALTS, RST_OVF_ALTS:RST_OVF_ALTS, RST_FREQS:RST_FREQS,
+ RST_CLOSED_OWNER:RST_CLOSED_OWNER,
+ neighbourAt:neighbourAt, exitBearing:exitBearing,
+ setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
+ LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; },
+ overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
+ sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,
+ FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,
+ sayDigits:sayDigits, altimIn:altimIn, simAltim:simAltim,
+ routeTextFor:routeTextFor, SID_DEST:SID_DEST,
+ fmtAlt:fmtAlt, clock:clock, log:log, render:render, renderFeed:renderFeed,
+ logHtml:logHtml, px:px, pxRD:pxRD, nmOf:nmOf
+};
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
+else { mountAll(); }
+})();
+</script>
