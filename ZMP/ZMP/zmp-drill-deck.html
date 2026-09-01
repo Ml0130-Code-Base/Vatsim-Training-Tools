@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZMP Drill Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D0C;
+    --panel:#0F1614;
+    --panel2:#121A17;
+    --ink:#E7EDE9;
+    --dim:#6F8079;
+    --dim2:#455049;
+    --line:#1E2925;
+    --green:#4FE0A0;
+    --amber:#E8A23D;
+    --red:#E8604D;
+    --display:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(79,224,160,0.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(79,224,160,0.25);}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  a{color:var(--green);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--dim);
+    position:sticky;top:0;
+    background:rgba(10,13,12,0.9);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .topbar b{color:var(--ink);font-weight:600;}
+
+  .hero{padding:56px 0 8px;}
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.16em;
+    text-transform:uppercase;color:var(--green);margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:var(--display);font-size:34px;line-height:1.15;
+    margin:0 0 12px;font-weight:700;letter-spacing:-0.01em;
+  }
+  .hero p{color:var(--dim);margin:0;max-width:62ch;}
+
+  .modnav{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;}
+
+  footer{
+    margin-top:64px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--dim2);font-size:12.5px;
+  }
+
+  @media(max-width:640px){
+    .hero h1{font-size:26px;}
+    .wrap{padding:0 14px 60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div><b>ZMP</b> Minneapolis ARTCC</div>
+  <div>DRILL DECK</div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Drill deck</div>
+    <h1>Pick the sector, build the drill, fly it, bank what it taught.</h1>
+    <p>Thirty-three sectors, six areas, and the en route procedures that actually get graded. Every number traces to ZMP 7200.1O or the vNAS facility record.</p>
+  </div>
+  <div class="modnav" id="modnav"></div>
+
+  <footer>
+    En route drill tool. Skeleton build, 2026-09-01 — the sector spine is real and cited, the traffic model is not built yet. Every operational number traces to the claude_*.md set; where two sources disagree the tool shows both. Single file, no build step, no network.
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   ZMP SECTOR DECK v0 — the data spine and the mount.
+   Skeleton: carries verified sector data, mounts its own sections,
+   and exposes window.ZD. No traffic model yet (see CLAUDE.md roadmap).
+   Safe to paste as one block before </body> of any copy of this tool.
+   ================================================================ */
+(function(){
+'use strict';
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.zd-section{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}'
++ '.zd-section h2{font-family:var(--display);font-size:24px;margin:0 0 6px;font-weight:600;}'
++ '.zd-section .lede{color:var(--dim);margin:0 0 16px;max-width:64ch;}'
++ '.zd-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.zd-mono{font-family:var(--mono);}'
++ '.zd-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
++ '.zd-bar button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
++ '.zd-bar button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.zd-bar button.on{color:var(--green);border-color:var(--green);}'
++ '.zd-navlink{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 12px;cursor:pointer;text-decoration:none;}'
++ '.zd-navlink.on{color:var(--green);border-color:var(--green);}'
++ '.zd-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}'
++ '.zd-tbl th{text-align:left;color:var(--dim);font-weight:500;border-bottom:1px solid var(--line);padding:6px 8px;position:sticky;top:52px;background:var(--panel);}'
++ '.zd-tbl td{border-bottom:1px solid var(--line);padding:5px 8px;color:var(--ink);}'
++ '.zd-tbl tr:hover td{background:var(--panel2);}'
++ '.zd-tbl .dim{color:var(--dim);}'
++ '.zd-scroll{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:6px;}'
++ '.zd-tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--dim);}'
++ '.zd-tag.low{color:var(--green);border-color:var(--green);}'
++ '.zd-tag.high{color:var(--amber);border-color:var(--amber);}'
++ '.zd-tag.full{color:var(--red);border-color:var(--red);}'
++ '.zd-warn{color:var(--amber);}'
++ '.zd-empty{color:var(--dim2);font-family:var(--mono);font-size:12px;padding:18px;text-align:center;border:1px dashed var(--line);border-radius:6px;}'
++ '.zd-kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-family:var(--mono);font-size:12px;}'
++ '.zd-kv dt{color:var(--dim);}'
++ '.zd-kv dd{margin:0;color:var(--ink);}'
++ '.zd-feed{font-family:var(--mono);font-size:12px;line-height:1.7;max-height:300px;overflow:auto;}'
+;
+
+/* ---------- 2. Verified data ----------
+   Sources, per claude_ZMP_Sector_Reference.md:
+     sop   = ZMP Order 7200.1O CHG 2, eff 2024-11-15
+     vnas  = vNAS facility record for ZMP, lastUpdatedAt 2026-08-26
+   Where the two disagree BOTH values are carried. The tool never picks one. */
+
+var AREAS = {
+  1:[ '01','02','03','04','12','13' ],
+  2:[ '05','06','10','11','15','16','21' ],
+  3:[ '07','08','09','17','18','19' ],
+  4:[ '20','22','23','24','25','33' ],
+  5:[ '26','29','30','36','37' ],
+  6:[ '27','38','39' ]
+};
+
+/* freq: SOP value. freqVnas: only present where the two sources CONFLICT. */
+var SECTORS = {
+  '01':{ area:1, freq:134.6,   filter:'000B242', range:'115-135 NM', combine:'Combined at 02 when not open' },
+  '02':{ area:1, freq:132.9,   filter:'000B242', range:'075-100 NM', combine:'Combines to 04' },
+  '03':{ area:1, freq:133.55,  filter:'000B242', range:'150 NM',     combine:'' },
+  '04':{ area:1, freq:124.4,   filter:'000B242', range:'100-124 NM', combine:'All Area 1 sectors combine here; filter becomes 000B999' },
+  '12':{ area:1, freq:132.425, filter:'228B999', range:'130-175 NM', combine:'Receives 13' },
+  '13':{ area:1, freq:133.45,  freqVnas:133.175, filter:'228B999', range:'150-200 NM', combine:'Combines to 12' },
+  '05':{ area:2, freq:125.3,   filter:'000B242', range:'125-175 mi', combine:'Receives 10 and 21 in single-scope Area 2' },
+  '06':{ area:2, freq:134.3,   filter:'000B242', range:'60-75 NM',   combine:'' },
+  '10':{ area:2, freq:121.05,  filter:'000B242', range:'75 NM',      combine:'Combines to 05 single-scope; combined at 11' },
+  '11':{ area:2, freq:133.4,   filter:'228B999', range:'150 NM',     combine:'vZMP combines here (Appendix 03)' },
+  '15':{ area:2, freq:135.7,   filter:'228B999', range:'100-125 NM', combine:'' },
+  '16':{ area:2, freq:133.75,  filter:'228B999', range:'100-125 NM', combine:'' },
+  '21':{ area:2, freq:134.85,  filter:'068B242', range:'60-75 NM',   combine:'Combined at 05 in single-scope Area 2' },
+  '07':{ area:3, freq:132.35,  filter:'000B242', range:'60-75 NM',   combine:'' },
+  '08':{ area:3, freq:135.0,   filter:'000B242', range:'60-75 mi',   combine:'' },
+  '09':{ area:3, freq:125.5,   filter:'000B242', range:'75-100 NM',  combine:'' },
+  '17':{ area:3, freq:134.25,  filter:'FL228B999', range:'90-125 NM', combine:'' },
+  '18':{ area:3, freq:128.675, filter:'228B999', range:'120-150 NM', combine:'' },
+  '19':{ area:3, freq:119.875, filter:'228B999', range:'120-150 NM', combine:'' },
+  '20':{ area:4, freq:128.425, filter:'228B999', range:'150 NM',     combine:'' },
+  '22':{ area:4, freq:134.55,  freqVnas:134.75, filter:'228B999', range:'150 or 225 by configuration', combine:'' },
+  '23':{ area:4, freq:127.6,   filter:'000B999', range:'125-150 NM', combine:'' },
+  '24':{ area:4, freq:124.2,   freqVnas:132.15, filter:'000B999', range:'150 NM', combine:'' },
+  '25':{ area:4, freq:134.75,  freqVnas:134.55, filter:'000B999', range:'125-150 NM', combine:'Takes DLH airspace when DLH is closed' },
+  '33':{ area:4, freq:125.1,   filter:'000B242', range:'150-200 NM', combine:'' },
+  '26':{ area:5, freq:119.4,   filter:'000B242', range:'100-150 mi', combine:'Can receive 37' },
+  '29':{ area:5, freq:124.875, filter:'228B999', range:'95-150 mi',  combine:'Receives 37 when Area 5 is one scope' },
+  '30':{ area:5, freq:135.775, filter:'228B999', range:'95-150 NM',  combine:'' },
+  '36':{ area:5, freq:134.0,   filter:'000B242', range:'95-150 mi',  combine:'Can receive 37' },
+  '37':{ area:5, freq:128.0,   filter:'000B242', range:'95-150 mi',  combine:'Combines at 36 or 26; to 29 when Area 5 is one scope' },
+  '27':{ area:6, freq:119.6,   filter:'000B242', range:'100 mi',     combine:'Combines to 38' },
+  '38':{ area:6, freq:123.975, filter:'228B999', range:'90-110 NM',  combine:'Receives 27 and 39' },
+  '39':{ area:6, freq:135.1,   filter:'228B999', range:'110-125 NM', combine:'Combines at 38, but may be combined elsewhere' }
+};
+
+/* Adapted in vNAS, no sector page in 7200.1O. Not selectable as a seat. */
+var UNDOCUMENTED = {
+  '14':127.125, '28':119.725, '32':133.075, '34':132.725, '40':134.225,
+  '42':119.525, '43':118.825, '44':120.05,  '46':125.825, '83':125.55
+};
+var NON_SECTOR = { 'G':{ freq:121.5, name:'Guard' }, 'T':{ freq:123.45, name:'Minneapolis TMU' } };
+
+/* Which sectors carry a coordination rule facing which facility.
+   Source: the 125 routeBasedCoordinations records in the vNAS facility file.
+   This is a COORDINATION map, not a boundary map — absence proves nothing. */
+var NEIGHBOURS = {
+  M98:['05','06','07','08','09','10'],
+  R90:['26','27','37'],
+  RST:['05','07','21','36'],
+  SUX:['26','27','37'],
+  DSM:['27','36'],
+  FSD:['33','37'],
+  FAR:['24'], RDR:['24'], BIS:['23'], MIB:['02'],
+  DLH:['03','10','25'], GRB:['02','03','04'], APN:['01'], AZO:['02'], MKE:['04'], VOK:['05'],
+  ZAU:['04','05','12','13','15','16','17','30','36','38'],
+  ZOB:['01','02','12'],
+  ZDV:['20','23','29','39'],
+  ZKC:['27','38','39'],
+  ZLC:['20','23'],
+  CZWG:['25'], CYQT:['25']
+};
+
+/* 7200.1O 3.2 — ERAM altitude filter buffers */
+var FILTER_BUFFER = { sep1000:1200, sep2000:2200 };
+
+/* 7200.1O 3.6 + the three radii stated in the sector narratives */
+var SEP = {
+  standard:5,
+  reduced:3,
+  sites:['Empire MI (QJA)','Eagle River WI (EGV)','Alpena MI (APN)','Sawyer MI (SAW)'],
+  statedRadii:[
+    { sector:'01', site:'APN',        nm:54, band:'below FL230', cite:'7200.1O 4.1.1' },
+    { sector:'02', site:'Empire',     nm:40, band:'below FL230', cite:'7200.1O 4.2.1' },
+    { sector:'03', site:'SAW and EGV',nm:40, band:'not stated',  cite:'7200.1O 4.3.1' }
+  ],
+  note:'Appendix 02 is a picture. The three radii above are the only ones written down.'
+};
+
+/* 7200.1O 3.3.B.2 — the only sector pairs where the interim altitude may be omitted */
+var INTERIM_WAIVER = [ ['06','16'], ['07','17'], ['08','18'], ['09','11'], ['09','19'], ['10','11'], ['21','15'] ];
+var INTERIM_NOTE = 'ZMP low altitude terminal sectors must not clear M98 departures above FL230 without prior verbal coordination (7200.1O 3.3.B.2).';
+
+/* 7200.1O 3.7 */
+var AIT_RULES = {
+  transfers:['altitude control','radar identification','en route fourth line control information'],
+  eramOnly:true, radarIdentifiedOnly:true, verbalOverrides:true,
+  notForPointOuts:true,
+  vatcanCannotAccept:true,
+  cite:'7200.1O 3.7'
+};
+
+/* 7200.1O 3.8 */
+var DBC_RULES = {
+  adjacentZmpSectorsOnly:true,
+  minutesFromBoundaryWhenEntered:5,
+  handoffInitiatedBeforeMinutes:3,
+  requiresValidModeC:true,
+  notForDeparturesWithinMinutes:5,
+  verbalOverrides:true,
+  acceptanceIsApproval:true,
+  proceduralAltitudeForDescendVia:true,
+  example:'An aircraft on the KKILR arrival issued a descend via clearance carries a procedural altitude of 100.',
+  cite:'7200.1O 3.8'
+};
+
+/* Per-neighbour releases, from the sector pages. INCOMPLETE — Areas 2-6 unwalked. */
+var XFER_CONTROL = [
+  { pair:'ZMP / ZOB, ZMP / YWG', release:'Beacon code changes and turns up to 20 degrees', within:'20 miles of the common boundary crossing point', cite:'7200.1O 4.1.4.5.a' },
+  { pair:'ZMP / YYZ',  release:'Beacon code changes and turns up to 45 degrees', within:'20 miles', cite:'7200.1O 4.1.4.5.b' },
+  { pair:'ZMP / APN',  release:'APN has control for turns, climbs and descent', within:'on completion of handoff and communications transfer', cite:'7200.1O 4.1.4.5.c' },
+  { pair:'ZMP / AZO',  release:'Both facilities: turns up to 30 degrees, descent, code change', within:'10 miles of the common boundary', cite:'7200.1O 4.1.4.5.d' },
+  { pair:'ZMP / DLH',  release:'DLH has control for turns and descent', within:'10 miles of the common boundary', cite:'7200.1O 4.3.4.5.b' },
+  { pair:'Area 1 low internal', release:'Descent and turns up to 20 degrees to all other Area 1 low sectors', within:'-', cite:'7200.1O 4.1.4.5.e' }
+];
+
+var COMBINE_POINT = {
+  sector:'11', freq:133.4,
+  note:'In AFV, TX/RX must be selected for MSP_CTR or transceiver coverage is Sector 11 only, not the whole centre.',
+  cite:'7200.1O Appendix 03'
+};
+
+/* 7200.1O Appendix 01 */
+var PRB_CHECKLIST = [
+  'Status information area (SIA)','Equipment','Sector config',
+  'Airport status and activities — closures, braking action',
+  'Weather and altimeter trends — rides, winds, thunderstorm tops',
+  'Flow control — routes, metering and miles-in-trail',
+  'Military','Special activities','Communication status',
+  'Traffic current and pending — non-radar, point-outs, holding, primary targets with no data block, aircraft in restricted areas/MOAs/ATCAAs/IRs, released but not airborne, handed off but still in the sector, VFR advisory'
+];
+
+/* Standing training items are derived from OBSERVED OJT shortfalls.
+   There are none yet. This array stays empty until the first session is flown
+   and claude_ZMP_OJT_Session_Review.md is filled in. Do not seed it from documents. */
+var STANDING = [];
+
+/* ---------- 3. Helpers ---------- */
+function pad(n){ return (n < 10 ? '0' : '') + n; }
+function fmtAlt(a){
+  if(a === null || a === undefined) return '-';
+  if(a >= 18000) return 'FL' + Math.round(a/100);
+  return a.toLocaleString('en-US');
+}
+function fmtFreq(f){ var s = f.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0'); return s; }
+function zdSector(n){ return SECTORS[n] || null; }
+function zdArea(n){ var s = SECTORS[n]; return s ? s.area : null; }
+function zdStratum(n){
+  var s = SECTORS[n]; if(!s) return null;
+  var f = s.filter.replace(/^FL/,'');
+  if(f === '000B999') return 'full';
+  if(f.indexOf('B242') > -1) return 'low';
+  if(f.indexOf('B999') > -1) return 'high';
+  return 'unknown';
+}
+function zdCallsign(n){ return 'MSP_' + n + '_CTR'; }
+function zdConflicted(n){ var s = SECTORS[n]; return !!(s && s.freqVnas !== undefined); }
+function zdNeighboursOf(n){
+  var out = [];
+  for(var f in NEIGHBOURS){ if(NEIGHBOURS[f].indexOf(n) > -1) out.push(f); }
+  return out.sort();
+}
+function zdAreaOf(n){ return AREAS[zdArea(n)] || []; }
+function allSectors(){
+  var out = [];
+  for(var a = 1; a <= 6; a++){ out = out.concat(AREAS[a]); }
+  return out;
+}
+
+var feed = [];
+function log(msg, kind){
+  feed.push({ t:new Date(), msg:msg, kind:kind || 'info' });
+  renderFeed();
+}
+function logHtml(){
+  if(!feed.length) return '<div class="zd-empty">Nothing logged yet.</div>';
+  return feed.slice().reverse().map(function(e){
+    var c = e.kind === 'warn' ? 'zd-warn' : '';
+    return '<div class="' + c + '">' + e.t.toTimeString().slice(0,8) + '  ' + e.msg + '</div>';
+  }).join('');
+}
+function renderFeed(){
+  var el = document.getElementById('zd-feed');
+  if(el) el.innerHTML = logHtml();
+}
+
+/* ---------- 4. Sections ---------- */
+function sectorRows(){
+  return allSectors().map(function(n){
+    var s = SECTORS[n], st = zdStratum(n);
+    var freq = fmtFreq(s.freq);
+    if(s.freqVnas !== undefined){
+      freq = '<span class="zd-warn">' + freq + ' / ' + fmtFreq(s.freqVnas) + '</span>';
+    }
+    return '<tr>'
+      + '<td><b>' + n + '</b></td>'
+      + '<td class="dim">' + s.area + '</td>'
+      + '<td>' + freq + '</td>'
+      + '<td class="dim">' + zdCallsign(n) + '</td>'
+      + '<td><span class="zd-tag ' + st + '">' + st + '</span></td>'
+      + '<td class="dim">' + s.filter + '</td>'
+      + '<td class="dim">' + s.range + '</td>'
+      + '<td class="dim">' + (zdNeighboursOf(n).join(' ') || '-') + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function sectionSectors(){
+  return ''
+  + '<section class="zd-section" id="zd-sectors">'
+  + '<h2>The sector spine</h2>'
+  + '<p class="lede">Thirty-three sectors in six areas. Frequencies are confirmed against two independent sources; the four that disagree are shown as <span class="zd-warn">SOP / vNAS</span> and the tool does not pick one.</p>'
+  + '<div class="zd-scroll"><table class="zd-tbl">'
+  + '<thead><tr><th>Sec</th><th>Area</th><th>Freq</th><th>Callsign</th><th>Stratum</th><th>Filter</th><th>Range</th><th>Faces</th></tr></thead>'
+  + '<tbody>' + sectorRows() + '</tbody></table></div>'
+  + '<div class="zd-panel"><div class="zd-mono" style="font-size:11.5px;color:var(--dim);">'
+  + 'Combine point: <b style="color:var(--ink)">Sector ' + COMBINE_POINT.sector + ' on ' + fmtFreq(COMBINE_POINT.freq) + '</b> &mdash; ' + COMBINE_POINT.note
+  + '</div></div>'
+  + '</section>';
+}
+
+function sectionProcedures(){
+  var waiver = INTERIM_WAIVER.map(function(p){ return p[0] + '&rarr;' + p[1]; }).join(' &middot; ');
+  var radii = SEP.statedRadii.map(function(r){
+    return '<tr><td>' + r.sector + '</td><td>' + r.site + '</td><td>' + r.nm + ' NM</td><td class="dim">' + r.band + '</td><td class="dim">' + r.cite + '</td></tr>';
+  }).join('');
+  var xfer = XFER_CONTROL.map(function(x){
+    return '<tr><td>' + x.pair + '</td><td>' + x.release + '</td><td class="dim">' + x.within + '</td><td class="dim">' + x.cite + '</td></tr>';
+  }).join('');
+  return ''
+  + '<section class="zd-section" id="zd-procedures">'
+  + '<h2>The procedures that get graded</h2>'
+  + '<p class="lede">The four ZMP-local rules with hard, checkable conditions. These are the first grading targets because none of them needs geometry.</p>'
+
+  + '<div class="zd-panel"><b>ERAM altitude filter (7200.1O 3.2)</b><dl class="zd-kv">'
+  + '<dt>1,000 ft separation</dt><dd>' + FILTER_BUFFER.sep1000 + ' ft above and below the airspace limits</dd>'
+  + '<dt>2,000 ft separation</dt><dd>' + FILTER_BUFFER.sep2000 + ' ft above and below</dd>'
+  + '</dl></div>'
+
+  + '<div class="zd-panel"><b>Separation (7200.1O 3.6)</b> &mdash; ' + SEP.standard + ' NM standard, ' + SEP.reduced + ' NM only inside the Appendix 02 single-site areas.'
+  + '<table class="zd-tbl" style="margin-top:10px;"><thead><tr><th>Sector</th><th>Site</th><th>Radius</th><th>Band</th><th>Cite</th></tr></thead><tbody>' + radii + '</tbody></table>'
+  + '<div class="zd-warn zd-mono" style="font-size:11px;margin-top:8px;">' + SEP.note + '</div></div>'
+
+  + '<div class="zd-panel"><b>Interim altitude waiver (7200.1O 3.3)</b><div class="zd-mono" style="margin:6px 0;">' + waiver + '</div>'
+  + '<div class="zd-warn zd-mono" style="font-size:11px;">' + INTERIM_NOTE + '</div></div>'
+
+  + '<div class="zd-panel"><b>Data Block Coordination (7200.1O 3.8)</b><dl class="zd-kv">'
+  + '<dt>Scope</dt><dd>Two adjacent ZMP sectors only</dd>'
+  + '<dt>Altitude entered</dt><dd>More than ' + DBC_RULES.minutesFromBoundaryWhenEntered + ' minutes from the boundary</dd>'
+  + '<dt>Handoff initiated</dt><dd>Before ' + DBC_RULES.handoffInitiatedBeforeMinutes + ' minutes from the boundary</dd>'
+  + '<dt>Mode C</dt><dd>Required and valid</dd>'
+  + '<dt>Departures</dt><dd>Never within ' + DBC_RULES.notForDeparturesWithinMinutes + ' minutes of the boundary</dd>'
+  + '<dt>Acceptance</dt><dd>Accepting the handoff is the approval</dd>'
+  + '<dt>Descend via</dt><dd>' + DBC_RULES.example + '</dd>'
+  + '</dl></div>'
+
+  + '<div class="zd-panel"><b>Automated Information Transfer (7200.1O 3.7)</b> &mdash; transfers '
+  + AIT_RULES.transfers.join(', ') + ' without verbal coordination. ERAM only. Radar identified only. '
+  + 'Verbal coordination overrides. <span class="zd-warn">Not for point-outs. VATCAN sectors cannot accept it, which is why Toronto and Winnipeg handoffs are manual.</span></div>'
+
+  + '<div class="zd-panel"><b>Transfer of control across the boundary</b>'
+  + '<table class="zd-tbl" style="margin-top:10px;"><thead><tr><th>Boundary</th><th>Release</th><th>Within</th><th>Cite</th></tr></thead><tbody>' + xfer + '</tbody></table>'
+  + '<div class="zd-warn zd-mono" style="font-size:11px;margin-top:8px;">Incomplete &mdash; Areas 2 through 6 have not been walked paragraph by paragraph. See claude_ZMP_Gap_Analysis.md.</div></div>'
+  + '</section>';
+}
+
+function sectionLive(){
+  return ''
+  + '<section class="zd-section" id="zd-live">'
+  + '<h2>Fly it</h2>'
+  + '<p class="lede">The live player.</p>'
+  + '<div class="zd-empty">No traffic model yet.<br><br>'
+  + 'An en route traffic model is roadmap item 2, and it is blocked on sector boundaries &mdash; every Sector NN Map page in 7200.1O is a picture, and vNAS does not publish video-map geometry.<br><br>'
+  + 'The unblocked path is owner-supplied points for Sectors 07/08/09 (the M98 face) and 26/27/37 (the R90 face).<br>'
+  + 'See claude_ZMP_Gap_Analysis.md, Part 1.</div>'
+  + '<div class="zd-panel"><b>Position relief briefing (7200.1O Appendix 01)</b>'
+  + '<ol class="zd-mono" style="font-size:11.5px;color:var(--dim);margin:8px 0 0;padding-left:20px;">'
+  + PRB_CHECKLIST.map(function(i){ return '<li>' + i + '</li>'; }).join('')
+  + '</ol><div class="zd-mono" style="font-size:11px;color:var(--dim2);margin-top:8px;">'
+  + 'This checklist is the closest thing the order has to a published scan, and it is the natural spine for a ZMP drill debrief.</div></div>'
+  + '</section>';
+}
+
+function sectionLog(){
+  return ''
+  + '<section class="zd-section" id="zd-log">'
+  + '<h2>Log</h2>'
+  + '<p class="lede">Session feed.</p>'
+  + '<div class="zd-panel"><div class="zd-feed" id="zd-feed"></div></div>'
+  + '</section>';
+}
+
+/* ---------- 5. Mount ---------- */
+function mountAll(){
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var footer = wrap.querySelector('footer');
+
+  var host = document.createElement('div');
+  host.innerHTML = sectionSectors() + sectionProcedures() + sectionLive() + sectionLog();
+  while(host.firstChild){
+    if(footer) wrap.insertBefore(host.firstChild, footer);
+    else wrap.appendChild(host.firstChild);
+  }
+
+  var nav = document.getElementById('modnav');
+  if(nav){
+    nav.innerHTML = ''
+      + '<a class="zd-navlink" href="#zd-sectors">Sectors</a>'
+      + '<a class="zd-navlink" href="#zd-procedures">Procedures</a>'
+      + '<a class="zd-navlink" href="#zd-live">Fly it</a>'
+      + '<a class="zd-navlink" href="#zd-log">Log</a>';
+  }
+
+  renderFeed();
+  log('ZMP Sector Deck v0 mounted. ' + allSectors().length + ' sectors, 6 areas.');
+  var conflicts = allSectors().filter(zdConflicted);
+  if(conflicts.length){
+    log('Frequency conflict between 7200.1O and vNAS on sectors ' + conflicts.join(', ') + ' — both values carried, neither chosen.', 'warn');
+  }
+  if(!STANDING.length){
+    log('No standing training items — no ZMP OJT sessions flown yet.', 'warn');
+  }
+}
+
+/* ---------- 6. Export ---------- */
+window.ZD = {
+  version:0, hooks:[],
+  SECTORS:SECTORS, AREAS:AREAS, UNDOCUMENTED:UNDOCUMENTED, NON_SECTOR:NON_SECTOR,
+  NEIGHBOURS:NEIGHBOURS, FILTER_BUFFER:FILTER_BUFFER, SEP:SEP,
+  INTERIM_WAIVER:INTERIM_WAIVER, INTERIM_NOTE:INTERIM_NOTE,
+  AIT_RULES:AIT_RULES, DBC_RULES:DBC_RULES, XFER_CONTROL:XFER_CONTROL,
+  COMBINE_POINT:COMBINE_POINT, PRB_CHECKLIST:PRB_CHECKLIST, STANDING:STANDING,
+  zdSector:zdSector, zdArea:zdArea, zdStratum:zdStratum, zdCallsign:zdCallsign,
+  zdConflicted:zdConflicted, zdNeighboursOf:zdNeighboursOf, zdAreaOf:zdAreaOf,
+  allSectors:allSectors,
+  fmtAlt:fmtAlt, fmtFreq:fmtFreq, pad:pad,
+  log:log, logHtml:logHtml, renderFeed:renderFeed
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
+else { mountAll(); }
+})();
+</script>
+
+<script>
+/* ================================================================
+   ZMP DRILL BUILDER + TRAINING NOTEBOOK v0 — additive extension.
+   Requires the Sector Deck block (window.ZD) earlier in the page.
+
+   Skeleton: the seat picker, the three-page wrapper, persistence,
+   and the notebook's empty state. No authoring or grading yet.
+
+   No new operational data lives here. Every sector, frequency and
+   procedure is read through window.ZD.
+   ================================================================ */
+(function(){
+'use strict';
+var ZD = window.ZD;
+if(!ZD){ return; }
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.zdb-pagenav{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 4px;}'
++ '.zdb-pagenav button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:8px 14px;cursor:pointer;}'
++ '.zdb-pagenav button.on{color:var(--green);border-color:var(--green);}'
++ '.zdb-page{display:none;}'
++ '.zdb-page.on{display:block;}'
++ '.zdb-seat{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0;}'
++ '.zdb-seat select,.zdb-seat input{font-family:var(--mono);font-size:12px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:7px 9px;}'
++ '.zdb-frame{font-family:var(--mono);font-size:12px;color:var(--dim);border-left:2px solid var(--green);padding:6px 0 6px 12px;margin:12px 0;}'
++ '.zdb-frame b{color:var(--ink);}'
+;
+
+/* ---------- 2. State ---------- */
+var KEY = 'zmp-drill-deck-v1';
+var storageOk = true;
+var state = { seat:'06', open:[], entries:[] };
+
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var p = JSON.parse(raw); if(p && typeof p === 'object'){ state = p; } }
+  }catch(e){ storageOk = false; }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ storageOk = false; }
+}
+
+/* One ledger, no second class. PRIOR is empty because no ZMP drill has been
+   flown yet; when one is, it goes into state.entries and is scored identically. */
+var PRIOR = [];
+function hist(){ return PRIOR.concat(state.entries); }
+
+/* ---------- 3. Sections ---------- */
+function seatOptions(){
+  var out = '';
+  for(var a = 1; a <= 6; a++){
+    out += '<optgroup label="Area ' + a + '">';
+    ZD.AREAS[a].forEach(function(n){
+      var s = ZD.SECTORS[n];
+      var lbl = n + '  ' + ZD.fmtFreq(s.freq) + (s.freqVnas !== undefined ? ' / ' + ZD.fmtFreq(s.freqVnas) : '') + '  ' + ZD.zdStratum(n);
+      out += '<option value="' + n + '"' + (n === state.seat ? ' selected' : '') + '>' + lbl + '</option>';
+    });
+    out += '</optgroup>';
+  }
+  return out;
+}
+
+function frameHtml(){
+  var n = state.seat, s = ZD.SECTORS[n];
+  if(!s) return '';
+  var nb = ZD.zdNeighboursOf(n);
+  var conflict = ZD.zdConflicted(n)
+    ? ' <span style="color:var(--amber)">(7200.1O ' + ZD.fmtFreq(s.freq) + ' / vNAS ' + ZD.fmtFreq(s.freqVnas) + ' — unresolved)</span>'
+    : '';
+  return '<div class="zdb-frame">'
+    + '<b>Sector ' + n + '</b> &middot; Area ' + s.area + ' &middot; ' + ZD.zdStratum(n)
+    + ' &middot; ' + ZD.fmtFreq(s.freq) + conflict
+    + ' &middot; ' + ZD.zdCallsign(n) + '<br>'
+    + 'Scope ' + s.range + ' &middot; filter <b>' + s.filter + '</b>'
+    + ' &middot; buffer ' + ZD.FILTER_BUFFER.sep1000 + ' ft at 1,000 separation<br>'
+    + 'Faces: <b>' + (nb.join(', ') || 'no coordination rule on record') + '</b>'
+    + (s.combine ? '<br>Combining: ' + s.combine : '')
+    + '</div>';
+}
+
+function sectionPosition(){
+  return ''
+  + '<section class="zd-section" id="zdb-position">'
+  + '<h2>Take a seat</h2>'
+  + '<p class="lede">The seat is the trainee’s pick and it drives everything downstream — the stratum, the scope setup, the neighbours, and which coordination rules apply.</p>'
+  + '<div class="zdb-seat"><label class="zd-mono" for="zdb-seat" style="color:var(--dim)">Sector</label>'
+  + '<select id="zdb-seat">' + seatOptions() + '</select></div>'
+  + '<div id="zdb-frame">' + frameHtml() + '</div>'
+  + '</section>';
+}
+
+function sectionBuild(){
+  return ''
+  + '<section class="zd-section" id="zdb-build">'
+  + '<h2>Build a drill</h2>'
+  + '<div class="zd-empty">Authoring is not built yet.<br><br>'
+  + 'Roadmap item 3 is the first drill that needs no geometry: Automated Information Transfer and Data Block Coordination, graded against the hard conditions in 7200.1O 3.7 and 3.8.<br>'
+  + 'See CLAUDE.md, Roadmap.</div>'
+  + '</section>';
+}
+
+function sectionNotes(){
+  var n = hist().length;
+  var body = n
+    ? '<div class="zd-mono">' + n + ' drill' + (n === 1 ? '' : 's') + ' banked.</div>'
+    : '<div class="zd-empty">No drills banked, and no standing training items.<br><br>'
+      + 'Standing items come from observed OJT shortfalls, not from documents. Until the first ZMP session is flown, claude_ZMP_OJT_Session_Review.md is an intake template and this list stays empty on purpose.</div>';
+  var warn = storageOk ? '' :
+    '<div class="zd-panel zd-warn zd-mono" style="font-size:11.5px;">Local storage is unavailable in this context. The tool still works in memory; nothing will persist across a reload.</div>';
+  return ''
+  + '<section class="zd-section" id="zdb-notes">'
+  + '<h2>Notes and log</h2>'
+  + '<p class="lede">One ledger. A drill flown here and a drill recorded in the practice log count identically — there is no seeded tier.</p>'
+  + warn + body
+  + '</section>';
+}
+
+/* ---------- 4. Pages ---------- */
+var PAGES = [
+  { id:'setup', label:'Set up a drill', sections:['zdb-position','zdb-build'] },
+  { id:'fly',   label:'Fly it',         sections:['zd-live'] },
+  { id:'notes', label:'Notes and log',  sections:['zdb-notes','zd-sectors','zd-procedures','zd-log'] }
+];
+
+function buildPages(){
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var footer = wrap.querySelector('footer');
+
+  var nav = document.createElement('div');
+  nav.className = 'zdb-pagenav';
+  nav.id = 'zdb-pagenav';
+
+  var holders = {};
+  PAGES.forEach(function(p){
+    var d = document.createElement('div');
+    d.className = 'zdb-page';
+    d.id = 'zdb-page-' + p.id;
+    holders[p.id] = d;
+  });
+
+  /* move the already-mounted sections into their page wrappers, ids untouched */
+  PAGES.forEach(function(p){
+    p.sections.forEach(function(sid){
+      var el = document.getElementById(sid);
+      if(el) holders[p.id].appendChild(el);
+    });
+  });
+
+  var anchor = footer || null;
+  if(anchor) wrap.insertBefore(nav, anchor); else wrap.appendChild(nav);
+  PAGES.forEach(function(p){
+    if(anchor) wrap.insertBefore(holders[p.id], anchor); else wrap.appendChild(holders[p.id]);
+  });
+
+  nav.innerHTML = PAGES.map(function(p){
+    return '<button data-page="' + p.id + '">' + p.label + '</button>';
+  }).join('');
+
+  var oldnav = document.getElementById('modnav');
+  if(oldnav) oldnav.innerHTML = '';
+
+  Array.prototype.forEach.call(nav.querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){ zdPage(b.getAttribute('data-page')); });
+  });
+}
+
+function zdPage(id){
+  PAGES.forEach(function(p){
+    var el = document.getElementById('zdb-page-' + p.id);
+    if(el) el.className = 'zdb-page' + (p.id === id ? ' on' : '');
+  });
+  var nav = document.getElementById('zdb-pagenav');
+  if(nav){
+    Array.prototype.forEach.call(nav.querySelectorAll('button'), function(b){
+      b.className = (b.getAttribute('data-page') === id) ? 'on' : '';
+    });
+  }
+}
+
+/* ---------- 5. Mount ---------- */
+function mount(){
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  load();
+
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var footer = wrap.querySelector('footer');
+
+  var host = document.createElement('div');
+  host.innerHTML = sectionPosition() + sectionBuild() + sectionNotes();
+  while(host.firstChild){
+    if(footer) wrap.insertBefore(host.firstChild, footer);
+    else wrap.appendChild(host.firstChild);
+  }
+
+  buildPages();
+  zdPage('setup');
+
+  var sel = document.getElementById('zdb-seat');
+  if(sel){
+    sel.addEventListener('change', function(){
+      state.seat = sel.value;
+      save();
+      var f = document.getElementById('zdb-frame');
+      if(f) f.innerHTML = frameHtml();
+      ZD.log('Seat set to Sector ' + state.seat + '.');
+    });
+  }
+
+  ZD.log('Drill Builder v0 mounted. Storage ' + (storageOk ? 'available' : 'UNAVAILABLE — in memory only') + '.');
+}
+
+window.zdb = {
+  state:function(){ return state; },
+  hist:hist, PRIOR:PRIOR, PAGES:PAGES, zdPage:zdPage,
+  storageOk:function(){ return storageOk; }
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+</body>
+</html>

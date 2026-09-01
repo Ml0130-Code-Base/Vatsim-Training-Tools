@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R90 Drill Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D0C;
+    --panel:#0F1614;
+    --panel2:#121A17;
+    --ink:#E7EDE9;
+    --dim:#6F8079;
+    --dim2:#455049;
+    --line:#1E2925;
+    --green:#4FE0A0;
+    --amber:#E8A23D;
+    --red:#E8604D;
+    --display:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(79,224,160,0.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(79,224,160,0.25);}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  a{color:var(--green);}
+
+  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--dim);
+    position:sticky;top:0;
+    background:rgba(10,13,12,0.9);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .topbar b{color:var(--ink);font-weight:600;}
+
+  .hero{padding:56px 0 8px;}
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.16em;
+    text-transform:uppercase;color:var(--green);margin-bottom:14px;
+  }
+  .hero h1{
+    font-family:var(--display);font-size:34px;line-height:1.15;
+    margin:0 0 12px;font-weight:700;letter-spacing:-0.01em;
+  }
+  .hero p{color:var(--dim);margin:0;max-width:62ch;}
+
+  .modnav{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 8px;}
+
+  footer{
+    margin-top:64px;padding-top:20px;border-top:1px solid var(--line);
+    color:var(--dim2);font-size:12.5px;
+  }
+
+  @media(max-width:640px){
+    .hero h1{font-size:26px;}
+    .wrap{padding:0 14px 60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div><b>R90</b> Omaha TRACON</div>
+  <div>DRILL DECK</div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Drill deck</div>
+    <h1>Take the position, build the drill, fly it, bank what it taught.</h1>
+    <p>Six positions, three fields, and a hard airspace lid that changes over Lincoln. Every number traces to R90 7220.10B, the ZMP-R90 LOA, or the tower orders.</p>
+  </div>
+  <div class="modnav" id="modnav"></div>
+
+  <footer>
+    Terminal drill tool. Skeleton build, 2026-09-01 — positions, altitudes and scratchpad encoding are real and cited; every sector boundary in R90 is a picture and is not modelled. Every operational number traces to the claude_*.md set. Single file, no build step, no network.
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   R90 RADAR DECK v0 — the data spine and the mount.
+   Skeleton: carries verified position, altitude and scratchpad data,
+   mounts its own sections, and exposes window.RD.
+   No traffic model and NO GEOMETRY (see CLAUDE.md roadmap items 1-2).
+   Safe to paste as one block before </body> of any copy of this tool.
+   ================================================================ */
+(function(){
+'use strict';
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.rd-section{margin:64px 0;padding-top:8px;scroll-margin-top:70px;}'
++ '.rd-section h2{font-family:var(--display);font-size:24px;margin:0 0 6px;font-weight:600;}'
++ '.rd-section .lede{color:var(--dim);margin:0 0 16px;max-width:64ch;}'
++ '.rd-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.rd-mono{font-family:var(--mono);}'
++ '.rd-navlink{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 12px;cursor:pointer;text-decoration:none;}'
++ '.rd-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}'
++ '.rd-tbl th{text-align:left;color:var(--dim);font-weight:500;border-bottom:1px solid var(--line);padding:6px 8px;}'
++ '.rd-tbl td{border-bottom:1px solid var(--line);padding:5px 8px;color:var(--ink);vertical-align:top;}'
++ '.rd-tbl tr:hover td{background:var(--panel2);}'
++ '.rd-tbl .dim{color:var(--dim);}'
++ '.rd-tag{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--dim);}'
++ '.rd-tag.id{color:var(--green);border-color:var(--green);}'
++ '.rd-warn{color:var(--amber);}'
++ '.rd-gap{color:var(--red);}'
++ '.rd-empty{color:var(--dim2);font-family:var(--mono);font-size:12px;padding:18px;text-align:center;border:1px dashed var(--line);border-radius:6px;}'
++ '.rd-kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-family:var(--mono);font-size:12px;}'
++ '.rd-kv dt{color:var(--dim);}'
++ '.rd-kv dd{margin:0;color:var(--ink);}'
++ '.rd-feed{font-family:var(--mono);font-size:12px;line-height:1.7;max-height:300px;overflow:auto;}'
++ '.rd-cols{display:flex;gap:14px;flex-wrap:wrap;}'
++ '.rd-cols > div{flex:1 1 260px;}'
+;
+
+/* ---------- 2. Verified data ----------
+   Sources:
+     sop  = R90 Order 7220.10B CHG 2, eff 2024-10-27
+     loa  = ZMP-R90 Letter of Agreement, eff 2023-11-06
+     oma  = OMA ATCT 7110.4A CHG 1
+     lnk  = LNK ATCT 7110.6A
+     vnas = vNAS facility record for ZMP (R90 child area), 2026-08-26
+   Anything the documents do not state is null and is LABELLED as not stated.
+   It is never guessed. */
+
+/* R90 7220.10B 2-1 — confirmed independently against vNAS, all six agree. */
+var POSITIONS = {
+  RW:{ name:'Radar West',    freq:135.875, starsId:'W', callsign:'OMA_W_APP', field:'OMA' },
+  RE:{ name:'Radar East',    freq:124.500, starsId:'X', callsign:'OMA_X_APP', field:'OMA' },
+  RF:{ name:'Radar Final',   freq:133.325, starsId:'V', callsign:'OMA_V_APP', field:'OMA' },
+  RO:{ name:'Radar Offutt',  freq:124.950, starsId:'O', callsign:'OMA_O_APP', field:'OFF' },
+  RL:{ name:'Radar Lincoln', freq:124.000, starsId:'L', callsign:'LNK_L_APP', field:'LNK' },
+  LF:{ name:'Lincoln Final', freq:128.150, starsId:'F', callsign:'LNK_F_APP', field:'LNK' }
+};
+var SUPERSEDED_FREQ = { RW:120.1 };  /* CHG 2 record of changes — must NOT be accepted */
+
+/* ZMP-R90 LOA 3 — the hard lid, and it is not uniform. */
+var CEILING = { east:15000, west:15000, lnk:10000 };
+
+/* Airport inventory is NOT stated in any R90 document. Single-source from vNAS. */
+var AIRPORTS = {
+  OMA:{ name:'Eppley Airfield',  runways:['14L','14R','18','32L','32R','36'], src:'OMA 7110.4A 4.a/4.b', towerRange:120 },
+  OFF:{ name:'Offutt AFB',       runways:null, src:'NOT STATED — no OFF tower order exists in the pull', towerRange:60 },
+  LNK:{ name:'Lincoln',          runways:['14','17','18','32','35','36'],     src:'LNK 7110.6A 4.a/4.b/5.b', towerRange:90 },
+  CBF:{ name:'Council Bluffs',   runways:['36'], src:'R90 3-10, from "I = ILS Rwy 36" only', towerRange:null },
+  MLE:{ name:'Millard',          runways:null, src:'NOT STATED — vNAS underlying airport only', towerRange:null }
+};
+var AIRPORTS_SRC = 'vNAS R90 area: underlying OMA, OFF, LNK, CBF, MLE. The SOP never enumerates them.';
+
+var TOWER_FREQ = {
+  OMA:{ del:119.900, gnd:121.900, twr:132.100, atis:120.400, cite:'OMA 7110.4A 6' },
+  LNK:{ del:120.700, gnd:121.900, twr:118.500, atis:118.050, cite:'LNK 7110.6A 7' },
+  OFF:null  /* not stated anywhere */
+};
+
+/* ZMP-R90 LOA 4.b — delivery altitudes */
+var ARRIVAL_ALTS = {
+  star:        { level:16000, stacked:17000, cite:'LOA 4.b.2.b' },
+  suxMzeee:    { level:11000, cite:'LOA 4.b.2.c / 4.b.3.b' },
+  otherEW:     { descendingTo:16000, levelAtOrBelow:15000, cite:'LOA 4.b.3.a' },
+  otherLNK:    { descendingTo:11000, levelBelow:11000, cite:'LOA 4.b.3.a' }
+};
+var ARRIVAL_NOTE = 'R90 accepting a handoff of an aircraft in level flight constitutes approval of an inappropriate altitude for direction of flight (LOA 4.b.3.a).';
+
+/* ZMP-R90 LOA 4.b.2.a — the STAR window is a clock, not a condition */
+var STAR_WINDOW = { from:'0730', to:'2130', days:'Monday through Friday', tz:'local',
+  rule:'All aircraft at or above 16,000 landing OMA or OFF must be assigned a STAR.', cite:'LOA 4.b.2.a' };
+var STARS_LIST = ['LANTK','MARWI','TIMMO','HOWRY','AANDY'];
+var STARS_NOTE = 'Named in the LOA. Attachment B is a picture — no fixes, no crossing restrictions, and AANDY’s position relative to the other four is unrecoverable. AANDY and TIMMO replaced the Sioux City / Pawnee City arrivals.';
+
+/* ZMP-R90 LOA 4.d.2 — departure heading bands, defined by the gaps BETWEEN STARs.
+   Applies while STARs are active to anything off OMA/OFF requesting above 15,000. */
+var HEADING_BANDS = [
+  { from:'ZMP 26/27 boundary', to:'LANTK', band:'360-030' },
+  { from:'LANTK', to:'MARWI',  band:'090-110' },
+  { from:'MARWI', to:'TIMMO',  band:'150-185', except:'Aircraft filed on the RBA arrival or J41 are established on course' },
+  { from:'TIMMO', to:'HOWRY',  band:'220-250' },
+  { from:'HOWRY', to:'ZMP 26/27 boundary', band:'280-320' }
+];
+var HEADING_FLOW_RULES = [
+  'OBH/LBF departures go north of HOWRY when Eppley is in a north flow, south of it in a south flow (LOA 4.d.2.f).',
+  'SLN/PWE/ICT departures go west of TIMMO in a north flow, east of it in a south flow (LOA 4.d.2.g).',
+  'When the STARs are off, all R90 aircraft must be on course (LOA 4.d.6).'
+];
+
+/* OMA 7110.4A 5.a.4 / LNK 7110.6A 6.c.4 */
+var DEP_ALTS = {
+  OMA:[ { cat:'IFR turbojet', alt:5000 }, { cat:'IFR prop-driven', alt:4000 },
+        { cat:'VFR/SVFR turbojet', alt:5000 }, { cat:'VFR/SVFR prop-driven', alt:3500 } ],
+  LNK:[ { cat:'All outbound IFR/VFR/SVFR', alt:4000 } ],
+  OFF:null
+};
+var DEP_ALT_QUALIFIER = { OMA:'or filed altitude if lower', LNK:'or lower if requested' };
+
+/* OMA 5.c.4 / LNK 6.a.6 */
+var DEP_HEADINGS = {
+  OMA:{
+    north:{ runways:['32L','32R','36'], turbojetWest:320, turbojetEast:360, prop:'300 clockwise through 020' },
+    south:{ runways:['14R','14L','18'], turbojetWest:180, turbojetEast:140, prop:'120 clockwise through 200' }
+  },
+  LNK:{
+    north:{ runways:['36','35','32'], fan:'300 clockwise through 030' },
+    south:{ runways:['18','17','14'], fan:'140 clockwise through 210' }
+  }
+};
+
+/* OMA 5.c.6 / LNK 6.a.5 */
+var MISSED_TOWER = {
+  OMA:{ north:{ alt:3000, hdg:360 }, south:{ alt:3000, hdg:140 } },
+  LNK:{ north:{ alt:3000, hdg:'300/030' }, south:{ alt:3000, hdg:'210/140' } },
+  OFF:null
+};
+/* R90 3-10 — on the R90 side the missed approach is a scratchpad letter, not a heading */
+var MISSED_SCRATCH = {
+  E:{ meaning:'Miss to East',   freq:124.5 },
+  W:{ meaning:'Miss to West',   freq:135.875 },
+  V:{ meaning:'Miss to OVR',    freq:124.5 },
+  P:{ meaning:'Published Miss', freq:124.5 }
+};
+var MISSED_SCRATCH_NOTE = 'All missed approaches should be assigned 135.875 when Radar East is not open (R90 3-10).';
+
+/* R90 3-10 — the four scratchpad tables, complete text in the order */
+var SCRATCHPAD = {
+  OMA:{
+    approach:{ I:'ILS', R:'RNAV Y', RN:'RNAV Z', O:'Overhead', OMA:'Tower sequenced VFRs' },
+    termination:{ F:'Full Stop', Z:'Tower VFR Pattern', E:'Miss to East', W:'Miss to West', V:'Miss to OVR', P:'Published Miss' },
+    visual:['32L','32R','R36','R18','14R','14L'],
+    note:'T*G = Touch and Go — runway assignment at Tower’s discretion.'
+  },
+  LNK:{
+    approach:{ I:'ILS', L:'Localizer', O:'Overhead', R:'RNAV', T:'TACAN', V:'VOR' },
+    runway:{ '2':'R32', '4':'R14', '5':'R35', '6':'R36', '7':'R17', '8':'R18' },
+    termination:{ E:'East departure', F:'Full stop', W:'West departure', Z:'Tower pattern', P:'Published missed approach' }
+  },
+  CBF:{
+    approach:{ R:'RNAV', I:'ILS Rwy 36', VR:'VOR-A', VA:'Visual Approach', CBF:'VFR Arrival' },
+    termination:{ E:'Miss to East', P:'Published Miss', F:'Full Stop' },
+    note:'CBF IFR/VFR practice approaches should have CBF entered into their secondary scratchpad.'
+  },
+  OTHER:{
+    approach:{ I:'ILS', R:'RNAV', L:'Localizer', T:'TACAN', V:'VOR', VA:'Visual Approach' },
+    runwayRule:'Digits of the runway number, or the last digit and L/R if parallel. ILS 34R is I4R; ILS 30 is I30.'
+  }
+};
+/* The encoding rule with no M98 analogue: the approach letter's ABSENCE is the meaning. */
+var VISUAL_RULE = 'A runway alone in the scratchpad indicates a visual approach to that runway (R90 3-10).';
+
+/* ZMP-R90 LOA — "control for" grants, both directions */
+var CONTROL_FOR = {
+  r90HasFromZmp:[
+    'Descent and turns up to 30 degrees on all STAR arrivals at or below FL230 on initial contact, provided the aircraft will not enter another controller’s airspace (LOA 4.b.2.d)',
+    'Descent and turns up to 30 degrees on all other arrivals at or below FL230 on initial contact, same proviso (LOA 4.b.3.c)',
+    'Code changes on all arrivals (LOA 4.b.1.a)',
+    'Leveling all R90 arrivals at ZMP-assigned altitude without coordination, provided the aircraft is left on course (LOA 4.b.1.b)'
+  ],
+  zmpHasFromR90:[
+    'Turns up to 30 degrees on aircraft exiting R90 airspace; R90 owns the resulting internal point-outs (LOA 4.d.8)',
+    'Code changes (LOA 4.d.9)',
+    'Leveling all R90 departures at R90-assigned altitudes without coordination (LOA 4.d.10)',
+    'Climbing R90 LNK departures above 10,000 that traverse, or come within 2.5 miles of, the R90 west shelf over R90 LNK (LOA 4.d.5)'
+  ]
+};
+
+/* OMA 5.c.2 / LNK 6.a.3 — flow follows the wind, and both prefer north when calm */
+var FLOW_RULE = {
+  OMA:{ calmBelowKt:5,  calmPrefers:'north profile', otherwise:'the profile most closely aligned with the wind' },
+  LNK:{ calmBelowKt:6,  calmPrefers:'north configuration', otherwise:'the configuration most closely aligned with the wind' }
+};
+
+/* R90 3-8, repeated once per arrival category — the sequencing controller's guarantee */
+var FREEZE_RULE = 'Once a handoff is accepted, no changes to assigned heading or assigned altitude without verbal approval from the receiving controller (R90 3-8).';
+
+/* R90 2-2 — the seven standing duties common to all radar positions */
+var POSITION_DUTIES = [
+  'Make necessary STARS configuration entries',
+  'Ensure auto-acquisition for departures at satellite airports',
+  'Provide direct control of aircraft',
+  'Coordinate pilot-applied visual separation prior to communication transfer',
+  'Complete required data block entries prior to initiating transfer of radar identification',
+  'Resolve all potential conflicts prior to transferring radio communication',
+  'Ensure radar handoffs and point-outs are accomplished'
+];
+
+/* Everything in R90 that is a picture. The tool must never pretend to know these. */
+var UNREAD_GEOMETRY = [
+  { what:'R90 Omaha Sector Boundaries (RW / RE / RO)', where:'7220.10B Appendix A p12' },
+  { what:'R90 Lincoln Sector Boundaries',              where:'7220.10B Appendix A p13' },
+  { what:'Lincoln Final (LF) Airspace',                where:'7220.10B Appendix A p14' },
+  { what:'RADAR Final (RF) Boundaries',                where:'7220.10B Appendix A p15' },
+  { what:'Prearranged Coordination Airspace',          where:'7220.10B Appendix D p18' },
+  { what:'Combining / decombining table',              where:'7220.10B p8 under 3-4' },
+  { what:'R90 delegated airspace',                     where:'ZMP-R90 LOA Attachment A' },
+  { what:'Omaha STARs',                                where:'ZMP-R90 LOA Attachment B' },
+  { what:'LNK tower Area A / Area B lateral limits',   where:'LNK 7110.6A Appendices 1 and B' }
+];
+
+/* Standing training items come from OBSERVED OJT shortfalls. There are none yet. */
+var STANDING = [];
+
+/* ---------- 3. Helpers ---------- */
+function fmtAlt(a){
+  if(a === null || a === undefined) return 'not stated';
+  if(a >= 18000) return 'FL' + Math.round(a/100);
+  return a.toLocaleString('en-US');
+}
+function fmtFreq(f){ return f.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0'); }
+function rdPosition(id){ return POSITIONS[id] || null; }
+function rdPositionIds(){ return Object.keys(POSITIONS); }
+function rdCeilingOver(area){ return CEILING[area] === undefined ? null : CEILING[area]; }
+function rdRunwaysAt(apt){ var a = AIRPORTS[apt]; return a ? a.runways : null; }
+function rdRunwaysKnown(apt){ return !!rdRunwaysAt(apt); }
+function rdByStarsId(id){
+  for(var k in POSITIONS){ if(POSITIONS[k].starsId === id) return k; }
+  return null;
+}
+function rdFreqAccepted(f){
+  for(var k in POSITIONS){ if(Math.abs(POSITIONS[k].freq - f) < 0.0005) return true; }
+  return false;
+}
+
+var feed = [];
+function log(msg, kind){
+  feed.push({ t:new Date(), msg:msg, kind:kind || 'info' });
+  renderFeed();
+}
+function logHtml(){
+  if(!feed.length) return '<div class="rd-empty">Nothing logged yet.</div>';
+  return feed.slice().reverse().map(function(e){
+    var c = e.kind === 'warn' ? 'rd-warn' : (e.kind === 'gap' ? 'rd-gap' : '');
+    return '<div class="' + c + '">' + e.t.toTimeString().slice(0,8) + '  ' + e.msg + '</div>';
+  }).join('');
+}
+function renderFeed(){
+  var el = document.getElementById('rd-feed');
+  if(el) el.innerHTML = logHtml();
+}
+
+/* ---------- 4. Sections ---------- */
+function sectionPositions(){
+  var rows = rdPositionIds().map(function(k){
+    var p = POSITIONS[k];
+    return '<tr><td><b>' + k + '</b></td><td>' + p.name + '</td><td>' + fmtFreq(p.freq) + '</td>'
+      + '<td><span class="rd-tag id">' + p.starsId + '</span></td><td class="dim">' + p.callsign + '</td>'
+      + '<td class="dim">' + p.field + '</td></tr>';
+  }).join('');
+  var apt = Object.keys(AIRPORTS).map(function(a){
+    var A = AIRPORTS[a];
+    var rw = A.runways ? A.runways.join(' ') : '<span class="rd-gap">not stated</span>';
+    return '<tr><td><b>' + a + '</b></td><td>' + A.name + '</td><td>' + rw + '</td><td class="dim">' + A.src + '</td></tr>';
+  }).join('');
+  return ''
+  + '<section class="rd-section" id="rd-positions">'
+  + '<h2>The six positions</h2>'
+  + '<p class="lede">Confirmed twice — R90 7220.10B 2-1 and the vNAS facility record agree on all six.</p>'
+  + '<table class="rd-tbl"><thead><tr><th></th><th>Position</th><th>Freq</th><th>STARS</th><th>Callsign</th><th>Field</th></tr></thead>'
+  + '<tbody>' + rows + '</tbody></table>'
+  + '<div class="rd-panel rd-warn rd-mono" style="font-size:11.5px;">Radar West moved from ' + fmtFreq(SUPERSEDED_FREQ.RW)
+  + ' to ' + fmtFreq(POSITIONS.RW.freq) + ' in the CHG 2 record of changes. The old number is still in circulation and the tool does not accept it.</div>'
+  + '<h2 style="margin-top:34px;">The fields</h2>'
+  + '<p class="lede">' + AIRPORTS_SRC + '</p>'
+  + '<table class="rd-tbl"><thead><tr><th></th><th>Field</th><th>Runways</th><th>Source</th></tr></thead><tbody>' + apt + '</tbody></table>'
+  + '<div class="rd-panel"><b>Airspace ceiling (ZMP-R90 LOA 3)</b><dl class="rd-kv">'
+  + '<dt>R90 East</dt><dd>at and below ' + fmtAlt(CEILING.east) + '</dd>'
+  + '<dt>R90 West</dt><dd>at and below ' + fmtAlt(CEILING.west) + '</dd>'
+  + '<dt>R90 LNK</dt><dd>at and below ' + fmtAlt(CEILING.lnk) + '</dd>'
+  + '</dl><div class="rd-mono" style="font-size:11px;color:var(--dim);margin-top:8px;">'
+  + 'The lid is flat and it steps down over Lincoln. Where it steps is a picture — see the gaps panel.</div></div>'
+  + '</section>';
+}
+
+function sectionScratchpad(){
+  function tbl(o){
+    return Object.keys(o).map(function(k){
+      return '<tr><td><b>' + k + '</b></td><td class="dim">' + o[k] + '</td></tr>';
+    }).join('');
+  }
+  var miss = Object.keys(MISSED_SCRATCH).map(function(k){
+    return '<tr><td><b>' + k + '</b></td><td>' + MISSED_SCRATCH[k].meaning + '</td><td class="dim">' + fmtFreq(MISSED_SCRATCH[k].freq) + '</td></tr>';
+  }).join('');
+  return ''
+  + '<section class="rd-section" id="rd-scratchpad">'
+  + '<h2>Scratchpad encoding</h2>'
+  + '<p class="lede">Complete text in the order, unambiguous, and needing no geometry — which is why this is the first drill the facility can actually support.</p>'
+  + '<div class="rd-panel" style="border-color:var(--green)"><b>' + VISUAL_RULE + '</b>'
+  + '<div class="rd-mono" style="font-size:11.5px;color:var(--dim);margin-top:6px;">'
+  + 'The approach letter’s <i>absence</i> carries the meaning. At OMA the visual set is '
+  + SCRATCHPAD.OMA.visual.join(', ') + '.</div></div>'
+  + '<div class="rd-cols">'
+  + '<div><div class="rd-panel"><b>OMA approach</b><table class="rd-tbl">' + tbl(SCRATCHPAD.OMA.approach) + '</table></div></div>'
+  + '<div><div class="rd-panel"><b>OMA termination</b><table class="rd-tbl">' + tbl(SCRATCHPAD.OMA.termination) + '</table></div></div>'
+  + '</div>'
+  + '<div class="rd-cols">'
+  + '<div><div class="rd-panel"><b>LNK approach</b><table class="rd-tbl">' + tbl(SCRATCHPAD.LNK.approach) + '</table></div></div>'
+  + '<div><div class="rd-panel"><b>LNK runway digit</b><table class="rd-tbl">' + tbl(SCRATCHPAD.LNK.runway) + '</table></div></div>'
+  + '<div><div class="rd-panel"><b>LNK termination</b><table class="rd-tbl">' + tbl(SCRATCHPAD.LNK.termination) + '</table></div></div>'
+  + '</div>'
+  + '<div class="rd-panel"><b>Missed approach — the R90 side is a scratchpad letter, not a heading</b>'
+  + '<table class="rd-tbl" style="margin-top:8px;"><thead><tr><th></th><th>Meaning</th><th>Frequency</th></tr></thead><tbody>' + miss + '</tbody></table>'
+  + '<div class="rd-warn rd-mono" style="font-size:11px;margin-top:8px;">' + MISSED_SCRATCH_NOTE + '</div></div>'
+  + '</section>';
+}
+
+function sectionLoa(){
+  var bands = HEADING_BANDS.map(function(b){
+    return '<tr><td>' + b.from + '</td><td>' + b.to + '</td><td><b>' + b.band + '</b></td>'
+      + '<td class="dim">' + (b.except || '') + '</td></tr>';
+  }).join('');
+  return ''
+  + '<section class="rd-section" id="rd-loa">'
+  + '<h2>The ZMP seam</h2>'
+  + '<p class="lede">What R90 is guaranteed to receive, what it may do with it on initial contact, and what it owes back.</p>'
+  + '<div class="rd-panel"><b>Arrival delivery altitudes (LOA 4.b)</b><dl class="rd-kv">'
+  + '<dt>STAR arrivals</dt><dd>level at or descending to ' + fmtAlt(ARRIVAL_ALTS.star.level) + ', or ' + fmtAlt(ARRIVAL_ALTS.star.stacked) + ' stacked</dd>'
+  + '<dt>Over SUX/MZEEE</dt><dd>level or descending to ' + fmtAlt(ARRIVAL_ALTS.suxMzeee.level) + '</dd>'
+  + '<dt>Other, East/West</dt><dd>at or descending to ' + fmtAlt(ARRIVAL_ALTS.otherEW.descendingTo) + ', or level at or below ' + fmtAlt(ARRIVAL_ALTS.otherEW.levelAtOrBelow) + '</dd>'
+  + '<dt>Other, LNK</dt><dd>at or descending to ' + fmtAlt(ARRIVAL_ALTS.otherLNK.descendingTo) + ', or level below ' + fmtAlt(ARRIVAL_ALTS.otherLNK.levelBelow) + '</dd>'
+  + '</dl><div class="rd-warn rd-mono" style="font-size:11px;margin-top:8px;">' + ARRIVAL_NOTE + '</div></div>'
+
+  + '<div class="rd-panel"><b>The STAR window (LOA 4.b.2.a)</b> &mdash; <span class="rd-mono">' + STAR_WINDOW.from + '&ndash;' + STAR_WINDOW.to
+  + ' ' + STAR_WINDOW.tz + ', ' + STAR_WINDOW.days + '</span><br>' + STAR_WINDOW.rule
+  + '<div class="rd-mono" style="font-size:11.5px;color:var(--dim);margin-top:8px;">STARs: <b style="color:var(--ink)">' + STARS_LIST.join(' &middot; ') + '</b></div>'
+  + '<div class="rd-gap rd-mono" style="font-size:11px;margin-top:6px;">' + STARS_NOTE + '</div></div>'
+
+  + '<div class="rd-panel"><b>Departure heading bands (LOA 4.d.2)</b> &mdash; the gaps <i>between</i> the STARs, while they are active, for anything off OMA or OFF requesting above ' + fmtAlt(15000) + '.'
+  + '<table class="rd-tbl" style="margin-top:10px;"><thead><tr><th>From</th><th>To</th><th>Heading</th><th>Exception</th></tr></thead><tbody>' + bands + '</tbody></table>'
+  + '<ul class="rd-mono" style="font-size:11.5px;color:var(--dim);margin:10px 0 0;padding-left:18px;">'
+  + HEADING_FLOW_RULES.map(function(r){ return '<li>' + r + '</li>'; }).join('') + '</ul></div>'
+
+  + '<div class="rd-cols">'
+  + '<div><div class="rd-panel"><b>R90 has control for</b><ul class="rd-mono" style="font-size:11px;color:var(--dim);padding-left:18px;margin:8px 0 0;">'
+  + CONTROL_FOR.r90HasFromZmp.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul></div></div>'
+  + '<div><div class="rd-panel"><b>ZMP has control for</b><ul class="rd-mono" style="font-size:11px;color:var(--dim);padding-left:18px;margin:8px 0 0;">'
+  + CONTROL_FOR.zmpHasFromR90.map(function(x){ return '<li>' + x + '</li>'; }).join('') + '</ul></div></div>'
+  + '</div>'
+  + '</section>';
+}
+
+function sectionLive(){
+  var gaps = UNREAD_GEOMETRY.map(function(g){
+    return '<tr><td>' + g.what + '</td><td class="dim">' + g.where + '</td></tr>';
+  }).join('');
+  return ''
+  + '<section class="rd-section" id="rd-live">'
+  + '<h2>Fly it</h2>'
+  + '<p class="lede">The live player.</p>'
+  + '<div class="rd-empty">No traffic model yet.<br><br>'
+  + 'A terminal traffic model needs a final-approach boundary, and every boundary in R90 is a picture.<br>'
+  + 'The unblocked path is owner-supplied points, starting with the RADAR Final boundary.<br>'
+  + 'See claude_R90_Gap_Analysis.md, Part 1.</div>'
+  + '<div class="rd-panel"><b class="rd-gap">Unread geometry &mdash; nine items, all pictures</b>'
+  + '<table class="rd-tbl" style="margin-top:8px;"><thead><tr><th>What</th><th>Where</th></tr></thead><tbody>' + gaps + '</tbody></table></div>'
+  + '<div class="rd-panel"><b>Standing radar position duties (R90 2-2)</b>'
+  + '<ol class="rd-mono" style="font-size:11.5px;color:var(--dim);margin:8px 0 0;padding-left:20px;">'
+  + POSITION_DUTIES.map(function(d){ return '<li>' + d + '</li>'; }).join('') + '</ol></div>'
+  + '<div class="rd-panel" style="border-color:var(--green)"><b>' + FREEZE_RULE + '</b>'
+  + '<div class="rd-mono" style="font-size:11px;color:var(--dim);margin-top:6px;">'
+  + 'The order repeats this once per arrival category. It is the sequencing controller’s guarantee to the final controller.</div></div>'
+  + '</section>';
+}
+
+function sectionLog(){
+  return ''
+  + '<section class="rd-section" id="rd-log">'
+  + '<h2>Log</h2>'
+  + '<p class="lede">Session feed.</p>'
+  + '<div class="rd-panel"><div class="rd-feed" id="rd-feed"></div></div>'
+  + '</section>';
+}
+
+/* ---------- 5. Mount ---------- */
+function mountAll(){
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var footer = wrap.querySelector('footer');
+
+  var host = document.createElement('div');
+  host.innerHTML = sectionPositions() + sectionScratchpad() + sectionLoa() + sectionLive() + sectionLog();
+  while(host.firstChild){
+    if(footer) wrap.insertBefore(host.firstChild, footer);
+    else wrap.appendChild(host.firstChild);
+  }
+
+  var nav = document.getElementById('modnav');
+  if(nav){
+    nav.innerHTML = ''
+      + '<a class="rd-navlink" href="#rd-positions">Positions</a>'
+      + '<a class="rd-navlink" href="#rd-scratchpad">Scratchpad</a>'
+      + '<a class="rd-navlink" href="#rd-loa">ZMP seam</a>'
+      + '<a class="rd-navlink" href="#rd-live">Fly it</a>'
+      + '<a class="rd-navlink" href="#rd-log">Log</a>';
+  }
+
+  renderFeed();
+  log('R90 Radar Deck v0 mounted. ' + rdPositionIds().length + ' positions, ' + Object.keys(AIRPORTS).length + ' fields.');
+  var unknown = Object.keys(AIRPORTS).filter(function(a){ return !rdRunwaysKnown(a); });
+  if(unknown.length){ log('Runway inventory not stated for ' + unknown.join(', ') + ' — not guessed.', 'gap'); }
+  log(UNREAD_GEOMETRY.length + ' geometry items are pictures and are not modelled.', 'gap');
+  if(!STANDING.length){ log('No standing training items — no R90 OJT sessions flown yet.', 'warn'); }
+}
+
+/* ---------- 6. Export ---------- */
+window.RD = {
+  version:0, hooks:[],
+  POSITIONS:POSITIONS, SUPERSEDED_FREQ:SUPERSEDED_FREQ, CEILING:CEILING,
+  AIRPORTS:AIRPORTS, AIRPORTS_SRC:AIRPORTS_SRC, TOWER_FREQ:TOWER_FREQ,
+  ARRIVAL_ALTS:ARRIVAL_ALTS, ARRIVAL_NOTE:ARRIVAL_NOTE,
+  STAR_WINDOW:STAR_WINDOW, STARS_LIST:STARS_LIST, STARS_NOTE:STARS_NOTE,
+  HEADING_BANDS:HEADING_BANDS, HEADING_FLOW_RULES:HEADING_FLOW_RULES,
+  DEP_ALTS:DEP_ALTS, DEP_ALT_QUALIFIER:DEP_ALT_QUALIFIER, DEP_HEADINGS:DEP_HEADINGS,
+  MISSED_TOWER:MISSED_TOWER, MISSED_SCRATCH:MISSED_SCRATCH, MISSED_SCRATCH_NOTE:MISSED_SCRATCH_NOTE,
+  SCRATCHPAD:SCRATCHPAD, VISUAL_RULE:VISUAL_RULE,
+  CONTROL_FOR:CONTROL_FOR, FLOW_RULE:FLOW_RULE, FREEZE_RULE:FREEZE_RULE,
+  POSITION_DUTIES:POSITION_DUTIES, UNREAD_GEOMETRY:UNREAD_GEOMETRY, STANDING:STANDING,
+  rdPosition:rdPosition, rdPositionIds:rdPositionIds, rdCeilingOver:rdCeilingOver,
+  rdRunwaysAt:rdRunwaysAt, rdRunwaysKnown:rdRunwaysKnown, rdByStarsId:rdByStarsId,
+  rdFreqAccepted:rdFreqAccepted,
+  fmtAlt:fmtAlt, fmtFreq:fmtFreq,
+  log:log, logHtml:logHtml, renderFeed:renderFeed
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
+else { mountAll(); }
+})();
+</script>
+
+<script>
+/* ================================================================
+   R90 DRILL BUILDER + TRAINING NOTEBOOK v0 — additive extension.
+   Requires the Radar Deck block (window.RD) earlier in the page.
+
+   Skeleton: the position picker, the three-page wrapper, persistence,
+   and the notebook's empty state. No authoring or grading yet.
+
+   No new operational data lives here. Every position, altitude and
+   scratchpad code is read through window.RD.
+   ================================================================ */
+(function(){
+'use strict';
+var RD = window.RD;
+if(!RD){ return; }
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.rdb-pagenav{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 4px;}'
++ '.rdb-pagenav button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:8px 14px;cursor:pointer;}'
++ '.rdb-pagenav button.on{color:var(--green);border-color:var(--green);}'
++ '.rdb-page{display:none;}'
++ '.rdb-page.on{display:block;}'
++ '.rdb-seat{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0;}'
++ '.rdb-seat select{font-family:var(--mono);font-size:12px;background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:3px;padding:7px 9px;}'
++ '.rdb-frame{font-family:var(--mono);font-size:12px;color:var(--dim);border-left:2px solid var(--green);padding:6px 0 6px 12px;margin:12px 0;}'
++ '.rdb-frame b{color:var(--ink);}'
+;
+
+/* ---------- 2. State ---------- */
+var KEY = 'r90-drill-deck-v1';
+var storageOk = true;
+var state = { seat:'RW', flow:'north', entries:[] };
+
+function load(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var p = JSON.parse(raw); if(p && typeof p === 'object'){ state = p; } }
+  }catch(e){ storageOk = false; }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ storageOk = false; }
+}
+
+/* One ledger, no second class. */
+var PRIOR = [];
+function hist(){ return PRIOR.concat(state.entries); }
+
+/* ---------- 3. Sections ---------- */
+function seatOptions(){
+  return RD.rdPositionIds().map(function(k){
+    var p = RD.POSITIONS[k];
+    return '<option value="' + k + '"' + (k === state.seat ? ' selected' : '') + '>'
+      + k + '  ' + p.name + '  ' + RD.fmtFreq(p.freq) + '  (' + p.starsId + ')</option>';
+  }).join('');
+}
+function flowOptions(){
+  return ['north','south'].map(function(f){
+    return '<option value="' + f + '"' + (f === state.flow ? ' selected' : '') + '>' + f + '</option>';
+  }).join('');
+}
+
+function frameHtml(){
+  var p = RD.POSITIONS[state.seat];
+  if(!p) return '';
+  var field = p.field;
+  var area = (field === 'LNK') ? 'lnk' : 'east';
+  var ceil = RD.rdCeilingOver(area);
+  var rw = RD.rdRunwaysAt(field);
+  var dep = RD.DEP_HEADINGS[field] ? RD.DEP_HEADINGS[field][state.flow] : null;
+  var depTxt = '';
+  if(dep){
+    depTxt = dep.fan
+      ? 'fan ' + dep.fan
+      : 'turbojet west ' + dep.turbojetWest + ', east ' + dep.turbojetEast + ', prop ' + dep.prop;
+  } else {
+    depTxt = '<span class="rd-gap">not stated</span>';
+  }
+  var missed = RD.MISSED_TOWER[field] ? RD.MISSED_TOWER[field][state.flow] : null;
+  return '<div class="rdb-frame">'
+    + '<b>' + p.name + '</b> &middot; ' + RD.fmtFreq(p.freq) + ' &middot; STARS <b>' + p.starsId + '</b> &middot; ' + p.callsign + '<br>'
+    + 'Field <b>' + field + '</b> &middot; ceiling <b>' + RD.fmtAlt(ceil) + '</b>'
+    + ' &middot; runways ' + (rw ? rw.join(' ') : '<span class="rd-gap">not stated</span>') + '<br>'
+    + 'Flow <b>' + state.flow + '</b> &middot; departures: ' + depTxt + '<br>'
+    + 'Missed: ' + (missed ? RD.fmtAlt(missed.alt) + ' heading ' + missed.hdg : '<span class="rd-gap">not stated</span>')
+    + '</div>';
+}
+
+function sectionPosition(){
+  return ''
+  + '<section class="rd-section" id="rdb-position">'
+  + '<h2>Take the position</h2>'
+  + '<p class="lede">The position sets the field, the ceiling over it, and which departure and missed-approach set applies. Flow is wind-driven — both towers prefer north when it is calm.</p>'
+  + '<div class="rdb-seat">'
+  + '<label class="rd-mono" for="rdb-seat" style="color:var(--dim)">Position</label><select id="rdb-seat">' + seatOptions() + '</select>'
+  + '<label class="rd-mono" for="rdb-flow" style="color:var(--dim)">Flow</label><select id="rdb-flow">' + flowOptions() + '</select>'
+  + '</div>'
+  + '<div id="rdb-frame">' + frameHtml() + '</div>'
+  + '<div class="rd-panel rd-mono" style="font-size:11.5px;color:var(--dim);">'
+  + 'OMA: winds under ' + RD.FLOW_RULE.OMA.calmBelowKt + ' kt prefer the ' + RD.FLOW_RULE.OMA.calmPrefers + '; otherwise ' + RD.FLOW_RULE.OMA.otherwise + '.<br>'
+  + 'LNK: calm prefers the ' + RD.FLOW_RULE.LNK.calmPrefers + '; ' + RD.FLOW_RULE.LNK.calmBelowKt + ' kt or more, ' + RD.FLOW_RULE.LNK.otherwise + '.'
+  + '</div>'
+  + '</section>';
+}
+
+function sectionBuild(){
+  return ''
+  + '<section class="rd-section" id="rdb-build">'
+  + '<h2>Build a drill</h2>'
+  + '<div class="rd-empty">Authoring is not built yet.<br><br>'
+  + 'Roadmap item 3 is the first drill that needs no geometry: scratchpad-encoded approach clearances, graded against the complete R90 3-10 tables — including the rule that a runway alone means a visual.<br>'
+  + 'Roadmap item 4 is the five STAR-gap departure heading bands.<br>'
+  + 'See CLAUDE.md, Roadmap.</div>'
+  + '</section>';
+}
+
+function sectionNotes(){
+  var n = hist().length;
+  var body = n
+    ? '<div class="rd-mono">' + n + ' drill' + (n === 1 ? '' : 's') + ' banked.</div>'
+    : '<div class="rd-empty">No drills banked, and no standing training items.<br><br>'
+      + 'Standing items come from observed OJT shortfalls, not from documents. Until the first R90 session is flown, claude_R90_OJT_Session_Review.md is an intake template and this list stays empty on purpose.</div>';
+  var warn = storageOk ? '' :
+    '<div class="rd-panel rd-warn rd-mono" style="font-size:11.5px;">Local storage is unavailable in this context. The tool still works in memory; nothing will persist across a reload.</div>';
+  return ''
+  + '<section class="rd-section" id="rdb-notes">'
+  + '<h2>Notes and log</h2>'
+  + '<p class="lede">One ledger. A drill flown here and a drill recorded in the practice log count identically — there is no seeded tier.</p>'
+  + warn + body
+  + '</section>';
+}
+
+/* ---------- 4. Pages ---------- */
+var PAGES = [
+  { id:'setup', label:'Set up a drill', sections:['rdb-position','rdb-build'] },
+  { id:'fly',   label:'Fly it',         sections:['rd-live'] },
+  { id:'notes', label:'Notes and log',  sections:['rdb-notes','rd-positions','rd-scratchpad','rd-loa','rd-log'] }
+];
+
+function buildPages(){
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var footer = wrap.querySelector('footer');
+
+  var nav = document.createElement('div');
+  nav.className = 'rdb-pagenav';
+  nav.id = 'rdb-pagenav';
+
+  var holders = {};
+  PAGES.forEach(function(p){
+    var d = document.createElement('div');
+    d.className = 'rdb-page';
+    d.id = 'rdb-page-' + p.id;
+    holders[p.id] = d;
+  });
+
+  /* move the already-mounted sections into their page wrappers, ids untouched */
+  PAGES.forEach(function(p){
+    p.sections.forEach(function(sid){
+      var el = document.getElementById(sid);
+      if(el) holders[p.id].appendChild(el);
+    });
+  });
+
+  var anchor = footer || null;
+  if(anchor) wrap.insertBefore(nav, anchor); else wrap.appendChild(nav);
+  PAGES.forEach(function(p){
+    if(anchor) wrap.insertBefore(holders[p.id], anchor); else wrap.appendChild(holders[p.id]);
+  });
+
+  nav.innerHTML = PAGES.map(function(p){
+    return '<button data-page="' + p.id + '">' + p.label + '</button>';
+  }).join('');
+
+  var oldnav = document.getElementById('modnav');
+  if(oldnav) oldnav.innerHTML = '';
+
+  Array.prototype.forEach.call(nav.querySelectorAll('button'), function(b){
+    b.addEventListener('click', function(){ rdPage(b.getAttribute('data-page')); });
+  });
+}
+
+function rdPage(id){
+  PAGES.forEach(function(p){
+    var el = document.getElementById('rdb-page-' + p.id);
+    if(el) el.className = 'rdb-page' + (p.id === id ? ' on' : '');
+  });
+  var nav = document.getElementById('rdb-pagenav');
+  if(nav){
+    Array.prototype.forEach.call(nav.querySelectorAll('button'), function(b){
+      b.className = (b.getAttribute('data-page') === id) ? 'on' : '';
+    });
+  }
+}
+
+/* ---------- 5. Mount ---------- */
+function mount(){
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  load();
+
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var footer = wrap.querySelector('footer');
+
+  var host = document.createElement('div');
+  host.innerHTML = sectionPosition() + sectionBuild() + sectionNotes();
+  while(host.firstChild){
+    if(footer) wrap.insertBefore(host.firstChild, footer);
+    else wrap.appendChild(host.firstChild);
+  }
+
+  buildPages();
+  rdPage('setup');
+
+  function refresh(){
+    var f = document.getElementById('rdb-frame');
+    if(f) f.innerHTML = frameHtml();
+  }
+  var seat = document.getElementById('rdb-seat');
+  if(seat){
+    seat.addEventListener('change', function(){
+      state.seat = seat.value; save(); refresh();
+      RD.log('Position set to ' + RD.POSITIONS[state.seat].name + '.');
+    });
+  }
+  var flow = document.getElementById('rdb-flow');
+  if(flow){
+    flow.addEventListener('change', function(){
+      state.flow = flow.value; save(); refresh();
+      RD.log('Flow set to ' + state.flow + '.');
+    });
+  }
+
+  RD.log('Drill Builder v0 mounted. Storage ' + (storageOk ? 'available' : 'UNAVAILABLE — in memory only') + '.');
+}
+
+window.rdb = {
+  state:function(){ return state; },
+  hist:hist, PRIOR:PRIOR, PAGES:PAGES, rdPage:rdPage,
+  storageOk:function(){ return storageOk; }
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+</body>
+</html>
