@@ -1,0 +1,374 @@
+                        Legacy AFV Transceiver Inheritance Tree
+
+NOTE-Utilize THIS IMAGE as a quick reference for ZLC Sector stratums
+
+     ZLC admin have placed as many of the real world transceiver station locations and
+         height into the AFV station as possible and have routed the use of these transceivers to
+         certain callsigns for common combination operations leading all the way up to ZLC
+         (CTR) Sector 44 eventually owning ALL stations.
+
+     The AFV Tree structure is a fairly complicated concept to learn how to use. The following
+         is a list of example situations to help ease the learning curve:
+
+               If logging on as BOI_DEL to work only BOI_DEL, you would type BOI_DEL into
+                   AFV.
+
+               If you are logging in to control BOI_GND, you would type BOI-GND into AFV.
+
+               If you log on to control Boise (Big Sky) Approach and you are the only controller
+                   online, you type BOI_S_APP into AFV. This will allow you to inherit all of the
+                   transceivers for not only South Approach sectors but also the North Approach
+                   sectors, Tower, Ground, and Clearance Delivery controller. This is setup this way
+                   because the BOI_S_APP works Top-Down for these positions.
+
+                         If BOI_N_APP comes online to help you out, that controller will now be
+                             responsible for the Northern App sector along with Boise Tower, Ground,
+                             and Clearance Delivery. In this situation you (as S_APP), are now only
+                             responsible for the Southern Approach sector but you are still making use
+                             of the transceivers from N_APP, TWR, GND, and DEL but only if the pilot
+                             tunes to your frequency.
+
+               Salt Lake City Center Sector 03 (SLC_03_CTR) comes online. That controller will
+                   be able to use the transceiver stations for and will be, by default, disposable for
+                   the following positions: SLC_S_APP, SLC_B_APP, SLC_G_APP, OGD_TWR,
+                   OGD_GND, SLC_K_APP, SLC_F_APP, SLC_C_TWR, SLC_W_TWR,
+                   SLC_W_GND, SLC_DEL, SLC_E_TWR, SLC_E_GND, SLC_J_APP, PVU_TWR,
+                   and PVU_GND.
+
+               If Salt Lake Center Sector 04 (SLC_04_CTR) logs on, that controller will have
+                   access and be responsible for ONLY Sector 04, because there are no positions
+                   for 04 to inherit.
+
+     LIGHT BLUE Positions are considered preferred/primary combination points. The
+         Controller In Charge (CIC) should direct ATC to staff bold positions that would be the
+         most beneficial before a non-bolded position. Example: SLC_S_APP should be staffed
+         prior to opening SLC_K_APP or SLC_J_APP.
+ The following callsigns are to be used in AFV regardless of callsign logged into the
+    network. Example: If you are relieving SLC_44_CTR, you are going to log into the
+    network as SLC_4R_CTR but in AFV, you still need to input SLC_44_CTR.
+
+ SLC_44_CTR (Sector 44 Area C/Main Position)
+          SLC_33_CTR
+          SLC_32_CTR
+                    SLC_11_CTR
+          SLC_47_CTR (Sector 47 Area C/Combination 2)
+                    SLC_45_CTR
+                    SLC_46_CTR
+                              SLC_34_CTR
+
+          SLC_06_CTR (Sector 06 Area A/Combination 1)
+                    SLC_07_CTR
+                    SLC_06_CTR
+                              BZN_APP
+                                        BZN_TWR
+                                                  BZN_GND
+                                                            BZN_DEL
+                              SLC_08_CTR
+                                        IDA_TWR
+                                                  IDA_GND
+                                        PIH_TWR
+                                                  PIH_GND
+                              SLC_14_CTR
+                    SLC_20_CTR (Sector 20 Area A/Combination 2)
+                              SLC_19_CTR
+                                        MSO_APP
+                                                  MSO_TWR
+                                                            MSO_GND
+                                        HLN_APP
+                                                  HLN_TWR
+                                                            HLN_GND
+                                        GTF_APP
+                                                  GTF_TWR
+                                                            GTF_GND
+                                        GPI_TWR
+                                                  GPI_GND
+                              SLC_12_CTR
+
+                    SLC_03_CTR (Sector 3 Area B/Combination 1)
+                              SLC_K_APP
+                                        SLC_J_APP
+                                        SLC_S_APP
+                                                  SLC_A_APP
+                                                            PVU_TWR
+                                                                      PVU_GND
+
+                              SLC_V_APP
+                              SLC_B_APP
+
+                                        SLC_G_APP
+                                                  SLC_H_APP
+                                                            OGD_TWR
+                                                                      OGD_GND
+                                                            HIF_TWR
+                                                                      HIF_GND
+                                                                      HIF_DEL
+
+                                        SLC_F_APP
+                                                  SLC_C_TWR
+                                                            SLC_W_TWR
+                                                                      SLC_W_GND
+                                                                      SLC_DEL
+                                                            SLC_E_TWR
+                                                                      SLC_E_GND
+                                                            SLC_A_TWR
+
+                    SLC_04_CTR
+                              SLC_05_CTR
+
+          SLC_16_CTR (Sector 16 Area B/Combination 2)
+                    SLC_15_CTR
+                              BIL_N_APP
+                                        BIL_S_APP
+                                                  BIL_TWR
+                                                            BIL_GND
+                    SLC_16_CTR
+                                                  JAC_TWR
+                                                            JAC_GND
+                    SLC_17_CTR
+                              SLC_39_CTR
+                                        SLC_66_CTR
+
+ SLC_40_CTR (Sector 40 Area D)
+          SLC_41_CTR
+                    SLC_30_CTR
+                              BOI_G_APP
+                                        BOI_A_APP
+                                                  BOI_TWR
+                                                            BOI_GND
+                                                                      BOI_DEL
+                                    MUO_N_APP
+                                              MUO_TWR
+                                                        MUO_GND
+                                                                  MUO_DEL
+
+                          MUO_S_APP
+                          SLC_31_CTR
+
+                                    TWF_APP
+                                              TWF_TWR
+                                                        TWF_GND
+                                                                  TWF_DEL
+
+                                    SUN_TWR
+                                              SUN_GND
+
+                 SLC_42_CTR
+                          SLC_43_CTR
+
+                                           Frequency Info
+
+NOTES:
+
+     There are times when the relief callsign matches another sector's relief callsign. These
+         times will be extremely rare. In these cases, consult with the Controller In Charge (CIC)
+         to determine the best course of action.
+
+ARTCC (Center)
+
+VATSIM/AFV      Relief    Radio Name         Sector Title Frequency
+Callsign        Callsign
+SLC_03_CTR
+SLC_04_CTR      SLC_3R_CTR Salt Lake Center  U03                           119.950
+SLC_05_CTR
+SLC_06_CTR      SLC_4R_CTR Salt Lake Center  U04                           135.775
+SLC_07_CTR
+SLC_08_CTR      SLC_5R_CTR Salt Lake Center  U05                           124.350
+SLC_11_CTR
+SLC_12_CTR      SLC_6R_CTR Salt Lake Center  U06                           132.400
+SLC_14_CTR
+                SLC_7R_CTR Salt Lake Center  U07                           127.700
+
+                SLC_8R_CTR Salt Lake Center  U08                           128.350
+
+                SLC_1R_CTR Salt Lake Center  U11                           127.825
+
+                SLC_2R_CTR Salt Lake Center  U12                           127.075
+
+                SLC_4R_CTR Salt Lake Center  U14                           133.800
+SLC_15_CTR SLC_5R_CTR Salt Lake Center  U15  127.750
+                                             133.250
+SLC_16_CTR SLC_6R_CTR Salt Lake Center  U16  126.850
+                                             125.925
+SLC_17_CTR SLC_7R_CTR Salt Lake Center  U17  133.400
+                                             119.750
+SLC_18_CTR SLC_8R_CTR Salt Lake Center  U18  128.050
+                                             118.050
+SLC_19_CTR SLC_9R_CTR Salt Lake Center  U19  133.900
+                                             120.275
+SLC_20_CTR SLC_0R_CTR Salt Lake Center  U20  127.925
+                                             132.425
+SLC_30_CTR SLC_0R_CTR Salt Lake Center  U30  128.550
+                                             121.150
+SLC_31_CTR SLC_1R_CTR Salt Lake Center  U31  128.725
+                                             132.250
+SLC_32_CTR SLC_2R_CTR Salt Lake Center  U32  125.575
+                                             134.525
+SLC_33_CTR SLC_3R_CTR Salt Lake Center  U33  133.600
+                                             133.450
+SLC_34_CTR SLC_4R_CTR Salt Lake Center  U34
+
+SLC_39_CTR SLC_9R_CTR Salt Lake Center  U39
+
+SLC_40_CTR SLC_0R_CTR Salt Lake Center  U40
+
+SLC_41_CTR SLC_1R_CTR Salt Lake Center  U41
+
+SLC_42_CTR SLC_2R_CTR Salt Lake Center  U42
+
+SLC_43_CTR SLC_3R_CTR Salt Lake Center  U43
+
+SLC_44_CTR SLC_4R_CTR Salt Lake Center  U44
+
+SLC_45_CTR SLC_5R_CTR Salt Lake Center  U45
+
+SLC_46_CTR SLC_6R_CTR Salt Lake Center  U46
+
+SLC_47_CTR SLC_7R_CTR Salt Lake Center  U47
+TRACON (Approach)
+
+VATSIM/AFV Relief Callsign Radio Name                   Sector Title  Frequency
+Callsign
+                                                                      124.900
+SLC_B_APP SLC_BR_APP Salt Lake City Approach Bear                     126.250
+                                                                      128.600
+SLC_G_APP SLC_GR_APP Salt Lake City Approach Gunnison                 135.500
+                                                                      121.100
+SLC_J_APP SLC_JR_APP Salt Lake City Approach Jordan                   118.850
+                                                                      120.900
+SLC_K_APP SLC_KR_APP Salt Lake City Approach Lake                     128.100
+                                                                      125.700
+SLC_H_APP SLC_HR_APP Salt Lake City Approach Hart                     126.900
+                                                                      119.600
+SLC_A_APP SLC_AR_APP Salt Lake City Approach Alpine                   118.975
+                                                                      119.200
+SLC_V_APP SLC_VR_APP Salt Lake City Approach Valley                   120.500
+                                                                      128.600
+SLC_S_APP SLC_SR_APP Salt Lake City Approach Stockton                 124.900
+                                                                      124.800
+SLC_F_APP SLC_FR_APP Salt Lake City Approach Final
+                                                                      134.100
+BOI_A_APP BOI_AR_APP Big Sky Approach                   Alpine        119.500
+                                                                      126.700
+BOI_G_APP BOI_GR_APP Big Sky Approach                   Sage
+
+BZN_APP  BZN_R_APP Big Sky Approach                     Bozeman
+
+BIL_N_APP BIL_NR_APP Billings Approach                  North
+
+BIL_S_APP BIL_SR_APP Billings Approach                  South
+
+GTF_APP  GTF_R_APP Great Falls Approach Great Falls
+
+MSO_APP  MSO_R_APP Spokane Approach                     Missoula
+
+MUO_N_APP MUO_NR_APP Mountain Home                      X-Ray North
+                                              Approach
+
+MUO_S_APP MUO_SR_APP Cowboy Control                     Cowboy
+
+HLN_APP  HLN_R_APP Helena Approach                      Helena
+
+TWF_APP  TWF_R_APP Twin Falls Approach                  Twin Falls
+ATCT (Local)
+Tower
+
+VATSIM/AFV Relief Callsign Radio Name         Sector Title  Frequency
+Callsign
+                                                            132.650
+SLC_W_TWR SLC_WR_TWR Salt Lake City Tower West              119.050
+                                                            118.300
+SLC_C_TWR SLC_CR_TWR Salt Lake City Tower Center            120.200
+                                                            118.100
+SLC_E_TWR SLC_ER_TWR Salt Lake City Tower East              127.200
+                                                            118.200
+SLC_A_TWR SLC_AR_TWR Salt Lake City Tower City              118.400
+                                                            133.850
+BOI_TWR       BOI_R_TWR Boise Tower
+                                                            118.700
+BIL_TWR       BIL_R_TWR  Billings Tower                     118.300
+                                                            127.150
+BZN_TWR BZN_R_TWR Bozeman Tower                             118.200
+                                                            125.300
+MSO_TWR MSO_R_TWR Missoula Tower                            118.700
+                                                            124.550
+MUO_TWR       MUO_R_TWR Mountain Home                       125.600
+                                       Tower                118.500
+                                                            118.075
+GTF_TWR GTF_R_TWR Great Falls Tower                         119.100
+
+HLN_TWR HLN_R_TWR Helena Tower
+
+HIF_TWR       HIF_R_TWR  Hill AFB Tower
+
+TWF_TWR TWF_R_TWR Twin Falls Tower
+
+PVU_TWR PVU_R_TWR Provo Tower
+
+OGD_TWR OGD_R_TWR Ogden Tower
+
+GPI_TWR       GPI_R_TWR Glacier Tower
+
+SUN_TWR SUN_R_TWR Hailey Tower
+
+IDA_TWR       IDA_R_TWR  Idaho Falls Tower
+
+JAC_TWR       JAC_R_TWR Jackson Tower
+
+PIH_TWR       PIH_R_TWR  Pocatello Tower
+Ground
+
+VATSIM/AFV  Relief Callsign Radio Name          Sector Title  Frequency
+Callsign
+SLC_E_GND   SLC_ER_GND Salt Lake City Ground East             121.900
+SLC_W_GND                                                     123.775
+BOI_GND     SLC_WR_GND Salt Lake City Ground West             121.700
+OGD_GND                                                       121.700
+PVU_GND     BOI_R_GND Boise Ground                            119.400
+MSO_GND                                                       121.900
+MUO_GND     OGD_R_GND Ogden Ground                            120.500
+
+GTF_GND     PVU_R_GND Provo Ground                            121.700
+BIL_GND                                                       121.900
+TWF_GND     MSO_R_GND Missoula Ground                         121.700
+BZN_GND                                                       121.800
+GPI_GND     MUO_R_GND Mountain Home                           121.600
+SUN_GND                             Ground                    121.700
+HLN_GND                                                       121.900
+HIF_GND     GTF_R_GND Great Falls Ground                      121.600
+IDA_GND                                                       121.700
+JAC_GND     BIL_R_GND  Billings Ground                        124.550
+PIH_GND                                                       121.900
+            TWF_R_GND Twin Falls Ground
+
+            BZN_R_GND Bozeman Ground
+
+            GPI_R_GND Glacier Ground
+
+            SUN_R_GND Hailey Ground
+
+            HLN_R_GND Helena Ground
+
+            HIF_R_TWR Hill AFB Ground
+
+            IDA_R_GND Idaho Falls Ground
+
+            JAC_R_GND Jackson Ground
+
+            PIH_R_GND Pocatello Ground
+
+Clearance Delivery
+
+VATSIM/AFV Callsign Relief Callsign Radio Name     Frequency
+
+SLC_DEL             SLC_R_DEL  Salt Lake City Clearance 127.300
+
+BOI_DEL             BOI_R_DEL  Boise Clearance     125.900
+
+BZN_DEL             BZN_R_DEL  Bozeman Clearance   124.050
+HIF_DEL  HIF_R_DEL  Hill Clearance        124.100
+MUO_DEL  MUO_R_DEL                        127.100
+                    Mountain Home
+TWF_DEL  TWF_R_DEL  Clearance             123.650
+
+                    Twin Falls Clearance
+

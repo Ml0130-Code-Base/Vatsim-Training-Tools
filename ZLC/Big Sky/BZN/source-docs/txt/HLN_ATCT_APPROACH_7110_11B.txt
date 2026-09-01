@@ -1,0 +1,631 @@
+SUBJ: HLN ATCT/APPROACH Standard Operating Procedures
+
+  This document establishes the Helena Airport Traffic Control Tower (HLN ATCT) and the Helena
+
+Airport Non-Radar Approach Control (HLN APP) Standard Operating Procedures within the Salt Lake City
+
+ARTCC on VATSIM (vZLC). This SOP establishes standardized air traffic control, flight operations, and
+
+airfield management procedures at Helena (HLN). It ensures safe, efficient, and coordinated air traffic
+
+operations by detailing responsibilities, communication protocols, and operational guidelines. The
+
+provisions and procedures described herein are supplemental to vZLC Facility Policies and FAA Order JO
+
+7110.65.
+
+  The information contained herein will be used only for flight simulation purposes on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facilities Engineer
+Salt Lake City ARTCC
+          Record of Changes
+
+Version                   Description             Effective Date Issued By
+
+7110.11A         Initial Release In New Format    Feb 10, 2026   CN
+7110.11B  Fixing Typos and adding Appendices 1-4
+                                                  March 1, 2026  CN
+
+          Not for real world use.
+                                  Table of Contents
+
+Chapter 1. General Control                                 1
+
+Section 1. Introduction                                    1
+
+1-1-1. Purpose                                             1
+
+1-1-2. Audience                                            1
+
+1-1-3. Distribution                                        1
+
+1-1-4. Cancellation                                        1
+
+Section 2. Operational Positions                           2
+
+Section 3. Intrafacility Coordination Procedures           3
+
+1-3-1. Runway Configurations                               3
+
+1-3-2. Changing Runway Configurations                      3
+
+1-3-3. ATIS                                                3
+
+Section 4. Opposite Direction Operations (ODO)             4
+
+1-4-1. General                                             4
+
+1-4-2. Responsibilities                                    4
+
+1-4-3. IFR Aircraft Procedures                             4
+
+1-4-4. VFR Aircraft Procedures                             5
+
+Chapter 2. Operational Positions                           6
+
+Section 1. Ground Control (GC)                             6
+
+2-1-1. Position Responsibilities                           6
+
+2-1-2. Area of Jurisdiction                                6
+
+2-1-3. IFR Departure Instructions                          6
+
+2-1-4. VFR FF Departure Instructions                       6
+
+2-1-5. Traffic Flow                                        7
+
+2-1-6. Control of Runway 5/23 & 17/35                      7
+
+2-1-7. ATIS                                                7
+
+2-1-8. Pushback Clearances                                 7
+
+Section 2. Local Control (LC)                              8
+
+2-2-1. Position Responsibilities                           8
+
+2-2-2. Area of Jurisdiction                                8
+
+2-2-3. Departures                                          8
+
+2-2-4. Approaches/Arrivals                                 8
+
+2-2-5. Line Up And Wait (LUAW)                             8
+
+2-2-6. Land And Hold Short Operations (LAHSO)              9
+
+2-2-7. Multiple Runway Crossings For Taxiing Aircraft      9
+
+2-2-8. Turf Runway 10/28 Operations                        9
+
+Chapter 3. Approach Control                                10
+
+Section 1. Non-Radar Standarization                        10
+
+3-1-1 vStrip Configuration                                 10
+
+Section 2. Non-Radar Departures                            10
+
+                                  Not for real world use.
+3-2-1 Helena Airport                                      10
+
+3-2-2. Deer Lodge Airport (38S)                           10
+
+Section 3. Non-Radar Arrivals                             10
+
+3-3-1 ZLC AIT                                             10
+
+3-3-2 Helena Airport                                      11
+
+7110.65 Reference 6-7-5b                                  11
+
+7110.65 Reference 6-7-5b                                  12
+
+3-3-3 7S6 White Sulphur Springs                           12
+
+Section 4. Overflights                                    12
+
+3-4-1 HLN                                                 12
+
+3-4-1 Airways                                             12
+
+Appendix 3. Deer Lodge Shelf                              14
+
+                                 Not for real world use.
+                               Chapter 1. General Control
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Helena Air Traffic Control Tower And Approach Control Facility
+(HLN ATCT/APPROACH) Standard Operating Procedures within the Salt Lake City ARTCC on
+VATSIM (vZLC). This SOP establishes standardized air traffic control, flight operations, and
+airfield management procedures at Helena (HLN). It ensures safe, efficient, and coordinated air
+traffic operations by detailing responsibilities, communication protocols, and operational
+guidelines.
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels HLN SOP, effective January 23, 2025.
+
+Not for real world use.                                                                          1
+                                Section 2. Operational Positions
+
+                           Table 1-2-1. HLN ATCT Operational Positions Table
+
+     Sector/Position         STARS ID  VATSIM Callsign                        Frequency
+ Ground Control (GC)             N/A       HLN_GND                              121.900
+                                                                                118.300
+   Local Control (LC)          N/A       HLN_TWR                                119.500
+Approach Control (AP)
+                               N/A       HLN_APP
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                                  2
+                    Section 3. Intrafacility Coordination Procedures
+
+1-3-1. Runway Configurations
+The active runway configuration refers to the general cardinal direction of departures and
+arrivals currently in use. Authorized runway configurations are listed in subparagraphs c. and d.
+
+    a. When selecting a runway configuration, the following factors must be considered:
+              (1) Wind direction.
+              (2) Wind speed. The gust factor takes precedence over the constant wind speed.
+
+    b. West Flow is designated as the "calm wind" runway configuration.
+    c. West Flow: Landing and departing Runway 27.
+    d. East Flow: Landing and departing Runway 9. Runway 5 may be issued at the pilot's
+
+         request.
+    e. Runway 17/35 is a VFR-only runway.
+    f. Runway 10/28 is a turf seasonal runway only to be used by VFR aircraft by request only.
+    g. Rwy 5/23 and Rwy 17/35 are not available to commercial airliners with greater than 30
+
+         seats.
+
+1-3-2. Changing Runway Configurations
+The Local Control (LC) position is the final authority for selecting the runway configuration, but
+coordination with GC and Approach must be completed before changing the configuration.
+
+    a. LC must:
+              (1) Coordinate with GC to determine which aircraft will be the last to depart and
+                   arrive in the old runway configuration.
+              (2) Ensure that:
+                        (a) The ATIS is updated to reflect the runway configuration change.
+              (3) Notify Approach Control (or other appropriate overlying sector) of the runway
+                   configuration change.
+
+1-3-3. ATIS
+Regardless of the position broadcasting the ATIS, the following statements must be included on
+the ATIS broadcast:
+
+    a. During VFR weather conditions: "DEPARTING VFR AIRCRAFT ADVISE GROUND
+         CONTROL OF REQUESTED HEADING OR DESTINATION."
+
+    b. When the outside air temperature is 27°C or greater: "CHECK DENSITY ALTITUDE."
+
+NOTE-
+This statement must be made immediately after stating the altimeter setting.
+
+    c. Record the following message at the end of the ATIS: "ADVISE ON INITIAL CONTACT
+         YOU HAVE INFORMATION (current ATIS code) WITH YOUR POSITION AND
+         ALTITUDE."
+
+Not for real world use.                    3
+                    Section 4. Opposite Direction Operations (ODO)
+
+1-4-1. General
+Opposite Direction Operations consist of IFR/VFR operations conducted on the same or parallel
+runway, where an aircraft is operating in a direction opposite to another aircraft arriving,
+departing, or performing an approach.
+
+NOTE-
+Departing aircraft include aircraft conducting a touch-and-go, stop-and-go, low approach,
+missed approach, or go-around.
+
+1-4-2. Responsibilities
+    a. LC and Approach Control to share the responsibility to coordinate ODO and issue traffic
+         advisories (see below).
+    b. LC is responsible for applying the cutoff point between arriving and departing aircraft in
+         opposite directions.
+    c. Approach Control is responsible for applying the cutoff point between aircraft arriving in
+         opposite directions.
+
+1-4-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to all ODO aircraft.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) VFR aircraft conducting practice approaches must receive IFR services.
+              (3) Opposite direction, same or parallel runway, operations with opposing traffic
+
+                   inside the cutoff point are prohibited.
+              (4) Lateral separation must exist before any other type of separation is applied.
+    b. Coordination:
+              (1) LC must verbally request opposite direction departures with APP.
+              (2) APP must verbally request opposite direction arrivals with LC.
+              (3) Initial coordination must include callsign, type, and arrival/departure runway. The
+
+                   phrase "opposite direction" must be used.
+    c. Cutoff procedures for aircraft conducting ODO to the same runway:
+
+         NOTE-
+         When both aircraft are receiving IFR services, visual separation is not authorized.
+
+              (1) A departing aircraft must be airborne and have turned to avoid conflict prior to an
+                   aircraft reaching:
+
+Not for real world use.                    4
+                        (a) A pilot reports five flying miles from the threshold of the runway of
+                             intended landing or, if an aircraft is established in the traffic pattern, prior
+                             to that aircraft turning base leg.
+
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+    d. Cutoff procedures for aircraft conducting ODO to parallel runways:
+              (1) Provide a turn away from the opposing arriving traffic before the arrival is inside
+                   of the cutoff point to the other runway. The same cutoff points in subparagraph c.
+                   must apply.
+
+NOTE-
+1. Visual separation of any type may be applied after the turn away from opposing traffic is
+issued.
+2. Prior to a pilot providing visual separation, a heading with at least 15° angular difference
+between the aircraft's flight paths must be assigned to ensure flight paths do not cross.
+
+1-4-4. VFR Aircraft Procedures
+    a. Ensure VFR aircraft are issued a turn to avoid conflict with the opposing IFR/VFR traffic.
+    b. During coordination, the phrase "opposite direction" must be used.
+    c. LC must issue traffic information to both aircraft and indicate the direction that the
+         departure will turn (arrival/departure ODO) or the location of the opposing aircraft on final
+         (arrival/arrival ODO).
+
+
+
+Not for real world use.                    5
+                           Chapter 2. Operational Positions
+
+                               Section 1. Ground Control (GC)
+
+2-1-1. Position Responsibilities
+    a. Monitor the GC frequency (121.900 MHz).
+    b. Prepare, update, and mark flight progress strips in accordance with the ZLC Flight Strip
+         Handling Directive (7210.3).
+    c. Issue departure clearances to IFR aircraft, complying with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. Handle VFR departure aircraft in accordance with paragraph 2-1-4.
+    e. Ensure all taxiing aircraft have the current ATIS.
+    f. Determine/finalize aircraft departure runway assignments.
+    g. Assume other ground control or other cab responsibilities, as assigned.
+
+2-1-2. Area of Jurisdiction
+GC has jurisdiction of all movement areas except active runways. If LC releases control of
+Runway 5/23 and 17/35 to GC (see paragraph 2-1-6), GC assumes control of that runway for
+taxi use and crossings.
+
+2-1-3. IFR Departure Instructions
+Departing IFR aircraft must be assigned the following:
+
+    a. In Both Flows (West & East)
+             i. All aircraft departing to the North and East are to be issued the STAKK SID.
+            ii. All aircraft departing to the Northwest are to be issued the SIEBE SID.
+            iii. All aircraft departing to the South are to be issued the HELENA SID.
+            iv. All IFR Aircraft departing on Rwy 5 are to be issued the DIVIDE ODP.
+
+NOTE-
+If the aircraft filed a DP that is listed above, you (The Controller) Are Not Required To Change
+Them To The Appropriate SID based on direction but are required to change if they use RWY 5.
+
+NOTE-
+Departure headings are not authorized, as departure control is a non-radar facility.
+
+    b. An initial altitude of 9,000 feet, or lower cruising altitude if compliant with the MOCA.
+
+2-1-4. VFR FF Departure Instructions
+All VFR aircraft that requested flight following and will depart the Class D surface area must:
+
+    a. Be issued both of the following:
+              (1) Appropriate departure frequency.
+              (2) Discrete beacon code.
+
+    b. Have the following filled out:
+              (1) Flight Strip, in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+
+Not for real world use.                    6
+              (2) Flight Plan.
+
+NOTE-
+Aircraft that depart the Class D surface area and are not requesting flight following are not to
+have any of the above, except a filled out Half Strip.
+
+2-1-5. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+LC.
+
+2-1-6. Control of Runway 5/23 & 17/35
+Runway 5/23 & 17/35 must be under the jurisdiction of LC by default. However, it is common for
+LC to release control of Runway 5/23 & 17/35 to GC when operationally advantageous. When
+GC requests control of Runway 5/23 & 17/35, verbal coordination must be accomplished in
+accordance with the following.
+
+EXAMPLE-
+To request control: "REQUEST CONTROL OF RUNWAY (number)."
+To release control: "RUNWAY (number) RELEASED TO (position)."
+
+2-1-7. ATIS
+Ensure all departure aircraft have the current ATIS.
+
+2-1-8. Pushback Clearances
+To the maximum extent possible, aircraft parked at the terminal ramp should push back within
+the non-movement area.
+
+2-1-9. Use Of SAID System
+    a. SAID only displays ADS-B-equipped and transmitting aircraft/vehicles within the
+         site-specific adapted area (the airport itself, not the surrounding area).
+    b. SAID systems may rely solely on ADS-B transponder information to display aircraft
+         identification if NAS flight plan information is not available to the system. This may result
+         in a discrepancy between SAID depicted aircraft identification and NAS flight plan
+         identification. This means that aircraft must have their ADS-B on with Altitude Reporting
+         Enabled in order to move on the airport movement areas.
+    c. SAID-derived information may only be used for reference and requires confirmation via
+         visual observation and/or pilot/operator reporting
+
+Not for real world use.                    7
+                                 Section 2. Local Control (LC)
+
+2-2-1. Position Responsibilities
+    a. Monitor the LC frequency (118.300 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Determine the appropriate runway configuration in accordance with paragraph 1-3-1.
+    d. Sequence and separate departures and arrivals.
+    e. Mark FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    f. Assume other local control or other cab responsibilities, as assigned.
+
+2-2-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. Controls active runway(s), and controls class Delta airspace (a 4.5 mile circle from the
+         center of the airport with 1.5 mile extensions to the east for runway 27 and to the west
+         for runway 9, at and below 6,400 feet MSL).
+
+2-2-3. Departures
+    a. Departure Notification / Releases
+             i. A DM notification needs to be sent to Salt Lake Center so that Center can
+                   activate the flight plan and start radar track. That can be done via the following:
+                        1. .hlndmait <Sector ID> <asel>
+            ii. Tower shall get releases from HLN Approach as well via either voice coordination
+                   or .rr command in CRC.
+    b. VFR aircraft to unicom, unless the VFR has requested Flight Following and those go to
+         the appropriate departure frequency.
+
+2-2-4. Approaches/Arrivals
+    a. Missed Approach/Go Around
+             i. Send a Missed Notification (.MA) for the aircraft executing an unplanned Missed
+                   Approach/Go Around to the appropriate Approach sector that will be receiving the
+                   aircraft for re-sequencing.
+            ii. The following is considered a Primary Climb-Out procedure and does not require
+                   any special coordination with Center or Strip marking other than the basic Missed
+                   Notification. Aircraft must not turn prior to the departure end of the runway.
+                   Handoff/Comm-Change to the appropriate Center sector must be completed no
+                   later than 1 mile off the departure end of the runway.
+    b. IFR: Fly the missed approach as published
+    c. VFR: Join the local pattern
+
+2-2-5. Line Up And Wait (LUAW)
+    a. LUAW operations are not conducted at Helena ATCT.
+
+Not for real world use.                    8
+2-2-6. Land And Hold Short Operations (LAHSO)
+    a. LAHSO operations are not conducted at Helena ATCT.
+
+2-2-7. Multiple Runway Crossings For Taxiing Aircraft
+    a. Helena ATCT is not authorized to conduct multiple runway crossing for taxiing aircraft.
+
+2-2-8. Turf Runway 10/28 Operations
+    a. Turf 10/28 is defined as a movement area.
+    b. Do not assign Turf 10/28 to arrivals or departures unless requested by the aircraft
+    c. Controllers must instruct aircraft exiting Turf 10/28 to turn left onto taxiway BRAVO or
+         turn right onto taxiway DELTA as part of the aircraft's taxi instructions.
+    d. Due to the proximity of Turf 10/28 to runway 09/27, controllers must utilize intersection
+         wake turbulence separation between aircraft departing runway 09/27 and aircraft
+         departing the Turf 10/28 in accordance with FAA JO 7110.65 paragraph 3-9-7 when
+         required:
+
+NOTE-
+Landing/departures on Turf 10/28 is limited to Category I single-propeller driven General
+Aviation aircraft and helicopters. Ensure that aircraft on final to the turf 10/28 strip do not overfly
+aircraft on the movement area.
+
+    e. Simultaneous, same direction operations to the Turf 10/28 and runway 9/27 are
+         authorized in accordance with the LOA and FAA JO 7110.65.
+
+2-2-9. Density Altitude
+    a. Broadcast a density altitude advisory to departing general aviation aircraft whenever the
+         temperature is 80 F (27 C) or higher unless the advisory is included on the ATIS and the
+         pilot reports the appropriate ATIS code.
+
+PHRASEOLOGY-
+"(Call sign) CHECK DENSITY ALTITUDE".
+
+Not for real world use.                    9
+                             Chapter 3. Approach Control
+
+                            Section 1. Non-Radar Standarization
+
+3-1-1. vStrip Configuration
+To ease non radar procedures, airspace within a sector is typically broken up in bays to help
+ease complexities of sectors. HLN has only 1 bay because the airspace is not very complex.
+
+    a. HLN Bay
+              (1) Mandatory Reporting Points: None
+              (2) Every Aircraft that will enter HLN approach airspace as depicted in Appendix 1,
+                   must have a flight strip in the HLN bay.
+              (3) Aircraft that are proposed, must have their strip offset to show it is a proposal
+
+Note: vStrips does not currently automatically add strips for satellite airports. Controllers should
+use external applications like vatsim-radar.com to monitor for flight plans departing satellite
+airports.
+
+                              Section 2. Non-Radar Departures
+
+3-2-1. Helena Airport
+    a. STAKK SID: Upon check in, aircraft shall be asked to report the estimated time for
+         STAKK and joining the HLN 15 DME.
+              (1) Time Approaches: Authorized with RNAV 09's and LOC-BC approaches and
+                   STAKK Departure
+    b. SIEBE SID: Upon check in, the aircraft shall be asked to report the estimated time for
+         SIEBE.
+              (1) Time Approaches: Authorized with RNAV 27's and ILS-Z 27 and the SIEBE
+                   Departure
+    c. HELENA & DIVIDE SID: Time approaches NA. If crossing traffic prevents climbs above
+         9,000 msl, aircraft shall be given hold over HLN VOR.
+    d. No SID - Not Authorized. Use DIVIDE ODP.
+
+3-2-2. Deer Lodge Airport (38S)
+    a. For IFR operations at Deer Lodge Montana (38S), ZLC must coordinate with Helena
+         ATCT at least 10 minutes prior to issuing an IFR clearance at 38S.
+    b. Airspace depicted in Attachment 3 must be released to ZLC as soon as practical. Upon
+         completion of activity at 38S, ZLC must release Deer Lodge Shelf back to Helena ATCT.
+
+Not for real world use.                  
+
+10
+                                 Section 3. Non-Radar Arrivals
+
+3-3-1. ZLC AIT
+ZLC shall send an AIT Time for the estimated entrance into the Procedural Control
+Environment. This time must be entered into box <number> with the center estimated
+procedural control entry time. The entry fix should be displayed in box G.
+
+3-3-2. Helena Airport
+    a. West Flow (Landing 27)
+         RNAV's are the preferred approaches for HLN, with the Z's having multiple feeder fixes
+         on the border with center or within the TRACON.
+              (1) RNAV: RNAV Z or Y shall be the preferred approach. HLN APP May coordinate
+                   HIA and URELE provided ZLC provides non radar separation upon entering the
+                   TRACON. Otherwise aircraft filed over one of the other transitions shall be
+                   cleared for the approach at an appropriate altitude upon check-in. All aircraft will
+                   be asked to report Estimated time over GOKME and report passing GOKME.
+              (2) RNAV X: Once cleared for the approach, aircraft shall be asked to report
+                   estimated time over GASBE and report passing GASBE.
+              (3) Non RNAVs: If timed approaches are in use with departures utilizing the SIEBE
+                   departure, ILS Z shall be the preferred approach, otherwise there shall be no
+                   preference. Timed approaches on the ILS Z shall use 7110.65 6-7-5b 1 Minima
+
+7110.65 Reference 6-7-5b
+
+    b. East Flow (Landing 09)
+             (1) RNAV:RNAV Z or Y shall be the preferred approach. HLN APP May coordinate
+                  GLUES provided ZLC provides non radar separation upon entering the
+                  TRACON. Otherwise aircraft filed over one of the other transitions shall be
+                  cleared for the approach at an appropriate altitude upon check-in. All aircraft will
+                  be asked to report Estimated time over LISTY and report passing LISTY.
+
+Not for real world use.                  
+
+11
+7110.65 Reference 6-7-5b
+
+3-3-3. 7S6 White Sulphur Springs
+RNAV GPS 19 and 01 Are Not Authorized due to non radar separation procedures within HLN
+APP.
+
+                                      Section 4. Overflights
+
+3-4-1. HLN
+Aircraft shall be asked for estimated time over the HLN VOR upon check in. Once over HLN,
+the next reporting point shall be the final fix before enter ZLC airspace, which is listed below:
+
+    Airway                       Fix
+    V247                         HEXOL
+    V113(W of HLN)               LINGE
+    V21(N of HLN)                PONVE
+    V365(N of HLN)               WOKEN
+    V2(W of HLN)                 PIXXI
+    V113(S of HLN)               EVVER
+    V21(S of HLN)                NNORA
+    V365/V2(E of HLN)            CONNS
+
+Not for real world use.                       
+
+12
+3-4-2. Airways
+    a. V257
+         Shall be asked for estimates and reporting times for WOKEN, RICHD, and the exit fixes
+         SCAAT and TUCOK.
+    b. V536
+         Shall be asked for estimates and reporting times for SWEDD, FALDE, and ANNEM, and
+         the exit fixes GODFE and URELE
+    c. Aircraft southbound on V113 and V21 shall be handed off to Salt Lake Center Sector 06
+         on 132.400
+
+Not for real world use.                  
+
+13
+                             Appendix 1. Airspace
+
+Not for real world use.                                
+
+14
+                           Appendix 2. Deer Lodge Shelf
+
+Not for real world use.                                    
+
+15
+                         Appendix 3. Minimum Vectoring Altitude
+
+Not for real world use.                                          
+
+16
+                               Appendix 4. Strip Marking
+
+Due to the non radar component for working HLN APP, the following applies IN ADDITION to
+ZLC Order 7210.3A
+
+IFR Arrivals
+Box 4: First two letters of the FAF
+Box 5: FAF estimate time.
+
+IFR Departures
+Box 9: Estimated time joining the HLN 10 DME (SNAKO SID) or airway for non SID departures.
+Box 8: HLN Release time.
+
+IFR Overflights
+Boxes 1, 4, 7: First two letters of any reporting point
+Boxes 2, 5, 8: Estimated time over reporting point in adjacent boxes.
+Boxes 3, 6, 9: Actual time over reporting point.
+
+Not for real world use.                  
+
+17
+

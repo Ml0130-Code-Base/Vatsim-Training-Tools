@@ -1,0 +1,866 @@
+SUBJ: BOI ATCT/TRACON Standard Operating Procedures
+
+  This document establishes the Boise Airport Traffic Control Tower (BOI ATCT) and Big Sky
+
+Terminal Radar Approach Control (BOI TRACON) Standard Operating Procedures within the Salt Lake
+
+City ARTCC on VATSIM (vZLC). Controllers are required to be familiar with the provisions of this
+
+document and to exercise their best judgment if they encounter situations not covered by it. The
+
+provisions and procedures described herein are supplemental to vZLC Facility Policies and FAA Order JO
+
+7110.65.
+
+  The information contained herein is to be used for flight simulation purposes only on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facilities Engineer
+Salt Lake City ARTCC
+Version        Record of Changes  Effective Date Issued By
+
+7110.2A         Description       11/01/2024  HL
+7110.2B
+                Initial Release   03/19/2026  AE
+         Addition Of SAID System
+
+         Not for real world use.
+                                Table of Contents
+
+Chapter 1. General Control                                       1
+
+Section 1. Introduction                                          1
+
+1-1-1. Purpose                                                   1
+
+1-1-2. Audience                                                  1
+
+1-1-3. Distribution                                              1
+
+1-1-4. Cancellation                                              1
+
+Section 2. Operational Positions                                 2
+
+Section 3. Coordination and Intrafacility Procedures             3
+
+1-3-1. BOI Runway Configurations                                 3
+
+1-3-2. BOI Automatic Departure Releases                          3
+
+1-3-3. BOI Departure Instructions                                3
+
+1-3-4. Vectoring IFR Departures (DVA)                            3
+
+1-3-5. Vectors Below the MVA                                     4
+
+1-3-6. BOI Missed Approach/Go-Around Procedures                  4
+
+1-3-7. BOI Visual Separation                                     5
+
+1-3-8. BOI Practice Approaches (Planned Missed Approaches)       5
+
+1-3-9. BOI Automated Point-Outs                                  5
+
+Section 4. Pre-Arranged Coordination Procedures (PACP)           6
+
+1-4-1. General                                                   6
+
+1-4-2. Application                                               6
+
+Section 5. Opposite Direction Operations (ODO)                   7
+
+1-5-1. General                                                   7
+
+1-5-2. Responsibilities                                          7
+
+1-5-3. IFR Aircraft Procedures                                   7
+
+1-5-4. VFR Aircraft Procedures                                   8
+
+Chapter 2. Tower Operational Positions                           9
+
+Section 1. Clearance Delivery (CD)                               9
+
+2-1-1. Position Responsibilities                                 9
+
+2-1-2. IFR Departure Routing                                     9
+
+2-1-3. IFR Departure Altitudes                                   10
+
+2-1-4. Use of Pre-Departure Clearances (PDCs)                    10
+
+2-1-5. Reroute Procedures                                        10
+
+2-1-6. Compliance with TMIs                                      10
+
+2-1-7. VFR Departure Instructions                                11
+
+Section 2. Ground Control (GC)                                   12
+
+2-2-1. Position Responsibilities                                 12
+
+2-2-2. Area of Jurisdiction                                      12
+
+2-2-3. Traffic Flow                                              12
+
+2-2-4. ATIS                                                      12
+
+2-2-5. Multiple Runway Crossings                                 12
+
+                                        Not for real world use.
+2-2-6. Pushback Clearances                                 12
+
+2-2-7. Use Of SAID System                                  12
+
+Section 3. Local Control (LC)                              13
+
+2-3-1. Position Responsibilities                           13
+
+2-3-2. Area of Jurisdiction                                13
+
+2-3-3. Use of Radar                                        13
+
+2-3-4. Departure Procedures                                13
+
+2-3-5. Arrival Procedures                                  14
+
+2-3-6. Landing Clearance                                   14
+
+2-3-7. Multiple Runway Crossings                           14
+
+Chapter 3. TRACON Operational Positions                    15
+
+Section 1. General Control                                 15
+
+3-1-1. Facility Identification                             15
+
+3-1-2. Scratchpad Use                                      15
+
+3-1-3. Altitude Filter Limits                              15
+
+Section 2. Alpine Radar                                    16
+
+3-2-1. Position Responsibilities                           16
+
+3-2-2. LC Coordination                                     16
+
+3-2-3. Procedures                                          16
+
+Section 3. Sage Radar                                      17
+
+3-3-1. Position Responsibilities                           17
+
+3-3-2. Procedures                                          17
+
+Section 4. Bozeman Radar                                   19
+
+3-4-1. Position Responsibilities                           19
+
+3-4-2. Procedures                                          19
+
+Appendix 1. Airspace                                       20
+
+Appendix 1A. BOI Local Control Airspace                    20
+
+Appendix 1B. Sage/Alpine Radar (East Flow)                 21
+
+Appendix 1C. Sage/Alpine Radar (West Flow)                 22
+
+Appendix 1D. Bozeman Radar                                 23
+
+Appendix 2. Pre-Arranged Coordination Areas                24
+
+Appendix 2A. East Flow                                     24
+
+Appendix 2B. West Flow                                     25
+
+Appendix 3. Arrival Zones                                  26
+
+Appendix 3A. East Flow                                     26
+
+Appendix 3B. West Flow                                     27
+
+                                  Not for real world use.
+                               Chapter 1. General Control
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Boise Airport Traffic Control Tower (BOI ATCT) and Big Sky
+Terminal Radar Approach Control (BOI TRACON) Standard Operating Procedures within the
+Salt Lake City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels 7110.2A, dated November 1, 2024.
+
+Not for real world use.                    1
+                           Section 2. Operational Positions
+
+                         Table 1-2-1. BOI ATCT Operational Positions Table
+
+     Sector/Position         STARS ID  VATSIM Callsign                        Frequency
+Clearance Delivery (CD)           H         BOI_DEL                             125.900
+ Ground Control (GC)              R        BOI_GND                              121.700
+                                   T       BOI_TWR                              118.100
+   Local Control (LC)             G                                             119.600
+   Sage Radar (SAG)               A       BOI_G_APP                             126.900
+   Alpine Radar (ALP)             B       BOI_A_APP                             118.975
+Bozeman Radar (APB)                        BZN_APP
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                                  2
+                 Section 3. Coordination and Intrafacility Procedures
+
+1-3-1. BOI Runway Configurations
+    a. The active runway configuration refers to the general cardinal direction of departures and
+         arrivals currently in use. Authorized runway configurations are listed in subparagraphs e.
+         and f.
+    b. When selecting a Runway Flow, the following factors must be considered:
+              (1) Wind direction.
+              (2) Wind speed. The gust factor takes precedence over the constant wind speed.
+    c. When changing runway flows, the following items must be accomplished:
+              (1) The radar position(s) must coordinate with ZLC ARTCC, in accordance with the
+                   BOI-ZLC LOA.
+              (2) All operational positions must be verbally advised of:
+                        (a) Impending runway configuration changes.
+                        (b) The callsign of the last departure and arrival in the old configuration.
+              (3) Ensure the ATIS broadcast is updated.
+    d. East Flow is designated as the "calm wind" runway configuration.
+    e. East Flow: Landing and departing Runway 10L and Runway 10R.
+    f. West Flow: Landing and departing Runway 28L and Runway 28R.
+
+1-3-2. BOI Automatic Departure Releases
+    a. BOI Local Control has automatic release for all departures.
+    b. Sage/Alpine has control on contact for all departures.
+
+1-3-3. BOI Departure Instructions
+    a. IFR departures must be issued the following:
+              (1) Runway heading.
+              (2) An initial altitude of 16,000 feet, or lower filed altitude.
+
+                   NOTE-
+                   IFR departures must be assigned a minimum of 8,000 feet.
+
+    b. Departures requesting VFR-on-top must not be restricted above 16,000 feet.
+
+1-3-4. Vectoring IFR Departures (DVA)
+    a. DVAs are only authorized for IFR departures.
+    b. DVAs must not be utilized when a SID or ODP has been assigned, or when issuing
+         missed approach/go-around instructions.
+    c. The following DVAs, listed in Table 1-3-1 and 1-3-2, are authorized:
+
+Not for real world use.                    3
+                             Table 1-3-1. BOI Diverse Vector Area
+
+          Runway(s)                       Headings            Distance from BOI
+10L and 10R                    089° clockwise to 270°    20nm
+28L and 28R                    150° clockwise to 330°    20nm
+
+                             Table 1-3-2. BZN Diverse Vector Area
+
+          Runway(s)                       Headings           Distance from BZN
+12                             245° clockwise to 302°    18nm
+30                             215° clockwise to 298°    18nm
+
+1-3-5. Vectors Below the MVA
+Air traffic is responsible for terrain and obstruction avoidance when vectoring an aircraft that is
+not on a published procedure below the MVA/MIA. This is primarily performed for aircraft
+conducting a go-around/missed approach. The following provisions must be complied with when
+vectoring aircraft below the MVA:
+
+    a. BOI:
+              (1) Runway 10L/10R: Vectors below the MVA are not authorized.
+              (2) Runway 28L/28R: Headings between 200° clockwise to 330° are authorized in
+                   accordance with FAA JO 7110.65 paragraph 5-6-3. STARS Map 13 must be
+                   depicted when vectoring below the MVA.
+
+    b. BZN:
+              (1) Runway 12: Headings between 245° clockwise to 302° are authorized.
+              (2) Runway 30: Headings between 215° clockwise to 298° are authorized.
+
+1-3-6. BOI Missed Approach/Go-Around Procedures
+IFR aircraft executing an unplanned missed approach/go-around must comply with the following
+procedures:
+
+    a. IFR aircraft that are not on a visual approach must be instructed to fly the published
+         missed approach procedure and to maintain 8,000 feet.
+
+    b. IFR aircraft that are on a visual approach can be issued either of the following:
+              (1) Instruct the pilot to fly runway heading and maintain 8,000 feet.
+
+                   NOTE-
+                   A heading between 200° clockwise to 330° may be given to aircraft on a visual
+                   approach to Runway 28L/R. This heading must only be assigned after the aircraft
+                   has crossed the runway threshold.
+
+Not for real world use.                                                          4
+              (2) Instruct the pilot to join the local traffic pattern, in accordance with FAA JO
+                   7110.65, paragraph 7-4-1.
+
+1-3-7. BOI Visual Separation
+    a. When Sage or Alpine is using pilot-applied visual separation on arrival traffic, "VS" must
+         be placed in Scratchpad 2 of the aircraft's full data block, unless otherwise coordinated.
+    b. When Local Control is using pilot-applied visual separation on successive departures,
+         verbal coordination must be accomplished.
+
+1-3-8. BOI Practice Approaches (Planned Missed Approaches)
+    a. The following climb out instructions must be issued to aircraft requesting multiple
+         approaches in Sage or Alpine airspace:
+              (1) IFR: Alpine is responsible for issuing the following climb out instruction:
+
+                   PHRASEOLOGY-
+                   "Climb out instructions: fly the published missed approach, maintain eight
+                   thousand."
+
+              (2) VFR: Local Control is responsible for issuing instructions. Local Control may
+                   issue any heading in accordance with Table 2-3-1 or Table 2-3-2, depending on
+                   the runway flow.
+
+    b. Alpine must ensure the appropriate practice approach information is entered into the
+         data block, in accordance with the ZLC Scratchpad Directive (7210.4).
+
+    c. Alpine must handoff the aircraft to Local Control, regardless of the aircraft's flight rules.
+    d. Local Control must handoff the aircraft to the appropriate sector following the missed
+
+         approach.
+
+1-3-9. BOI Automated Point-Outs
+The STARS automated point-out function may be used to point-out traffic between Local Control
+and/or Sage/Alpine under the following conditions:
+
+    a. The transferring controller must enter the destination or direction of flight in the
+         scratchpad area of the STARS data block prior to initiating the automated point-out.
+
+    b. The receiving controller must accept the point-out using automation to indicate no
+         altitude or speed restrictions are imposed, or verbally coordinate altitude/speed/route
+         restrictions prior to accepting the point-out.
+
+Not for real world use.                    5
+             Section 4. Pre-Arranged Coordination Procedures (PACP)
+
+1-4-1. General
+Pre-arranged coordination refers to the procedure where one controller may penetrate another
+controller's airspace without coordination, on the basis that the penetrating aircraft is operating
+on a pre-determined track/route, which enables the controller applying PACP to determine
+whether or not appropriate separation can be applied between the penetrating aircraft and other
+traffic. When applying PACP, the following procedures must be complied with:
+
+    a. Two positions of operation cannot be authorized to penetrate each other's airspace
+         simultaneously.
+
+    b. Any penetration of another controller's airspace that is not designated as a pre-arranged
+         coordination area (see Appendix 2) is prohibited, unless otherwise coordinated.
+
+    c. The following must be considered prior to applying PACP. If any of the following
+         situations exist, PACP should not be used:
+              (1) Complexity and volume of traffic in the pre-arranaged airspace.
+              (2) Weather or other conditions that may disrupt the normal flow of traffic.
+              (3) Whether or not the use of PACP will disrupt or adversely affect the normal flow of
+                   traffic for the other sector.
+
+    d. PACP may be terminated at any time by the controller responsible for the pre-arranged
+         airspace and must not be resumed until additional coordination has been accomplished.
+
+    e. The controller using PACP in another controller's airspace must:
+              (1) Continuously display data block information for all traffic in that sector's airspace,
+                   which must contain, at a minimum, the position symbol and altitude information.
+              (2) Assume separation responsibility for, and avoid, all traffic under the jurisdiction of
+                   the controller responsible for the pre-arranged airspace.
+
+1-4-2. Application
+    a. Sage departure aircraft may depart Local Control airspace through the areas depicted in
+         Appendix 2.
+    b. Alpine has control to turn VFR departures to the north. Any deviation from the Local
+         Control assigned heading to the south must be coordinated with Sage.
+    c. Arrival aircraft sequenced by Sage/Alpine to BOI airport must be routed through the
+         arrival zones, as depicted in Appendix 3.
+
+Not for real world use.                    6
+                    Section 5. Opposite Direction Operations (ODO)
+
+1-5-1. General
+Opposite Direction Operations consists of IFR/VFR operations conducted to the same or
+parallel runway where an aircraft is operating in a reciprocal direction of another aircraft arriving,
+departing, or conducting an approach.
+
+1-5-2. Responsibilities
+    a. Local Control and Sage/Alpine share the responsibility to coordinate ODO and issue
+         traffic advisories (see below).
+    b. Local Control is responsible for cutoff point compliance for opposite direction arriving and
+         departing aircraft. STARS Map 710 (ODO Cutoff Points) must be displayed.
+    c. Sage/Alpine is responsible for cutoff point compliance for opposite direction arrival/arrival
+         aircraft. STARS Map 710 (ODO Cutoff Points) must be displayed.
+
+1-5-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to both aircraft conducting ODO.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) Opposite direction, same or parallel runway, operations with opposing traffic
+                   inside the cutoff point are prohibited.
+
+              (3) Visual separation is not authorized during ODO.
+              (4) Aircraft conducting RNAV Z approaches must be cleared from OFTER or JIMMI
+
+                   for ODO to be authorized.
+    b. Coordination:
+
+              (1) Local Control must verbally request opposite direction departures with
+                   Sage/Alpine and include aircraft callsign, aircraft type, runway, and the phrase
+                   "opposite direction."
+
+              (2) Sage/Alpine must verbally request opposite direction arrivals with Local Control
+                   and include aircraft callsign, aircraft type, runway, and the phrase "opposite
+                   direction."
+
+    c. Cutoff procedures for aircraft conducting ODO:
+              (1) A departing aircraft, including an aircraft performing a touch-and-go, stop-and-go,
+                   go-around, low approach, or missed approach, must be airborne and have
+                   commenced a turn to avoid conflict prior to an aircraft reaching:
+                        (a) A point 10 flying miles from the threshold of the runway of intended
+                             landing, or;
+                        (b) The base leg turn for an aircraft established in the traffic pattern.
+
+Not for real world use.                    7
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+                        (a) A point 15 flying miles from the threshold of the runway of intended
+                             landing, or;
+                        (b) The base leg turn for an aircraft established in the traffic pattern.
+
+              (3) If the above conditions are not met, action must be taken to ensure control
+                   instructions are issued to protect the integrity of the cutoff points.
+
+                   NOTE-
+                   Flying miles are defined as the distance an aircraft is expected to fly (via pilot
+                   navigation) or required to fly (via control instructions) to reach the landing
+                   threshold of the runway of intended landing.
+
+1-5-4. VFR Aircraft Procedures
+    a. Ensure VFR aircraft are issued a turn to avoid conflict with the opposing IFR/VFR traffic.
+    b. During coordination, the phrase "opposite direction" must be used.
+    c. Traffic information must be issued to both aircraft, including the direction that the
+         departure will turn (as appropriate) and/or the location of the opposing aircraft on final
+         (as appropriate).
+
+Not for real world use.                    8
+                         Chapter 2. Tower Operational Positions
+
+                           Section 1. Clearance Delivery (CD)
+
+2-1-1. Position Responsibilities
+    a. Monitor the CD frequency (125.900 MHz).
+    b. Prepare and update flight progress strips in accordance with the ZLC Flight Strip
+         Handling Directive (7210.3).
+    c. Issue departure clearances to IFR aircraft, complying with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. Issue departure clearances to VFR aircraft in accordance with paragraph 2-1-7.
+    e. Create VFR flight plans for departing VFR aircraft.
+    f. Assume other clearance delivery or other cab responsibilities, as assigned.
+
+2-1-2. IFR Departure Routing
+    a. All aircraft must be instructed to fly runway heading and expect radar vectors to their first
+         fix. For aircraft that will leave the Big Sky TRACON, the first fix must be in accordance
+         with subparagraph b. Write "RH" into Box 9 of the aircraft's flight progress strip when
+         given.
+    b. All aircraft that will leave the Big Sky TRACON must be routed via one of the departure
+         fixes listed in Table 2-1-1. Aircraft that are unable to be routed via a departure fix must
+         be routed through a departure corridor or coordinated with ZLC ARTCC. Departure
+         corridors are depicted and described in the BOI-ZLC LOA.
+
+                                          Table 2-1-1. BOI Departure Fixes
+
+Departure Fix                    FRD      Minimum Altitude (MSL)
+    HYVAL                    BOI215041                10,000'
+     SAILL                   BOI268041                 8,000'
+    OLAAH                    BOI309040                10,000'
+     VALYY                   BOI350040                11,000'
+    FETHR                    BOI071039                13,000'
+    ROARR                    BOI096039                10,000'
+    BARNR                    BOI030039                13,000'
+
+c. Aircraft requesting IFR practice approaches at BOI must be routed KBOI.RENOL.KBOI.
+d. Aircraft requesting IFR practice approaches at a satellite airport must be routed direct.
+
+Not for real world use.                                             9
+2-1-3. IFR Departure Altitudes
+    a. All aircraft must be issued an initial departure altitude of 16,000 feet, or lower filed
+         altitude.
+    b. Aircraft with a filed altitude below 16,000 feet that will exit Big Sky TRACON airspace
+         must be assigned an altitude at or above the minimum altitude for their departure fix, in
+         accordance with Table 2-1-1.
+
+2-1-4. Use of Pre-Departure Clearances (PDCs)
+    a. Unless an operational necessity exists, a route amendment is required, or the aircraft is
+         impacted by a posted TMI (except as outlined in paragraph 2-1-6), all PDC capable
+         aircraft must be sent a PDC via vTDLS in lieu of a voice clearance.
+    b. Fill out the boxes in vTDLS as follows:
+              (1) "Expect" box: Always select "10 MIN AFT DP" unless the aircraft's initial climb
+                   instruction is equal to their requested/assigned altitude. In this instance, leave the
+                   selection in this box blank.
+              (2) "SID" box: Always select "NO SID".
+              (3) "Transition" box: Must always be left blank.
+              (4) "Climb out" box: Always select "FLY RUNWAY HEADING".
+              (5) "Climb via" box: Must always be left blank.
+              (6) "Maintain" box: Select the initial altitude assignment in accordance with
+                   paragraph 2-1-3.
+              (7) "Contact info" box: This box should be left blank unless the aircraft will push back
+                   into the movement area.
+              (8) "Departure frequency" box: Select the appropriate departure frequency for the
+                   aircraft's route of flight and/or current staffing. Temporary non-standard departure
+                   frequencies can be added in the vTDLS Facility Menu.
+              (9) "Local info" box: Must always be left blank.
+
+2-1-5. Reroute Procedures
+When a reroute is required, CD must proceed with the following steps in order:
+
+    a. Dump the aircraft from vTDLS.
+    b. Amend the flight plan as necessary in the flight plan window, complying with paragraph
+
+         2-1-2.
+    c. Print the amended flight progress strip, ensuring the revision number is correct, and
+
+         delete the original strip.
+    d. Verbally issue the departure clearance to the aircraft.
+    e. Mark the amended flight progress strip in accordance with the ZLC Flight Strip Handling
+
+         Directive (7210.3).
+
+2-1-6. Compliance with TMIs
+    a. Aircraft affected by posted TMIs must be advised of any delays verbally.
+    b. Aircraft affected by posted TMIs must have pertinent TMI information placed in their flight
+         progress strip, in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    c. Aircraft affected by posted TMIs must not be issued a PDC.
+
+Not for real world use.                    10
+         NOTE-
+         Aircraft affected by an ESP or CFR program that are not expected to be assigned an
+         EDCT are exempt from this clause.
+
+2-1-7. VFR Departure Instructions
+    a. Turbojet departures must be assigned runway heading without an altitude restriction.
+         Write "RH" following a check mark into Box F of the aircraft's flight progress strip when
+         given. An example FPS is listed below in Figure 2-1-1.
+
+                                         Figure 2-1-1. Example VFR Turbojet FPS
+
+    b. All other aircraft:
+              (1) Runway 10L/10R:
+                        (a) Aircraft departing south of the runway centerline must be assigned at or
+                             below 5,000 feet. Mark the altitude restriction on the FPS.
+                        (b) Aircraft departing north of the runway centerline must not be assigned an
+                             altitude restriction.
+              (2) Runway 28L/28R departures must be assigned at or below 5,000 feet. Mark the
+                   altitude restriction on the FPS.
+
+Not for real world use.                    11
+                               Section 2. Ground Control (GC)
+
+2-2-1. Position Responsibilities
+    a. Monitor the GC frequency (121.700 MHz).
+    b. Ensure all taxiing aircraft have the current ATIS.
+    c. Determine/finalize aircraft departure runway assignments.
+    d. Marks FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    e. Assume other ground control responsibilities, as assigned.
+    f. Assume CD responsibilities when combined.
+
+2-2-2. Area of Jurisdiction
+GC has jurisdiction of all taxiways in the movement area, except for all taxiways located
+between Runway 10L and Runway 10R.
+
+NOTE-
+Taxiway J between Runway 10R and Taxiway W must be considered located between the
+runways, and therefore is not the jurisdiction of GC.
+
+2-2-3. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+Local Control.
+
+2-2-4. ATIS
+Ensure all departure aircraft have the current ATIS.
+
+2-2-5. Multiple Runway Crossings
+A waiver has been granted to BOI ATCT for FAA JO 7110.65, paragraph 3-7-2, which requires
+an aircraft to have crossed a previous runway before another runway crossing clearance can be
+issued. Thus, aircraft may be cleared to cross both runways at BOI with a single clearance.
+
+2-2-6. Pushback Clearances
+To the maximum extent possible, aircraft parked at the terminal ramp should push back within
+the non-movement area.
+
+2-2-7. Use Of SAID System
+    a. SAID only displays ADS-B-equipped and transmitting aircraft/vehicles within the
+         site-specific adapted area (the airport itself, not the surrounding area).
+    b. SAID systems may rely solely on ADS-B transponder information to display aircraft
+         identification if NAS flight plan information is not available to the system. This may result
+         in a discrepancy between SAID depicted aircraft identification and NAS flight plan
+         identification. This means that aircraft must have their ADS-B on with Altitude Reporting
+         Enabled in order to move on the airport movement areas.
+    c. SAID-derived information may only be used for reference and requires confirmation via
+         visual observation and/or pilot/operator reporting.
+
+Not for real world use.                    12
+d. The SAID system does not use search patterns in a scratchpad box like ASDE-X.
+
+Not for real world use.                                                           13
+                           Section 3. Local Control (LC)
+
+2-3-1. Position Responsibilities
+    a. Monitor the LC frequency (118.100 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Operate TDW/STARS equipment, as necessary.
+    d. Marks FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    e. Assume other local control or other cab responsibilities, as assigned.
+
+2-3-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. LC airspace, as depicted in Appendix 1A.
+    b. Runway 10L/28R.
+    c. Runway 10R/28L.
+    d. All taxiways between Runway 10L/28R and Runway 10R/28L.
+
+2-3-3. Use of Radar
+When using TDW/STARS, LC must:
+
+    a. Comply with the provisions contained within FAA JO 7110.65 Chapter 5.
+    b. Adjust the range of the radar to display a minimum of 10 NM.
+    c. Display the BOI Tower List.
+
+2-3-4. Departure Procedures
+For all departing aircraft, LC must:
+
+    a. Provide initial separation between all departures.
+    b. Assign all non-turbojet VFR departures a heading and altitude restriction in accordance
+
+         with Table 2-3-1 in East Flow or Table 2-3-2 in West Flow. LC may assign any heading
+         within the heading ranges described in the applicable table.
+
+                                  Table 2-3-1. VFR Departure Procedures (East Flow)
+
+                    Heading(s)                               Altitude
+010° clockwise to 069° (See Note)      Unrestricted
+070° clockwise to 100°                 At or below 5,000
+140° clockwise to 180°
+
+NOTE-
+LC assumes responsibility for separation from all known traffic within 8 NM of the center
+of BOI airport when assigning a heading between 010° clockwise to 069°.
+
+Not for real world use.                                                  14
+                           Table 2-3-2. VFR Departure Procedures (West Flow)
+
+                    Heading(s)                              Altitude
+250° clockwise to 310°                At or below 5,000
+
+    c. Assign all turbojet VFR departures runway heading without an altitude restriction.
+    d. Coordinate with Sage/Alpine if a departure aircraft does not auto-acquire within 3 NM of
+
+         the departure end of the runway.
+    e. Advise Sage/Alpine of aircraft executing an unplanned missed approach/go-around and
+
+         comply with paragraph 1-3-6.
+
+2-3-5. Arrival Procedures
+For all arriving aircraft, LC must:
+
+    a. Quick-look the Alpine sector.
+
+         NOTE-
+         When Alpine is combined to Sage, LC must quick-look the Sage sector.
+
+    b. Sequence and separate VFR downwind traffic from all other traffic after accepting the
+         handoff from Sage/Alpine.
+
+    c. Have control of arrivals on initial contact. If LC issues control instructions that affect the
+         sequence, LC assumes responsibility for separation and must coordinate with
+         Sage/Alpine.
+
+         NOTE-
+         Coordination may be verbal or via STARS scratchpad.
+
+    d. Issue traffic advisories to aircraft when:
+              (1) Two aircraft are on opposing bases.
+              (2) One aircraft is established on final and another aircraft will turn base to final
+                   beside the aircraft established on final.
+
+2-3-6. Landing Clearance
+The use of a memory aid upon issuance of a landing clearance is mandatory. The preferred
+method for utilizing a landing clearance memory aid is by highlighting the aircraft's STARS Full
+Data Block (FDB).
+
+2-3-7. Multiple Runway Crossings
+A waiver has been granted to BOI ATCT for FAA JO 7110.65, paragraph 3-7-2, which requires
+an aircraft to have crossed a previous runway before another runway crossing clearance can be
+issued. Thus, aircraft may be cleared to cross both runways at BOI with a single clearance.
+
+Not for real world use.                                                         15
+                    Chapter 3. TRACON Operational Positions
+
+                                   Section 1. General Control
+
+3-1-1. Facility Identification
+When working TRACON sectors listed in sections 3-2 through 3-4, controllers must identify
+themselves as "Big Sky Approach" or "Big Sky Departure."
+
+3-1-2. Scratchpad Use
+All scratchpad entries must be made in accordance with the ZLC Scratchpad Directive (7210.4).
+At a minimum, all arrival aircraft must have the approach type and runway placed in Scratchpad
+#1.
+
+3-1-3. Altitude Filter Limits
+Each position is required to set the filter limits at a minimum of 1,000 feet below the surface to
+1,000 feet above the vertical limits assigned to that position. Other altitudes may be viewed at
+the controller's discretion.
+
+Not for real world use.                    16
+                                     Section 2. Alpine Radar
+
+3-2-1. Position Responsibilities
+    a. Monitor the Alpine frequency (126.900 MHz).
+    b. Provide air traffic control services within the Alpine delegated airspace (see Appendix 2B
+         and 2C).
+
+3-2-2. LC Coordination
+Alpine must:
+
+    a. Sequence all arrivals to BOI airport except for VFR aircraft handed off to LC.
+    b. Ensure separation of arrivals to the LC airspace lateral boundary, except when wake
+
+         turbulence separation minima applies. In this instance, ensure separation to the runway
+         threshold.
+    c. Transfer communications of arrival traffic to LC prior to the LC airspace boundary, but no
+         further than 10 NM from the airport.
+    d. Hand off all VFR arrivals to LC prior to the LC airspace boundary.
+
+3-2-3. Procedures
+    a. Alpine must adjust the range of their radar to display a minimum of 11 NM outside
+         delegated airspace.
+    b. Aircraft handed off from Sage are released for turns and descent, except for arrivals in
+         the southernmost downwind during East Flow.
+
+Not for real world use.                    17
+                             Section 3. Sage Radar
+
+3-3-1. Position Responsibilities
+    a. Monitor the Sage frequency (119.600 MHz).
+    b. Provide air traffic control services within the Sage delegated airspace (see Appendix 2B
+         and 2C).
+    c. Assume Alpine responsibilities when combined.
+
+3-3-2. Procedures
+    a. Sage must adjust the range of their radar to display a minimum of 11 NM outside
+         delegated airspace.
+    b. Sequence BOI IFR arrival traffic to Alpine in accordance with Table 3-2-1 in East Flow or
+         Table 3-2-2 in West Flow.
+
+                                  Table 3-2-1. BOI IFR Arrival Sequencing (East Flow)
+
+                         STAR/Route/Direction                      Altitude
+KOURT# / SPUUD#                                           Descending to 8,000
+Downwind (Heading 280°)                                   Descending to 7,000
+SADYL#, Direct JIMMI or heading west of JIMMI (See Note)  Descending to 8,000
+SADYL# (Vectored to a downwind only)
+
+NOTE-
+Sage arrival traffic inbound via the Ellis Corridor or a "right base" leg to final (from the
+Southwest) must be routed via the SADYL#, direct to JIMMI, or assigned a heading that
+will direct the aircraft west of JIMMI.
+
+                        Table 3-2-2. BOI IFR Arrival Sequencing (West Flow)
+
+                           STAR/Route/Direction             Altitude
+
+KYANN# / BEWTE#
+
+Downwind (Heading 100°)                              Descending to 8,000
+
+SADYL# (See Note 1)
+
+Direct TOILS or heading east of TOILS (See Note 2)   Descending to 11,000 or MVA
+                                                     (whichever is higher)
+
+Not for real world use.                                                           18
+    NOTE-
+    1. Aircraft assigned the SADYL# may be vectored into a downwind or may be kept on
+    the West Flow transition.
+    2. Sage arrival traffic inbound via the Euugg Corridor that has been routed direct to BOI
+    by ZLC must be routed direct to TOILS or assigned a heading that will direct the aircraft
+    east of TOILS.
+
+c. When vectoring BOI IFR arrival traffic into a downwind for Alpine, headings may be
+    assigned ±15° from the heading specified in Table 3-2-1 or Table 3-2-2 without additional
+    coordination.
+
+Not for real world use.                    19
+                                   Section 4. Bozeman Radar
+
+3-4-1. Position Responsibilities
+    a. Monitor the Bozeman frequency (118.975 MHz).
+    b. Provide air traffic control services within the Bozeman delegated airspace (see Appendix
+         2D).
+
+3-4-2. Procedures
+Bozeman must:
+
+    a. Adjust the range of the radar to display a minimum of 10 NM outside of delegated
+         airspace.
+
+    b. Coordinate with Bozeman Federal Contract Tower (FCT) to determine the approach in
+         use to be broadcast on the ATIS.
+
+    c. Coordinate with BZN FCT for aircraft that are cleared for any type of approach other than
+         advertised.
+
+    d. Provide applicable separation for VFR aircraft conducting practice instrument
+         approaches.
+
+Not for real world use.                    20
+                                     Appendix 1. Airspace
+                         Appendix 1A. BOI Local Control Airspace
+
+Not for real world use.                                             21
+                         Appendix 1B. Sage/Alpine Radar (East Flow)
+
+Not for real world use.                                                22
+                         Appendix 1C. Sage/Alpine Radar (West Flow)
+
+Not for real world use.                                                23
+                           Appendix 1D. Bozeman Radar
+
+Not for real world use.                                    24
+                         Appendix 2. Pre-Arranged Coordination Areas
+                                           Appendix 2A. East Flow
+
+Not for real world use.                                                 25
+                             Appendix 2B. West Flow
+
+Not for real world use.                                    26
+                             Appendix 3. Arrival Zones
+                               Appendix 3A. East Flow
+
+Not for real world use.                                       27
+                             Appendix 3B. West Flow
+
+Not for real world use.                                    28
+

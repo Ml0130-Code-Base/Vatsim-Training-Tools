@@ -1,0 +1,514 @@
+SUBJ: Flight Progress Strip (FPS) Handling Procedures
+
+          This document establishes procedures for handling aircraft flight progress strips at Unrestricted
+Airport Traffic Control Tower (ATCT) and Federal Contract Tower (FCT) facilities within the Salt Lake City
+ARTCC on VATSIM (vZLC). Controllers are required to be familiar with the provisions of this document
+and to exercise their best judgment if they encounter situations not covered by it. The provisions and
+procedures described herein are supplemental to vZLC Facility Policy and FAA Order JO 7110.65.
+
+          The information contained herein is to be used for flight simulation purposes only on the VATSIM
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Harry Linsenmayer
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Evan McSweeny
+Deputy Air Traffic Manager
+Salt Lake City ARTCC
+Version   Record of Changes       Effective Date Issued By
+
+7210.3A  Description              11/01/2024  HL
+
+         Initial Release
+
+         Not for real world use.
+                              Table of Contents
+
+Chapter 1. Administrative                                       1
+
+Section 1. Introduction                                         1
+
+1-1-1. Purpose                                                  1
+
+1-1-2. Audience                                                 1
+
+1-1-3. Distribution                                             1
+
+1-1-4. Cancellation                                             1
+
+Section 2. Supplements                                          2
+
+1-2-1. Requirements                                             2
+
+1-2-2. Facilities with a Radar Aid                              2
+
+1-2-3. Facilities without a Radar Aid                           2
+
+Chapter 2. IFR Flight Progress Strips                           3
+
+Section 1. FPS Marking                                          3
+
+2-1-1. Flight Strip Printer                                     3
+
+2-1-2. Approved Contractions                                    3
+
+2-1-3. Flight Progress Strip                                    4
+
+2-1-4. Departure Strip Marking                                  4
+
+2-1-5. Arrival Strip Marking                                    5
+
+Section 2. FPS Handling                                         6
+
+2-2-1. Clearance Delivery (CD)                                  6
+
+2-2-2. Ground Control (GC)                                      6
+
+2-2-3. Local Control (LC)                                       6
+
+Chapter 3. VFR Flight Progress Strips                           7
+
+Section 1. Flight Plan Generation                               7
+
+3-1-1. Class C                                                  7
+
+3-1-2. Terminal Radar Service Area (TRSA)                       7
+
+3-1-3. Class D                                                  7
+
+3-1-4. Flight Plan Editor                                       7
+
+Section 2. FPS Marking                                          9
+
+3-2-1. Format                                                   9
+
+3-2-2. Approved Contractions                                    9
+
+3-2-3. Flight Progress Strip                                    9
+
+3-2-4. Strip Marking                                            10
+
+3-2-5. Example FPSs                                             11
+
+Section 3. FPS Handling                                         13
+
+3-3-1. Clearance Delivery                                       13
+
+3-3-2. Ground Control                                           13
+
+3-3-3. Local Control                                            13
+
+                                       Not for real world use.
+                                Chapter 1. Administrative
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes procedures for handling aircraft flight progress strips at Unrestricted
+Airport Traffic Control Tower (ATCT) and Federal Contract Tower (FCT) facilities within the Salt
+Lake City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels Flight Strip Markings Directive, dated August 1, 2023.
+
+Not for real world use.  1
+                                     Section 2. Supplements
+
+1-2-1. Requirements
+All members listed on the vZLC roster that are authorized to control any Local Control, Ground
+Control, and/or Clearance Delivery positions at facilities designated as "Unrestricted" in
+accordance with the VATSIM Global Controller Administration Policy (GCAP) must adhere to the
+provisions contained herein.
+
+NOTE-
+Individual facility SOPs take precedence over this document. Should any contradiction appear in
+an individual facility's SOP, those clauses contained in the SOP must be adhered to.
+
+1-2-2. Facilities with a Radar Aid
+The following Unrestricted facilities are equipped with a radar aid:
+
+    a. Billings ATCT (BIL)
+    b. Boise ATCT (BOI)
+    c. Bozeman FCT (BZN)
+    d. Great Falls ATCT (GTF)
+    e. Hill AFB (HIF)
+    f. Missoula FCT (MSO)
+    g. Mountain Home AFB (MUO)
+    h. Ogden FCT (OGD)
+    i. Provo FCT (PVU)
+
+1-2-3. Facilities without a Radar Aid
+The following Unrestricted facilities are not equipped with a radar aid:
+
+    a. Glacier Park FCT (GPI)
+    b. Helena ATCT (HLN)
+    c. Idaho Falls FCT (IDA)
+    d. Jackson Hole FCT (JAC)
+    e. Pocatello FCT (PIH)
+    f. Hailey FCT (SUN)
+    g. Twin Falls ATCT (TWF)
+
+Not for real world use.  2
+                         Chapter 2. IFR Flight Progress Strips
+
+                                     Section 1. FPS Marking
+
+2-1-1. Flight Strip Printer
+All IFR FPSs must be printed using the Flight Strip Printer.
+
+NOTE-
+1. Arrival FPSs will only automatically print at facilities without a radar aid.
+2. For facilities with a radar aid, arrival FPSs must not be used unless otherwise required
+through a facility SOP or an operational necessity exists.
+
+2-1-2. Approved Contractions
+The following approved contractions, listed in Table 2-1-1, may be utilized when marking FPSs.
+
+                                  Table 2-1-1. IFR FPS Approved Contractions
+
+                         Contraction           Location/Meaning
+                               TR                 Terminal Ramp
+                               GA
+                               CR            General Aviation Ramp
+                               HP                   Cargo Ramp
+                               WX                      Helipad
+                               GS
+                                                Weather Onboard
+                             EDCT                   Ground Stop
+                              CFR
+                               MA     Expect Departure Clearance Time
+                               LA                 Call for Release
+                               TG
+                               SG          Planned Missed Approach
+                               OH                  Low Approach
+                                                   Touch-and-Go
+                                                    Stop-and-Go
+
+                                               Overhead Maneuver
+
+NOTE-
+Additional approved contractions may be listed in facility SOPs.
+
+Not for real world use.                                                3
+2-1-3. Flight Progress Strip
+Figures 2-1-1 and 2-1-2 identify box locations for various types of IFR FPSs.
+
+                                          Figure 2-1-1. IFR Departure FPS
+
+                         Figure 2-1-2. IFR Arrival FPS
+
+2-1-4. Departure Strip Marking
+Write data into the boxes of IFR Departure FPSs, depicted in Figure 2-1-1, in accordance with
+the following:
+
+    a. Boxes A-L: Automatically printed by the Flight Strip Printer.
+    b. Box 1: Clearance contraction. Write "PDC" if the aircraft has successfully been issued a
+
+         departure clearance through vTDLS or a check mark if the aircraft has been verbally
+         issued a clearance with a correct readback.
+
+         NOTE-
+         1. A check mark () is inserted by pressing Shift + / (?).
+         2. BOI ATCT is the only Unrestricted facility with the ability to issue PDC clearances.
+
+    c. Box 2: Aircraft location. Write the location of the aircraft or the taxiway that the aircraft
+         will enter the movement area at.
+
+    d. Box 3: ATIS. Write the letter of the ATIS information that has been reported by the pilot. If
+         no ATIS is active, or the facility does not have the ability to broadcast an ATIS, "WX" may
+         be written.
+
+    e. Box 4: TMI contraction. Write "GS" when the aircraft's arrival airport is placed under a
+         ground stop. Write "EDCT" when the aircraft has been assigned an EDCT.
+
+    f. Box 5: Release required. Write "CFR" when the aircraft requires a departure release.
+    g. Box 6: Release time. Write the time at which the aircraft is released if an EDCT has been
+
+         assigned or a departure release has been issued. The time may be abbreviated to the
+         two-digit time in minutes only if the release time is within the same hour as the time of
+         marking the FPS.
+    h. Box 7: Assigned runway. Utilize an asterisk (*) to the right of the runway number if the
+         runway is not designated as an active runway.
+    i. Box 8: Runway intersection. If other than full length, write the intersection of the runway
+         the aircraft will depart from. Otherwise, leave blank.
+
+Not for real world use.                                                        4
+2-1-5. Arrival Strip Marking
+Write data into the boxes of IFR Arrival FPSs, depicted in Figure 2-1-2, in accordance with the
+following:
+
+    a. Boxes A-K: Automatically printed by the Flight Strip Printer.
+    b. Box 1: Approach termination. If other than full-stop, write the aircraft's intended approach
+
+         termination.
+    c. Box 2: Parking location. Write the parking location of the aircraft or the taxiway that the
+
+         aircraft will exit the movement area at.
+    d. Box 3: Reporting point. Write the first three characters of the non-radar reporting point
+
+         for the IAP the aircraft is conducting.
+
+         NOTE-
+         Reporting points can be found in individual facility SOPs.
+
+    e. Boxes 4-5: Must be left blank, unless otherwise specified in an individual facility SOP.
+    f. Box 6: Reporting time. Write the time that the aircraft reports over the reporting point
+
+         specified in Box 3.
+
+         NOTE-
+         The time must be abbreviated to the two-digit time in minutes.
+
+    g. Boxes 7-9: Must be left blank, unless otherwise specified in an individual facility SOP.
+
+Not for real world use.  5
+                                     Section 2. FPS Handling
+
+2-2-1. Clearance Delivery (CD)
+    a. When a Departure FPS is received through Flight Strip Printer, CD must move the strip
+         to their strip bay.
+    b. CD must mark Boxes 1-6 on all IFR Departure FPSs in accordance with paragraph
+         2-1-4.
+    c. Upon completion of FPS preparation and after a departure clearance has been issued,
+         forward the aircraft's FPS to Ground Control.
+
+         NOTE-
+         Only select facilities have a separate CD position. For facilities that have CD combined
+         with Ground Control, the above procedures must be assumed by Ground Control.
+
+2-2-2. Ground Control (GC)
+    a. GC must coordinate with CD prior to removing a Departure FPS from any CD strip bay.
+    b. Departure FPSs must be pushed to the appropriate LC strip bay and sequenced to
+         reflect their actual sequence on the taxiway.
+    c. GC must ensure FPS markings are updated prior to pushing a Departure FPS to LC.
+
+2-2-3. Local Control (LC)
+    a. Departure FPSs must be sequenced in the appropriate bay for the runway of departure
+         and must reflect the order in which the aircraft will depart.
+    b. Arrival FPSs must be sequenced in the appropriate bay for the runway of arrival and
+         must reflect the order in which the aircraft will arrive.
+    c. Departure FPSs may be deleted when all conflicts are resolved and the aircraft has been
+         instructed to contact departure.
+    d. Ensure Box 2 of Arrival FPSs are updated prior to pushing the FPS to GC.
+
+         NOTE-
+         Box 2 must only be updated if the aircraft informs LC of their parking location.
+
+Not for real world use.  6
+                       Chapter 3. VFR Flight Progress Strips
+
+                              Section 1. Flight Plan Generation
+
+3-1-1. Class C
+All VFR departure aircraft must have a flight plan generated through the Flight Plan Editor or via
+the STARS VP function.
+
+3-1-2. Terminal Radar Service Area (TRSA)
+All VFR departure aircraft must have a flight plan generated through the Flight Plan Editor, or via
+the STARS VP function, unless the pilot specifically requests to not receive TRSA services.
+
+3-1-3. Class D
+    a. All VFR departure aircraft that have not requested flight following must not have a flight
+         plan generated.
+    b. All VFR departure aircraft that have requested flight following must have a flight plan
+         generated through the Flight Plan Editor or via the STARS VP function.
+
+         NOTE-
+         Flight Following must not be given on the ground at facilities without a radar aid.
+
+3-1-4. Flight Plan Editor
+When generating VFR flight plans through the Flight Plan Editor, the following items must be
+filled out:
+
+    a. Aircraft type code (TYP).
+    b. Departure airport (DEP).
+    c. Arrival airport (DEST), if provided.
+    d. Requested altitude (ALT). Fill out this box in accordance with the following:
+
+              (1) "VFR" must precede any numerical entry.
+              (2) If a requested altitude is provided, enter the altitude in hundreds of feet after a
+
+                   forward slash succeeding the phrase "VFR."
+
+                   EXAMPLE-
+                   1. VFR
+                   2. VFR/075
+
+    e. Direction of flight, type of departure, or request (RTE). Fill out this box in accordance
+         with the following:
+              (1) Aircraft that will depart LC airspace must have entries placed between forward
+                   slashes.
+                        (a) If flight following is requested, write "FF" followed by the cardinal direction
+                             letter.
+                        (b) If flight following is not requested, write the cardinal direction letter.
+
+Not for real world use.  7
+              EXAMPLE-
+              1. /N/
+              2. /SW/
+              3. /FFNE/
+
+(2) Aircraft remaining within LC airspace must have simple explanatory entries
+    spelled out.
+
+    EXAMPLE-
+    1. "PATTERN"
+    2. "SIGHTSEEING"
+    3. "PHOTOSHOOT"
+
+Not for real world use.                                                         8
+                                     Section 2. FPS Marking
+
+3-2-1. Format
+All VFR FPSs must be handwritten on a half-strip.
+
+3-2-2. Approved Contractions
+The following approved contractions, listed in Table 3-2-1, may be utilized when marking FPSs.
+
+                                 Table 3-2-1. VFR FPS Approved Contractions
+
+                         Contraction            Location/Meaning
+                               TR                  Terminal Ramp
+                               GA
+                               CR            General Aviation Ramp
+                               HP                   Cargo Ramp
+                               WX                       Helipad
+                               MA
+                               FS                Weather Onboard
+                               LA          Planned Missed Approach
+                               TG
+                               SG                      Full-Stop
+                               OP                  Low Approach
+                                                   Touch-and-Go
+                              LDG                   Stop-and-Go
+
+                               OH                       Option
+                             TRSN     Landing at Helipad/Non-Movement
+
+                                              Area (Rotorcraft only)
+                                               Overhead Maneuver
+                                              Transitioning Airspace
+
+NOTE-
+Additional approved contractions may be listed in facility SOPs.
+
+3-2-3. Flight Progress Strip
+Figure 3-2-1 identifies box locations for VFR FPSs.
+
+Not for real world use.                                                9
+                         Figure 3-2-2. VFR FPS (Half-Strip)
+
+3-2-4. Strip Marking
+Write data into the boxes of Half-Strips, depicted in Figure 3-2-2, in accordance with the
+procedures below. All boxes are always required except Box F.
+
+    a. Box A: Callsign.
+    b. Box B: Aircraft type. Equipment suffix is not required.
+    c. Box C: Operation type. Write the type of operation that the aircraft has requested or
+
+         been cleared for.
+
+         NOTE-
+         1. For departure aircraft, refer to the examples listed below. For arrivals, utilize
+         contractions listed in Table 3-2-1.
+         2. The operation type must be continually updated as aircraft are cleared for different
+         operations.
+
+         EXAMPLE-
+         1. "Northbound"
+         2. "Southeast"
+         3. "FF Westbound"
+         4. "Pattern"
+         5. "Practice Apchs"
+
+    d. Box D: Assigned runway and intersection. Utilize an asterisk (*) to the right of the runway
+         number if the runway is not designated as an active runway. If the aircraft will depart
+         from an intersection, write the intersection of the runway the aircraft will depart from after
+         the assigned runway. Separate the assigned runway and runway intersection with a
+         forward slash.
+
+         NOTE-
+         If LC switches the aircraft to another runway in the air or on the ground, they must keep
+         this box up to date.
+
+         EXAMPLE-
+         1. "13"
+         2. "28R/D"
+
+Not for real world use.                                      10
+    e. Box E: ATIS and beacon code. Write the letter of the ATIS information that has been
+         reported by the pilot. If no ATIS is active, or the facility does not have the ability to
+         broadcast an ATIS, "WX" may be written. Write the beacon code the aircraft has been
+         assigned, if applicable. Separate the ATIS letter from a beacon code with a forward
+         slash.
+
+         EXAMPLE-
+         1. "W"
+         2. "WX"
+         3. "D/0052"
+
+    f. Box F: Clearance marking and altitude restriction. If departure clearance instructions are
+         issued with a correct readback, write a check mark. If an altitude restriction has been
+         assigned, write the letter A followed by the assigned altitude in hundreds of feet.
+         Separate the clearance marking from an altitude restriction with a space.
+
+         NOTE-
+         If the phrase "at or below" is not used when imposing an altitude restriction, the letter A
+         preceding the altitude assignment must be omitted.
+
+         EXAMPLE-
+         1. " A045"
+         2. " 055"
+
+3-2-5. Example FPSs
+Examples of VFR FPSs may be found below.
+
+Not for real world use.  11
+Not for real world use.  12
+                                     Section 3. FPS Handling
+
+3-3-1. Clearance Delivery
+    a. CD must mark Boxes A, B, C, and F on all VFR FPSs in accordance with paragraph
+         3-2-4. If applicable, CD must also mark Box E.
+    b. Upon completion of FPS preparation and after a departure clearance has been issued,
+         forward the aircraft's FPS to GC.
+
+         NOTE-
+         Only select facilities have a separate CD position. For facilities that have CD combined
+         with GC, the above procedures must be assumed by GC.
+
+3-3-2. Ground Control
+    a. At facilities with a separate CD position, GC must not issue VFR clearances.
+
+         NOTE-
+         Taxi instructions do not count as VFR clearances. At Class D airports (not including
+         TRSA) with a separate CD position, aircraft that have not requested flight following are
+         not required to contact CD. In this case, GC must be responsible for the creation of the
+         aircraft's FPS.
+
+    b. Departure aircraft FPSs must be pushed to the appropriate LC strip bay and sequenced
+         to reflect their actual sequence on the taxiway.
+
+    c. GC must ensure FPS markings are updated prior to pushing a FPS to LC.
+
+3-3-3. Local Control
+    a. Departure aircraft FPSs must be sequenced in the appropriate bay for the runway of
+         departure and must reflect the order in which the aircraft will depart.
+    b. Arrival aircraft FPSs must be sequenced in the appropriate bay for the runway of arrival
+         and must reflect the order in which the aircraft will arrive.
+    c. Departure aircraft FPSs may be deleted when the aircraft has exited LC airspace and/or
+         instructed to contact departure.
+    d. Arrival aircraft FPSs may be deleted once the aircraft has cleared the runway and has
+         been instructed to contact GC. LC need not push arrival aircraft FPSs to GC.
+
+Not for real world use.  13
+

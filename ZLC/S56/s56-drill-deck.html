@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S56 Drill Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D0C;
+    --panel:#0F1614;
+    --panel2:#121A17;
+    --ink:#E7EDE9;
+    --dim:#6F8079;
+    --dim2:#455049;
+    --line:#1E2925;
+    --green:#4FE0A0;
+    --amber:#E8A23D;
+    --red:#E8604D;
+    --display:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(79,224,160,0.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(79,224,160,0.25);}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  a{color:var(--green);}
+
+  .wrap{max-width:940px;margin:0 auto;padding:0 20px 80px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--dim);
+    position:sticky;top:0;
+    background:rgba(10,13,12,0.9);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .topbar b{color:var(--ink);font-weight:600;}
+
+  .hero{padding:26px 0 4px;}
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--green);margin-bottom:10px;
+  }
+  .hero h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(20px,3vw,26px);
+    margin:0 0 6px;letter-spacing:-0.01em;
+  }
+  .hero p{color:var(--dim);max-width:64ch;margin:0 0 8px;font-size:15px;}
+
+  .modnav{
+    display:flex;gap:8px;flex-wrap:wrap;margin:32px 0;
+    padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .modnav:empty{display:none;}
+
+  footer{
+    margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--dim2);
+  }
+
+  @media(max-width:640px){
+    .hero h1{font-size:26px;}
+    .wrap{padding:0 14px 60px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div><b>S56</b> SALT LAKE CITY APPROACH</div>
+  <div>DRILL DECK</div>
+</div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">S56 &mdash; skeleton</div>
+    <h1>Nine sectors, three roots, and somewhere to put what you learn.</h1>
+    <p>The selector is built and the frequencies are verified. The engine is not. Every sector carries a note slot, because the notes are what the next version gets built from.</p>
+  </div>
+  <div class="modnav" id="modnav"></div>
+
+  <footer>
+    Skeleton tool. Sector names, STARS identifiers, VATSIM callsigns and frequencies are verified against S56 TRACON 7110.20C chapter 3 and the ZLC Position and Frequency Info sheet &mdash; see claude_S56_Reference.md and ../_shared/claude_ZLC_Positions_Reference.md. Notes live in this browser only; export them before clearing site data. Single file, no build step, no network.
+  </footer>
+
+</div>
+
+<script>
+/* ================================================================
+   S56 POSITION SELECTOR + STUDENT NOTES v0 (skeleton)
+   Self-contained: injects its own CSS, nav links and sections.
+
+   Real here: the nine sectors, the combining tree, the frequencies,
+   the ownership resolution, and the notes layer. Stubbed: airspace
+   geometry, traffic engine, grading. Stubs say so on the page.
+
+   The notes layer is not decoration. It is the intake path for the
+   next version of this tool: a note is tagged, it attaches to the
+   sector or the open question it answers, and it exports as a block
+   that can be promoted straight into the data above.
+   ================================================================ */
+(function(){
+'use strict';
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.zlc-section{margin:56px 0;padding-top:8px;scroll-margin-top:70px;}'
++ '.zlc-section h2{font-family:var(--display);font-weight:600;font-size:24px;margin:6px 0 4px;letter-spacing:-0.01em;}'
++ '.zlc-tag{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--green);text-transform:uppercase;}'
++ '.zlc-tag.warn{color:var(--amber);}'
++ '.zlc-sub{color:var(--dim);font-size:14px;margin:0 0 6px;max-width:72ch;}'
++ '.zlc-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.zlc-panel h3{font-family:var(--display);font-weight:600;font-size:15px;margin:0 0 8px;}'
++ '.zlc-mono{font-family:var(--mono);}'
++ '.zlc-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
++ '.zlc-bar button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
++ '.zlc-bar button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.zlc-bar button.on{color:var(--green);border-color:var(--green);}'
++ '.zlc-bar .sub{font-family:var(--mono);font-size:11px;color:var(--dim2);margin-left:auto;}'
++ '.zlc-secs{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:8px;margin:12px 0;}'
++ '.zlc-sec{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:9px 11px;display:flex;flex-direction:column;}'
++ '.zlc-sec.open{border-color:var(--green);}'
++ '.zlc-sec.seat{border-color:var(--green);background:rgba(79,224,160,0.09);}'
++ '.zlc-sec .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;cursor:pointer;}'
++ '.zlc-sec .nm{font-family:var(--display);font-weight:600;font-size:14.5px;}'
++ '.zlc-sec .id{font-family:var(--mono);font-size:11px;color:var(--dim);}'
++ '.zlc-sec .frq{font-family:var(--mono);font-size:12.5px;color:var(--green);margin-top:2px;cursor:pointer;}'
++ '.zlc-sec .cs{font-family:var(--mono);font-size:10.5px;color:var(--dim2);letter-spacing:0.04em;}'
++ '.zlc-sec .role{font-size:11px;color:var(--dim2);font-style:italic;margin-top:3px;}'
++ '.zlc-sec .st{font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;}'
++ '.zlc-sec .st b{color:var(--amber);font-weight:500;}'
++ '.zlc-sec .acts{display:flex;gap:6px;margin-top:8px;}'
++ '.zlc-sec .acts button{flex:1;font-family:var(--mono);font-size:10.5px;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:3px;padding:4px 6px;cursor:pointer;}'
++ '.zlc-sec .acts button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.zlc-sec .acts button.has{color:var(--amber);border-color:rgba(232,162,61,0.4);}'
++ '.zlc-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px;}'
++ '.zlc-tbl th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim2);border-bottom:1px solid var(--line);padding:5px 8px 5px 0;font-weight:500;}'
++ '.zlc-tbl td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);vertical-align:top;}'
++ '.zlc-tbl td.m{font-family:var(--mono);color:var(--green);white-space:nowrap;}'
++ '.zlc-tbl td.d{color:var(--dim);}'
++ '.zlc-note{font-size:12.5px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:14px;line-height:1.5;}'
++ '.zlc-note b{color:var(--amber);font-weight:500;}'
++ '.zlc-stub{background:var(--panel);border:1px dashed var(--dim2);border-radius:6px;padding:14px;margin:14px 0;}'
++ '.zlc-stub h3{font-family:var(--display);font-weight:600;font-size:14.5px;margin:0 0 4px;color:var(--dim);}'
++ '.zlc-stub p{margin:0;color:var(--dim2);font-size:12.5px;line-height:1.5;}'
++ '.zlc-stub .lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px;}'
++ '.zlc-split{display:flex;gap:12px;flex-wrap:wrap;}'
++ '.zlc-split > *{flex:1 1 300px;}'
++ '.zlc-tree{font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--dim);white-space:pre;overflow-x:auto;margin:0;}'
++ '.zlc-tree b{color:var(--ink);font-weight:500;}'
++ '.zlc-tree i{color:var(--green);font-style:normal;}'
+/* ----- notes layer ----- */
++ '.zlc-nform{margin-top:10px;}'
++ '.zlc-nform select,.zlc-nform textarea,.zlc-nform input{font-family:var(--body);font-size:12.5px;background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);padding:7px 9px;width:100%;}'
++ '.zlc-nform textarea{min-height:74px;resize:vertical;line-height:1.5;}'
++ '.zlc-nform select{font-family:var(--mono);font-size:11.5px;}'
++ '.zlc-nrow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;}'
++ '.zlc-nrow > select{flex:0 1 180px;}'
++ '.zlc-nrow > input{flex:1 1 200px;}'
++ '.zlc-nadd{font-family:var(--mono);font-size:12px;background:var(--green);color:#062;border:0;border-radius:3px;padding:8px 16px;cursor:pointer;font-weight:600;}'
++ '.zlc-nlist{margin-top:14px;display:flex;flex-direction:column;gap:8px;}'
++ '.zlc-n{background:var(--panel2);border:1px solid var(--line);border-left-width:3px;border-radius:4px;padding:9px 11px;}'
++ '.zlc-n.k-question{border-left-color:var(--amber);}'
++ '.zlc-n.k-correction{border-left-color:var(--red);}'
++ '.zlc-n.k-technique{border-left-color:var(--green);}'
++ '.zlc-n.k-phraseology{border-left-color:#7FB2E8;}'
++ '.zlc-n .nh{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}'
++ '.zlc-n .kind{font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;}'
++ '.zlc-n.k-question .kind{color:var(--amber);}'
++ '.zlc-n.k-correction .kind{color:var(--red);}'
++ '.zlc-n.k-technique .kind{color:var(--green);}'
++ '.zlc-n.k-phraseology .kind{color:#7FB2E8;}'
++ '.zlc-n .anch{font-family:var(--mono);font-size:10.5px;color:var(--dim2);}'
++ '.zlc-n .body{font-size:13px;margin-top:5px;white-space:pre-wrap;line-height:1.5;}'
++ '.zlc-n .meta{font-family:var(--mono);font-size:10px;color:var(--dim2);margin-top:6px;display:flex;gap:10px;align-items:center;}'
++ '.zlc-n .meta button{font-family:var(--mono);font-size:10px;color:var(--dim2);background:transparent;border:0;cursor:pointer;padding:0;text-decoration:underline;}'
++ '.zlc-n .meta button:hover{color:var(--red);}'
++ '.zlc-open{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:10px 12px;margin-top:8px;}'
++ '.zlc-open .q{font-size:13px;color:var(--ink);}'
++ '.zlc-open .w{font-size:12px;color:var(--dim);margin-top:4px;line-height:1.45;}'
++ '.zlc-open .cnt{font-family:var(--mono);font-size:10.5px;color:var(--amber);margin-top:6px;display:block;}'
++ '.zlc-xport{width:100%;min-height:150px;font-family:var(--mono);font-size:11px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--dim);padding:10px;margin-top:10px;line-height:1.5;}';
+
+var st=document.createElement('style');
+st.textContent=css;
+document.head.appendChild(st);
+
+/* ---------- 2. Data ----------
+   Verified 2026-09-01 against S56 TRACON 7110.20C. Each frequency is
+   quoted from that sector's own "Monitor the X frequency" paragraph in
+   chapter 3, not read off Table 1-2-1 — the table extracts with a row
+   offset. Cross-checked against the ZLC Position and Frequency sheet,
+   which agrees on all nine.
+   See ../_shared/claude_ZLC_Positions_Reference.md. */
+
+var RADIO='Salt Lake City Approach';
+var CENTER={cs:'SLC_03_CTR', name:'Salt Lake Center sector 3 (Area B)'};
+
+/* `into` is the sector this one folds into when closed; null means it
+   folds out of S56 to Center. Three sectors sit directly under Center:
+   Lake, Bear and Valley. */
+var SECTORS=[
+ {id:'K', name:'Lake',     cs:'SLC_K_APP', frq:'135.500', into:null, app:'Appendix 3D',
+  role:'primarily departure control', sop:'3-1',
+  duty:'Departure control. Routes SLC departures filed V21/V101, or landing in Hart airspace, through the Antelope Gate — heading 310°–340° in North Flow, 330°–340° in South Flow, climbing to 10,000. Crosses the Heber Shelf line at or above 13,000.',
+  excl:'excluding airspace owned by Valley and SLC ATCT'},
+
+ {id:'G', name:'Gunnison', cs:'SLC_G_APP', frq:'126.250', into:'B', app:'Appendix 3G',
+  role:'primarily departure control', sop:'3-2',
+  duty:'Departure control. Routes transiting aircraft landing LGU, BMC, OGD or HIF through the Keyhole Gate on 330°–340° at 12,000, and hands them to Hart before the gate — Hart has control for descent.',
+  excl:'excluding airspace owned by Valley and SLC ATCT'},
+
+ {id:'B', name:'Bear',     cs:'SLC_B_APP', frq:'124.900', into:null, app:'Appendix 3B',
+  role:'primarily arrival control', sop:'3-3',
+  duty:'Arrival control. South Flow sequences to 16L/17; North Flow into the 34L downwind, established 11,000 and 210 knots before Final airspace. Sequences Avon/Bird gate arrivals for HIF, OGD and BMC at 12,000 to Hart.',
+  excl:'excluding airspace owned by Valley and SLC ATCT'},
+
+ {id:'H', name:'Hart',     cs:'SLC_H_APP', frq:'121.100', into:'G', app:'Appendix 3H',
+  role:'OGD / HIF / BMC satellite', sop:'3-4',
+  duty:'Satellite. Routes OGD/HIF/BMC departures transiting Lake or Gunnison through the Jepson Gate on 240°–250° at 9,000. Issues BMC clearances via the Ogden obstacle departure, maintain 6,000.',
+  excl:''},
+
+ {id:'F', name:'Final',    cs:'SLC_F_APP', frq:'125.700', into:'B', app:'Appendix 3F',
+  role:'final', sop:'3-5',
+  duty:'Final. Holds 11,000 until established downwind — north of NICHOL in South Flow, abeam the 34L approach end in North Flow. The 30° turn to final is issued at no more than 210 knots. Transfers to Local before SLC ATCT airspace, no sooner than 7 NM from its boundary.',
+  excl:'excluding airspace owned by Valley and SLC ATCT'},
+
+ {id:'J', name:'Jordan',   cs:'SLC_J_APP', frq:'128.600', into:'K', app:'Appendix 3C',
+  role:'arrival and departure', sop:'3-6',
+  duty:'North Flow sequences to 34R/35; during SIMULs, 35 arrivals are cleared before HLMET and scratchpads updated before the P4 Area. South Flow departures may climb and turn within the P2 Area, and Jordan takes separation from Stockton traffic when it is present.',
+  excl:'excluding airspace owned by Alpine, Valley and SLC ATCT'},
+
+ {id:'S', name:'Stockton', cs:'SLC_S_APP', frq:'128.100', into:'K', app:'Appendix 3E',
+  role:'downwind feeds', sop:'3-7',
+  duty:'North Flow sequences into the 34L downwind, South Flow into the 16R downwind. Ensures sequencing and in-trail spacing with Bear arrivals — Bear does not share that responsibility. Transiting aircraft for LGU/BMC/OGD/HIF go toward the Keyhole Gate at 15,000 and 250 knots or less, handed to Gunnison.',
+  excl:'excluding airspace owned by Valley and SLC ATCT'},
+
+ {id:'V', name:'Valley',   cs:'SLC_V_APP', frq:'120.900', into:null, app:'Appendix 3I',
+  role:'VFR under the Class B shelf', sop:'3-8',
+  duty:'May operate to the lateral boundary of its airspace outside SLC Class B, and to the sector boundary over I-15 — Final, Lake, Jordan, Alpine and Bear keep their aircraft clear of Valley rather than the other way round. Routes VFR Category I, II and turboprop III per the SLC–S56 LOA.',
+  excl:'excluding airspace owned by SLC ATCT'},
+
+ {id:'A', name:'Alpine',   cs:'SLC_A_APP', frq:'118.850', into:'S', app:'Appendix 3A',
+  role:'PVU / SPK satellite', sop:'3-9',
+  duty:'Satellite. Coordinates all IFR with Jordan in South Flow; in North Flow with SIMULs, coordinates PVU and SPK aircraft with Final and Jordan. Coordinates with ZLC sector 32 to protect the missed approach on RNAV approaches into SPK.',
+  excl:''}
+];
+
+var PRESETS=[
+ {id:'roots',  label:'Three roots — Lake · Bear · Valley', open:{K:1,B:1,V:1}},
+ {id:'six',    label:'Six — roots plus Final, Jordan, Hart', open:{K:1,B:1,V:1,F:1,J:1,H:1}},
+ {id:'all',    label:'Everything open', open:{K:1,G:1,B:1,H:1,F:1,J:1,S:1,V:1,A:1}}
+];
+
+/* Open questions the source documents do not answer. Each is a note
+   anchor: a student note attached to one of these is the thing that
+   eventually closes it. */
+var OPEN_Q=[
+ {id:'q-primary', q:'Which sectors are the primary positions?',
+  w:'Table 1-2-1 ends with "Bold designates a primary position", and the ZLC frequency sheet marks preferred combination points in light blue. Both are lost in text extraction, so the tool does not know which sectors those are. Ask a mentor and note the answer here.'},
+ {id:'q-single', q:'What does a single-controller S56 actually look like?',
+  w:'The inheritance tree puts Lake, Bear and Valley all directly under Center, so closing everything but Lake sends Bear’s and Valley’s airspace to Center rather than to Lake. That is what the tree says; it is probably not how one controller works S56 in practice. The tree cannot answer this — a mentor can.'},
+ {id:'q-order', q:'Is Stockton really staffed before Lake?',
+  w:'The ZLC sheet says "SLC_S_APP should be staffed prior to opening SLC_K_APP or SLC_J_APP", but its own tree puts Lake above Stockton. The same sheet still refers to BOI_S_APP and BOI_N_APP, callsigns that no longer exist, so parts of it appear stale. Which is current?'},
+ {id:'q-geom', q:'Where are the sector boundaries?',
+  w:'Appendices 1 and 3 are chart images with no text layer. Gate names — Antelope, Keyhole, Jepson, Avon, Bird — and the P2/P3/P4 areas exist here as words with no geometry behind them. Nothing can be plotted until the shapes are recovered.'}
+];
+
+var KINDS=[
+ {id:'question',    label:'Question'},
+ {id:'correction',  label:'Correction'},
+ {id:'technique',   label:'Technique'},
+ {id:'phraseology', label:'Phraseology'}
+];
+
+/* ---------- 3. State and storage ---------- */
+var KEY='zlc-s56-skeleton-v1';
+var storageOK=true;
+
+var state={
+ open:{K:1,B:1,V:1},
+ seat:'B',
+ notes:[],          /* {id, kind, anchor, anchorLabel, text, ts} */
+ draft:{kind:'question', anchor:'', text:''}
+};
+
+function load(){
+ try{
+  var raw=window.localStorage.getItem(KEY);
+  if(raw){
+   var o=JSON.parse(raw);
+   if(o && typeof o==='object'){
+    if(o.open) state.open=o.open;
+    if(o.seat) state.seat=o.seat;
+    if(Object.prototype.toString.call(o.notes)==='[object Array]') state.notes=o.notes;
+   }
+  }
+ }catch(e){ storageOK=false; }
+}
+function save(){
+ try{
+  window.localStorage.setItem(KEY, JSON.stringify({open:state.open, seat:state.seat, notes:state.notes}));
+ }catch(e){ storageOK=false; }
+}
+
+/* ---------- 4. Resolution ---------- */
+function secById(id){
+ for(var i=0;i<SECTORS.length;i++){ if(SECTORS[i].id===id) return SECTORS[i]; }
+ return null;
+}
+function isOpen(id){ return !!state.open[id]; }
+
+function ownerOf(id){
+ var s=secById(id), seen={};
+ while(s && !seen[s.id]){
+  if(isOpen(s.id)) return s;
+  seen[s.id]=1;
+  s = s.into ? secById(s.into) : null;
+ }
+ return null;   /* fell out of S56 — Center has it */
+}
+function answerFor(id){
+ var own=ownerOf(id);
+ return own ? {kind:'sector', sec:own} : {kind:'center', cs:CENTER.cs, name:CENTER.name};
+}
+function foldedInto(id){
+ return SECTORS.filter(function(x){
+  if(x.id===id) return false;
+  var o=ownerOf(x.id); return o && o.id===id;
+ });
+}
+function notesFor(anchor){
+ return state.notes.filter(function(n){ return n.anchor===anchor; });
+}
+
+/* ---------- 5. Helpers ---------- */
+function esc(s){
+ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function anchorLabel(a){
+ if(!a) return 'General';
+ var s=secById(a);
+ if(s) return s.name+' sector';
+ var q=OPEN_Q.filter(function(x){ return x.id===a; })[0];
+ return q ? q.q : a;
+}
+function stamp(){
+ var d=new Date();
+ function p(n){ return (n<10?'0':'')+n; }
+ return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes());
+}
+
+/* ---------- 6. Render: sectors ---------- */
+function sectorsHtml(){
+ return SECTORS.map(function(s){
+  var open=isOpen(s.id), seat=(state.seat===s.id);
+  var cls='zlc-sec'+(open?' open':'')+(seat?' seat':'');
+  var status;
+  if(seat)      status='<b>Your seat.</b> Staffed.';
+  else if(open) status='Staffed by someone else.';
+  else {
+   var ans=answerFor(s.id);
+   status = ans.kind==='sector'
+     ? 'Closed &mdash; folds into <b>'+esc(ans.sec.name)+'</b> on '+esc(ans.sec.frq)+'.'
+     : 'Closed &mdash; leaves S56 to <b>'+esc(ans.name)+'</b>.';
+  }
+  var nc=notesFor(s.id).length;
+  return '<div class="'+cls+'">'
+   +'<div class="hd" onclick="zlcToggle(\''+s.id+'\')"><span class="nm">'+esc(s.name)+'</span><span class="id">'+esc(s.id)+' &middot; '+esc(s.sop)+'</span></div>'
+   +'<div class="frq" onclick="zlcToggle(\''+s.id+'\')">'+esc(s.frq)+' <span class="cs">'+esc(s.cs)+'</span></div>'
+   +'<div class="role">'+esc(s.role)+'</div>'
+   +'<div class="st">'+status+'</div>'
+   +'<div class="acts">'
+     +'<button onclick="zlcSeat(\''+s.id+'\')">Take seat</button>'
+     +'<button class="'+(nc?'has':'')+'" onclick="zlcNoteOn(\''+s.id+'\')">Note'+(nc?' ('+nc+')':'')+'</button>'
+   +'</div>'
+   +'</div>';
+ }).join('');
+}
+
+function presetsHtml(){
+ var h=PRESETS.map(function(p){
+  var on=SECTORS.every(function(s){ return !!p.open[s.id] === isOpen(s.id); });
+  return '<button class="'+(on?'on':'')+'" onclick="zlcPreset(\''+p.id+'\')">'+esc(p.label)+'</button>';
+ }).join('');
+ var n=SECTORS.filter(function(s){ return isOpen(s.id); }).length;
+ return h+'<span class="sub">'+n+' of '+SECTORS.length+' open</span>';
+}
+
+function ownershipHtml(){
+ var rows=SECTORS.map(function(s){
+  var ans=answerFor(s.id);
+  var who = ans.kind==='sector'
+    ? esc(ans.sec.name)+(ans.sec.id===s.id?'':' <span class="zlc-mono" style="color:var(--dim2)">(combined)</span>')
+    : '<span style="color:var(--amber)">'+esc(ans.name)+'</span>';
+  var frq = ans.kind==='sector' ? ans.sec.frq : '&mdash;';
+  return '<tr><td>'+esc(s.name)+'</td><td class="d">'+esc(s.app)+'</td><td>'+who+'</td><td class="m">'+frq+'</td></tr>';
+ }).join('');
+ return '<table class="zlc-tbl"><thead><tr><th>Sector</th><th>Chart</th><th>Answered by</th><th>Frequency</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+
+function treeHtml(){
+ function line(id, prefix, last){
+  var s=secById(id);
+  var kids=SECTORS.filter(function(x){ return x.into===id; });
+  var mark=isOpen(id)?'<i>●</i>':'<span style="color:var(--dim2)">○</span>';
+  var nm=isOpen(id)?'<b>'+esc(s.name)+'</b>':esc(s.name);
+  var out=prefix+(prefix?(last?'└── ':'├── '):'')+mark+' '+nm+'  '+esc(s.cs)+'  '+esc(s.frq)+'\n';
+  var np=prefix+(prefix?(last?'    ':'│   '):'    ');
+  kids.forEach(function(k,i){ out+=line(k.id, np, i===kids.length-1); });
+  return out;
+ }
+ var roots=SECTORS.filter(function(s){ return s.into===null; });
+ var out='<b>'+esc(CENTER.cs)+'</b>  '+esc(CENTER.name)+'\n';
+ roots.forEach(function(r,i){ out+=line(r.id,'    ', i===roots.length-1); });
+ return '<pre class="zlc-tree">'+out+'</pre>';
+}
+
+function seatHtml(){
+ var s=secById(state.seat);
+ if(!s) return '<p class="zlc-sub">No seat taken.</p>';
+ var folded=foldedInto(s.id);
+ var h='<p class="zlc-sub">You are <b style="color:var(--ink)">'+esc(s.name)+'</b>, working as <b style="color:var(--ink)">'+esc(RADIO)+'</b> on <span class="zlc-mono" style="color:var(--green)">'+esc(s.frq)+'</span> &mdash; login <span class="zlc-mono">'+esc(s.cs)+'</span>.</p>';
+ h+='<p class="zlc-sub">'+esc(s.duty)+' <span style="color:var(--dim2)">(S56 7110.20C '+esc(s.sop)+'-1, airspace '+esc(s.app)+(s.excl?', '+esc(s.excl):'')+')</span></p>';
+ if(folded.length){
+  h+='<p class="zlc-sub">Also yours right now: <b style="color:var(--amber)">'+folded.map(function(x){return esc(x.name);}).join(', ')+'</b>.</p>';
+ } else {
+  h+='<p class="zlc-sub">Nothing folds into you &mdash; you have your own airspace only.</p>';
+ }
+ var orphans=SECTORS.filter(function(x){ return answerFor(x.id).kind==='center'; });
+ if(orphans.length){
+  h+='<div class="zlc-note"><b>'+orphans.map(function(x){return esc(x.name);}).join(', ')
+   +' '+(orphans.length===1?'is':'are')+' not held by anyone in S56</b> in this configuration &mdash; by the inheritance tree that airspace belongs to '
+   +esc(CENTER.name)+'. Whether that is how it actually works with this many controllers is one of the open questions below.</div>';
+ }
+ return h;
+}
+
+/* ---------- 7. Render: notes ---------- */
+function noteFormHtml(){
+ var opts='<option value="">General &mdash; not tied to a sector</option>';
+ opts+='<optgroup label="Sector">'+SECTORS.map(function(s){
+  return '<option value="'+s.id+'"'+(state.draft.anchor===s.id?' selected':'')+'>'+esc(s.name)+'</option>';
+ }).join('')+'</optgroup>';
+ opts+='<optgroup label="Open question">'+OPEN_Q.map(function(q){
+  return '<option value="'+q.id+'"'+(state.draft.anchor===q.id?' selected':'')+'>'+esc(q.q)+'</option>';
+ }).join('')+'</optgroup>';
+
+ var kinds=KINDS.map(function(k){
+  return '<option value="'+k.id+'"'+(state.draft.kind===k.id?' selected':'')+'>'+esc(k.label)+'</option>';
+ }).join('');
+
+ return '<div class="zlc-nform">'
+  +'<textarea id="zlc-ntext" placeholder="What did you learn, get corrected on, or want to check? Write it the way you would say it back." oninput="zlcDraftText(this.value)">'+esc(state.draft.text)+'</textarea>'
+  +'<div class="zlc-nrow">'
+    +'<select id="zlc-nkind" onchange="zlcDraftKind(this.value)">'+kinds+'</select>'
+    +'<select id="zlc-nanchor" onchange="zlcDraftAnchor(this.value)" style="flex:1 1 240px">'+opts+'</select>'
+    +'<button class="zlc-nadd" onclick="zlcAddNote()">Add note</button>'
+  +'</div>'
+  +'</div>';
+}
+
+function noteListHtml(filter){
+ var list=state.notes.slice().sort(function(a,b){ return b.ts<a.ts?-1:1; });
+ if(filter) list=list.filter(filter);
+ if(!list.length) return '<p class="zlc-sub" style="margin-top:12px">No notes yet.</p>';
+ return '<div class="zlc-nlist">'+list.map(function(n){
+  return '<div class="zlc-n k-'+esc(n.kind)+'">'
+   +'<div class="nh"><span class="kind">'+esc(n.kind)+'</span><span class="anch">'+esc(anchorLabel(n.anchor))+'</span></div>'
+   +'<div class="body">'+esc(n.text)+'</div>'
+   +'<div class="meta"><span>'+esc(n.ts)+'</span><button onclick="zlcDelNote(\''+n.id+'\')">delete</button></div>'
+   +'</div>';
+ }).join('')+'</div>';
+}
+
+function openQHtml(){
+ return OPEN_Q.map(function(q){
+  var n=notesFor(q.id).length;
+  return '<div class="zlc-open">'
+   +'<div class="q">'+esc(q.q)+'</div>'
+   +'<div class="w">'+esc(q.w)+'</div>'
+   +'<span class="cnt">'+(n? n+' note'+(n===1?'':'s')+' attached &mdash; still open until someone marks it answered' : 'no notes yet')
+   +' &nbsp;<button style="font-family:var(--mono);font-size:10.5px;background:transparent;border:1px solid var(--line);border-radius:3px;color:var(--dim);padding:2px 7px;cursor:pointer" onclick="zlcNoteOn(\''+q.id+'\')">answer this</button></span>'
+   +'</div>';
+ }).join('');
+}
+
+function exportText(){
+ if(!state.notes.length) return 'No notes yet. Notes you add will appear here as a block you can paste into a reference file or hand to a mentor.';
+ var byAnchor={};
+ state.notes.forEach(function(n){
+  var k=anchorLabel(n.anchor);
+  (byAnchor[k]=byAnchor[k]||[]).push(n);
+ });
+ var out='# S56 student notes\n\nExported '+stamp()+' from s56-drill-deck.html (skeleton v0).\n';
+ Object.keys(byAnchor).sort().forEach(function(k){
+  out+='\n## '+k+'\n\n';
+  byAnchor[k].sort(function(a,b){ return a.ts<b.ts?-1:1; }).forEach(function(n){
+   out+='- **'+n.kind+'** ('+n.ts+') — '+n.text.replace(/\n+/g,' ')+'\n';
+  });
+ });
+ out+='\n---\nPromote anything here into claude_S56_Reference.md once it is confirmed, and cite who confirmed it.\n';
+ return out;
+}
+
+/* ---------- 8. Sections ---------- */
+function posHtml(){
+ return '<section class="zlc-section" id="mod-pos">'
+  +'<div class="zlc-tag">Step one</div>'
+  +'<h2>Sectors</h2>'
+  +'<p class="zlc-sub">Nine sectors. Click a name or a frequency to open or close it; take a seat to see what that seat owns. Frequencies are quoted from each sector’s own paragraph in chapter 3 of the SOP.</p>'
+  +'<div class="zlc-bar" id="zlc-presets"></div>'
+  +'<div class="zlc-secs" id="zlc-secs"></div>'
+  +'<div class="zlc-panel"><h3>Combining tree</h3>'
+    +'<p class="zlc-sub" style="font-size:13px">Filled markers are open. Three sectors sit directly under Center &mdash; Lake, Bear and Valley &mdash; and everything else folds into one of them.</p>'
+    +'<div id="zlc-tree"></div></div>'
+  +'<div class="zlc-panel"><h3>Who owns what, right now</h3><div id="zlc-own"></div></div>'
+  +'</section>'
+
+  +'<section class="zlc-section" id="mod-seat">'
+  +'<div class="zlc-tag">Step two</div>'
+  +'<h2>Your seat</h2>'
+  +'<div class="zlc-panel" id="zlc-seat"></div>'
+  +'</section>';
+}
+
+function notesHtml(){
+ return '<section class="zlc-section" id="mod-notes">'
+  +'<div class="zlc-tag">Step three</div>'
+  +'<h2>Student notes</h2>'
+  +'<p class="zlc-sub">This is the part of the tool that is supposed to grow. A note attaches to a sector or to one of the open questions, so when it is confirmed it has an obvious home in the data above. Nothing here is graded and nothing is sent anywhere.</p>'
+  +'<div class="zlc-panel"><h3>Add a note</h3><div id="zlc-nform"></div></div>'
+  +'<div class="zlc-panel"><h3>Open questions the documents do not answer</h3>'
+    +'<p class="zlc-sub" style="font-size:13px">Each of these is a real gap, not a placeholder. Answering one is the most useful note you can write.</p>'
+    +'<div id="zlc-openq"></div></div>'
+  +'<div class="zlc-panel"><h3>Everything noted</h3><div id="zlc-nlist"></div></div>'
+  +'<div class="zlc-panel"><h3>Export</h3>'
+    +'<p class="zlc-sub" style="font-size:13px">Markdown, ready to paste into a reference file or send to a mentor. Notes live in this browser only &mdash; export before clearing site data.</p>'
+    +'<textarea class="zlc-xport" id="zlc-xport" readonly></textarea>'
+    +'<div class="zlc-bar"><button onclick="zlcCopy()">Select all</button><span class="sub" id="zlc-store"></span></div></div>'
+  +'</section>';
+}
+
+function stubHtml(){
+ return '<section class="zlc-section" id="mod-stubs">'
+  +'<div class="zlc-tag warn">Not built yet</div>'
+  +'<h2>Empty slots</h2>'
+  +'<p class="zlc-sub">Named so the gaps are visible rather than discovered later. Each is a place a future block mounts, in this order.</p>'
+  +'<div class="zlc-split">'
+  +'<div class="zlc-stub"><span class="lbl">Slot 1 &middot; geometry</span><h3>Delegated airspace and gates</h3>'
+  +'<p>Appendices 1 and 3 are chart images with no text layer. Antelope, Keyhole, Jepson, Avon and Bird are gate names with no coordinates; P2, P3 and P4 are areas with no shape. Everything spatial waits on recovering these.</p></div>'
+
+  +'<div class="zlc-stub"><span class="lbl">Slot 2 &middot; configuration</span><h3>North Flow and South Flow</h3>'
+  +'<p>The SOP defines North Flow as 34L/34R/35/32 and South Flow as 16L/16R/17/14, and almost every sector procedure branches on it. The selector does not model flow yet, so the duty text shows both branches.</p></div>'
+
+  +'<div class="zlc-stub"><span class="lbl">Slot 3 &middot; engine</span><h3>Traffic, scope and clock</h3>'
+  +'<p>No aircraft model and no scope. The M98 deck is the pattern: geometry and reference values in one place, downstream blocks reading them through a single bridge object rather than keeping copies.</p></div>'
+
+  +'<div class="zlc-stub"><span class="lbl">Slot 4 &middot; grading</span><h3>Standing training items</h3>'
+  +'<p>Deliberately empty. In the M98 tool the standing items came out of real session notes; the same should happen here, which is what the notes section above is for.</p></div>'
+  +'</div>'
+  +'</section>';
+}
+
+/* ---------- 9. Render ---------- */
+function render(){
+ var el;
+ el=document.getElementById('zlc-presets'); if(el) el.innerHTML=presetsHtml();
+ el=document.getElementById('zlc-secs');    if(el) el.innerHTML=sectorsHtml();
+ el=document.getElementById('zlc-tree');    if(el) el.innerHTML=treeHtml();
+ el=document.getElementById('zlc-own');     if(el) el.innerHTML=ownershipHtml();
+ el=document.getElementById('zlc-seat');    if(el) el.innerHTML=seatHtml();
+ el=document.getElementById('zlc-openq');   if(el) el.innerHTML=openQHtml();
+ el=document.getElementById('zlc-nlist');   if(el) el.innerHTML=noteListHtml(null);
+ el=document.getElementById('zlc-xport');   if(el) el.value=exportText();
+ el=document.getElementById('zlc-store');
+ if(el) el.textContent = storageOK ? (state.notes.length+' note'+(state.notes.length===1?'':'s')+' saved in this browser')
+                                   : 'storage unavailable — notes are in memory only, export before closing';
+ for(var i=0;i<ZLC.hooks.length;i++){ try{ ZLC.hooks[i](); }catch(e){} }
+}
+function renderForm(){
+ var el=document.getElementById('zlc-nform');
+ if(el) el.innerHTML=noteFormHtml();
+}
+
+/* ---------- 10. Actions ---------- */
+window.zlcToggle=function(id){
+ if(isOpen(id)){
+  delete state.open[id];
+  if(state.seat===id){
+   var own=ownerOf(id);
+   state.seat = own ? own.id : null;
+  }
+ } else {
+  state.open[id]=1;
+ }
+ save(); render();
+};
+window.zlcSeat=function(id){
+ if(!isOpen(id)) state.open[id]=1;
+ state.seat=id;
+ save(); render();
+};
+window.zlcPreset=function(pid){
+ var p=PRESETS.filter(function(x){ return x.id===pid; })[0];
+ if(!p) return;
+ state.open=JSON.parse(JSON.stringify(p.open));
+ if(!isOpen(state.seat)){
+  var first=SECTORS.filter(function(s){ return isOpen(s.id); })[0];
+  state.seat=first?first.id:null;
+ }
+ save(); render();
+};
+
+window.zlcDraftText=function(v){ state.draft.text=v; };
+window.zlcDraftKind=function(v){ state.draft.kind=v; };
+window.zlcDraftAnchor=function(v){ state.draft.anchor=v; };
+
+window.zlcNoteOn=function(anchor){
+ state.draft.anchor=anchor;
+ renderForm();
+ var el=document.getElementById('zlc-ntext');
+ if(el && el.focus){ el.focus(); }
+ if(el && el.scrollIntoView){ el.scrollIntoView({block:'center'}); }
+};
+
+window.zlcAddNote=function(){
+ var t=(state.draft.text||'').replace(/^\s+|\s+$/g,'');
+ if(!t) return;
+ state.notes.push({
+  id:'n'+Date.now()+Math.floor(Math.random()*1000),
+  kind:state.draft.kind||'question',
+  anchor:state.draft.anchor||'',
+  text:t,
+  ts:stamp()
+ });
+ state.draft.text='';
+ save(); renderForm(); render();
+};
+
+window.zlcDelNote=function(id){
+ state.notes=state.notes.filter(function(n){ return n.id!==id; });
+ save(); render();
+};
+
+window.zlcCopy=function(){
+ var el=document.getElementById('zlc-xport');
+ if(el && el.select){ el.select(); }
+};
+
+/* ---------- 11. Mount ---------- */
+function mountAll(){
+ var wrap=document.querySelector('.wrap')||document.body;
+ if(!wrap) return;
+ load();
+ if(!secById(state.seat) || !isOpen(state.seat)){
+  var first=SECTORS.filter(function(s){ return isOpen(s.id); })[0];
+  state.seat=first?first.id:'B';
+ }
+ var mount=document.createElement('div');
+ mount.innerHTML=posHtml()+notesHtml()+stubHtml();
+ var foot=wrap.querySelector('footer');
+ if(foot){ wrap.insertBefore(mount, foot); } else { wrap.appendChild(mount); }
+ var nav=document.getElementById('modnav');
+ if(nav){ nav.innerHTML += '<a href="#mod-pos">SECTORS</a><a href="#mod-seat">SEAT</a><a href="#mod-notes">NOTES</a><a href="#mod-stubs">GAPS</a>'; }
+ renderForm();
+ render();
+}
+
+/* ---------- 12. Extension bridge ---------- */
+window.ZLC = {
+ version:0, skeleton:true, facility:'S56', hooks:[],
+ RADIO:RADIO, CENTER:CENTER, SECTORS:SECTORS, PRESETS:PRESETS,
+ OPEN_Q:OPEN_Q, KINDS:KINDS,
+ state:state,
+ secById:secById, isOpen:isOpen, ownerOf:ownerOf, answerFor:answerFor,
+ foldedInto:foldedInto, notesFor:notesFor,
+ render:render, renderForm:renderForm, save:save, exportText:exportText, esc:esc
+};
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
+else { mountAll(); }
+})();
+</script>
+</body>
+</html>

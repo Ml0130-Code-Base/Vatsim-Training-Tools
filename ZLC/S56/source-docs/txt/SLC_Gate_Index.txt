@@ -1,0 +1,133 @@
+                            SLC Gate Index
+
+                                                   June 2026 Edition
+      Ramp Is Uncontrolled This Is For Reference For Those Pilots Who Want To Know
+
+           And For The Controller To Find A Spot To Allow Aircraft Enter The Ramp
+                                 The "W" Suffix Stands For Widebody Gate.
+
+CONCOURSE A: Delta Domestic/All International Flights
+
+Spot 1 West: Enter At Taxiway A4
+
+A2: Delta
+A4: Delta
+A6: Delta
+A8: Delta
+A10: Delta
+A12: Delta
+A14: Delta
+A16: Delta
+A18: Delta
+A20: Delta
+A22: Delta
+A24: Delta
+
+Spot 2 West (South): Enter At Taxiway A5
+
+A3: Delta
+A5: Delta
+A7: Delta
+A9: Delta
+A11: Delta
+A13: Delta
+A15 (International): Common Use Gate*
+A15 (Domestic): Delta
+A17: Delta
+A19W (International): Common Use Gate*
+A19W (Domestic): Delta
+A21W (International/Domestic): Delta
+A23: Delta
+A25W (International): Common Use Gate*
+
+A15: Used Mostly By Volaris, Delta
+A19: Used Mostly By Aeromexico, Delta
+A25 (Domestic): Delta
+
+Spot 2 East (South): Enter At Taxiway G6
+
+A27: Delta
+A29: Delta
+A31: Delta
+A33W (International): Delta
+A35: Delta
+A37: Delta
+A39: Delta
+A41: Delta
+A43: Delta
+A45: Delta
+A47: Delta
+A49: Delta
+
+Spot 1 East: Enter At Taxiway G5 (1 E North)
+
+A26: Delta
+A28: Delta
+A30: Delta
+A32: Delta
+A34: Delta
+A36: Delta
+A38: Delta
+A40: Delta
+A42: Delta
+A44: Delta
+
+CONCOURSE B: Domestic All Air Carriers/Canadian Flights
+
+Spot 2 West (North): Enter At Taxiway A5
+
+B2: Common Use Gate*
+B4: Alaska
+B6: Alaska
+B8: Alaska
+B10: United
+B12: United
+B14: United
+B16: United
+
+A25: Used Mostly By KLM, Delta
+B2: Used Mostly By American, United
+B18: Southwest
+B20: Delta
+B22: Delta
+
+Spot 2 East(North): Enter At Taxiway G7
+
+B24: Delta
+B26: Delta
+B28: Delta
+B30: Delta
+B32: Delta
+B34: Southwest
+B36: Southwest
+B38: Southwest
+
+Spot 16: Enter At Taxiway F5 Or Spot 2W North To Taxilane C)
+
+B1: Common Use Gate*
+B3: Frontier
+B5: American
+B7: American
+
+Spot 14: Enter At Taxiway F4
+
+B9: American
+B11: American
+B13: United
+B15: Southwest
+B17: Southwest
+
+Spot 12: Enter At Taxiway F3
+
+B19: Common Use Gate*
+B21: Delta
+B23: Delta
+B25: Delta
+B27: Delta
+B29: Delta
+B31: Southwest
+B33: Southwest
+
+B1: Used Mostly By Air Canada, American, Frontier
+B19: Used Mostly By Sun Country, Westjet, Jetblue, United
+

@@ -1,0 +1,189 @@
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+                                    LETTER OF AGREEMENT
+
+                                  EFFECTIVE: November 1, 2024
+
+SUBJECT: Coordination Procedures
+
+1. PURPOSE: This Letter of Agreement establishes procedures for handling air traffic between
+Salt Lake City Air Route Traffic Control Center (ZLC ARTCC) and Boise Airport Traffic Control
+Tower/Terminal Radar Approach Control (herein referred to as "Big Sky TRACON").
+
+2. SCOPE: To establish standard operating procedures for the coordination and control of
+aircraft between ZLC ARTCC and Big Sky TRACON on the VATSIM network. This letter of
+agreement is supplemental to vZLC Facility Policy and FAA Order JO 7110.65. The information
+contained herein is to be used for flight simulation purposes only on the VATSIM network. It is
+not intended, nor should it be used for, real-world navigation. The Virtual Salt Lake City ARTCC
+is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+3. RESPONSIBILITIES:
+
+    a. All controllers staffing (or controlling overlying airspace containing) ZLC ARTCC and/or
+         Big Sky TRACON positions (not including Bozeman Radar) are required to be familiar
+         with the provisions of this document.
+
+    b. ZLC ARTCC delegates responsibility to Big Sky TRACON for providing terminal air traffic
+         control services within the airspace depicted in Attachment 1.
+
+4. DEFINITIONS:
+
+    a. Arrival Fix: A fix on the ZLC ARTCC/Big Sky TRACON common airspace boundary for
+         use by arrival aircraft, as depicted in Attachment 3, Figure 1, and described in
+         Attachment 3, Table 1.
+
+    b. Departure Fix: A fix on the ZLC ARTCC/Big Sky TRACON common airspace boundary
+         for use by departing aircraft, as depicted in Attachment 3, Figure 1, and described in
+         Attachment 3, Table 2.
+
+    c. Corridor: Areas on the ZLC ARTCC/Big Sky TRACON common airspace boundary used
+         by both arrivals and departures, as depicted in Attachment 3, Figure 1, and described in
+         Attachment 3, Table 3.
+
+5. GENERAL PROCEDURES:
+
+    a. Big Sky TRACON must keep ZLC ARTCC advised of the runway flow in use.
+
+    b. Each facility must be responsible for any required intra-facility coordination.
+
+Not for real world use.                                                                           1
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+    c. Overflight aircraft must be routed as filed.
+
+6. ARRIVAL PROCEDURES:
+    a. BOI arrival aircraft must be:
+              (1) Assigned an RNAV STAR, or;
+              (2) Routed via an arrival fix then direct BOI VORTAC/KBOI, or;
+              (3) Routed through the ELLIS corridor direct BOI VORTAC/KBOI, or;
+              (4) Routed through the EUUGG corridor direct BOI VORTAC/KBOI.
+    b. Satellite airport arrival aircraft must be:
+              (1) Routed via an arrival fix, direct BOI, direct destination, or;
+              (2) Routed through the ELLIS corridor direct destination, or;
+              (3) Routed through the EUUGG corridor, direct BOI, direct destination.
+    c. ZLC ARTCC must issue altitudes to arrival aircraft in accordance with the following:
+              (1) Aircraft assigned an RNAV STAR must be cleared to descend via the STAR and
+                   issued the landing direction.
+              (2) Aircraft not assigned an RNAV STAR and routed via an arrival fix:
+                        (a) Operating at or above FL180: The aircraft must be assigned 17,000 feet
+                             MSL.
+                        (b) Operating below 17,000 feet MSL: The aircraft must be level five (5) NM
+                             prior to crossing the lateral boundary of Big Sky TRACON airspace.
+              (3) Aircraft not assigned an RNAV STAR and routed through the ELLIS or EUUGG
+                   corridor: Assigned 17,000 feet MSL.
+    d. A handoff and communications transfer of arriving aircraft constitutes a transfer of
+         control to Big Sky TRACON for:
+              (1) Descent.
+              (2) Turns up to 40° either side of the previous course.
+              (3) Speed reductions within the confines of the lateral boundaries of Big Sky
+                   TRACON airspace.
+    e. ZLC ARTCC must handoff aircraft that will enter Big Sky TRACON airspace to the
+         appropriate sector, in accordance with Attachment 2.
+
+Not for real world use.                                                                              2
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+7. DEPARTURE PROCEDURES:
+
+    a. Big Sky TRACON must provide five (5) NM of separation, constant or increasing, to ZLC
+         ARTCC.
+
+    b. Aircraft must be assigned 16,000 feet MSL or the requested altitude, if lower.
+    c. Aircraft must be routed via a departure fix and at or above the minimum altitude for the
+
+         fix, in accordance with Attachment 3.
+    d. Aircraft that are unable to be routed via a departure fix must be:
+
+              (1) Assigned routing that exits Big Sky TRACON airspace through the ELLIS or
+                   EUUGG corridors, or;
+
+              (2) Issued the filed flight plan, if coordinated with ZLC ARTCC.
+    e. A handoff and communications transfer of departing aircraft constitutes a transfer of
+
+         control to ZLC ARTCC for turns up to 40° either side of the previous course.
+
+8. ATTACHMENTS:
+    a. Attachment 1. Big Sky TRACON Airspace
+    b. Attachment 2. Big Sky TRACON Sectorization
+    c. Attachment 3. Arrival/Departure Fixes and Corridors
+
+9. APPROVED:
+
+Not for real world use.  3
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+                                  Attachment 1. Big Sky TRACON Airspace
+
+                            Figure 1. Big Sky TRACON Lateral Airspace Depiction
+
+NOTE-
+Big Sky TRACON is also delegated terminal airspace overlying Bozeman (BZN). Depictions and
+coordination procedures between ZLC ARTCC and Big Sky TRACON for the Bozeman Radar
+sector can be found in a separate Letter of Agreement.
+
+Not for real world use.                                                                           4
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+                               Attachment 2. Big Sky TRACON Sectorization
+
+                            Figure 1. Big Sky TRACON Sectorization (East Flow)
+
+Not for real world use.                                                                           5
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+                            Figure 2. Big Sky TRACON Sectorization (West Flow)
+
+Not for real world use.                                                                           6
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+                          Attachment 3. Arrival/Departure Fixes and Corridors
+
+                          Figure 1. Arrival/Departure Fixes and Corridors Depiction
+
+Not for real world use.                                                                           7
+Salt Lake City Air Route Traffic Control Center and Boise Airport Traffic Control Tower/Terminal
+Radar Approach Control
+
+                                          Table 1. Arrival Fixes Description
+
+                         Arrival Fix Associated STAR      FRD
+                                                      BOI204041
+                         SADYL          SADYL#        BOI291041
+                                                      BOI325041
+                         MAALR          KYANN#        BOI086039
+                                                      BOI111039
+                         CHUKA          BEWTE#
+
+                         KOURT          KOURT#
+
+                         TAUTT          SPUDD#
+
+Table 2. Departure Fixes Description and Minimum Required Altitude
+
+                         Departure Fix      FRD    Minimum Altitude (MSL)
+                             HYVAL      BOI215041              10,000'
+                              SAILL     BOI268041               8,000'
+                             OLAAH      BOI309040              10,000'
+                              VALYY     BOI350040              11,000'
+                             FETHR      BOI071039              13,000'
+                             ROARR      BOI096039              10,000'
+                             BARNR      BOI030039              13,000'
+
+                         Table 3. Arrival/Departure Corridors Description
+
+Corridor                                                     Description
+ ELLIS
+EUUGG                      A line beginning 6NM northwest of HYVAL clockwise along the
+                                  ZLC-BOI airspace boundary to 6NM south of SAILL
+
+                         A line beginning 6NM east of VALYY clockwise along the ZLC-BOI
+                                        airspace boundary to 6NM north of FETHR
+
+Not for real world use.                                                                           8
+

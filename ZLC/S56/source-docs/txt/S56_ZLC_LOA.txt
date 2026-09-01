@@ -1,0 +1,452 @@
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+C ontrol
+
+                                    LETTER OF AGREEMENT
+
+                                   EFFECTIVE: May 14, 2026
+
+S UBJECT: Coordination Procedures
+
+1 . PURPOSE:This Letter of Agreement establishesprocedures for handling air traffic between
+S alt Lake City Air Route Traffic Control Center (ZLC ARTCC) and Salt Lake City Terminal Radar
+Approach Control (S56 TRACON).
+
+2. SCOPE:T o establish standard operating proceduresfor the coordination and control of
+aircraft between ZLC ARTCC and S56 TRACON on the VATSIM network. This letter of
+a greement is supplemental to vZLC Facility Policy and FAA Order JO 7110.65. The information
+c ontained herein is to be used for flight simulation purposes only on the VATSIM network. It is
+n ot intended, nor should it be used for, real-world navigation. The Virtual Salt Lake City ARTCC
+is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+3. RESPONSIBILITIES:
+
+    a . All controllers staffing (or controlling overlying airspace containing) ZLC ARTCC and/or
+         S 56 TRACON positions are required to be familiar with the provisions of this document.
+
+    b . ZLC ARTCC delegates responsibility to S56 TRACON for providing terminal air traffic
+         control services within the airspace depicted in Attachment 1.
+
+4. DEFINITIONS:
+
+    a . North Flow: Operations at SLC utilizing Runways 34L, 34R and 35.
+
+    b. S outh Flow: Operations at SLC utilizing Runways 16L, 16R and 17.
+
+    c. Miles in Trail (MIT): Spacing between aircraft of similar types (jet to jet, prop to prop,
+         etc.) that, after crossing defined fixes, will remain constant. For unlike types, the spacing
+         w ill be accomplished when the succeeding aircraft crosses the defined fix.
+
+         NOTE-
+         T his definition assumes that the receiving facility issues no control instructions.
+
+         N OTE-
+         F or departures (from S56 to ZLC), MIT will be maintained until the succeeding aircraft
+         c rosses the common boundary.
+
+    d. A rrival Fix: The location(s) where speed and spacing will be accomplished from ZLC to
+         S56. These fixes are listed in Table 1.
+
+Not for real world use.                                                                     1
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+Control
+
+                         T able 1. Arrival Fixes
+
+D irection of Arrival                     Defined Fixes
+
+N orth                   B EARR or CARTR
+
+South                    J AMMN, SPANE, YMONT, or 20 DME south of FFU (within
+                         PAYSON Gate)
+
+W est                    K NOLE or 40 DME west of TCH (within DELLE Gate)
+
+    e . N ear Gate: Arrival aircraft inbound to the following gates must be considered Near Gate
+         arrivals.
+
+              (1) North Flow: PANEL and PAYSON gates.
+
+              (2) South Flow: BIRD and AVON gates.
+
+    f. Far Gate: Arrival aircraft inbound to the following gates must be considered Far Gate
+         arrivals.
+
+              (1) North Flow: BIRD and AVON gates.
+
+              (2) S outh Flow: PANEL and WILLOW gates.
+
+    g . Northern Satellite (N Sats): Airports within S56 TRACON airspace that are located north
+         of the 41st parallel north. These airports are BMC, HIF, and OGD.
+
+    h. Southern Satellites (S Sats): Airports within S56 TRACON airspace that are located
+         south of the 41st parallel north (excluding SLC). These airports are BTF, PVU, SPK,
+         T VY, and U42.
+
+5. GENERAL:
+
+    a. W hen SLC ATCT advises S56 TRACON of a runway change, S56 TRACON must notify
+         ZLC ARTCC of the runway change. Coordination must include, but is not limited to:
+
+              (1) T he number of remaining departures in the old configuration and the callsign of
+                   the last departure assigned the old departure routing.
+
+              (2) T he callsign of the last arrival that will be accepted on the old arrival routing.
+
+6. ARRIVALS:
+
+    a. S 56 TRACON must:
+
+              (1) Have control for the following within 20 NM of the common boundary:
+
+Not for real world use.                                                                     2 
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+C ontrol
+
+                        (a) Descent.
+                        (b) Turns within the confines of the gate.
+                        (c) S peed increases.
+                        (d) S peed decreases, provided the aircraft is 1,000 feet below the last
+
+                             a ltitude assigned by ZLC ARTCC.
+              (2) Assign LGU arrivals the following:
+
+                        (a) R outing direct to HUSEM or JIPOS.
+                        (b) A descent to 12,000 feet MSL.
+
+                   N OTE-
+                   F or LGU arrivals, ZLC ARTCC has control for descent at JIPOS.
+
+    b. Z LC ARTCC must:
+              (1) Ensure all RNAV-capable jet aircraft inbound to SLC are established on an RNAV
+                   S TAR, except when the aircraft indicates they are unable to comply.
+              (2) E nsure arriving aircraft enter S56 TRACON airspace established on the
+                   appropriate STAR or route and at the appropriate altitude, in accordance with
+                   Attachment 2.
+
+                   N OTE-
+                   ZLC ARTCC must not issue a "descend via" clearance to comply with this
+                   requirement. A crossing restriction or "hard descent" must be issued.
+
+              (3) Ensure all jet aircraft cross the gate at the following speeds:
+                        (a) Near Gate and DELLE Gate: 250 kts.
+                        (b) F ar Gate: 280 kts.
+                        (c) A VON/BIRD Gate and landing at N Sats: 250 kts or less.
+
+N ot for real world use.  3
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+Control
+
+              (4) C omply with the following Traffic Management Initiatives:
+
+                        (a) N ear Gate jet and turboprop aircraft must not be less than 5 MIT,
+                             regardless of altitude, as the trailing aircraft enters S56 TRACON
+                             a irspace.
+
+                        (b) W hen a jet aircraft is less than 5 MIT of a turboprop aircraft over the
+                             D ELLE Gate, a subsequent DELLE Gate arrival must be sequenced a
+                             m inimum of 10 MIT of the preceding jet aircraft.
+
+              (5) Issue expected runways to jet aircraft landing at SLC in accordance with
+                   Attachment 4, unless otherwise coordinated with S56 TRACON.
+
+7 . DEPARTURES:
+
+    a . S56 TRACON must:
+
+              (1) P rovide ZLC ARTCC with 5 MIT between successive departures, constant or
+                   increasing, unless transitional separation (see 7.c.) is being used.
+
+              (2) Ensure departing aircraft enter ZLC ARTCC airspace at, or climbing to, the
+                   appropriate altitude (or lower filed altitude) in accordance with Attachment 3.
+
+    b. Z LC ARTCC must have control for the following within 20 NM of the common boundary:
+
+              (1) C limb to filed altitude.
+
+              (2) Turns out of the gate, provided the turns do not exceed 30° either side of the
+                   previous course.
+
+    c. T ransitional Separation:
+
+              (1) W hen transitioning from terminal to enroute control, separation as described in
+                   FAA Order JO 7110.65 Paragraph 5-5-4.d.4. is authorized between departing
+                   aircraft on diverging routes/courses that will enter ZLC ARTCC airspace.
+
+              (2) S56 TRACON must establish aircraft on the diverging routes/courses prior to the
+                   c ommon boundary and prior to communications transfer.
+
+              (3) T ransitional separation must only be utilized between aircraft departing on the
+                   following routes:
+
+                        (a) ZIONZ#.ROMMN/FFU133R and ZIONZ#.LODUY/FFU170R.
+
+                        (b) CGULL#/TCH296R and DEZRT#/V32/250° heading.
+
+                        (c) A RCHZ#/SEVYR#/TCH193R and TCH182R.
+
+                        (d) A ll SANDY and BRIGHTON gate departures.
+
+Not for real world use.  4
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+C ontrol
+7. HOLDING:
+
+    a . P rimary holding will normally be accomplished at the holding fixes of BVL, LHO,
+         JAMMN, and SPANE. When ZLC is instructed to hold, S56 will normally accept handoffs
+         on all aircraft inside the fixes listed above and within S56 airspace.
+
+    b . When S56 requests holding from ZLC sector 32 and/or 11, S56 must release the
+         JAMMN and SPANE Shelves. ZLC will return the airspace to S56 when it is no longer
+         n eeded for holding.
+
+    c. S TACO Holding Plan Procedures
+
+              (1) S56 TMU/CIC serves as the focal point between ZLC TMU, ZLC Sector 40, and
+                   all affected S56 sectors for execution of the STACO holding plane. S56 TMU will
+                   ensure coordination with all impacted S56 sectors to confirm protection of the
+                   d esignated airspace.
+
+              (2) A ll aircraft held in the STACO Holding Plan must be on ZLC Sector 40 Frequency
+                   and held at or above FL190
+
+              (3) U pon Notification by S56 TMU/CIC to ZLC TMU to initiate the STACO Holding
+                   P lan, all S56 airspace underlying ZLC Sector 40 is released to ZLC Sector 40 at
+                   and above FL190.
+
+8 . OVERFLIGHT AIRCRAFT (EVENT ONLY):
+
+A ll overflight traffic at or above 15,000 feet MSL, along normal active jet arrival flows do not
+require verbal coordination with the exception of HCR arrivals. All other traffic must be verbally
+c oordinated on an individual basis no later than 5 minutes prior to entering S56 airspace.
+
+H EBER ARRIVALS: Aircraft transitioning S56 airspace must enter through the BIRD, DELLE, or
+P AYSON gates. ZLC must assign FL210 and direct TCH..CUVAK..HCR. S56 must hand-off
+a ircraft to ZLC Sector 03 CUVAK..HCR and assign 14,000. ZLC Sector 03 has control for speed
+a djustments, turns up to 30 degrees, and descent.
+
+8 . ATTACHMENTS:
+
+    a. A ttachment 1. S56 TRACON Airspace
+
+    b. Attachment 2. Arrival Routing/Altitudes
+
+    c. Attachment 3. Departure Routing/Altitudes
+
+    d . A ttachment 4. SLC Standard Arrival Runways
+
+9 . APPROVED:
+
+N ot for real world use.  5
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+C ontrol
+
+                                     Attachment 1. S56 TRACON Airspace
+
+                                 Figure 1. S56 TRACON Airspace (Land North)
+
+Not for real world use.                                                                     6 
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+C ontrol
+
+                                 Figure 2. S56 TRACON Airspace (Land South)
+
+Not for real world use.                                                                     7 
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+C ontrol
+
+                            A ttachment 2. Arrival Routing/Altitudes
+                          Table 1. Arrival Routing/Altitudes (Land North)
+
+G ate A irport               Turboprops                                Jets
+                          Route                               R oute
+                                         A ltitude                           A ltitude
+
+        SLC LHO#                         1 60       C ARTR# / LHO#           1 90
+
+A VON N Sats L HO..CARTR..OGD..DCT 1 30             LHO..CARTR..OGD..DCT 1 30
+
+        S Sats O GD.TAYTR# / OGD..DCT 200           OGD.TAYTR# / OGD..DCT 2 00
+
+        S LC BEARR#                      1 50       SKEES# / BEARR#          1 70
+
+BIRD N Sats OGD..DCT                     1 30       OGD..DCT                 1 30
+
+        S Sats OGD.TAYTR# / OGD..DCT 200            OGD.TAYTR# / OGD..DCT 200
+
+        SLC BVL#                         1 60       Y UTES# / BVL#           1 70
+
+D ELLE  A ll              W AATS..DCT    130        W AATS..DCT              1 70
+        S ats
+
+        P VU TAYTR#                      1 70       T AYTR#                  1 70
+
+        SLC S PANE#                      150        JAZZZ# / SPANE#          150
+
+P ANEL N Sats FFU..DCT                   2 10       FFU..DCT                 210
+
+        S Sats TAYTR# / FFU..DCT         130        T AYTR# / FFU..DCT       1 30
+
+        SLC FFU..DCT                     1 30       Q WENN# / FFU..DCT       150
+
+        N Sats                                      V21.FFU..DCT             2 00
+
+                          V21.FFU..DCT   1 30
+
+PAYSON S Sats                                       V 21.FFU..DCT            1 30
+
+                          JAMMN.TAYTR#   110        JAMMN.TAYTR#             110
+
+        PVU
+
+                          F RNZY.TAYTR#  130        F RNZY.TAYTR#            1 30
+
+NOTE-
+Aircraft entering S56 TRACON airspace via the PANEL or PAYSON Gates may be cleared
+d irect FFU between the FFU 170R and FFU 200R.
+
+N ot for real world use.                                                                    8
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+Control
+
+                                 Table 2. Arrival Routing/Altitudes (Land South)
+
+Gate A irport               Turboprops                                Jets
+                         R oute                              R oute
+                                        Altitude                            A ltitude
+
+         SLC LHO#                       1 40      C ARTR# / LHO#            150
+
+AVON N Sats L HO..CARTR..OGD..DCT 1 30            LHO..CARTR..OGD..DCT 130
+
+         S Sats OGD.TAYTR# / OGD..DCT 2 00        OGD.TAYTR# / OGD..DCT 200
+
+         S LC B EARR#                   1 40      SKEES# / BEARR#           160
+
+BIRD N Sats OGD..DCT                    1 30      O GD..DCT                 1 30
+
+         S Sats O GD.TAYTR# / OGD..DCT 2 00       O GD.TAYTR# / OGD..DCT 2 00
+
+         SLC B VL#                      160       YUTES# / BVL#             1 70
+
+D ELLE   A ll            W AATS..DCT    1 30      WAATS..DCT                1 70
+         S ats
+
+         PVU T AYTR#                    1 70      TAYTR#                    170
+
+         S LC S PANE#                   1 70      P ITTT# / SPANE#          1 90
+
+P ANEL N Sats FFU..DCT                  140       F FU..DCT                 2 10
+
+         S Sats TAYTR# / FFU..DCT       1 30      TAYTR# / FFU..DCT         1 30
+
+         N Sats                                   V 21.FFU..DCT             200
+
+                         V 21.FFU..DCT  1 30
+
+         S Sats                                   V21.FFU..DCT              130
+
+P AYSON
+
+                         JAMMN.TAYTR#   1 10      J AMMN.TAYTR#             1 10
+
+         PVU
+
+                         FRNZY.TAYTR#   130       F RNZY.TAYTR#             1 30
+
+         S LC J AMMN#                   1 50      PITTT# / JAMMN#           1 70
+
+W ILLOW N Sats TCH..DCT                 2 00      T CH..DCT                 2 00
+
+         S Sats T AYTR# / FFU..DCT      130       T AYTR# / FFU..DCT        1 30
+
+N OTE-
+A ircraft entering S56 TRACON airspace via the PANEL or PAYSON Gates may be cleared
+d irect FFU between the FFU 170R and FFU 200R.
+
+Not for real world use.                                                                     9
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+Control
+
+                                 Attachment 3. Departure Routing/Altitudes
+
+                          Table 1. Departure Routing/Altitudes (All Configurations)
+
+                            Turboprops                                   J ets
+                         R oute
+G ate
+
+                                             Altitude                  Route                  Altitude
+
+GUNNISON T CH296R / J12 / J15 / V484                   TCH296R / J12 / J15 / V484 / CGULL#
+
+                                                                                              230
+
+E DEN      TCH005R / V6                      140       TCH005R / RUGGD#
+
+S UNSET V 32 / DEZRT..TIPTN                            D EZRT# / DEZRT..TIPTN                 150
+
+P ANEL     V134                              130
+
+                         T able 2. Departure Routing/Altitudes (Land North)
+
+                                T urboprops                              J ets
+                             Route
+    G ate  TCH094R / J154 / J56 / J173       Altitude                  Route                  A ltitude
+           T CH182R / DRAPR / SEVYR#
+S ANDY                                                 T CH094R / J154 / J56 / J173 / RUGGD#
+O QUIRH
+                                             230                                              2 30
+
+                                                       J Class: TCH193R / SEVYR# / ARCHZ#
+
+                         T able 3. Departure Routing/Altitudes (Land South)
+
+Gate                        T urboprops                                        J ets
+                         Route                                         Route
+                                             Altitude                                         A ltitude
+                                                                                              2 30
+HOBBLE     F FU#                             1 40      F FU# / ZIONZ#                         230
+PAYSON
+
+SANDY      J 154 / J56 / J173 / TCH094R 2 30           J154 / J56 / J173 / TCH094R / RUGGD#
+
+BRIGHTON V 484 / TCH094R                     1 70
+
+N OTE-
+D epartures on the ARCHZ# or RUGGD# DP may be cleared direct to the first RNAV waypoint in
+Z LC ARTCC airspace. Transitional separation may be applied.
+
+Not for real world use.                                                                             1 0
+Salt Lake City Air Route Traffic Control Center and Salt Lake City Terminal Radar Approach
+Control
+
+                               A ttachment 4. SLC Standard Arrival Runways
+
+                            T able 1. SLC Standard Arrival Runways (Land North)
+
+                                    S TAR     R unway
+                          B EARR#          3 4L
+                          BVL#             3 4R/35
+                          LHO#
+                          CARTR#
+                          S KEES#
+                          Y UTES#
+                          J AZZZ#
+                          Q WENN#
+                          S PANE#
+
+                          T able 2. SLC Standard Arrival Runways (Land South)
+
+                                    STAR      R unway
+                          BEARR#           1 6L/17
+                          LHO#
+                          C ARTR#          1 6R
+                          S KEES#
+                          B VL#
+                          PITTT#
+                          JAMMN#
+                          SPANE#
+                          YUTES#
+
+N ot for real world use.                                                                    1 1
+

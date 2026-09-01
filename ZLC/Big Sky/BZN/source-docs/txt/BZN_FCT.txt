@@ -1,0 +1,172 @@
+                                           Clearance
+
+1. Frequency
+         (1) Bozeman Clearance: 124.050
+
+2. Procedures
+         (1) When appropriate, inform pilots of the current ATIS information prior to contacting
+              ground control.
+
+3. IFR Routing
+         (1) Initial Altitude: 16,000.
+                   (a) When the BGSKY, BOBKT, or MEADO SID has been assigned, the pilot
+                        must be instructed to "Climb via SID."
+         (2) Route all IFR departures on an approved SID appropriate for their route of flight.
+              Aircraft unable/refusing to accept a SID must be assigned radar vectors (see
+              3.(3)).
+                   (a) East Operations (Runway 12):
+                           (i) SW to NW departures issue BGSKY SID. Non-RNAV aircraft
+                                  should be issued the HIA SID.
+                          (ii) NE to SE departures issue BOBKT SID.
+                   (b) West Operations (Runway 30):
+                           (i) All directions issue MEADO SID. Non-RNAV aircraft may be
+                                  issued the HIA SID.
+         (3) If a pilot cannot accept a departure procedure, issue the following headings for
+              radar vectors to their route, per their departure runway:
+                   (a) Runway 12 - Heading 250
+                   (b) Runway 30 - Heading 290
+
+4. Standard Departure Frequencies
+         (1) When appropriate, issue the following frequencies to IFR aircraft and VFR aircraft
+              requiring radar services after departure:
+                   (a) Big Sky 118.975
+
+5. VFR Routing
+         (1) Not applicable.
+                                            Ground
+
+1. Frequency
+         (1) Bozeman Ground: 121.800
+
+2. Airspace
+         (1) All movement areas with the exception of active runways.
+
+3. Procedures
+         (1) Not applicable.
+
+4. Departures
+         (1) All aircraft requiring pushback onto the movement area will contact ground prior
+              to pushback and start-up.
+         (2) All aircraft will contact ground with position and ATIS prior to being issued taxi
+              instructions.
+         (3) During periods of high volumes of traffic, the published Standard Runway
+              Assignments may be used to expedite the flow of departures.
+         (4) Standard Runway Assignments:
+                   (a) East Operations
+                           (i) Runway 12: All departures.
+                   (b) West Operations
+                           (i) Runway 30: All departures.
+
+5. Arrivals
+         (1) All aircraft will remain on ground frequency until off the movement area.
+                                              Local
+
+1. Frequency
+
+         (1) Bozeman Tower (Local): 118.200
+
+2. Airspace
+
+         (1) Local: Runways 3/21, 11/29, 11G/29G, 12/30, and airspace as depicted on sector
+              file.
+
+3. Procedures
+
+         (1) Runway operations
+
+                   (a) Use runway 12 (East) during calm wind operations.
+
+                   (b) Use runway 30 (West) when the tailwind component exceeds 5 knots.
+
+         (2) LAHSO
+
+                   (a) The following procedure defines position responsibilities for the use of
+                        Land and Hold Short Operations.
+
+                           (i) The LAHSO runway must be dry
+
+                          (ii) The tailwind on the LAHSO runway shall be calm (less than 3
+                                  knots)
+
+                         (iii) The RED LAHSO CHIP will be placed face up at the bottom center
+                                  of the TMB, when LAHSO is authorized, and placed face down in
+                                  the same place when not
+
+                         (iv) A RED magnetic chip will accompany the magnetic chip of the
+                                  aircraft which is landing and holding short
+
+                          (v) LAHSO must not be utilized if wind shear has been reported
+
+                         (vi) Ceiling of 1000 feet and 3 miles visibility must be reported at the
+                                  airfield
+
+                        (vii) Runway 12 has 6,841 feet available landing distance (ALD) for
+                                  LAHSO, when ALD is requested by a Pilot; it will be rounded down
+                                  to 6,800 ft. of ALD, IAW JO 7110.65
+
+                        (viii) All other procedures are outlined in FAA JO 711.118
+
+                         (ix) Traffic will be issued in accordance with FAA JO 7110.118 and the
+                                  FAA JO 711.65
+                   (b) LAHSO for Runway 12 will be limited to:
+                           (i) Daytime operations only
+                          (ii) Propeller driven aircraft in FAA Group 7 and below
+
+                   (c) The following aircraft WILL NOT be allowed to conduct LAHSO.
+                           (i) All Air Carrier and Air Taxi aircraft
+                          (ii) All jet aircraft
+                         (iii) All solo student pilots
+                         (iv) BE60 Beach Duke
+                          (v) Super DC-3 (C-117, R4D 8)
+                         (vi) HERN Heron DH-114
+
+                        (vii) PAY3 Piper Cheyenne 3
+4. Local Radar
+
+         (1) Tower Use of Radar
+                   (a) Limited
+
+5. Departures
+         (1) Departure Notification / Releases
+                   (a) Departure Notifications are not required, unless otherwise coordinated by
+                        TRACON.
+                   (b) Departures are automatically released, unless otherwise coordinated by
+                        TRACON.
+         (2) IFR Departures
+                   (a) Ensure aircraft turn to assigned point/heading and altitude reporting is
+                        operating prior to handoff to departure.
+         (3) VFR Departures
+                   (a) Handoff to departure control as soon as clear of any possible conflicts.
+                   (b) Ensure all aircraft requiring flight following have the appropriate
+                        scratchpad entry prior to handoff to departure.
+6. Arrivals
+
+         (1) IFR Arrivals
+
+                   (a) N/A
+
+         (2) Missed Approach/Go Around
+
+                   (a) Send a Missed Notification (.MA) for the aircraft executing an unplanned
+                        Missed Approach/Go Around to the appropriate TRACON sector that will
+                        be receiving the aircraft for re-sequencing.
+
+                   (b) VFR aircraft, and/or IFR Category I/II aircraft conducting a visual
+                        approach and executing a Go-Around must be instructed to remain in the
+                        local pattern, if capable of doing so.
+
+                   (c) The following is considered Primary Climb-Out procedure and does not
+                        require any special coordination with Approach Control or Strip marking
+                        (Scratchpad entries) other than the basic Missed Notification. Aircraft
+                        must not turn prior to the departure end of the runway.
+                        Handoff/Comm-Change to the appropriate TRACON sector must be
+                        completed no later than 1 mile off the departure end of the runway.
+
+                   (d) CLIMB OUT PROCEDURE:
+
+                           (i) East Flow: Heading 250, Maintain 8,000.
+
+                          (ii) West Flow: Heading 290, Maintain 8,000.
+
+                   (e) VFR traffic join local pattern.
+

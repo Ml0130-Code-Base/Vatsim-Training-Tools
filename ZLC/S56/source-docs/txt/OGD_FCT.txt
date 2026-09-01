@@ -1,0 +1,162 @@
+                                           Clearance
+
+1. Frequency
+         (1) Ogden Ground: 121.700
+
+2. Procedures
+         (1) When appropriate, inform pilots of the current ATIS information prior to contacting
+              ground control.
+
+3. IFR Routing
+         (1) Initial Altitude: 9,000
+         (2) Issue radar vectors for all departure aircraft, except when the pilot requests the
+              EMONT ODP.
+              Note-VCOA available for RWY 3 on the EMONT ODP. VCOA must never be
+              solicited by controllers.
+         (3) Issue the following headings for radar vectors to their route, per the departure
+              runway:
+                   (a) Runway 3/35 - Heading 280
+                   (b) Runway 21 - Heading 210
+
+4. Standard Departure Frequencies
+         (1) When appropriate, issue the following frequencies to IFR aircraft:
+                   (a) Salt Lake Approach (Hart Sector) 121.1
+         (2) When appropriate, issue the following frequencies to VFR aircraft requiring radar
+              services after departure:
+                   (a) Salt Lake Approach (Hart Sector) 121.1
+
+5. VFR Routing
+         (1) VFR aircraft wanting to transit the HIF Class Delta are to request the Mountain
+              Road Transition
+
+                                    Ground
+
+1. Frequency
+         (1) Ogden Ground: 121.700
+2. Airspace
+         (1) Ground: All movement areas except active runways.
+
+3. Procedures
+         (1) Not applicable.
+
+4. Departures
+         (1) All aircraft requiring pushback onto the movement area will contact ground prior
+              to pushback and start-up.
+         (2) All aircraft will contact ground with position and ATIS prior to being issued taxi
+              instructions.
+
+5. Arrivals
+         (1) All aircraft will remain on ground frequency until off the movement area.
+
+                                              Local
+
+1. Frequency
+         (1) Ogden Tower: 118.700
+
+2. Airspace
+         (1) Local: Runway 3/21, 17/35, and OGD Class D airspace.
+
+3. Procedures
+         (1) Runway operations
+                   (a) Use runway 3 (East) during calm wind operations.
+                   (b) Use runway 21 (West) when the tailwind component exceeds 5 knots.
+         (2) LAHSO
+                   (a) Land and Hold Short Operations (LAHSO) are only permitted for Landing
+                        Runway 21 with an instruction to hold short of Runway 17/35 if all of the
+                        following apply:
+                           (i) Daylight hours.
+                          (ii) The local weather is reported as at least 3 miles visibility and a
+                                  1,000' ceiling.
+                         (iii) The Available Landing Distance from the landing threshold to the
+                                  hold short point is dry.
+
+                         (iv) The tailwind is less than 3kts.
+
+                          (v) The most recent Wind Shear was reported greater than 20 min
+                                  ago.
+
+                         (vi) An advisory is broadcast via the ATIS or pilot is advised on initial
+                                  contact: "Land and Hold Short Operations are in effect."
+
+                        (vii) When issued a Land and Hold Short instruction, the landing
+                                  runway and the hold short point must be acknowledge by the pilot
+                                  in the readback.
+
+                        (viii) Traffic on a crossing runway holding in position must be advised
+                                  and an acknowledgement received from that aircraft.
+
+                         (ix) Landing or departing aircraft on the same runway beyond the hold
+                                  short point is not authorized. Aircraft/vehicles must be allowed to
+                                  cross the portion of the runway surface beyond the hold short
+                                  point.
+
+                          (x) No more than one hold short operation must be conducted on the
+                                  same runway at any one time.
+
+                         (xi) LAHSO is not authorized for experimental aircraft.
+
+                   (b) Aircraft landing on Runway 21 and instructed to hold short of Runway
+                        17/35 has an available landing distance of 4,600.
+
+         (3) Tower Use of Radar:
+
+                   (a) Full
+
+4. Departures
+
+         (1) Departure Notification / Releases
+
+                   (a) A "Release Request" (.RR) is required to be sent to the appropriate
+                        Departure Controller for all departing aircraft in accordance with the
+                        General Control Directive.
+
+5. Arrivals
+
+         (1) IFR Arrivals
+
+                   (a) N/A
+
+         (2) Missed Approach/Go Around
+                   (a) Send a Missed Notification (.MA) for the aircraft executing an unplanned
+                        Missed Approach/Go Around to the appropriate TRACON sector that will
+                        be receiving the aircraft for re-sequencing.
+
+                   (b) VFR aircraft, and/or IFR Category I/II aircraft conducting a visual
+                        approach and executing a Go-Around must be instructed to remain in the
+                        local pattern, if capable of doing so.
+
+                   (c) The following is considered Primary Climb-Out procedure and does not
+                        require any special coordination with Approach Control or Strip marking
+                        (Scratchpad entries) other than the basic Missed Notification. Aircraft
+                        must not turn prior to the departure end of the runway. Comm-Change to
+                        the appropriate TRACON sector must be completed no later than 1 mile
+                        off the departure end of the runway.
+
+                   (d) CLIMB OUT PROCEDURE:
+
+                           (i) North Flow: Heading 280, Maintain 9,000.
+
+                          (ii) South Flow: Heading 210, Maintain 9,000.
+
+                   (e) VFR traffic join local pattern.
+
+6. VFR Operations
+
+         (1) VFR Departures
+
+                   (a) Depart on-course, remain clear of the HIF Delta Airspace.
+
+                   (b) Comm change to departure control as soon as clear of any possible
+                        conflicts.
+
+                           (i) Salt Lake Approach (Hart Sector) 121.1
+
+         (2) VFR Arrivals
+
+                   (a) Direct to airport, remain clear of the HIF Delta Airspace.
+
+         (3) VFR Flight Following
+
+                   (a) Ensure all aircraft requiring flight following have the appropriate
+                        scratchpad entry prior to comm change to departure.
+

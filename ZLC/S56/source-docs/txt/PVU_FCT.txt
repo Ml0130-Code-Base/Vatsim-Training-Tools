@@ -1,0 +1,151 @@
+                                           Clearance
+
+1. Frequency
+
+         (1) Provo Ground: 119.400
+
+2. Procedures
+
+         (1) When appropriate, inform pilots of the current ATIS information prior to contacting
+              ground control.
+
+3. IFR Routing
+
+         (1) Initial Altitude: 9,000
+
+         (2) Route all IFR departures on an approved departure procedure appropriate for
+              their route of flight. Aircraft unable/refusing to accept a departure procedure will
+              be assigned radar vectors.
+
+         (3) RNAV-Capable Aircraft Operations
+
+                   (a) Issue DITTI SID with a clearance limit of the aircraft's destination airport.
+
+                        "N123AB Cleared to (destination) airport via the DITTI one departure,
+                        (transition) transition, then as filed. Maintain 9,000. (etc...)"
+
+         (4) Non-RNAV Aircraft Operations
+
+                   (a) Issue PROVO ODP with a clearance limit of "FFU", not the destination
+                        airport. Instruct all aircraft to "Hold as published" and "Expect further
+                        clearance at Fairfield VORTAC."
+
+                        "N123AB Cleared to Fairfield VORTAC. Depart via the PROVO four
+                        obstacle departure procedure. Maintain 9,000. Hold as published. Expect
+                        further clearance at Fairfield. Departure frequency (frequency). Squawk
+                        (code)."
+
+         (5) If a pilot cannot accept a departure procedure, issue the following headings for
+              radar vectors to their route, per their departure runway:
+
+                   (a) Runway 13, 18 - Heading 270
+
+                   (b) Runway 31, 36 - Heading 310
+
+4. Standard Departure Frequencies
+
+         (1) When appropriate, issue the following frequencies to IFR aircraft:
+
+                   (a) Salt Lake City Approach (Alpine Sector) 118.85
+         (2) When appropriate, issue the following frequencies to VFR aircraft requiring radar
+              services after departure:
+                   (a) Salt Lake City Approach (Alpine Sector) 118.85
+
+5. VFR Routing
+         (1) Not Applicable.
+
+                                            Ground
+
+1. Frequency
+         (1) Provo Ground: 119.400
+
+2. Airspace
+         (1) Ground: All movement areas except active runways.
+
+3. Procedures
+         (1) Not applicable.
+
+4. Departures
+         (1) All aircraft requiring pushback onto the movement area will contact ground prior
+              to pushback and start-up.
+         (2) All aircraft will contact ground with position and ATIS prior to being issued taxi
+              instructions.
+
+5. Arrivals
+         (1) All aircraft will remain on ground frequency until off the movement area.
+
+                                              Local
+
+1. Frequency
+         (1) Provo Tower: 125.300
+
+2. Airspace
+         (1) Local: Runway 13/31, 18/36, and airspace as depicted on sector file.
+
+3. Procedures
+         (1) Runway operations
+                   (a) Use runway 13 (South) during calm wind operations.
+
+                   (b) Use runway 31 (North) when the tailwind component exceeds 5 knots.
+
+         (2) LAHSO
+
+                   (a) Not authorized.
+
+         (3) Tower Use of Radar:
+
+                   (a) Full
+
+4. Departures
+
+         (1) Departure Notification / Releases
+
+                   (a) A "Release Request" (.RR) is required to be sent to the appropriate
+                        Departure Controller for all departing aircraft in accordance with the
+                        General Control Directive.
+
+5. Arrivals
+
+         (1) IFR Arrivals
+
+                   (a) N/A
+
+                   (b) Circling procedures are not authorized east of runway 18/36 anytime or
+                        runway 18 at night.
+
+         (2) Missed Approach/Go Around
+
+                   (a) Send a Missed Notification (.MA) for the aircraft executing an unplanned
+                        Missed Approach/Go Around to the appropriate TRACON sector that will
+                        be receiving the aircraft for re-sequencing.
+
+                   (b) VFR aircraft, and/or IFR Category I/II aircraft conducting a visual
+                        approach and executing a Go-Around must be instructed to remain in the
+                        local pattern, if capable of doing so.
+
+                   (c) The following is considered Primary Climb-Out procedure and does not
+                        require any special coordination with Approach Control or Strip marking
+                        (Scratchpad entries) other than the basic Missed Notification. Aircraft
+                        must not turn prior to the departure end of the runway. Comm-Change to
+                        the appropriate TRACON sector must be completed no later than 1 mile
+                        off the departure end of the runway.
+
+                   (d) CLIMB OUT PROCEDURE:
+
+                           (i) South Flow: Heading 270, Maintain 9,000.
+                          (ii) North Flow: Heading 310, Maintain 9,000.
+                   (e) VFR traffic join local pattern.
+6. VFR Operations
+         (1) VFR Departures
+                   (a) Depart on-course.
+                   (b) Handoff to departure control as soon as clear of any possible conflicts.
+
+                           (i) Salt Lake City Approach (Alpine Sector) 118.85
+         (2) VFR Arrivals
+
+                   (a) Direct to airport.
+         (3) VFR Flight Following
+
+                   (a) Ensure all aircraft requiring flight following have the appropriate
+                        scratchpad entry prior to handoff to departure.
+

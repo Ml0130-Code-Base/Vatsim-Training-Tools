@@ -1,0 +1,1542 @@
+SUBJ: SLC ATCT Standard Operating Procedures
+
+          This document establishes the Salt Lake City AirportT raffic Control Tower (SLC ATCT) Standard
+O perating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC). Controllers are required to be
+familiar with the provisions of this document and to exercise their best judgment if they encounter
+situations not covered by it. The provisions and procedures described herein are supplemental to vZLC
+Facility Policy and FAA Order JO 7110.65.
+
+          The information contained herein is to be used for flight simulation purposes only on the VATSIM
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+C am Revelle
+D eputy Air Traffic Manager
+S alt Lake City ARTCC
+          R ecord of Changes
+
+V ersion  D escription                                         Effective Date Issued By
+7110.1A
+7 110.1B  Initial Release                                      0 3/04/2024  H L
+7 110.1C
+7110.1D   U pdated CPDLC Reroute Procedure (2-2-5)             06/19/2024   H L
+7 110.1E
+          U pdate to IFR Departures Initial Speed (2-2-3)      1 1/01/2025  CN
+
+          U pdate to IFR Departures PDC Initial Speed (2-2-4)  0 3/01/2026  AE
+
+          Removal of RWY 14/32, Ramp Control Addition          0 8/05/2026 C R/AE/BS
+
+          Not for real world use.
+                             Table of Contents
+
+C hapter 1. General Control                                               1
+
+S ection 1. Introduction                                                  1 
+
+1-1-1. Purpose                                                            1 
+
+1-1-2. Audience                                                           1 
+
+1 -1-3. Distribution                                                      1 
+
+1 -1-4. Cancellation                                                      1 
+
+Section 2. Operational Positions                                          2 
+
+S ection 3. Duty Familiarization and Transfer of Position Responsibility  3
+
+1-3-1. Duty Familiarization                                               3
+
+1 -3-2. Transfer of Position Responsibility                               3
+
+S ection 4. Flight Progress Strip (FPS) Marking                           4 
+
+1-4-1. General                                                            4 
+
+1-4-2. Flight Progress Strips                                             4 
+
+1-4-3. IFR Strips                                                         4 
+
+1-4-4. VFR Strips                                                         5 
+
+Section 5. Runway Flows and Runway Use Plans (RUP)                        6 
+
+1-5-1. General                                                            6 
+
+1 -5-2. Flow/RUP Change Procedures                                        6
+
+1 -5-3. Runway Flows                                                      7
+
+1-5-4. RUP Naming                                                         7
+
+1 -5-5. Normal Runways (NRI, NRV, NRV+, and NRVN)                         7
+
+1 -5-6. Departure-Only                                                    7 
+
+Section 6. Low Visibility Operations                                      8 
+
+1 -6-1. General                                                           8 
+
+1 -6-2. Determination                                                     8 
+
+1 -6-3. Configuration Change Procedures                                   8
+
+1 -6-4. Taxiway Usage                                                     8 
+
+Chapter 2. Clearance Delivery (CD)                                        9
+
+Section 1. General                                                        9
+
+2-1-1. Position Relief Checklist                                          9
+
+2-1-2. Position Responsibilities                                          9
+
+S ection 2. IFR Departures                                                10
+
+2-2-1. IFR Departure Routing                                              1 0
+
+2-2-2. IFR Departure Altitudes                                            1 0
+
+2-2-3. IFR Departure Speeds                                               1 0
+
+2 -2-4. Use of Pre-Departure Clearances (PDCs)                            1 1
+
+2 -2-5. Reroute Procedures                                                1 1
+
+2-2-6. Gate Hold Procedures                                               1 2
+
+2-2-7. Compliance with TMIs                                               12
+
+2 -2-8. FPS Handling/Marking                                              13
+
+                                      N ot for real world use.
+Section 3. VFR Departures                                                1 4
+
+2 -3-1. Flight Plan Generation                                           1 4
+
+2-3-2. VFR Category I, Category II, and Category III Turboprop Aircraft  14
+
+2 -3-3. VFR Category III Turbojet Aircraft (Unrestricted VFR)            1 4
+
+2 -3-4. VFR Helicopters                                                  15
+
+2 -3-5. Closed Traffic                                                   15
+
+2 -3-6. FPS Handling/Marking                                             1 5
+
+C hapter 3. Ramp Control (RC)                                            1 6
+
+S ection 1. General                                                      1 6
+
+3-1-1. Position Relief Checklist                                         1 6
+
+3-1-2. Ramp Opening Prerequisites                                        1 6
+
+3-1-3. Pushback Clearances & Gates                                       1 6
+
+3-1-4. Ramp Flow                                                         16
+
+3 -1-5. Traffic Flow                                                     17
+
+3 -1-6. Deicing Operations                                               17
+
+3 -1-7. Compliance with TMIs                                             18
+
+3 -1-8. FPS Marking                                                      18
+
+3-1-9. FPS Handling                                                      18
+
+3-1-10. Outdated Scenery                                                 18
+
+Section 2. Ramp Control 1 (RC1)                                          1 9
+
+3-2-1. Position Responsibilities                                         1 9
+
+3-2-2. Area of Jurisdiction                                              1 9
+
+3-2-3. Wingspan Restrictions                                             1 9
+
+C hapter 4. Ground Control (GC)                                          2 2
+
+S ection 1. General                                                      2 2
+
+4 -1-1. Position Relief Checklist                                        2 2
+
+4 -1-2. Traffic Flow                                                     2 2
+
+4 -1-3. ATIS                                                             2 2
+
+4 -1-4. Taxing To Ramp                                                   2 2
+
+4 -1-5. Compliance with Routing                                          23
+
+4 -1-6. Deicing Operations                                               23
+
+4 -1-7. Compliance with TMIs                                             23
+
+4 -1-8. FPS Marking                                                      23
+
+4 -1-9. FPS Handling                                                     23
+
+Section 2. Ground Control East (GCE)                                     24
+
+4 -2-1. Position Responsibilities                                        2 4
+
+4-2-2. Area of Jurisdiction                                              24
+
+4 -2-3. Deicing Operations                                               24
+
+Section 3. Ground Control West (GCW)                                     25
+
+4 -3-1. Position Responsibilities                                        2 5
+
+4 -3-2. Area of Jurisdiction                                             25
+
+                                   N ot for real world use.
+Chapter 5. Local Control                                       26
+
+Section 1. General                                             2 6
+
+5 -1-1. Position Relief Checklist                              26
+
+5-1-2. Pre-Arranged Coordination                               2 6
+
+5 -1-3. Compliance with TMIs                                   27
+
+5 -1-4. Coordination Procedures for Departure Releases         27
+
+5 -1-5. Line Up and Wait (LUAW)                                2 8
+
+5 -1-6. SLC Diverse Vector Area (DVA)                          28
+
+5 -1-7. Use of Radar                                           29
+
+5-1-8. Departure Frequencies                                   29
+
+5-1-9. Landing Clearance                                       2 9
+
+5-1-10. Runway Exiting                                         2 9
+
+5-1-11. FPS Marking                                            2 9
+
+5-1-12. FPS Handling                                           29
+
+S ection 2. Local Assist City (CTY)                            30
+
+5-2-1. Position Responsibilities                               3 0
+
+5-2-2. Area of Jurisdiction                                    30
+
+5-2-3. Sequencing                                              3 0
+
+5 -2-4. Routing                                                30
+
+5 -2-5. VFR Arrival Best Practices                             30
+
+Section 3. Local Control East (LCE)                            3 2
+
+5 -3-1. Position Responsibilities                              3 2
+
+5 -3-2. Area of Jurisdiction                                   32
+
+5 -3-3. VFR Departure Routing                                  32
+
+5 -3-4. Skypark Airport (BTF)                                  33
+
+5 -3-5. Local Assist City                                      33
+
+S ection 4. Local Control West (LCW)                           3 4
+
+5-4-1. Position Responsibilities                               3 4
+
+5 -4-2. Area of Jurisdiction                                   3 4
+
+5-4-3. Point NICHOL                                            3 4
+
+S ection 5. Local Control Center (LCC)                         3 5
+
+5-5-1. Position Responsibilities                               3 5
+
+5-5-2. Area of Jurisdiction                                    3 5
+
+5-5-3. Releases                                                3 5
+
+A ppendix 1. Local Control Airspace                            3 6
+
+A ppendix 1A. SLC Tower Airspace                               3 6
+
+A ppendix 1B. SLC Tower Airspace North Flow                    37
+
+A ppendix 1C. SLC Tower Airspace South Flow                    3 8
+
+Appendix 2. Pre-Arranged Coordination Areas                    39
+
+A ppendix 2A. SLC Tower Pre-Arranged Coordination Area         3 9
+
+Appendix 2B. P7 Pre-Arranged Coordination Area (North Flow)    4 0
+
+                                     N ot for real world use.
+A ppendix 2C. P8 Pre-Arranged Coordination Area (South Flow)  4 1
+
+Appendix 3. SLC Airport Supplemental Information              42
+
+A ppendix 3A. Runway 16R/34L Distance Remaining Chart         42
+
+A ppendix 3B. Runway 16L/34R Distance Remaining Chart         4 3
+
+A ppendix 3C. Runway 17/35 Distance Remaining Chart           4 4
+
+A ppendix 3D. Ground Control Control Areas                    4 5
+
+A ppendix 4A. Ramp Appendix                                   4 6
+
+Appendix 4B. Runway 16L Deice Pad                             47
+
+A ppendix 4C. Runway 34L Deice Pad                            4 8
+
+A ppendix 4D. Runway 34R Deice Pad                            4 9
+
+Appendix 4E. Taxiway L Deice Pad                              50
+
+                                  N ot for real world use.
+                               C hapter 1. General Control
+
+                                      S ection 1. Introduction
+
+1 -1-1. Purpose
+T his document establishes the Salt Lake City Airport Traffic Control Tower (SLC ATCT)
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC).
+
+1 -1-2. Audience
+A ll vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1 -1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels SLC FD, effective June 19, 2024.
+
+Not for real world use.  1 
+                               S ection 2. Operational Positions
+
+                          Table 1-2-1. SLC ATCT Operational Positions Table
+
+              P osition      V ATSIM Callsign                                F requency
+   C learance Delivery (CD)      SLC_DEL                                       1 27.300
+ Ground Control East (GCE)                                                     1 21.900
+Ground Control West (GCW)      S LC_E_GND                                      123.775
+    Ramp Control 1 (RC1)       S LC_W_GND                                      1 31.275
+Local Control Center (LCC)     SLC_01_RMP                                      1 19.050
+   Local Control East (LCE)    S LC_C_TWR                                      1 18.300
+  L ocal Control West (LCW)    S LC_E_TWR                                      132.650
+                               SLC_W_TWR                                       120.200
+    Local Assist City (CTY)    SLC_A_TWR
+
+                          B oldd esignates a primary position.
+
+N ot for real world use.                                                                 2 
+    Section 3. Duty Familiarization and Transfer of Position Responsibility
+
+1-3-1. Duty Familiarization
+Prior to requesting a position relief briefing, controllers must accomplish the following items:
+
+    a. L og-in to position and activate session.
+    b. Log-in to vStrips.
+    c. If applicable, log-in to vTDLS.
+    d. R eview current METAR.
+    e . Review all Traffic Management Programs.
+    f. Review pertinent overlying controller information.
+    g . Verify integrity of ASDE-X and its configuration.
+
+1 -3-2. Transfer of Position Responsibility
+    a . All position relief briefings must be conducted in accordance with FAA Order 7110.65
+         Appendix A. All controllers must follow the position-specific checklists located in each
+         c hapter pertaining to their operational position.
+    b. Controllers must activate the session of the position they are assuming prior to the start
+         o f the position relief briefing.
+    c. W hen traffic conditions warrant, the controller being relieved must monitor and observe
+         the position for a minimum of 2 minutes after the conclusion of the briefing.
+
+Not for real world use.  3
+                     Section 4. Flight Progress Strip (FPS) Marking
+
+1 -4-1. General
+    a . A ll operational positions must utilize FPSs at all times.
+    b . IFR FPSs must be printed using the Flight Strip Printer.
+    c. V FR FPSs must be handwritten.
+    d. T imes on FPSs may be abbreviated to the two digit time in minutes when the time
+         indicated in the FPS is in the same hour as the current time.
+
+1-4-2. Flight Progress Strips
+F igures 1-4-1 and 1-4-2 identify box locations on various types of FPSs.
+
+                                                 Figure 1-4-1. IFR FPS
+
+                         F igure 1-4-2. VFR FPS
+
+1 -4-3. IFR Strips
+Enter data into the FPS boxes for IFR departures in accordance with Figure 1-4-1 as follows:
+
+    a. B ox 1: Clearance contraction. Write "PDC" if the aircraft has successfully been issued a
+         departure clearance through vTDLS. Write "X" if the aircraft has been issued a departure
+         clearance via CPDLC with a "W" response or if the aircraft has been verbally issued a
+         d eparture clearance with a correct readback.
+
+    b . Box 2: Speed restriction issued. Write the speed followed by a "K" for jet aircraft that
+         h ave been issued a speed restriction on departure.
+
+    c. B ox 3: ATIS. Write the letter of the ATIS information that has been reported by the pilot.
+    d. Box 4: TMI contraction. Write "GS" when the aircraft's arrival airport is placed under a
+
+         g round stop. Write "EDCT" when the aircraft has been assigned an EDCT.
+    e . B ox 5: Release required. Write "CFR" when the aircraft requires a departure release.
+    f. B ox 6: Release time. Write the time at which the aircraft is released if an EDCT has been
+
+         assigned or a departure release has been issued.
+    g. Box 7: Assigned runway. Utilize an asterisk (*) to the right of the runway number if the
+
+         runway is not a designated departure runway.
+    h. B ox 8: Runway intersection. If other than full length, write the intersection of the runway
+
+         the aircraft will depart from.
+
+Not for real world use.                                                                  4 
+    i. Box 9: Call up time. Write the time at which the aircraft requested startup when gate hold
+         p rocedures are in effect.
+
+1-4-4. VFR Strips
+Write information into the FPS boxes for VFR departures in accordance with Figure 1-4-2 as
+follows:
+
+    a . Box A: Callsign.
+    b. B ox B: Aircraft type. Equipment suffix is not required.
+    c . Box D: Beacon code.
+    d . Box F: Requested altitude in hundreds of feet, if given.
+    e. B ox G: Arrival airport, if given.
+    f. B ox J: Direction of flight or type of departure.
+    g. Box 1: Clearance contraction. Write "X" if the aircraft has been verbally issued a
+
+         clearance with a correct readback.
+    h . Box 2: Assigned runway. Utilize an asterisk (*) to the right of the runway number if the
+
+         runway is not a designated departure runway.
+    i. B ox 3: ATIS. Write the letter of the ATIS information that has been reported by the pilot.
+    j. B ox 5: Runway intersection. If other than full length, write the intersection of the runway
+
+         the aircraft will depart from.
+
+N ot for real world use.  5
+              S ection 5. Runway Flows and Runway Use Plans (RUP)
+
+1-5-1. General
+    a . T he active Runway Flow refers to the general cardinal direction of departures and
+         arrivals currently in use. Authorized Runway Flows are listed in paragraph 1-5-3.
+    b. T he active Runway Use Plan refers to the designation of traffic usage on individual
+         runways in use. Authorized RUPs are listed below in paragraphs 1-5-5 and 1-5-6.
+    c . RUPs must be selected in accordance with the active Runway Flow.
+    d. R UPs must be selected by the CIC. If the CIC position has not been appointed, this duty
+         is passed to the highest of the following operational positions:
+              (1) The least (current or anticipated) busy Local Control.
+              (2) T he least busy Ground Control.
+    e . W hen selecting a Runway Flow, the following factors must be considered:
+              (1) W ind direction.
+              (2) Wind speed. The gust factor takes precedence over the constant wind speed.
+    f. W hen selecting a RUP, the following factors must be considered:
+              (1) Current and anticipated traffic volume.
+              (2) C urrent and anticipated type of traffic (departures and/or arrivals).
+              (3) Runway status.
+
+1 -5-2. Flow/RUP Change Procedures
+W hen changing runway flows or the Runway Use Plan, the CIC (or other appointed position)
+must use the Runway Flow/RUP Change Checklist (below) and ensure the following:
+
+    a . A ll operational positions acknowledge the new runway flow and/or RUP.
+    b. All appropriate positions are informed of:
+
+              (1) C allsign of the last departure in the old flow/RUP.
+              (2) C allsign of the last arrival in the old flow/RUP.
+              (3) N ew type of approaches in progress.
+              (4) Automatic departure release status.
+
+           Runway Flow/RUP Change Checklist
+
+ C oordinate with appropriate S56 CIC
+
+ Cancel automatic releases, advise S56 once complete
+
+ V erbally advise all positions of impending changes
+
+ Make appropriate ASDE-X configuration changes
+
+ Ensure ATIS broadcast is correct
+
+ C oordinate and resume automatic releases
+
+N ot for real world use.  6 
+NOTE-
+Items listed in the checklist in italics must only be completed if S56 is online.
+
+1 -5-3. Runway Flows
+    a. North Flow:
+              (1) R unways 34L, 34R, and 35 may be used.
+    b . S outh Flow:
+              (1) R unways 16L, 16R, and 17 may be used.
+
+1 -5-4. RUP Naming
+RUPs are coded/named in accordance with the following:
+
+    a . For Normal Runways RUPs:
+              (1) T he first two characters are "NR"
+              (2) The third and fourth (if applicable) character(s) denote the departure plan (see
+                   SLC-S56 LOA) in use.
+
+    b. For Departure-Only RUPs:
+              (1) The first two characters are "XX"
+              (2) T he third character denotes the runway identifier that is not available for arrivals.
+              (3) The fourth and fifth (if applicable) character(s) denote the departure plan in use.
+
+1-5-5. Normal Runways (NRI, NRV, NRV+, and NRVN)
+During Normal Runways RUPs, all runways are available for arrivals and departures.
+
+1-5-6. Departure-Only
+When excessive departure demand and light arrival demand exist, one of the following RUPs
+should be used:
+
+    a . XXRI, XXRV, or XXRV+:
+              (1) A ll runways are available for departures.
+              (2) All runways except Runway 34R are available for arrivals.
+
+    b . X XLI, XXLV, or XXLV+:
+              (1) All runways are available for departures.
+              (2) A ll runways except Runway 16L are available for arrivals.
+
+    c . XX7I, XX7V, or XX7V+:
+              (1) All runways are available for departures.
+              (2) All runways except Runway 17 are available for arrivals.
+
+    d . XX5I, XX5V, XX5V+, or XX5VN:
+              (1) All runways are available for departures.
+              (2) A ll runways except Runway 35 are available for arrivals.
+
+Not for real world use.  7
+                            S ection 6. Low Visibility Operations
+
+1-6-1. General
+    a . Unless otherwise determined in accordance with paragraph 1-6-2, low visibility
+         operations must be in effect when any controlling RVR decreases to any RVR target
+         v alue (see below) or a target value appears imminent.
+              (1) L ow visibility operations begin when any controlling RVR decreases to less than
+                   1 ,200 or a value of less than 1,200 appears imminent.
+              (2) M ore restrictive procedures are initiated when a controlling RVR decreases to
+                   less than 600.
+    b. The ASDE-X must be used when low visibility operations are in progress.
+
+1-6-2. Determination
+When any controlling RVR decreases to an RVR target value or an RVR target value appears
+imminent, the CIC (or other appointed position) should consider the extent of the RVR
+o bscuration before commencing any low visibility operational configuration changes (i.e. is it an
+isolated patch of ground fog or part of a larger weather system/trend).
+
+1-6-3. Configuration Change Procedures
+When commencing low visibility operations, the CIC (or other appointed position) must ensure
+the following:
+
+    a . All operational positions acknowledge the configuration changes.
+    b. The phrase "SMGCS LOW VISIBILITY PROCEDURES ARE IN EFFECT" is included on
+
+         the ATIS broadcast.
+    c . T he ASDE-X is properly configured.
+    d . All non-low visibility taxi routes and runways are clear of traffic.
+
+1-6-4. Taxiway Usage
+When low visibility procedures are in effect, the following taxiway restrictions exist:
+
+    a. RVR 1,200 feet to 600 feet:
+              (1) Taxiway E must only be used for eastbound traffic.
+              (2) Taxiway F must only be used for westbound traffic.
+              (3) T axiways A2, A3, A6, A9, A10, H6, H7, H12, and J must not be used.
+
+    b . RVR 500 feet or less:
+              (1) All restrictions listed in paragraph 1-6-4.a.
+              (2) T axiways H2, H3, H11, K4, K6, K7, K8, P, N, and R must not be used.
+
+Not for real world use.  8
+                         C hapter 2. Clearance Delivery (CD)
+
+                                         S ection 1. General
+
+2-1-1. Position Relief Checklist
+P osition relief briefings must occur in accordance with Section 1-3 of this document. Utilize the
+following checklist for position relief briefings of the Clearance Delivery position:
+
+               C D Position Relief Briefing Checklist
+
+ P osition Information (which positions are being assumed)
+
+ A TIS Letter / Runway Flow / Runway Use Plan
+
+ A ppropriate Departure Frequencies
+
+ C urrent TMIs / Special Activities / Coordination Agreements
+
+ Traffic Impacted by TMIs
+
+ S pecial Requests or Instructions
+
+ O ther Traffic Status
+
+2 -1-2. Position Responsibilities
+    a. M onitor the CD frequency (127.300 MHz).
+    b . Prepare and update FPSs in accordance with paragraph 1-4-3, section 2-2, and section
+         2 -3.
+    c. Issue departure clearances to IFR aircraft in accordance with section 2-2, complying with
+         posted traffic management initiatives (TMIs), letters of agreement (LOAs), and published
+         preferred routes.
+    d . For clearances not yet issued, ensure routings comply with the new runway flow
+         following any runway changes.
+    e. Issue departure clearances to VFR aircraft in accordance with section 2-3.
+    f. Perform gate hold procedures in accordance with paragraph 2-2-6.
+    g. Assume other clearance delivery or other cab responsibilities, as assigned.
+
+Not for real world use.  9
+                                    S ection 2. IFR Departures
+
+2-2-1. IFR Departure Routing
+    a . A ll aircraft that will leave the Salt Lake City Terminal Radar Approach Control (TRACON)
+         m ust be issued an appropriate SID in accordance with the following:
+              (1) E quipment capable turbojets must be assigned an RNAV departure procedure.
+                        (a) T he ARCHZ# departure must only be assigned when SLC is in North
+                             F low.
+                        (b) The ZIONZ# departure must only be assigned when SLC is in South
+                             F low.
+              (2) A ll other turbojets and non-turbojet aircraft must be assigned a non-RNAV
+                   departure.
+                        (a) T he SEVYR# and FFU# departures are preferred for aircraft departing the
+                             OQUIRH (Land North), HOBBLE (Land South), or PAYSON (Land South)
+                             gates.
+                                (i) T he SEVYR# departure must only be assigned when SLC is in
+                                       N orth Flow.
+
+                                       N OTE-
+                                       The SEVYR# departure may only be assigned to turbojets and
+                                       turboprops. Any prop aircraft departing the OQUIRH gate must be
+                                       issued the SLC# departure.
+
+                               (ii) The FFU# departure must only be assigned when SLC is in South
+                                       Flow.
+
+                        (b) T he SLC# departure should be used for departures to all other gates.
+    b . All aircraft that will not leave the Salt Lake City TRACON should be assigned the latest
+
+         rendition of the SLC# departure.
+    c . U nless otherwise coordinated, all routes must be in compliance with posted traffic
+
+         m anagement initiatives (TMIs), letters of agreement (LOAs), and published preferred
+         routes.
+
+         NOTE-
+         P ublished TMIs, LOAs, and preferred routes shall take precedence over paragraphs
+         2 -2-1.a. and 2-2-1.b. of this document.
+
+2-2-2. IFR Departure Altitudes
+    a. All aircraft must be issued an initial departure altitude of 9,000.
+    b. P ilots that file an altitude below 9,000, and cannot accept an initial altitude of 9,000,
+         m ust be issued the filed altitude.
+
+2-2-3. IFR Departure Speeds
+A ll turbojet aircraft must be issued the restriction: "Maintain 240 knots."
+
+Not for real world use.  10
+NOTE-
+The phrase "Maintain 240 knots" must be issued after issuing a cruise altitude to expect (if
+required).
+
+EXAMPLE-
+"Maintain niner thousand, expect flight level three zero zero one zero minutes after departure,
+m aintain two four zero knots."
+
+2 -2-4. Use of Pre-Departure Clearances (PDCs)
+    a. U nless an operational necessity exists, a route amendment is required, or the aircraft is
+         impacted by a posted TMI (except as outlined in paragraph 2-2-7), all PDC capable
+         a ircraft must be sent a PDC via vTDLS in lieu of a voice clearance.
+    b. Fill out the boxes in vTDLS as follows:
+              (1) "Expect" box: Always select "10 MIN AFT DP" unless the aircraft's initial climb
+                   instruction is equal to their requested/assigned altitude. In this instance, leave the
+                   s election in this box blank.
+              (2) "SID" and "Transition" boxes: Ensure both boxes match the assigned SID and
+                   transition.
+              (3) "Climb out" box: "MAINTAIN 240 KTS UNTIL ADVISED" must be selected for
+                   turbojet aircraft, otherwise leave blank.
+              (4) "Climb via" box: Must always be left blank.
+              (5) "Maintain" box: Select the initial altitude assignment in accordance with
+                   paragraph 2-2-2.
+              (6) "Contact info" box: Make an applicable selection that conforms to current staffing
+                   a nd special procedures. This box should be left blank unless gate hold
+                   procedures are in effect or the aircraft will push back into the movement area.
+              (7) "Departure frequency" box: Select the appropriate departure frequency for the
+                   aircraft's assigned DP. Temporary non-standard departure frequencies can be
+                   added in the vTDLS Facility Menu.
+              (8) "Local info" box: Make a selection that matches the current flow and RUP.
+
+2-2-5. Reroute Procedures
+W hen a reroute is required, CD must proceed with the following steps in order:
+
+    a. D ump the aircraft from vTDLS.
+    b . Amend the flight plan as necessary in the flight plan window.
+    c . Issue the amended departure clearance via CPDLC for CPDLC-capable aircraft. Aircraft
+
+         n ot equipped with CPDLC must be issued the amended departure clearance verbally.
+         Ensure compliance with paragraphs 2-2-1 and 2-2-2.
+
+              (1) T o send an amended departure clearance via CPDLC, select the aircraft in the
+                   Messages Window and type the following command depending on the aircraft
+                   type:
+                        (a) For turbojet aircraft:.cpdlc [Departure Handoff ID]
+                             [Departure runway]
+
+Not for real world use.  1 1
+                        (b) F or non-turbojet aircraft:.cpdlcs [Departure Handoff ID]
+                             [Departure runway]
+
+                        (c) Add the letter `g' to the end of the initial command string when gate hold
+                             p rocedures are in effect.
+
+              (2) C PDLC clearances are acknowledged with a "W" for Wilco or a "U" for Unable. If
+                   a "W" is received from the aircraft, move on to the next step. If a "U" is received
+                   from the aircraft, the aircraft must contact CD via the CD frequency. Aircraft must
+                   reply to the CPDLC message prior to moving on to the next step.
+
+    d. Print the amended FPS, ensuring the revision number is correct, and delete the original
+         FPS.
+
+    e . Mark the amended FPS in accordance with paragraph 2-2-8.
+
+2-2-6. Gate Hold Procedures
+G ate hold procedures may be used to hold aircraft at the gate or other ground location
+w henever departure delays exceed or are anticipated to exceed 15 minutes after engine start
+a nd taxi time. When gate hold procedures are in effect, the following must apply:
+
+    a. A ircraft must be advised to call CD prior to pushback.
+              (1) For aircraft being sent a PDC, the following statements must be used in the
+                   "Contact info" box of vTDLS:
+                        (a) Aircraft parked within the terminal area or cargo ramps: "CTC 127.3
+                             PRIOR TO PB"
+                        (b) Aircraft parked elsewhere: "CTC 127.3 PRIOR TO ENG START"
+              (2) F or aircraft issued a departure clearance via CPDLC, add the letter `g' to the end
+                   of the initial command string (see paragraph 2-2-5).
+              (3) For aircraft being issued a verbal departure clearance, the following statement
+                   must be issued after confirmation of a correct readback: "Advise ready for
+                   pushback" or "Advise ready for engine start."
+
+    b. When aircraft call prior to pushback/engine start, initial call-up time must be marked in
+         B ox 9 of the FPS.
+
+    c . C oordinate with the appropriate GC, LC, TMU, or CIC to come up with a proposed
+         engine start time and relay this information to the aircraft.
+
+    d . Approve aircraft for pushback/engine start when expected delays are anticipated to be
+         less than 15 minutes or if they choose to taxi to a delay absorbing area.
+
+    e . F orward FPSs of aircraft approved for pushback/engine start to the appropriate GC.
+
+N OTE-
+The aircraft has the final authority to decide whether to absorb the delay at the gate or to taxi to
+a delay absorbing area.
+
+2-2-7. Compliance with TMIs
+    a . Aircraft affected by posted TMIs must be advised of any delays verbally.
+    b . Aircraft affected by posted TMIs must have pertinent TMI information placed in their FPS
+         in accordance with paragraph 1-4-3.
+    c . A ircraft affected by posted TMIs must not be issued a PDC.
+
+N ot for real world use.  1 2
+         N OTE-
+         A ircraft affected by an ESP or CFR program that are not expected to be assigned an
+         EDCT are exempt from this clause.
+
+2-2-8. FPS Handling/Marking
+    a. When a FPS is received through the Departure Printer, CD must move all strips to their
+         s trip bay.
+    b . M ark boxes 1-9 on all IFR FPSs in accordance with paragraph 1-4-3.
+    a . U pon completion of FPS preparation and after a departure clearance has been issued,
+         forward the aircraft's FPS to the appropriate GC unless gate hold procedures are in
+         effect (see paragraph 2-2-6).
+
+Not for real world use.  1 3
+                                   S ection 3. VFR Departures
+
+2-3-1. Flight Plan Generation
+Except for aircraft landing at BTF, remaining within LCE airspace, or will exit LCE airspace to
+the East, all VFR departures must have a VFR flight plan generated via the Flight Plan Editor
+with, at a minimum, the following items filled out:
+
+    a . Aircraft type.
+    b. Departure airport.
+    c . D estination airport (if specified) (if not write NONE).
+    d . R equested altitude (if specified).
+
+              (1) If no requested altitude is specified, enter "VFR" into the "ALT" box.
+              (2) If the requested altitude is specified, enter "VFR/" followed by the requested
+
+                   altitude in hundreds of feet into the "ALT" box.
+    e. D irection of flight and type of radar service.
+
+              (1) If no flight following is requested, enter the direction of flight between forward
+                   slashes into the "RTE" box.
+
+              (2) If flight following is requested, enter the direction of flight after two "F"s and
+                   between forward slashes into the "RTE" box. Ex. "/FFSE/"
+
+2 -3-2. VFR Category I, Category II, and Category III Turboprop Aircraft
+A ll VFR Category I prop, Category II prop, and Category III turboprop aircraft must be issued the
+following items:
+
+    a. C learance out of Salt Lake City Class Bravo airspace.
+    b . An altitude restriction of at 5,500 feet.
+    c. A ppropriate departure frequency (if receiving flight following)
+
+         N OTE-
+         Aircraft that will land at BTF, remain within LCE airspace, or exit LCE airspace to the
+         East must not be issued a departure frequency.
+
+    d . D iscrete beacon code.
+
+E XAMPLE-
+"Cleared out of the Salt Lake Class Bravo airspace. Maintain VFR at 5,500 while in Bravo
+airspace, squawk 1234."
+
+2 -3-3. VFR Category III Turbojet Aircraft (Unrestricted VFR)
+All VFR Category III turbojet aircraft must be issued the following items:
+
+    a . C learance out of Salt Lake City Class Bravo airspace.
+    b. An altitude restriction of 8,500 feet.
+    c. Departure frequency in accordance with the IFR flow for the aircraft's direction of flight.
+    d. Discrete beacon code.
+
+Not for real world use.  1 4
+2-3-4. VFR Helicopters
+    a . A ll VFR helicopters departing to the East, North, or South must be issued the following
+         items:
+              (1) C learance out of Salt Lake City Class Bravo airspace.
+              (2) A n altitude restriction at or below 5,000 feet.
+              (3) Appropriate departure frequency.
+              (4) Discrete beacon code.
+
+         E XAMPLE-
+         "Cleared out of Bravo airspace. Maintain VFR at or below 5,000 while in Bravo airspace.
+         D eparture frequency 120.9, squawk 1234."
+
+    b. A ll VFR helicopters departing to the West must be coordinated with LCE.
+
+2-3-5. Closed Traffic
+Aircraft requesting to remain in the pattern must be issued the following items:
+
+    a . Clearance to enter Salt Lake City Class Bravo airspace.
+    b. A n altitude restriction at or below 5,500 feet.
+
+2 -3-6. FPS Handling/Marking
+    a . VFR FPSs must be handwritten.
+    b. Mark VFR FPSs in accordance with paragraph 1-4-4.
+    c . Upon completion of FPS preparation and after a departure clearance has been issued,
+         forward the aircraft's FPS to the appropriate GC or LC.
+
+N ot for real world use.  1 5
+                             C hapter 3. Ramp Control (RC)
+
+                                         Section 1. General
+
+3-1-1. Position Relief Checklist
+Position relief briefings must occur in accordance with Section 1-3 of this document. Utilize the
+following checklist for position relief briefings of Ground Control positions:
+
+               G C Position Relief Briefing Checklist
+ P osition Information (which positions are being assumed)
+ A TIS Letter / Runway Flow / Ramp Configuration
+ Taxilane / Taxiway Status
+ O ther Relevant Active Positions
+ Current TMIs / Special Activities / Coordination Agreements
+ Traffic Impacted by TMIs
+ Traffic Standing By for Service
+ Other Active Traffic
+
+3 -1-2. Ramp Opening Prerequisites
+P rior to any RC position being opened, GC and CD must both be online.
+
+3-1-3. Pushback Clearances & Gates
+    A. A ircraft shall check-in with gate number and RNAV Departure. Pushback clearances
+         should be issued with a tail direction and taxilane.
+    B . Aircraft that are entering the ramp shall be asked for their gate, if the aircraft does not
+         p rovide a gate, one will be provided to them in accordance with theSLC GATE INDEX.
+
+P HRASEOLOGY-
+P USH ONTO (ramp line), TAIL (direction).
+
+EXAMPLE-
+"Push onto the 2 North Line, tail west."
+
+3-1-4. Ramp Flow
+U nless otherwise coordinated, traffic on the concourse ramps operates as follows:
+
+N ot for real world use.  1 6
+    A . R amp 1: Departure aircraft should be pushed in the direction that faces the exit of the
+         ramp on the northern taxilane. Arrival aircraft will have Ramp Control assign either a
+         n orth or south line for taxi to the gate upon contact. If they enter on the southern taxilane
+         they will taxi along it until abeam to the gate and then turn into their gate barring any
+         o bstructions.
+
+    B . R amp 2: During peak periods 2 North runs EB and 2 South runs WB. Otherwise, aircraft
+         w ill exit the ramp on the side closest to them. Arrival aircraft will have Ramp Control
+         a ssign either a north or south line for taxi to the gate upon contact. Aircraft can cross to
+         another taxilane with visual contact with obstructing aircraft then told where to rejoin
+         w hether in front or behind them, taxilane C can be used to cross aircraft over as well.
+         A ircraft can be held out between Taxiway B and Taxilane C until the lane and their gate
+         is clear then they will taxi along it until abeam to the gate and then turn into their gate
+         barring any obstructions.
+
+    C . Ramp 3: Departure aircraft should be pushed in the direction that faces the closest exit,
+         unless an obstruction is present. Arrival aircraft should be coordinated with ramp so
+         a void any head on action. told to enter the closest spot to their gate.
+
+    D. R C will instruct aircraft to taxi to the appropriate exit spot, instructed to hold short of the
+         first taxiway, and contact ground.
+
+    E . 180 degree turns are authorized on the ramp.
+
+P HRASEOLOGY-
+T AXI SPOT (spot), HOLD SHORT (taxiway), CONTACT GROUND (frequency).
+
+EXAMPLE-
+"Taxi Spot 1 West North, hold short B, contact ground 123.77."
+
+3 -1-5. Traffic Flow
+    A . R C must ensure all aircraft yield to aircraft entering the ramp to prevent congestion on
+         taxiways and runway exits.
+    B. G ND will instruct aircraft to taxi to a ramp and side (ex. 1 West) then will be switched to
+         the ramp while approaching the ramp to be given a north/south taxilane to use to enter.
+
+PHRASEOLOGY-
+H OLD POSITION.
+
+         b. GC is authorized to issue taxi instructions to arrival aircraft that allows them to
+         continue their taxi into the ramp and clear the movement area.
+
+3 -1-6. Deicing Operations
+         a. Aircraft requesting to deice from the concourse ramp should be taxied by the ground
+         c ontroller to the appropriate De-Ice Pad according to the aircraft's departure runway.
+         b . Aircraft deicing at any De-Ice Pad must monitor ramp to receive deice pad
+         assignment.
+
+Not for real world use.  17
+3-1-7. Compliance with TMIs
+         a . Aircraft affected by newly posted TMIs must be advised of any delays verbally.
+         b. If the aircraft's arrival airport is ground stopped, do not issue a pushback clearance.
+                   (1) If a ground stop is issued after the aircraft begins pushback, the aircraft must
+                   either return to their gate or be taxied out of the traffic flow.
+         c . Unless otherwise coordinated, do not allow an aircraft to begin pushback until the
+         a ircraft is within 30 minutes of their assigned EDCT.
+         d . Aircraft affected by posted TMIs must have pertinent TMI information placed in their
+         FPS in accordance with paragraph 1-4-4.
+          e. If a newly posted TMI requires a new departure clearance to be issued, RC must
+         instruct the aircraft to contact the appropriate CD.
+
+3 -1-8. FPS Marking
+         a. Mark box 4 and, if applicable, boxes 6-8 of the aircraft's IFR FPS in accordance with
+         section 1-4.
+         b. Keep boxes 7 and 8 of an aircraft's IFR FPS up-to-date to the maximum extent
+         possible.
+         c. Mark box 9 with applicable ramp exit or entrance spot. Examples are listed in table
+         4 -1-1.
+
+                                    T able 4-1-1. FPS Spot Marking Examples
+
+     Entry                                   M eaning
+1 WN
+2ES                      S pot 1 West North
+14                       Spot 2 East South
+                         Spot 14
+
+3 -1-9. FPS Handling
+         a. Coordinate with CD prior to removing a FPS from any CD strip bay.
+         b. Departure FPSs must be pushed to the appropriate GC's flight strip bay and
+         s equenced so as to reflect their actual sequence on the taxiway.
+         c . Box 4 must be filled in correctly prior to the FPS being pushed to GC. d. If applicable,
+         b oxes 6-9 must be correctly marked prior to being pushed to GC.
+
+3-1-10. Outdated Scenery
+A ircraft with outdated scenery (scenery not with the current terminal layout, pre 2020) should be
+a llowed to push at their discretion and be directed to the nearest taxiway or a direction that
+w ould benefit the flow of the ramp.
+
+Not for real world use.                                1 8
+                               S ection 2. Ramp Control 1 (RC1)
+
+3 -2-1. Position Responsibilities
+         a. Monitor the RC1 frequency (1 31.275M Hz).
+         b . Issue pushback clearances to aircraft within the RC1 area of jurisdiction.
+         c . Issue initial taxi instructions to the proper ramp spot(s) to aircraft within the RCS area
+
+o f jurisdiction.
+         d. Mark FPSs in accordance with section 1-4 and section 4-1.
+         e. Assume other ramp control or other cab responsibilities, as assigned.
+
+3-2-2. Area of Jurisdiction
+R C1 has jurisdiction of the entire concourse area. This is defined to include:
+
+         a . All A, B Gates.
+         b . All De-icing Pads.
+         c . All Taxilanes Within The Ramp Area.
+
+3-2-3. Wingspan Restrictions
+B757 and smaller have sufficient wingtip clearance when adhering to taxi lines to be
+side-by-side in The Ramp.
+
+3-3-3. Ramp Activation
+N o controller shall log onto SLC_01_RMP unless SLC_GND and SLC_DEL are online.
+
+Not for real world use.  19
+                           C hapter 4. Ground Control (GC)
+
+                                         S ection 1. General
+
+4 -1-1. Position Relief Checklist
+P osition relief briefings must occur in accordance with Section 1-3 of this document. Utilize the
+following checklist for position relief briefings of Ground Control positions:
+
+               GC Position Relief Briefing Checklist
+ P osition Information (which positions are being assumed)
+ ATIS Letter / Runway Flow / Runway Use Plan
+ R unway / Taxiway Status
+ Appropriate Departure Frequencies
+ O ther Relevant Active Positions
+ C urrent TMIs / Special Activities / Coordination Agreements
+ T raffic Impacted by TMIs
+ Traffic Standing By for Service
+ Other Active Traffic
+
+N OTE-
+Items above that are listed in italics must only be briefed when GC is combined with CD.
+
+4-1-2. Traffic Flow
+    a . GC must ensure all aircraft yield to aircraft exiting a runway.
+    b. LC is authorized to issue taxi instructions to arrival aircraft that allows them to continue a
+         taxi and clear the runway.
+
+4 -1-3. ATIS
+Ensure all departure aircraft have the current ATIS.
+
+4-1-4. Taxing To Ramp
+    a . Ensure aircraft are routed to the correct ramp based on gate provided, if no gate is
+         provided, taxi them to the ramp corresponding with the SLC Gate Index.
+    b. Ensure aircraft are handed off to the ramp prior to entering the ramp with no possibility
+         for conflict on the controlled taxiways outside of the ramp.
+
+Not for real world use.  2 0
+4-1-5. Compliance with Routing
+    c . P rior to issuing a taxi clearance, check FPSs to ensure all aircraft are cleared via a
+         departure procedure valid for the active runway flow (see paragraph 2-2-1).
+    d . If a new departure clearance must be issued, GC may issue the amended clearance,
+         w orkload permitting. Otherwise, taxi the aircraft out of the traffic flow and instruct them to
+         c ontact CD.
+
+4-1-6. Deicing Operations
+Aircraft requesting to deice from the terminal area or cargo ramps should be taxiied to a deicing
+p ad that correlates to their departure runway and contact ramp control inside of the deice pad.
+
+4 -1-7. Compliance with TMIs
+    a. Aircraft affected by posted TMIs during taxi must be advised of any delays verbally.
+    b . Aircraft affected by posted TMIs must have pertinent TMI information placed in their FPS
+         in accordance with paragraph 1-4-3.
+    c. If a newly posted TMI requires a new departure clearance to be issued, GC may issue
+         the amended clearance, workload permitting. Otherwise, taxi the aircraft out of the traffic
+         flow and instruct them to contact CD.
+    d. Every effort must be made to position any aircraft that has been assigned an EDCT to
+         depart within plus or minus five (±5) minutes of their assigned EDCT.
+              (1) If it becomes evident that the aircraft will be outside of this departure window, the
+                   a ircraft must be taxiied out of the traffic flow and a new EDCT must be assigned.
+
+                   N OTE-
+                   If the aircraft was delayed for reasons beyond its control, the aircraft may
+                   p roceed to the runway. GC must notify the appropriate LC in this instance.
+
+4 -1-8. FPS Marking
+    a. Mark boxes 3-9 of an aircraft's IFR FPS in accordance with section 1-4.
+              (1) Ensure that the letter in Box 3 matches the letter of the current ATIS prior to
+                   issuing taxi instructions.
+              (2) Keep boxes 4-6 up-to-date to the maximum extent possible.
+              (3) Mark Box 7 once a taxi instruction has been issued.
+    b. Mark VFR FPSs in accordance with section 1-4.
+
+4-1-9. FPS Handling
+    a. D eparture aircraft FPSs must be pushed to the appropriate LC's flight strip bay
+         c orresponding to the runway of departure and sequenced so as to reflect their actual
+         sequence on the taxiway.
+    b . All strip markings must be filled in correctly prior to the FPS being pushed to LC.
+
+N ot for real world use.  21
+                           Section 2. Ground Control East (GCE)
+
+4 -2-1. Position Responsibilities
+    a . Monitor the GCE frequency (121.900 MHz).
+    b. Ensure all aircraft taxiing out of ramps east of Taxiway K have the current ATIS.
+    c. Determine/finalize aircraft departure runway assignments.
+    d. Mark FPSs in accordance with section 1-4 and section 3-1.
+    e . A ssume other ground control responsibilities, as assigned.
+
+         NOTE-
+         W hen only one GC position is open, GCE must combine to GCW.
+
+4-2-2. Area of Jurisdiction
+G CE has jurisdiction of all taxiways east of Runway 17/35.
+
+4-2-3. Deicing Operations
+    a . It is preferred that all non-Delta/Skywest aircraft requesting to deice shall be taxied to the
+         Taxiway L Deice Pad.
+    b . A ircraft requesting to deice must be taxiied to hold short of Runway 17/35 at Taxiway K1,
+         K5, or K6 and instructed to contact the appropriate LC.
+
+Not for real world use.  22
+                          S ection 3. Ground Control West (GCW)
+
+4 -3-1. Position Responsibilities
+    a . M onitor the GCW frequency (123.775 MHz).
+    b. Ensure all aircraft taxiing out of ramps within the GCW area of jurisdiction have the
+         current ATIS.
+    c. D etermine/finalize aircraft departure runway assignments.
+    d. Mark FPSs in accordance with section 1-4 and section 3-1.
+    e. A ssume other ground control responsibilities, as assigned.
+    f. Assume GCE responsibilities when combined.
+
+4-3-2. Area of Jurisdiction
+G CW has jurisdiction of all taxiways between Runways 16L/34R and 16R/34L.
+
+N ot for real world use.                                                                      2 3
+                                 C hapter 5. Local Control
+
+                                         Section 1. General
+
+5-1-1. Position Relief Checklist
+P osition relief briefings must occur in accordance with Section 1-3 of this document. Utilize the
+following checklist for position relief briefings of Local Control positions:
+
+               LC Position Relief Briefing Checklist
+
+ P osition Information (which positions are being assumed)
+
+ A TIS Letter / Runway Flow / Runway Use Plan
+
+ Runway / Taxiway Status
+
+ A ppropriate Departure Frequencies
+
+ O ther Relevant Active Positions
+
+ Current TMIs / Coordination Agreements / ODO Status
+
+ T raffic Impacted by TMIs
+
+ Other Active Traffic
+
+5-1-2. Pre-Arranged Coordination
+    a . Definition: a process by which one controller allows an aircraft to penetrate or transit
+         another controller's airspace in a manner that ensures standard separation without
+         individual coordination for each aircraft. Two operational positions may not penetrate
+         e ach other's airspace simultaneously.
+    b . P rerequisites:
+              (1) F ull data blocks (FDBs) must be displayed.
+              (2) When the P7 or P8 Pre-Arranged Coordination Areas are in use, LCW, LCC,
+                   LCE, and CTY must all quick-look each other.
+    c . Procedures:
+              (1) S LC Tower Pre-Arranged Coordination Area:
+                        (a) LCC may not deviate arrival aircraft from the extended centerline of
+                             Runway 16L/34R.
+                        (b) L CE is authorized to operate in LCC airspace, so long as the following
+                             c riteria are met:
+                                (i) A ircraft must remain over or east of the Runway 17 localizer
+                                       (south flow) or over or east of the Runway 35 localizer (north flow).
+                               (ii) LCE assumes responsibility for providing the appropriate
+                                       s eparation from LCC traffic.
+
+Not for real world use.  2 4
+                        (c) LCW is authorized to operate in LCC airspace, so long as the following
+                             criteria are met:
+                                (i) A ircraft must remain over or west of the Runway 16R/34L
+                                       extended centerline.
+                               (ii) L CW assumes responsibility for providing the appropriate
+                                       s eparation from LCC and LCE traffic.
+
+              (2) P7 Pre-Arranged Coordination Area:
+                        (a) P re-arranged coordination must only be utilized within the airspace
+                             d epicted in Appendix 2B.
+                        (b) The P7 area must not be utilized in IFR conditions.
+                        (c) L CW, LCC, and LCE must apply the required separation from any P7
+                             A rea traffic.
+
+              (3) P 8 Pre-Arranged Coordination Area:
+                        (a) P re-arranged coordination must only be utilized within the airspace
+                             depicted in Appendix 2C.
+                        (b) T he P8 area must not be utilized in IFR conditions.
+                        (c) L CW, LCC, and LCE must apply the required separation from any P8
+                             Area traffic.
+
+5 -1-3. Compliance with TMIs
+    a. A ircraft affected by posted TMIs while waiting to depart must be advised of any new
+         d elays verbally.
+    b . A ircraft affected by posted TMIs must have pertinent TMI information placed in their FPS
+         in accordance with paragraph 1-4-3.
+    c. If a newly posted TMI requires a new departure clearance to be issued, LC may issue
+         the amended clearance, workload permitting. Otherwise, taxi the aircraft out of the traffic
+         flow and instruct them to contact the appropriate CD.
+    d . Aircraft with an assigned EDCT must depart within plus or minus five (±5) minutes of
+         their assigned EDCT.
+    e. Do not authorize an aircraft to depart if the aircraft's destination airport is ground
+         stopped.
+    f. Do not authorize an aircraft to depart without an appropriate departure release when
+         "CFR" is placed in Box 5 of the aircraft's FPS or a departure release is required.
+
+5 -1-4. Coordination Procedures for Departure Releases
+U nless otherwise coordinated, LCC must hold IFR and Unrestricted VFR (UVFR) releases. LCE
+m ust hold Category I and Category II VFR releases.
+
+    a. L C positions without departure releases must coordinate with the appropriate LC holding
+         departure releases for each departure prior to issuing a takeoff clearance.
+
+    b. The LC position that holds departure releases is authorized to operate within another
+         L C's airspace when using the standard departure headings outlined in the SLC-S56
+         L OA.
+
+N ot for real world use.  2 5
+5 -1-5. Line Up and Wait (LUAW)
+    a. O nly one aircraft at a time, per runway, may be authorized to LUAW.
+    b . LUAW must not be used for the application of the 2- or 3-minute interval for wake
+         turbulence separation.
+    c . When an aircraft has been authorized to LUAW, the FPS for that aircraft must be offset
+         in the strip bay.
+    d. W hen an aircraft has been authorized to LUAW, the first aircraft in the landing sequence
+         on the Tower frequency, regardless of distance from the runway, must be advised of the
+         traffic on the runway.
+              (1) W hen the reported ceiling is less than 800 feet or the reported visibility is less
+                   than 2 miles, landing clearance must be withheld until the aircraft in position
+                   b egins takeoff roll.
+    e . L UAW is not authorized when traffic volume or complexity issues negatively impact the
+         a bility to use the procedures in a safe and efficient manner.
+
+5-1-6. SLC Diverse Vector Area (DVA)
+    a. The DVA may be utilized for SLC departures only.
+    b . Vectoring below the MVA in the areas described within Table 4-1-6 is approved;
+         h owever, the aircraft must be assigned an altitude at or above the MVA.
+    c. Leaving the confines of the DVA, the aircraft must be at or above the MVA.
+
+N ot for real world use.  26
+                          T able 4-1-6. SLC Diverse Vector Area Headings
+
+A irport                  Runways  Available Headings Distance from DER
+
+SLC 1 6L, 16R, and 17 150° CW to 175°                                     9 NM
+
+S LC 3 4L, 34R, and 35 2 60° CW to 345°                                   10 NM
+
+5-1-7. Use of Radar
+When using TDW/STARS, LC must comply with the provisions contained within FAA JO
+7110.65 Chapter 5.
+
+5-1-8. Departure Frequencies
+Ensure aircraft have the appropriate departure frequency if the frequency in use is different than
+the frequency assigned or published on the assigned DP.
+
+5 -1-9. Landing Clearance
+T he use of a memory aid upon issuance of a landing clearance is mandatory. The preferred
+m ethod for utilizing a landing clearance memory aid is by highlighting the aircraft's STARS Full
+Data Block (FDB).
+
+5-1-10. Runway Exiting
+LC is authorized to issue taxi instructions to arrival aircraft that allows them to continue a taxi
+and clear the runway.
+
+5 -1-11. FPS Marking
+    a. Mark boxes 4-8 of an aircraft's IFR FPS in accordance with section 1-4.
+    b. Mark Box 5 of an aircraft's VFR FPS in accordance with section 1-4.
+
+5-1-12. FPS Handling
+    a . Departure aircraft FPSs must be sequenced in the appropriate bay for the runway of
+         departure and must reflect the order in which the aircraft will depart.
+    b. D eparture aircraft FPSs may be deleted when all conflicts are resolved and the aircraft
+         has been instructed to contact departure.
+
+N ot for real world use.                                                         2 7
+                              Section 2. Local Assist City (CTY)
+
+5 -2-1. Position Responsibilities
+    a. Monitor the CTY frequency (120.200 MHz).
+    b. P rovide control instructions to aircraft within the CTY area of jurisdiction.
+    c . Mark FPSs in accordance with section 1-4 and paragraph 4-1-10.
+    d. A ssume other local control or other cab responsibilities, as assigned.
+
+5 -2-2. Area of Jurisdiction
+CTY has jurisdiction of LCE airspace (see Appendix 1), except that airspace between Redwood
+Road and the extended centerline of Runway 17/35, at and below 5,500 feet.
+
+5-2-3. Sequencing
+    a. Sequence VFR aircraft landing at SLC into a downwind over Redwood Road at 6,000
+         feet MSL and assign LCE frequency.
+    b . Verbally coordinate the VFR arrival sequence with LCE prior to sequencing aircraft over
+         R edwood Road.
+
+5-2-4. Routing
+    a. Route VFR overflight traffic in accordance with the following:
+              (1) From the north transitioning southbound: over or east of I-15 at 5,500, 6,500, or
+                   7,500 feet MSL.
+              (2) From the south transitioning northbound: over or east of I-15 at 5,000, 6,000, or
+                   7 ,000 feet MSL.
+              (3) From the west transitioning eastbound:
+                        (a) North Flow: via I-80 transition at 5,500 feet MSL.
+                        (b) South Flow: via BARN transition at 5,500 feet MSL.
+              (4) From the east transitioning westbound:
+                        (a) North Flow: via I-80 transition at 5,500 feet MSL.
+                        (b) South Flow: via BARN transition at 5,500 feet MSL.
+
+PHRASEOLOGY-
+CLEARED INTO THE SALT LAKE CLASS BRAVO AIRSPACE VIA (transition) (direction).
+MAINTAIN VFR AT (altitude).
+
+5 -2-5. VFR Arrival Best Practices
+The following are considered best practices for handling VFR arrival traffic, but are not required.
+
+    a . W hen sequencing aircraft into a downwind in accordance with paragraph 4-2-3, utilize
+         I-15 north/south parallel to the upwind direction prior to turning aircraft into a downwind
+         o ver Redwood Road.
+
+    b . A dvise aircraft on initial contact the type of pattern entry/direction and the landing
+         runway to expect.
+
+Not for real world use.  2 8
+    EXAMPLE-
+    "Expect right traffic runway three five over Redwood Road."
+
+c . During north flow, instruct aircraft inbound via the I-80 transition to maintain 6,500 until
+    a beam the arrival end of Runway 35, then sequence into an upwind over I-15 (if
+    required) and/or a downwind over Redwood Road at 6,000.
+
+    P HRASEOLOGY-
+    C ONTINUE VIA/FOLLOW I-80 EASTBOUND. MAINTAIN VFR AT (altitude).
+
+    and once abeam Runway 35, if applicable,
+
+    TURN LEFT, JOIN/FOLLOW I-15 NORTHBOUND. DESCEND AND MAINTAIN VFR AT
+    (altitude).
+
+    and/or, if applicable,
+
+    TURN LEFT/RIGHT, JOIN/FOLLOW REDWOOD ROAD SOUTHBOUND.
+
+d. During south flow, instruct aircraft inbound via the BARN transition to maintain 6,500
+    u ntil over the arrival end of Runway 17, then sequence into an upwind over I-15 (if
+    required) and/or a downwind over Redwood Road at 6,000.
+
+    P HRASEOLOGY-
+    CONTINUE VIA BARN TRANSITION EASTBOUND. MAINTAIN VFR AT (altitude).
+
+    and once over Runway 17, if applicable,
+
+    TURN RIGHT, JOIN/FOLLOW I-15 SOUTHBOUND. DESCEND AND MAINTAIN VFR
+    AT (altitude).
+
+    and/or, if applicable,
+
+    TURN LEFT/RIGHT, JOIN/FOLLOW REDWOOD ROAD NORTHBOUND.
+
+e. Be practical and coordinate with LCE to the maximum extent possible in order to move
+    aircraft in the most efficient manner possible. For example, if a gap/shortcut exists,
+    separation will be maintained, and sequencing the aircraft into a downwind would not be
+    a dvantageous, coordinate with LCE to get the aircraft sequenced toward the airport as
+    q uickly as practical.
+
+Not for real world use.  2 9
+                             S ection 3. Local Control East (LCE)
+
+5 -3-1. Position Responsibilities
+    a . M onitor the LCE frequency (118.300 MHz).
+    b. Provide control instructions to aircraft within the LCE area of jurisdiction.
+    c. Mark FPSs in accordance with section 1-4 and paragraph 4-1-10.
+    d . A ssume other local control or other cab responsibilities, as assigned.
+    e. Assume CTY responsibilities when combined.
+
+5 -3-2. Area of Jurisdiction
+LCE has jurisdiction of the following:
+
+    a. L CE airspace, as depicted in Appendix 1.
+
+         N OTE-
+         W hen CTY is staffed, LCE has jurisdiction over that airspace within LCE airspace
+         between Redwood Road and the extended centerline of Runway 17/35, at and below
+         5 ,500 feet.
+
+    b. R unway 17/35.
+    c . A ll taxiways between Runway 16L/34R and Runway 17/35.
+
+5 -3-3. VFR Departure Routing
+    a. R oute north/south/east departures via I-15 at one of the following altitudes:
+              (1) Northbound fixed-wing: 5,500 feet MSL.
+              (2) S outh/eastbound fixed-wing: 5,500 feet MSL.
+
+                   NOTE-
+                   East departures must only be routed over I-15 when CTY is staffed. Otherwise,
+                   e ast departures may be turned on course as soon as practical.
+
+              (3) Helicopters: at or below 5,000 feet MSL.
+
+         PHRASEOLOGY-
+         T URN LEFT/RIGHT, JOIN/FOLLOW I-15 (direction).
+
+    b. Route west departures in accordance with the following:
+              (1) N orth Flow: initially via I-15 southbound. After radar identification, via I-80
+                   transition at or below 6,000 feet MSL.
+
+                   PHRASEOLOGY-
+                   T URN RIGHT, JOIN/FOLLOW I-15 SOUTHBOUND. RUNWAY (runway),
+                   CLEARED FOR TAKEOFF.
+
+                   and after radar identification,
+
+N ot for real world use.  3 0
+                   T URN RIGHT, JOIN/FOLLOW I-80 WESTBOUND.
+
+                   or, if appropriate,
+
+                   C ONTINUE VIA I-15 SOUTHBOUND, THEN TURN RIGHT, JOIN/FOLLOW I-80
+                   WESTBOUND.
+
+              (2) South Flow: initially via I-15 northbound. After radar identification, via BARN
+                   transition at or below 6,000 feet MSL.
+
+                   P HRASEOLOGY-
+                   T URN LEFT, JOIN/FOLLOW I-15 NORTHBOUND. RUNWAY (runway),
+                   CLEARED FOR TAKEOFF.
+
+                   a nd after radar identification,
+
+                   T URN LEFT, OVERFLY/PROCEED TO THE RUNWAY ONE SIX RIGHT
+                   N UMBERS, THEN PROCEED TO THE BARN.
+
+                   o r,
+
+                   TURN LEFT, OVERFLY/PROCEED TO THE RUNWAY ONE SIX RIGHT
+                   NUMBERS, JOIN/FOLLOW BARN TRANSITION WESTBOUND.
+
+5-3-4. Skypark Airport (BTF)
+    a. LCE must provide radar services to BTF VFR arrivals/departures to/from all directions
+         e xcept north.
+    b . Assign BTF VFR departures initial routing and altitudes consistent with the SLC VFR
+         flow.
+
+5-3-5. Local Assist City
+When CTY is staffed, LCE must:
+
+    a. Ensure traffic in the pattern for Runway 17/35 remains over or west of Redwood Road,
+         a t or below 5,500 feet MSL.
+
+    b. H ave control for descent over Redwood Road for VFR arrivals.
+    c . M aintain separation responsibility for all operations between Redwood Road and the
+
+         extended centerline of Runway 17/35 within LCE airspace, at and below 5,500 feet MSL.
+    d . Assign CTY frequency to Category I & II VFR departures.
+
+Not for real world use.  3 1
+                            S ection 4. Local Control West (LCW)
+
+5-4-1. Position Responsibilities
+    a . M onitor the LCW frequency (132.650 MHz).
+    b. Provide control instructions to aircraft within the LCW area of jurisdiction.
+    c. M ark FPSs in accordance with section 1-4 and paragraph 4-1-10.
+    d . A ssume other local control or other cab responsibilities, as assigned.
+
+5-4-2. Area of Jurisdiction
+L CW has jurisdiction of the following:
+
+    a . LCW airspace, as depicted in Appendix 1.
+    b. Runway 16R/34L.
+
+5-4-3. Point NICHOL
+During South Flow, LCW must ensure all turn departures remain over or south of Point NICHOL
+(see Appendix 1A) at all times.
+
+Not for real world use.  32
+                           Section 5. Local Control Center (LCC)
+
+5 -5-1. Position Responsibilities
+    a. Monitor the LCC frequency (119.050 MHz).
+    b . P rovide control instructions to aircraft within the LCC area of jurisdiction.
+    c . M ark FPSs in accordance with section 1-4 and paragraph 4-1-10.
+    d . Assume other local control or other cab responsibilities, as assigned.
+    e . Assume LCE and/or LCW responsibilities when combined.
+
+5 -5-2. Area of Jurisdiction
+LCC has jurisdiction of the following:
+
+    a. LCC airspace, as depicted in Appendix 1.
+    b. R unway 16L/34R.
+
+5-5-3. Releases
+    a . U nless otherwise coordinated, LCC must hold all IFR/UVFR releases.
+    b . L CC may release control of turn releases and/or straight-out releases to LCW or LCE as
+         needed.
+
+         N OTE-
+         W hen turn releases have been released to LCW, LCC assumes responsibility for
+         s eparation of aircraft departing on a heading of 310° from turn departures.
+
+Not for real world use.  3 3
+                          Appendix 1. Local Control Airspace
+                            Appendix 1A. SLC Tower Airspace
+
+N ot for real world use.                                      3 4
+                         A ppendix 1B. SLC Tower Airspace North Flow
+
+Not for real world use.                                               3 5
+                         A ppendix 1C. SLC Tower Airspace South Flow
+
+Not for real world use.                                               3 6
+     A ppendix 2. Pre-Arranged Coordination Areas
+A ppendix 2A. SLC Tower Pre-Arranged Coordination Area
+
+Not for real world use.                                 3 7
+A ppendix 2B. P7 Pre-Arranged Coordination Area (North Flow)
+
+Not for real world use.                                       3 8
+A ppendix 2C. P8 Pre-Arranged Coordination Area (South Flow)
+
+Not for real world use.                                       3 9
+ A ppendix 3. SLC Airport Supplemental Information
+A ppendix 3A. Runway 16R/34L Distance Remaining Chart
+
+Not for real world use.                                4 0
+A ppendix 3B. Runway 16L/34R Distance Remaining Chart
+
+Not for real world use.                                4 1
+A ppendix 3C. Runway 17/35 Distance Remaining Chart
+
+Not for real world use.                              4 2
+                         A ppendix 3D. Ground Control Control Areas
+
+Not for real world use.                                              4 3
+                         A ppendix 4A. Ramp Appendix
+
+Not for real world use.                               4 4
+                         A ppendix 4B. Runway 16L Deice Pad
+
+Not for real world use.                                      4 5
+                         A ppendix 4C. Runway 34L Deice Pad
+
+Not for real world use.                                      4 6
+                         A ppendix 4D. Runway 34R Deice Pad
+
+Not for real world use.                                      4 7
+                         A ppendix 4E. Taxiway L Deice Pad
+
+Not for real world use.                                     4 8
+

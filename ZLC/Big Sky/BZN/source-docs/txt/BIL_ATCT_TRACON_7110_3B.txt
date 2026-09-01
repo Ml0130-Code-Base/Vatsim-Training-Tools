@@ -1,0 +1,700 @@
+SUBJ: BIL ATCT/TRACON Standard Operating Procedures
+
+  This document establishes the Billings Airport Traffic Control Tower and Terminal Radar Approach
+
+Control (BIL ATCT/TRACON) Standard Operating Procedures within the Salt Lake City ARTCC on
+
+VATSIM (vZLC). Controllers are required to be familiar with the provisions of this document and to
+
+exercise their best judgment if they encounter situations not covered by it. The provisions and procedures
+
+described herein are supplemental to vZLC Facility Policy and FAA Order JO 7110.65.
+
+  The information contained herein is to be used for flight simulation purposes only on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facilities Engineer
+Salt Lake City ARTCC
+Version        Record of Changes  Effective Date Issued By
+
+7110.3A         Description       05/03/2025  HL
+7110.3B
+                Initial Release   03/19/2026  AE
+         Addition Of SAID System
+
+         Not for real world use.
+                                  Table of Contents
+
+Chapter 1. General Control                                 1
+
+Section 1. Introduction                                    1
+
+1-1-1. Purpose                                             1
+
+1-1-2. Audience                                            1
+
+1-1-3. Distribution                                        1
+
+1-1-4. Cancellation                                        1
+
+Section 2. Operational Positions                           2
+
+Section 3. Intrafacility Coordination Procedures           3
+
+1-3-1. Runway Configurations                               3
+
+1-3-2. Changing Runway Configurations                      3
+
+1-3-3. ATIS                                                3
+
+1-3-4. Airfield Pavement Weight Limitations                4
+
+1-3-5. Taxiway H Jurisdiction                              4
+
+Section 4. LC-TRACON Coordination Procedures               5
+
+1-4-1. IFR Departure Corridors                             5
+
+1-4-2. Departure Procedures                                5
+
+1-4-3. Arrival Procedures                                  6
+
+1-4-4. Missed Approach/Go-Around                           7
+
+1-4-5. IFR Practice Approaches                             7
+
+Section 5. Automation                                      8
+
+1-5-1. Use of Tower Display Workstation (TDW)              8
+
+1-5-2. Altitude Filter Limits                              8
+
+1-5-3. STARS Automated Point-Out Procedures                8
+
+Section 6. Opposite Direction Operations (ODO)             9
+
+1-6-1. General                                             9
+
+1-6-2. Responsibilities                                    9
+
+1-6-3. IFR Aircraft Procedures                             9
+
+1-6-4. VFR Aircraft Procedures                             10
+
+Chapter 2. Operational Positions                           11
+
+Section 1. Ground Control (GC)                             11
+
+2-1-1. Position Responsibilities                           11
+
+2-1-2. Area of Jurisdiction                                11
+
+2-1-3. IFR Departure Instructions                          11
+
+2-1-4. VFR Departure Instructions                          11
+
+2-1-5. Traffic Flow                                        12
+
+2-1-6. Control of Runway 7/25                              12
+
+2-1-7. ATIS                                                12
+
+2-1-8. Pushback Clearances                                 12
+
+2-1-9. Use Of SAID System                                  12
+
+                                  Not for real world use.
+Section 2. Local Control (LC)                                13
+
+2-2-1. Position Responsibilities                             13
+
+2-2-2. Area of Jurisdiction                                  13
+
+2-2-3. Use of Radar                                          13
+
+2-2-4. Landing Clearance                                     13
+
+Section 3. Radar North (RN)                                  14
+
+2-3-1. Position Responsibilities                             14
+
+2-3-2. Laurel Airport (6S8) Procedures                       14
+
+2-3-3. Radar South (RS)                                      14
+
+Appendix 1. Local Control Airspace                           15
+
+Appendix 1A. West Flow                                       15
+
+Appendix 1B. East Flow                                       16
+
+Appendix 2. TRACON Airspace                                  17
+
+Appendix 3. Laurel Airport (6S8) Runway 22 Approach Finals   18
+
+Appendix 4. BIL Airport Supplemental Information             19
+
+Appendix 4A. Taxiway Diagram                                 19
+
+Appendix 4B. Runway 7/25 Distance Remaining Chart            19
+
+Appendix 4C. Runway 10L/28R Distance Remaining Chart         20
+
+Appendix 4D. Runway 10R/28L Distance Remaining Chart         20
+
+                                    Not for real world use.
+                               Chapter 1. General Control
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Billings Airport Traffic Control Tower and Terminal Radar
+Approach Control (BIL ATCT/TRACON) Standard Operating Procedures within the Salt Lake
+City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels BIL ATCT SOP (7110.3A), effective May 3, 2025.
+
+Not for real world use.                    1
+                                    Section 2. Operational Positions
+
+                         Table 1-2-1. BIL ATCT/TRACON Operational Positions Table
+
+   Sector/Position           STARS ID  VATSIM Callsign                             Frequency
+Ground Control (GC)               X         BIL_GND                                  121.900
+                                   T        BIL_TWR                                  127.200
+ Local Control (LC)               N                                                  119.200
+  Radar North (RN)                S       BIL_N_APP                                  120.500
+  Radar South (RS)                        BIL_S_APP
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                                       2
+                    Section 3. Intrafacility Coordination Procedures
+
+1-3-1. Runway Configurations
+The active runway configuration refers to the general cardinal direction of departures and
+arrivals currently in use. Authorized runway configurations are listed in subparagraphs c. and d.
+
+    a. When selecting a runway configuration, the following factors must be considered:
+              (1) Wind direction.
+              (2) Wind speed. The gust factor takes precedence over the constant wind speed.
+
+    b. West Flow is designated as the "calm wind" runway configuration.
+    c. East Flow: Landing and departing Runway 10L and Runway 10R. Runway 7 may be
+
+         issued at pilot request.
+    d. West Flow: Landing and departing Runway 28L and Runway 28R. Runway 25 may be
+
+         issued at pilot request.
+
+1-3-2. Changing Runway Configurations
+The Local Control (LC) position is the final authority for selecting the runway configuration, but
+coordination with GC and TRACON must be accomplished prior to changing the runway
+configuration.
+
+    a. LC must:
+              (1) Coordinate with GC and TRACON to determine which aircraft will be the last
+                   departure and arrival in the old runway configuration.
+              (2) Coordinate with GC to determine the appropriate status of Runway 7/25, in
+                   accordance with paragraph 2-1-6.
+              (3) Ensure that:
+                        (a) The Tower Display Workstation (STARS) display is adjusted to indicate
+                             the correct flow.
+                        (b) The ATIS is updated to reflect the runway configuration change.
+
+    b. TRACON must:
+              (1) Ensure the STARS display is adjusted to indicate the correct flow.
+              (2) Notify ZLC ARTCC Sectors 15 and 39 (or other appropriate overlying sector) of
+                   the runway configuration change.
+
+1-3-3. ATIS
+Regardless of the position broadcasting the ATIS, the following statements must be included on
+the ATIS broadcast:
+
+    a. During VFR weather conditions: "DEPARTING VFR AIRCRAFT ADVISE GROUND
+         CONTROL OF REQUESTED HEADING OR DESTINATION."
+
+    b. When the outside air temperature is 26°C or greater: "CHECK DENSITY ALTITUDE."
+
+         NOTE-
+         This statement must be made immediately after stating the altimeter setting.
+
+Not for real world use.                    3
+1-3-4. Airfield Pavement Weight Limitations
+To the maximum extent possible, avoid having any aircraft weighing more than 12,500 lbs. use
+Runway 7/25 as an exit for Runway 10L/28R.
+
+1-3-5. Taxiway H Jurisdiction
+The position that has control jurisdiction of Runway 7/25 must also have jurisdiction of that
+portion of Taxiway H west of Runway 7/25 (see paragraph 2-1-6).
+
+Not for real world use.                    4
+                   Section 4. LC-TRACON Coordination Procedures
+
+1-4-1. IFR Departure Corridors
+IFR Departure Corridors are activated based on the runway flow currently in use and provide LC
+with a "fan" of headings to release IFR departures on. IFR Departure Corridors are depicted in
+Appendix 1, extending from the surface up to 7,000 feet MSL. The following procedures must be
+adhered to when utilizing departure corridors:
+
+    a. Only one departure corridor may be active at any time.
+
+         NOTE-
+         An operation to a non-advertised runway does not activate a new/additional departure
+         corridor.
+
+    b. Aircraft departing through the corridor may operate immediately adjacent to the lateral
+         boundaries from the surface up to the ceiling of the corridor. Assigned headings from LC
+         must not allow the aircraft's target to touch the corridor boundary.
+
+    c. Aircraft under the control of TRACON must maintain the following separation from the
+         corridor lateral boundaries:
+              (1) IFR aircraft - 3NM.
+              (2) VFR aircraft - must not touch the corridor boundary.
+
+    d. The radar map for the active departure corridor must be displayed on all radar displays.
+
+1-4-2. Departure Procedures
+For all departing aircraft, the following procedures must be adhered to:
+
+    a. LC must:
+              (1) Have automatic (rolling) departure releases on all IFR aircraft departing through
+                   the departure corridor (see paragraph 1-4-1), unless cancelled by TRACON.
+
+                   NOTE-
+                   1. TRACON may cancel automatic departure releases at any time. Unless
+                   explicitly stated by TRACON and acknowledged by LC, automatic departure
+                   releases are assumed to be in use.
+                   2. A rolling call is required to be sent to the appropriate departure controller. The
+                   preferred method for sending a rolling call is utilizing the .RC command (see the
+                   ZLC Alias Command Reference).
+
+              (2) Provide initial separation between all departing aircraft.
+              (3) Assign initial headings to all IFR aircraft in accordance with Table 1-4-1 and to all
+
+                   VFR aircraft in accordance with Table 1-4-2.
+
+Not for real world use.                    5
+                                     Table 1-4-1. IFR Initial Headings
+
+                           Type        Runway         Authorized Heading(s)
+                                                      102°
+                         Turbojet    10L/R            282°-320°
+                                     28L/R            060°-140°
+                                                      240°-320°
+                                             10L/R
+                         Non-Turbojet
+
+                                             28L/R
+
+                                     Table 1-4-2. VFR Initial Headings
+
+                           Type        Runway         Authorized Heading(s)
+                                                      102°
+                         Turbojet    10L/R            282°-360°
+                                     28L/R            360°-180°
+                                                      180°-360°
+                                             10L/R
+                         Non-Turbojet
+
+                                             28L/R
+
+              (4) Coordinate with TRACON if a departure does not auto-acquire within 2 NM of the
+                   airport.
+
+              (5) Transfer communications to TRACON within 3 NM of the departure end of the
+                   runway.
+
+    b. TRACON must:
+              (1) Have control for climbs and turns on initial contact.
+              (2) Verbally coordinate with LC when cancelling automatic departure releases.
+
+1-4-3. Arrival Procedures
+For all arriving aircraft, the following procedures must be adhered to:
+
+    a. LC must:
+              (1) Have control of arrivals on initial contact. If LC issues control instructions that
+                   affect the sequence, LC assumes responsibility for separation and must
+                   coordinate with TRACON.
+
+                   NOTE-
+                   Coordination may be verbal or via STARS scratchpad.
+
+              (2) Advise TRACON of aircraft executing an unplanned missed approach/go-around
+                   and comply with paragraph 1-4-4.
+
+    b. TRACON must:
+              (1) Sequence all arrivals to BIL airport except for VFR aircraft handed off to LC.
+
+Not for real world use.                                                        6
+              (2) Ensure separation of arrivals to the runway threshold.
+
+                   NOTE-
+                   If LC issues control instructions that affect the sequence, LC assumes
+                   responsibility for separation and must coordinate with TRACON.
+
+              (3) Transfer communications to LC between 5 NM and 15 NM from the airport.
+              (4) Hand off all VFR arrivals to LC prior to the LC airspace boundary (see Appendix
+
+                   1).
+              (5) When vectoring to the final approach course(s) for a single runway, parallel
+
+                   runways, or crossing runways, ensure the existence of vertical separation
+                   between opposite direction base leg traffic until another form of separation is
+                   established.
+              (6) Provide IFR separation services to VFR aircraft conducting practice approaches,
+                   in accordance with FAA JO 7110.65, paragraphs 4-8-11.a.(2) and 5-5-4.
+    c. TRACON may vector aircraft for a visual approach when the reported ceiling is 2,100
+         feet or greater and the visibility is 3 miles or greater.
+
+1-4-4. Missed Approach/Go-Around
+IFR aircraft executing an unplanned missed approach/go-around must comply with the following
+procedures:
+
+    a. Aircraft not on a visual approach may:
+              (1) Fly the published missed approach procedure, or;
+              (2) Be assigned a heading in accordance with Table 1-4-1 and an altitude of 7,000
+                   feet.
+
+    b. Aircraft on a visual approach may:
+              (1) Be assigned a heading in accordance with Table 1-4-1 and an altitude of 7,000
+                   feet, or;
+              (2) Join the local traffic pattern, in accordance with FAA JO 7110.65, paragraph
+                   7-4-1.
+                             Table 1-4-1. Missed Approach/Go-Around Headings
+
+                               Runway    Authorized Heading(s)
+                           10L/R         290°-090°
+                           7, 25, 28L/R  Any
+
+1-4-5. IFR Practice Approaches
+TRACON must issue the following missed approach instructions to IFR aircraft conducting
+multiple practice approaches:
+
+    a. Runway 10L: Heading 090° and 7,000 feet
+    b. Runway 28R: Heading 280° and 7,000 feet
+
+Not for real world use.                                                                  7
+                                      Section 5. Automation
+
+1-5-1. Use of Tower Display Workstation (TDW)
+LC must quick-look all TRACON positions. Arrival data from TRACON to LC must be transferred
+through the use of quick-look.
+
+1-5-2. Altitude Filter Limits
+All radar positions must monitor all aircraft altitudes to include up to at least:
+
+    a. TRACON: FL200.
+    b. LC: 8,000 feet. The lower limit may be temporarily adjusted to no higher than 3,800 feet
+
+         when target clutter is excessive.
+
+1-5-3. STARS Automated Point-Out Procedures
+The STARS automated Point-Out function is authorized between all BIL positions in accordance
+with the following procedures. The initiating controller must ensure:
+
+    a. The data block contains accurate scratchpad, type aircraft, and valid Mode-C altitude
+         information.
+
+    b. Any requested and/or assigned altitude information contained in the data block is
+         accurate prior to, and not changed after initiating, the point-out. Any changed information
+         after acceptance of the point-out must be re-coordinated.
+
+    c. Altitude information for point-outs from LC must be considered to be "at or below"
+         altitudes. Altitude information for point-outs from TRACON must be considered to be "at
+         or above" altitudes.
+
+Not for real world use.                    8
+                    Section 6. Opposite Direction Operations (ODO)
+
+1-6-1. General
+Opposite Direction Operations consist of IFR/VFR operations conducted to the same or parallel
+runway where an aircraft is operating in a reciprocal direction of another aircraft arriving,
+departing, or conducting an approach.
+
+NOTE-
+Departing aircraft include aircraft conducting a touch-and-go, stop-and-go, low approach,
+missed approach, or go-around.
+
+1-6-2. Responsibilities
+    a. LC and TRACON share the responsibility to coordinate ODO and issue traffic advisories
+         (see below).
+    b. LC is responsible for applying the cutoff point between opposite direction arriving and
+         departing aircraft.
+    c. TRACON is responsible for applying the cutoff point between opposite direction arrival
+         aircraft.
+
+1-6-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to all ODO aircraft.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) VFR aircraft conducting practice approaches must receive IFR services.
+              (3) Opposite direction, same or parallel runway, operations with opposing traffic
+
+                   inside the cutoff point are prohibited.
+              (4) Lateral separation must exist before any other type of separation is applied.
+    b. Coordination:
+              (1) LC must verbally request opposite direction departures with TRACON.
+              (2) TRACON must verbally request opposite direction arrivals with LC.
+              (3) Initial coordination must include callsign, type, and arrival/departure runway. The
+
+                   phrase "opposite direction" must be used.
+              (4) TRACON must enter the runway in the scratchpad for all ODO arrivals.
+    c. Cutoff procedures for aircraft conducting ODO to the same runway:
+
+         NOTE-
+         When both aircraft are receiving IFR services, visual separation is not authorized.
+
+Not for real world use.                    9
+              (1) A departing aircraft must be airborne and have turned to avoid conflict prior to an
+                   aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+    d. Cutoff procedures for aircraft conducting ODO to parallel runways:
+              (1) Provide a turn away from the opposing arriving traffic before the arrival is inside
+                   of the cutoff point to the other runway. The same cutoff points in subparagraph c.
+                   must apply.
+
+                   NOTE-
+                   1. Visual separation of any type may be applied after the turn away from
+                   opposing traffic is issued.
+                   2. Prior to a pilot providing visual separation, a heading with at least 15° angular
+                   difference between the aircraft's flight paths must be assigned to ensure flight
+                   paths do not cross.
+
+1-6-4. VFR Aircraft Procedures
+    a. Ensure VFR aircraft are issued a turn to avoid conflict with the opposing IFR/VFR traffic.
+    b. During coordination, the phrase "opposite direction" must be used.
+    c. LC must issue traffic information to both aircraft and indicate the direction that the
+         departure will turn (arrival/departure ODO) or the location of the opposing aircraft on final
+         (arrival/arrival ODO).
+    d. TRACON must enter the runway in the scratchpad for all ODO arrivals.
+
+Not for real world use.                    10
+                           Chapter 2. Operational Positions
+
+                               Section 1. Ground Control (GC)
+
+2-1-1. Position Responsibilities
+    a. Monitor the GC frequency (121.900 MHz).
+    b. Prepare, update, and mark flight progress strips in accordance with the ZLC Flight Strip
+         Handling Directive (7210.3).
+    c. Issue departure clearances to IFR aircraft, complying with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. Handle VFR departure aircraft in accordance with paragraph 2-1-4.
+    e. Ensure all taxiing aircraft have the current ATIS.
+    f. Determine/finalize aircraft departure runway assignments.
+    g. Assume other ground control or other cab responsibilities, as assigned.
+
+2-1-2. Area of Jurisdiction
+GC has jurisdiction of all taxiways in the movement area except that portion of Taxiway H west
+of Runway 7/25 (see Figure 2-1-1). When LC releases control of Runway 7/25 to GC (see
+paragraph 2-1-6), GC assumes control of that portion of Taxiway H west of Runway 7/25.
+
+                                        Figure 2-1-1. Taxiway H Jurisdiction
+
+2-1-3. IFR Departure Instructions
+Departing IFR aircraft must be assigned the following:
+
+    a. The latest rendition of the BIL# SID. If the pilot does not accept the SID, mark "NS" into
+         Box 9 of the aircraft's flight progress strip.
+
+    b. An initial altitude of 7,000 feet, or lower cruising altitude.
+
+2-1-4. VFR Departure Instructions
+All VFR aircraft that will depart the Class C surface area must:
+
+    a. Be issued both of the following:
+              (1) Appropriate departure frequency.
+              (2) Discrete beacon code.
+
+Not for real world use.                                                                            11
+    b. Have the following filled out:
+              (1) Flight Strip, in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+              (2) Flight Plan.
+
+NOTE-
+1. Aircraft that will not depart the Class C surface area (e.g. remaining in the traffic pattern) are
+not required to have any of the above, except a filled out Flight Strip.
+2. A filled out Flight Plan indicates that the flight plan will be pushed to the NAS. This may be
+accomplished by using the Flight Plan Editor in CRC or by using the VP command in STARS.
+
+2-1-5. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+LC.
+
+2-1-6. Control of Runway 7/25
+Runway 7/25 must be under the jurisdiction of LC by default. However, it is common for LC to
+release control of Runway 7/25 to GC when operationally advantageous. When GC requests
+control of Runway 7/25, verbal coordination must be accomplished in accordance with the
+following.
+
+EXAMPLE-
+To request control: "REQUEST CONTROL OF RUNWAY (number)."
+To release control: "RUNWAY (number) RELEASED TO (position)."
+
+NOTE-
+Whichever position has control of Runway 7/25 must also have control of that portion of Taxiway
+H west of Runway 7/25 (see Figure 2-1-1). When coordination is accomplished to release
+control of Runway 7/25 to the other position, Taxiway H must be assumed to have also
+transferred control without any further coordination.
+
+2-1-7. ATIS
+Ensure all departure aircraft have the current ATIS.
+
+2-1-8. Pushback Clearances
+To the maximum extent possible, aircraft parked at the terminal ramp should push back within
+the non-movement area.
+
+2-1-9. Use Of SAID System
+    a. SAID only displays ADS-B-equipped and transmitting aircraft/vehicles within the
+         site-specific adapted area (the airport itself, not the surrounding area).
+    b. SAID systems may rely solely on ADS-B transponder information to display aircraft
+         identification if NAS flight plan information is not available to the system. This may result
+         in a discrepancy between SAID depicted aircraft identification and NAS flight plan
+
+Not for real world use.                    12
+         identification. This means that aircraft must have their ADS-B on with Altitude Reporting
+         Enabled in order to move on the airport movement areas.
+    c. SAID-derived information may only be used for reference and requires confirmation via
+         visual observation and/or pilot/operator reporting.
+    d. The SAID system does not use search patterns in a scratchpad box like ASDE-X.
+
+                                 Section 2. Local Control (LC)
+
+2-2-1. Position Responsibilities
+    a. Monitor the LC frequency (127.200 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Determine the appropriate runway configuration in accordance with paragraph 1-3-1.
+    d. Sequence and separate departures and arrivals.
+    e. Operate TDW/STARS equipment, as necessary.
+    f. Mark FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    g. Assume other local control or other cab responsibilities, as assigned.
+
+2-2-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. LC airspace, as depicted in Appendix 1.
+    b. Runway 10L/28R.
+    c. Runway 10R/28L.
+    d. Runway 7/25, except when delegated to GC.
+    e. Taxiway H west of Runway 7/25, except when Runway 7/25 is delegated to GC.
+
+2-2-3. Use of Radar
+When using TDW/STARS, LC must:
+
+    a. Comply with the provisions contained within FAA JO 7110.65 Chapter 5.
+    b. Adjust the range of the radar to display a minimum of 15 NM.
+    c. Display the BIL Tower List.
+
+2-2-4. Landing Clearance
+The use of a memory aid upon issuance of landing clearance is mandatory. The preferred
+method for utilizing a landing clearance memory aid is by highlighting the aircraft's STARS Full
+Data Block (FDB).
+
+Not for real world use.                    13
+                                  Section 3. Radar North (RN)
+
+2-3-1. Position Responsibilities
+RN shall have the following responsibilities when operating the TRACON delegated airspace
+(see Appendix 2):
+
+    a. Ensure separation of aircraft.
+    b. Initiate, and ensure adequate readback of, control instructions.
+    c. Monitor and operate the Radar North frequency (119.200 MHz) as well as the Radar
+
+         South (RS) frequency (120.500 MHz).
+    d. Accept and initiate handoffs, as necessary.
+    e. Coordinate with other control positions, as necessary.
+    f. Ensure scratchpad (and other STARS) entries are kept up-to-date, in accordance with
+
+         ZLC Scratchpad Directive (7210.4).
+
+2-3-2. Laurel Airport (6S8) Procedures
+RN must adhere to the following procedures when handling air traffic at 6S8:
+
+    a. Aircraft requesting IFR clearance while still on the ground must be assigned the latest
+         rendition of the BIL# SID.
+
+    b. Aircraft requesting IFR clearance in the air after departing 6S8 must be issued the
+         clearance in accordance with FAA JO 7110.65, paragraph 4-2-8.d.
+
+    c. When in West Flow, coordinate any 6S8 arrivals conducting the RNAV (GPS) or VOR
+         Runway 22 approach with LC. LC must hold all departure aircraft until the arrival is south
+         of the Runway 10L/28R extended centerline (see Appendix 3).
+
+    d. IFR separation services must be provided to VFR aircraft conducting practice
+         approaches, in accordance with FAA JO 7110.65, paragraphs 4-8-11.a.(2) and 5-5-4.
+
+2-3-3. Radar South (RS)
+While multiple TRACON positions exist (RN and RS), no split between positions exists.
+Therefore, RS must never be opened without explicit written permission from a ZLC Junior Staff
+or Senior Staff member, as defined in ZLC Facility Policy (7210.1).
+
+NOTE-
+RS must still monitor the RN frequency when open. This is generally done automatically, but
+must still be verified when signing on to position.
+
+Not for real world use.                    14
+                           Appendix 1. Local Control Airspace
+                                    Appendix 1A. West Flow
+
+Not for real world use.                                            15
+                             Appendix 1B. East Flow
+
+Not for real world use.                                    16
+                           Appendix 2. TRACON Airspace
+
+NOTE-
+BIL ATCT/TRACON is delegated that airspace extending upward from the surface up to 15,000
+feet MSL within a 40 NM radius of the defined coordinates for Billings Logan International
+Airport. The 60 NM ring displayed above is only to be interpreted for situational awareness.
+
+Not for real world use.                                     17
+Appendix 3. Laurel Airport (6S8) Runway 22 Approach Finals
+
+Not for real world use.                                     18
+Appendix 4. BIL Airport Supplemental Information
+                Appendix 4A. Taxiway Diagram
+
+Appendix 4B. Runway 7/25 Distance Remaining Chart
+
+Not for real world use.                            19
+Appendix 4C. Runway 10L/28R Distance Remaining Chart
+Appendix 4D. Runway 10R/28L Distance Remaining Chart
+
+Not for real world use.                               20
+

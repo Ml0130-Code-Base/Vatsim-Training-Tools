@@ -1,0 +1,324 @@
+SUBJ: Scratchpad Entry and Coordination Procedures
+
+          This document establishes procedures for scratchpad entry and coordination at Unrestricted
+Terminal Radar Approach Control (TRACON) and Radar Approach Control (RAPCON) facilities within the
+Salt Lake City ARTCC on VATSIM (vZLC). Controllers are required to be familiar with the provisions of
+this document and to exercise their best judgment if they encounter situations not covered by it. The
+provisions and procedures described herein are supplemental to vZLC Facility Policy and FAA Order JO
+7110.65.
+
+          The information contained herein is to be used for flight simulation purposes only on the VATSIM
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Harry Linsenmayer
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Evan McSweeny
+Deputy Air Traffic Manager
+Salt Lake City ARTCC
+Version   Record of Changes       Effective Date Issued By
+
+7210.4A  Description              01/01/2025  HL
+
+         Initial Release
+
+         Not for real world use.
+                                   Table of Contents
+
+Chapter 1. Administrative                                   1
+
+Section 1. Introduction                                     1
+
+1-1-1. Purpose                                              1
+
+1-1-2. Audience                                             1
+
+1-1-3. Distribution                                         1
+
+1-1-4. Cancellation                                         1
+
+Section 2. Supplements                                      2
+
+1-2-1. Requirements                                         2
+
+1-2-2. Enroute Fourth-Line Data Entries                     2
+
+Chapter 2. IFR Scratchpad Entries                           3
+
+Section 1. Automation                                       3
+
+2-1-1. Automatic Departure Scratchpad Entries               3
+
+2-1-2. Automatic Arrival Scratchpad Entries                 3
+
+Section 2. Approach Assignment                              4
+
+2-2-1. Usage                                                4
+
+2-2-2. Limitations                                          4
+
+2-2-3. Approach Assignee                                    4
+
+2-2-4. Special Approach Variants                            4
+
+2-2-5. Entry Format                                         4
+
+2-2-6. Approach Type/Variant Abbreviations                  5
+
+Section 3. Other Approved Entry Usage                       6
+
+2-3-1. Format                                               6
+
+2-3-2. Coordination                                         6
+
+2-3-3. Approved Entries                                     6
+
+Chapter 3. VFR Scratchpad Entries                           8
+
+Section 1. Usage                                            8
+
+3-1-1. Format                                               8
+
+3-1-2. Coordination                                         8
+
+3-1-3. Approved Entries                                     8
+
+                                   Not for real world use.
+                                Chapter 1. Administrative
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes procedures for scratchpad entry and coordination at Unrestricted
+Terminal Radar Approach Control (TRACON) and Radar Approach Control (RAPCON) facilities
+within the Salt Lake City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels Scratchpad Directive, dated August 1, 2023.
+
+Not for real world use.                                                                         1
+                                     Section 2. Supplements
+
+1-2-1. Requirements
+All members listed on the vZLC roster that are authorized to control any Approach Control
+and/or Departure Control positions at facilities designated as "Unrestricted" in accordance with
+the VATSIM Global Controller Administration Policy (GCAP) must adhere to the provisions
+contained herein.
+
+NOTE-
+1. Regardless of top-down status, scratchpad entry usage is mandatory for all radar positions.
+2. Individual facility SOPs take precedence over this document. Should any contradiction
+appear in an individual facility's SOP, those clauses contained in the SOP must be adhered to.
+
+1-2-2. Enroute Fourth-Line Data Entries
+The provisions contained herein must not apply to Enroute controllers. A list of approved
+Fourth-Line Data entries for ERAM full data blocks may be found in section 1-5 of the ZLC
+ARTCC SOP.
+
+Not for real world use.                                                                           2
+                          Chapter 2. IFR Scratchpad Entries
+
+                                      Section 1. Automation
+
+2-1-1. Automatic Departure Scratchpad Entries
+At some facilities within the Salt Lake City ARTCC, Scratchpad #1 of certain departure aircraft
+full data blocks will automatically populate with the aircraft's exit fix or gate. This is primarily
+used as a memory aid and may be cleared at the departure controller's discretion.
+
+2-1-2. Automatic Arrival Scratchpad Entries
+At all facilities within the Salt Lake City ARTCC, Scratchpad #1 of an arrival aircraft's full data
+block will automatically populate with the aircraft's arrival airport, abbreviated to the FAA
+three-letter airport identifier. This is primarily used as a memory aid and may be overwritten with
+the approach assignment scratchpad, entered in accordance with section 2-2, at the approach
+controller's discretion.
+
+Not for real world use.  3
+                              Section 2. Approach Assignment
+
+2-2-1. Usage
+Regardless of the airport an IFR arrival aircraft is inbound to, all aircraft assigned an instrument
+approach must have an approach assignment scratchpad entry made in accordance with the
+provisions of this section.
+
+2-2-2. Limitations
+Scratchpad entries are limited to three (3) characters. Therefore, information contained in
+scratchpads must be heavily abbreviated. When making scratchpad entries to communicate an
+approach assignment, controllers must make entries in accordance with the procedures
+contained within this section.
+
+2-2-3. Approach Assignee
+The controller that is responsible for assigning an approach to pilots must place the approach
+assignment into Scratchpad #1 of the aircraft's full data block.
+
+2-2-4. Special Approach Variants
+Special approach variants that are not covered in Table 2-2-1, such as the HI-ILS, HI-TACAN,
+PRM, etc. must be verbally coordinated with any subsequent radar controllers.
+
+NOTE-
+For TRACON or RAPCON facilities that must transfer radar identification to any Local Control
+position (typically via STARS quick-look function), the TRACON/RAPCON controller(s)
+responsible for transferring radar identification must verbally coordinate any special approach
+variants with the appropriate Local Control position(s).
+
+2-2-5. Entry Format
+All approach assignment scratchpad entries must follow the following format:
+
+    a. First character: Approach type and, if applicable, approach variation. Abbreviate in
+         accordance with paragraph 2-2-6.
+
+         NOTE-
+         BIL and BOI have multiple ILS or LOC variations to Runway 10L and 10R, respectively.
+         Unless assigning the ILS Z variation, write "I" in the first character to signify that the ILS
+         Y variation has been assigned. Aircraft must still be notified which variation of approach
+         to expect.
+
+    b. Second character: Runway number. If a runway number contains more than one
+         character, abbreviate to use the second character. If the approach is classified as a
+         circling approach only (no runway specified), utilize the approach variant (A, B, C, etc.).
+
+Not for real world use.                                                                                  4
+         EXAMPLE-
+         1. Runway 2 would be abbreviated as "2."
+         2. Runway 13 would be abbreviated as "3."
+
+    c. Third character: Runway designator (L/R/C), if applicable.
+
+         EXAMPLE-
+         Runway 28R would be abbreviated as "8R."
+
+2-2-6. Approach Type/Variant Abbreviations
+When abbreviating the approach type and variation in accordance with paragraph 2-2-5.a.,
+Table 2-2-1 must be used.
+
+                            Table 2-2-1. Approach Type and Variant Abbreviations
+
+              Approach Type/Variant                    Scratchpad Entry
+Visual                               V
+ILS                                  I
+LOC                                  L
+LOC (BACK CRS)                       B
+RNAV                                 R
+RNAV X                               X
+RNAV Y                               Y
+RNAV Z                               Z
+VOR or VOR/DME                       O
+LDA                                  D
+NDB                                  N
+TACAN                                T
+Contact                              C
+
+Not for real world use.                                                                   5
+                         Section 3. Other Approved Entry Usage
+
+2-3-1. Format
+Entries made in accordance with Table 2-3-1 must be placed in Scratchpad #2 of the aircraft's
+full data block.
+
+2-3-2. Coordination
+The entries listed in Table 2-3-1 must be considered valid coordination when placed in
+Scratchpad #2 of an aircraft's full data block. If an approved entry from Table 2-3-1 is utilized,
+verbal coordination is not required.
+
+2-3-3. Approved Entries
+The following entries listed in Table 2-3-1 may be utilized in accordance with the provisions of
+this section. Example entries are listed in Table 2-3-2.
+
+                            Table 2-3-1. Approved Secondary Scratchpad Entries
+
+Entry                     Meaning
+
+xxK Aircraft assigned specific speed (speed in tens of knots).
+
+Hxx Aircraft assigned specific heading (heading in tens of degrees).
+
+PA Aircraft is conducting a practice approach.
+
+VS Aircraft is maintaining visual separation from the aircraft directly ahead.
+
+REQ Pilot has a request.
+
+S                        Aircraft reported destination airport in sight.
+
+HLD Aircraft holding.
+
+XOX Pilot has difficulty following instructions.
+
+NOTE-
+Entries in Table 2-3-1 with lowercase "xx" denote entries with several possible designators. See
+Table 2-3-2 for examples.
+
+Not for real world use.                                                                             6
+                         Table 2-3-2. IFR Primary Scratchpad Entry Examples
+
+                         Entry  Meaning
+
+                         19K Aircraft assigned 190 knots.
+
+                         21K Aircraft assigned 210 knots.
+
+                         H05 Aircraft assigned heading 050°.
+
+                         H22 Aircraft assigned heading 220°.
+
+Not for real world use.                                                      7
+                         Chapter 3. VFR Scratchpad Entries
+
+                         Section 1. Usage
+
+3-1-1. Format
+Except as described in paragraph 3-1-3, entries made in accordance with Table 3-1-1 must be
+placed in Scratchpad #1 of the aircraft's full data block.
+
+3-1-2. Coordination
+The entries listed in Table 3-1-1 must be considered valid coordination when placed in
+Scratchpad #1 of an aircraft's full data block. If an approved entry from Table 3-1-1 is utilized,
+verbal coordination is not required.
+
+3-1-3. Approved Entries
+The following entries listed in Table 3-1-1 may be utilized in accordance with the provisions of
+this section. Example entries are listed in Table 3-1-2.
+
+                                Table 3-1-1. Approved VFR Scratchpad Entries
+
+Entry                                 Meaning
+
+Axx Aircraft restricted at or above specific altitude (altitude in hundreds of feet).
+
+Bxx Aircraft restricted at or below specific altitude (altitude in hundreds of feet).
+
+PA Aircraft executing a practice approach (must be paired with approach assignment).
+
+S      Aircraft reported destination airport in sight.
+
+TG Aircraft requesting touch-and-go.
+
+SG Aircraft requesting stop-and-go.
+
+XOX Pilot has difficulty following instructions.
+
+NOTE-
+1. Entries in Table 3-1-1 with lowercase "xx" denote entries with several possible designators.
+See Table 3-1-2 for examples.
+2. When "PA" is entered into Scratchpad #1, an approach assignment scratchpad entry must be
+made in Scratchpad #2 in accordance with section 2-2.
+
+Not for real world use.                                                                             8
+                                Table 3-1-2. VFR Scratchpad Entry Examples
+
+                         Entry  Meaning
+
+                         A45 Aircraft restricted at or above 4,500 feet.
+
+                         B65 Aircraft restricted at or below 6,500 feet.
+
+Not for real world use.                                                     9
+

@@ -1,0 +1,1440 @@
+SUBJ: S56 TRACON Standard Operating Procedures
+
+  This document establishes the Salt Lake City Terminal Radar Approach Control (S56 TRACON)
+
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC). Controllers are
+
+required to be familiar with the provisions of this document and to exercise their best judgment if they
+
+encounter situations not covered by it. The provisions and procedures described herein are supplemental
+
+to vZLC Facility Policy and FAA Order JO 7110.65.
+
+  The information contained herein is to be used for flight simulation purposes only on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+          Record of Changes
+
+Version   Description                                       Effective Date Issued By
+
+7110.1A   Initial Release                                   05/19/2024  HL
+7110.1B
+7110.20C  Minor revisions for SLC/PVU flight data overhaul  02/20/2025  HL
+
+          Update to Independent Approaches, Change U42 To   11/01/2025  CN
+
+          SVR, and Approach Boundary Changes
+
+          Not for real world use.
+                                 Explanation of Changes
+
+1-1-4. Cancellation
+Rewrote paragraph to indicate cancellation of ZLC 7110.1B.
+2-4-4. Establish on RNAV (EOR) Procedures
+
+    a. When utilizing simultaneous independent approaches in accordance with 7110.65 5-9-7:
+              (1) The following approaches are allowed when utilizing RNAV (RNP) Z RWY 34L:
+                   All 34R approach procedures.
+              (2) The following approaches are allowed when utilizing RNAV (RNP) Z RWY 16R:
+                   All 16L approach procedures.
+
+    b. When utilizing wide spaced simultaneous approaches in accordance with 7110.65
+         5-9-10:
+              (1) The following approaches are allowed when utilizing RNAV (RNP) Z RWY 34L:
+                   All 35 approaches except RNAV (RNP) Z 35.
+              (2) The following approaches are allowed when utilizing RNAV (RNP) Z 16R: All 17
+                   approaches.
+
+2-3-3. Secondary Scratchpad Entries
+Updates to Table 2-3-3
+
+3-8 Valley
+Changed U42 to SVR.
+Appendix 3-C and E
+Updates to Stockton and Jordan airspace diagrams.
+
+                                                                         Not for real world use.
+                             Table of Contents
+
+Chapter 1. Introduction                                                       1
+
+Section 1. General                                                            1
+
+1-1-1. Purpose                                                                1
+
+1-1-2. Audience                                                               1
+
+1-1-3. Distribution                                                           1
+
+1-1-4. Cancellation                                                           1
+
+Section 2. Operational Positions                                              2
+
+Section 3. Airspace                                                           3
+
+1-3-1. Definitions                                                            3
+
+1-3-2. S56 TRACON Airspace                                                    3
+
+1-3-3. VFR Airspace                                                           3
+
+Section 4. Normal Sectorization Splits                                        4
+
+1-4-1. Alpine Sector                                                          5
+
+Chapter 2. General Control                                                    6
+
+Section 1. General                                                            6
+
+2-1-1. Intra-facility Transfer of Control                                     6
+
+2-1-2. Compliance with TMIs                                                   6
+
+2-1-3. General Arrival Procedures                                             6
+
+2-1-4. General Departure Procedures                                           6
+
+Section 2. Duty Familiarization and Transfer of Position Responsibility       7
+
+2-2-1. Duty Familiarization                                                   7
+
+2-2-2. Transfer of Position Responsibility                                    7
+
+Section 3. Automation                                                         8
+
+2-3-1. Use of Scratchpads                                                     8
+
+2-3-2. Approved Primary Scratchpad Entries (IFR)                              8
+
+2-3-3. Secondary Scratchpad Entries (SLC)                                     9
+
+2-3-4. Secondary Scratchpad Entries (Satellites)                              10
+
+2-3-5. Approved VFR Scratchpad Entries                                        10
+
+2-3-6. Radar Displays                                                         12
+
+Section 4. Approaches                                                         13
+
+2-4-1. Simultaneous Independent Approaches to Widely Spaced Parallel Runways
+
+(SIMULs)                                                                      13
+
+2-4-2. Simultaneous Dependent Approaches (Staggers)                           13
+
+2-4-3. Visual Approach Procedures                                             14
+
+Section 5. Pre-Arranged Coordination                                          15
+
+2-5-1. Definition                                                             15
+
+2-5-2. Requirements                                                           15
+
+2-5-3. P1 Area (North Flow Only)                                              15
+
+2-5-4. P2 Area (South Flow Only)                                              15
+
+                                  Not for real world use.
+2-5-5. P3 Area (South Flow & Visual/SIMULs Only)           16
+
+2-5-6. P4 Area (North Flow & Visual/SIMULs Only)           16
+
+2-5-7. Satellite Airport Departures                        17
+
+Section 6. Off-Load Procedures and Responsibilities        18
+
+2-6-1. Definitions                                         18
+
+2-6-2. Categories                                          18
+
+2-6-3. Routing                                             18
+
+2-6-4. Automated Point-Outs                                18
+
+Chapter 3. Position Responsibilities and Procedures        19
+
+Section 1. Lake Sector                                     19
+
+3-1-1. Position Responsibilities                           19
+
+3-1-2. Procedures                                          19
+
+Section 2. Gunnison Sector                                 20
+
+3-2-1. Position Responsibilities                           20
+
+3-2-2. Procedures                                          20
+
+Section 3. Bear Sector                                     21
+
+3-3-1. Position Responsibilities                           21
+
+3-3-2. SLC Arrival Procedures                              21
+
+3-3-3. Satellite Arrival Procedures                        21
+
+Section 4. Hart Sector                                     22
+
+3-4-1. Position Responsibilities                           22
+
+3-4-2. Procedures                                          22
+
+Section 5. Final Sector                                    23
+
+3-5-1. Position Responsibilities                           23
+
+3-5-2. General Procedures                                  23
+
+3-5-2. South Flow Procedures                               23
+
+3-5-3. North Flow Procedures                               23
+
+Section 6. Jordan Sector                                   24
+
+3-6-1. Position Responsibilities                           24
+
+3-6-2. South Flow Procedures                               24
+
+3-6-3. North Flow Procedures                               24
+
+3-6-4. Alpine Sector Arrival/Departure Procedures          24
+
+3-6-5. VFR Procedures                                      25
+
+Section 7. Stockton Sector                                 26
+
+3-7-1. Position Responsibilities                           26
+
+3-7-2. Procedures                                          26
+
+Section 8. Valley Sector                                   27
+
+3-8-1. Position Responsibilities                           27
+
+3-8-2. Procedures                                          27
+
+Section 9. Alpine Sector                                   29
+
+3-9-1. Position Responsibilities                           29
+
+                                  Not for real world use.
+3-9-2. Procedures                                              29
+
+Appendix 1. General Airspace                                   30
+
+Appendix 1A. Salt Lake City TRACON Gates (North Flow)          30
+
+Appendix 1B. Salt Lake City TRACON Gates (South Flow)          31
+
+Appendix 1C. Salt Lake City ATCT Delegated Airspace            32
+
+Appendix 1D. Salt Lake City Class B Airspace                   33
+
+Appendix 2. Pre-Arranged Coordination Areas                    34
+
+Appendix 2A. P1 Area (North Flow Only)                         34
+
+Appendix 2B. P2 Area (South Flow Only)                         35
+
+Appendix 2C. P3 Area (South Flow & Visual/SIMULs Only)         36
+
+Appendix 2D. P4 Area (North Flow & Visual/SIMULs Only)         37
+
+Appendix 3. Delegated Airspace                                 38
+
+Appendix 3A. Alpine Airspace                                   38
+
+Appendix 3B. Bear Airspace                                     39
+
+Appendix 3B-1. Bear Airspace (North Flow)                      39
+
+Appendix 3B-2. Bear Airspace (South Flow & SIMULs)             40
+
+Appendix 3B-3. Bear Airspace (South Flow & Visual/Staggers)    41
+
+Appendix 3C. Jordan Airspace                                   42
+
+Appendix 3C-1. Jordan Airspace (North Flow & SIMULs)           42
+
+Appendix 3C-2. Jordan Airspace (North Flow & Visual/Staggers)  43
+
+Appendix 3C-3. Jordan Airspace (South Flow)                    44
+
+Appendix 3D. Lake Airspace                                     45
+
+Appendix 3D-1. Lake Airspace (North Flow)                      45
+
+Appendix 3D-2. Lake Airspace (South Flow)                      46
+
+Appendix 3E. Stockton Airspace                                 47
+
+Appendix 3E-1. Stockton Airspace (North Flow)                  47
+
+Appendix 3E-2. Stockton Airspace (South Flow)                  48
+
+Appendix 3F. Final Airspace                                    49
+
+Appendix 3F-1. Final Airspace (North Flow & SIMULs)            49
+
+Appendix 3F-2. Final Airspace (North Flow & Visual/Staggers)   50
+
+Appendix 3F-3. Final Airspace (South Flow & SIMULs)            51
+
+Appendix 3F-4. Final Airspace (South Flow & Visual/Staggers)   52
+
+Appendix 3G. Gunnison Airspace                                 53
+
+Appendix 3G-1. Gunnison Airspace (North Flow)                  53
+
+Appendix 3G-2. Gunnison Airspace (South Flow)                  54
+
+Appendix 3H. Hart Airspace                                     55
+
+Appendix 3H-1. Hart Airspace (North Flow)                      55
+
+Appendix 3H-2. Hart Airspace (South Flow)                      56
+
+Appendix 3I. Valley Airspace                                   57
+
+Appendix 3I-1. Valley Airspace (North Flow)                    57
+
+Appendix 3I-2. Valley Airspace (South Flow)                    58
+
+                                Not for real world use.
+Not for real world use.
+                                 Chapter 1. Introduction
+
+                                         Section 1. General
+
+1-1-1. Purpose
+This document establishes the Salt Lake City Terminal Radar Approach Control (S56 TRACON)
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels S56 SOP 7110.1B, effective February 20, 2025.
+
+Not for real world use.                    1
+                                Section 2. Operational Positions
+
+                         Table 1-2-1. S56 TRACON Operational Positions Table
+
+Sector/Position STARS ID            VATSIM Callsign                 Frequency
+                                       SLC_A_APP                      118.850
+Alpine                       A         SLC_B_APP                      124.900
+                                       SLC_F_APP                      125.700
+Bear                         B        SLC_G_APP                       126.250
+                                       SLC_H_APP                      121.100
+Final                        F         SLC_J_APP                      128.600
+                                      SLC_K_APP                       135.500
+Gunnison                     G         SLC_S_APP                      128.100
+                                       SLC_V_APP                      120.900
+Hart                         H
+
+Jordan                       J
+
+Lake                         K
+
+Stockton                     S
+
+Valley                       V
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                         2
+                                        Section 3. Airspace
+
+1-3-1. Definitions
+    a. Altitudes are in feet mean sea level (MSL) except when describing cloud ceilings, which
+         are in feet above airport elevation (AAE).
+    b. Runway Flow: The primary direction of landing and departing traffic.
+    c. North Flow: Operations at Salt Lake City International Airport (SLC) utilizing Runways
+         34L, 34R, 35, and 32.
+    d. South Flow: Operations at SLC utilizing Runways 16L, 16R, 17, and 14.
+
+1-3-2. S56 TRACON Airspace
+S56 TRACON airspace is depicted in Appendix 1. The airspace is divided into specific positions
+of operation depicted in Appendix 3.
+
+1-3-3. VFR Airspace
+All operational positions are assigned the 500-foot altitude below their designated airspace
+altitude except where such airspace overlies Alpine, Valley, and SLC ATCT airspace.
+
+EXCEPTION-
+Hart is assigned the 500-foot altitude above HS3 and HN4. See Appendix 3H.
+
+Not for real world use.                    3
+                            Section 4. Normal Sectorization Splits
+
+                         Table 1-4-1. North Flow Normal Sectorization Splits
+
+# of Controllers                Active Sector (Associated Sectors)
+
+                         1    Lake (All)
+
+                                       Lake (Lake, Bear, Stockton, Gunnison, & Hart)
+                         2
+
+                                       Jordan (Jordan, Final, Alpine, & Valley)
+
+                              Lake (Lake, Bear, Stockton, Gunnison, & Hart)
+
+                         3    Jordan (Jordan & Alpine)
+
+                              Final (Final & Valley)
+
+                              Lake (Lake & Gunnison)
+
+                                       Jordan (Jordan & Alpine)
+                         4
+
+                                       Bear (Bear, Stockton, & Hart)
+
+                              Final (Final & Valley)
+
+                              Lake (Lake & Gunnison)
+
+                              Jordan (Jordan & Alpine)
+
+                         5    Bear (Bear & Hart)
+
+                              Stockton
+
+                              Final (Final & Valley)
+
+Not for real world use.                                                                 4
+                            Table 1-4-2. South Flow Normal Sectorization Splits
+
+# of Controllers                  Active Sector (Associated Sectors)
+
+                         1      Lake (All)
+
+                                       Lake (Lake, Stockton, Jordan, Gunnison, & Alpine)
+                         2
+
+                                       Bear (Bear, Final, Hart, & Valley)
+
+                                Lake (Lake, Jordan, Gunnison, & Alpine)
+
+                         3      Bear (Bear, Stockton, & Hart)
+
+                                Final (Final & Valley)
+
+                                Lake (Lake & Gunnison)
+
+                                       Bear (Bear & Hart)
+                         4
+
+                                       Stockton (Stockton, Jordan, & Alpine)
+
+                                Final (Final & Valley)
+
+                                Lake (Lake & Gunnison)
+
+                                Bear (Bear & Hart)
+
+                         5      Stockton
+
+                                Jordan (Jordan & Alpine)
+
+                                Final (Final & Valley)
+
+1-4-1. Alpine Sector
+Alpine can be split off separate of suggested order due to traffic demand around PVU. This
+sector's whole purpose is to function as the approach control for PVU. This must only be
+initiated by the Events Coordinator or CIC.
+
+Not for real world use.                                                                     5
+                               Chapter 2. General Control
+
+                                         Section 1. General
+
+2-1-1. Intra-facility Transfer of Control
+An intra-facility radar handoff and communications transfer constitutes transfer of control for:
+
+    a. 30° turns either side of course.
+    b. Climbs/Descents.
+    c. Speed control ±30 knots.
+
+2-1-2. Compliance with TMIs
+All controllers must comply with all speed/in-trail restrictions, as mandated by the vATCSCC.
+
+2-1-3. General Arrival Procedures
+    a. On initial contact, the responsible radar position must:
+              (1) Ensure receipt of airport arrival information (ATIS, AWOS, or ASOS).
+              (2) Update the scratchpad in accordance with section 2-3. The scratchpad must
+                   reflect the aircraft destination and applicable approach information.
+    b. All SLC arrival aircraft that have been vectored off of an RNAV arrival must be
+         re-established on the arrival prior to entering the lateral confines of Final airspace. This
+         must be done in accordance with paragraphs 2-5-3 and/or 2-5-4.
+
+2-1-4. General Departure Procedures
+Controllers must not use the phrase "climb via SID" when there is conflicting crossing traffic.
+
+Not for real world use.                                                                                6
+    Section 2. Duty Familiarization and Transfer of Position Responsibility
+
+2-2-1. Duty Familiarization
+Prior to requesting a position relief briefing, controllers must accomplish the following items:
+
+    a. Log-in to position and activate session.
+    b. Review current METAR, PIREPs, or any other pertinent weather information.
+    c. Review all Traffic Management Programs.
+    d. Review pertinent overlying/underlying controller information.
+
+2-2-2. Transfer of Position Responsibility
+    a. All position relief briefings must be conducted in accordance with FAA Order 7110.65
+         Appendix A.
+    b. All controllers must follow the Position Relief Briefing Checklist located below.
+    c. Controllers must activate the session of the position they are assuming prior to the start
+         of the position relief briefing.
+    d. When traffic conditions warrant, the controller being relieved must monitor and observe
+         the position for a minimum of 2 minutes after the conclusion of the briefing.
+
+                 Position Relief Briefing Checklist
+
+ Position Information (which positions are being assumed)
+
+ ATIS Letter / Weather Trends / Flight Conditions
+
+ Runway Status / Type Approaches / Airspace Configuration
+
+ Current TMIs / Special Activity / Holding Aircraft
+
+ Point-Outs / Handoffs / Other Coordination
+
+ Special Requests or Instructions
+
+ Active Traffic
+
+Not for real world use.                    7
+                             Section 3. Automation
+
+2-3-1. Use of Scratchpads
+The use of scratchpads varies based upon whether the aircraft is IFR or VFR.
+
+    a. IFR Aircraft:
+              (1) The primary scratchpad will automatically populate with the following:
+                        (a) The exit fix for departures, or;
+                        (b) The three-letter airport identifier for arrivals.
+              (2) The primary scratchpad may be used for the following:
+                        (a) Speed assignments.
+                        (b) Visual separation.
+                        (c) Aircraft requesting a specific approach/runway.
+                        (d) Other approved entries, in accordance with paragraph 2-3-2.
+              (3) The secondary scratchpad must be used for the following:
+                        (a) Approach assignment, in accordance with paragraphs 2-3-3 and 2-3-4.
+
+    b. VFR Aircraft:
+              (1) The primary scratchpad may be used for the following:
+                        (a) Altitude restrictions.
+                        (b) Practice approach information.
+                        (c) Requested/expected runway.
+                        (d) Other approved entries, in accordance with paragraph 2-3-5.
+              (2) The secondary scratchpad must not be used.
+
+2-3-2. Approved Primary Scratchpad Entries (IFR)
+The following entries listed in Table 2-3-1 must be considered coordination when displayed in
+the primary scratchpad. When any of the entries listed in Table 2-3-1 are displayed in the
+primary scratchpad, verbal coordination is not required. Example entries are listed in Table
+2-3-2.
+
+                           Table 2-3-1. Approved IFR Primary Scratchpad Entries
+
+Entry                            Meaning
+
+xxK Aircraft assigned specific speed (speed in tens of knots).
+
+VS Aircraft is maintaining visual separation from the aircraft directly ahead.
+
+Rxx Aircraft requesting a specific approach/runway into SLC.
+
+S      Aircraft reported destination airport in sight.
+
+HLD Aircraft holding.
+
+XOX Pilot has difficulty following instructions.
+
+Not for real world use.                                                                          8
+NOTE-
+Entries in Table 2-3-1 with lowercase "xx" denote entries with several possible designators. See
+Table 2-3-2 for examples.
+
+                            Table 2-3-2. IFR Primary Scratchpad Entry Examples
+
+                           Entry               Meaning
+
+                           19K Aircraft assigned 190 knots.
+
+                           21K Aircraft assigned 210 knots.
+
+                           RIL Aircraft requesting ILS to RW 16L/34L.
+
+                           RD5 Aircraft requesting LDA to RW 35.
+
+                           RL Aircraft requesting RW 16L/34L.
+
+2-3-3. Secondary Scratchpad Entries (SLC)
+Arrival aircraft into SLC must have an approach assignment entered into the secondary
+scratchpad. All secondary scratchpad entries for SLC arrivals must conform to the following
+template:
+
+    a. First character: Approach type. See Table 2-3-3.
+    b. Second character: Runway designator. See Table 2-3-4.
+    c. Third character: Approach termination (if other than full stop). See Table 2-3-5.
+
+                                     Table 2-3-3. Approach Type Designators
+
+                           Designator       Approach Type
+
+                           I           ILS
+
+                           D           LDA
+
+                           R           RNAV
+
+                           G           RNAV Y
+
+                           Z           RNAV Z
+
+                           T           TACAN
+
+                           H           HI-TACAN
+
+                           O           VOR
+
+                           V           Visual
+
+Not for real world use.                                                                      9
+                               Table 2-3-4. SLC Runway Designators
+
+                           Designator           Runway
+
+                           L           16L/34L
+
+                           R           16R/34R
+
+                           7           17
+
+                           5           35, following the RNAV/LDA final
+
+                           35          35, not following the RNAV/LDA final
+
+                              Table 2-3-5. Approach Termination Designators
+
+                                 Designator     Meaning
+
+                                 F              Full Stop (optional)
+
+                                 O              Option
+
+                                 T              Touch-and-Go
+
+                                 W              Low Approach
+
+         NOTE-
+         When an aircraft is on an approach to Runway 35, is not following the RNAV/LDA final,
+         and is requesting to terminate the approach in anything that is not a full-stop landing,
+         verbally coordinate the termination with SLC ATCT.
+
+2-3-4. Secondary Scratchpad Entries (Satellites)
+Arrival aircraft into S56 satellite airports must have an approach assignment and termination
+designator entered into the secondary scratchpad. Entries listed in Table 2-3-3 and Table 2-3-5
+are approved.
+
+NOTE-
+A runway designator does not need to be specified for satellite airport scratchpads. Only
+dual-character entries are required to be made denoting the approach type, unless the aircraft
+will not make a full-stop landing.
+
+2-3-5. Approved VFR Scratchpad Entries
+The following entries listed in Table 2-3-6 must be considered coordination when displayed in
+the primary scratchpad. When any of the entries listed in Table 2-3-6 are displayed in the
+primary scratchpad, verbal coordination is not required. Example entries are listed in Table
+2-3-8.
+
+Not for real world use.                                                          10
+                           Table 2-3-6. Approved VFR Scratchpad Entries
+
+Entry                                      Meaning
+
+Axx Aircraft restricted at or above specific altitude (altitude in hundreds of feet).
+
+Bxx Aircraft restricted at or below specific altitude (altitude in hundreds of feet).
+
+Pxx Aircraft executing a specific practice approach.
+
+S      Aircraft reported destination airport in sight.
+
+TG Aircraft requesting touch-and-go.
+
+XOX Pilot has difficulty following instructions.
+
+NOTE-
+Entries in Table 2-3-6 with lowercase "xx" denote entries with several possible designators. See
+Table 2-3-8 for examples.
+
+                          Table 2-3-7. VFR Practice Approach Airport Designators
+
+                           Designator             Airport
+
+                           A             Salt Lake City International (SLC)
+
+                           C             Brigham City Regional (BMC)
+
+                           Z             Hill Air Force Base (HIF)
+
+                           O             Ogden-Hinckley (OGD)
+
+                           J             Provo Municipal (PVU)
+
+                           S             Spanish Fork Municipal (SPK)
+
+                           T             Bolinder Field-Tooele Valley (TVY)
+
+                           K             South Valley Regional (SVR)
+
+NOTE-
+Use Table 2-3-3 for the second character in practice approach entries. Airport designators in
+Table 2-3-7 must be used as the third character in practice approach entries. See Table 2-3-8
+for examples.
+
+Not for real world use.                                                                        11
+                                Table 2-3-8. VFR Scratchpad Entry Examples
+
+                         Entry        Meaning
+
+                         A85 Aircraft restricted at or above 8,500 feet.
+
+                         B85 Aircraft restricted at or below 8,500 feet.
+
+                         PIJ Aircraft executing a practice ILS approach at PVU.
+
+                         POO Aircraft executing a practice VOR approach at OGD.
+
+                         PTZ Aircraft executing a practice TACAN approach at HIF.
+
+2-3-6. Radar Displays
+    a. Radar displays must be set at a range to ensure a minimum of 5 miles is displayed
+         outside the sector's airspace boundary.
+    b. Jordan, Stockton, and Bear radar displays must be set to display arrival aircraft far
+         enough out to take handoffs, or issue alternate instructions in a timely manner, or ensure
+         ZLC has time to avoid TRACON airspace.
+
+Not for real world use.                                                              12
+                                      Section 4. Approaches
+
+2-4-1. Simultaneous Independent Approaches to Widely Spaced Parallel Runways
+(SIMULs)
+SIMULs are authorized to Runway 16R and 17 or Runway 34L and 35 in accordance with FAA
+Order 7110.65 5-9-10. The Runway 16R/34L and 17/35 centerlines are at least 9,200 feet apart.
+The following procedures must be adhered to:
+
+    a. Landing Runways 16R and 17:
+              (1) Bear must sequence to Runway 17 and clear aircraft for the ILS approach prior to
+                   UDUZU at or above 11,000 feet.
+
+                   NOTE-
+                   Bear must maintain control of aircraft until the SLC ATCT border. See paragraph
+                   2-5-5.
+
+              (2) Final must sequence to Runway 16R. Aircraft must be established on final and
+                   cleared for the approach no farther south than RRUFF at or below 9,000 feet, or
+                   the Wide Simul Line at or below 8,000 feet.
+
+    b. Landing Runways 34L and 35:
+              (1) Jordan must sequence to Runway 35 and clear aircraft for the LDA approach
+                   prior to HLMET at or above 11,000 feet.
+
+                   NOTE-
+                   Jordan must maintain control of aircraft until the SLC ATCT border. See
+                   paragraph 2-5-6.
+
+              (2) Final must sequence to Runway 34L. Aircraft must turn base 4NM or more
+                   outside of PUTER at or below 10,000 feet, or 3NM or more outside of CAMRI at
+                   or below 9,000 feet.
+
+    c. Final must assume responsibility for separation from Bear/Jordan traffic.
+
+2-4-2. Simultaneous Dependent Approaches (Staggers)
+Staggers are authorized to Runway 16L and 16R or Runway 34L and 34R in accordance with
+FAA Order 7110.65 5-9-6. The Runway 16L/34R and 16R/34L centerlines are approximately
+6,155 feet apart. The following procedures must be adhered to:
+
+    a. Final must advise Bear/Jordan of the in-trail spacing needed for staggers.
+    b. In South Flow, Bear must:
+
+              (1) Sequence all arrivals onto the Runway 16L localizer.
+              (2) Assign 11,000 feet and 210 knots.
+              (3) Handoff to Final prior to IRRON.
+
+Not for real world use.                    13
+                   NOTE-
+                   Contrary to Simultaneous Independent Approaches, Bear must handoff all traffic
+                   to Final rather than working the traffic until SLC ATCT airspace.
+
+    c. In North Flow, Jordan must:
+              (1) Sequence all arrivals onto the Runway 34R localizer.
+              (2) Assign 11,000 feet and 210 knots.
+              (3) Handoff to Final prior to PLAGE.
+
+                   NOTE-
+                   Contrary to Simultaneous Independent Approaches, Jordan must handoff all
+                   traffic to Final rather than working the traffic until SLC ATCT airspace.
+
+2-4-3. Visual Approach Procedures
+    a. When visual approaches are in use, the following runway pairings may be utilized:
+              (1) Runway 16L and 16R.
+              (2) Runway 16L and 17.
+              (3) Runway 16R and 17.
+              (4) Runway 34L and 34R.
+              (5) Runway 34L and 35.
+              (6) Runway 34R and 35.
+    b. During North Flow (any runway pairing):
+              (1) Final must sequence to the west runway and ensure that aircraft are at or below
+                   9,000 feet prior to aircraft beginning the base turn.
+              (2) Jordan must sequence to the east runway and ensure that aircraft are cleared for
+                   the approach prior to entering the P4 Area.
+    c. During South Flow (any runway pairing):
+              (1) Final must sequence to the west runway and ensure that aircraft are at or below
+                   8,000 feet prior to aircraft beginning the base turn.
+              (2) Bear must sequence to the east runway and ensure that aircraft are cleared for
+                   the approach prior to entering the P3 Area.
+    d. Final must assume responsibility for separation from Bear/Jordan traffic.
+    e. When clearing an aircraft for a visual approach to Runway 35 and separating from
+         Runway 34R traffic, use the following phraseology:
+
+         PHRASEOLOGY-
+         "(Follow, fly, or track) the localizer to WEEEL, cleared visual approach runway
+         three-five."
+
+         OR
+
+         "(Follow, fly, or track) the final approach course to WEEEL, cleared visual approach
+         runway three-five."
+
+Not for real world use.                    14
+2-4-4. Establish on RNAV (EOR) Procedures
+    c. When utilizing simultaneous independent approaches in accordance with 7110.65 5-9-7:
+              (1) The following approaches are allowed when utilizing RNAV (RNP) Z RWY 34L:
+                   All 34R approach procedures.
+              (2) The following approaches are allowed when utilizing RNAV (RNP) Z RWY 16R:
+                   All 16L approach procedures.
+    d. When utilizing wide spaced simultaneous approaches in accordance with 7110.65
+         5-9-10:
+              (1) The following approaches are allowed when utilizing RNAV (RNP) Z RWY 34L:
+                   All 35 approaches except RNAV (RNP) Z 35.
+              (2) The following approaches are allowed when utilizing RNAV (RNP) Z 16R: All 17
+                   approaches.
+
+Not for real world use.                    15
+                           Section 5. Pre-Arranged Coordination
+
+2-5-1. Definition
+Pre-arranged coordination is a process by which one controller allows an aircraft to penetrate or
+transit another controller's airspace in a manner which ensures standard separation without
+individual coordination for each aircraft.
+
+2-5-2. Requirements
+    a. Two positions of operation cannot penetrate each other's airspace simultaneously.
+    b. Controllers who penetrate another controller's airspace must determine whether the lead
+         aircraft requires wake turbulence separation behind it.
+
+2-5-3. P1 Area (North Flow Only)
+    a. Pre-arranged coordination is authorized during North Flow within the airspace depicted
+         in Appendix 2A for the following sectors' departure aircraft:
+              (1) Gunnison (encompassing portions of Bear and Lake airspace).
+              (2) Stockton (encompassing portions of Final, Bear, Gunnison, and Lake airspace).
+    b. When pre-arranged coordination is being utilized within the P1 Area, the following
+         restrictions must exist:
+              (1) Stockton must not turn SLC departure aircraft right of the course/route assigned
+                   by the SLC ATCT Local Control (LC) position.
+              (2) Gunnison departures off of SLC may climb and turn in the absence of Bear, Lake,
+                   and Stockton traffic. Otherwise, Gunnison must assume responsibility for
+                   separation.
+              (3) Bear must establish arrivals into the Runway 34L downwind at 11,000 feet.
+              (4) Stockton must establish arrivals into the Runway 34L downwind at 12,000 feet.
+              (5) RNAV Arrival Aircraft:
+                        (a) Bear and Stockton must ensure that arrival aircraft are established on the
+                             appropriate STAR prior to entering Final airspace.
+                        (b) Final must not use a heading west of 170° if the aircraft is vectored off of
+                             the RNAV arrival.
+              (6) Non-RNAV Arrival Aircraft:
+                        (a) Once aircraft are south of the TCH 249° radial, Bear, Stockton, and Final
+                             must not use a heading west of 170°.
+
+2-5-4. P2 Area (South Flow Only)
+    a. Pre-arranged coordination is authorized during South Flow within the airspace depicted
+         in Appendix 2B for the following sectors' departure aircraft:
+              (1) Lake (encompassing portions of Stockton, Bear, Jordan, and Final airspace).
+              (2) Gunnison (encompassing portions of Stockton, Lake, Final, and Jordan
+                   airspace).
+              (3) Jordan (encompassing portions of Stockton airspace).
+
+Not for real world use.                    16
+    b. When pre-arranged coordination is being utilized within the P2 Area, the following
+         restrictions must exist:
+              (1) Arrival Aircraft:
+                        (a) Stockton must establish arrivals into the Runway 16R downwind at, or
+                             descending to, 11,000 feet.
+                        (b) Stockton must ensure that RNAV aircraft are established on the
+                             appropriate STAR prior to entering Final airspace.
+
+                             NOTE-
+                             Stockton must ensure RNAV arrivals that are direct MAGNE are not west
+                             of a 335° course/heading.
+
+                        (c) Once aircraft are north of 2100 South, Stockton and Final must not use a
+                             heading west of 335°.
+
+              (2) Departure Aircraft:
+                        (a) Lake departures off of SLC may climb and turn on course in the absence
+                             of Final, Bear, and Stockton traffic. Otherwise, Lake must assume
+                             responsibility for separation.
+                        (b) Lake must not turn SLC departure aircraft left of the course/route
+                             assigned by LC without approval from Gunnison.
+                        (c) Gunnison departures off of SLC may climb and turn on course in the
+                             absence of Final, Bear, Lake, and Stockton traffic. Otherwise, Gunnison
+                             must assume responsibility for separation.
+                        (d) Jordan may climb all departure aircraft in the absence of Stockton traffic.
+                             Otherwise, Jordan must assume responsibility for separation.
+
+2-5-5. P3 Area (South Flow & Visual/SIMULs Only)
+    a. Pre-arranged coordination is authorized during South Flow within the airspace depicted
+         in Appendix 2C for Bear (encompassing portions of Final airspace) to operate.
+
+         NOTE-
+         The P3 Area must not be utilized during a Simultaneous Dependent Approach/Stagger
+         configuration.
+
+    b. When pre-arranged coordination is being utilized within the P3 Area, the following
+         restrictions must exist:
+              (1) Bear must comply with the procedures listed in section 2-4 and paragraph 3-3-2.
+              (2) Final must comply with the procedures listed in section 2-4 and paragraph 3-5-2.
+              (3) Final and Bear must quick-look each other.
+              (4) Final must apply the required separation from Bear traffic.
+
+2-5-6. P4 Area (North Flow & Visual/SIMULs Only)
+    a. Pre-arranged coordination is authorized during North Flow within the airspace depicted
+         in Appendix 2D for Jordan (encompassing portions of Final airspace) to operate.
+
+Not for real world use.                    17
+         NOTE-
+         The P4 Area must not be utilized during a Simultaneous Dependent Approach/Stagger
+         configuration.
+
+    b. When pre-arranged coordination is being utilized within the P4 Area, the following
+         restrictions must exist:
+              (1) Jordan must comply with the procedures listed in section 2-4 and paragraph
+                   3-6-3.
+              (2) Final must comply with the procedures listed in section 2-4 and paragraph 3-5-3.
+              (3) Final and Jordan must quick-look each other.
+              (4) Final must apply the required separation from Jordan traffic.
+
+2-5-7. Satellite Airport Departures
+Any satellite airport departure that will be worked by sectors in addition to the initial departure
+sector must be coordinated with the initial adjacent sector prior to release.
+
+Not for real world use.                    18
+                Section 6. Off-Load Procedures and Responsibilities
+
+2-6-1. Definitions
+    a. SOP Runway: Refers to the standard runway that arrivals will land on at SLC. Downwind
+         traffic is sent to the west runway and straight-in traffic is sent to the center or east
+         runway.
+    b. Runway Use Plan (RUP): As defined in the S56-SLC LOA.
+
+2-6-2. Categories
+Reasons for off-loading SLC arrivals to a runway other than the SOP runway fall into one of two
+categories listed below:
+
+    a. Arrival is off-loaded for the purpose of maintaining separation or the safety/integrity of
+         the sector.
+
+         EXAMPLE-
+         The downwind is 20 miles long and the Final controller is struggling to keep up with
+         demand. 1 or more aircraft are off-loaded to the center or east runway.
+
+    b. Arrival aircraft prefers to land on a runway other than the SOP runway.
+
+         EXAMPLE-
+         N12345 is inbound via the downwind but prefers to land on the east runway, so they are
+         off-loaded.
+
+         NOTE-
+         Verbal coordination with SLC ATCT is required if off-loading to the departure-only
+         runway during a Departure-Only RUP.
+
+2-6-3. Routing
+Off-load arrivals from the downwind must be routed in the following manner:
+
+    a. RNAV aircraft must fly the STAR into the downwind at 12,000 and 210 knots.
+    b. Non-RNAV aircraft must be assigned a vector into the downwind (in accordance with
+
+         paragraph 2-5-3 or 2-5-4) at 12,000 and 210 knots.
+
+2-6-4. Automated Point-Outs
+Non-verbal (automated) coordination may be utilized for approval of requested off-load runway
+between Final and Bear or Jordan sectors, provided the following procedures are adhered to:
+
+    a. Verbal coordination must be used if automated point-outs are not practical.
+    b. The initiating controller must ensure that the primary scratchpad indicates the requested
+
+         runway/approach prior to initiating an automated point-out. See paragraph 2-3-2.
+    c. The receiving controller must verbally coordinate any required restrictions prior to
+
+         accepting the point-out.
+    d. After an automated point-out is approved, any subsequent changes must be verbally
+
+         coordinated.
+
+Not for real world use.                    19
+            Chapter 3. Position Responsibilities and Procedures
+
+                                      Section 1. Lake Sector
+
+3-1-1. Position Responsibilities
+    a. Monitor the Lake frequency (135.500 MHz).
+    b. Provide air traffic control services within the Lake delegated airspace (see Appendix 3D),
+         excluding airspace owned by Valley and SLC ATCT. This is primarily a departure control
+         position.
+
+3-1-2. Procedures
+    a. In North Flow, route departure aircraft off of SLC filed along V21/V101, or landing within
+         Hart airspace, through the Antelope Gate (see Appendix 1A) on a heading between
+         310°-340° and climbing to 10,000 feet.
+
+         NOTE-
+         Hart does not have control of these aircraft until they are within Hart airspace.
+
+    b. In South Flow, route departure aircraft off of SLC filed along V21/V101, or landing within
+         Hart airspace, through the Antelope Gate (see Appendix 1B) on a heading between
+         330°-340° and climbing to 10,000 feet.
+
+    c. Route VFR Category I & II aircraft landing in, or transiting through, LC airspace from the
+         east over I-80 to I-15 descending to 9,000 with a Class B clearance.
+
+    d. Cross the Heber Shelf "line" at or above 13,000, or 1,000 feet above any other
+         coordinated altitude with ZLC. The Heber Shelf line includes the appropriate lateral
+         separation from ZLC airspace.
+
+Not for real world use.                    20
+                                  Section 2. Gunnison Sector
+
+3-2-1. Position Responsibilities
+    a. Monitor the Gunnison frequency (126.250 MHz).
+    b. Provide air traffic control services within the Gunnison delegated airspace (see Appendix
+         3G), excluding airspace owned by Valley and SLC ATCT. This is primarily a departure
+         control position.
+
+3-2-2. Procedures
+    a. Route aircraft transiting Gunnison airspace (excluding SLC departure aircraft) and
+         landing at LGU, BMC, OGD, or HIF through the Keyhole Gate (see Appendix 1) on a
+         heading between 330°-340° at 12,000 feet.
+    b. For aircraft landing at LGU, BMC, OGD, or HIF, handoff to Hart sector prior to the aircraft
+         passing the Keyhole gate. Hart has control for descent into their airspace.
+
+Not for real world use.                    21
+                                      Section 3. Bear Sector
+
+3-3-1. Position Responsibilities
+    a. Monitor the Bear frequency (124.900 MHz).
+    b. Provide air traffic control services within the Bear delegated airspace (see Appendix 3B),
+         excluding airspace owned by Valley and SLC ATCT. This is primarily an arrival control
+         position.
+
+3-3-2. SLC Arrival Procedures
+    a. South Flow: Unless another runway is coordinated in accordance with paragraph 2-6-4,
+         sequence all IFR and Category III turbojet aircraft to Runway 16L or Runway 17 using
+         the procedures outlined in section 2-4 in addition to the following:
+              (1) During SIMULs:
+                        (a) Aircraft sequenced to Runway 17 must be cleared for the approach prior
+                             to UDUZU.
+                        (b) Scratchpads must be updated (in accordance with paragraph 2-3-3) prior
+                             to entering the P3 Area.
+                        (c) Transfer communications to LC prior to entering SLC ATCT airspace, but
+                             no sooner than 7NM from the lateral boundary of SLC ATCT airspace.
+              (2) During Staggers:
+                        (a) Ensure the scratchpad is updated (in accordance with paragraph 2-3-3)
+                             prior to beginning the handoff to Final.
+                        (b) Sequence all arrivals onto the Runway 16L localizer.
+                        (c) Assign 11,000 feet and 210 knots.
+                        (d) Handoff to Final prior to IRRON.
+              (3) During visual approaches:
+                        (a) Aircraft sequenced to Runway 16L or Runway 17 must be cleared for the
+                             approach with the scratchpad updated (in accordance with paragraph
+                             2-3-3) prior to entering the P3 Area.
+                        (b) Transfer communications to LC prior to entering SLC ATCT airspace, but
+                             no sooner than 7NM from the lateral boundary of SLC ATCT airspace.
+    b. North Flow:
+              (1) Sequence all arrival aircraft into the Runway 34L downwind in accordance with
+                   paragraph 2-5-3.
+              (2) Except as described in paragraph 2-6-3, all arrival aircraft must be established at
+                   11,000 feet and 210 knots prior to entering Final airspace.
+
+3-3-3. Satellite Arrival Procedures
+    a. Obtain approval from Hart prior to issuing an approach clearance for any HI-ILS or
+         HI-TACAN approach to HIF.
+    b. Provide initial sequence of IFR Avon/Bird gate arrivals landing at HIF, OGD, or BMC
+         airports. Assign 12,000 feet and handoff to Hart sector.
+
+Not for real world use.                    22
+                                      Section 4. Hart Sector
+
+3-4-1. Position Responsibilities
+    a. Monitor the Hart frequency (121.100 MHz).
+    b. Provide air traffic control services within the Hart delegated airspace (see Appendix 3H).
+
+3-4-2. Procedures
+    a. Route departures off of OGD/HIF/BMC that will transit Lake and/or Gunnison airspace
+         through the Jepson gate (see Appendix 1) on a heading between 240° and 250° at 9,000
+         feet.
+    b. Issue IFR clearances to aircraft departing BMC as follows:
+
+         PHRASEOLOGY-
+         "(ACID) Cleared to the Ogden VORTAC via the Ogden (current number) obstacle
+         departure procedure, maintain 6,000. Expect further clearance at the Ogden VORTAC,
+         departure frequency 121.1, squawk (code). Hold for release."
+
+Not for real world use.                    23
+                                      Section 5. Final Sector
+
+3-5-1. Position Responsibilities
+    a. Monitor the Final frequency (125.700 MHz).
+    b. Provide air traffic control services within the Final delegated airspace (see Appendix 3F),
+         excluding airspace owned by Valley and SLC ATCT.
+
+3-5-2. General Procedures
+    a. Use scratchpad information on aircraft arriving Runway 16L/34R and Runway 17/35 to
+         apply the appropriate radar separation in accordance with FAA Order 7110.65.
+
+         NOTE-
+         Final is responsible for separation from Bear/Jordan traffic during Visual/SIMULs. See
+         paragraphs 2-4-1 and 2-4-3.
+
+    b. When assigning the 30° turn to final, assigned aircraft speed must not exceed 210 knots.
+    c. Transfer communications to LC prior to entering SLC ATCT airspace, but no sooner than
+
+         7NM from the lateral boundary of SLC ATCT airspace.
+
+3-5-2. South Flow Procedures
+    a. Do not descend aircraft below 11,000 feet until established in the downwind and north of
+         Point NICHOL (see Appendix 1C) and the associated line.
+    b. Unless another runway is coordinated in accordance with paragraph 2-6-4, sequence all
+         IFR and Category III turbojet aircraft to Runway 16R using the procedures outlined in
+         section 2-4.
+
+         NOTE-
+         When visual approaches are in use, Final may sequence to Runway 16L if Bear is
+         sequencing to Runway 17.
+
+3-5-3. North Flow Procedures
+    a. Do not descend aircraft below 11,000 feet until established in the downwind and abeam
+         the approach end of Runway 34L.
+    b. Unless another runway is coordinated in accordance with paragraph 2-6-4, sequence all
+         IFR and Category III turbojet aircraft to Runway 34L using the procedures outlined in
+         section 2-4.
+
+         NOTE-
+         When visual approaches are in use, Final may sequence to Runway 34R if Jordan is
+         sequencing to Runway 35.
+
+Not for real world use.                    24
+                                    Section 6. Jordan Sector
+
+3-6-1. Position Responsibilities
+    a. Monitor the Jordan frequency (128.600 MHz).
+    b. Provide air traffic control services within the Jordan delegated airspace (see Appendix
+         3C), excluding airspace owned by Alpine, Valley, and SLC ATCT.
+
+3-6-2. South Flow Procedures
+    a. Departure aircraft may climb and turn within the P2 Area in accordance with paragraph
+         2-5-4.
+    b. When Stockton traffic is present, assume responsibility for separation from Stockton
+         traffic.
+
+3-6-3. North Flow Procedures
+Unless another runway is coordinated in accordance with paragraph 2-6-4, sequence all IFR
+and Category III turbojet aircraft to Runway 34R or Runway 35 using the procedures outlined in
+section 2-4 in addition to the following:
+
+    a. During SIMULs:
+              (1) Aircraft sequenced to Runway 35 must be cleared for the approach prior to
+                   HLMET.
+              (2) Scratchpads must be updated (in accordance with paragraph 2-3-3) prior to
+                   entering the P4 Area.
+              (3) Transfer communications to LC prior to entering SLC ATCT airspace, but no
+                   sooner than 7NM from the lateral boundary of SLC ATCT airspace.
+
+    b. During Staggers:
+              (1) Ensure the scratchpad is updated (in accordance with paragraph 2-3-3) prior to
+                   beginning the handoff to Final.
+              (2) Sequence all arrivals onto the Runway 34R localizer.
+              (3) Assign 11,000 feet and 210 knots.
+              (4) Handoff to Final prior to PLAGE.
+
+    c. During visual approaches:
+              (1) Aircraft sequenced to Runway 34R or Runway 35 must be cleared for the
+                   approach with the scratchpad updated (in accordance with paragraph 2-3-3) prior
+                   to entering the P4 Area.
+              (2) Transfer communications to LC prior to entering SLC ATCT airspace, but no
+                   sooner than 7NM from the lateral boundary of SLC ATCT airspace.
+
+3-6-4. Alpine Sector Arrival/Departure Procedures
+    a. Alpine will coordinate departure release requests from PVU FCT. If a departure release
+         is approved, Jordan approves entry into their airspace via the aircraft's assigned
+         departure procedure to 9,000 feet.
+    b. Clear IFR departure aircraft off of PVU routed via the PROVO# obstacle departure
+         procedure to their destination airport.
+
+Not for real world use.                    25
+         NOTE-
+         1. Alpine does not share this responsibility. Jordan must amend the clearance limit of
+         PVU departure aircraft routed via the PROVO#.
+         2. PVU departure aircraft routed via the DITTI# need not be cleared to their destination
+         airport. PVU FCT must clear aircraft to their destination airport on the ground.
+
+3-6-5. VFR Procedures
+Route VFR Category I & II aircraft landing in, or transiting through, LC airspace from the east
+over I-80 to I-15 descending to 9,000 with a Class B clearance.
+
+Not for real world use.                                                                            26
+                                   Section 7. Stockton Sector
+
+3-7-1. Position Responsibilities
+    a. Monitor the Stockton frequency (128.100 MHz).
+    b. Provide air traffic control services within the Stockton delegated airspace (see Appendix
+         3E), excluding airspace owned by Valley and SLC ATCT.
+
+3-7-2. Procedures
+    a. During North Flow, sequence all arrivals into the Runway 34L downwind in accordance
+         with paragraph 2-5-3.
+
+         NOTE-
+         Stockton must ensure sequencing and in-trail spacing is provided with Bear arrival
+         aircraft. Bear does not share this responsibility.
+
+    b. During South Flow, sequence all arrivals into the Runway 16R downwind in accordance
+         with paragraph 2-5-4, except as described in paragraph 2-6-3.
+
+    c. Assign aircraft transiting Stockton airspace and landing at LGU, BMC, OGD, or HIF a
+         heading toward the Keyhole gate (see Appendix 1) at 15,000 feet and 250 knots or less.
+         Handoff to Gunnison sector.
+
+    d. Issue IFR clearances to aircraft departing TVY as follows:
+
+         PHRASEOLOGY-
+         "(ACID), cleared to the STACO intersection via the STACO (current number) departure,
+         climb via SID. Expect further clearance at STACO, departure frequency 128.1, squawk
+         (code). Hold for release."
+
+Not for real world use.                    27
+                                     Section 8. Valley Sector
+
+3-8-1. Position Responsibilities
+    a. Monitor the Valley frequency (120.900 MHz).
+    b. Provide air traffic control services within the Valley delegated airspace (see Appendix 3I),
+         excluding airspace owned by SLC ATCT. In addition, Valley may operate to the lateral
+         boundary of its airspace that is outside SLC Class B airspace.
+
+         NOTE-
+         Valley may operate to the sector airspace boundary over I-15. Final, Lake, Jordan,
+         Alpine, and Bear are responsible for ensuring that aircraft remain the appropriate
+         distance from Valley airspace.
+
+3-8-2. Procedures
+    a. Route VFR Category I, Category II, and Category III turboprop aircraft in accordance
+         with the SLC-S56 LOA.
+    b. Issue IFR clearances to aircraft departing SVR as follows:
+              (1) RNAV-capable aircraft must be assigned the SVALY# departure procedure.
+
+                   PHRASEOLOGY-
+                   "(ACID), cleared to the Fairfield VORTAC via the South Valley (current number)
+                   departure, maintain 9,000. Expect further clearance at Fairfield, departure
+                   frequency 120.9, squawk (code). Hold for release."
+
+              (2) Non-RNAV aircraft must be assigned the SVR ODP.
+                        (a) Departing Runway 16, to FFU VORTAC climbing to 11,000 feet.
+                        (b) Departing Runway 34, to TCH VORTAC climbing to 9,000 feet.
+
+                   PHRASEOLOGY-
+                   "(ACID), cleared to the (Wasatch/Fairfield) VORTAC via the South Valley
+                   Regional Obstacle Departure Procedure. Climb and maintain (altitude). Expect
+                   further clearance at (TCH/FFU), departure frequency 120.9, squawk (code). Hold
+                   for release."
+
+    c. Issue IFR clearances to aircraft departing BTF as follows:
+
+         NOTE-
+         BTF departure aircraft are strongly encouraged to depart VFR due to proximity with SLC.
+         When a BTF departure aircraft will depart VFR, they must communicate with SLC ATCT.
+
+         NOTE-
+         Coordination must be accomplished with SLC ATCT prior to releasing a BTF IFR
+         departure aircraft. During North Flow, SLC ATCT must hold all departures prior to
+         releasing a BTF IFR departure aircraft.
+
+Not for real world use.                    28
+NOTE-
+Prior to issuing an en route clearance to the aircraft (following radar identification),
+ensure the aircraft is at or above the MIA to guarantee terrain or obstruction avoidance.
+
+NOTE-
+In the following phraseology examples, the phrase "no delay expected" must only be
+used when you are certain the aircraft will not need to enter the hold. Substitute this
+phrase with an EFC time when holding is expected.
+
+    (1) Aircraft filed TCH VORTAC:
+
+         PHRASEOLOGY-
+         "(ACID), cleared to the Wasatch VORTAC. Hold south on the 341 radial, left
+         turns, standard legs. No delay expected. Climb and maintain 9,000. Departure
+         frequency 120.9, squawk (code). Hold for release."
+
+    (2) Aircraft did not file TCH VORTAC:
+
+         PHRASEOLOGY-
+         "(ACID), cleared to the Wasatch VORTAC. Hold south on the 341 radial, left
+         turns, standard legs. No delay expected. Climb and maintain 9,000. Departure
+         frequency 120.9, squawk (code). Verify this clearance will allow compliance with
+         terrain or obstruction avoidance. Hold for release."
+
+Not for real world use.                    29
+                                     Section 9. Alpine Sector
+
+3-9-1. Position Responsibilities
+    a. Monitor the Alpine frequency (118.850 MHz).
+    b. Provide air traffic control services within the Alpine delegated airspace (see Appendix
+         3A).
+
+3-9-2. Procedures
+    a. During South Flow, coordinate all IFR aircraft with Jordan.
+    b. During North Flow with SIMULs, coordinate all PVU and SPK aircraft with Final and
+         Jordan.
+    c. Coordinate with ZLC Sector 32, to protect the missed approach, when conducting RNAV
+         approaches into SPK.
+
+Not for real world use.                    30
+                Appendix 1. General Airspace
+Appendix 1A. Salt Lake City TRACON Gates (North Flow)
+
+Not for real world use.                                31
+Appendix 1B. Salt Lake City TRACON Gates (South Flow)
+
+Not for real world use.                                32
+Appendix 1C. Salt Lake City ATCT Delegated Airspace
+
+Not for real world use.                              33
+                         Appendix 1D. Salt Lake City Class B Airspace
+
+NOTE-
+The numbers listed in each quadrant of the Class B airspace represent the bottom altitude of
+the individual shelves. The top altitude of the Class B in all quadrants is 12,000 feet.
+
+Not for real world use.                                                                       34
+                         Appendix 2. Pre-Arranged Coordination Areas
+                               Appendix 2A. P1 Area (North Flow Only)
+
+Not for real world use.                                                  35
+                         Appendix 2B. P2 Area (South Flow Only)
+
+Not for real world use.                                              36
+Appendix 2C. P3 Area (South Flow & Visual/SIMULs Only)
+
+Not for real world use.                                 37
+Appendix 2D. P4 Area (North Flow & Visual/SIMULs Only)
+
+Not for real world use.                                 38
+                           Appendix 3. Delegated Airspace
+                              Appendix 3A. Alpine Airspace
+
+Not for real world use.                                         39
+                                Appendix 3B. Bear Airspace
+
+                           Appendix 3B-1. Bear Airspace (North Flow)
+
+Not for real world use.                                                   40
+                         Appendix 3B-2. Bear Airspace (South Flow & SIMULs)
+
+Not for real world use.                                                        41
+Appendix 3B-3. Bear Airspace (South Flow & Visual/Staggers)
+
+Not for real world use.                                        42
+                                    Appendix 3C. Jordan Airspace
+
+                         Appendix 3C-1. Jordan Airspace (North Flow & SIMULs)
+
+Not for real world use.                                                          43
+Appendix 3C-2. Jordan Airspace (North Flow & Visual/Staggers)
+
+Not for real world use.                                        44
+                           Appendix 3C-3. Jordan Airspace (South Flow)
+
+Not for real world use.                                                     45
+                                Appendix 3D. Lake Airspace
+
+                           Appendix 3D-1. Lake Airspace (North Flow)
+
+Not for real world use.                                                   46
+                           Appendix 3D-2. Lake Airspace (South Flow)
+
+Not for real world use.                                                   47
+                                Appendix 3E. Stockton Airspace
+
+                           Appendix 3E-1. Stockton Airspace (North Flow)
+
+Not for real world use.                                                       48
+                         Appendix 3E-2. Stockton Airspace (South Flow)
+
+Not for real world use.                                                     49
+                                     Appendix 3F. Final Airspace
+
+                         Appendix 3F-1. Final Airspace (North Flow & SIMULs)
+
+Not for real world use.                                                         50
+Appendix 3F-2. Final Airspace (North Flow & Visual/Staggers)
+
+Not for real world use.                                         51
+                         Appendix 3F-3. Final Airspace (South Flow & SIMULs)
+
+Not for real world use.                                                         52
+Appendix 3F-4. Final Airspace (South Flow & Visual/Staggers)
+
+Not for real world use.                                         53
+                              Appendix 3G. Gunnison Airspace
+
+                         Appendix 3G-1. Gunnison Airspace (North Flow)
+
+Not for real world use.                                                   54
+                         Appendix 3G-2. Gunnison Airspace (South Flow)
+
+Not for real world use.                                                   55
+                                Appendix 3H. Hart Airspace
+
+                           Appendix 3H-1. Hart Airspace (North Flow)
+
+Not for real world use.                                                   56
+                           Appendix 3H-2. Hart Airspace (South Flow)
+
+Not for real world use.                                                   57
+                                Appendix 3I. Valley Airspace
+
+                           Appendix 3I-1. Valley Airspace (North Flow)
+
+Not for real world use.                                                     58
+                           Appendix 3I-2. Valley Airspace (South Flow)
+
+Not for real world use.                                                     59
+

@@ -1,0 +1,2927 @@
+SUBJ: ZLC ARTCC Standard Operating Procedures
+
+  This document establishes the Salt Lake City Air Route Traffic Control Center (ZLC ARTCC)
+
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC). Controllers are
+
+required to be familiar with the provisions of this document and to exercise their best judgment if they
+
+encounter situations not covered by it. The provisions and procedures described herein are supplemental
+
+to vZLC Facility Policy and FAA Order JO 7110.65.
+
+  The information contained herein is to be used for flight simulation purposes only on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+          Record of Changes
+
+Version                        Description                 Effective Date Issued By
+
+7110.65A                        Initial Release            09/01/2024  HL
+7110.65B
+7110.65C     Minor revisions for SLC flight data overhaul  02/20/2025  HL
+
+7110.65D                    Moving of Sector 14.           11/07/2025  CN
+
+           Adding Of Sector 25 & 26, Along With Sector 4   03/01/2026  AE/CN
+          Becoming New Area B Combo Sector Replacing
+
+                                    Sector 3
+
+          Not for real world use.
+                                 Explanation of Changes
+
+1-1-4. Cancellation
+Rewrote paragraph to indicate cancellation of ZLC 7110.65C. Adding of sector 25 & 26, along
+with sector 4 becoming the new area B combo sector. This will replace Sector 3 as the combo
+sector. This also includes sector 4 taking over as the new A & B combo sector replacing sector
+3 in this aspect also. This is to avoid bleed through of comms into ZLAs frequencies.
+
+                                                                         Not for real world use.
+                                Table of Contents
+
+Chapter 1. General Control                                      1
+
+Section 1. Introduction                                         1
+
+1-1-1. Purpose                                                  1
+
+1-1-2. Audience                                                 1
+
+1-1-3. Distribution                                             1
+
+1-1-4. Cancellation                                             1
+
+Section 2. Operational Positions                                2
+
+1-2-1. Operational Positions                                    2
+
+Section 3. Area Sectorization Splits                            4
+
+Section 4. Assumption and Transfer of Position Responsibility   6
+
+1-4-1. Duty Familiarization                                     6
+
+1-4-2. Transfer of Position Responsibility                      6
+
+1-4-3. Position Relief Checklist Description                    6
+
+Section 5. Coordination                                         8
+
+1-5-1. Facility Identification                                  8
+
+1-5-2. Transfer of Control                                      8
+
+1-5-3. Entry of Assigned Altitude                               8
+
+1-5-4. Fourth-Line Data                                         8
+
+1-5-5. Inappropriate Altitude for Direction of Flight (IAFDOF)  9
+
+Section 6. Automation                                           10
+
+1-6-1. 3nm Reduced Separation Areas                             10
+
+1-6-2. Automated Information Transfer (AIT)                     10
+
+1-6-3. Target Markers (Data Block Retention)                    11
+
+Section 7. Traffic Management                                   12
+
+1-7-1. General                                                  12
+
+1-7-2. Salt Lake City Terminal Area                             12
+
+1-7-3. Denver (DEN) Arrivals                                    12
+
+Chapter 2. Area A                                               14
+
+Section 1. Area Procedures                                      14
+
+2-1-1. Area Narrative                                           14
+
+2-1-2. Billings (BIL) Procedures                                14
+
+2-1-3. Jackson Hole (JAC) Procedures                            14
+
+2-1-4. Northern California (NCT) Procedures                     15
+
+Section 2. Sector 6                                             16
+
+2-2-1. Sector Narrative                                         16
+
+2-2-2. Terminal Airspace                                        16
+
+2-2-3. Sector Procedures                                        16
+
+2-2-4. Sector Holding                                           16
+
+2-2-5. Transfer of Control                                      17
+
+Section 3. Sector 7                                             19
+
+                                      Not for real world use.
+2-3-1. Sector Narrative                                    19
+
+2-3-2. Sector Procedures                                   19
+
+2-3-3. Sector Holding                                      20
+
+2-3-4. Transfer of Control                                 21
+
+Section 4. Sector 8                                        23
+
+2-4-1. Sector Narrative                                    23
+
+2-4-2. Sector Procedures                                   23
+
+2-4-3. Sector Holding                                      24
+
+2-4-4. Transfer of Control                                 24
+
+Section 5. Sector 12                                       27
+
+2-5-1. Sector Narrative                                    27
+
+2-5-2. Terminal Airspace                                   27
+
+2-5-3. Sector Holding                                      27
+
+2-5-4. Transfer of Control                                 27
+
+Section 6. Sector 14                                       29
+
+2-6-1. Sector Narrative                                    29
+
+2-6-2. Sector Procedures                                   29
+
+2-6-3. Transfer of Control                                 29
+
+Section 7. Sector 18                                       31
+
+2-7-1. Sector Narrative                                    31
+
+2-7-2. Sector Procedures                                   31
+
+2-7-3. Transfer of Control                                 31
+
+Section 8. Sector 19                                       33
+
+2-8-1. Sector Narrative                                    33
+
+2-8-2. Terminal Airspace                                   33
+
+2-8-3. Sector Procedures                                   33
+
+2-8-4. Sector Holding                                      33
+
+2-8-5. Transfer of Control                                 33
+
+Section 9. Sector 20                                       35
+
+2-9-1. Sector Narrative                                    35
+
+2-9-2. Sector Procedures                                   35
+
+2-9-3. Transfer of Control                                 35
+
+Chapter 3. Area B                                          37
+
+Section 1. Area Procedures                                 37
+
+3-1-1. Area Narrative                                      37
+
+3-1-2. Billings (BIL) Procedures                           37
+
+3-1-3. Jackson Hole (JAC) Procedures                       37
+
+Section 2. Sector 3                                        39
+
+3-2-1. Sector Narrative                                    39
+
+3-2-2. Sector Procedures                                   39
+
+3-2-3. Sector Holding                                      39
+
+                                  Not for real world use.
+3-2-4. Transfer of Control                              40
+
+Section 3. Sector 4                                     41
+
+3-3-1. Sector Narrative                                 41
+
+3-3-2. Sector Procedures                                41
+
+3-3-3. Sector Holding                                   41
+
+3-3-4. Transfer of Control                              42
+
+Section 4. Sector 5                                     43
+
+3-4-1. Sector Narrative                                 43
+
+3-4-2. Sector Procedures                                43
+
+3-4-3. Sector Holding                                   43
+
+3-4-4. Transfer of Control                              44
+
+Section 5. Sector 15                                    45
+
+3-5-1. Sector Narrative                                 45
+
+3-5-2. Terminal Airspace                                45
+
+3-5-3. Sector Procedures                                45
+
+3-5-4. Sector Holding                                   45
+
+3-5-5. Transfer of Control                              46
+
+Section 6. Sector 16                                    48
+
+3-6-1. Sector Narrative                                 48
+
+3-6-2. Sector Procedures                                48
+
+3-6-3. Sector Holding                                   48
+
+3-6-4. Transfer of Control                              49
+
+Section 7. Sector 17                                    51
+
+3-7-1. Sector Narrative                                 51
+
+3-7-2. Terminal Airspace                                51
+
+3-7-3. Sector Procedures                                51
+
+3-7-4. Sector Holding                                   51
+
+3-7-5. Transfer of Control                              51
+
+Section 8. Sector 26                                    53
+
+3-8-1. Sector Narrative                                 53
+
+3-8-2. Sector Procedures                                53
+
+3-8-3. Transfer of Control                              54
+
+Section 9. Sector 39                                    56
+
+3-9-1. Sector Narrative                                 56
+
+3-9-2. Sector Procedures                                56
+
+3-9-3. Transfer of Control                              56
+
+Chapter 4. Area C                                       58
+
+Section 1. Area Procedures                              58
+
+4-1-1. Area Narrative                                   58
+
+4-1-2. Salt Lake City Terminal Area General Procedures  58
+
+4-1-3. Jackson Hole (JAC) Procedures                    58
+
+                            Not for real world use.
+4-1-4. Denver (DEN) Procedures                       58
+
+4-1-5. Las Vegas (LAS) Procedures                    58
+
+Section 2. Sector 11                                 60
+
+4-2-1. Sector Narrative                              60
+
+4-2-2. Sector Procedures                             60
+
+4-2-3. Sector Holding                                60
+
+4-2-4. Transfer of Control                           61
+
+Section 3. Sector 32                                 63
+
+4-3-1. Sector Narrative                              63
+
+4-3-2. Sector Procedures                             63
+
+4-3-3. Sector Holding                                63
+
+4-3-4. Transfer of Control                           64
+
+Section 4. Sector 33                                 65
+
+4-4-1. Sector Narrative                              65
+
+Section 5. Sector 34                                 66
+
+4-5-1. Sector Narrative                              66
+
+Section 6. Sector 44                                 67
+
+4-6-1. Sector Narrative                              67
+
+4-6-2. Sector Procedures                             67
+
+4-6-3. Sector Holding                                68
+
+4-6-4. Transfer of Control                           68
+
+Section 7. Sector 45                                 70
+
+4-7-1. Sector Narrative                              70
+
+4-7-2. Transfer of Control                           70
+
+Section 8. Sector 46                                 71
+
+4-8-1. Sector Narrative                              71
+
+4-8-2. Sector Procedures                             71
+
+4-8-3. Sector Holding                                71
+
+4-8-4. Transfer of Control                           71
+
+Section 9. Sector 47                                 73
+
+4-9-1. Sector Narrative                              73
+
+4-9-2. Transfer of Control                           73
+
+Chapter 5. Area D                                    74
+
+Section 1. Area Procedures                           74
+
+5-1-1. Area Narrative                                74
+
+5-1-2. Jackson Hole (JAC) Procedures                 74
+
+Section 2. Sector 30                                 76
+
+5-2-1. Sector Narrative                              76
+
+5-2-2. Terminal Airspace                             76
+
+5-2-3. Sector Holding                                76
+
+5-2-4. Transfer of Control                           76
+
+                            Not for real world use.
+Section 3. Sector 31                                      78
+
+5-3-1. Sector Narrative                                   78
+
+5-3-2. Terminal Airspace                                  78
+
+5-3-3. Sector Procedures                                  78
+
+5-3-4. Sector Holding                                     78
+
+5-3-5. Transfer of Control                                79
+
+Section 4. Sector 40                                      81
+
+5-4-1. Sector Narrative                                   81
+
+5-4-2. Sector Procedures                                  81
+
+5-4-3. Sector Holding                                     81
+
+5-4-4. Transfer of Control                                82
+
+Section 5. Sector 41                                      84
+
+5-5-1. Sector Narrative                                   84
+
+5-5-2. Sector Procedures                                  84
+
+5-5-3. Sector Holding                                     84
+
+5-5-4. Transfer of Control                                84
+
+Section 6. Sector 42                                      86
+
+5-6-1. Sector Narrative                                   86
+
+5-6-2. Sector Procedures                                  86
+
+5-6-3. Sector Holding                                     86
+
+5-6-4. Transfer of Control                                86
+
+Section 7. Sector 43                                      88
+
+5-7-1. Sector Narrative                                   88
+
+5-7-2. Sector Procedures                                  88
+
+5-7-3. Sector Holding                                     88
+
+5-7-4. Transfer of Control                                88
+
+Chapter 6. Traffic Management Unit (TMU)                  90
+
+Section 1. General                                        90
+
+6-1-1. TMU Qualification                                  90
+
+6-1-2. National Traffic Management Log (NTML) Use         90
+
+6-1-3. Offload Procedures                                 91
+
+Appendix 1. Terminal Airspace                             92
+
+Appendix 1A. Salt Lake City TRACON (Landing North)        92
+
+Appendix 1B. Salt Lake City TRACON (Landing South)        93
+
+Appendix 1C. Big Sky TRACON (Boise)                       94
+
+Appendix 1D. Big Sky TRACON (Bozeman)                     95
+
+Appendix 1E. Billings TRACON                              96
+
+Appendix 1F. Great Falls TRACON                           97
+
+Appendix 1G. Helena Approach Control                      98
+
+Appendix 1H. Twin Falls Approach Control                  99
+
+Appendix 1I. Spokane TRACON (Missoula)                    100
+
+                                 Not for real world use.
+Appendix 1J. Mountain Home RAPCON                             101
+
+Appendix 2. 3nm Reduced Separation Areas                      102
+
+Appendix 2A. ZLC ARTCC                                        102
+
+Appendix 2B. Ashton (QVA) 3nm Aircraft Alert Volume           103
+
+Appendix 2C. Battle Mountain (BAM) 3nm Aircraft Alert Volume  104
+
+Appendix 2D. Billings (BIL) 3nm Aircraft Alert Volume         105
+
+Appendix 2E. Bootlegger (GFA) 3nm Aircraft Alert Volume       106
+
+Appendix 2F. Bozeman (BZN) 3nm Aircraft Alert Volume          107
+
+Appendix 2G. Cascade (QCK) 3nm Aircraft Alert Volume          108
+
+Appendix 2H. Cedar City (CDC) 3nm Aircraft Alert Volume       109
+
+Appendix 2I. Francis Peak (FPK) 3nm Aircraft Alert Volume     110
+
+Appendix 2J. Jackson (JAC) 3nm Aircraft Alert Volume          111
+
+Appendix 2K. Lakeside (QLS) 3nm Aircraft Alert Volume         112
+
+Appendix 2L. Lovell (QSI) 3nm Aircraft Alert Volume           113
+
+Appendix 2M. Missoula (MSO) 3nm Aircraft Alert Volume         114
+
+Appendix 2N. Mountain Home (MUO) 3nm Aircraft Alert Volume    115
+
+Appendix 2O. Provo (PVU) 3nm Aircraft Alert Volume            116
+
+Appendix 2P. Rock Springs (RKS) 3nm Aircraft Alert Volume     117
+
+Appendix 2Q. Tonopah (TPH) 3nm Aircraft Alert Volume          118
+
+Appendix 2R. Watford City (QWA) 3nm Aircraft Alert Volume     119
+
+Appendix 3. Interfacility Delegated Airspace                  120
+
+Appendix 3A. IR-126 Airspace (Delegated to ZDV)               120
+
+Appendix 3B. CNY Airport Airspace (Delegated to ZDV)          121
+
+                        Not for real world use.
+                               Chapter 1. General Control
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Salt Lake City Air Route Traffic Control Center (ZLC ARTCC)
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels ZLC ARTCC SOP (7110.65C), effective November 7, 2025.
+
+Not for real world use.                    1
+                               Section 2. Operational Positions
+
+1-2-1. Operational Positions
+The positions listed in Tables 1-2-1 through 1-2-4 are authorized for use when controlling ZLC
+ARTCC. For each table, bold designates the primary position per area. When working with ZLC
+ARTCC combined, Salt Lake 44 is designated as the primary position.
+
+                       Table 1-2-1. ZLC ARTCC Area A Operational Positions Table
+
+        Sector/Position              VATSIM Callsign                Frequency
+Salt Lake 6                  SLC_06_CTR                 132.400 MHz
+Salt Lake 7                  SLC_07_CTR                 127.700 MHz
+Salt Lake 8                  SLC_08_CTR                 128.350 MHz
+Salt Lake 12                 SLC_12_CTR                 127.075 MHz
+Salt Lake 14                 SLC_14_CTR                 127.675 MHz
+Salt Lake 18                 SLC_18_CTR                 125.925 MHz
+Salt Lake 19                 SLC_19_CTR                 133.400 MHz
+Salt Lake 20                 SLC_20_CTR                 119.750 MHz
+
+                         Table 1-2-2. ZLC ARTCC Area B Operational Positions Table
+
+        Sector/Position              VATSIM Callsign                Frequency
+Salt Lake 3                  SLC_03_CTR                 119.950 MHz
+Salt Lake 4                  SLC_04_CTR                 135.775 MHz
+Salt Lake 5                  SLC_05_CTR                 124.350 MHz
+Salt Lake 15                 SLC_15_CTR                 127.750 MHz
+Salt Lake 16                 SLC_16_CTR                 133.250 MHz
+Salt Lake 17                 SLC_17_CTR                 126.850 MHz
+Salt Lake 26                 SLC_26_CTR                 120.975 MHz
+Salt Lake 39                 SLC_39_CTR                 132.425 MHz
+
+Not for real world use.                                                               2
+                         Table 1-2-3. ZLC ARTCC Area C Operational Positions Table
+
+        Sector/Position              VATSIM Callsign                Frequency
+Salt Lake 11                 SLC_11_CTR                 127.825 MHz
+Salt Lake 32                 SLC_32_CTR                 133.900 MHz
+Salt Lake 33                 SLC_33_CTR                 120.275 MHz
+Salt Lake 34                 SLC_34_CTR                 127.925 MHz
+Salt Lake 44                 SLC_44_CTR                 125.575 MHz
+Salt Lake 45                 SLC_45_CTR                 134.525 MHz
+Salt Lake 46                 SLC_46_CTR                 133.600 MHz
+Salt Lake 47                 SLC_47_CTR                 133.450 MHz
+
+                         Table 1-2-4. ZLC ARTCC Area D Operational Positions Table
+
+        Sector/Position              VATSIM Callsign                Frequency
+Salt Lake 30                 SLC_30_CTR                 128.050 MHz
+Salt Lake 31                 SLC_31_CTR                 118.050 MHz
+Salt Lake 40                 SLC_40_CTR                 128.550 MHz
+Salt Lake 41                 SLC_41_CTR                 121.150 MHz
+Salt Lake 42                 SLC_42_CTR                 120.725 MHz
+Salt Lake 43                 SLC_43_CTR                 132.250 MHz
+
+                           Table 1-2-5. ZLC ARTCC TMU Positions Table
+
+         Position/Name               VATSIM Callsign                Frequency
+Salt Lake 1 (TMAC)           SLC_01_TMU                 N/A
+Salt Lake 2 (TMEC)           SLC_02_TMU                 N/A
+Salt Lake 71 (TMWC)          SLC_71_TMU                 N/A
+
+Not for real world use.                                                               3
+                              Section 3. Area Sectorization Splits
+
+                                     Table 1-3-1. Area A Sectorization
+
+                         # of Controllers Active Sector (Associated Sectors)
+
+                         1        06
+
+                                                  06
+                         2
+
+                                                  20
+
+                                  06
+
+                         3        20
+
+                                  08
+
+                                Table 1-3-2. Area B Sectorization
+
+                         # of Controllers Active Sector (Associated Sectors)
+
+                         1        04
+
+                                                  04
+                         2
+
+                                                  16
+
+                                  04
+
+                         3        16
+
+                                  03
+
+                                  04
+
+                                                  16
+                         4
+
+                                                  03
+
+                                  17
+
+Not for real world use.                                                         4
+                                Table 1-3-3. Area C Sectorization
+
+                         # of Controllers Active Sector (Associated Sectors)
+
+                         1        44
+
+                                                  44
+                         2
+
+                                                  47
+
+                                  44
+
+                         3        47
+
+                                  46
+
+                                Table 1-3-4. Area D Sectorization
+
+                         # of Controllers Active Sector (Associated Sectors)
+
+                         1        40
+
+                                                  40
+                         2
+
+                                                  41
+
+                                  40
+
+                         3        41
+
+                                  43
+
+Not for real world use.                                                         5
+         Section 4. Assumption and Transfer of Position Responsibility
+
+1-4-1. Duty Familiarization
+Prior to assuming responsibility for any position, controllers must accomplish the following items:
+
+    a. Review current weather, trends, and forecasts for the sector(s) they will assume
+         responsibility for.
+
+    b. Review all Traffic Management Programs.
+    c. Review pertinent underlying and neighboring controller information.
+    d. Log-in to position and activate session.
+    e. If applicable, log-in to vStrips.
+    f. If applicable, log-in to vTDLS.
+
+1-4-2. Transfer of Position Responsibility
+    a. All position relief briefings must be conducted in accordance with FAA Order 7110.65
+         Appendix A.
+    b. Controllers must activate the session of the position they are assuming prior to the start
+         of the position relief briefing.
+    c. When conducting a position relief briefing, all controllers must follow the Position Relief
+         Checklist (POS CHECK) located in the "CHECK LISTS" toolbar menu of ERAM.
+    d. When traffic conditions warrant, the controller being relieved must monitor and observe
+         the position for a minimum of 2 minutes after the conclusion of the briefing.
+
+1-4-3. Position Relief Checklist Description
+Subparagraphs a. through g. are the checklist items listed in the Position Relief Checklist. The
+clauses listed underneath each subparagraph are items that should be included in each position
+relief briefing, as necessary.
+
+    a. SECTORS
+              (1) The configuration of the sector that is being transferred.
+              (2) The status of the sectors adjacent to the position being transferred.
+
+    b. EQUIPMENT / AUTO-TRK
+              (1) The status of equipment and resources we use for controlling.
+              (2) Auto-Track status.
+
+    c. WEATHER
+              (1) ATIS letters and status.
+              (2) Lowest usable flight level.
+              (3) PIREPs.
+              (4) Deviations.
+              (5) SIGMETs.
+
+    d. AIRPORTS / SIA
+              (1) Pertinent status of airports under the jurisdiction of the sector being transferred.
+              (2) Any item in paragraph 1-4-1 that should be reviewed.
+
+    e. MILITARY
+              (1) The status of any military aircraft.
+
+    f. TRAFFIC
+
+Not for real world use.                    6
+         (1) POINT OUTS / HOLDING
+         (2) RELEASED NOT AIRBORNE
+         (3) VFR ADVISORIES
+         (4) EMERGENCIES / NORDO
+         (5) Status of all other traffic, if other than displayed in the full data block.
+g. OPERATING INITIALS
+
+Not for real world use.                                                                    7
+                                     Section 5. Coordination
+
+1-5-1. Facility Identification
+A waiver to FAA JO 7110.65, paragraph 2-4-19, has been granted to ZLC ARTCC, which allows
+for the use of "Salt Lake Center" as opposed to "Salt Lake City Center."
+
+1-5-2. Transfer of Control
+The completion of a radar handoff and transfer of communications between sectors constitutes
+a transfer of control for all of the following:
+
+    a. Climb/descent into the receiving controller's airspace, if applicable.
+    b. Turns up to 15°.
+    c. Speed adjustment ±10 knots.
+    d. Beacon code change.
+
+1-5-3. Entry of Assigned Altitude
+When inputting an assigned altitude into an aircraft's data block, the provisions of FAA JO
+7110.65, paragraph 5-13-3, must be adhered to, except during the handoff scenarios listed
+below. During these scenarios, interim altitude entry is not required when a climbing aircraft is
+assigned an altitude strictly based on sector stratification or standard operating procedure.
+
+    a. Sector 11 handing off to Sector 44.
+    b. Sector 30 handing off to Sector 41.
+    c. Sector 31 handing off to Sector 41.
+
+1-5-4. Fourth-Line Data
+Intra-facility coordination using fourth-line data is authorized, provided the entries used are in
+accordance with FAA JO 7110.65, paragraph 5-4-10. The following fourth-line data entries must
+be considered valid coordination in addition to those entries listed in FAA JO 7110.65,
+paragraph 5-4-10.
+
+    a. Instrument Approaches: Pilot requests for, or clearances given for, instrument
+         approaches must be put in the fourth-line of the aircraft's data block using the following
+         format:
+              (1) Approach type. Utilize Table 1-5-1 for the type of approach requested/cleared.
+              (2) Approach rendition (i.e. "Z" or "Y"), if applicable.
+              (3) Runway. Utilize "A" when a visual approach to a non-towered airport is being
+                   conducted.
+              (4) Approach termination, if other than full stop, following a hyphen.
+
+Not for real world use.                    8
+                           Table 1-5-1. Approach Type Designators
+
+                              Approach Type      Designator
+                                ILS or HI-ILS           I
+                                   Localizer            L
+                                     RNAV              R
+                                     Visual            V
+                                                       O
+                            VOR or VOR DME             T
+                           TACAN or HI-TACAN           N
+
+                            NDB or NDB DME
+
+         EXAMPLE-
+         "O1" means the VOR Runway 1 approach.
+         "IZ19" means the ILS Z Runway 19 approach.
+         "NA-M" means the NDB DME-A approach with a planned missed approach.
+
+    b. Away From Keyboard (AFK): Pilots requesting to step away from their connection must
+         have the acronym "AFK," followed by the "zulu" time they are expected to return by,
+         placed in the fourth-line of their data block.
+
+         EXAMPLE-
+         "AFK/2104" means the pilot has stepped away and is expected to return by 2104z.
+
+    c. The phrase "CTRL" transfers full control of the aircraft to the receiving controller.
+
+         NOTE-
+         In this instance, "full control" of an aircraft is not restricted to the items listed in paragraph
+         1-5-2.
+
+    d. The phrase "PD" means the aircraft has been issued a descent at pilot's discretion to the
+         assigned altitude in the data block.
+
+1-5-5. Inappropriate Altitude for Direction of Flight (IAFDOF)
+Aircraft whose route of flight course is within the ranges of 340°-020° or 160°-200° may be
+assigned any legal altitude regardless of direction of flight. Any resulting IAFDOF altitudes need
+not be coordinated.
+
+NOTE-
+This must only apply to intra-facility coordination, unless otherwise specified in a LOA.
+
+Not for real world use.                                                9
+                                      Section 6. Automation
+
+1-6-1. 3nm Reduced Separation Areas
+Reduced IFR separation of 3nm may be used in accordance with FAA JO 7110.65, paragraph
+5-5-4, within the areas depicted in Appendix 2 at or below FL230.
+
+NOTE-
+Due to current ERAM limitations, all targets at or below FL230 will appear as a Reduced
+Separation target. 3nm Reduced Separation is only authorized in the areas depicted in
+Appendix 2.
+
+1-6-2. Automated Information Transfer (AIT)
+AIT is a process by which two controllers, whose sectors may not be adjacent, may transfer
+radar identification and communications of an aircraft to each other via a third intermediary
+controller, but without transferring communications to the intermediary controller. Except for
+instances listed in subparagraphs b. and c., aircraft must be in level flight at their assigned
+altitude throughout the AIT process. Should any AIT process be implemented, clauses (1)
+through (3) must be adhered to sequentially.
+
+    a. General Procedures:
+              (1) Controller A must initiate transfer of radar identification to Controller B.
+              (2) Controller B, after accepting the transfer of radar identification and traffic
+                   permitting, must initiate a transfer of radar identification to Controller C before the
+                   aircraft enters Controller B's airspace.
+              (3) Once Controller A observes Controller C accept the transfer of radar
+                   identification, Controller A must transfer aircraft communications to Controller C
+                   before the aircraft enters Controller C's airspace.
+              (4) If Controller A does not observe Controller B initiate a transfer of radar
+                   identification to Controller C prior to the A/B sector boundary, Controller A must
+                   transfer aircraft communications to Controller B.
+
+                   NOTE-
+                   Controller A may, at their discretion, transfer aircraft communications to
+                   Controller B prior to Controller C accepting the transfer of radar identification.
+
+    b. BZN/Sector 15 Procedures: This process may be used for Bozeman (BZN) arrivals
+         17,000 feet and above that will enter the lateral confines of Sector 6 from Sector 15 and
+         enter the Bozeman sector of Big Sky TRACON.
+              (1) Sector 15 must clear the aircraft to 17,000 and then initiate a transfer of radar
+                   identification to Sector 6.
+              (2) Sector 6 must accept the transfer of radar identification and then initiate a
+                   transfer of radar identification to Big Sky Approach.
+              (3) Sector 15 must transfer communication of the aircraft to Big Sky Approach after
+                   observing Big Sky Approach accept radar identification.
+
+Not for real world use.                    10
+              (4) If the handoff is not accepted by Big Sky Approach prior to the Sector 6/15
+                   boundary, Sector 15 must transfer communications to Sector 6.
+
+    c. BZN/Sector 19 Procedures: This process may be used for BZN arrivals 17,000 feet and
+         above that will enter the lateral confines of Sector 6 from Sector 19 and enter the
+         Bozeman sector of Big Sky TRACON.
+              (1) Sector 19 must clear the aircraft to 17,000 and then initiate a transfer of radar
+                   identification to Sector 6.
+              (2) Sector 6 must accept the transfer of radar identification and then initiate a
+                   transfer of radar identification to Big Sky Approach.
+              (3) Sector 19 must transfer communication of the aircraft to Big Sky Approach after
+                   observing Big Sky Approach accept radar identification.
+              (4) If the handoff is not accepted by Big Sky Approach prior to the Sector 6/19
+                   boundary, Sector 19 must transfer communications to Sector 6.
+
+1-6-3. Target Markers (Data Block Retention)
+When an aircraft is departing from an non-towered airport, or a towered airport that ZLC ARTCC
+provides approach control services to, a track or departure message needs to be initiated as
+soon as practical. There are two methods of accomplishing this:
+
+    a. Track Method (preferred): The QT command (see below) will start a track over the
+         aircraft's departing airport and issue a departure message automatically. The track will
+         have a coasting status and remain over the departure airport until the aircraft is airborne
+         and picked up by radar.
+
+         QT //<ICAO Airport> <ACID>
+
+    b. Departure Message Method: The DM command (see below) will issue a departure
+         message, but will not initiate a track until the aircraft is airborne and picked up by radar.
+
+         DM <ACID>
+
+Not for real world use.                    11
+                                Section 7. Traffic Management
+
+1-7-1. General
+    a. In accordance with VATUSA DP003, all Traffic Management Initiatives (TMIs) posted to
+         the National Traffic Management Log (NTML) by VATUSA Division Command Center
+         (DCC) must be complied with.
+    b. TMU procedures outlined in Chapter 6 must be complied with.
+
+1-7-2. Salt Lake City Terminal Area
+    a. When transferring aircraft to Salt Lake TRACON, the transferring controller must ensure
+         each aircraft is on its own navigation via the appropriate STAR or coordinate a radar
+         vector heading.
+    b. Issue speed/altitude crossing restrictions to aircraft in accordance with the S56-ZLC
+         LOA.
+
+         EXAMPLE-
+         "Cross SPANE at and maintain flight level one-niner-zero, at two-eight-zero knots."
+
+    c. Issue expected runways in accordance with the S56-ZLC LOA to aircraft on RNAV
+         arrivals.
+
+         EXAMPLE-
+         "Expect runway tree-four right."
+
+1-7-3. Denver (DEN) Arrivals
+All DEN arrival aircraft must be routed in accordance with the following:
+
+    a. Aircraft north of Line A in Figure 1-7-1 must be routed over or northeast of WYS to
+         TOFUU.
+
+    b. Aircraft south of Line A but north of Line B in Figure 1-7-1 must be routed via:
+              (1) Over or south of IDA to MJANE, or;
+              (2) PIH..MJANE.
+
+    c. Aircraft south of Line B in Figure 1-7-1 must be routed via:
+              (1) TCH..PERTY..KAMPR.LONGZ, or;
+              (2) PERTY..KAMPR.LONGZ, or;
+              (3) BUMPP.SSKII.
+
+    d. All traffic transitioning Sector 5 must be routed over MJANE or TOFUU.
+
+Not for real world use.                    12
+                           Figure 1-7-1. DEN Arrival Routing Lines and Fixes
+
+Not for real world use.                                                           13
+                                     Chapter 2. Area A
+
+                                  Section 1. Area Procedures
+
+2-1-1. Area Narrative
+Area A consists of eight sectors: 6, 7, 8, 12, 14, 18, 19, and 20. There are five approach control
+facilities and five FAA Contract Towers located within Area A. Controllers in Area A also provide
+approach control services to several non-towered airports. Area A is depicted in Figure 2-1-1.
+
+2-1-2. Billings (BIL) Procedures
+    a. All BIL jet/turboprop arrival aircraft with GNSS/RNAV1 capability operating at or above
+         17,000 feet must be assigned an appropriate STAR prior to initiating a transfer of radar
+         identification to Sector 15 or Sector 25 if active.
+
+         NOTE-
+         Aircraft assigned a STAR into BIL must be given a pilot's discretion descent to FL190
+         prior to entering Sector 15 if active.
+
+    b. Aircraft assigned one of the BIL STARs may be routed direct to the inner fixes without
+         prior coordination.
+
+2-1-3. Jackson Hole (JAC) Procedures
+    a. When Runway 19 is active at JAC, ensure all arrivals:
+              (1) Are routed via:
+                        (a) ELLKK..MOSSS..KJAC, or;
+                        (b) IPARK..PETTZ..TOCUD..KJAC
+                        (c) Aircraft routed between PETTZ and COD may be routed direct TOCUD.
+                        (d) Idaho Falls (IDA) departures may be routed direct MOSSS.
+              (2) Enter Sector 16 at FL250, or requested altitude, if lower.
+              (3) Are spaced 8 miles in trail with constant or increasing separation crossing
+                   MOSSS/TOCUD, or as specified in a traffic management initiative.
+    b. When Runway 1 is active at JAC, ensure:
+              (1) All arrivals are routed via:
+                        (a) ELLKK..HOMVA..KJAC
+                        (b) Sector 8 may route aircraft direct HOMVA.
+              (2) All arrivals are issued a crossing restriction of 14,000 feet at the IAF they are
+                   routed towards.
+              (3) Aircraft from Sector 8 are spaced 10 miles in trail with constant or increasing
+                   separation crossing HOMVA, or as specified in a traffic management initiative.
+    c. The controller staffing Sector 16 is responsible for keeping other sectors informed of any
+         changes to the active runway status at JAC.
+
+Not for real world use.                    14
+2-1-4. Northern California (NCT) Procedures
+Aircraft destined for San Francisco (SFO), Oakland (OAK), or San Jose (SJC) on a route that
+crosses a line from TCH to JWELL must be assigned routing that will keep them north of this
+line.
+
+                                               Figure 2-1-1. Area A Map
+
+Not for real world use.                                                                      15
+Not for real world use.                    16
+                                        Section 2. Sector 6
+
+2-2-1. Sector Narrative
+Sector 6 is delegated airspace extending upward from the surface up to, but not including,
+FL330 except for the area that overlies Big Sky TRACON. It has a moderate amount of en route
+east/west traffic that crosses with north/south traffic on a regular basis. The sector has a mix of
+aircraft that depart off the smaller airports in the Montana and Idaho areas including Butte
+(BTM), Bozeman (BZN), Livingston (LVM), West Yellowstone (WYS), Dillon (DLN), and Salmon
+(SMN). Sector 6 works with Sector 19 for arrivals and departures from Helena (HLN) and
+Missoula (MSO) approach controls which are located in Sector 19. The sector is bounded to the
+west by Seattle ARTCC. Sector 6 is depicted in Figure 2-2-1.
+
+2-2-2. Terminal Airspace
+Sector 6 delegates airspace around BZN at or below 16,000 feet to BOI ATCT (see Appendix
+1D). This airspace is operated as Big Sky Approach. Sector 6 also includes a section of Helena
+Approach that extends into its airspace (see Appendix 1G). When Big Sky Approach is not
+open, the airspace delegated to BOI ATCT becomes the responsibility of Sector 6. When
+Helena Approach is not open, the airspace delegated to Helena Approach becomes the
+responsibility of Sector 19.
+
+2-2-3. Sector Procedures
+    a. Sector 6 is delegated control from Big Sky Approach of BZN departures for climb to filed
+         altitude and turns not to exceed 60°.
+    b. Sector 8 and Sector 16 must ensure all BZN arrival aircraft are issued a descent
+         clearance in accordance with the following:
+              (1) Aircraft assigned the LOSST# arrival: "Descend via" with a runway transition
+                   consistent with the active runway at BZN.
+              (2) Aircraft not assigned the LOSST# arrival: A clearance to cross 40nm from BZN at
+                   or below 17,000 feet.
+    c. Ensure all other BZN arrival aircraft (not mentioned in subparagraph b.) are issued a
+         clearance to cross 40nm from BZN at or below 17,000 feet.
+
+2-2-4. Sector Holding
+When necessary, use the following approved holding patterns:
+
+Not for real world use.                    17
+NAVAID/  HOLD              HOLD                                     HOLDING / ALT
+   FIX    DIR              RAD/
+                            CRS  INB CRS      TRN
+  CPN       N
+          NW                                    L             175K    230K           265K
+   LKT    SW                                    L
+ MAGIC    NW               346 RAD 166          L                   90/140 140/175
+TARGY       S                                   R
+                           307 RAD 127          R                   90/140 140/175
+
+                           218 RAD 038                              112/140 140/175
+
+                           331 CRS 151                              100/140 140/175
+
+                           190 CRS 010                              100/175
+
+2-2-5. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-2-1.
+
+                               Table 2-2-1. Sector 6 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               6                  15              Descent
+BOI arrivals               6                  41              Control
+                           15, 19, 41                         Descent
+BZN arrivals               8, 18              6               Control
+                           12, 19                             Descent
+BTM arrivals               6                  6               Control
+GTF arrivals               6                  19              Descent
+HLN arrivals               6                  19              Descent
+IDA arrivals               6                  8               Control
+JAC arrivals               6                  16              Descent
+MSO arrivals               8                  19              Descent
+WYS arrivals                                  6
+
+Not for real world use.                                                                    18
+                             Figure 2-2-1. Sector 6 Map
+
+Not for real world use.                                        19
+                                        Section 3. Sector 7
+
+2-3-1. Sector Narrative
+Sector 7 is delegated airspace from the surface up to, but not including, FL330. It has a normal
+flow of en route traffic, but mostly works arriving and departing traffic to and from the Salt Lake
+City Terminal Area. As a first tier sector outside of S56 TRACON, Sector 7 provides the final
+in-trail spacing from the north into the S56 TRACON. There are no other approach controls
+within the sector, however Sector 7 provides approach control services to Malad (MLD), Logan
+(LGU), and Evanston (EVW). Sector 7 is depicted in Figure 2-3-2.
+
+2-3-2. Sector Procedures
+    a. Sector 7 should expect S56 arrivals from neighboring sectors to comply with the
+         following:
+              (1) Sector 5 must ensure:
+                        (a) Traffic enters Sector 7 at or below FL300.
+                        (b) All J and L Class aircraft inbound to SLC enter Sector 7 via one of the
+                             following routes:
+                                (i) OCS.CARTR#, CKW.CARTR#, DDY.CARTR#, or
+                                       BOBRT.CARTR#
+                               (ii) OCS.LHO# or LHO.LHO#
+              (2) Sector 8 must ensure:
+                        (a) Traffic enters Sector 7 at or below FL300.
+                        (b) All traffic is cleared via, and established on, the appropriate STAR or
+                             other routing, in accordance with the S56-ZLC LOA.
+              (3) Sector 31 and 41 must ensure that all J and L Class aircraft inbound to SLC are
+                   cleared via, and established on, the BEARR or SKEES arrival.
+              (4) Sector 40 must ensure:
+                        (a) Traffic at or above FL210 enters Sector 7 at FL200.
+                        (b) All traffic inbound to SLC entering Sector 7 is routed via BLIDA.BEARR#
+                             or BLIDA.SKEES#.
+    b. Sector 7 must ensure northbound S56 departure aircraft that will enter Sector 5 or Sector
+         8 are cleared to FL290 using an interim altitude (or assigned altitude if filed/requested
+         altitude is FL290 or lower). Sector 5/8 may climb aircraft to requested altitude without
+         further coordination with Sector 7. Coordination with Sector 18 is the responsibility of
+         Sector 5/8.
+
+Not for real world use.                    20
+2-3-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 2-3-1:
+
+                                            Table 2-3-1. Sector 7 Holding
+
+NAVAID/  HOLD              HOLD                    MAX                HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+                            CRS    INB CRS  TRN
+CARTR       N                                        5
+  LHO       N                                 L                       230K     265K
+          NW                                  L      8
+BEARR     NW               353 RAD 173        L      8                140      140/220
+ BLIDA     SE                                 L      7
+  MLD                      353 RAD 173        R                     120/140 140/175
+
+                           302 CRS 122                              100/140 140/450
+
+                           302 CRS 122                              120/140 140/310
+
+                           148 RAD 328                              90/140 140/175
+
+                           Figure 2-3-1. Sector 7 Holding Patterns
+
+Not for real world use.                                                              21
+2-3-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-3-2.
+
+                               Table 2-3-2. Sector 7 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+JAC arrivals               3                  7               Control
+LGU arrivals               5                  7               Descent
+PIH arrivals               7                  8               Descent
+                                                              Descent, Turns up to 30°,
+S56 TRACON arrivals        5, 8               7               Speed adjustment
+                                                              Descent
+JAC arrivals               40                 7               Descent
+PIH arrivals               7                  8               Control
+S56 TRACON arrivals        31, 40, 41         7               Descent
+SUN/TWF arrivals           7                  31
+
+Not for real world use.                                                                  22
+                             Figure 2-3-2. Sector 7 Map:
+
+Not for real world use.                                         23
+                                        Section 4. Sector 8
+
+2-4-1. Sector Narrative
+Sector 8 is delegated airspace at and below FL320. It is normally operated upward from the
+surface combined with Sector 18 above. Its busiest airports are Idaho Falls (IDA) and Pocatello
+(PIH), which have VFR towers. There are also several smaller uncontrolled airports such as Big
+Piney (BPI), Afton (AFO), Alpine (46U), Arco (AOC), Blackfoot (U02), Driggs (DIJ), and Rexburg
+(RXE). Sector 8 works arrival and departure traffic for IDA and PIH, southbound departing traffic
+from JAC, eastbound traffic from Sun Valley (SUN), and northbound departing traffic from the
+Salt Lake City Terminal Area. This sector is very involved with spacing traffic destined for SLC.
+Sector 8 is depicted in Figure 2-4-1.
+
+2-4-2. Sector Procedures
+    a. S56 arrivals:
+              (1) Sector 8 must ensure aircraft enter Sector 7 at or below FL300.
+              (2) Sector 8 must ensure that all aircraft are cleared via, and established on, the
+                   appropriate STAR or other routing, in accordance with the S56-ZLC LOA.
+              (3) When Sector 18 is sectorized from Sector 8, aircraft from Sector 16 must cross
+                   the Sector 8/18 boundary at or below FL320.
+              (4) Sector 16 must ensure all SLC arrival aircraft at or above 15,000 feet enter
+                   Sector 8 via one of the following routes:
+                        (a) JAC.CARTR#
+                        (b) BPI.LHO#, JAC.LHO#, or LHO.LHO#
+    b. Sector 7 must ensure northbound S56 departure aircraft that will enter Sector 8 are
+         cleared to FL290 using an interim altitude (or assigned altitude if filed/requested altitude
+         is FL290 or lower). Sector 8 may climb aircraft to their requested altitude without further
+         coordination with Sector 7. Coordination with Sector 18 is the responsibility of Sector 8.
+    c. Ensure all BZN arrival aircraft are issued a descent clearance in accordance with the
+         following:
+              (1) Aircraft assigned the LOSST# arrival: "Descend via" with a runway transition
+                   consistent with the active runway at BZN.
+
+                   NOTE-
+                   A procedure altitude to 16,000 feet must be inputted into the aircraft's data block
+                   to indicate the "descend via" clearance has been issued.
+
+                   EXAMPLE-
+                   "Descend via the LOSST one arrival, runway one-two transition."
+
+              (2) Aircraft not assigned the LOSST# arrival: A clearance to cross 40nm from BZN at
+                   or below 17,000 feet.
+
+    d. When sectorized, Sector 18 must ensure BZN arrival traffic is at FL330 in a timely
+         manner.
+
+Not for real world use.                    24
+2-4-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 2-4-1:
+
+                                            Table 2-4-1. Sector 8 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+   IDA                      CRS    INB CRS  TRN
+            S                                        7
+   PIH      N                                 L      9    230K                 265K
+            N                                 R      8
+TYHEE       S              199 RAD 019        R         70/140 140/175
+UCONN      W                                  L
+           NE              015 RAD 195        L         68/140 140/175
+           NE                                 R
+                           358 RAD 178        R                                150/450
+
+                           201 BRG 021                  85/140
+
+                           269 RAD 089                  76/140
+
+                           031 BRG 211                  76/100
+
+                           024 BRG 204                  67/140
+
+2-4-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-4-2.
+
+Not for real world use.                                                              25
+                           Table 2-4-2. Sector 8 Transfer of Control Eligibility
+
+          Flight Type          From sector           To sector                    For
+BOI arrivals               8                    41              Control
+                           8                    6
+BZN arrivals               18                   8               Control
+                           41                   8
+IDA arrivals               6, 14, 16, 31, 41    8               Descent
+JAC arrivals               8                    16              Control
+JAC departures             5, 31, 41            8
+PIH arrivals               16                   8               Control
+S56 TRACON arrivals        7, 31                8
+SUN/TWF arrivals                                                Climb, Turns up to 30°
+WYS arrivals               5, 8                 7               Descent
+                                                                Descent, Turns up to 30°,
+                           8                    31              Speed adjustment
+                           8                    6               Descent
+                                                                Descent
+
+Not for real world use.                                                                    26
+                             Figure 2-4-1. Sector 8 Map:
+
+Not for real world use.                                         27
+                                        Section 5. Sector 12
+
+2-5-1. Sector Narrative
+Sector 12 is delegated airspace from the surface up to, but not including, FL290. It is normally
+combined with Sector 19. It is located over northwestern Montana and is bounded by Seattle
+ARTCC to the west and Edmonton ACC to the north. There are VFR towers at Missoula (MSO)
+and Kalispell (GPI), as well as approach control services at MSO provided by GEG ATCT. The
+main traffic flow for Sector 12 is arrival and departure traffic to and from MSO, GPI, and other
+small airports. In addition, there are many overflights to and from the west, midwest, and east
+coast airports, plus a regular flow of northbound and southbound flights. Westbound traffic to
+Seattle (SEA), Portland (PDX), Vancouver (YVR), and Spokane (GEG) converge just outside
+the sector at Mullan Pass (MLP). Sector 12 is depicted in Figure 2-5-1.
+
+2-5-2. Terminal Airspace
+Sector 12 delegates airspace around MSO at or below 14,000 feet to GEG ATCT (see Appendix
+1I). This airspace is operated as Spokane Approach. Helena Approach is also very near the
+eastern boundary of the sector (see Appendix 1G). When Spokane Approach is not open, the
+airspace delegated to GEG ATCT becomes the responsibility of Sector 12.
+
+2-5-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 2-5-1:
+
+                                            Table 2-5-1. Sector 12 Holding
+
+NAVAID/  HOLD              HOLD                                     HOLDING / ALT
+   FIX    DIR              RAD/
+                            CRS    INB CRS    TRN
+ KILLY    SW                                    L
+                                                              200K    230K           265K
+
+                           238 RAD 058                              120/140
+
+2-5-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-5-2.
+
+                              Table 2-5-2. Sector 12 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BTM arrivals               12                 6               Descent
+GPI arrivals               19                 12              Control
+GTF arrivals               12                 19              Control
+HLN arrivals               12                 19              Descent
+
+Not for real world use.                                                                    28
+                             Figure 2-5-1. Sector 12 Map
+
+Not for real world use.                                         29
+                                        Section 6. Sector 14
+
+2-6-1. Sector Narrative
+Sector 14 is delegated airspace at and above FL330. It is a high altitude sector that covers
+Sector 6. The major traffic flows are to and from the west coast as well as arrivals and
+departures to and from Bozeman, Billings, and Kalispell. Sector 14 is depicted in Figure 2-6-2.
+
+2-6-2. Sector Procedures
+Sector 14 shall give the following instructions for BZN and BIL Arrivals:
+
+    a. Give all BZN arrivals pilot discretion descent to FL330 and put the descent in a "hard"
+         altitude in the datablock
+
+    b. Give all BIL arrivals via the CRAZI arrival pilot discretion descent to FL330 and put the
+         descent in a "hard" altitude in the datablock.
+
+2-6-3. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-6-2.
+
+                              Table 2-6-2. Sector 14 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               6/14               15/25           Descent
+BOI arrivals               6/14               41              Control
+                           15, 19, 41                         Descent
+BZN arrivals               8, 18              6/14            Control
+                           12, 19                             Descent
+BTM arrivals               6/14               6/14            Control
+GTF arrivals               6/14               19              Descent
+HLN arrivals               6/14               19              Descent
+IDA arrivals               6/14               8               Control
+JAC arrivals               6/14               16/26           Descent
+MSO arrivals               8                  19              Descent
+WYS arrivals                                  6/14
+
+Not for real world use.                                                              30
+                             Figure 2-6-1. Sector 14 Map
+
+Not for real world use.                                         31
+                                        Section 7. Sector 18
+
+2-7-1. Sector Narrative
+Sector 18 is delegated airspace at and above FL330. It is a high altitude sector that overlies
+Sectors 7, 8, and 14, but is normally combined with each of these sectors so that they can be
+worked from the ground up. The major traffic flows are to and from the west coast, with
+northwest/southeast crossing traffic that is intermixed with the SLC northbound departures.
+
+2-7-2. Sector Procedures
+    a. S56 arrival traffic that will overfly Sector 8 must be at FL330 in a timely manner that
+         allows that traffic to cross the Sector 8 and Sector 7 boundary at or below FL300.
+    b. All S56 arrival aircraft must be cleared via, and established on, the appropriate STAR or
+         other routing, in accordance with the S56-ZLC LOA.
+    c. When Sector 8 and Sector 18 are sectorized, S56 arrival traffic from Sector 16 must be
+         at or below FL320 prior to crossing the boundary between Sector 16 and Sector 8/18.
+    d. When Sector 8 and Sector 18 are sectorized, Sector 18 must ensure BZN arrival traffic is
+         at FL330 in a timely manner that allows that traffic to cross 40nm from BZN at or below
+         17,000 feet. If Sectors 6 and 14 are sectorized, Sector 18 and 8 shall coordinate to have
+         BZN arrivals cross the 18/8 and 6/14 boundary at or below FL320.
+
+2-7-3. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-7-1.
+
+                              Table 2-7-1. Sector 18 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BOI arrivals               18                 41              Control
+BZN arrivals               18                 6, 8            Control
+JAC arrivals               41                 18              Descent
+                           40, 41             18              Descent
+
+Not for real world use.                                                              32
+                             Figure 2-7-1. Sector 18 Map:
+
+Not for real world use.                                          33
+                                        Section 8. Sector 19
+
+2-8-1. Sector Narrative
+Sector 19 is delegated airspace from the surface up to, but not including, FL330. It is normally
+combined with Sector 12. It is located over northwestern Montana and is bounded by Edmonton
+and Winnipeg ACCs to the north. There is a radar approach control located at Great Falls (GTF)
+and a non-radar approach control at Helena (HLN). Big Sky Approach is adjacent to the
+southern boundary of the sector. The main traffic flow for Sector 19 is arrival and departure
+traffic for GTF, HLN, Lewistown (LWT), and other small airports. In addition, there are many
+overflights to and from the west, midwest, and east coast airports, plus a regular flow of
+northbound and southbound flights. Sector 19 is depicted in Figure 2-8-1.
+
+2-8-2. Terminal Airspace
+Sector 19 delegates airspace around GTF at or below 13,000 feet to GTF ATCT (see Appendix
+1F). Sector 19 also delegates airspace around HLN at or below 13,000 feet to HLN ATCT (see
+Appendix 1G). When either facility is not open, the delegated airspace to that facility becomes
+the responsibility of Sector 19.
+
+2-8-3. Sector Procedures
+Sector 19 must ensure all BZN arrival aircraft are issued a clearance to cross 40nm from BZN at
+or below 17,000 feet.
+
+2-8-4. Sector Holding
+When necessary, use the following approved holding patterns in Table 2-8-1:
+
+                                            Table 2-8-1. Sector 19 Holding
+
+NAVAID/ HOLD               HOLD  INB           MAX        HOLDING / ALT
+                           RAD/  CRS           DME
+FIX  DIR                    CRS         TRN         200K 230K 265K
+                                                 5
+CTB  SE 135 RAD 315                       R         54/60 60/140
+                                          R
+HVR  W 274 RAD 094                        R         45/140 45/80
+                                          R
+HLN  E 086 RAD 266                                          84/140 140/175
+
+LWT  W 274 RAD 094                                    60    60/140 140/175
+
+2-8-5. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-8-2.
+
+Not for real world use.                                                  34
+                         Table 2-8-2. Sector 19 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               19                 15              Descent
+BZN/BTM arrivals           19                 6/14            Descent
+GPI arrivals               19                 12              Control
+                           14, 15, 17, 39     19              Descent
+GTF arrivals               6, 14, 12          19              Control
+                           6, 12, 14, 15      19              Descent
+HLN arrivals               6, 14              19              Descent
+MSO arrivals
+
+                             Figure 2-8-1. Sector 19 Map:
+
+Not for real world use.                                                              35
+                                        Section 9. Sector 20
+
+2-9-1. Sector Narrative
+Sector 20 is located over Sectors 12 and 19, and is stratified at FL290 and above over Sector
+12 and FL340 and above over Sector 19. It is normally combined with Sectors 12 and 19. The
+sector shares common boundaries with Seattle ARTCC to the west, and Edmonton and
+Winnipeg ACCs to the north. Major traffic flows in Sector 20 include traffic to and from Spokane
+(GEG), Portland (PDX), Seattle (SEA), and Vancouver (YVR). These east/west flights cross with
+northbound Canadian and polar flights, as well as southbound flights to Salt Lake City (SLC),
+Las Vegas (LAS), Los Angeles (LAX), and additional southern destinations. The sector handles
+Missoula (MSO), Helena (HLN), Kalispell (GPI), and Great Falls (GTF) departures climbing to
+FL290 and above. Sector 20 is depicted in Figure 2-9-1.
+
+2-9-2. Sector Procedures
+BZN arrival traffic that will overfly Sector 19 must be at FL340 in a timely manner that allows that
+traffic to cross 40nm from BZN at or below 17,000 feet.
+
+2-9-3. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 2-9-1.
+
+                              Table 2-9-1. Sector 20 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+GTF arrivals               14, 15, 39         20              Descent
+
+Not for real world use.                                                              36
+                             Figure 2-9-1. Sector 20 Map:
+
+Not for real world use.                                          37
+                                     Chapter 3. Area B
+
+                                  Section 1. Area Procedures
+
+3-1-1. Area Narrative
+Area B consists of seven sectors: 3, 4, 5, 15, 16, 17, 25, 26, 39 and 66. There are two approach
+control facilities and one FAA Contract Tower located within Area B. Sectors 25 and 66 are not
+controllable FAV sectors which become delegated to 15 or 16 and 17 or 39 respectively.
+Controllers in Area B also provide approach control services to several non-towered airports.
+Area B is depicted in Figure 3-1-1.
+
+3-1-2. Billings (BIL) Procedures
+    a. All BIL jet/turboprop arrival aircraft with GNSS/RNAV1 capability operating at or above
+         17,000 feet must be assigned an appropriate STAR prior to initiating a transfer of radar
+         identification to Sector 15.
+
+         NOTE-
+         Aircraft assigned a STAR into BIL must be given a pilot's discretion descent to FL190
+         prior to entering Sector 15.
+
+    b. Aircraft assigned a STAR into BIL may be routed direct to the inner fixes without prior
+         coordination.
+
+3-1-3. Jackson Hole (JAC) Procedures
+    a. When Runway 19 is active at JAC, ensure all arrivals are routed via:
+              (1) MOSSS..KJAC, or;
+              (2) TCH..ELLKK..MOSSS..KJAC
+              (3) Aircraft routed between PETTZ and COD may be routed direct TOCUD.
+    b. When Runway 1 is active at JAC, ensure all arrivals are routed via:
+              (1) SOLDR..ELLKK..HOMVA..KJAC, or;
+              (2) TCH..ELLKK..HOMVA..KJAC
+    c. The controller staffing Sector 16 is responsible for keeping other sectors informed of any
+         changes to the active runway status at JAC.
+
+Not for real world use.                    38
+                             Figure 3-1-1. Area B Map:
+
+Not for real world use.                                       39
+                                        Section 2. Sector 3
+
+
+3-2-1. Sector Narrative
+Sector 3 is delegated airspace extending upward from the surface that overlies northeastern
+Utah. Traffic in this sector is primarily departure aircraft from Salt Lake City (SLC) airport.
+Eastbound en route aircraft are often in conflict with departures to the east requesting higher
+altitudes. The Sector 3 controller provides approach control services to Vernal (VEL) and Heber
+City (HCR). Sector 3 is bordered by Salt Lake City TRACON to the west and Denver ARTCC to
+the east. Sector 3 owns the Heber Shelf at or below 12,000 feet and that portion of the Heber
+Shelf within Sector 3 at or below 14,000. Sector 3 is depicted in Figure 3-2-1.
+
+3-2-2. Sector Procedures
+    a. S56 departure aircraft routed into Sectors 4 and 5 must be cleared to FL290 using an
+         interim altitude (or assigned altitude if filed/requested altitude is FL290 or lower). On
+         transfer of communication, Sector 4 may climb aircraft to requested altitude, and Sector
+         5 may climb aircraft to requested altitude and/or radar vector the aircraft, without further
+         coordination.
+    b. VEL arrival aircraft from ZDV that enter Sector 3 or Sector 4 must enter ZLC airspace
+         with clearance to 12,000 feet or assigned altitude, if lower. ZLC has control for descent
+         within 20nm of the common boundary.
+    c. The following phraseology may be used when issuing the route portion of a HCR
+         Runway 22 departure clearance:
+
+         PHRASEOLOGY-
+         ...VIA THE HEBER CITY RUNWAY TWO-TWO ODP, (NONTY or COOLI) THEN (the
+         direct fix) AS FILED,...
+
+3-2-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 3-2-1:
+
+                                            Table 3-2-1. Sector 3 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+                           BRG     INB CRS  TRN
+ COOLI      S                                        7
+OHAPE       S                                 L      4    230K    265K
+           SE                                 L
+   VEL      N              173 BRG 353        R      7  120/140
+ZANGY                                         R
+                           160 BRG 340                  100/140 140/175
+
+                           142 RAD 322                  86/140 140/175
+
+                           359 BRG 179                  110/140 140/150
+
+Not for real world use.                                                  40
+3-2-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-2-2.
+
+                               Table 3-2-2. Sector 3 Transfer of Control Eligibility
+
+          Flight Type           From sector    To sector               For
+JAC arrivals
+                           3                   Area A       Control
+
+                                Figure 3-2-1. Sector 3 Map
+
+Not for real world use.                                                     41
+                                        Section 3. Sector 4
+
+3-3-1. Sector Narrative
+Sector 4 overlies Sectors 11 and 32, and is delegated airspace at and above FL340 with a shelf
+extending upward from the surface in the vicinity of Myton VORTAC (MTU). Sector 4 is bounded
+by Denver ARTCC to the east. The main flow of traffic is east/west, with aircraft departing from
+Salt Lake City (SLC) and climbing to higher altitudes. Sector 4 provides approach control
+services to Roosevelt (74V). Sector 4 is depicted in Figure 3-3-1.
+
+3-3-2. Sector Procedures
+    a. All SLC arrivals must comply with the following:
+              (1) SLC Landing North:
+                        (a) Aircraft above FL300 that will enter Sector 32 must cross the Sector 4/32
+                             lateral boundary at or below FL340 with a descent to FL300. A pilot's
+                             discretion descent is not authorized.
+                        (b) J and L Class aircraft must be routed via MTU.SPANE# or MTU.JAZZZ#.
+              (2) SLC Landing South:
+                        (a) Aircraft above FL300 that will enter Sector 32 must cross the Sector 4/32
+                             lateral boundary at or below FL340 with a descent to FL300. A pilot's
+                             discretion descent to FL300 may be issued.
+                        (b) J and L Class aircraft must be routed via MTU.SPANE# or MTU.PITTT#.
+    b. S56 departure aircraft routed into Sector 4 from Sector 3 must be cleared to FL290 using
+         an interim altitude (or assigned altitude if filed/requested altitude is FL290 or lower). On
+         transfer of communication, Sector 4 may climb aircraft to requested altitude without
+         further coordination with Sector 3.
+    c. Sector 11/32 may point-out aircraft to Sector 4 with an interim or requested altitude
+         above their delegated airspace stratum. Automated approval of a point-out constitutes
+         approval for the aircraft to climb to the altitude displayed in the data block.
+    d. VEL arrival aircraft from ZDV that enter Sector 3 or Sector 4 must enter ZLC airspace
+         with clearance to 12,000 feet or assigned altitude, if lower. ZLC has control for descent
+         within 20nm of the common boundary.
+
+3-3-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 3-3-1:
+
+                                            Table 3-3-1. Sector 4 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+                           BRG     INB CRS  TRN
+  MTU       S                                        7
+            E                                 R           230K    265K
+                                              R
+                           160 RAD 340                  85/140 140/175
+
+                           089 RAD 269                  80/140 140/175
+
+Not for real world use.                                                  42
+3-3-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-3-2.
+
+                               Table 3-3-2. Sector 4 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+SLC arrivals               4                  32              Left turns up to 30°
+
+                             Figure 3-3-1. Sector 4 Map
+
+Not for real world use.                                                              43
+                                        Section 4. Sector 5
+
+3-4-1. Sector Narrative
+Sector 5 is delegated airspace that extends upward from the surface. It is located over
+southwestern Wyoming and is bounded by Denver ARTCC to the east. It is both an en route
+sector and a feeder sector that works traffic to and from the Salt Lake City Terminal Area. A mix
+of arrivals, departures, and low altitude overflights can create a heavy workload. Sector 5
+provides approach control services to Rock Springs (RKS). Sector 5 is depicted in Figure 3-4-1.
+
+3-4-2. Sector Procedures
+    a. All S56 arrivals that are routed into Sector 7 must:
+              (1) Enter Sector 7 at or below FL300.
+              (2) Enter Sector 7 over or north of OCS.
+              (3) Be cleared via, and established on, the appropriate STAR or other routing, in
+                   accordance with the S56-ZLC LOA.
+    b. Sector 5 should expect S56 departures from neighboring sectors to comply with the
+         following:
+              (1) Aircraft routed into Sector 5 from Sector 3 must be cleared to FL290 using an
+                   interim altitude (or assigned altitude if filed/requested altitude is FL290 or lower).
+                   On transfer of communication, Sector 5 may climb aircraft to requested altitude
+                   and/or radar vector the aircraft, without further coordination with Sector 3.
+              (2) Aircraft routed into Sector 5 from Sector 7 must be cleared to FL290 using an
+                   interim altitude (or assigned altitude if filed/requested altitude is FL290 or lower).
+                   Sector 5 may climb aircraft to requested altitude without further coordination with
+                   Sector 7. Coordination with Sector 18 is the responsibility of Sector 5.
+    c. JAC arrival aircraft routed into Sector 8 must enter Sector 8 at or below FL320.
+
+3-4-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 3-4-1:
+
+                                            Table 3-4-1. Sector 5 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+                           BRG     INB CRS  TRN
+KAADE       E                                 R     11
+  FBR      NE                                 R           230K    265K
+                                              R
+  OCS       E              085 BRG 265                            240/350
+
+                           035 RAD 215                  90/140 140/175
+
+                           090 RAD 270
+
+                                                        93/140 140/175
+
+                           080 RAD 260
+
+Not for real world use.                                                  44
+3-4-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-4-2.
+
+                               Table 3-4-2. Sector 5 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+JAC arrivals               5                  8, 16, 26       Control
+LGU arrivals               5                  7               Descent
+S56 arrivals               5                  7               Descent, Turns up to 30°
+
+                             Figure 3-4-1. Sector 5 Map
+
+Not for real world use.                                                                 45
+                                        Section 5. Sector 15
+
+3-5-1. Sector Narrative
+Sector 15 is delegated airspace that extends upward from the surface, except for the area that
+overlies Billings TRACON. It is located over south central Montana with a portion over northern
+Wyoming. It is bounded by Denver ARTCC to the east and Big Sky Approach to the west. It can
+be described as the hub sector for Billings (BIL). For this reason, the traffic in this sector
+involves a great deal of arrivals and departures. High altitude traffic problems occur frequently in
+the BIL area, as BIL is the convergence and crossing point of numerous major jet airways.
+Sector 15 also provides approach control services to Cody (COD) and Sheridan (SHR). Sector
+15 is depicted in Figure 3-5-1.
+
+3-5-2. Terminal Airspace
+Sector 15 delegates airspace around BIL at or below 15,000 feet to BIL ATCT (see Appendix
+1E). When BIL ATCT is not open, the airspace delegated to BIL ATCT becomes the
+responsibility of Sector 15.
+
+3-5-3. Sector Procedures
+    a. Ensure all Salt Lake City (SLC) arrival aircraft at or above 15,000 are routed via one of
+         the following routes:
+              (1) JAC.CARTR#
+              (2) BPI.LHO#, JAC.LHO#, or LHO.LHO#
+    b. Ensure all RNAV-capable BZN arrival aircraft are routed in accordance with the
+         following, based on the active runway at BZN:
+              (1) Runway 12: POWDA#
+              (2) Runway 30: SUBKY#
+    c. Ensure all BZN arrival aircraft are issued a descent clearance in accordance with the
+         following:
+              (1) Aircraft assigned the POWDA# or SUBKY# arrival: "Descend via."
+
+                   NOTE-
+                   A procedure altitude to 16,000 feet must be inputted into the aircraft's data block
+                   to indicate the "descend via" clearance has been issued.
+
+                   EXAMPLE-
+                   "Descend via the POWDA one arrival."
+
+              (2) Aircraft not assigned a STAR: A clearance to cross 40nm from BZN at or below
+                   17,000 feet.
+
+    d. All COD arrival aircraft from Sector 16 must be issued a descent to 16,000 feet. A pilot's
+         discretion descent is approved.
+
+3-5-4. Sector Holding
+When necessary, use the following approved holding patterns in Table 3-5-1:
+
+Not for real world use.                    46
+                             Table 3-5-1. Sector 15 Holding
+
+NAVAID/  HOLD              HOLD                                 MAX    HOLDING / ALT
+   FIX    DIR              RAD/                                 DME
+           NE              BRG     INB CRS      TRN
+   BIL     W                                                      7
+           SE                                     R               4    230K            265K
+  POY     NW                                      R
+  SHR                      028 RAD 208            L                  63/140 140/200
+  COD     NW                                      L
+  GEY                      252 RAD 072            L                  60/140
+            N
+           SE              123 RAD 303                               60/140 140/200
+
+                           324 BRG 144                               74/100
+
+                           302 RAD 122                               70/140 140/175
+
+                           313 RAD 133                               70/120
+
+                           009 RAD 189                               80/140 140/175
+
+                           138 BRG 318                               65/140
+
+3-5-5. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-5-2.
+
+                              Table 3-5-2. Sector 15 Transfer of Control Eligibility
+
+          Flight Type          From sector           To sector                    For
+BIL arrivals               6, 16, 17, 19, 39    15              Descent
+                           15                   6/14
+BZN arrivals               17, 39               15              Descent
+                           16                   15
+COD arrivals               15                   19, 20          Control
+GTF arrivals               15                   19              Descent
+HLN arrivals               15                   16, 26          Descent
+JAC arrivals                                                    Control
+
+Not for real world use.                                                                      47
+                             Figure 3-5-1. Sector 15 Map:
+
+NOTE-
+Sector 25 is a Fixed Airspace Volume (FAV) that must always be delegated to Sector 15, unless
+otherwise coordinated.
+
+Not for real world use.                                          48
+                                        Section 6. Sector 16
+
+3-6-1. Sector Narrative
+Sector 16 is delegated airspace from the surface up to, but not including, FL270 that is located
+over central Wyoming. It is bounded by Denver ARTCC to the east. The main traffic flow in
+Sector 16 is east/west along a major route to and from the Midwest and Bay Area. Sector 16
+provides approach control services to Jackson Hole (JAC), Riverton (RIW), and other
+uncontrolled airports. There is a VFR tower at JAC. High terrain throughout Sector 16
+contributes to its complexity. Sector 16 is depicted in Figure 3-6-1.
+
+3-6-2. Sector Procedures
+    a. When Runway 19 is in use at JAC, departure aircraft routed into Sector 8 must be
+         cleared to FL240 using an interim altitude (or assigned altitude if filed/requested altitude
+         is FL290 or lower).
+    b. Ensure all Salt Lake City (SLC) arrival aircraft at or above 15,000 are routed via one of
+         the following routes:
+              (1) JAC.CARTR#
+              (2) BPI.LHO#, JAC.LHO#, or LHO.LHO#
+    c. Ensure all BZN arrival aircraft are issued a descent clearance in accordance with the
+         following:
+              (1) Aircraft assigned the LOSST# arrival: "Descend via" with a runway transition
+                   consistent with the active runway at BZN.
+
+                   NOTE-
+                   A procedure altitude to 16,000 feet must be inputted into the aircraft's data block
+                   to indicate the "descend via" clearance has been issued.
+
+                   EXAMPLE-
+                   "Descend via the LOSST one arrival, runway one-two transition."
+
+              (2) Aircraft not assigned the LOSST# arrival: A clearance to cross 40nm from BZN at
+                   or below 17,000 feet.
+
+    d. Ensure all Cody (COD) arrival aircraft are issued a descent to 16,000 feet. A pilot's
+         discretion descent is approved.
+
+3-6-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 3-6-1:
+
+Not for real world use.                    49
+                             Table 3-6-1. Sector 16 Holding
+
+NAVAID/  HOLD              HOLD                               MAX    HOLDING / ALT
+   FIX    DIR              RAD/                               DME
+  BOY       S              BRG     INB CRS    TRN
+           W                                    R               8
+  DNW                                           R                    230K    265K
+            N                                   L
+   RIW                     180 RAD 360                             100/175
+  WRL       E                                   R
+           W               267 RAD 087          R                            149/175
+            N
+                           016 RAD 196                             130/140 140/175
+
+                           018 RAD 198                               140     140/175
+
+                           113 RAD 293
+
+                                                                   77/140 140/175
+
+                           281 RAD 101
+
+                           339 RAD 159                             68/140 140/175
+
+3-6-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-6-2.
+
+                              Table 3-6-2. Sector 16 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               16                 15              Descent
+COD arrivals               16                 15              Control
+IDA arrivals               16                 8               Control
+JAC arrivals               5, 6, 8, 15        16, 26          Control
+JAC departures             16                 8               Climb, Turns up to 30°
+
+Not for real world use.                                                               50
+                             Figure 3-6-1. Sector 16 Map:
+
+Not for real world use.                                          51
+                                        Section 7. Sector 17
+
+3-7-1. Sector Narrative
+Sector 17 is delegated airspace from the surface up to, but not including, FL340 and is located
+over eastern Montana, with a portion over western North and South Dakota. It is bounded by
+Minneapolis ARTCC to the east, Denver ARTCC to the south, Winnipeg ACC to the north, and
+Edmonton ACC to the northwest. It is normally combined with Sector 39. Typical traffic in Sector
+17 includes low-altitude airway and point-to-point traffic transiting between uncontrolled airports.
+Sector 17 provides approach control services to Williston (XWA), Glasgow (GGW), Miles City
+(MLS), and other uncontrolled airports. Sector 17 is depicted in Figure 3-7-1.
+
+3-7-2. Terminal Airspace
+Sector 17 includes a section of Billings Approach that extends into its airspace (see Appendix
+1E). When Billings Approach is not open, the airspace delegated to BIL ATCT becomes the
+responsibility of Sector 15.
+
+3-7-3. Sector Procedures
+Ensure all RNAV-capable BZN arrival aircraft are routed in accordance with the following, based
+on the active runway at BZN:
+
+    a. Runway 12: POWDA#
+    b. Runway 30: SUBKY#
+
+3-7-4. Sector Holding
+When necessary, use the following approved holding patterns in Table 3-7-1:
+
+                                            Table 3-7-1. Sector 17 Holding
+
+NAVAID/ HOLD               HOLD  INB           MAX    HOLDING / ALT
+                           RAD/  CRS           DME
+FIX  DIR                   BRG          TRN         200K 230K 265K
+                                 130      R      5
+GDV  NW 310 BRG                  293      R         39/60 60/140 140/175
+                                 133      R
+GGW  SE 113 RAD                  125      R         40/60    60/140 140/175
+     NW 313 RAD                  210                41/60
+                                 030
+ISN  NW 305 RAD                                     40/60 60/140 140/175
+
+     NE 030 RAD                                     50/60 60/140
+     SW 210 RAD
+MLS
+
+                                                    47/60 60/140
+
+3-7-5. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-7-2.
+
+Not for real world use.                                              52
+                         Table 3-7-2. Sector 17 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               17                 15              Descent
+BZN arrivals               17                 15              Descent
+GTF arrivals               17                 19, 20          Descent
+
+                             Figure 3-7-1. Sector 17 Map
+
+NOTE-
+Sector 66 is a Fixed Airspace Volume (FAV) that must always be delegated to Sector 17, unless
+otherwise coordinated with Sector 39.
+
+Not for real world use.                                                              53
+                                        Section 8. Sector 26
+
+3-8-1. Sector Narrative
+Sector 26 is delegated airspace at and above FL270, that is located over central Wyoming. It is
+bounded by Denver ARTCC to the east. The main traffic flow in Sector 26 is east/west along a
+major route to and from the Midwest and Bay Area. Sector 26 can include FAV 25 or FAV 25 can
+be assigned to sector 15. Sector 26 is depicted in Figure 3-6-1.
+
+3-8-2. Sector Procedures
+    a. When Runway 19 is in use at JAC, departure aircraft routed into Sector 8 must be
+         cleared to FL240 using an interim altitude (or assigned altitude if filed/requested altitude
+         is FL270 or lower).
+    b. When Sector 8 and 18 are sectorized from each other, all S56 arrivals must cross the
+         Sector 16/26 and Sector 8/18 boundary at or below FL320.
+    c. Ensure all Salt Lake City (SLC) arrival aircraft at or above 15,000 are routed via one of
+         the following routes:
+             i. JAC.CARTR#
+            ii. BPI.LHO#, JAC.LHO#, or LHO.LHO#
+    d. Ensure all BZN arrival aircraft are issued a descent clearance in accordance with the
+         following:
+             i. Aircraft assigned the LOSST# arrival: "Descend via" with a runway transition
+                   consistent with the active runway at BZN.
+
+NOTE-
+A procedure altitude to 16,000 feet must be inputted into the aircraft's data block to indicate the
+"descend via" clearance has been issued.
+
+EXAMPLE-
+"Descend via the LOSST one arrival, runway one-two transition."
+
+            ii. Aircraft not assigned the LOSST# arrival: A clearance to cross 40nm from BZN at
+                   or below 17,000 feet.
+
+    e. Ensure all Cody (COD) arrival aircraft are issued a descent to Flight Level 270. A pilot's
+         discretion descent is approved.
+
+Not for real world use.                    54
+                             Table 3-8-1. Sector 16 Holding
+
+NAVAID/  HOLD              HOLD                               MAX    HOLDING / ALT
+   FIX    DIR              RAD/                               DME
+  BOY       S              BRG     INB CRS    TRN
+           W                                    R               8
+  DNW                                           R                    230K    265K
+            N                                   L
+   RIW                     180 RAD 360                             100/175
+  WRL       E                                   R
+           W               267 RAD 087          R                            149/175
+            N
+                           016 RAD 196                             130/140 140/175
+
+                           018 RAD 198                               140     140/175
+
+                           113 RAD 293
+
+                                                                   77/140 140/175
+
+                           281 RAD 101
+
+                           339 RAD 159                             68/140 140/175
+
+3-8-3. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-8-1.
+
+                              Table 3-8-2. Sector 26 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               26                 15              Descent
+COD arrivals               26                 15, 16          Control
+IDA arrivals               26                 8               Control
+                                                              Descent, Turns up to 30°, and
+JAC arrivals               26                 16              Control
+
+Not for real world use.                                                             55
+                             Figure 3-8-1. Sector 26 Map:
+
+Not for real world use.                                          56
+                                        Section 9. Sector 39
+
+3-9-1. Sector Narrative
+Sector 39 overlies Sector 17 along with FAV 66, and is delegated airspace at and above FL340.
+It is bounded by Minneapolis ARTCC to the east, Denver ARTCC to the south, Winnipeg ACC to
+the north, and Edmonton ACC to the northwest. It is normally combined with Sector 17 and FAV
+66. Typical traffic in Sector 39 consist of east/west overflight traffic flying to and from the Pacific
+Northwest, as well as polar traffic crossing the Canadian border. Sector 39 is depicted in Figure
+3-9-1.
+
+3-9-2. Sector Procedures
+    a. BIL arrival traffic that will overfly Sector 17 must be at FL340 in a time that allows that
+         traffic to descend in a normal manner.
+    b. BZN arrival traffic must cross the Sector 15 and Sector 39 boundary at FL340.
+    c. Ensure all RNAV-capable BZN arrival aircraft are routed in accordance with the
+         following, based on the active runway at BZN:
+              (1) Runway 12: POWDA#
+              (2) Runway 30: SUBKY#
+
+3-9-3. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 3-8-1.
+
+                              Table 3-9-1. Sector 39 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BIL arrivals               39                 15, 17          Descent
+GTF arrivals               39                 19, 20          Descent
+
+Not for real world use.                                                              57
+                             Figure 3-9-1. Sector 39 Map
+
+NOTE-
+Sector 66 is a Fixed Airspace Volume (FAV) that must always be delegated to Sector 17, unless
+otherwise coordinated.
+
+Not for real world use.                                         58
+                                     Chapter 4. Area C
+
+                                  Section 1. Area Procedures
+
+4-1-1. Area Narrative
+Area C consists of eight sectors: 11, 32, 33, 34, 44, 45, 46, and 47. There is one approach
+control facility in Area C. Controllers in Area C also provide approach control services to several
+non-towered airports. Area C is depicted in Figure 4-1-1.
+
+4-1-2. Salt Lake City Terminal Area General Procedures
+    a. The first Area C sector to work a S56 TRACON or Logan (LGU) airport arrival must
+         ensure the aircraft is assigned the appropriate route, in accordance with the S56-ZLC
+         LOA.
+    b. The first Area C sector to work a Heber City (HCR) arrival that will enter Sector 11 must
+         ensure that the aircraft is routed via NONTY.
+
+4-1-3. Jackson Hole (JAC) Procedures
+    a. When Runway 19 is in use at JAC, Area C must ensure all arrivals are routed via
+         TCH..ELLKK..MOSSS..KJAC.
+    b. When Runway 1 is in use at JAC, Area C must ensure all arrivals are routed via
+         TCH..ELLKK..HOMVA..KJAC.
+
+4-1-4. Denver (DEN) Procedures
+All DEN arrivals routed through Area C must be routed via:
+
+    a. BUMMP.SSKII, or;
+    b. TCH..PERTY..KAMPR.LONGZ
+
+4-1-5. Las Vegas (LAS) Procedures
+J Class LAS arrivals must be descended to cross the ZLA/ZLC common boundary at or below
+FL320, in accordance with the ZLA-ZLC LOA.
+
+Not for real world use.                    59
+                             Figure 4-1-1. Area C Map
+
+Not for real world use.                                      60
+                                        Section 2. Sector 11
+
+4-2-1. Sector Narrative
+Sector 11 is delegated airspace at and below FL330. It is normally combined with Sector 32. It
+has a normal flow of en route traffic, but mostly works arriving and departing traffic to and from
+the Salt Lake City Terminal Area. As a first tier sector outside of S56 TRACON, Sector 11
+provides the final in-trail spacing from the south into the S56 TRACON. There are no other
+approach controls within the sector, however Sector 11 provides approach control services to
+Delta (DTA). Sector 11 is depicted in Figure 4-2-1.
+
+4-2-2. Sector Procedures
+    a. Sector 11 should expect S56 arrivals from neighboring sectors to comply with the
+         following:
+              (1) Aircraft must enter Sector 11 at or below FL330.
+              (2) When SLC is landing north, SLC arrival aircraft routed through the PAYSON gate
+                   are required to enter Sector 11 at or below FL310.
+              (3) When SLC is landing south, SLC arrival aircraft on the JAMMN or PITTT STAR
+                   must enter Sector 11 over or west of DTA.
+    b. Sector 44 need not coordinate SLC arrivals with an IAFDOF.
+    c. Sector 11 must comply with the following procedures for SLC J Class departure aircraft,
+         filed above FL280, that are routed into Sector 44:
+              (1) When SLC is landing north, aircraft may not climb above FL290 if their route will
+                   intersect J9 between DTA and MLF.
+              (2) When SLC is landing south, aircraft routed via EHK may not climb above FL310.
+    d. In order to accommodate uninterrupted climbs for S56 departure aircraft, Sector 11 may
+         utilize automated point-outs to climb aircraft above their delegated airspace stratum
+         utilizing the following procedures:
+              (1) Sector 11 must always comply with the procedures listed in subparagraph c.,
+                   unless otherwise coordinated with Sector 44.
+              (2) Sector 11 will enter either an interim or requested altitude above FL330 into the
+                   aircraft's data block, then point-out the aircraft to Sector 4 using ERAM
+                   automation.
+              (3) Approval of the point-out by Sector 4 indicates approval for the aircraft to climb to
+                   the altitude displayed in the data block.
+
+4-2-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 4-2-1:
+
+Not for real world use.                    61
+                             Table 4-2-1. Sector 11 Holding
+
+NAVAID/  HOLD              HOLD                                MAX      HOLDING / ALT
+   FIX    DIR              RAD/                                DME
+                           BRG     INB CRS    TRN
+FRNZY       S                                                   10
+JAMMN       S                                   L               11      230K         265K
+NEEBO       S                                   R               10
+            S              194 BRG 014          L             1.5min                 150/300
+   DTA                                          L
+                           184 BRG 004                                               170/280
+
+                           175 BRG 355                                               150/300
+
+                           184 RAD 004                                96/140 140/175
+
+4-2-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 4-2-2.
+
+                              Table 4-2-2. Sector 11 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+S56/HCR/LGU arrivals       Area C             11              Control
+S56/HCR arrivals           40                 11              Descent, Turns
+SLC departures             11                 44, 46, 47      Control
+
+Not for real world use.                                                                    62
+                             Figure 4-2-1. Sector 11 Map
+
+Not for real world use.                                         63
+                                        Section 3. Sector 32
+
+4-3-1. Sector Narrative
+Sector 32 is delegated airspace at and below FL330. It is normally combined with Sector 11. It
+has a normal flow of en route traffic, but mostly works arriving and departing traffic to and from
+the Salt Lake City Terminal Area. As a first tier sector outside of S56 TRACON, Sector 32
+provides the final in-trail spacing from the south into the S56 TRACON. There are no other
+approach controls within the sector, however Sector 11 provides approach control services to
+Price (PUC). Sector 32 is depicted in Figure 4-3-1.
+
+4-3-2. Sector Procedures
+    a. SLC arrival aircraft above FL300 from Sector 4 must cross the Sector 4/32 lateral
+         boundary at or below FL340 with a descent to FL300.
+
+         NOTE-
+         A pilot's discretion descent to FL300 is only authorized when SLC is operating in a south
+         configuration.
+
+    b. Sector 32 should expect SLC arrivals routed via HELPR to cross the ZDV/ZLC border at
+         or below FL320.
+
+    c. In order to accommodate uninterrupted climbs for S56 departure aircraft, Sector 32 may
+         utilize automated point-outs to climb aircraft above their delegated airspace stratum
+         utilizing the following procedures:
+              (1) Sector 32 will enter either an interim or requested altitude above FL320 into the
+                   aircraft's data block, then point-out the aircraft to Sector 4 using ERAM
+                   automation.
+              (2) Approval of the point-out by Sector 4 indicates approval for the aircraft to climb to
+                   the altitude displayed in the data block.
+
+4-3-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 4-3-1:
+
+                                            Table 4-3-1. Sector 32 Holding
+
+NAVAID/  HOLD              HOLD                     MAX      HOLDING / ALT
+   FIX    DIR              RAD/                     DME
+                           BRG     INB CRS  TRN
+  PUC       S                                      1.5min
+   FFU      S                                 R    1.5min    230K    265K
+SPANE       E                                 R
+                           189 RAD 009        R      10    100/140 140/175
+
+                           188 RAD 008                     94/140 140/450
+
+                           105 BRG 285                               160/450
+
+Not for real world use.                                                     64
+4-3-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 4-3-2.
+
+                              Table 4-3-2. Sector 32 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+S56/HCR/LGU arrivals       Area C             32              Control
+SLC arrivals               4                  32              Left turns up to 30°
+SLC departures             11                 44, 46, 47      Control
+
+                             Figure 4-3-1. Sector 32 Map
+
+Not for real world use.                                                              65
+                                        Section 4. Sector 33
+
+4-4-1. Sector Narrative
+Sector 33 is delegated airspace at and above FL360. It is a high altitude sector that overlies
+Sector 44, however they are normally combined. It is bounded by Los Angeles ARTCC to the
+south. Traffic is normally east/west to and from the Bay Area, with crossing traffic to and from
+Southern California. Traffic volume is typically moderate to heavy, but can decrease depending
+on weather and turbulence at higher altitudes. Sector 33 is depicted in Figure 4-4-1.
+
+                                             Figure 4-4-1. Sector 33 Map
+
+Not for real world use.                    66
+                                        Section 5. Sector 34
+
+4-5-1. Sector Narrative
+Sector 34 is delegated airspace at and above FL360. It is a high altitude sector that overlies
+Sector 46, however they are normally combined. It is bounded by Denver ARTCC to the east
+and Los Angeles ARTCC to the south. Traffic is normally east/west to and from the Bay Area,
+with crossing traffic to and from Southern California. Traffic volume is typically moderate to
+heavy, but can decrease depending on weather and turbulence at higher altitudes. Sector 34 is
+depicted in Figure 4-5-1.
+
+                                             Figure 4-5-1. Sector 34 Map
+
+Not for real world use.                    67
+                                        Section 6. Sector 44
+
+4-6-1. Sector Narrative
+Sector 44 is delegated airspace from the surface up to FL350 and is located over central Utah.
+It is bounded by Los Angeles ARTCC to the south. It is normally combined with Sector 33.
+Typically, traffic flows north/south as well as east/west. This sector provides initial sequencing
+for Salt Lake City (SLC) arrivals routed into Sector 11. The east/west traffic flow and the
+north/south SLC arrival/departure flow present complexity problems. The crossing characteristic
+creates conflicting demands. Sector 44 also provides approach control services to Milford
+(MLF), Cedar City (CDC), and other uncontrolled airports. Sector 44 is depicted in Figure 4-6-1.
+
+4-6-2. Sector Procedures
+    a. Sector 44 should expect Los Angeles ARTCC to comply with the following:
+              (1) SLC arrivals routed via MLF must cross the ZLA/ZLC border at or below FL330.
+              (2) SLC arrivals routed via BCE must cross the ZLA/ZLC border at or below FL340.
+              (3) CDC arrivals must cross the ZLA/ZLC border at or below 14,000 feet, or
+                   requested altitude, if lower.
+
+                   NOTE-
+                   ZLC has control for descent within 15nm of the common boundary for SLC
+                   arrivals, and 20nm for CDC arrivals.
+
+    b. S56 arrivals routed into Sector 11 must comply with the following:
+              (1) Aircraft must enter Sector 11 at or below FL330.
+              (2) When SLC is landing north, SLC arrival aircraft routed through the PAYSON gate
+                   are required to enter Sector 11 at or below FL310.
+
+                   NOTE-
+                   Sector 44 need not coordinate SLC arrivals at an IAFDOF with Sector 11.
+
+              (3) When SLC is landing south, SLC arrival aircraft on the JAMMN or PITTT STAR
+                   must enter Sector 11 over or west of DTA.
+
+    c. Sector 44 should expect Sector 11 to comply with the following procedures for SLC J
+         Class departure aircraft, filed above FL280, that are routed into Sector 44:
+              (1) When SLC is landing north, aircraft may not climb above FL290 if their route will
+                   intersect J9 between DTA and MLF.
+              (2) When SLC is landing south, aircraft routed via EHK may not climb above FL310.
+
+Not for real world use.                    68
+4-6-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 4-6-1:
+
+                                            Table 4-6-1. Sector 44 Holding
+
+NAVAID/  HOLD              HOLD                               MAX       HOLDING / ALT
+   FIX    DIR              RAD/                               DME
+                           BRG       INB CRS      TRN
+ BERYL      E                                                   7
+  MLF       N                                       R        1.5min     230K      265K
+                                                    R
+                           100 BRG 280                                95/140
+
+                           007 RAD 187                                96/140 140/175
+
+4-6-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 4-6-2.
+
+                              Table 4-6-2. Sector 44 Transfer of Control Eligibility
+
+          Flight Type          From sector        To sector                  For
+S56/HCR/LGU arrivals
+SLC departures             44                 11, 32         Control
+
+                           11, 32             44             Control
+
+Not for real world use.                                                                 69
+                             Figure 4-6-1. Sector 44 Map
+
+Not for real world use.                                         70
+                                        Section 7. Sector 45
+
+4-7-1. Sector Narrative
+Sector 45 is delegated airspace at and above FL360. It is a high altitude sector that overlies
+Sector 47, however they are normally combined. It is bounded by Los Angeles ARTCC to the
+south and Oakland ARTCC to the west. Traffic is normally east/west to and from the Bay Area,
+with occasional north/south conflicting traffic. Traffic volume is typically moderate, but can
+decrease depending on weather and turbulence at higher altitudes. Sector 45 is depicted in
+Figure 4-7-1.
+
+4-7-2. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 4-7-1.
+
+                              Table 4-7-1. Sector 45 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+LAS/HND/VGT arrivals       40, 42, 43         45              Descent
+
+                             Figure 4-7-1. Sector 45 Map
+
+Not for real world use.                                                              71
+                                        Section 8. Sector 46
+
+4-8-1. Sector Narrative
+Sector 46 is delegated airspace from the surface up to FL350 and is located over east-central
+Utah. It is bounded by Denver ARTCC to the east and Los Angeles ARTCC to the south. Small
+portions of Sector 46 are delegated to Denver ARTCC (see Attachment 3). It is normally
+combined with Sector 34. Typically, traffic enters the sector from all directions, and within the
+same altitude stratum. Adding to the complexity, a LOA requires Las Vegas (LAS) arrival traffic
+to be at or below FL320. Sector 46 also provides approach control services to uncontrolled
+airports. Sector 46 is depicted in Figure 4-8-1.
+
+4-8-2. Sector Procedures
+    a. Sector 46 should expect Los Angeles ARTCC to have SLC arrivals routed via BCE cross
+         the ZLA/ZLC border at or below FL340.
+    b. S56 arrivals routed into Sector 32 must enter Sector 32 at or below FL330.
+
+4-8-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 4-8-1:
+
+                                            Table 4-8-1. Sector 46 Holding
+
+NAVAID/  HOLD              HOLD                              MAX        HOLDING / ALT
+   FIX    DIR              RAD/                              DME
+                           BRG       INB CRS      TRN
+ RRICH      S                                                 12
+ SLINA      S                                       L         12        230K    265K
+                                                    R
+                           172 CRS 352                                          240/350
+
+                           160 CRS 340                                          240/450
+
+4-8-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 4-8-2.
+
+                              Table 4-8-2. Sector 46 Transfer of Control Eligibility
+
+          Flight Type          From sector        To sector             For
+S56/HCR/LGU arrivals
+SLC departures             46                 Area C         Control
+
+                           11, 32             46             Control
+
+Not for real world use.                                                                72
+                             Figure 4-8-1. Sector 46 Map
+
+Not for real world use.                                         73
+                                        Section 9. Sector 47
+
+4-9-1. Sector Narrative
+Sector 47 is delegated airspace from the surface up to FL350 and is located over east-central
+Nevada. It is bounded by Los Angeles ARTCC to the south and Oakland ARTCC to the west. It
+is normally combined with Sector 45. Traffic is normally east/west to and from the Bay Area, with
+occasional north/south conflicting traffic. Sector 47 also provides approach control services to
+Ely (ELY), Tonopah (TPH), and other uncontrolled airports. Sector 47 is depicted in Figure 4-9-1.
+
+4-9-2. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 4-9-1.
+
+                              Table 4-9-1. Sector 47 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+LAS/HND/VGT arrivals       40, 42, 43         47              Descent
+
+                             Figure 4-9-1. Sector 47 Map
+
+Not for real world use.                                                              74
+                                     Chapter 5. Area D
+
+                                  Section 1. Area Procedures
+
+5-1-1. Area Narrative
+Area D consists of six sectors: 30, 31, 40, 41, 42, and 43. There are four approach control
+facilities in Area D. Controllers in Area D also provide approach control services to several
+non-towered airports. Area D is depicted in Figure 5-1-1.
+
+5-1-2. Jackson Hole (JAC) Procedures
+    a. When Runway 19 is in use at JAC, Area D must ensure all arrivals are routed via:
+              (1) SKYMM..ELLKK..MOSSS..KJAC, or;
+              (2) ELLKK..MOSSS..KJAC, or;
+              (3) IPARK..PETTZ..TOCUD..KJAC
+    b. When Runway 1 is in use at JAC, Area D must ensure all arrivals are routed via:
+              (1) SKYMM..ELLKK..HOMVA..KJAC, or;
+              (2) ELLKK..HOMVA..KJAC
+
+Not for real world use.                                                                        75
+                             Figure 5-1-1. Area D Map
+
+Not for real world use.                                      76
+                                        Section 2. Sector 30
+
+5-2-1. Sector Narrative
+Sector 30 is delegated airspace at and below FL280 over southwest Idaho and eastern Oregon.
+It is bounded by Seattle ARTCC to the west. It is normally combined with Sector 31. There are
+approach control facilities located at Boise (BOI) and Mountain Home (MUO). The main traffic
+flow patterns are in and out of both approach control facilities, with most civilian traffic departing
+and arriving to and from the north or west. Sector 30 also provides approach control services to
+Ontario (ONO), Baker City (BKE), Burns (BNO), and other uncontrolled airports. Sector 30 is
+depicted in Figure 5-2-1.
+
+5-2-2. Terminal Airspace
+Sector 30 delegates airspace around BOI at or below 16,000 feet to BOI ATCT (see Appendix
+1C). Sector 30 also delegates airspace around MUO at or below 16,000 feet (or FL230
+depending on the configuration) to MUO ATCT (see Appendix 1J). When BOI ATCT is not open,
+the airspace delegated to BOI ATCT becomes the responsibility of Sector 30. When MUO ATCT
+is not open, the airspace delegated to MUO ATCT becomes the responsibility of Sector 31.
+
+5-2-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 5-2-1:
+
+                                            Table 5-2-1. Sector 30 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+  BKE                      BRG     INB CRS  TRN
+          NW                                         7
+   BOI    NW                                  R           230K    265K
+            E                                 R
+   ILR     SE              315 RAD 135        L         67/120
+PEPUC      SE                                 R
+           SE              301 RAD 121        L         62/140 140/400
+
+                           072 RAD 252                            200/320
+
+                           113 RAD 293                  64/140 140/400
+
+                           124 RAD 304                  80/100
+
+                           156 BRG 336                  100/140
+
+5-2-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 5-2-2.
+
+Not for real world use.                                                  77
+                         Table 5-2-2. Sector 30 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BOI arrivals               43                 30              Descent
+JAC arrivals               30                 6               Descent
+SUN/TWF arrivals           Area D             Area D          Control
+
+                             Figure 5-2-1. Sector 30 Map
+
+Not for real world use.                                                              78
+                                        Section 3. Sector 31
+
+5-3-1. Sector Narrative
+Sector 31 is delegated airspace at and below FL280 over southern Idaho and northeast
+Nevada. It is normally combined with Sector 30. There are approach control facilities located at
+Boise (BOI), Mountain Home (MUO), and Twin Falls (TWF), as well as a VFR tower located at
+Sun Valley (SUN). The main traffic flow patterns are in and out of the airports under Sector 31's
+control. Sector 31 provides approach control services to SUN and other uncontrolled airports.
+Sector 31 is depicted in Figure 5-3-1.
+
+5-3-2. Terminal Airspace
+Sector 31 delegates airspace around BOI at or below 16,000 feet to BOI ATCT (see Appendix
+1C). Sector 31 also delegates airspace around MUO at or below 16,000 feet (or FL230
+depending on the configuration) to MUO ATCT (see Appendix 1J), as well as airspace around
+TWF and Burley (BYI) to TWF ATCT (see Appendix 1H). When BOI ATCT is not open, the
+airspace delegated to BOI ATCT becomes the responsibility of Sector 30. When MUO ATCT
+and/or TWF ATCT is not open, the airspace delegated to the closed facility becomes the
+responsibility of Sector 31.
+
+5-3-3. Sector Procedures
+Sector 31 must ensure that all J and L Class aircraft landing at Salt Lake City (SLC) are cleared
+via, and established on, the BEARR or SKEES arrival.
+
+5-3-4. Sector Holding
+When necessary, use the following approved holding patterns in Table 5-3-1:
+
+Not for real world use.                    79
+                             Table 5-3-1. Sector 31 Holding
+
+NAVAID/  HOLD              HOLD                               MAX    HOLDING / ALT
+   FIX    DIR              RAD/                               DME
+                           BRG     INB CRS    TRN
+   BOI      E                                                  10
+           SE                                   R               7    230K            265K
+   BYI     W                                    L               8
+   HLE    NW               072 RAD 252          L                                    200/320
+ MENIN     SE                                   R
+PRESN      SE              113 RAD 293          L                  64/140 140/400
+           W                                    L
+  TWF       S              274 RAD 094                             60/140
+           NE                                   R
+          NW               305 RAD 125                                               150/330
+                                                R
+                           155 BRG 330                             80/140 140/175
+
+                           113 BRG 293                             90/140
+
+                           269 BRG 089                                            140/150
+                                                                   98/140
+
+                           187 BRG 007
+
+                           060 RAD 240
+
+                                                                   60/140 140/175
+
+                           293 RAD 113
+
+5-3-5. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 5-3-2.
+
+                              Table 5-3-2. Sector 31 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BOI arrivals               43                 31              Descent
+IDA arrivals               31                 8               Control
+JAC arrivals               31                 Area A          Descent
+PIH arrivals               31                 8               Descent
+S56 TRACON arrivals        31                 7               Control
+SUN/TWF arrivals           Area D             Area D          Control
+SUN/TWF arrivals           8, 7               31              Descent
+
+Not for real world use.                                                                    80
+                             Figure 5-3-1. Sector 31 Map
+
+Not for real world use.                                         81
+                                        Section 4. Sector 40
+
+5-4-1. Sector Narrative
+Sector 40 is delegated airspace extending upward from the surface over western Utah. Most of
+the airspace within Sector 40 consists of military restricted airspace and the Utah Test and
+Training Ranges (UTTR). The major traffic flow for this sector is high altitude jet traffic crossing
+through the sector to and from other major cities. An additional major traffic flow for Sector 40 is
+departures and arrivals to and from Salt Lake City (SLC). Sector 40 also provides approach
+control services to Wendover (ENV). Sector 40 is depicted in Figure 5-4-2.
+
+5-4-2. Sector Procedures
+    a. S56 departure aircraft routed into Sector 41 must be positioned on or southwest of J15
+         or V484.
+    b. Sector 40 must ensure the following for S56 arrival aircraft routed into Sector 7:
+              (1) Traffic at or above FL210 must enter Sector 7 at FL200.
+              (2) All traffic inbound to SLC must be routed via BLIDA.BEARR# or BLIDA.SKEES#.
+
+5-4-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 5-4-1:
+
+                                            Table 5-4-1. Sector 40 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+   BVL     NE              BRG     INB CRS  TRN
+           W                                  R     10
+KNOLE                                         L           230K    265K
+           W                                  R
+STACO                      067 RAD 247                  80/140 140/175
+           W                                  R
+                           255 RAD 075                  80/140
+
+                           073 BRG 253                            150/310
+
+                           257 BRG 077                            170/310
+
+                           249 BRG 069
+
+                           251 BRG 071                         90/140 140/175
+                                                   7
+
+Not for real world use.                                                  82
+                             Figure 5-4-1. Sector 40 Holding
+
+5-4-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 5-4-2.
+
+                              Table 5-4-2. Sector 40 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+LAS/HND/VGT arrivals       40                 45, 47          Descent
+S56 TRACON arrivals        41, 42, 43         40              Descent
+S56 TRACON arrivals        40                 7               Control
+S56/HCR arrivals           40                 11              Descent, Turns
+SUN/TWF arrivals           Area D             Area D          Control
+
+Not for real world use.                                                              83
+                             Figure 5-4-2. Sector 40 Map
+
+Not for real world use.                                         84
+                                        Section 5. Sector 41
+
+5-5-1. Sector Narrative
+Sector 41 is delegated airspace at and above FL290 and overlies Sectors 30 and 31. It is
+bounded to the north and west by Seattle ARTCC. Sector 41 is primarily en route in nature, but
+serves reasonably active airports in Boise (BOI), Mountain Home (MUO), Sun Valley (SUN), and
+Twin Falls (TWF). Sector 41 also plays a key role in providing spacing for Salt Lake City (SLC)
+arrivals into Sector 14. Sector 41 is depicted in Figure 5-5-1.
+
+5-5-2. Sector Procedures
+    a. SLC arrival aircraft at or above FL290 must be issued an altitude restriction to cross
+         EFFTA intersection at FL290.
+    b. All J and L Class aircraft landing at SLC must be cleared via, and established on, the
+         BEARR or SKEES arrival.
+    c. Sector 41 should expect S56 departure aircraft from Sector 40 to be positioned on or
+         southwest of J15 or V484.
+
+5-5-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 5-5-1:
+
+                                            Table 5-5-1. Sector 41 Holding
+
+NAVAID/  HOLD              HOLD                    MAX    HOLDING / ALT
+   FIX    DIR              RAD/                    DME
+                           BRG     INB CRS  TRN
+   BOI      E                                       10
+           SE                                 R           230K    265K
+   BYI    NW                                  L
+           W               072 RAD 252        R                   200/320
+          NW                                  L
+                           113 RAD 293        R         64/140 140/400
+
+                           301 RAD 121                  62/140 140/400
+
+                           274 RAD 094                  60/140
+
+                           305 RAD 125                            150/330
+
+5-5-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 5-5-2.
+
+Not for real world use.                                                  85
+                         Table 5-5-2. Sector 41 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BOI arrivals               42, 43             41              Descent
+BOI arrivals               6, 8, 14, 18       41              Control
+BZN/JAC arrivals           41                 Area A          Descent
+IDA arrivals               41                 8               Control
+MSO arrivals               41                 6, 14           Descent
+S56 TRACON arrivals        41                 40              Descent
+S56 TRACON arrivals        41                 7               Control
+SUN/TWF arrivals           Area D             Area D          Control
+
+                             Figure 5-5-1. Sector 41 Map
+
+Not for real world use.                                                              86
+                                        Section 6. Sector 42
+
+5-6-1. Sector Narrative
+Sector 42 is delegated airspace at and above FL360 and overlies Sector 43. It is normally
+combined with Sector 43. It is bounded on the northwest by Seattle ARTCC and on the
+southwest by Oakland ARTCC. Traffic mainly consists of en route traffic to and from the Bay
+Area, as well as traffic destined for Salt Lake City (SLC). Implementation of traffic management
+initiatives related to Bay Area arrivals and SLC arrival traffic is paramount to the sector. Sector
+42 is depicted in Figure 5-6-1.
+
+5-6-2. Sector Procedures
+Sector 42 must ensure that all traffic inbound to SLC, routed through Sector 7, is routed via
+BLIDA.BEARR# or BLIDA.SKEES#.
+
+5-6-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 5-6-1:
+
+                                            Table 5-6-1. Sector 42 Holding
+
+NAVAID/  HOLD              HOLD                               MAX    HOLDING / ALT
+   FIX    DIR              RAD/                               DME
+                           BRG     INB CRS    TRN
+SPRUZ      W                                    R
+                                                                     230K            265K
+
+                           250 BRG 070                                               150/280
+
+5-6-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 5-6-2.
+
+                              Table 5-6-2. Sector 42 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BOI arrivals               42                 30, 31, 41      Descent
+LAS/HND/VGT arrivals       42                 45, 47          Descent
+S56 TRACON arrivals        42                 7, 40           Descent
+SUN/TWF arrivals           Area D             Area D          Control
+
+Not for real world use.                                                                    87
+                             Figure 5-6-1. Sector 42 Map
+
+Not for real world use.                                         88
+                                        Section 7. Sector 43
+
+5-7-1. Sector Narrative
+Sector 43 is delegated airspace at and below FL350 over northern Nevada. It is normally
+combined with Sector 42. It is bounded on the northwest by Seattle ARTCC and on the
+southwest by Oakland ARTCC. Traffic mainly consists of en route traffic to and from the Bay
+Area, as well as traffic to and from Salt Lake City (SLC). Implementation of traffic management
+initiatives related to Bay Area arrivals and SLC arrival traffic is paramount to the sector. Sector
+43 provides approach control services to Elko (EKO), Winnemucca (WMC), and other
+uncontrolled airports. Sector 43 is depicted in Figure 5-7-1.
+
+5-7-2. Sector Procedures
+Sector 43 must ensure that all traffic inbound to SLC, routed through Sector 7, is routed via
+BLIDA.BEARR# or BLIDA.SKEES#.
+
+5-7-3. Sector Holding
+When necessary, use the following approved holding patterns in Table 5-7-1:
+
+                                            Table 5-7-1. Sector 43 Holding
+
+NAVAID/  HOLD              HOLD                               MAX    HOLDING / ALT
+   FIX    DIR              RAD/                               DME
+                           BRG     INB CRS    TRN
+SPRUZ      W                                                    6
+  BQU       S                                   R                    230K            265K
+                                                L
+                           250 BRG 070                                               150/280
+
+                           160 RAD 340                             86/140 140/175
+
+5-7-4. Transfer of Control
+In addition to paragraph 1-5-2, the completion of a radar handoff constitutes transfer of control
+as prescribed in Table 5-7-2.
+
+                              Table 5-7-2. Sector 43 Transfer of Control Eligibility
+
+          Flight Type          From sector         To sector                    For
+BOI arrivals               43                 30, 31, 41      Descent
+LAS/HND/VGT arrivals       43                 45, 47          Descent
+S56 TRACON arrivals        43                 7, 40           Descent
+SUN/TWF arrivals           Area D             Area D          Control
+
+Not for real world use.                                                                    89
+                             Figure 5-7-1. Sector 43 Map
+
+Not for real world use.                                         90
+                    Chapter 6. Traffic Management Unit (TMU)
+
+                                         Section 1. General
+
+6-1-1. TMU Qualification
+To serve as TMU during an ARTCC-sanctioned event, a controller must have watched the ZLC
+TMU video and must be designated as TMU by the vZLC Events Coordinator.
+
+6-1-2. National Traffic Management Log (NTML) Use
+The NTML must be used during events in accordance with the following procedures:
+
+    a. Prior to an event starting, the CIC or EC must post an opening statement in the NTML,
+         located within the vATCSCC Discord. It should include all of the following for featured
+         airports:
+              (1) Timestamp (formatted as <Day of Month>/<UTC Time>)
+              (2) Airport (FAA 3-letter identifier)
+              (3) Expected Weather Conditions (VMC, LVMC, IMC, and LIMC may be used. These
+                   condition categories should be decided by looking at TAFs and AFDs)
+              (4) Runway Configuration
+              (5) AAR and ADR for Runway Configuration
+
+         EXAMPLE-
+         13/0043 SLC VMC ARR:34L/35 DEP:34R/35 AAR:62 ADR:62
+
+    b. If traffic demand is expected to be high enough to warrant a Traffic Management
+         Initiative (TMI) from neighboring facilities, they must be posted in the NTML and include
+         all of the following:
+              (1) Timestamp (formatted as <Day of Month>/<UTC Time>)
+              (2) Airport (FAA 3-letter identifier)
+              (3) Routing
+              (4) Restriction
+                        (a) The phrase "AS ONE" or "PER STREAM" must be included.
+                        (b) Exclusions must be included.
+              (5) Reason
+              (6) Applicable Timeframe
+              (7) Requesting and Restricted Facility
+
+         EXAMPLE-
+         13/2336 SLC via ALL 15MIT PER STREAM EXCL:NONE VOLUME:VOLUME
+         2359-0400 ZLC:ZLA,ZOA,ZSE
+         13/2336 SLC via HELPR 25MIT AS ONE EXCL:PROPS VOLUME:VOLUME
+         2359-0400 ZLC:ZDV
+
+    c. Any TMI cancellation must be posted in the NTML.
+
+Not for real world use.                    91
+         EXAMPLE-
+         13/0249 SLC via ALL CANCEL TMI ZLC:ZDV,ZLA
+
+6-1-3. Offload Procedures
+In the event that gate balance begins to affect MIT restrictions for aircraft inbound to Salt Lake
+City (SLC), the TMU or CIC may begin to offload SLC arrivals to different gates. Because of
+topography, options may be limited at times. All reroute requests must be posted in the NTML.
+
+    a. SLC Landing North:
+              (1) QWENN# arrivals may be offloaded to the YUTES# or BVL# arrival. In this
+                   instance, aircraft must be cleared direct BVL and routed via BVL.YUTES# or
+                   BVL.BVL#, assuming the UTTR's are closed.
+              (2) JAZZZ# or SPANE# arrivals routed via MTU may be offloaded to the CARTR# or
+                   LHO# arrival. If this is going to be done, ZLC TMU must ask ZDV to reroute
+                   aircraft via OCS.CARTR#/CKW.CARTR or OCS.LHO# as soon as practical. This
+                   is not a recommended option due to the increase in flight length. Planes will not
+                   be flying a downwind in addition to the reroute.
+
+    b. SLC Landing South:
+              (1) SKEES# or BEARR# and BCE.PITTT#, MLF.PITTT#, or JAMMN arrivals may be
+                   offloaded to the YUTES# or BVL# arrival. In this instance, aircraft must be
+                   cleared direct BVL and routed via BVL.YUTES# or BVL.BVL#, assuming the
+                   UTTR's are closed.
+              (2) CARTR# or LHO# arrivals routed via CKW may be offloaded to the MTU.PITTT#
+                   or SPANE arrival. If this is going to be done, TMU must ask ZDV to reroute
+                   aircraft via MTU.PITTT# or MTU.SPANE# as soon as practical. ZLC TMU may
+                   also ask ZMP to reroute as well. This procedure can also be applied vice versa
+                   (e.g. MTU.PITTT# offloaded to CKW.CARTR#).
+
+Not for real world use.                    92
+             Appendix 1. Terminal Airspace
+Appendix 1A. Salt Lake City TRACON (Landing North)
+
+Not for real world use.                             93
+Appendix 1B. Salt Lake City TRACON (Landing South)
+
+Not for real world use.                             94
+                           Appendix 1C. Big Sky TRACON (Boise)
+
+Not for real world use.                                             95
+                         Appendix 1D. Big Sky TRACON (Bozeman)
+
+Not for real world use.                                           96
+                           Appendix 1E. Billings TRACON
+
+Not for real world use.                                      97
+                           Appendix 1F. Great Falls TRACON
+
+Not for real world use.                                         98
+                           Appendix 1G. Helena Approach Control
+
+Not for real world use.                                              99
+                         Appendix 1H. Twin Falls Approach Control
+
+Not for real world use.                                              100
+                         Appendix 1I. Spokane TRACON (Missoula)
+
+Not for real world use.                                            101
+                           Appendix 1J. Mountain Home RAPCON
+
+Not for real world use.                                           102
+                         Appendix 2. 3nm Reduced Separation Areas
+                                        Appendix 2A. ZLC ARTCC
+
+Not for real world use.                                              103
+Appendix 2B. Ashton (QVA) 3nm Aircraft Alert Volume
+
+Not for real world use.                              104
+Appendix 2C. Battle Mountain (BAM) 3nm Aircraft Alert Volume
+
+Not for real world use.                                       105
+Appendix 2D. Billings (BIL) 3nm Aircraft Alert Volume
+
+Not for real world use.                                106
+Appendix 2E. Bootlegger (GFA) 3nm Aircraft Alert Volume
+
+Not for real world use.                                  107
+Appendix 2F. Bozeman (BZN) 3nm Aircraft Alert Volume
+
+Not for real world use.                               108
+Appendix 2G. Cascade (QCK) 3nm Aircraft Alert Volume
+
+Not for real world use.                               109
+Appendix 2H. Cedar City (CDC) 3nm Aircraft Alert Volume
+
+Not for real world use.                                  110
+Appendix 2I. Francis Peak (FPK) 3nm Aircraft Alert Volume
+
+Not for real world use.                                    111
+Appendix 2J. Jackson (JAC) 3nm Aircraft Alert Volume
+
+Not for real world use.                               112
+Appendix 2K. Lakeside (QLS) 3nm Aircraft Alert Volume
+
+Not for real world use.                                113
+Appendix 2L. Lovell (QSI) 3nm Aircraft Alert Volume
+
+Not for real world use.                                114
+Appendix 2M. Missoula (MSO) 3nm Aircraft Alert Volume
+
+Not for real world use.                                115
+Appendix 2N. Mountain Home (MUO) 3nm Aircraft Alert Volume
+
+Not for real world use.                                     116
+Appendix 2O. Provo (PVU) 3nm Aircraft Alert Volume
+
+Not for real world use.                             117
+Appendix 2P. Rock Springs (RKS) 3nm Aircraft Alert Volume
+
+Not for real world use.                                    118
+Appendix 2Q. Tonopah (TPH) 3nm Aircraft Alert Volume
+
+Not for real world use.                               119
+Appendix 2R. Watford City (QWA) 3nm Aircraft Alert Volume
+
+Not for real world use.                                    120
+                          Appendix 3. Interfacility Delegated Airspace
+                         Appendix 3A. IR-126 Airspace (Delegated to ZDV)
+
+Not for real world use.                                                     121
+Appendix 3B. CNY Airport Airspace (Delegated to ZDV)
+
+Not for real world use.                               122
+

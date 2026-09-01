@@ -1,0 +1,172 @@
+                                                Clearance Delivery
+1. Frequency
+
+       1.1. Mountain Home Delivery: 127.1
+2. Procedures
+
+       2.1. When Appropriate, inform pilots of the current ATIS information prior to
+                 contacting ground control.
+
+3. IFR Routing
+       3.1. Initial Altitude: 10,000.
+       3.2. All Operations:
+              3.2.1. Issue Radar vectors to all aircraft.
+       3.3. If a pilot cannot accept a departure procedure, issue the following headings for
+                 radar vectors to their route, per their departure runway:
+              3.3.1. Runway 30 - Heading 270
+              3.3.2. Runway 12 - Heading 100
+
+4. Standard Departure Frequencies
+       4.1. When appropriate, issue the following frequencies to IFR aircraft:
+              4.1.1. Mountain Home Approach 124.8
+       4.2. When appropriate issue the following to VFR aircraft requiring Radar services
+                 after departure:
+              4.2.1. Mountain Home Approach 124.8
+
+5. VFR Routing
+       5.1. Not applicable
+
+                                                        Ground
+1. Frequency
+
+       1.1. Mountain Home Ground: 120.5
+2. Airspace
+
+       2.1. All movement areas with the exception of the active runway.
+3. Procedures
+
+       3.1. Not Applicable
+4. Departures
+
+       4.1. All aircraft requiring pushback onto the movement area will contact ground prior
+                 to pushback and start-up
+
+       4.2. All aircraft will contact ground with position and ATIS prior to being issues taxi
+                 instructions
+
+5. Arrivals
+       5.1. All aircraft will remain on ground frequency until off the movement area.
+
+                                                          Local
+1. Frequency
+
+       1.1. Mountain Home Tower (Local): 133.850
+2. Airspace
+       2.1. Local: Runway 12/30, and the airspace within 5NM of the center of the field.
+3. Procedures
+
+       3.1. Runway operations
+              3.1.1. Use runway 30 for arrivals and departures (West) during calm wind
+                           operations.
+              3.1.2. Use runway 12 for arrivals and departures (East) when the tailwind
+                           component exceeds 5 knots
+
+       3.2. LAHSO
+              3.2.1. Not authorized.
+
+       3.3. Tower Use of Radar
+              3.3.1. Full
+
+4. Departures
+       4.1. Departure Notification / Releases
+              4.1.1. Departure Notification are not required, unless otherwise coordinate by
+                           RAPCON
+              4.1.2. Departures are automatically release unless otherwise coordinate by
+                           RAPCON
+       4.2. IFR Departures
+              4.2.1. Ensure aircraft turn to assigned point/heading and altitude reporting is
+                           operating prior to handoff to departure.
+
+5. Arrivals
+       5.1. IFR arrival
+              5.1.1. Quicklook Radar North
+              5.1.2. Accept radar handoff of all IFR arrivals, if radar certified and it is
+                           operationally beneficial
+       5.2. Missed Approach/Go Around
+              5.2.1. Acquire the track control for the aircraft conducting a missed approach.
+              5.2.2. Send a Missed Notification (.MA) for the aircraft executing an unplanned
+                           Missed Approach/Go Around to the appropriate RAPCON sector that will
+                           be receiving the aircraft for re-sequencing.
+              5.2.3. VFR aircraft, and/or IFR Category I/II aircraft conducting a visual
+                           approach and executing a Go-Around must be instructed to remain in the
+                           local pattern, if capable of doing so. The following is considered Primary
+                           Climb-Out procedure and does not require any special coordination with
+                           Approach Control or Strip marking (Scratchpad entries) other than the
+                           basic Missed Notification. Aircraft must not turn prior to the departure end
+                           of the runway. Handoff/Comm-Change to the appropriate RAPCON sector
+                           must be completed no later than 1 mile off the departure end of the
+                           runway.
+                      5.2.3.1. PRIMARY CLIMB OUT PROCEDURE:
+                             5.2.3.1.1. West Flow: Heading 270, Maintain 5,000.
+                             5.2.3.1.2. East Flow: Heading 100, Maintain 5,000.
+              5.2.4. VFR Traffic join local pattern
+
+6. VFR Operations
+       6.1. VFR Departures
+              6.1.1. Depart on course at or below 5,500.
+              6.1.2. Handoff to departure control as soon as clear of any possible conflicts
+                      6.1.2.1. MUO - 124.8
+
+       6.2. VFR Arrivals
+              6.2.1. Direct to airport at or below 5,500.
+
+       6.3. VFR Flight Following
+              6.3.1. Ensure all aircraft requiring flight following have the appropriate scratch
+                           pad entry prior to handoff to departure.
+
+                                          Radar North (X RAY North)
+1. Frequency
+
+       1.1. Mountain Home Approach: 124.800
+2. Airspace
+
+       2.1. Provide air traffic control service to aircraft within the depicted airspace up to and
+                 including 16,000.
+
+              2.1.1. If Salt Lake Center is offline FL230 shall be the default.
+              2.1.2. Mountain Home Approach can flex up to FL230 if coordinated with Salt
+
+                           Lake Center.
+       2.2. Mountain Home Shelf: Provide air traffic control service to aircraft within the
+
+                 depicted airspace up to and including 10,000.
+              2.2.1. U76 departures: Issue RNAV capable aircraft the ALKAL ODP. Non-RNAV
+
+                           capable aircraft will be issued Radar vectors first fix, then as filed. Upon
+                           readback of clearance, then issue "Enter controlled airspace heading 120,
+                           released for departure." then clearance void time.
+3. IFR Procedures
+       3.1. West Flow
+              3.1.1. All arrivals be clear direct MUO TACAN or an appropriate IAF
+       3.2. East Flow
+              3.2.1. All arrivals be clear direct MUO TACAN or an appropriate IAF
+
+                                          Radar South (X RAY South)
+1. Frequency
+
+       1.1. Mountain Home Approach: 134.100
+2. Airspace
+
+       2.1. Provide air traffic control service to aircraft with the depicted airspace up to and
+                 including 16,000.
+
+              2.1.1. If Salt Lake Center is offline FL230 shall be the default.
+              2.1.2. Mountain Home Approach can flex up to FL230 if coordinated with Salt
+
+                           Lake Center.
+3. IFR Procedures
+
+       3.1. West Flow
+                 3.1.1. All arrivals be clear direct MUO TACAN or an appropriate IAF
+         3.2. East Flow
+
+                 3.2.1. All arrivals be clear direct MUO TACAN or an appropriate IAF
+
+                                                    Cowboy Control
+N/A
+           Appendix A. Airspace Diagrams
+
+1. E Flow
+2. W Flow
+Appendix B. Military specific phraseology
+

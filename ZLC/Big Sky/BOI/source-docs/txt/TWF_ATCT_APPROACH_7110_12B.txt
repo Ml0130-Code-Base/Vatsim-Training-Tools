@@ -1,0 +1,850 @@
+SUBJ: TWF ATCT/APPROACH Standard Operating Procedures
+
+           This document establishes the Twin Falls Airport Traffic Control Tower (TWF ATCT) and the Twin
+Falls Airport Non-Radar Approach Control (TWF APP) Standard Operating Procedures within the Salt
+Lake City ARTCC on VATSIM (vZLC). This SOP establishes standardized air traffic control, flight
+operations, and airfield management procedures at Twin Falls (TWF). It ensures safe, efficient, and
+coordinated air traffic operations by detailing responsibilities, communication protocols, and operational
+guidelines. The provisions and procedures described herein are supplemental to vZLC Facility Policies
+and FAA Order JO 7110.65.
+
+          The information contained herein will be used only for flight simulation purposes on the VATSIM
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+ARTCC is not affiliated with the FAA, Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facilities Engineer
+Salt Lake City ARTCC
+Version          Record of Changes        Effective    Issued
+                                             Date      By
+7110.12A           Description
+7110.12B                                 Feb 10, 2026       CN
+          Initial Release In New Format
+            Addition Of SAID System      Mar 19, 2026  AE
+
+          Not for real world use.
+                                  Table of Contents
+
+Chapter 1. Standard Operating Control Procedures           1
+
+Section 1. Introduction                                    1
+
+1-1-1. Purpose                                             1
+
+1-1-2. Audience                                            1
+
+1-1-3. Distribution                                        1
+
+1-1-4. Cancellation                                        1
+
+Section 2. Operational Positions                           2
+
+Section 3. Intrafacility Coordination Procedures           3
+
+1-3-1. Runway Configurations                               3
+
+1-3-2. Changing Runway Configurations                      3
+
+1-3-3. ATIS                                                3
+
+Section 4. Opposite Direction Operations (ODO)             4
+
+1-4-1. General                                             4
+
+1-4-2. Responsibilities                                    4
+
+1-4-3. IFR Aircraft Procedures                             4
+
+1-4-4. VFR Aircraft Procedures                             5
+
+Chapter 2. Operational Positions                           6
+
+Section 1. Clearance Delivery                              6
+
+2-1-2. Position Responsibilities                           6
+
+2-1-2. IFR Departure Instructions                          6
+
+Section 2. Ground Control (GC)                             7
+
+2-2-1. Position Responsibilities                           7
+
+2-2-2. Area of Jurisdiction                                7
+
+2-2-3. Traffic Flow                                        7
+
+2-2-4. Control of Runway 12/30                             7
+
+2-2-5. ATIS                                                7
+
+2-2-6. Pushback Clearances                                 7
+
+Section 3. Local Control (LC)                              8
+
+2-3-1. Position Responsibilities                           8
+
+2-3-2. Area of Jurisdiction                                8
+
+2-3-3. Departures                                          8
+
+2-3-4. Approaches/Arrivals                                 8
+
+Chapter 5. Approach Control                                9
+
+Section 1. Non-Radar Standarization                        9
+
+5-1-1 vStrips Configuration                                9
+
+Section 2. Non-Radar Flight Data                           9
+
+5-2-1 Satellite Clearances                                 9
+
+5-2-2 Jerome Airport and Burley Departures                 9
+
+5-2-3 Flight Plan Activation                               9
+
+                                  Not for real world use.
+Section 3. Non-Radar Departures                            10
+
+5-3-1 Twins Falls Airport                                  10
+
+5-3-2 Jerome Airport                                       10
+
+5-3-3 Burley Airport                                       11
+
+Section 4. Non-Radar Arrivals                              12
+
+5-4-1 ZLC AIT                                              12
+
+5-4-2 Visual Approaches                                    12
+
+5-4-3 Twin Falls Airport (TWF)                             12
+
+7110.65 Reference 6-7-1c                                   13
+
+5-4-4 Jerome Airport (JER)                                 15
+
+5-4-5 Burley Airport (BYI)                                 16
+
+Appendix 1. Airspace                                       18
+
+Appendix 2. Strip Bay Boundaries                           19
+
+Appendix 3. Minimum Vectoring Altitudes                    20
+
+Appendix 3.1 Twin Falls (TWF) VOR                          20
+
+Appendix 3.2 Burley (BYI) VOR                              21
+
+Appendix 4. Strip Marking                                  22
+
+IFR Arrivals                                               22
+
+IFR Departures                                             22
+
+IFR Overflights                                            22
+
+                                  Not for real world use.
+              Chapter 1. Standard Operating Control Procedures
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Twin Falls Air Traffic Control Tower And Approach Control
+Facility (TWF ATCT/APP) Standard Operating Procedures within the Salt Lake City ARTCC on
+VATSIM (vZLC). This SOP establishes standardized air traffic control, flight operations, and
+airfield management procedures at Twin Falls (TWF). It ensures safe, efficient, and coordinated
+air traffic operations by detailing responsibilities, communication protocols, and operational
+guidelines.
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+1-1-4. Cancellation
+This document cancels the TWF SOP (7110.12A), effective February 26, 2026.
+
+                                                                         Not for real world use.
+     Section 2. Operational Positions
+
+Table 1-2-1. TWF ATCT Operational Positions Table
+
+     Sector/Position     STARS ID  VATSIM Callsign            Frequency
+Clearance Delivery (CD)      N/A       TWF_DEL                  123.650
+ Ground Control (GC)         N/A       TWF_GND                  121.700
+                                                                118.200
+   Local Control (LC)    N/A       TWF_TWR                      126.700
+Approach Control (AP)
+                         N/A       TWF_APP
+
+                         Bold designates a primary position.
+
+                         Not for real world use.
+                    Section 3. Intrafacility Coordination Procedures
+
+1-3-1. Runway Configurations
+The active runway configuration refers to the general cardinal direction of departures and
+arrivals currently in use. Authorized runway configurations are listed in subparagraphs c. and d.
+
+    a. When selecting a runway configuration, the following factors must be considered:
+              (1) Wind direction.
+              (2) Wind speed. The gust factor takes precedence over the constant wind speed.
+
+    b. West Flow is designated as the "calm wind" runway configuration.
+    c. West Flow: Landing and departing Runway 26. Runway 30 may be issued at the pilot's
+
+         request.
+    d. East Flow: Landing and departing Runway 8. Runway 12 may be issued at the pilot's
+
+         request.
+    e. Runway 12/30 is a VFR-only runway. Departures and arrivals on runway 12 are not
+
+         allowed due to obstructions.
+
+1-3-2. Changing Runway Configurations
+The Local Control (LC) position is the final authority for selecting the runway configuration, but
+coordination with GC and Approach must be completed before changing the configuration.
+
+    a. LC must:
+              (1) Coordinate with GC to determine which aircraft will be the last to depart and
+                   arrive in the old runway configuration.
+              (2) Ensure that:
+                        (a) The ATIS is updated to reflect the runway configuration change.
+              (3) Notify Approach Control (or other appropriate overlying sector) of the runway
+                   configuration change.
+
+1-3-3. ATIS
+Regardless of the position broadcasting the ATIS, the following statements must be included on
+the ATIS broadcast:
+
+    a. During VFR weather conditions: "DEPARTING VFR AIRCRAFT ADVISE GROUND
+         CONTROL OF REQUESTED HEADING OR DESTINATION."
+
+    b. When the outside air temperature is 26°C or greater: "CHECK DENSITY ALTITUDE."
+
+         NOTE-
+         This statement must be made immediately after stating the altimeter setting.
+
+                                                                         Not for real world use.
+                    Section 4. Opposite Direction Operations (ODO)
+
+1-4-1. General
+Opposite Direction Operations consist of IFR/VFR operations conducted on the same or parallel
+runway, where an aircraft is operating in a direction opposite to another aircraft arriving,
+departing, or performing an approach.
+
+NOTE-
+Departing aircraft include aircraft conducting a touch-and-go, stop-and-go, low approach,
+missed approach, or go-around.
+
+1-4-2. Responsibilities
+    a. LC and Approach Control to share the responsibility to coordinate ODO and issue traffic
+         advisories (see below).
+    b. LC is responsible for applying the cutoff point between arriving and departing aircraft in
+         opposite directions.
+    c. Approach Control is responsible for applying the cutoff point between aircraft arriving in
+         opposite directions.
+
+1-4-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to all ODO aircraft.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) VFR aircraft conducting practice approaches must receive IFR services.
+              (3) Opposite direction, same or parallel runway, operations with opposing traffic
+
+                   inside the cutoff point are prohibited.
+              (4) Lateral separation must exist before any other type of separation is applied.
+    b. Coordination:
+              (1) LC must verbally request opposite direction departures with APP.
+              (2) APP must verbally request opposite direction arrivals with LC.
+              (3) Initial coordination must include callsign, type, and arrival/departure runway. The
+
+                   phrase "opposite direction" must be used.
+    c. Cutoff procedures for aircraft conducting ODO to the same runway:
+
+                                                                         Not for real world use.
+NOTE-
+When both aircraft are receiving IFR services, visual separation is not authorized.
+
+              (1) A departing aircraft must be airborne and have turned to avoid conflict prior to an
+                   aircraft reaching:
+                        (a) A pilot reports five flying miles from the threshold of the runway of
+                             intended landing or, if an aircraft is established in the traffic pattern, prior
+                             to that aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+    d. Cutoff procedures for aircraft conducting ODO to parallel runways:
+              (1) Provide a turn away from the opposing arriving traffic before the arrival is inside
+                   of the cutoff point to the other runway. The same cutoff points in subparagraph c.
+                   must apply.
+
+NOTE-
+1. Visual separation of any type may be applied after the turn away from opposing traffic is
+issued.
+2. Prior to a pilot providing visual separation, a heading with at least 15° angular difference
+between the aircraft's flight paths must be assigned to ensure flight paths do not cross.
+
+1-4-4. VFR Aircraft Procedures
+    a. Ensure VFR aircraft are issued a turn to avoid conflict with the opposing IFR/VFR traffic.
+    b. During coordination, the phrase "opposite direction" must be used.
+    c. LC must issue traffic information to both aircraft and indicate the direction that the
+         departure will turn (arrival/departure ODO) or the location of the opposing aircraft on final
+         (arrival/arrival ODO).
+
+                                                                         Not for real world use.
+                           Chapter 2. Operational Positions
+
+                                 Section 1. Clearance Delivery
+
+2-1-2. Position Responsibilities
+    a. Monitor the CD frequency (123.650 MHz).
+    b. Prepare and update FPSs in accordance with the ZLC Flight Strip Handling Directive
+         (7210.3).
+    c. Issue departure clearances to IFR aircraft in accordance with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. For clearances not yet issued, ensure routings comply with the new runway flow
+         following any runway changes.
+    e. Issue squawk codes to VFR aircraft requesting Flight Following in accordance with
+         section 2-1-3.
+    f. Confirm ATIS information with pilots before ground contact.
+    g. Assume other clearance delivery or other cab responsibilities, as assigned.
+
+2-1-2. IFR Departure Instructions
+Departing IFR aircraft must be assigned the following:
+
+    a. In Both Flows (East & West)
+             i. All aircraft departing from headings 080 CW to 240 are to be issued the SNAKO
+                   DP (See Note).
+            ii. Issue "as filed" if the pilot is departing on heading 240 CW to 080 or unable the
+                   SNAKO SID.
+
+NOTE-
+Departure headings are not authorized, as departure control is a non-radar facility.
+
+    b. An initial altitude of 9,000 feet, or lower cruising altitude if compliant with the MOCA.
+
+                                                                         Not for real world use.
+                               Section 2. Ground Control (GC)
+
+2-2-1. Position Responsibilities
+    a. Monitor the GC frequency (121.700 MHz).
+    b. Ensure all taxiing aircraft have the current ATIS.
+    c. Determine/finalize aircraft departure runway assignments.
+    d. Assume other ground control or other cab responsibilities, as assigned.
+
+2-2-2. Area of Jurisdiction
+GC has jurisdiction of all movement areas & ramp areas except active runways. If LC releases
+control of Runway 12/30 to GC (see paragraph 2-2-4), GC assumes control of that runway for
+taxi use and crossings.
+
+2-2-3. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+LC.
+
+2-2-4. Control of Runway 12/30
+Runway 12/30 must be under the jurisdiction of LC by default. However, it is common for LC to
+release control of Runway 12/30 to GC when operationally advantageous. When GC requests
+control of Runway 12/30, verbal coordination must be accomplished in accordance with the
+following.
+
+EXAMPLE-
+To request control: "REQUEST CONTROL OF RUNWAY (number)."
+To release control: "RUNWAY (number) RELEASED TO (position)."
+
+2-2-5. ATIS
+Ensure all departure aircraft have the current ATIS.
+
+2-2-6. Pushback Clearances
+To the maximum extent possible, aircraft parked at the terminal ramp should push back within
+the non-movement area.
+
+2-1-7. Use Of SAID System
+    a. SAID only displays ADS-B-equipped and transmitting aircraft/vehicles within the
+         site-specific adapted area (the airport itself, not the surrounding area).
+    b. SAID systems may rely solely on ADS-B transponder information to display aircraft
+         identification if NAS flight plan information is not available to the system. This may result
+         in a discrepancy between SAID depicted aircraft identification and NAS flight plan
+         identification. This means that aircraft must have their ADS-B on with Altitude Reporting
+         Enabled in order to move on the airport movement areas.
+    c. SAID-derived information may only be used for reference and requires confirmation via
+         visual observation and/or pilot/operator reporting.
+
+                                                                         Not for real world use.
+d. The SAID system does not use search patterns in a scratchpad box like ASDE-X.
+
+                                                                   Not for real world use.
+                                 Section 3. Local Control (LC)
+
+2-3-1. Position Responsibilities
+    a. Monitor the LC frequency (118.200 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Determine the appropriate runway configuration in accordance with paragraph 1-3-1.
+    d. Sequence and separate departures and arrivals.
+    e. Mark FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    f. Assume other local control or other cab responsibilities, as assigned.
+
+2-3-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. TWF Class D Airspace
+    b. Runway 8/26.
+    c. Runway 12/30, except when delegated to GC.
+
+2-3-3. Departures
+    a. Departure Notification / Releases
+             i. A DM notification needs to be sent to Salt Lake Center so that Center can
+                   activate the flight plan and start radar track. That can be done via the following:
+                        1. .twfdmait <Sector ID> <asel>
+            ii. Tower shall get releases from TWF Approach as well via either voice coordination
+                   or .rr command in CRC.
+    b. VFR aircraft to unicom, unless the VFR has requested Flight Following and those go to
+         the appropriate departure frequency.
+
+2-3-4. Approaches/Arrivals
+    a. Missed Approach/Go Around
+             i. Send a Missed Notification (.MA) for the aircraft executing an unplanned Missed
+                   Approach/Go Around to the appropriate Approach sector that will be receiving the
+                   aircraft for re-sequencing.
+            ii. The following is considered a Primary Climb-Out procedure and does not require
+                   any special coordination with Center or Strip marking other than the basic Missed
+                   Notification. Aircraft must not turn prior to the departure end of the runway.
+                   Handoff/Comm-Change to the appropriate Center sector must be completed no
+                   later than 1 mile off the departure end of the runway.
+    b. IFR: Fly the missed approach as published
+    c. VFR: Join the local pattern
+
+                                                                         Not for real world use.
+                             Chapter 5. Approach Control
+
+                            Section 1. Non-Radar Standarization
+
+5-1-1 vStrips Configuration
+To ease non radar procedures, airspace within a sector is broken up in bays to help ease
+complexities of sectors. TWF has 2 strip bays centered over the 2 primary VOR's within TWF
+APP airspace..
+
+    a. BYI Bay
+              (1) Mandatory Reporting Points
+                   BYI
+                   TFALZ
+                   APGUH
+              (2) Every aircraft that will enter the airspace within 17NM of BYI VOR must have a
+                   strip in the BYI Bay.
+              (3) Aircraft that are proposed, must have their strip offset to show it is a proposal.
+
+    b. TWF Bay
+              (1) Mandatory Reporting Points
+              (2) Every aircraft that will enter the airspace within 17NM of TWF VOR must have a
+                   strip in the TWF Bay.
+              (3) Aircraft that are proposed must have their strip offset to show a proposal.
+
+Note: vStrips does not currently automatically add strips for satellite airports. Controllers should
+use external applications like vatsim-radar.com to monitor for flight plans departing satellite
+airports.
+
+                              Section 2. Non-Radar Flight Data
+
+5-2-1 Satellite Clearances
+Due to non radar constraints and nature of the published departure procedures for satellites,
+controllers shall normally ask for departure runway before giving the clearance to help set up
+the non radar procedure. Giving hold for release is strongly suggested as well if there are any
+aircraft in the TWF Approach airspace or proposed flight plans.
+
+5-2-2 Jerome Airport and Burley Departures
+Jerome and Burley Airports have No SIDs, all aircraft should be cleared as filed with the
+expectation they will fly the published procedures listed in the takeoff minimums supplement.
+Any first fix located outside of TWF Approach Control airspace shall be coordinated with Salt
+Lake Center.
+
+5-2-3 Flight Plan Activation
+Departure Notification / Releases
+
+    a. A DM notification needs to be sent to Salt Lake Center so that Center can activate the
+         flight plan and start radar track. That can be done via the following:
+             i. .twfdmait <Sector ID> <asel>
+
+                                                                         Not for real world use.
+                              Section 3. Non-Radar Departures
+
+5-3-1 Twins Falls Airport
+    a. SNAKO SID
+              (1) West Config: If the inbound aircraft is 4NM from the airport, departures can be
+                   released if the inbound aircraft is on either the ILS 26 or RNAV 26. If the inbound
+                   aircraft is on the VOR 26, the missed approach does not protect the departure
+                   corridor until the missed aircraft reaches an altitude 1,000 ft above the departure
+                   aircraft's cleared altitude.
+                        (a) VOR 26: Approach shall not release any aircraft until the tower reports the
+                             inbound aircraft as landed.
+              (2) East Config: Approach shall hold all departures until tower reports the inbound
+                   aircraft as landed. East configuration does not satisfy 7110.65 6-3-1b. Or
+                   Approach must hold all in-bound aircraft above departures until the departure join
+                   the 10 DME TWF Arc.
+
+7110.65 Reference 6-3-1b:
+"TERMINAL. When takeoff direction is other than in subparagraph a, the departing aircraft takes
+off so that it is established on a course diverging by at least 45degrees from the reciprocal of
+the final approach course before the arriving aircraft leaves a fix inbound not less than 4 miles
+from the airport."
+
+    b. Obstacle: The TWF Obstacle departure will prevent approaches and other departures
+         from TWF and should not be used unless necessary.
+              (1) Rwy 26, aircraft departing on TWF VORTAC R-240 CW 080° climb on course. All
+                   others climb heading 258° to 6000 then climbing right turn direct TWF VORTAC.
+                   Climb in holding pattern (hold NW, right turns, 113° inbound) to MCA or MEA for
+                   direction of flight.
+              (2) Rwy 8, aircraft departing on TWF VORTAC R-260 CW 080° climb on course. All
+                   others climb heading 078° to 6000 then climbing right turn direct TWF VORTAC.
+                   Climb in holding pattern (hold NW, right turns, 113° inbound) to MCA or MEA for
+                   direction of flight.
+              (3) Rwy 30, aircraft departing on TWF VORTAC R-240 CW 080° climb on course. All
+                   others climb heading 303° to 6000 then climbing right turn direct TWF VORTAC.
+                   Climb in holding pattern (hold NW, right turns, 113° inbound) to MCA or MEA for
+                   direction of flight.
+
+5-3-2 Jerome Airport
+    a. Obstacle
+         The Published Obstacle departure out of Jerome is runway dependent. If an aircraft is
+         calling for clearance off the ground, the Approach controller must ask which runway the
+         pilot will be departing. Controllers are advised to issue a "Hold for release" until the pilot
+         is at the runway and to then clarify which runway the pilot plans to depart. This is to
+         prevent a configuration change between clearance void time and when the pilot departs.
+         Aircraft shall be assigned an initial altitude no lower than 7,000 ft in accordance with the
+         TWF VOR MVA.
+
+                                                                         Not for real world use.
+              (1) Runway 09 - Planes will climb out on a 110 heading until 5,000 ft MSL then
+                   proceed on course.
+                        (a) TWF Strip Bay - Mark the release and void times. 
+                             APGUH - Aircraft on V269 Eastbound from TWF to APGUH are still legal
+                             until Passing APGUH for JER departures that are not going Southbound
+                             or to TWF as the first fix. Vertical separation is strongly advised for aircraft
+                             along V269. Aircraft going Southbound or going to TWF will close off
+                             V269 until vertical separation is met or ODO diverging headings are met.
+                        (b) BYI Strip Bay - If the plane is proceeding on course to the east, the strip
+                             must also be placed in the BYI Bay.
+                             TFALZ - Aircraft along V4 will have lateral separation until TFALZ, and
+                             cannot proceed past TFALZ until the departing aircraft makes a turn on
+                             course to the South, reports past the BYI 17 NM Arc, or 10 minutes after
+                             passing V4 to the North.
+
+Note: Departures off all runways will meet lateral separation requirements from BYI Bay
+overflights if the plane is turning toward TWF or to the east even with FAA JO 7110.65 6-5-4 a1.
+
+7110.65 Reference 6-5-4 a1
+
+"Via NAVAIDs or radials FL 600 and below- 4miles on each side of the route to a point 51 miles
+from the NAVAID, then increasing in width on a 41/2degree angle to a width of 10 miles on each
+side of the route at a distance of 130 miles from the NAVAID."
+
+7110.65 Reference 6-4-2 3d
+"When the conditions of subparagraphs a, b, or c cannot be met- 20 miles between DME
+equipped aircraft; RNAV equipped aircraft using ATD; and between DME and ATD aircraft
+provided the DME aircraft is either 10,000 feet or below or outside of 10miles from the
+DME/NAVAID; or 10 minutes between other aircraft. (See FIG 6-4-11, FIG 6-4-12, FIG 6-4-13,
+FIG 6-4-14, FIG 6-4-15, and FIG 6-4-16.)"
+
+              (2) Runway 27 - Planes will climb on a 266 heading until reaching 4800', then
+                   proceed on course.
+                        (a) TWF Strip Bay - Departures off 26 MUST be coordinated with Center to
+                             prevent SE bound aircraft along V4 from passing GOODE unless vertical
+                             separation is guaranteed. Unless vertical separation is achieved, JER
+                             departures will prevent aircraft from departing TWF VOR on V484, V293,
+                             & V253.
+
+5-3-3 Burley Airport
+    1. Obstacle: The Published Obstacle departure out of Burley is runway dependent. If an
+         aircraft is calling for clearance off the ground, the Approach controller must ask which
+         runway the pilot will be departing. Controllers are advised to issue a "Hold for release"
+
+                                                                         Not for real world use.
+         until the pilot is at the runway and to then clarify which runway the pilot plans to depart.
+         This is to prevent a configuration change between clearance void time and when the
+         pilot departs. Aircraft shall be assigned an initial altitude no lower than 7,000 ft in
+         accordance with the BYI VOR MVA.
+
+              (a) Runway's 6 & 2: Climbing left turn direct BYI VOR/DME, continue climb in BYI
+                   VOR/DME Holding pattern (hold NW, right turns. 125 degrees inbound) to cross
+                   BYI VOR/DME at or above MEA for route of flight.
+
+              (b) Runways 20 & 24: Climbing right turn direct BYI VOR/DME, continue climb in BYI
+                   VOR/DME Holding pattern (hold NW, right turns. 125 degrees inbound) to cross
+                   BYI VOR/DME at or above MEA for route of flight.
+
+              (c) Initial Altitude needs to be above MEA for route of flight.
+              (d) BYI Hold protection area - Protect the hold and Separate other aircraft in the BYI
+
+                   bay in accordance with 6-5-2
+
+                                 Section 4. Non-Radar Arrivals
+
+5-4-1 ZLC AIT
+ZLC will send an AIT Time for the estimated entrance into the Procedural Control Environment.
+This time must be entered into box 3 with the center estimated procedural control entry time.
+The entry fix should be displayed in box G.
+
+5-4-2 Visual Approaches
+    a. Aircraft destined to Twin Falls Airport within the TWF strip bay boundaries may be
+         assigned a visual approach and cleared direct to Twin Falls Airport from a mandatory
+         reporting point, or assigned a visual approach if filed over the Twin Falls VORTAC. If the
+         aircraft is in the BYI Strip bay, any instructions for visual approach must wait until the
+         aircraft is passing the BYI/TWF Boundary mandatory reporting point. If the aircraft is
+         GPS equipped, the controller may descend the aircraft to the MVA for the aircraft's
+         location. Once the airport is reported in sight, the controller shall coordinate pattern entry
+         with the local controller.
+
+    b. Aircraft destined to the Jerome Airport may be cleared direct Jerome Airport once within
+         the boundaries of the TWF Strip Bay. If the aircraft is GPS equipped, the controller may
+         descend the aircraft to the MVA for the aircraft's location.
+
+    c. Aircraft destined to the Burley Airport may be assigned a visual approach and cleared
+         direct to the Burley Airport once passing a mandatory reporting point in the Burley Strip
+         bay, or assigned a visual approach if filed over the Burley VOR/DME. If the aircraft is in
+         the TWF Strip bay, any instructions for visual approach must wait until the aircraft is
+         passing the BYI/TWF Boundary mandatory reporting point. If the aircraft is GPS
+         equipped, the controller may descend the aircraft to the MVA for the aircraft's location.
+
+5-4-3 Twin Falls Airport (TWF)
+    a. Timed Approaches are permitted with the following approaches in accordance with FAA
+         JO 7710.65 6-7-1(c)(1)
+
+                                                                         Not for real world use.
+7110.65 Reference 6-7-1c
+
+         RNAV (GPS) RWY 8
+         VOR DME RWY 8
+         ILS OR LOS RWY 26
+         RNAV (GPS) RWY 26
+    b. West Configuration
+
+              (1) ILS 26: Should be the primary IAP when landing West. The flight strip should be
+                   marked with the first 2 letters of the fix the aircraft will be entering the 11DME arc
+                   at. The controller must also inform the pilot to report the estimated fix time upon
+                   checking in from ZLC and must have the pilot report the time over the fix once
+                   passed. Aircraft will then be separated by the minima described in FAA JO
+                   7110.65 6-4.
+
+              (2) RNAV 26:
+                       i. All IAF Except SAMAN and DRYAD; Controllers must put the first two
+                             letters of the IAF in the flight progress strip and have the pilot report an
+                             estimated time for SOREE upon checking in from ZLC and have the pilot
+                             report the time passing the IAF. Aircraft on the approach will then be
+                             separated in accordance with 7110.65 6-4. 
+
+                      ii. SAMAN: SAMAN IAF will prevent aircraft from entering south of the TWF
+                             VOR/DME in accordance with 7110.65 6-5. The controller shall also do as
+                             described above for other fixes.
+
+                     iii. DRYAD: TWF Can coordinate a DRYAD IAF with ZLC. If ZLC is clearing
+                             an aircraft for an approach, ZLC shall apply radar separation until the
+                             transfer of communication, upon which TWF will provide Non Radar
+                             Separation. If ZLC transfers communications before DRYAD, TWF may
+                             clear the aircraft for the approach after the pilot provides the estimated
+                             time for crossing DRYAD. The controllers shall also put DR in the flight
+                             progress strip to indicate DRYAD IAF. Upon check in with either ZLC
+                             approach clearance or TWF approach clearance, the controller shall get
+                             an estimated time for SOREE and separation successive approach in
+                             accordance with 7110.65 6-4.
+
+              (3) VOR 26:
+                       i. All IAFs Except CEEDY; Controllers must put the first two letters of the
+                             IAF in the flight progress strip and have the pilot report an estimated time
+                             for SOREE upon checking in from ZLC and have the pilot report the time
+                             passing the IAF. Aircraft on the approach will then be separated in
+
+                                                                         Not for real world use.
+                        accordance with 7110.65 6-4. Timed approaches ARE NOT
+                        AUTHORIZED!
+
+                 ii. CEEDY: TWF Can coordinate a CEEDY IAF with ZLC. If ZLC is clearing
+                        an aircraft for an approach, ZLC shall apply radar separation until the
+                        transfer of communication, upon which TWF will provide Non Radar
+                        Separation. If ZLC transfers communications before DRYAD, TWF may
+                        clear the aircraft for the approach after the pilot provides the estimated
+                        time for crossing DRYAD. The controllers shall also put DR in the flight
+                        progress strip to indicate DRYAD IAF. Upon check in with either ZLC
+                        approach clearance or TWF approach clearance, the controller shall get
+                        an estimated time for TWF and protect from TWF to the procedure turn.
+                        Timed approaches ARE NOT AUTHORIZED!
+
+c. East Configuration
+         (1) RNAV 08:
+                  i. JEDBU/WIDUG/UYEME: Controllers must put the first two letters of the
+                        IAF in the flight progress strip and have the pilot report an estimated time
+                        for WIDUG upon checking in from ZLC and have the pilot report the time
+                        passing the IAF. Aircraft on the approach will then be separated in
+                        accordance with 7110.65 6-4.
+
+                 ii. KINZE/YIKUK: TWF Can coordinate a KINZE/YIKUK IAF with ZLC. If
+                        ZLC is clearing an aircraft for an approach, ZLC shall apply radar
+                        separation until the transfer of communication, upon which TWF will
+                        provide Non Radar Separation. If ZLC transfers communications before
+                        KINZE/YIKUK, TWF may clear the aircraft for the approach after the pilot
+                        provides the estimated time for crossing KINZE/YIKUK. The controllers
+                        shall also put DR in the flight progress strip to indicate KINZE/YIKUK
+                        IAF's. Upon check in with either ZLC approach clearance or TWF
+                        approach clearance, the controller shall get an estimated time for WIDUG
+                        and separation successive approach in accordance with 7110.65 6-4.
+
+         (2) VOR/DME 08:
+              Either the VOR/DME 08 or RNAV 08 should be the primary IAP when landing
+              East. The flight strip should be marked with the first 2 letters of the fix the aircraft
+              will be entering the 11DME arc at. If the aircraft is not joining the 11DME arc at
+              YUSUN, the controller must have the aircraft join the 11 DME arc and clear the
+              aircraft for the approach from TIRAE. The controller must also inform the pilot to
+              report the estimated fix time upon checking in from ZLC and must have the pilot
+              report the time over the fix once passed. Aircraft will then be separated by the
+              minima described in FAA JO 7110.65 6-4.
+
+         (3) VOR 08
+
+                                                                   Not for real world use.
+                       i. All IAF Except CEEDY; Controllers must put the first two letters of the
+                             IAF in the flight progress strip and have the pilot report an estimated time
+                             for SOREE upon checking in from ZLC and have the pilot report the time
+                             passing the IAF. Aircraft on the approach will then be separated in
+                             accordance with 7110.65 6-4. Timed approaches ARE NOT
+                             AUTHORIZED!
+
+                      ii. CEEDY: TWF Can coordinate a CEEDY IAF with ZLC. If ZLC is clearing
+                             an aircraft for an approach, ZLC shall apply radar separation until the
+                             transfer of communication, upon which TWF will provide Non Radar
+                             Separation. If ZLC transfers communications before DRYAD, TWF may
+                             clear the aircraft for the approach after the pilot provides the estimated
+                             time for crossing DRYAD. The controllers shall also put DR in the flight
+                             progress strip to indicate DRYAD IAF. Upon check in with either ZLC
+                             approach clearance or TWF approach clearance, the controller shall get
+                             an estimated time for TWF and protect from TWF to the procedure turn.
+                             Timed approaches ARE NOT AUTHORIZED!
+
+5-4-4 Jerome Airport (JER)
+    a. RNAV 09
+             i. LAHEW: Controllers must put the first two letters of the IAF in the flight progress
+                   strip and have the pilot report an estimated time for LAHEW upon checking in
+                   from ZLC and have the pilot report the time passing the IAF. Aircraft on the
+                   approach will then be separated in accordance with 7110.65 6-4. In addition, if
+                   the plane will be flying a procedure turn or hold in lieu of a procedure turn, the
+                   controller must coordinate the procedure turn with ZLC, so ZLC Sector 31 can
+                   provide non-radar separation in the protected area.
+
+            ii. GOODE: TWF Can coordinate a GOODE IAF with ZLC. If ZLC is clearing an
+                   aircraft for an approach, ZLC shall apply radar separation until the transfer of
+                   communication, upon which TWF will provide Non Radar Separation. If ZLC
+                   transfers communications before GOODE, TWF may clear the aircraft for the
+                   approach after the pilot provides the estimated time for crossing GOODE. The
+                   controllers shall also put DR in the flight progress strip to indicate GOODE IAF's.
+                   Upon check in with either ZLC approach clearance or TWF approach clearance,
+                   the controller shall get an estimated time for LAHEW and separation successive
+                   approach in accordance with 7110.65 6-4.
+
+            iii. SECAR: Controllers must put the first two letters of the IAF in the flight progress
+                   strip and have the pilot report an estimated time for LAHEW upon checking in
+                   from ZLC and have the pilot report the time passing the IAF. Aircraft on the
+                   approach will then be separated in accordance with 7110.65 6-4.
+
+    b. RNAV 27
+
+                                                                         Not for real world use.
+             i. BURLEY/FANCO/SHONE/APGUH: Controllers must put the first two letters of
+                   the IAF in the flight progress strip and have the pilot report an estimated time for
+                   FANCO upon checking in from ZLC and have the pilot report the time passing the
+                   IAF. Aircraft on the approach will then be separated in accordance with 7110.65
+                   6-4.
+
+            ii. DRYAD: TWF Can coordinate a DRYAD IAF with ZLC. If ZLC is clearing an
+                   aircraft for an approach, ZLC shall apply radar separation until the transfer of
+                   communication, upon which TWF will provide Non Radar Separation. If ZLC
+                   transfers communications before DRYAD, TWF may clear the aircraft for the
+                   approach after the pilot provides the estimated time for crossing DRYAD. The
+                   controllers shall also put DR in the flight progress strip to indicate DRYAD IAF.
+                   Upon check in with either ZLC approach clearance or TWF approach clearance,
+                   the controller shall get an estimated time for FANCO and separation successive
+                   approach in accordance with 7110.65 6-4.
+
+Note: RNAV 27 prevents the use of V444, V4, and V269 at altitudes below the cleared altitude.
+
+    c. VOR-A: Controllers must put the TW in the flight progress strip and have the pilot report
+         an estimated time for TWF upon checking in from ZLC and have the pilot report the time
+         passing the IAF. Aircraft on the approach will then be separated in accordance with
+         7110.65 6-4.
+
+5-4-5 Burley Airport (BYI)
+    a. RNAV 20
+             i. LAHEW: Controllers must put the first two letters of the IAF in the flight progress
+                   strip and have the pilot report an estimated time for LAHEW upon checking in
+                   from ZLC and have the pilot report the time passing the IAF. Aircraft on the
+                   approach will then be separated in accordance with 7110.65 6-4. In addition, if
+                   the plane will be flying a procedure turn or hold in lieu of a procedure turn, the
+                   controller must coordinate the procedure turn with ZLC, so ZLC Sector 31 can
+                   provide non-radar separation in the protected area.
+
+            ii. GOODE: TWF Can coordinate a GOODE IAF with ZLC. If ZLC is clearing an
+                   aircraft for an approach, ZLC shall apply radar separation until the transfer of
+                   communication, upon which TWF will provide Non Radar Separation. If ZLC
+                   transfers communications before GOODE, TWF may clear the aircraft for the
+                   approach after the pilot provides the estimated time for crossing GOODE. The
+                   controllers shall also put DR in the flight progress strip to indicate GOODE IAF's.
+                   Upon check in with either ZLC approach clearance or TWF approach clearance,
+                   the controller shall get an estimated time for LAHEW and separation successive
+                   approach in accordance with 7110.65 6-4.
+
+                                                                         Not for real world use.
+       iii. SECAR: Controllers must put the first two letters of the IAF in the flight progress
+              strip and have the pilot report an estimated time for LAHEW upon checking in
+              from ZLC and have the pilot report the time passing the IAF. Aircraft on the
+              approach will then be separated in accordance with 7110.65 6-4.
+
+b. VOR-A:
+        i. ALL: Controllers must put the first two letters of the IAF in the flight progress strip
+              and have the pilot report an estimated time for IREME upon checking in from
+              ZLC and have the pilot report the time passing the IAF. Aircraft on the approach
+              will then be separated in accordance with 7110.65 6-4
+
+                                                                   Not for real world use.
+Appendix 1. Airspace
+
+            Not for real world use.
+Appendix 2. Strip Bay Boundaries
+
+                           Not for real world use.
+Appendix 3. Minimum Vectoring Altitudes
+      Appendix 3.1 Twin Falls (TWF) VOR
+
+                                     Not for real world use.
+Appendix 3.2 Burley (BYI) VOR
+
+                     Not for real world use.
+                               Appendix 4. Strip Marking
+
+Due to the non radar component for working TWF APP, the following applies IN ADDITION to
+ZLC Order 7210.3A
+IFR Arrivals
+Box 4: First two letters of the FAF
+Box 5: FAF estimate time.
+IFR Departures
+Box 9: Estimated time joining the TWF 13 DME (SNAKO SID) or airway for non SID departures.
+Box 8: TWF Release time.
+Box 9: Release Time for non TWF departures.
+IFR Overflights
+Boxes 1, 4, 7: First two letters of any reporting point
+Boxes 2, 5, 8: Estimated time over reporting point in adjacent boxes.
+Boxes 3, 6, 9: Actual time over reporting point.
+
+                                                                         Not for real world use.
+

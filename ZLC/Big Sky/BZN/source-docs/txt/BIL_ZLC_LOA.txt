@@ -1,0 +1,105 @@
+Salt Lake City Air Route Traffic Control Center and Billings Terminal Radar Approach Control
+
+                             LETTER OF AGREEMENT
+
+                                                    EFFECTIVE: May 3, 2025
+
+SUBJECT: Coordination Procedures
+
+1. PURPOSE: This Letter of Agreement establishes procedures for handling air traffic between
+Salt Lake City Air Route Traffic Control Center (ZLC ARTCC) and Billings Terminal Radar
+Approach Control (BIL TRACON).
+
+2. SCOPE: To establish standard operating procedures for the coordination and control of
+aircraft between ZLC ARTCC and BIL TRACON on the VATSIM network. This letter of
+agreement is supplemental to vZLC Facility Policy and FAA Order JO 7110.65. The information
+contained herein is to be used for flight simulation purposes only on the VATSIM network. It is
+not intended, nor should it be used for, real-world navigation. The Virtual Salt Lake City ARTCC
+is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+3. RESPONSIBILITIES:
+
+    a. All controllers staffing (or controlling overlying airspace containing) ZLC ARTCC and/or
+         BIL TRACON positions are required to be familiar with the provisions of this document.
+
+    b. ZLC ARTCC delegates responsibility to BIL TRACON for providing terminal air traffic
+         control services within the airspace extending from the surface up to and including
+         15,000 feet MSL within 40 NM of a point centered at 45.49.05N 108.32.49W. This
+         airspace is depicted in Attachment 1.
+
+4. DEFINITIONS:
+
+    a. Coordination Points: A point at the intersection of the lateral boundary of BIL TRACON
+         delegated airspace and the specified radial of the BIL VORTAC. These points (and their
+         associated radials) are listed and depicted in Attachment 1.
+
+5. GENERAL PROCEDURES:
+
+    a. A radar handoff and communications transfer constitutes transfer of control for:
+
+              (1) Climb/Descent.
+
+              (2) Turns up to 30° either side of the previous course.
+
+    b. BIL TRACON must keep ZLC ARTCC advised of the runway flow in use.
+
+    c. Minimum radar separation between facilities must be 5 NM, constant or increasing.
+
+Not for real world use.                                                                       1
+Salt Lake City Air Route Traffic Control Center and Billings Terminal Radar Approach Control
+
+    d. Inappropriate altitude for direction of flight (IAFDOF) may be assigned in accordance
+         with FAA JO 7110.65 and with prior approval from the receiving facility.
+
+6. ARRIVAL PROCEDURES:
+    a. ZLC ARTCC must:
+              (1) Ensure BIL arrival aircraft are routed via:
+                        (a) An RNAV STAR, or;
+                        (b) An airway terminating at BIL VORTAC, or;
+                        (c) Direct KBIL.
+
+                   NOTE-
+                   RNAV-capable aircraft must be assigned an RNAV STAR.
+
+              (2) Assign altitudes to arrival aircraft in accordance with the following:
+                        (a) Aircraft assigned an RNAV STAR must be cleared to descend via the
+                             STAR and issued the landing direction.
+                        (b) Aircraft not assigned an RNAV STAR:
+                                (i) Operating at or above 16,000: The aircraft must be assigned
+                                       16,000 feet MSL. A pilot's discretion descent is approved.
+                               (ii) Operating at or below 15,000: The aircraft must be level ten (10)
+                                       NM prior to crossing the lateral boundary.
+
+7. DEPARTURE PROCEDURES:
+    a. BIL TRACON must:
+              (1) Ensure that, prior to leaving the lateral boundary:
+                        (a) Aircraft whose cleared route includes an airway in BIL TRACON's
+                             airspace are established on that airway.
+                        (b) Aircraft whose cleared route does not include an airway in BIL TRACON's
+                             airspace are cleared direct to the first fix on their route that is outside of
+                             BIL TRACON's airspace.
+              (2) Clear aircraft to 15,000 MSL, or lower requested altitude, until ZLC ARTCC
+                   accepts the handoff of that aircraft.
+              (3) Clear aircraft to the following altitude when ZLC ARTCC accepts a handoff from
+                   BIL TRACON (before transferring communications):
+
+Not for real world use.                    2
+Salt Lake City Air Route Traffic Control Center and Billings Terminal Radar Approach Control
+
+                        (a) Aircraft whose route exits TRACON delegated airspace between Point
+                             GOLF clockwise to Point BRAVO: FL260, or lower requested altitude.
+
+                        (b) Aircraft whose route exits TRACON delegated airspace between Point
+                             BRAVO clockwise to Point GOLF: Requested altitude.
+
+8. ATTACHMENTS:
+    a. Attachment 1. Billings TRACON Delegated Airspace and Coordination Points
+
+9. APPROVED:
+
+Not for real world use.                                                                          3
+Salt Lake City Air Route Traffic Control Center and Billings Terminal Radar Approach Control
+         Attachment 1. Billings TRACON Delegated Airspace and Coordination Points
+
+Not for real world use.                                                                       4
+

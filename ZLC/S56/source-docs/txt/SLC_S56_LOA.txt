@@ -1,0 +1,581 @@
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+                             LETTER OF AGREEMENT
+
+                                        EFFECTIVE: November 7, 2025
+
+SUBJECT: Coordination Procedures
+
+1. PURPOSE: This Letter of Agreement establishes procedures for handling air traffic between
+Salt Lake City Terminal Radar Approach Control (S56 TRACON) and Salt Lake City Airport
+Traffic Control Tower (SLC ATCT).
+
+2. SCOPE: To establish standard operating procedures for the coordination and control of
+aircraft between S56 TRACON and SLC ATCT on the VATSIM network. This letter of agreement
+is supplemental to vZLC Facility Policy and FAA Order JO 7110.65. The information contained
+herein is to be used for flight simulation purposes only on the VATSIM network. It is not
+intended, nor should it be used for, real-world navigation. The Virtual Salt Lake City ARTCC is
+not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+3. DEFINITIONS:
+
+    a. Runway Flow: The primary direction of landing and departing traffic.
+
+    b. North Flow: Operations at Salt Lake City International Airport (SLC) utilizing Runways
+         34L, 34R, 35, and 32.
+
+    c. South Flow: Operations at SLC utilizing Runways 16L, 16R, 17, and 14.
+
+    d. Runway Use Plan (RUP): A plan that outlines procedures applicable to the use of
+         individual runways.
+
+    e. Departure Plan: A plan that outlines procedures authorizing the application of
+         pilot-provided visual separation for successive departures during certain weather
+         conditions.
+
+    f. North Flow straight-out departures: SLC IFR departures that fly a 310° or 340° heading.
+
+    g. South Flow straight-out departures: SLC IFR departures that fly a 160° heading.
+
+    h. Turn departures: SLC IFR departures other than straight-outs.
+
+    i. Unrestricted VFR (UVFR): A VFR Category III turbojet aircraft which joins the SLC IFR
+         departure flow.
+
+    j. BARN Transition: A bi-directional route between the BARN VFR waypoint, the approach
+         end of Runway 16R, and the approach end of Runway 17.
+
+Not for real world use.                                 1
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+    k. I-80 Transition: A bi-directional route between a point over I-80 and abeam the KSL
+         antenna, the approach end of Runway 34L, and the approach end of Runway 35.
+
+4. RESPONSIBILITIES:
+
+    a. All controllers staffing (or controlling overlying airspace containing) S56 TRACON and/or
+         SLC ATCT positions are required to be familiar with the provisions of this document.
+
+    b. S56 TRACON delegates to SLC ATCT that airspace as depicted in Attachment 1
+         extending from the surface up to and including 8,500 feet MSL.
+
+    c. S56 TRACON delegates control and responsibility to SLC ATCT for separation of aircraft
+         within airspace delegated to SLC ATCT and on final approach beginning at the
+         delegated airspace boundary.
+
+5. GENERAL:
+
+    a. Each SLC ATCT Local Control (LC) position must Quick-Look the S56 TRACON Final,
+         Valley, Bear, Lake, Gunnison, Stockton, and Jordan positions.
+
+    b. Each LC position must set the TDW to display, at a minimum, 7 miles from the final
+         approach fix of the runway in use, and at least 7 miles from the departure end of the
+         runway.
+
+    c. SLC ATCT may operate to the lateral boundary between SLC ATCT airspace and S56
+         TRACON airspace. S56 TRACON sectors must ensure that aircraft under their control
+         remain the appropriate distance from SLC ATCT airspace.
+
+    d. When it has been determined an aircraft cleared for approach to SLC will be broken off
+         the approach, the controller must coordinate with appropriate positions to ensure
+         separation and transfer of control to S56 TRACON positions.
+
+              (1) Except to prevent a loss of separation or during an emergency situation, aircraft
+                   broken off the final must be instructed to track the final approach course until the
+                   approach end of the runway, or fly a straight-out heading (if on a visual
+                   approach).
+
+6. DEPARTURE PLANS:
+
+    a. Definitions:
+
+              (1) Visual Departure Plan (Plan V, V+, or VN): Weather allows the application of
+                   visual separation until routes diverge.
+
+              (2) Instrument Departure Plan (Plan I): Weather precludes the application of visual
+                   separation until routes diverge.
+
+Not for real world use.                    2
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+    b. Responsibilities:
+              (1) SLC ATCT must keep S56 TRACON informed of the departure plan in use.
+              (2) S56 TRACON must advise SLC ATCT if weather conditions prohibit the use of
+                   visual separation.
+
+    c. Procedures:
+              (1) Visual Departure Plan:
+                        (a) SLC ATCT must:
+                                (i) Verbally coordinate with S56 TRACON when pilot-provided visual
+                                       separation is being used.
+                               (ii) Not utilize visual separation for aircraft departing to the same gate.
+                              (iii) Ensure compliance with FAA JO 7110.65 paragraph 7-2-1.a.2.
+                        (b) V Plan: The following routes are authorized for pilot-provided visual
+                             separation:
+                                (i) DEZRT departure with a CGULL departure.
+                               (ii) DEZRT departure with a 280° course to GUNNISON gate.
+                              (iii) 280° course to SUNSET gate with a CGULL departure.
+                              (iv) 280° course to SUNSET gate with a 280° course to GUNNISON
+                                       gate.
+                        (c) V+ Plan: Adds the following to the V Plan:
+                                (i) EDEN (HOLTR) gate departures.
+                               (ii) J154 (SPINE) departures.
+                              (iii) J56, J173, TCH094R (HERTS, UPJAR, LOFOG) departures.
+                        (d) VN Plan (North Flow only): For use when visual separation is not
+                             available on turn departures. Visual separation can be utilized
+                             independently in any combination of the following:
+                                (i) EDEN (HOLTR) gate departures.
+                               (ii) J154 (SPINE) departures.
+                              (iii) J56, J173, TCH094R (HERTS, UPJAR, LOFOG) departures.
+              (2) Instrument Departure Plan: All aircraft must have proper in-trail spacing.
+
+Not for real world use.                    3
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+7. RUNWAY USE PLANS (RUPs):
+    a. Definitions:
+              (1) Normal Runway RUPs (NRV, NRV+, NRVN, NRI): All runways are available for
+                   departures and arrivals.
+              (2) Departure-Only RUPs: All runways are available for departures. Some runways
+                   are available for arrivals.
+                        (a) XXRI, XXRV, XXRV+, or XXRVN Plan:
+                                (i) All runways are available for departures.
+                               (ii) All runways except Runway 34R are available for arrivals.
+                        (b) XXLI, XXLV, or XXLV+ Plan:
+                                (i) All runways are available for departures.
+                               (ii) All runways except Runway 16L are available for arrivals.
+                        (c) XX7I, XX7V, or XX7V+ Plan:
+                                (i) All runways are available for departures.
+                               (ii) All runways except Runway 17 are available for arrivals.
+                        (d) XX5I, XX5V, XX5V+, or XX5VN Plan:
+                                (i) All runways are available for departures.
+                               (ii) All runways except Runway 35 are available for arrivals.
+    b. Responsibilities:
+              (1) SLC ATCT must coordinate with S56 TRACON prior to establishing a RUP other
+                   than Normal Runway.
+    c. Procedures:
+              (1) A RUP must always be in use.
+              (2) A Departure Plan must always be in use.
+                        (a) The selected departure plan is placed at the end of the RUP code (i.e.
+                             The Normal Runway RUP with a V+ departure plan is coded "NRV+").
+              (3) The Normal Runway RUP must be the default RUP.
+
+Not for real world use.                    4
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+8. VFR PROCEDURES:
+
+    a. SLC ATCT must:
+
+              (1) Issue the following items to all SLC VFR departures that will leave SLC ATCT
+                   airspace:
+
+                        (a) Class Bravo clearance.
+
+                        (b) Appropriate departure frequency.
+
+                        (c) Discrete beacon code.
+
+              (2) Provide initial separation on VFR departures.
+
+              (3) Transfer communications prior to entering S56 TRACON airspace.
+
+              (4) Radar identify and verify Mode C on all VFR aircraft not routed in the IFR flow.
+
+              (5) Have control on contact for descent and turns toward the airport for VFR arrivals.
+
+              (6) Route southbound VFR aircraft (over-flight or departure) "over", "via", or "follow"
+                   I-15 freeway at 5,500, 6,500, 7,500, or 8,500. These aircraft must be considered
+                   in Class Bravo airspace until the Valley controller advises or routes the aircraft
+                   outside of Class B airspace.
+
+              (7) Route northbound VFR aircraft (over-flight or departure) "over", "via", or "follow"
+                   I-15 freeway at 6,000, 7,000, or 8,000.
+
+              (8) Inform VFR aircraft routed northbound when they leave Class Bravo airspace
+                   and to resume appropriate VFR altitude.
+
+              (9) Provide radar services to BTF VFR arrivals/departures to/from all directions
+                   except north. Assign VFR BTF departures initial routes and altitudes consistent
+                   with SLC VFR flow.
+
+              (10) Coordinate requests for VFR aircraft requesting practice approaches at SLC
+                   with the appropriate S56 TRACON sector(s).
+
+b. S56 TRACON must:
+
+         (1) Transfer communications prior to entering SLC ATCT airspace, but no sooner
+              than 7 miles from the lateral boundary of SLC ATCT airspace.
+
+         (2) Have control of VFR aircraft upon communications transfer.
+
+         (3) Assign a Class Bravo clearance to all arrivals and overflights prior to
+              communications transfer to SLC ATCT.
+
+Not for real world use.                                                                  5
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+              (4) Route VFR Category I, Category II, and Category III turboprop aircraft as follows:
+
+                        (a) Landing SLC:
+
+                                (i) From the north: Over I-15 at 6,500.
+
+                                       NOTE-
+                                       SLC ATCT is responsible for separation between the arrival and
+                                       the lower northbound traffic.
+
+                               (ii) From the south: Over I-15 at 6,000.
+
+                              (iii) From the west (North Flow): Via I-80 Transition at 6,500.
+
+                              (iv) From the west (South Flow): Via BARN Transition at 6,500.
+
+                               (v) From the east: Over I-80 to I-15 descending to (or at) 9,000.
+
+                        (b) Overflights:
+
+                                (i) From the north transitioning southbound: Via I-15 at 6,500, 7,500,
+                                       or 8,500.
+
+                               (ii) From the south transitioning northbound: Via I-15 at 6,000, 7,000,
+                                       or 8,000.
+
+                              (iii) From the west transitioning eastbound (North Flow): Via I-80
+                                       Transition at 6,500.
+
+                              (iv) From the west transitioning eastbound (South Flow): Via BARN
+                                       Transition at 6,500.
+
+                               (v) From the east transitioning westbound (North Flow): Via I-80
+                                       Transition at 6,000.
+
+                              (vi) From the east transitioning westbound (South Flow): Via BARN
+                                       Transition at 6,000.
+
+              (5) Provide radar services to BTF VFR arrivals/departures to/from the north.
+
+         NOTE-
+         None of the above clauses listed in 6.a. or 6.b. may apply to UVFR departures.
+
+Not for real world use.                    6
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+9. ARRIVALS:
+
+    a. Reduced separation on final is authorized on all runways, except Runway 14/32, in
+         accordance with FAA JO 7110.65 paragraph 5-5-4.
+
+    b. SLC ATCT must:
+
+              (1) Separate IFR/VFR arrivals from the SLC ATCT airspace boundary to the airport.
+
+              (2) Coordinate with the appropriate S56 TRACON sector for aircraft conducting a
+                   missed approach or go-around. Issue the turn or straight-out climb as
+                   appropriate. Aircraft must not turn prior to the departure end of the runway.
+
+                        (a) Turn:
+
+                                (i) North Flow: Heading 280, altitude 9,000, speed 210. No prominent
+                                       obstacles are identified.
+
+                               (ii) South Flow: Heading 280, altitude 9,000, speed 210. No
+                                       prominent obstacles are identified.
+
+                        (b) Straight-out:
+
+                                (i) North Flow: Heading 340, altitude 9,000, speed 210. No prominent
+                                       obstacles are identified.
+
+                               (ii) South Flow: Heading 160, altitude 9,000, speed 210. No
+                                       prominent obstacles are identified.
+
+                   NOTE-
+                   Provide five miles in-trail with a subsequent straight-out departure following a
+                   "Straight-out" climb out. Provide five miles in-trail with a subsequent turn
+                   departure following a "Turn" climb-out.
+
+              (3) Issue climb out instructions consistent with normal VFR departure routings (as
+                   specified in 8.a.) to aircraft executing VFR practice approaches.
+
+    c. SLC ATCT has control:
+
+              (1) To clear aircraft for a visual approach if the aircraft is 9 miles or less from the
+                   runway. This must be to the previously assigned runway and the appropriate S56
+                   TRACON sector must be verbally advised.
+
+              (2) To change the assigned runway of arrivals established on final within the lateral
+                   boundaries of SLC ATCT airspace.
+
+Not for real world use.                    7
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+    d. S56 TRACON must:
+              (1) Transfer communications prior to entering SLC ATCT airspace, but no sooner
+                   than 7 miles from the lateral boundary of SLC ATCT airspace.
+              (2) Ensure scratchpad entries are entered in accordance with Attachment 3 prior to
+                   communications transfer to SLC ATCT.
+              (3) Obtain approval from the appropriate LC prior to authorizing an approach that will
+                   not terminate in a full stop. For those aircraft that will depart IFR, assign 160/340
+                   heading (whichever will result in a straight-out) and maintain 8,000.
+
+10. DEPARTURES:
+    a. SLC ATCT must:
+              (1) Provide initial separation on all departures routed in the IFR flow.
+              (2) Issue all IFR departures the restriction: "Maintain 9,000."
+              (3) Issue all turbojet departures the restriction: "Maintain 240 knots."
+              (4) Issue VFR Category III turbojet aircraft (UVFR departures) a clearance out of
+                   Class Bravo airspace, assign an altitude of 8,500, and a departure frequency in
+                   accordance with the IFR flow.
+              (5) Call for release on all of the following:
+                        (a) Aircraft landing at PVU, SVR, TVY, BTF, OGD, HIF, BMC, LGU, or HCR.
+                        (b) Aircraft issued an initial altitude other than 9,000.
+                        (c) Turbojet aircraft not issued a 240 knot speed restriction.
+                        (d) Aircraft not assigned a DP.
+              (6) Automatic Departure Releases:
+                        (a) Are granted to SLC ATCT for aircraft departing the runways in use.
+                        (b) Are canceled during a runway change or when advised by S56 TRACON.
+              (7) Ensure the following IFR/UVFR departure headings:
+                        (a) North Flow:
+                                (i) EDEN and SANDY gates: 340°
+                               (ii) BIRD gate and HIF/OGD/BMC arrivals: 310°
+                              (iii) GUNNISON gate (prop and turbo-prop only): 295°
+
+Not for real world use.                    8
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+                              (iv) SUNSET gate and GUNNISON gate (jet only): 280°
+                               (v) PANEL, PAYSON, and OQUIRRH gates: 260°
+                        (b) South Flow:
+                                (i) BRIGHTON, PAYSON, HOBBLE, and PANEL gates: 160°
+                               (ii) GUNNISON and SUNSET gates: 280°
+                              (iii) BIRD, EDEN, and SANDY gates and HIF/OGD/BMC arrivals: 295°
+              (8) Ensure South Flow turn departures exit SLC ATCT airspace over or south of
+                   Point Nichol (see Attachment 1).
+              (9) Ensure automatic acquisition of departures and verify initial turn or assigned
+                   heading visually or by use of radar prior to communications transfer.
+              (10) Transfer communications to S56 TRACON prior to entering S56 TRACON
+                   airspace.
+    b. S56 TRACON has:
+              (1) Control of departures at the SLC ATCT airspace boundary.
+                   EXCEPTION. Lake, Gunnison, Stockton, and Jordan sectors have control for
+                   turns leaving 7,000 for non-heavy/B-757 aircraft or leaving 7,500 for heavy/B-757
+                   aircraft.
+
+11. OPPOSITE DIRECTION OPERATIONS (ODO):
+    a. Definitions:
+              (1) ODO: IFR/VFR operations conducted to the same or parallel runway where an
+                   aircraft is operating in a reciprocal direction of another aircraft arriving, departing,
+                   or conducting an approach.
+              (2) Same Runway: The same piece of concrete; 16L/34R, 16R/34L, 17/35, or 14/32.
+              (3) Parallel Runway: A piece of pavement that parallels another. At SLC, all three
+                   north/south facing runways are considered parallel to each other. Runway 14/32
+                   does not fall under this categorization.
+              (4) Cutoff Point: The ODO cutoff for IFR/IFR or VFR aircraft receiving IFR services,
+                   north or south flow, is a 15-mile final.
+    b. Responsibilities:
+              (1) ODOs must only be conducted if there is an operational necessity.
+
+Not for real world use.                    9
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+              (2) Initiation of ODO must be verbally coordinated.
+
+              (3) SLC ATCT and S56 TRACON share the responsibility of issuing traffic advisories
+                   to participating aircraft.
+
+              (4) S56 TRACON must issue control instructions to protect the integrity of the cutoff
+                   point if the conditions for conducting ODO are not met.
+
+    c. Procedures:
+
+              (1) Same Runway Opposite Direction Arrival/Departure:
+
+                        (a) Prior to an opposite direction arrival reaching a 15-mile final, SLC ATCT
+                             must ensure the opposite direction departure is airborne and established
+                             on a heading that differs by at least 45° from the reciprocal of the inbound
+                             course of the arrival.
+
+                        (b) IFR separation must be maintained at all times. Visual separation is not
+                             authorized.
+
+              (2) Parallel Runway Opposite Direction Arrival/Departure:
+
+                        (a) Flight paths do not cross:
+
+                                (i) SLC ATCT must ensure the departure aircraft is issued a heading
+                                       that turns away from an opposite direction arrival that is inside a
+                                       15-mile final to the other runway.
+
+                               (ii) Once a turn away from opposing traffic is issued, the use of visual
+                                       separation is authorized.
+
+                        (b) Flight paths cross:
+
+                                (i) Prior to an opposite direction arrival reaching a 15-mile final, SLC
+                                       ATCT must ensure the opposite direction departure is airborne,
+                                       has crossed the path of, and is established on a heading that
+                                       differs by at least 45° from the reciprocal of the inbound course of
+                                       the arrival.
+
+                               (ii) Once flight paths have crossed, use of visual separation is
+                                       authorized.
+
+              (3) Same or Parallel Runway Opposite Direction Arrival/Arrival:
+
+                        (a) S56 TRACON must ensure that the first arrival has landed before the
+                             second arrival reaches a 15-mile final.
+
+                        (b) SLC ATCT must advise S56 TRACON when the first arrival has landed.
+
+Not for real world use.                    10
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+12. ATTACHMENTS:
+    a. Attachment 1 - SLC ATCT Delegated Airspace
+    b. Attachment 2 - S56 TRACON Gates Map
+    c. Attachment 3 - Scratchpad Entries
+
+13. APPROVED:
+
+Not for real world use.                    11
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+                                Attachment 1. SLC ATCT Delegated Airspace
+                                            Figure 1. SLC ATCT Airspace
+
+Not for real world use.                    12
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+                                    Figure 2. SLC ATCT Airspace North Flow
+
+Not for real world use.                    13
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+                                    Figure 3. SLC ATCT Airspace South Flow
+
+Not for real world use.                    14
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+                                    Attachment 2. S56 TRACON Gates Map
+                                                  Figure 1. North Flow
+
+Not for real world use.                    15
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+                         Table 1. Gate/DP/Airway Quick-Reference North Flow
+
+Gate                     Associated DPs Associated Airways Associated Radials Heading
+
+BIRD                                     V21 NORTH                             310°
+                                         V101 NORTH
+
+EDEN                     RUGGD#.HOLTR    V6 EAST              TCH005R          340°
+
+GUNNISON                 CGULL#          J12/J15 NORTHWEST    TCH296R          280° (J)
+                                                 V6 WEST                       295° (P)
+
+                                          V484 NORTHWEST
+
+PANEL                                         V200 EAST       FFU133R          260°
+                                         V134 SOUTHEAST
+
+PAYSON                                   V21/V235 SOUTH       FFU170R          260°
+                                                              TCH182R
+
+OQUIRRH                  ARCHZ#          V257 SOUTH           TCH193R          260°
+                         SEVYR#
+
+                         RUGGD#.EKR      J154/V32 EAST
+
+SANDY                    RUGGD#.KIERA    J173/V101 EAST       TCH094R          340°
+                          RUGGD#.OCS         J56 EAST
+
+                         RUGGD#.PERTY    V484 EAST
+
+SUNSET                   DEZRT#          V32 WEST                              280°
+
+Not for real world use.                                                              16
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+                                                  Figure 2. South Flow
+
+Not for real world use.                    17
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+                         Table 2. Gate/DP/Airway Quick-Reference South Flow
+
+Gate                     Associated DPs Associated Airways Associated Radials Heading
+
+BIRD                                     V21 NORTH                             295°
+                                         V101 NORTH
+
+EDEN                     RUGGD#.HOLTR    V6 EAST              TCH005R          295°
+
+                                         J12/J15 NORTHWEST
+
+GUNNISON                 CGULL#          V6 WEST              TCH296R          280°
+
+                                         V484 NORTHWEST
+
+HOBBLE                   ZIONZ#.EYELO                         FFU133R          160°
+                         ZIONZ#.KIMMR
+
+PANEL                                         V200 EAST                        160°
+                                         V134 SOUTHEAST
+
+PAYSON                     ZIONZ#.BCE    V21/V235 SOUTH       FFU170R          160°
+                           ZIONZ#.EHK                         TCH182R
+                         ZIONZ#.KROST
+
+                         RUGGD#.EKR      J154/V32 EAST
+
+SANDY                    RUGGD#.KIERA    J173/V101 EAST       TCH094R          295°
+                          RUGGD#.OCS         J56 EAST
+
+                         RUGGD#.PERTY    V484 EAST
+
+SUNSET                   DEZRT#          V32 WEST                              280°
+
+Not for real world use.                                                              18
+Salt Lake City Terminal Radar Approach Control and Salt Lake City Airport Traffic Control Tower
+
+                                   Attachment 3. Scratchpad Entries
+Table 1. Primary Scratchpad Entries for SLC Arrivals (First Character - Type of Approach)
+
+                         Character                Meaning
+
+                         G          GPS Approach
+
+                         I          ILS Approach
+
+                         D          LDA/DME Approach
+
+                         V          Visual Approach
+
+                         F          Visual Approach and Following Traffic
+
+Table 2. Primary Scratchpad Entries for SLC Arrivals (Second Character - Runway Identifier)
+
+                         Character                Meaning
+
+                         L          Runway 16L or Runway 34L
+
+                         R          Runway 16R or Runway 34R
+
+                         5          Runway 35
+
+                         7          Runway 17
+
+Table 3. Primary Scratchpad Entries for SLC Arrivals (Third Character - Approach Termination)
+
+                         Character                Meaning
+
+                         F          Full Stop
+
+                         O          Option
+
+                         T          Touch and Go
+
+                         W          Low Approach
+
+NOTE-
+Use of the "F" for the third character of SLC Arrival scratchpads is optional.
+
+Not for real world use.                                                                      19
+

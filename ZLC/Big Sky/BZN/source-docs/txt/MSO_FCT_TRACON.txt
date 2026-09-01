@@ -1,0 +1,137 @@
+                                           Clearance
+
+1. Frequency
+         (1) Missoula Ground: 121.900
+
+2. Procedures
+         (1) When appropriate, inform pilots of the current ATIS information prior to contacting
+              ground control.
+
+3. IFR Routing
+         (1) Initial Altitude: 14,000
+         (2) West Flow
+                   (a) Issue the DIDLY SID
+         (3) East Flow
+                   (a) All RNAV-capable aircraft: issue VICTO SID
+                   (b) All Non-RNAV aircraft: issue MZULA SID
+         (4) If a pilot cannot accept the above listed procedures:
+                   (a) Issue the GRZLY ODP
+         (5) If a pilot cannot accept a departure procedure, issue the following headings for
+              radar vectors to their route, per their departure runway:
+                   (a) Runway 12, 8 - Heading 160
+                   (b) Runway 30, 26 - Heading 280
+
+4. Standard Departure Frequencies
+         (1) When appropriate, issue the following frequencies to IFR aircraft:
+                   (a) Spokane Approach 124.900
+         (2) When appropriate, issue the following frequencies to VFR aircraft requiring radar
+              services after departure:
+                   (a) Spokane Approach 124.900
+
+5. VFR Routing
+         (1) Not Applicable.
+                                            Ground
+
+1. Frequency
+         (1) Missoula Ground: 121.900
+
+2. Airspace
+         (1) All movement areas with the exception of active runways.
+
+3. Procedures
+         (1) Not applicable.
+
+4. Departures
+         (1) All aircraft requiring pushback onto the movement area will contact ground prior
+              to pushback and start-up.
+         (2) All aircraft will contact ground with position and ATIS prior to being issued taxi
+              instructions.
+         (3) During periods of high volumes of traffic, the published Standard Runway
+              Assignments may be used to expedite the flow of departures.
+         (4) Standard Runway Assignments
+                   (a) East Operations
+                           (i) Runway 08: VFR Aircraft.
+                          (ii) Runway 12: All departures.
+                   (b) West Operations
+                           (i) Runway 26: VFR Aircraft.
+                          (ii) Runway 30: All departures.
+
+5. Arrivals
+         (1) All aircraft will remain on ground frequency until off the movement area.
+
+                                              Local
+
+1. Frequency
+         (1) Missoula Tower (Local): 118.400
+2. Airspace
+         (1) Local: Runways 12/30, 8/26, and MSO Class D airspace.
+
+3. Procedures
+         (1) Runway operations
+                   (a) Use runway 12 (East) during calm wind operations.
+                   (b) Use runway 30 (West) when the tailwind component exceeds 5 knots.
+         (2) LAHSO
+                   (a) Not authorized.
+         (3) Tower Use of Radar:
+                   (a) Limited
+
+4. Departures
+         (1) Departure Notification / Releases
+                   (a) Departure Notifications are not required, unless otherwise coordinated by
+                        TRACON.
+                   (b) Departures are automatically released, unless otherwise coordinated by
+                        TRACON.
+         (2) IFR Departures
+                   (a) Ensure aircraft turn to assigned point/heading and altitude reporting is
+                        operating prior to handoff to departure.
+
+5. Arrivals
+         (1) IFR Arrivals
+                   (a) N/A
+         (2) Missed Approach/Go Around
+                   (a) Send a Missed Notification (.MA) for the aircraft executing an unplanned
+                        Missed Approach/Go Around to the appropriate TRACON sector that will
+                        be receiving the aircraft for re-sequencing.
+                   (b) VFR aircraft, and/or IFR Category I/II aircraft conducting a visual
+                        approach and executing a Go-Around must be instructed to remain in the
+                        local pattern, if capable of doing so.
+                   (c) The following is considered Primary Climb-Out procedure and does not
+                        require any special coordination with Approach Control or Strip marking
+                        (Scratchpad entries) other than the basic Missed Notification. Aircraft
+                        must not turn prior to the departure end of the runway. Comm-Change to
+                        the appropriate TRACON sector must be completed no later than 1 mile
+                        off the departure end of the runway.
+
+                   (d) CLIMB OUT PROCEDURE:
+                           (i) East Flow: Heading 160, Maintain 9,000.
+                          (ii) West Flow: Heading 290, Maintain 9,000.
+
+                   (e) VFR traffic join local pattern.
+6. VFR Operations
+
+         (1) VFR Departures
+                   (a) Depart on-course.
+                   (b) Handoff to departure control as soon as clear of any possible conflicts.
+                           (i) Spokane Approach 124.900
+
+         (2) VFR Arrivals
+                   (a) Direct to airport.
+
+         (3) VFR Flight Following
+                   (a) Ensure all aircraft requiring flight following have the appropriate
+                        scratchpad entry prior to handoff to departure.
+
+                                           TRACON
+
+1. Frequency
+         (1) Spokane Approach 124.900
+
+2. Airspace
+         (1) As depicted up to and including 14,000
+
+3. IFR Procedures
+         (1) East Flow
+                   (a) All arrivals shall be cleared direct MSO VOR or an appropriate IAF.
+(2) West Flow
+         (a) All arrivals shall be cleared direct MSO VOR or an appropriate IAF.
+

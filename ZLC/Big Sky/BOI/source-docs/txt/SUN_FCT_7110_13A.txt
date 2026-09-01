@@ -1,0 +1,445 @@
+SUBJ: SUN FCT Standard Operating Procedures
+
+  This document establishes the Hailey/Sun Valley/Friedman Memorial Airport Federal Contract
+
+Control Tower (SUN FCT) Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM
+
+(vZLC). Controllers are required to be familiar with the provisions of this document and to exercise their
+
+best judgment if they encounter situations not covered by it. The provisions and procedures described
+
+herein are supplemental to vZLC Facility Policy and FAA Order JO 7110.65.
+
+  The information contained herein is to be used for flight simulation purposes only on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facilities Engineer
+Salt Lake City ARTCC
+Version           Record of Changes      Effective Date Issued By
+
+7110.13A           Description           Mar 20, 2026  AE
+
+          Initial Release In New Format
+
+          Not for real world use.
+                                  Table of Contents
+
+Chapter 1. Standard Operating Control Procedures           1
+
+Section 1. Introduction                                    1
+
+1-1-1. Purpose                                             1
+
+1-1-2. Audience                                            1
+
+1-1-3. Distribution                                        1
+
+1-1-4. Cancellation                                        1
+
+1-1-5. Special Information About Hailey Airport            1
+
+Section 2. Operational Positions                           2
+
+Section 3. Intrafacility Coordination Procedures           3
+
+1-3-1. Runway Configurations                               3
+
+1-3-2. Changing Runway Configurations                      3
+
+1-3-3. ATIS                                                3
+
+Section 4. Opposite Direction Operations (ODO)             4
+
+1-4-1. General                                             4
+
+1-4-2. Responsibilities                                    4
+
+1-4-3. IFR Aircraft Procedures                             4
+
+1-4-4. VFR Aircraft Procedures                             5
+
+Chapter 2. Operational Positions                           6
+
+Section 1. Ground Control (GC)                             6
+
+2-1-1. Position Responsibilities                           6
+
+2-1-2. Area of Jurisdiction                                6
+
+2-1-3. IFR Departure Instructions                          6
+
+2-1-4. VFR Departure Instructions                          6
+
+2-1-5. VFR FF Departure Instructions                       7
+
+2-1-6. Traffic Flow                                        7
+
+2-1-7. ATIS                                                7
+
+2-1-8. Pushback Clearances                                 7
+
+Section 2. Local Control (LC)                              8
+
+2-2-1. Position Responsibilities                           8
+
+2-2-2. Area of Jurisdiction                                8
+
+2-2-3. Departures                                          8
+
+2-2-4. Approaches/Arrivals                                 8
+
+2-2-5. Tower Procedures                                    9
+
+2-2-6. Center Coordination                                 9
+
+Appendix 1: Tower Airspace                                 10
+
+Appendix 2: Airport Terrain Environment                    11
+
+Appendix 3: WOOD RIVER VFR DEP                             12
+
+                                  Not for real world use.
+              Chapter 1. Standard Operating Control Procedures
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Hailey/Sun Valley/Friedman Memorial Airport Federal Contract
+Control Tower (SUN FCT) Standard Operating Procedures within the Salt Lake City ARTCC on
+VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels the SUN FD, effective August 6, 2025.
+
+1-1-5. Special Information About Hailey Airport
+    a. Friedman Memorial Airport is located in the Rocky Mountains of south central Idaho. The
+         airport is in a narrow valley, just north of a large plain. It is surrounded by high terrain
+         with the highest mountains to the north. The Smoky Mountain Range is to the west, and
+         the Pioneer Mountain Range is to the east. Magic Reservoir is near the Big Wood River
+         Valley entrance, 12 NM to the southwest. To the east-northeast, terrain rises to 8324 feet
+         MSL within 3 NM. To the west, Kelly Mountain rises to 8856 feet MSL within 7 NM.
+    b. The higher landing minimums and special missed approach procedures are designed to
+         allow for clearance of high terrain near the airport.
+    c. Windshear may be encountered, especially during periods of high wind conditions along
+         with the use of runways not based on winds but normalcy.
+
+Not for real world use.                    1
+                                Section 2. Operational Positions
+
+                           Table 1-2-1. SUN FCT Operational Positions Table
+
+   Sector/Position           STARS ID  VATSIM Callsign                         Frequency
+Ground Control (GC)              N/A       SUN_GND                               121.700
+                                                                                 125.600
+ Local Control (LC)            N/A       SUN_TWR
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                                   2
+                    Section 3. Intrafacility Coordination Procedures
+
+1-3-1. Runway Configurations
+The active runway configuration refers to the general cardinal direction of departures and
+arrivals currently in use. Authorized runway configurations are listed in subparagraphs c. and d.
+
+    a. When selecting a runway configuration, the following factors must be considered:
+              (1) Standard Runway Config
+              (2) Terrain And Visibility
+              (3) Wind speed. The gust factor takes precedence over the constant wind speed.
+
+    b. Runway 31 is the designated landing runway at all times except for times of extreme
+         wind but clear skies to allow for circling approaches (RNAV-Y) or (NDB-B).
+
+    c. Runway 13 is the designated departure runway and is to be used at all times, IFR
+         departures off of runway 31 are not authorized at any point in time.
+
+1-3-2. Changing Runway Configurations
+The Local Control (LC) position is the final authority for selecting the runway configuration, but
+coordination with GC and SLC CTR must be accomplished prior to changing the runway
+configuration.
+
+    a. LC must:
+              (1) Coordinate with GC to determine which aircraft will be the last departure and
+                   arrival in the old runway configuration.
+              (2) Ensure that:
+                        (a) The ATIS is updated to reflect the runway configuration change.
+                        (b) Runway 31 is not used for IFR departures at any time
+                        (c) Visibility permits use of Runway 13 for landing if necessary.
+              (3) Notify ZLC ARTCC Sectors 31 and 41 (or other appropriate overlying sector) of
+                   the runway configuration change.
+
+1-3-3. ATIS
+Regardless of the position broadcasting the ATIS, the following statements must be included on
+the ATIS broadcast:
+
+    a. During VFR weather conditions: "DEPARTING VFR AIRCRAFT ADVISE GROUND
+         CONTROL OF REQUESTED HEADING OR DESTINATION."
+
+    b. When the outside air temperature is 26°C or greater: "CHECK DENSITY ALTITUDE."
+
+         NOTE-
+         This statement must be made immediately after stating the altimeter setting.
+
+Not for real world use.                    3
+                    Section 4. Opposite Direction Operations (ODO)
+
+1-4-1. General
+Opposite Direction Operations consist of IFR/VFR operations conducted to the same or parallel
+runway where an aircraft is operating in a reciprocal direction of another aircraft arriving,
+departing, or conducting an approach. This is standard practice here at Hailey!
+
+NOTE-
+Departing aircraft include aircraft conducting a touch-and-go, stop-and-go, low approach,
+missed approach, or go-around.
+
+1-4-2. Responsibilities
+    a. LC is responsible for applying the cutoff point between opposite direction arriving and
+         departing aircraft.
+    b. SLC CTR (Sector 31) is responsible for applying the cutoff point between opposite
+         direction arrival aircraft.
+
+1-4-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to all ODO aircraft.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) VFR aircraft conducting practice approaches may or may not receive IFR
+                   services.
+
+              (3) Opposite direction, same or parallel runway, operations with opposing traffic
+                   inside the cutoff point are allowed with visual/tower applied separation.
+
+              (4) Lateral separation must exist before any other type of separation is applied.
+    b. Coordination:
+
+              (1) LC does not need to verbally request opposite direction departures with CTR.
+              (2) CTR does not need to verbally request opposite direction arrivals with LC.
+    c. Cutoff procedures for aircraft conducting ODO to the same runway:
+              (1) A departing aircraft must be airborne and have turned to avoid conflict prior to an
+
+                   aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+
+Not for real world use.                    4
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+    d. Cutoff procedures for aircraft conducting ODO to parallel runways:
+              (1) Provide a turn away from the opposing arriving traffic before the arrival is inside
+                   of the cutoff point to the other runway. The same cutoff points in subparagraph c.
+                   must apply.
+
+NOTE-
+1. Visual separation of any type may be applied after the turn away from opposing traffic is
+issued.
+2. Prior to a pilot providing visual separation, a heading with at least 15° angular difference
+between the aircraft's flight paths must be assigned to ensure flight paths do not cross.
+
+1-4-4. VFR Aircraft Procedures
+    a. Ensure VFR aircraft are issued and are aware of traffic to avoid conflict with the
+         opposing IFR/VFR traffic.
+    b. LC must issue traffic information to both aircraft and indicate the direction that the
+         departure will turn (arrival/departure ODO) or the location of the opposing aircraft on final
+         (arrival/arrival ODO).
+
+Not for real world use.                    5
+                           Chapter 2. Operational Positions
+
+                               Section 1. Ground Control (GC)
+
+2-1-1. Position Responsibilities
+    a. Monitor the GC frequency (121.700 MHz).
+    b. Prepare, update, and mark flight progress strips in accordance with the ZLC Flight Strip
+         Handling Directive (7210.3).
+    c. Issue departure clearances to IFR aircraft, complying with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. Handle VFR departure aircraft in accordance with paragraphs 2-1-4 and 2-1-5.
+    e. Ensure all taxiing aircraft have the current ATIS.
+    f. Determine/finalize aircraft departure runway assignments.
+    g. Assume other ground control or other cab responsibilities, as assigned.
+
+2-1-2. Area of Jurisdiction
+GC has jurisdiction of all movement areas except active runways.
+
+2-1-3. IFR Departure Instructions
+Departing IFR aircraft must be assigned the following:
+
+    a. In All Configs
+             i. All RNAV-capable aircraft
+                        1. Issue FLIYN SID
+            ii. All Non-RNAV aircraft:
+                        1. Issue RWY 13 ODP
+                        2. A VCOA may be approved when specifically requested by the pilot
+
+    b. An initial altitude of 15,000 feet, or lower cruising altitude if compliant with the MOCA.
+
+NOTE-
+Departure headings are not authorized, as terrain constraints do not allow for it.
+
+NOTE-
+AUREL SID is valid until 3/26/2026, aircraft may use/be assigned this RNAV SID until then.
+
+NOTE-
+Every attempt will be made to route all IFR departures on an approved SID appropriate for their
+route of flight. Aircraft unable/refusing to accept a SID will be assigned Runway 13 ODP.
+
+2-1-4. VFR Departure Instructions
+Departing VFR aircraft have the ability to fly the published VFR departure:
+
+    a. A pilot may request: WOOD RIVER VISUAL DEP
+             i. You are required to abide by this request if operationally safe.
+
+Not for real world use.                                                                            6
+2-1-5. VFR FF Departure Instructions
+All VFR aircraft that requested flight following and will depart the Class D surface area must:
+
+    a. Be issued both of the following:
+              (1) Appropriate departure frequency.
+              (2) Discrete beacon code.
+
+    b. Have the following filled out:
+              (1) Flight Strip, in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+              (2) Flight Plan.
+
+NOTE-
+Aircraft that depart the Class D surface area and are not requesting flight following are not to
+have any of the above, except a filled out Half Strip.
+
+2-1-6. VFR Arrival Instructions
+SUN Local may change VFR arrival aircraft to runway 13. This is generally done by telling VFR
+planes to remain over or East of the ridge and to enter a left downwind for Runway 13.
+
+PHRASEOLOGY-
+ENTER LEFT DOWN RUNWAY 13. REMAIN OVER OR EAST OF THE RIDGE
+
+2-1-7. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+LC.
+
+2-1-8. ATIS
+Ensure all departure aircraft have the current ATIS. If you have the VATIS BETA you're
+encouraged to use Voice Recorded ATIS mode over the Automated Mode as this airport is not
+listed as a D-ATIS airport.
+
+2-1-9. Pushback Clearances
+All Aircraft are required to receive pushback clearance before pushing back off the terminal onto
+taxiway B.
+
+Not for real world use.                    7
+                                 Section 2. Local Control (LC)
+
+2-2-1. Position Responsibilities
+    a. Monitor the LC frequency (125.600 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Determine the appropriate runway configuration in accordance with paragraph 1-3-1.
+    d. Sequence and separate departures and arrivals.
+    e. Mark FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    f. Assume other local control or other cab responsibilities, as assigned.
+
+2-2-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. LC airspace, as depicted in Appendix 1.
+    b. Runway 13/31
+
+2-2-3. Departures
+    a. IFR Departure Notification / Releases
+             i. A "Release Request" (.RR) is required to be sent to the appropriate Departure
+                   Controller for all departing aircraft in accordance with the General Control
+                   Directive.
+            ii. Release requests may also be verbally coordinated.
+    b. VFR aircraft to unicom, unless the VFR has requested Flight Following and those go to
+         the appropriate departure frequency.
+    c. Main Departure Frequency
+             i. Salt Lake Center (Sector 31) 118.050.
+    d. Runway Usage
+             i. Runway 13 is the only runway to be used for departures, if the weather doesn't
+                   allow for safe departures on Runway 13 (Example: 30 Knot Winds Out Of The
+                   North), aircraft must be held until conditions improve.
+
+2-2-4. Approaches/Arrivals
+    a. Non-FAA Published Approaches
+             i. At Hailey and other smaller airports with complex procedures some airlines and
+                   operators pay to have a specific approach made for them with lower minimums,
+                   better performance for their aircraft and other reasons. If a pilot requests such an
+                   approach, you must get the IAF/IF, FAF and the altitudes for them to allow the
+                   aircraft to use the approach.
+    a. Missed Approach/Go Around
+             i. Send a Missed Notification (.MA) for the aircraft executing an unplanned Missed
+                   Approach/Go Around to the appropriate Center sector that will be receiving the
+                   aircraft for re-sequencing.
+            ii. The following is considered a Primary Climb-Out procedure and does not require
+                   any special coordination with Center or Strip marking other than the basic Missed
+                   Notification. Aircraft must not turn prior to the departure end of the runway.
+
+Not for real world use.                    8
+                   Handoff/Comm-Change to the appropriate Center sector must be completed no
+                   later than 1 mile off the departure end of the runway.
+
+    b. Climb Out Procedure:
+             i. Fly Published Missed Approach.
+            ii. Otherwise Follow The Valley On Heading 320, Climb and Maintain 12,000.
+
+    c. VFR traffic joins the local pattern.
+
+2-2-5. Tower Procedures
+    a. LAHSO.
+             i. Not authorized.
+    b. Tower Use of Radar:
+             i. None.
+
+2-2-6. Center Coordination
+Salt Lake Center may provide radar traffic calls for Sun Valley Local control and will coordinate
+them via discord landline. Sun valley tower shall then relay the radar traffic call to the aircraft via
+the following phraseology.
+
+         PHRASEOLOGY
+         "Salt Lake Center advises traffic is at your <direction> and <distance>...."
+
+Not for real world use.                    9
+                             Appendix 1: Tower Airspace
+
+Not for real world use.                                      
+
+10
+                         Appendix 2: Airport Terrain Environment
+
+Not for real world use.                                             
+
+11
+                           Appendix 3: WOOD RIVER VFR DEP
+
+Not for real world use.                                      
+
+12
+

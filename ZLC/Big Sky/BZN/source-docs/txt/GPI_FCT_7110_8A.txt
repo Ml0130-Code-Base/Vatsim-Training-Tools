@@ -1,0 +1,411 @@
+SUBJ: GPI FCT Standard Operating Procedures
+
+  This document establishes the Glacier Park Airport Federal Contract Control Tower (GPI FCT)
+
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC). Controllers are
+
+required to be familiar with the provisions of this document and to exercise their best judgment if they
+
+encounter situations not covered by it. The provisions and procedures described herein are supplemental
+
+to vZLC Facility Policy and FAA Order JO 7110.65.
+
+  The information contained herein is to be used for flight simulation purposes only on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, the actual Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facilities Engineer
+Salt Lake City ARTCC
+Version          Record of Changes      Effective Date Issued By
+
+7110.8A           Description           Mar 19, 2026  AE
+
+         Initial Release In New Format
+
+         Not for real world use.
+                                    Table of Contents
+
+Chapter 1. Standard Operating Control Procedures             1
+
+Section 1. Introduction                                      1
+
+1-1-1. Purpose                                               1
+
+1-1-2. Audience                                              1
+
+1-1-3. Distribution                                          1
+
+1-1-4. Cancellation                                          1
+
+Section 2. Operational Positions                             2
+
+Section 3. Intrafacility Coordination Procedures             3
+
+1-3-1. Runway Configurations                                 3
+
+1-3-2. Changing Runway Configurations                        3
+
+1-3-3. ATIS                                                  3
+
+Section 4. Opposite Direction Operations (ODO)               4
+
+1-4-1. General                                               4
+
+1-4-2. Responsibilities                                      4
+
+1-4-3. IFR Aircraft Procedures                               4
+
+1-4-4. VFR Aircraft Procedures                               5
+
+Chapter 2. Operational Positions                             6
+
+Section 1. Ground Control (GC)                               6
+
+2-1-1. Position Responsibilities                             6
+
+2-1-2. Area of Jurisdiction                                  6
+
+2-1-3. IFR Departure Instructions                            6
+
+2-1-4. VFR FF Departure Instructions                         6
+
+2-1-5. Traffic Flow                                          7
+
+2-1-6. Control of Runway 12/30                               7
+
+2-1-7. ATIS                                                  7
+
+2-1-8. Pushback Clearances                                   7
+
+Section 2. Local Control (LC)                                8
+
+2-2-1. Position Responsibilities                             8
+
+2-2-2. Area of Jurisdiction                                  8
+
+2-2-3. Departures                                            8
+
+2-2-4. Approaches/Arrivals                                   8
+
+2-2-5. Tower Procedures                                      9
+
+2-2-6. Center Coordination                                   9
+
+Appendix 1. Local Control Airspace                           10
+
+                                    Not for real world use.
+              Chapter 1. Standard Operating Control Procedures
+
+                                      Section 1. Introduction
+
+1-1-1. Purpose
+This document establishes the Glacier Park Federal Contract Control Tower (GPI FCT)
+Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC).
+
+1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+1-1-4. Cancellation
+This document cancels the GPI SOP, effective July 25, 2025.
+
+Not for real world use.                    1
+                                Section 2. Operational Positions
+
+                           Table 1-2-1. GPI FCT Operational Positions Table
+
+   Sector/Position           STARS ID  VATSIM Callsign                         Frequency
+Ground Control (GC)              N/A       GPI_GND                               121.600
+                                                                                 124.550
+ Local Control (LC)            N/A       GPI_TWR
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                                   2
+                    Section 3. Intrafacility Coordination Procedures
+
+1-3-1. Runway Configurations
+The active runway configuration refers to the general cardinal direction of departures and
+arrivals currently in use. Authorized runway configurations are listed in subparagraphs c. and d.
+
+    a. When selecting a runway configuration, the following factors must be considered:
+              (1) Wind direction.
+              (2) Wind speed. The gust factor takes precedence over the constant wind speed.
+
+    b. North Flow is designated as the "calm wind", runway configuration.
+    c. North Flow: Landing and departing Runway 2. Runway 12 may be issued at pilot
+
+         request.
+    d. South Flow: Landing and departing Runway 20. Runway 30 may be issued at pilot
+
+         request.
+
+NOTE-
+North Flow is to be used until a greater than five knot tailwind is observed
+
+1-3-2. Changing Runway Configurations
+The Local Control (LC) position is the final authority for selecting the runway configuration, but
+coordination with GC and SLC CTR must be accomplished prior to changing the runway
+configuration.
+
+    a. LC must:
+              (1) Coordinate with GC to determine which aircraft will be the last departure and
+                   arrival in the old runway configuration.
+              (2) Ensure that:
+                        (a) The ATIS is updated to reflect the runway configuration change.
+              (3) Notify ZLC ARTCC Sectors 12 and 20 (or other appropriate overlying sector) of
+                   the runway configuration change.
+
+1-3-3. ATIS
+Regardless of the position broadcasting the ATIS, the following statements must be included on
+the ATIS broadcast:
+
+    a. During VFR weather conditions: "DEPARTING VFR AIRCRAFT ADVISE GROUND
+         CONTROL OF REQUESTED HEADING OR DESTINATION."
+
+    b. When the outside air temperature is 26°C or greater: "CHECK DENSITY ALTITUDE."
+
+NOTE-
+This statement must be made immediately after stating the altimeter setting.
+
+Not for real world use.                    3
+                    Section 4. Opposite Direction Operations (ODO)
+
+1-4-1. General
+Opposite Direction Operations consist of IFR/VFR operations conducted to the same or parallel
+runway where an aircraft is operating in a reciprocal direction of another aircraft arriving,
+departing, or conducting an approach.
+
+NOTE-
+Departing aircraft include aircraft conducting a touch-and-go, stop-and-go, low approach,
+missed approach, or go-around.
+
+1-4-2. Responsibilities
+    a. LC and SLC CTR (Sector 12) share the responsibility to coordinate ODO and issue
+         traffic advisories (see below).
+    b. LC is responsible for applying the cutoff point between opposite direction arriving and
+         departing aircraft.
+    c. SLC CTR (Sector 12) is responsible for applying the cutoff point between opposite
+         direction arrival aircraft.
+
+1-4-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to all ODO aircraft.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) VFR aircraft conducting practice approaches must receive IFR services.
+              (3) Opposite direction, same or parallel runway, operations with opposing traffic
+
+                   inside the cutoff point are prohibited.
+              (4) Lateral separation must exist before any other type of separation is applied.
+    b. Coordination:
+              (1) LC must verbally request opposite direction departures with CTR.
+              (2) CTR must verbally request opposite direction arrivals with LC.
+              (3) Initial coordination must include callsign, type, and arrival/departure runway. The
+
+                   phrase "opposite direction" must be used.
+    c. Cutoff procedures for aircraft conducting ODO to the same runway:
+
+Not for real world use.                    4
+NOTE-
+When both aircraft are receiving IFR services, visual separation is not authorized.
+
+              (1) A departing aircraft must be airborne and have turned to avoid conflict prior to an
+                   aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+    d. Cutoff procedures for aircraft conducting ODO to parallel runways:
+              (1) Provide a turn away from the opposing arriving traffic before the arrival is inside
+                   of the cutoff point to the other runway. The same cutoff points in subparagraph c.
+                   must apply.
+
+NOTE-
+1. Visual separation of any type may be applied after the turn away from opposing traffic is
+issued.
+2. Prior to a pilot providing visual separation, a heading with at least 15° angular difference
+between the aircraft's flight paths must be assigned to ensure flight paths do not cross.
+
+1-4-4. VFR Aircraft Procedures
+    a. Ensure VFR aircraft are issued a turn to avoid conflict with the opposing IFR/VFR traffic.
+    b. During coordination, the phrase "opposite direction" must be used.
+    c. LC must issue traffic information to both aircraft and indicate the direction that the
+         departure will turn (arrival/departure ODO) or the location of the opposing aircraft on final
+         (arrival/arrival ODO).
+
+Not for real world use.                    5
+                           Chapter 2. Operational Positions
+
+                               Section 1. Ground Control (GC)
+
+2-1-1. Position Responsibilities
+    a. Monitor the GC frequency (121.600 MHz).
+    b. Prepare, update, and mark flight progress strips in accordance with the ZLC Flight Strip
+         Handling Directive (7210.3).
+    c. Issue departure clearances to IFR aircraft, complying with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. Handle VFR departure aircraft in accordance with paragraph 2-1-4.
+    e. Ensure all taxiing aircraft have the current ATIS.
+    f. Determine/finalize aircraft departure runway assignments.
+    g. Assume other ground control or other cab responsibilities, as assigned.
+
+2-1-2. Area of Jurisdiction
+GC has jurisdiction of all movement areas except active runways. If LC releases control of
+Runway 12/30 to GC (see paragraph 2-1-6), GC assumes control of that runway for taxi use
+and crossings.
+
+2-1-3. IFR Departure Instructions
+Departing IFR aircraft must be assigned the following:
+
+    a. In Both Flows (North & South)
+             i. All RNAV-capable aircraft are to be issued the RIDDG SID
+            ii. All Non-RNAV aircraft are to be issued the SKOTT ODP
+
+NOTE-
+If The Aircraft Filed The SKOTT ODP and is RNAV Capable You (The Controller) Are Not
+Required To Change Them To The RIDDG SID.
+
+    b. If a pilot cannot accept a departure procedure, issue the following headings for radar
+         vectors to their route, per their departure runway:
+             i. Runway 2 - Heading 020
+            ii. Runway 12 - Heading 120
+            iii. Runway 20 - Heading 200
+            iv. Runway 30 - Heading 300
+
+    c. An initial altitude of 12,000 feet, or lower cruising altitude if compliant with the MOCA.
+
+2-1-4. VFR FF Departure Instructions
+All VFR aircraft that requested flight following and will depart the Class D surface area must:
+
+    a. Be issued both of the following:
+              (1) Appropriate departure frequency.
+              (2) Discrete beacon code.
+
+Not for real world use.                    6
+    b. Have the following filled out:
+              (1) Flight Strip, in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+              (2) Flight Plan.
+
+NOTE-
+Aircraft that depart the Class D surface area and are not requesting flight following are not to
+have any of the above, except a filled out Half Strip.
+
+2-1-5. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+LC.
+
+2-1-6. Control of Runway 12/30
+Runway 12/30 must be under the jurisdiction of LC by default. However, it is common for LC to
+release control of Runway 12/30 to GC when operationally advantageous. When GC requests
+control of Runway 12/30, verbal coordination must be accomplished in accordance with the
+following.
+
+EXAMPLE-
+To request control: "REQUEST CONTROL OF RUNWAY (number)."
+To release control: "RUNWAY (number) RELEASED TO (position)."
+
+2-1-7. ATIS
+Ensure all departure aircraft have the current ATIS. If you have the VATIS BETA you're
+encouraged to use Voice Recorded ATIS mode over the Automated Mode as this airport is not
+listed as a D-ATIS airport.
+
+2-1-8. Pushback Clearances
+To the maximum extent possible, aircraft parked at the terminal ramp should push back within
+the non-movement area.
+
+Not for real world use.                    7
+                                 Section 2. Local Control (LC)
+
+2-2-1. Position Responsibilities
+    a. Monitor the LC frequency (124.550 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Determine the appropriate runway configuration in accordance with paragraph 1-3-1.
+    d. Sequence and separate departures and arrivals.
+    e. Mark FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    f. Assume other local control or other cab responsibilities, as assigned.
+
+2-2-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. LC airspace, as depicted in Appendix 1.
+    b. Runway 2/20.
+    c. Runway 12/30, except when delegated to GC.
+
+2-2-3. Departures
+    a. IFR Departure Notification / Releases
+             i. A "Release Request" (.RR) is required to be sent to the appropriate Departure
+                   Controller for all departing aircraft in accordance with the General Control
+                   Directive.
+            ii. Release requests may also be verbally coordinated.
+    b. VFR aircraft to unicom, unless the VFR has requested Flight Following and those go to
+         the appropriate departure frequency.
+    c. Main Departure Frequency
+             i. Salt Lake Center (Sector 12) 127.025
+
+2-2-4. Approaches/Arrivals
+    a. Missed Approach/Go Around
+             i. Send a Missed Notification (.MA) for the aircraft executing an unplanned Missed
+                   Approach/Go Around to the appropriate Center sector that will be receiving the
+                   aircraft for re-sequencing.
+            ii. The following is considered a Primary Climb-Out procedure and does not require
+                   any special coordination with Center or Strip marking other than the basic Missed
+                   Notification. Aircraft must not turn prior to the departure end of the runway.
+                   Handoff/Comm-Change to the appropriate Center sector must be completed no
+                   later than 1 mile off the departure end of the runway.
+    b. Climb Out Procedure:
+             i. North Flow: Heading 020, Maintain 12,000.
+            ii. South Flow: Heading 200, Maintain 12,000.
+    c. VFR traffic joins the local pattern.
+
+Not for real world use.                    8
+2-2-5. Tower Procedures
+    a. LAHSO.
+             i. Not authorized.
+    b. Tower Use of Radar:
+             i. APRT System
+
+2-2-6. APRT System
+    a. The use of the APRT system as it is in real life isn't fully able to be simulated on the
+         network. To mimic the use of APRT you "the controller" are able to use an external
+         application such as VATSIM Radar, Vatglasses, the VATSPY Application, etc. You can
+         access these applications through the browser tab in CRC to simulate APRT use in the
+         tower.
+
+2-2-7. Center Coordination
+Salt Lake Center may provide radar traffic calls for Sun Valley Local control and will coordinate
+them via discord landline. Sun valley tower shall then relay the radar traffic call to the aircraft via
+the following phraseology.
+
+PHRASEOLOGY
+"Salt Lake Center advises traffic is at your <direction> and <distance>...."
+
+Not for real world use.                    9
+                           Appendix 1. Local Control Airspace
+
+Not for real world use.                                            10
+

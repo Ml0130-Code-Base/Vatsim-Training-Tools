@@ -1,0 +1,617 @@
+SUBJ: HIF AFB Standard Operating Procedures
+
+  This document establishes the Hill Air Force Base Non-Federal Contract Air Traffic Control Tower
+
+(HIF NFCT) Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM (vZLC). This
+
+SOP establishes standardized air traffic control, flight operations, and airfield management procedures at
+
+Hill Air Force Base (HAFB). It ensures safe, efficient, and coordinated air traffic operations by detailing
+
+responsibilities, communication protocols, and operational guidelines. The provisions and procedures
+
+described herein are supplemental to vZLC Facility Policies and FAA Order JO 7110.65.
+
+  The information contained herein will be used only for flight simulation purposes on the VATSIM
+
+network. It is not intended, nor should it be used for real-world navigation. The Virtual Salt Lake City
+
+ARTCC is not affiliated with the FAA, DOD, Salt Lake City ARTCC, or any governing aviation body.
+
+Cameron Negrete
+Air Traffic Manager
+Salt Lake City ARTCC
+
+Adam Earl
+Facility Engineer
+Salt Lake City ARTCC
+Version    Record of Changes       Effective Date Issued By
+
+7110.16A  Description              11/1/2025  AE
+
+          Initial Release
+
+          Not for real world use.
+                               Table of Contents
+
+Chapter 1. Standard Operating Control Procedures                 1
+
+Section 1. Introduction                                          1
+
+1-1-1. Purpose                                                   1
+
+1-1-2. Audience                                                  1
+
+1-1-3. Distribution                                              1
+
+1-1-4. Cancellation                                              1
+
+Section 2. Operational Positions                                 2
+
+Section 3. Intrafacility Coordination Procedures                 3
+
+1-3-1. Runway Configurations                                     3
+
+1-3-2. Changing Runway Configurations                            3
+
+1-3-3. ATIS                                                      3
+
+Section 4. Opposite Direction Operations (ODO)                   4
+
+1-4-1. General                                                   4
+
+1-4-2. Responsibilities                                          4
+
+1-4-3. IFR Aircraft Procedures                                   4
+
+1-4-4. VFR Aircraft With ODO Operations In Effect Procedures     5
+
+Chapter 2: Tower Operational Positions                           6
+
+Section 1. Clearance Delivery                                    6
+
+2-1-1. Responsibilities                                          6
+
+2-1-2. IFR Departure Routing                                     6
+
+2-1-3. IFR Departure Altitudes                                   6
+
+2-1-4. VFR Departure Instructions                                6
+
+Section 2. Ground Control                                        7
+
+2-2-1. Responsibilities                                          7
+
+2-2-2. Area of Jurisdiction                                      7
+
+2-2-3. Traffic Flow                                              7
+
+2-2-4. ATIS                                                      7
+
+2-2-5. Procedures                                                7
+
+2-2-6. Departure                                                 7
+
+2-2-7. Arrivals                                                  7
+
+Section 3. Local Control                                         8
+
+2-3-1. Responsibilities                                          8
+
+2-3-2. Area of Jurisdiction                                      8
+
+2-3-3. Runway Selection                                          8
+
+2-3-4. Use of Radar                                              8
+
+2-3-5. Departure Procedures                                      8
+
+2-3-6. Arrival Procedures                                        9
+
+2-3-7. Traffic Pattern Procedures                                9
+
+2-3-8. Additional vUSAF Procedures                               10
+
+                                        Not for real world use.
+2-3-8. VFR Procedures                                  10
+
+2-3-9. VFR Traffic Pattern Runway 32:                  11
+
+2-3-10. VFR Traffic Pattern Runway 14:                 11
+
+Appendix 1. Airspace                                   13
+
+Appendix 1A. LC Airspace                               13
+
+Appendix 1B. Hill Arrival Corridor (HAC)               14
+
+Appendix 2. Traffic Patterns                           15
+
+Appendix 2A. Runway 14 (vUSAF Only)                    15
+
+Appendix 2B. Runway 32 (vUSAF Only)                    16
+
+Appendix 3. Mudflat Recovery (vUSAF Only)              17
+
+Appendix 3A. Mudflat Recovery (Chart)                  17
+
+Appendix 3B. Mudflat Recovery (VFR Map)                18
+
+                              Not for real world use.
+              Chapter 1. Standard Operating Control Procedures
+
+                                      Section 1. Introduction
+
+    1-1-1. Purpose
+This document establishes the Hill Air Force Base Non-Federal Contract Air Traffic Control
+Tower (HIF NFCT) Standard Operating Procedures within the Salt Lake City ARTCC on VATSIM
+(vZLC). This SOP establishes standardized air traffic control, flight operations, and airfield
+management procedures at Hill Air Force Base (HIF). It ensures safe, efficient, and coordinated
+air traffic operations by detailing responsibilities, communication protocols, and operational
+guidelines.
+
+    1-1-2. Audience
+All vZLC controllers and visitors contained within the vZLC and VATUSA roster.
+
+    1-1-3. Distribution
+This document is authorized for unrestricted use and release and is available in the Resources
+Section of the vZLC Website.
+
+    1-1-4. Cancellation
+N/A
+
+Not for real world use.                    1
+                                Section 2. Operational Positions
+
+                           Table 1-2.1. HIF NFCT Operational Positions Table
+
+      Sector/Position        STARS ID  VATSIM Callsign                          Frequency
+Clearance Delivery (CD)           4D        HIF_DEL                               124.100
+                                                                                  121.600
+  Ground Control (GC)          4G        HIF_GND                                  127.150
+   Local Control (LC)
+                               4L        HIF_TWR
+
+                             Bold designates a primary position.
+
+Not for real world use.                                                                    2
+                    Section 3. Intrafacility Coordination Procedures
+
+1-3-1. Runway Configurations
+The active runway configuration refers to the general cardinal direction of departures and
+arrivals currently in use. Unless otherwise coordinated with Salt Lake City TRACON (S56), the
+active runway must be selected in accordance with the following:
+
+              (1) When the tailwind is component 10 knots or greater for Runway 14, Runway 32
+                   should be used.
+
+              (2) When the tailwind component exceeds 10 knots for Runway 32 or the weather is
+                   below circling minima, Runway 14 should be used.
+
+    a. South Flow is designated as the "calm wind" runway configuration.
+    b. South Flow: Landing and departing Runway 14.
+    c. North Flow: Landing and departing Runway 32.
+
+1-3-2. Changing Runway Configurations
+The Local Control (LC) position is the final authority for selecting the runway configuration, but
+coordination with GC and TRACON must be accomplished prior to changing the runway
+configuration.
+
+    a. LC must:
+              (1) Coordinate with GC and S56 to determine which aircraft will be the last departure
+                   and arrival in the old runway configuration.
+              (2) Ensure that:
+                        (a) The Tower Display Workstation (STARS) display is adjusted to indicate
+                             the correct flow.
+                        (b) The ATIS is updated to reflect the runway configuration change.
+
+    b. S56 TRACON must:
+              (1) Ensure the STARS display is adjusted to indicate the correct flow.
+              (2) Notify S56 TRACON Hart And Bear Sectors (or other appropriate overlying
+                   sector) of the runway configuration change.
+
+1-3-3. ATIS
+Regardless of the position broadcasting the ATIS, the following statements must be included on
+the ATIS broadcast:
+
+    a. During VFR weather conditions: "DEPARTING VFR AIRCRAFT ADVISE GROUND
+         CONTROL OF REQUESTED HEADING OR DESTINATION."
+
+    b. When the outside air temperature is 26°C or greater: "CHECK DENSITY ALTITUDE."
+
+         NOTE-
+         This statement must be made immediately after stating the altimeter setting.
+
+Not for real world use.                    3
+                    Section 4. Opposite Direction Operations (ODO)
+
+1-4-1. General
+Opposite Direction Operations consist of IFR/VFR operations conducted to the same or parallel
+runway where an aircraft is operating in a reciprocal direction of another aircraft arriving,
+departing, or conducting an approach.
+
+NOTE-
+Departing aircraft include aircraft conducting a touch-and-go, stop-and-go, low approach,
+missed approach, or go-around.
+
+1-4-2. Responsibilities
+    a. LC and Hart (S56) share the responsibility to coordinate ODO and issue traffic advisories
+         (see below).
+    b. LC is responsible for applying the cutoff point between opposite direction arriving and
+         departing aircraft.
+    c. Hart is responsible for applying the cutoff point between opposite direction arrival
+         aircraft.
+
+1-4-3. IFR Aircraft Procedures
+    a. General:
+              (1) Traffic advisories must be issued to all ODO aircraft.
+
+                   PHRASEOLOGY-
+                   OPPOSITE DIRECTION TRAFFIC (distance) MILE FINAL, (type aircraft).
+                   OPPOSITE DIRECTION TRAFFIC DEPARTING RUNWAY (number), (type
+                   aircraft).
+                   OPPOSITE DIRECTION TRAFFIC (position), (type aircraft).
+
+              (2) VFR aircraft conducting practice approaches must receive IFR services.
+              (3) Opposite direction, same or parallel runway, operations with opposing traffic
+
+                   inside the cutoff point are prohibited.
+              (4) Lateral separation must exist before any other type of separation is applied.
+    b. Coordination:
+              (1) LC must verbally request opposite direction departures with S56.
+              (2) S56 must verbally request opposite direction arrivals with LC.
+              (3) Initial coordination must include callsign, type, and arrival/departure runway. The
+
+                   phrase "opposite direction" must be used.
+    c. Cutoff procedures for aircraft conducting ODO to the same runway:
+
+NOTE-
+When both aircraft are receiving IFR services, visual separation is not authorized.
+
+Not for real world use.                    4
+              (1) A departing aircraft must be airborne and have turned to avoid conflict prior to an
+                   aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+              (2) An arriving aircraft must cross the runway threshold prior to an aircraft reaching:
+                        (a) A point five flying miles from the threshold of the runway of intended
+                             landing or, if an aircraft is established in the traffic pattern, prior to that
+                             aircraft turning base leg.
+                        (b) If the above conditions are not met, action must be taken to ensure
+                             control instructions are issued to protect the integrity of the cutoff points.
+
+    d. Cutoff procedures for aircraft conducting ODO to parallel runways:
+              (1) Provide a turn away from the opposing arriving traffic before the arrival is inside
+                   of the cutoff point to the other runway. The same cutoff points in subparagraph c.
+                   must apply.
+
+NOTE-
+1. Visual separation of any type may be applied after the turn away from opposing traffic is
+issued.
+2. Prior to a pilot providing visual separation, a heading with at least 15° angular difference
+between the aircraft's flight paths must be assigned to ensure flight paths do not cross.
+
+1-4-4. VFR Aircraft With ODO Operations In Effect Procedures
+    a. Ensure VFR aircraft are issued a turn to avoid conflict with the opposing IFR/VFR traffic.
+    b. During coordination, the phrase "opposite direction" must be used.
+    c. LC must issue traffic information to both aircraft and indicate the direction that the
+         departure will turn (arrival/departure ODO) or the location of the opposing aircraft on final
+         (arrival/arrival ODO).
+
+Not for real world use.                    5
+                      Chapter 2: Tower Operational Positions
+
+                                 Section 1. Clearance Delivery
+
+2-1-1. Responsibilities
+    a. Monitor the CD frequency (124.100/335.80 MHz).
+    b. Prepare and update flight progress strips in accordance with the ZLC Flight Strip
+         Handling Directive (7210.3).
+    c. Issue departure clearances to IFR aircraft in accordance with posted traffic management
+         initiatives (TMIs), letters of agreement (LOAs), and published preferred routes.
+    d. Issue departure clearances to VFR aircraft.
+    e. Assume other clearance delivery or other cab responsibilities, as assigned.
+
+2-1-2. IFR Departure Routing
+IFR departure aircraft must be routed in accordance with the following procedures:
+
+    a. Except when the flight crew indicates they are unable to accept, all aircraft must be
+         assigned the following SIDs depending on the departure runway:
+              (1) Runway 14: FRMNT#. The DEVLN# may be issued if filed by the aircraft.
+              (2) Runway 32: WLLRD#. The DEVLN# may be issued if filed by the aircraft.
+
+    b. If the flight crew is unable to accept a SID, the aircraft must be instructed to fly the
+         following headings, depending on the runway in use:
+              (1) Runway 14: 290°
+              (2) Runway 32: Runway heading.
+
+2-1-3. IFR Departure Altitudes
+    a. IFR departure aircraft cleared via the DEVLN# SID must be instructed to maintain 9,000
+         feet and expect filed/amended altitude 10 minutes after departure.
+    b. IFR departure aircraft not cleared via the DEVLN# SID must be instructed to maintain
+         the following altitudes, dependent on the runway in use, and expect filed altitude 10
+         minutes after departure:
+              (1) Runway 14: 6,500 feet.
+              (2) Runway 32: 7,000 feet.
+
+2-1-4. VFR Departure Instructions
+    a. VFR departure aircraft must be handled in accordance with the ZLC Flight Strip Handling
+         Directive (7210.3).
+    b. Unless otherwise coordinated with LC, VFR departure aircraft requesting any direction of
+         flight other than westbound must be instructed to expect one of the following VFR
+         transitions/departures:
+              (1) Mountain Road Transition (Northbound or Southbound).
+              (2) I-15 Transition (Northbound or Southbound).
+              (3) MUDFLAT Transition (Westbound)
+
+Not for real world use.                    6
+                                   Section 2. Ground Control
+
+2-2-1. Responsibilities
+    a. Monitor the GC frequency (121.600/275.80 MHz).
+    b. Ensure all taxiing aircraft have the current ATIS.
+    c. Mark FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    d. Assume other ground control responsibilities, as assigned.
+    e. Assume CD responsibilities when combined.
+
+2-2-2. Area of Jurisdiction
+GC has jurisdiction of all taxiways in the movement area.
+
+2-2-3. Traffic Flow
+GC must ensure all aircraft yield to aircraft exiting a runway, unless otherwise coordinated with
+LC.
+
+2-2-4. ATIS
+GC must ensure all departing aircraft have the current ATIS information prior to communications
+transfer to LC.
+
+2-2-5. Procedures
+    a. Hill AFB assigned aircraft and tow vehicles are authorized to taxi and tow on their
+         respective ramps, including USFS on the Alert Ramp and other parking areas approved
+         by AMOPS (i.e., hot pads) without prior ATC permission. ATC permission must be
+         received before taxi or tow operations outside controlled ramp areas.
+    b. Aircraft requiring de-arm shall establish and maintain contact with GC before taxiing from
+         the de-arm area. The Tower establishes preferred taxi routing depending on ground
+         traffic.
+    c. Heavy aircraft are requested to taxi with outboard engines off or idle when possible to
+         reduce FOD potential.
+
+2-2-6. Departure
+    a. Control all taxiing aircraft except those on active runways.
+    b. Approve pushback and start-up clearances.
+    c. Ensure aircraft request taxi clearance with position and ATIS confirmation.
+
+2-2-7. Arrivals
+    a. Aircraft not requiring de-arming after landing shall establish and maintain contact with
+         GC before entering Taxiway Alpha.
+
+Not for real world use.                    7
+                                     Section 3. Local Control
+
+2-3-1. Responsibilities
+    a. Monitor the LC frequency (127.150/263.15 MHz).
+    b. Provide control instructions to aircraft within the LC area of jurisdiction.
+    c. Operate TDW/STARS equipment, as necessary.
+    d. Marks FPSs in accordance with the ZLC Flight Strip Handling Directive (7210.3).
+    e. Assume other local control or other cab responsibilities, as assigned.
+
+2-3-2. Area of Jurisdiction
+LC has jurisdiction of the following:
+
+    a. LC airspace, as depicted in Appendix 1.
+    b. Runway 14/32.
+
+2-3-3. Runway Selection
+Unless otherwise coordinated with Salt Lake City TRACON (S56), the active runway must be
+selected in accordance with the following:
+
+    a. When the tailwind component is 10 knots or less, or the weather is below circling
+         minima, Runway 14 should be used.
+
+    b. When the tailwind component exceeds 10 knots from the north, Runway 32 should be
+         used.
+
+2-3-4. Use of Radar
+When using TDW/STARS, LC must:
+
+    a. Comply with the provisions contained within FAA JO 7110.65 Chapter 5.
+    b. Adjust the range of the radar to display a minimum of 15 NM.
+    c. Display the HIF Tower List.
+
+2-3-5. Departure Procedures
+    a. A "Release Request" (.RR) is required to be sent to the appropriate departure controller
+         for all departing IFR aircraft.
+    b. Departing aircraft must not climb above 6,300 feet until past the departure end of the
+         runway when another aircraft is conducting the overhead maneuver.
+    c. Departing VFR aircraft that will remain outside of the Ogden Class D airspace (see
+         Appendix 1):
+              (1) Must be restricted at or below 7,500 feet until:
+                        (a) Clear of the Hill Class D airspace (see Appendix 1), or;
+                        (b) Communications transfer to S56.
+              (2) May be instructed to depart on course.
+    d. Departing northbound VFR aircraft that will penetrate the Ogden Class D airspace must
+         be restricted below 7,800 feet and communications transferred to Ogden LC (or other
+         appropriate overlying controller).
+
+Not for real world use.                    8
+2-3-6. Arrival Procedures
+    a. IFR arrivals inbound on an IAP to Runway 14 utilize the Hill Arrival Corridor (see
+         Appendix 1B). The Hill Arrival Corridor must not be utilized for any other operation,
+         except as described in 5-8.
+    b. VFR arrivals should enter the Hill Class D on a prescribed VFR transition, or over the
+         Causeway (VPCWY) at 7,500 feet, to enter the traffic pattern.
+    c. VFR arrivals or Category I/II IFR arrivals conducting a visual approach that execute a
+         missed approach/go-around must be instructed to remain in the local traffic pattern, if
+         capable of doing so.
+    d. Except as described in subparagraph b., IFR arrivals that execute a missed
+         approach/go-around must be instructed to comply with one of the following
+         procedures/climbouts, depending on the arrival runway and organization status:
+              (1) Aircraft associated with the Virtual United States Air Force (vUSAF):
+                        (a) Runway 14: Issue Layton climbout.The Layton climbout requires aircraft
+                             to "Track heading 139° until HIF 0.8 DME. Turn right heading 290, remain
+                             within HIF 5.7 DME until passing a heading greater than 256°. Cross HIF
+                             0.8 DME at or below 6,300 feet. Climb and maintain 6,500 feet."
+                        (b) Runway 32: Issue Riverdale climbout. The Riverdale climbout requires
+                             aircraft to "Track heading 319, cross HIF 1.6 DME at or below 6,300.
+                             Climb and maintain 7,000."
+
+PHRASEOLOGY-
+"TALON 14, execute Layton climbout."
+
+              (2) Aircraft not associated with the vUSAF:
+                        (a) Runway 14: "Fly heading 290, climb and maintain 6,500."
+                        (b) Runway 32: "Fly runway heading, climb and maintain 7,000."
+
+    e. For aircraft that execute a missed approach/go-around that will not remain in the local
+         traffic pattern, LC must:
+              (1) Send a Missed Notification (.MA) to the appropriate S56 sector that will be
+                   receiving the aircraft for re-sequencing.
+              (2) Ensure the aircraft does not climb above 6,300 feet until past the departure end
+                   of the runway when another aircraft is conducting the overhead maneuver.
+
+2-3-7. Traffic Pattern Procedures
+    a. Runway 14:
+              (1) Category I aircraft: Right closed traffic at 5,800 feet.
+              (2) Non-Fighter Category II/III aircraft: Right closed traffic at 6,300 feet.
+              (3) Fighter aircraft: Left or Right closed traffic (LC's discretion) at 6,800 feet.
+    b. Runway 32:
+              (1) Category I aircraft: Left closed traffic at 5,800 feet.
+              (2) Non-Fighter Category II/III aircraft: Left closed traffic at 6,300 feet.
+              (3) Fighter aircraft: Left or Right closed traffic (LC's discretion) at 6,800 feet.
+
+Not for real world use.                    9
+NOTE-
+Right breaks are standard for aircraft conducting the overhead maneuver on Runway 32.
+
+2-3-8. Additional vUSAF Procedures
+To the maximum extent possible, LC must understand the following procedures for aircraft
+associated with the vUSAF:
+
+    a. VFR traffic re-entering the traffic pattern following a missed approach/go-around must
+         execute the following procedure depending on their arrival runway:
+              (1) Runway 14:
+                        (a) Fly runway heading until the departure end of the runway, then make a
+                             climbing left turn (towards the mountains) to 6,800 feet and enter a left
+                             downwind.
+              (2) Runway 32:
+                        (a) Fly runway heading to the HIF 2.0 DME, then make a right turn, crossing
+                             I-15 above 6,300 feet.
+                        (b) The fighter will then turn north around the Freeport Center and continue
+                             so their base turn places them 1 NM south of the Ogden Airport (KOGD).
+                        (c) Altitude and airspeed will normally be 6,800 feet and 300 knots,
+                             respectively.
+
+NOTE-
+This procedure is depicted in Appendix 2A.
+
+    b. MUDFLAT recovery:
+              (1) Runway 14:
+                        (a) Maintain 7,300 feet until past KOGD, then descend to pattern altitude
+                             (6,800 feet). Expect left turns.
+              (2) Runway 32:
+                        (a) Proceed to the downwind leg (3 NM west of the runway) at 7,500 feet until
+                             abeam the runway threshold, then enter the overhead maneuver at 6,800
+                             feet with right tums.
+
+2-3-8. VFR Procedures
+    a. VFR Missed Approach:
+             i. To RE-ENTER the Hill traffic pattern from a MISSED APPROACH, the aircraft will
+                   fly runway heading to the Hill TACAN 2 DME, then make a right turn crossing
+                   1-15 above 6,300 'MSL
+            ii. The fighter will then turn north around the Freeport Center and continue so his
+                   base turn places him 1 NM south of the Ogden Airport.
+            iii. Altitude and airspeed will be 6,800'MSL and 300 KIAS, respectively.
+    b. VFR Departure Frequencies
+             i. Handoff to departure control as soon as clear of any possible conflicts
+                        1. S56 - 121.1 OR 135.5
+            ii. If it's a north VFR departure under 7,800 handoff to Ogden FCT
+
+Not for real world use.                    10
+                        1. OGD TWR - 118.7
+    c. VFR Entering Pattern
+
+             i. Enter Class D on prescribed VFR transition to enter traffic pattern to airport at
+                   7,500 off of Causeway 4.
+
+    d. VFR Flight Following
+             i. Ensure all aircraft requiring flight following have the appropriate scratch pad entry
+                   prior to handoff to departure.
+
+    e. VFR Overhead Pattern
+             i. VMC to expedite recovery and landing of fighter-type aircraft The pattern consists
+                   of two 180-degree turns and resembles a race track
+            ii. It begins at approximately 3 to 5 NM from the approach end of the runway at an
+                   altitude of 6800' MSL
+            iii. Normal airspeed for flying initial is 300 KIAS with speed decreasing through the
+                   turns
+            iv. Over the approach end of the runway the pilot makes a 180 degree turn to
+                   downwind, then makes another 180 degree turn to complete the base to final
+                   portion of the pattern
+            v. The pattern is concluded either by a full stop or missed approach
+
+2-3-9. VFR Traffic Pattern Runway 32:
+    a. Light Civil A/C Use Left Closed Pattern @ 5,800
+    b. Larger Than Fighter Type Aircraft Will Use Left Closed Pattern @ 6,300
+    c. For Fighter Type Aircraft:
+             i. Traffic Pattern Alt: 6,800
+            ii. Left-Hand Or Right-Hand Circuits On All Runways (Tower's Choice)
+    d. Right brakes are standard for Runway 32.
+    e. The aircraft executing the MUDFLAT recovery will initially proceed to the downwind leg 3
+         miles west of the runway at 7,500 until it abeams the landing threshold, then enter the
+         overhead pattern at 6,800 right tums.
+    f. Fly over Freeport center on the outside downwind
+             i. Left reentries: Aircraft will enter an outside downwind 3NM west of the field at
+                   6,800 and report a 3-mile initial.
+
+2-3-10. VFR Traffic Pattern Runway 14:
+    a. Light Civil A/C Use Right Closed Pattern @ 5,800
+    b. Larger Than Fighter Type Aircraft Will Use Right Closed Pattern @ 6,300
+    c. For Fighter Type Aircraft:
+             i. Traffic Pattern Alt: 6,800
+            ii. Left-Hand Or Right-Hand Circuits On All Runways (Tower's Choice).
+    d. The aircraft executing the mudflat recovery will initially maintain 7,300 until past Ogden,
+         then descend to pattern altitude 6,800 left turns.
+    e. To remain in a CLOSED PATTERN, after a low/missed approach, the pilot will continue
+         to the end of the runway and make a climbing left turn (towards the mountains) to an
+         altitude of 6800' MSL.
+
+Not for real world use.                    11
+i. This will place him in the pattern on a left downwind.
+ii. Aircraft departing Weber Canyon should be aware of aircraft in this traffic pattern
+
+       due to the aircraft being belly up to the mountains
+
+Not for real world use.                    12
+                               Appendix 1. Airspace
+
+                             Appendix 1A. LC Airspace
+
+NOTE-
+The yellow-colored region represents LC airspace below 7,800 feet MSL. The blue-colored
+region is delegated to Ogden FCT below 7,800 feet MSL.
+
+Not for real world use.                                                                  13
+                           Appendix 1B. Hill Arrival Corridor (HAC)
+
+Not for real world use.                                                  14
+                                 Appendix 2. Traffic Patterns
+
+                           Appendix 2A. Runway 14 (vUSAF Only)
+
+Not for real world use.                                             15
+                           Appendix 2B. Runway 32 (vUSAF Only)
+
+Not for real world use.                                             16
+                         Appendix 3. Mudflat Recovery (vUSAF Only)
+
+                               Appendix 3A. Mudflat Recovery (Chart)
+
+Not for real world use.                                                 17
+                           Appendix 3B. Mudflat Recovery (VFR Map)
+
+Not for real world use.                                                 18
+

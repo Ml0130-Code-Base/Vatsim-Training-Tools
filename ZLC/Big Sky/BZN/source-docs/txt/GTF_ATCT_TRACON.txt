@@ -1,0 +1,135 @@
+                                           Clearance
+
+1. Frequency
+         (1) Great Falls Ground: 121.700
+
+2. Procedures
+         (1) When appropriate, inform pilots of the current ATIS information prior to contacting
+              ground control.
+
+3. IFR Routing
+         (1) Initial Altitude: 13,000.
+         (2) For all aircraft, issue the following headings for radar vectors to their route,
+              dependent on their departure runway:
+                   (a) Runway 3, 35 - Heading 030
+                   (b) Runway 17, 21 - Heading 210
+
+4. Standard Departure Frequencies
+         (1) When appropriate, issue the following frequencies to IFR aircraft:
+                   (a) Great Falls Approach 128.6
+         (2) When appropriate, issue the following frequencies to VFR aircraft requiring radar
+              services after departure:
+                   (a) Great Falls Approach 128.6
+
+5. VFR Routing
+         (1) Not Applicable.
+
+                                            Ground
+
+1. Frequency
+         (1) Great Falls Ground: 121.700
+
+2. Airspace
+         (1) Ground: All movement areas except active runways.
+
+3. Procedures
+         (1) Not applicable.
+4. Departures
+         (1) All aircraft requiring pushback onto the movement area will contact ground prior
+              to pushback and start-up.
+         (2) All aircraft will contact ground with position and ATIS prior to being issued taxi
+              instructions.
+
+5. Arrivals
+         (1) All aircraft will remain on ground frequency until off the movement area.
+
+                                              Local
+
+1. Frequency
+         (1) Great Falls Tower: 118.700
+
+2. Airspace
+         (1) Local: Runways 3/21, 17/35 and GTF Class D airspace.
+
+3. Procedures
+         (1) Runway operations
+                   (a) Use runway 3 (North) during calm wind operations.
+                   (b) Use runway 21 (South) when the tailwind component exceeds 5 knots.
+         (2) LAHSO
+                   (a) Not authorized.
+         (3) Tower Use of Radar:
+                   (a) Full
+
+4. Departures
+         (1) Departure Notification / Releases
+                   (a) Departure Notifications are not required, unless otherwise coordinated by
+                        TRACON.
+                   (b) Departures are automatically released, unless otherwise coordinated by
+                        TRACON.
+  5. Arrivals
+
+    (1) IFR Arrivals
+
+               (a) Circling procedures N/A
+
+    (2) Missed Approach/Go Around
+
+               (a) Acquire the track control for the aircraft conducting a missed approach.
+
+               (b) Send a Missed Notification (.MA) for the aircraft executing an unplanned
+                   Missed Approach/Go Around to the appropriate TRACON sector that will
+                   be receiving the aircraft for re-sequencing.
+
+               (c) VFR aircraft, and/or IFR Category I/II aircraft conducting a visual
+                   approach and executing a Go-Around must be instructed to remain in the
+                   local pattern, if capable of doing so.
+
+               (d) The following is considered Primary Climb-Out procedure and does not
+                   require any special coordination with Approach Control or Strip marking
+                   (Scratchpad entries) other than the basic Missed Notification. Aircraft
+                   must not turn prior to the departure end of the runway.
+                   Handoff/Comm-Change to the appropriate TRACON sector must be
+                   completed no later than 1 mile off the departure end of the runway.
+
+               (e) CLIMB OUT PROCEDURE:
+
+                 (i) North Flow: Heading 030, Maintain 6,000.
+
+                 (ii) South Flow: Heading 210, Maintain 6,000.
+
+               (f) VFR traffic join local pattern.
+
+  6. VFR Operations
+
+    (1) VFR Departures
+
+               (a) Depart on-course.
+
+               (b) Handoff to departure control as soon as clear of any possible conflicts.
+
+                 (i) Great Falls Approach 128.6
+
+               
+
+    (2) VFR Arrivals
+
+               (a) Direct to airport.
+
+    (3) VFR Flight Following
+                   (a) Ensure all aircraft requiring flight following have the appropriate
+                        scratchpad entry prior to handoff to departure.
+
+                                           TRACON
+
+1. Frequency
+         (1) Great Falls Approach 128.600
+
+2. Airspace
+         (1) As depicted up to and including 13,000
+
+3. IFR Procedures
+         (1) North Flow
+                   (a) All arrivals shall be cleared direct GTF VOR or an appropriate IAF.
+         (2) South Flow
+                   (a) All arrivals shall be cleared direct GTF VOR or an appropriate IAF.
+
