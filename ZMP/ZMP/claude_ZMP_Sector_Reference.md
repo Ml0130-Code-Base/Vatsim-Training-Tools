@@ -108,6 +108,86 @@ Two records run the other way, with **M98 owning and ZMP requesting** — the ZM
 
 **Foreign neighbours need manual handoffs.** Toronto Centre (YYZ) and Winnipeg Centre (YWG) both require manual coordination of radar handoffs (7200.1O Sector 01 §4.1.1, Sector 03 §4.3.1), and **VATCAN sectors cannot accept Automated Information Transfer** (7200.1O 3.7.A.6.a). Thunder Bay Terminal is a terminal facility based in YWG Centre and is also manual (Sector 03 §4.3.1).
 
+## The M98 interface — read this before trusting the adjacency table
+
+**Owner caution, 2026-09-01:** the M98 toolset's drill log names ZMP sectors **5, 9 and 10**, and the owner flagged that those may be **event-split / training-environment** sectors rather than the ones that actually overlay M98 day to day. That caution is well-founded in provenance — but the order does not bear out the strong form of it, and the real structure is more useful than either reading.
+
+**The M98 interface is layered, not a flat adjacency.** Walking every sector section of 7200.1O for M98 content gives:
+
+| Sector | Stratum | Documented M98 role | Mentions |
+|---|---|---|---|
+| **10** | low | **"Sector 10 and Minneapolis Approach Control (M98) share a common boundary along the South and Southwestern edge of Sector 10's airspace."** Sequences MSP arrivals over the GEP and BAINY STARs; handles north/northwest M98 departures on the KBREW SID | **19** |
+| **07** | low | Sequences M98 arrivals on KASPR, TWOLF, NITZR, BLUEM; controls M98 departures on the RST SID | 11 |
+| **05** | low | **Delegated the airspace in Attachment A of the ZMP/M98 LOA, 7,000 MSL and below along the common ZMP/M98 boundary, underlying the Sector 06 shelf.** Carries the EAU, MUSCL/KKILR and AGUDE STARs and the BITLR..GEP satellite routing at 6,000 | 7 |
+| **06** | low | "Traffic flow consists mainly of MSP Terminal Area arrival traffic from the east… primary function is the sequencing of MSP Area arrival traffic." EAU, MUSCL, KKILR STARs from the east; AGUDE for satellites | 7 |
+| **08** | low | "Primary functionality is working M98 departures on the SCHEP and ORSKY SIDs" | 7 |
+| **09** | low | Sequences M98 arrivals on TORGY, SKETR and ENCEE; controls M98 departures on SMERF, DARWIN and LEINY | 7 |
+| **16** | high | The FL240-and-above tier over Sector 06. Carries the same EAU / MUSCL-KKILR / AGUDE / BITLR-GEP arrival table | 7 |
+| **17** | high | Sequences M98 arrivals at FL240+; TWOLF at or below FL330 for satellites 0600–2200 local | 7 |
+| **30** | high | M98 satellite arrivals via TWOLF; routes M98 departures out of Sector 18 into ZKC and ZAU | 6 |
+| **36** | **low** | Clears M98 satellite arrivals; hands M98 arrivals to Sector 07 with control for descent to 10,000. **Area 5, `000B242` — a low sector, not part of the high tier** | 5 |
+| 18, 19, 21, 25, 39, 11 | mixed | Secondary or passing references | 2–6 |
+
+### What this actually means
+
+1. **Sectors 05, 09 and 10 all have genuine, documented, day-to-day M98 roles.** Sector 10 is the strongest case in the entire order — it is the only sector whose narrative states a shared common boundary with M98 in words. Sector 05's delegation of "7,000 MSL and below along the common ZMP/M98 boundary" is an explicit airspace grant. **The event-split reading does not hold for these three as a class.**
+
+2. **But the owner's instinct points at something real.** Both **05 and 09 are named in the Chapter 10 MSP/M98 event splits** — "Sector 05 (125.3) may be opened to cover Sector 12's airspace from SFC-230, and/or Sector 09 (125.5) may be opened to cover Sector 18's airspace from SFC-230." So both sectors have **two distinct jobs**: a standing M98 role, and an event role covering a *different* sector's airspace. A drill log entry naming 05 or 09 is ambiguous between them unless the frame says which.
+
+3. **The sector you actually talk to is often the combined parent.** **Sector 06 is normally combined at Sector 16**, and only opens "when traffic levels in Sector 16 approach or exceed moderate volume/complexity" or "to accommodate proposed M98 Area departure traffic." So in day-to-day operations the M98-arrivals-from-the-east job is frequently being done on **133.75 as Sector 16**, not on 134.3 as Sector 06. The same stacking applies elsewhere: 05 sits *underneath* the Sector 06 shelf rather than beside it.
+
+4. **The vNAS adjacency map is incomplete, exactly as this document warned.** It lists 05–10 against M98 and **does not list 16, 17, 30 or 36**, all of which carry substantial M98 procedures. Coordination records are not a boundary map, and absence from them proves nothing.
+
+**Practical rule for the tool:** do not present "faces M98" as a property of a sector without saying *at which stratum* and *in which configuration*. The drill frame must state the sector, its stratum, and whether it is standing or event-split.
+
+> **Unverified.** The owner said they would confirm the 5/9/10 question. The table above is what 7200.1O says; it is not a substitute for that confirmation, and the M98 tool's drill-log provenance is a separate question this document cannot settle.
+
+### The training environment split — owner-supplied, and it resolves the 5/9/10 question
+
+**Owner-supplied 2026-09-01. Not stated in 7200.1O.** This is the configuration the M98 drill log's references to "sectors 5, 9 and 10" actually come from.
+
+In the training environment, **three seats partition the entire Area 2 + Area 3 low tier**:
+
+| Seat | Frequency | Owns | Note |
+|---|---|---|---|
+| **05** | 125.3 | **05, 06, 21** | Area 2 low, less Sector 10 |
+| **09** | 125.5 | **07, 08** | The rest of Area 3 low. **Sector 09 does not own its own airspace.** |
+| **10** | 121.05 | **09, 10** | Its own airspace plus Sector 09's. **Crosses the Area 2 / Area 3 line.** |
+
+**The odd one is Sector 09: you sit it, but you do not work it.** Its own airspace belongs to seat 10; what you actually control from 09 is the rest of the area it belongs to — 07 and 08. Any drill log entry, note or reference that says "sector 9" in a training context therefore means *07 and 08*, not sector 09's airspace.
+
+**Consistency check.** The three bundles cover `05, 06, 07, 08, 09, 10, 21` — exactly the seven low sectors of Areas 2 and 3, with no sector owned twice and none left out. The tool's smoke test asserts this partition, so a future edit that breaks it fails loudly.
+
+**This is not the order's single-scope guidance, and the two must not be conflated:**
+
+| | Training environment (owner) | 7200.1O single-scope |
+|---|---|---|
+| Area 2 | Seat **05** takes 05, 06, 21; seat **10** keeps 10 | Sector 10 combines to 05; Sector 21 combined at 05 (§5.3.2, §5.7.2) |
+| Area 3 | Seat **09** takes 07, 08; **09's own airspace goes to seat 10** | "All sectors can be combined at Sector 07, 18, or 09" (§6.1.2, §6.2.2, §6.3.2) |
+
+The order never moves Sector 09's airspace to Sector 10, and never has a seat own airspace across the Area 2 / Area 3 boundary. **The training split is a separate configuration layered on top of the order, and the order is not wrong — it simply describes a different thing.**
+
+**Why this matters for the tool.** It means "sector" is ambiguous in three distinct ways, and a drill frame has to disambiguate all three:
+
+1. **Which sector's airspace** — 09 the seat versus 09 the airspace.
+2. **Standing or event** — 05 and 09 are also Chapter 10 event-split sectors covering 12's and 18's airspace.
+3. **Which stratum** — the low sector or the high sector above it, since 06 is normally combined at 16.
+
+Encoded as `TRAINING_SPLIT` and `trainingSeatOwning(n)` in the Sector Deck block. The seat picker shows both directions: pick 09 and it says *owns 07, 08*; it also says *in the training split this airspace is worked from seat 10*.
+
+### Procedure names in these sectors that the M98 tool does not carry
+
+Found while walking the M98 interface, and **not present** in `../M98 Training/CLAUDE.md`'s nine turbojet SIDs or its arrival set:
+
+- **`DARWIN`** — named as an M98 departure SID in Sector 09. The M98 tool's SID list is COULT, KBREW, LEINY, ORSKY, RST, SCHEP, SMERF, WLSTN, ZMBRO. `DARWIN` is not among them.
+- **`SKETR`** — named as an M98 arrival STAR in Sector 09.
+- **`EAU` STAR** and **`GEP` STAR** — named as MSP arrivals in Sectors 05, 06, 10 and 16.
+- **`RRAZZ`, `JAGOW`, `FOD`** — arrival fixes in the Sector 30 satellite routing.
+
+These are either genuinely additional procedures, ZMP-side names for arrivals the M98 tool knows by another name, or stale entries in one document or the other. **Not resolved.** Do not add them to either tool's route data until it is clear which.
+
+> Sector 17's narrative writes the arrival as **`NITRZ`**. Every other occurrence in the corpus is `NITZR`. Transcribed as written; it reads as a typo in the order.
+
 ## Reduced separation — the single-site areas
 
 5 NM is the standard everywhere in vZMP. 3 NM is authorised **only** inside the Appendix 02 single-site areas, which exist because of four radar sites: **Empire MI (QJA), Eagle River WI (EGV), Alpena MI (APN), Sawyer MI (SAW)** (7200.1O 3.6).

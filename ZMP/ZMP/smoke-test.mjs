@@ -119,6 +119,53 @@ try {
   assert('zdNeighboursOf is the inverse of NEIGHBOURS',
     ZD.zdNeighboursOf('27').includes('R90') && ZD.zdNeighboursOf('27').includes('ZKC'));
 
+  /* ============ 2b. The M98 interface and the training split ============ */
+  /* The M98 interface is layered; "faces M98" is not a property of a sector alone. */
+  assert('the M98 low tier is all low-stratum sectors',
+    ZD.M98_TIER.low.every(n => ZD.zdStratum(n) === 'low'));
+  assert('the M98 high tier is all high-stratum sectors',
+    ZD.M98_TIER.high.every(n => ZD.zdStratum(n) === 'high'));
+  assert('the two M98 tiers are disjoint',
+    ZD.M98_TIER.low.every(n => !ZD.M98_TIER.high.includes(n)));
+  assert('every sector in the M98 tiers exists',
+    ZD.M98_TIER.low.concat(ZD.M98_TIER.high).every(n => !!ZD.SECTORS[n]));
+  assert('sector 10 is the only one with a stated M98 common boundary',
+    ZD.M98_TIER.boundaryStated.join() === '10');
+  /* the vNAS map is known-incomplete; this guard records which sectors it misses */
+  assert('the sectors missing from the vNAS M98 map are recorded',
+    ZD.M98_TIER.notInVnasMap.every(n => !ZD.NEIGHBOURS.M98.includes(n)));
+
+  /* Chapter 10 event splits — 05 and 09 cover another sector's airspace */
+  assert('two event-split sectors are recorded',
+    Object.keys(ZD.EVENT_SPLIT).sort().join() === '05,09');
+  assert('every event-split target is a real sector',
+    Object.values(ZD.EVENT_SPLIT).every(e => !!ZD.SECTORS[e.covers]));
+  assert('an event-split sector never covers itself',
+    Object.keys(ZD.EVENT_SPLIT).every(k => ZD.EVENT_SPLIT[k].covers !== k));
+
+  /* The training environment split — owner-supplied, not in 7200.1O.
+     It must partition the Area 2 + Area 3 low tier exactly. */
+  const T = ZD.TRAINING_SPLIT;
+  const owned = Object.values(T).flatMap(v => v.owns);
+  const area23low = ZD.AREAS[2].concat(ZD.AREAS[3]).filter(n => ZD.zdStratum(n) === 'low');
+  assert('three training seats', Object.keys(T).length === 3);
+  assert('every training seat is a real sector', Object.keys(T).every(k => !!ZD.SECTORS[k]));
+  assert('every owned sector is a real sector', owned.every(n => !!ZD.SECTORS[n]));
+  assert('no sector is owned by two training seats', new Set(owned).size === owned.length);
+  assert('the training split partitions Area 2 + Area 3 low exactly',
+    owned.slice().sort().join() === area23low.slice().sort().join(),
+    owned.slice().sort().join() + ' vs ' + area23low.slice().sort().join());
+  assert('every owned sector is low stratum', owned.every(n => ZD.zdStratum(n) === 'low'));
+  /* the whole point: seat 09 does not own its own airspace — seat 10 does */
+  assert('seat 09 does not own sector 09', !T['09'].owns.includes('09'));
+  assert('seat 10 owns sector 09', T['10'].owns.includes('09'));
+  assert('trainingSeatOwning resolves 09 to seat 10', ZD.trainingSeatOwning('09') === '10');
+  assert('trainingSeatOwning resolves 07 to seat 09', ZD.trainingSeatOwning('07') === '09');
+  assert('trainingSeatOwning resolves 21 to seat 05', ZD.trainingSeatOwning('21') === '05');
+  assert('trainingSeatOwning returns null outside the split', ZD.trainingSeatOwning('01') === null);
+  assert('the training split records that it is not from the order',
+    /not stated in 7200\.1O/i.test(ZD.TRAINING_SPLIT_SRC));
+
   /* ============ 3. The graded procedures ============ */
   assert('ERAM filter buffers are 1200 / 2200',
     ZD.FILTER_BUFFER.sep1000 === 1200 && ZD.FILTER_BUFFER.sep2000 === 2200);

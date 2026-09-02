@@ -223,6 +223,44 @@ var NEIGHBOURS = {
   CZWG:['25'], CYQT:['25']
 };
 
+/* The M98 interface is LAYERED, and NEIGHBOURS above does not capture it.
+   See claude_ZMP_Sector_Reference.md, "The M98 interface".
+   NEIGHBOURS is a coordination map and is demonstrably incomplete: 16, 17, 30 and 36
+   carry substantial M98 procedures in 7200.1O and appear in none of its M98 records. */
+var M98_TIER = {
+  /* grouped by ACTUAL stratum, read off the ERAM filter — Sector 36 is low (000B242),
+     not high, despite feeding M98 arrivals down to Sector 07. */
+  low:  ['05','06','07','08','09','10','36'],
+  high: ['16','17','30'],
+  /* carry M98 procedures in 7200.1O but appear in NO vNAS M98 coordination record */
+  notInVnasMap:['16','17','30','36'],
+  boundaryStated:['10'],   /* the only sector whose narrative states a common M98 boundary in words */
+  note:'Sector 05 is delegated the ZMP/M98 LOA Attachment A airspace 7,000 MSL and below, underlying the Sector 06 shelf — 05 and 06 are stacked, not side by side. Sector 06 is normally combined at Sector 16.'
+};
+
+/* 7200.1O Chapter 10 — sectors opened during MSP/M98 events to cover ANOTHER sector's
+   airspace. A reference to one of these is ambiguous between its standing role and its
+   event role unless the drill frame says which. */
+var EVENT_SPLIT = {
+  '05':{ covers:'12', band:'SFC-230', split:'MSP/M98 event 3-way' },
+  '09':{ covers:'18', band:'SFC-230', split:'MSP/M98 event 3-way' }
+};
+
+/* THE TRAINING ENVIRONMENT SPLIT — owner-supplied 2026-09-01, NOT in 7200.1O.
+   Three seats partition the whole Area 2 + Area 3 low tier. This is the configuration
+   the M98 drill log's references to "sectors 5, 9 and 10" actually come from.
+   Note sector 09: you SIT it but you do NOT own its airspace — 10 has it. */
+var TRAINING_SPLIT = {
+  '05':{ owns:['05','06','21'], note:'Area 2 low, less Sector 10' },
+  '09':{ owns:['07','08'],      note:'The rest of Area 3 low. Sector 09 does NOT own its own airspace — Sector 10 has it.' },
+  '10':{ owns:['09','10'],      note:'Its own airspace plus Sector 09’s. Crosses the Area 2 / Area 3 line.' }
+};
+var TRAINING_SPLIT_SRC = 'Owner-supplied, 2026-09-01. Not stated in 7200.1O — the order’s single-scope guidance is different (Area 2 combines at 05; Area 3 at 07, 18 or 09).';
+function trainingSeatOwning(n){
+  for(var k in TRAINING_SPLIT){ if(TRAINING_SPLIT[k].owns.indexOf(n) > -1) return k; }
+  return null;
+}
+
 /* 7200.1O 3.2 — ERAM altitude filter buffers */
 var FILTER_BUFFER = { sep1000:1200, sep2000:2200 };
 
@@ -363,6 +401,7 @@ function sectorRows(){
       + '<td class="dim">' + s.filter + '</td>'
       + '<td class="dim">' + s.range + '</td>'
       + '<td class="dim">' + (zdNeighboursOf(n).join(' ') || '-') + '</td>'
+      + '<td class="dim">' + (EVENT_SPLIT[n] ? '<span class="zd-warn">covers ' + EVENT_SPLIT[n].covers + '</span>' : '') + '</td>'
       + '</tr>';
   }).join('');
 }
@@ -373,8 +412,26 @@ function sectionSectors(){
   + '<h2>The sector spine</h2>'
   + '<p class="lede">Thirty-three sectors in six areas. Frequencies are confirmed against two independent sources; the four that disagree are shown as <span class="zd-warn">SOP / vNAS</span> and the tool does not pick one.</p>'
   + '<div class="zd-scroll"><table class="zd-tbl">'
-  + '<thead><tr><th>Sec</th><th>Area</th><th>Freq</th><th>Callsign</th><th>Stratum</th><th>Filter</th><th>Range</th><th>Faces</th></tr></thead>'
+  + '<thead><tr><th>Sec</th><th>Area</th><th>Freq</th><th>Callsign</th><th>Stratum</th><th>Filter</th><th>Range</th><th>Faces</th><th>Event</th></tr></thead>'
   + '<tbody>' + sectorRows() + '</tbody></table></div>'
+  + '<div class="zd-panel"><div class="zd-warn zd-mono" style="font-size:11.5px;">'
+  + '<b>&ldquo;Faces&rdquo; is a coordination map, not a boundary map, and it is incomplete.</b></div>'
+  + '<div class="zd-mono" style="font-size:11.5px;color:var(--dim);margin-top:6px;">'
+  + 'It comes from the vNAS coordination records. Sectors <b style="color:var(--ink)">' + M98_TIER.notInVnasMap.join(', ')
+  + '</b> carry substantial M98 procedures in 7200.1O and appear in none of its M98 records &mdash; absence here proves nothing. '
+  + 'The M98 interface is layered: low <b style="color:var(--ink)">' + M98_TIER.low.join(', ') + '</b>, high <b style="color:var(--ink)">' + M98_TIER.high.join(', ') + '</b>. '
+  + M98_TIER.note + '</div></div>'
+  + '<div class="zd-panel" style="border-color:var(--green)"><b>The training environment split</b>'
+  + '<table class="zd-tbl" style="margin-top:8px;"><thead><tr><th>Seat</th><th>Freq</th><th>Owns</th><th>Note</th></tr></thead><tbody>'
+  + Object.keys(TRAINING_SPLIT).map(function(k){
+      return '<tr><td><b>' + k + '</b></td><td>' + fmtFreq(SECTORS[k].freq) + '</td>'
+        + '<td><b>' + TRAINING_SPLIT[k].owns.join(', ') + '</b></td>'
+        + '<td class="dim">' + TRAINING_SPLIT[k].note + '</td></tr>';
+    }).join('')
+  + '</tbody></table>'
+  + '<div class="zd-mono" style="font-size:11px;color:var(--dim);margin-top:8px;">'
+  + 'Three seats partition the whole Area 2 + Area 3 low tier &mdash; which is exactly the M98-facing tier. '
+  + '<span class="zd-warn">' + TRAINING_SPLIT_SRC + '</span></div></div>'
   + '<div class="zd-panel"><div class="zd-mono" style="font-size:11.5px;color:var(--dim);">'
   + 'Combine point: <b style="color:var(--ink)">Sector ' + COMBINE_POINT.sector + ' on ' + fmtFreq(COMBINE_POINT.freq) + '</b> &mdash; ' + COMBINE_POINT.note
   + '</div></div>'
@@ -493,7 +550,10 @@ function mountAll(){
 window.ZD = {
   version:0, hooks:[],
   SECTORS:SECTORS, AREAS:AREAS, UNDOCUMENTED:UNDOCUMENTED, NON_SECTOR:NON_SECTOR,
-  NEIGHBOURS:NEIGHBOURS, FILTER_BUFFER:FILTER_BUFFER, SEP:SEP,
+  NEIGHBOURS:NEIGHBOURS, M98_TIER:M98_TIER, EVENT_SPLIT:EVENT_SPLIT,
+  TRAINING_SPLIT:TRAINING_SPLIT, TRAINING_SPLIT_SRC:TRAINING_SPLIT_SRC,
+  trainingSeatOwning:trainingSeatOwning,
+  FILTER_BUFFER:FILTER_BUFFER, SEP:SEP,
   INTERIM_WAIVER:INTERIM_WAIVER, INTERIM_NOTE:INTERIM_NOTE,
   AIT_RULES:AIT_RULES, DBC_RULES:DBC_RULES, XFER_CONTROL:XFER_CONTROL,
   COMBINE_POINT:COMBINE_POINT, PRB_CHECKLIST:PRB_CHECKLIST, STANDING:STANDING,
@@ -589,6 +649,24 @@ function frameHtml(){
     + ' &middot; buffer ' + ZD.FILTER_BUFFER.sep1000 + ' ft at 1,000 separation<br>'
     + 'Faces: <b>' + (nb.join(', ') || 'no coordination rule on record') + '</b>'
     + (s.combine ? '<br>Combining: ' + s.combine : '')
+    + (ZD.EVENT_SPLIT[n]
+        ? '<br><span style="color:var(--amber)">Also an event-split sector &mdash; in the '
+          + ZD.EVENT_SPLIT[n].split + ' it is opened to cover <b>Sector ' + ZD.EVENT_SPLIT[n].covers
+          + '</b>&rsquo;s airspace ' + ZD.EVENT_SPLIT[n].band + '. State which role this drill is in.</span>'
+        : '')
+    + (ZD.M98_TIER.notInVnasMap.indexOf(n) > -1
+        ? '<br><span style="color:var(--dim2)">Carries M98 procedures in 7200.1O but appears in no vNAS M98 coordination record.</span>'
+        : '')
+    + (ZD.TRAINING_SPLIT[n]
+        ? '<br><span style="color:var(--green)">Training seat &mdash; owns <b>' + ZD.TRAINING_SPLIT[n].owns.join(', ')
+          + '</b>. ' + ZD.TRAINING_SPLIT[n].note + '</span>'
+        : '')
+    + (function(){
+        var owner = ZD.trainingSeatOwning(n);
+        return (owner && owner !== n)
+          ? '<br><span style="color:var(--dim2)">In the training split this airspace is worked from seat <b>' + owner + '</b>.</span>'
+          : '';
+      })()
     + '</div>';
 }
 
