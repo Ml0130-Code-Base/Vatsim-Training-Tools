@@ -65,16 +65,21 @@ anything that looks one up still works.
 configurations and the four MDW configurations, Final runway responsibility by configuration
 (4-3.b.1), turn-on altitudes and capture points for dual, triple and visual approaches
 (4-4, 4-5, 4-6), beacon blocks (2-4), the airport list with tower position symbols (2-6.d),
-NSAT entry altitudes (6-2.c) and the Appendix A glossary. Empty: the STAR and SID geometry,
-the boundary, the Arrival Descent Area shapes, the MVA map, the ZAU LOA interface and the
-tower LOAs. Partial: the four SSAT altitude matrices in 7-4.
+NSAT entry altitudes (6-2.c) and the Appendix A glossary. Plus, from the community pull below,
+the facility footprint (one polygon, surface–FL150) and the eight field positions. Empty: the
+STAR and SID geometry, the internal sectorisation, the Arrival Descent Area shapes, the MVA
+map, the ZAU LOA interface, the tower LOAs and every handoff identifier. Partial: the four
+SSAT altitude matrices in 7-4, the footprint, the field coordinates.
 
 **AZO** — the six West Wall sectors with callsigns, frequencies and hierarchy (2-2, 2-3,
 Appendix B), the East Wall neighbours, the departure areas for AZO, GRR and MKG (4-4, 5-3,
 6-3), every inter-sector handoff altitude in the order, the ZAU-AZO LOA interface, the local
 rules (TRSA, Class D, noise, control for climb, transfer to tower) and the minimums to
-vector for a visual. Empty: sector boundaries, the TRSA depiction, all procedure geometry,
-the MVA map.
+vector for a visual. Plus, from the community pull below, the TRACON footprint (one polygon
+covering both walls, surface–10,000) and five of the six field positions. Empty: the West Wall
+sector boundaries, the TRSA depiction, all procedure geometry, the MVA map, every handoff
+identifier, and KHLM's coordinates. Partial: the footprint, the field coordinates, the East
+Wall list, the beacon blocks.
 
 ### On the boundary slots, after the 2026-09-02 community-source pull
 
@@ -104,7 +109,29 @@ drawing these shapes **must credit VATGlasses on the page**.
 **One discrepancy to resolve against the orders before relying on the position list:**
 VATGlasses models **four** C90 positions and **three** AZO positions, where AZO 2-2/2-3 define
 **six** West Wall sectors. Fewer positions than the order defines is an owner question, not a
-correction to make here.
+correction to make here. Both tools now record it against their `positions` slot, together
+with the cross-check that came out clean: **all seven modelled frequencies match the orders
+exactly**, so the disagreement is coverage, not accuracy.
+
+**Wired into both tools 2026-09-02.** Each deck carries the polygon as `FOOTPRINT` with
+`inFootprint()`, `underLid()` and `containment()`; the scope draws it; every strip says
+whether it is inside and under the lid; and placing one outside logs a reminder that names
+itself as a reminder. The slots moved to `partial` — `boundary` at C90, `footprint` at AZO —
+and the slots that stayed `empty` gained a line saying the community source does **not** close
+them (`splits` at C90, `boundary` at AZO). **The CC BY-NC-SA attribution is on the page in
+three places** in each tool: the footer, a "where the boundary came from" panel in the data
+map, and a credit line inside the scope SVG. It is a licence obligation — do not remove it.
+
+Two things fell out of the pull that are worth knowing. **AZO's lid is corroborated**: the
+dataset's FL100 ceiling and the SOP Appendix B legend, *"AIRSPACE DELEGATED TO GREAT LAKES
+TRACON AOB 10,000'"*, agree independently, which is why the AZO tool treats the lid as solid
+while still treating the lateral shape as second-tier. And **AZO's footprint covers both
+walls** — its eastern half is ZOB's East Wall — so inside the polygon is not the same as
+inside West Wall airspace, and the tool says so rather than implying otherwise.
+
+**Still missing at both, and it is one `curl`:** no ZAU vNAS record is held anywhere in this
+repository, so C90 and AZO have **no handoff identifier source at all**. Both tools carry a
+`handoff` slot marked empty and naming the endpoint.
 
 ZAU's 19 **en route** sectors *are* fully described with stratums, which matters only if a ZAU
 Center tool is ever built.

@@ -68,10 +68,11 @@ Runway lists are only what the departure-area tables name. A field with no table
 runway list rather than a guessed one. LAN and JXN are East Wall fields (4-9); Detroit-area
 fields and DTW appear only as destinations in coordination rules.
 
-*Coordinates.* The six field positions plotted on the tool's scope come from public airport
-data, **not** from the vZAU document set. They are the only numbers in the tool that are not
-traced to a vZAU paragraph, they are good to about a tenth of a mile, and nothing operational
-is derived from them.
+*Coordinates.* The field positions plotted on the tool's scope come from the **vendored
+VATGlasses ZAU dataset's own airports table** — see §11 — not from the vZAU orders, which
+carry no coordinates. Five of the six plot; **KHLM is not in the dataset**, so it carries no
+coordinates at all rather than a recalled pair, and it does not appear on the scope. Nothing
+operational is derived from any of them.
 
 ## 4. Departure areas — silent coordination
 
@@ -229,11 +230,61 @@ and ZOB.
 | GRIFFIN / WHITECAP | 2,200 ft AGL (3,000 ft MSL) | 3 miles | 5-9 |
 | SHORELINE / LUMBERTOWN | 2,100 ft AGL (2,800 ft MSL) | 3 miles | 6-7 |
 
+## 11. Facility footprint — community source, added 2026-09-02
+
+Not from the orders. From the **VATGlasses ZAU dataset**, vendored at
+`../_shared/source-vatglasses/` and decoded in
+`../_shared/claude_ZAU_Sector_Geometry_Reference.md`. Read
+`../../claude_Community_Geometry_Sources.md` before using it anywhere else.
+
+- **One polygon, surface to FL100, 32 vertices**, extent 41.625–43.685 N / 84.667–87.000 W.
+  Carried in the tool as `FOOTPRINT`, drawn on the scope, tested by `inFootprint()` and
+  `underLid()`.
+- **It covers the whole Great Lakes TRACON — both walls.** Its eastern half is ZOB's East
+  Wall. Being inside the polygon is **not** the same as being in West Wall airspace, and the
+  tool says so rather than implying otherwise.
+- **It is not the West Wall sectorisation.** The dataset models the facility as one shape
+  shared by three positions through an ownership priority chain, so there is no polygon for
+  BELLS, BRONCO, GRIFFIN, WHITECAP, SHORELINE or LUMBERTOWN. `SECTORS` stays empty, the tool
+  never says which sector owns a position, and it never calls a sector boundary crossing.
+- **The lid is corroborated.** The dataset's FL100 ceiling and the SOP Appendix B legend —
+  *"AIRSPACE DELEGATED TO GREAT LAKES TRACON AOB 10,000'"* — are two independent sources
+  agreeing. That is why the tool treats the 10,000 lid as solid while still treating the
+  lateral shape as second-tier.
+- **Trusted because ZAU vARTCC manages the dataset** — the polygon is pushed from the
+  facility's own sector file. It still sits **below the orders**: where the SOP or either LOA
+  disagrees, the document wins, and an owner-supplied boundary supersedes it outright.
+- **Licence CC BY-NC-SA 4.0.** The tool credits VATGlasses in the footer, in the data map and
+  on the scope. That credit is a licence obligation — do not remove it.
+
+**The overlying ZAU sector is 26 KUBBS, 133.200.** The dataset names sector 26 as this
+facility's parent, and LOA 7.f naming *Kubbs* as the sector traffic transitions with
+corroborates it. The orders never state it outright, so it is carried as community-sourced.
+
+**Cross-check on the position list.** The dataset models three West Wall positions and their
+frequencies match 2-2 exactly: 128.400 (GRIFFIN), 119.800 (LUMBERTOWN), 121.200 (BRONCO).
+That it carries three where 2-2 defines six is an owner question, not a correction — the
+order is the authority.
+
+**No handoff identifiers anywhere.** The dataset's position keys (`Z1G`, `Z1R`, `Z1N`) are
+display handles, not STARS IDs. Every handoff ID comes from vNAS, and **no ZAU vNAS record is
+held in this repository**. One pull closes it:
+
+```bash
+curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZAU" -o ZAU_vnas.json
+```
+
+Endpoint verified 2026-09-02 — HTTP 200, 581 KB, carrying `starsId` and
+`singleCharacterStarsId`.
+
 ## Named gaps
 
 | Gap | What closes it |
 |---|---|
-| West Wall sector boundaries | Appendices A and B (chart images), ZAU LOA Appendix A, `vZAU TRACON Boundaries.pdf` |
+| West Wall sector boundaries | Appendices A and B (chart images), ZAU LOA Appendix A, `vZAU TRACON Boundaries.pdf`. **The community dataset does not close this** — it has one shape for the whole TRACON, see §11 |
+| ~~The facility footprint and its ceiling~~ — **closed 2026-09-02**, community-sourced, §11 | VATGlasses ZAU, vendored |
+| Handoff identifiers — STARS IDs, Field E formats | one `curl` against the vNAS ZAU record, §11 |
+| KHLM coordinates | not in the vendored dataset; public airport data or a chart |
 | AZO TRSA lateral and vertical limits | charts.zauartcc.org; the TRSA depiction |
 | Any STAR, SID or approach geometry, and the fixes LYSTR, JAVPO, FENAB, BIV, HLM as coordinates | charts.zauartcc.org — there is no procedure data in the vZAU document set for these fields |
 | Minimum vectoring altitudes | not in the vZAU document set for the West Wall |

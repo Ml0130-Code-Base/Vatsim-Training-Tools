@@ -106,13 +106,15 @@
   <div class="hero">
     <div class="eyebrow">Drill deck</div>
     <h1>Set the seat, build the drill, fly it, bank what it taught.</h1>
-    <p>The Chicago TRACON frame &mdash; positions, combining, configurations, finals, capture points &mdash; carried out of the vZAU documents. The published geometry that flies traffic is not carried yet, and every empty slot says so and names the document that fills it.</p>
+    <p>The Chicago TRACON frame &mdash; positions, combining, configurations, finals, capture points &mdash; carried out of the vZAU documents, and the facility footprint from the ZAU vARTCC's own sector data. The internal sectorisation and the procedure geometry are still not carried, and every empty slot says so and names the document that fills it.</p>
     <div class="note">Skeleton. Nothing here is invented: a number is either traced to a vZAU document by paragraph, or the slot is empty and marked empty. Student notes attach to any section, any table row and any empty slot, and export as Markdown to be folded back into the reference set.</div>
   </div>
   <div class="modnav" id="modnav"></div>
 
   <footer>
     Skeleton tool. Single file, no build step, no network, works from file://. Every operational number traces to the vZAU document set &mdash; see claude_Source_Documents_Index.md and claude_C90_Reference.md.
+    <br><br>
+    Facility footprint and field positions from the <b>VATGlasses ZAU dataset</b>, managed by ZAU vARTCC &mdash; vatglasses.uk, licensed <b>CC BY-NC-SA 4.0</b>. Second-tier data: the facility orders win over it, and an owner-supplied boundary supersedes it.
   </footer>
 
 </div>
@@ -193,7 +195,7 @@ var st = document.createElement('style'); st.textContent = css; document.head.ap
    RRCP 20, RRCP 25, RRCP 35 — so the scope is drawn the same way. */
 var RRCP = {lat:41.98000, lon:-87.92778};
 var COSL = Math.cos(RRCP.lat*Math.PI/180);
-var CX=350, CY=255, SC=4.0;                        /* px centre + px per NM */
+var CX=350, CY=255, SC=5.0;                        /* px centre + px per NM */
 function nmOf(lat,lon){ return {e:(lon-RRCP.lon)*60*COSL, n:(lat-RRCP.lat)*60}; }
 function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
 function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
@@ -307,16 +309,21 @@ var CAPTURE = {
 /* ---------- 6. Airports ----------
    The field list and the tower position symbols are 2-6.d verbatim. Runway
    inventories are deliberately absent: they are not in this order, and a
-   runway list is exactly the kind of thing that must not be guessed. */
+   runway list is exactly the kind of thing that must not be guessed.
+
+   Coordinates come from the vendored VATGlasses ZAU dataset's own airports
+   table, not from the SOP — the same ZAU vARTCC-managed source as the
+   footprint, and second-tier for the same reason. They are here so the scope
+   has something real on it; nothing operational is derived from them. */
 var AIRPORTS = [
-  {icao:'KORD', name:"O'Hare",           tower:'T', note:'ORD North or South tracks display Q (2-6.d)', runways:null},
-  {icao:'KMDW', name:'Midway',           tower:'R', runways:null},
-  {icao:'KPWK', name:'Chicago Executive',tower:'6', runways:null, note:'NSAT procedures 6-4'},
-  {icao:'KDPA', name:'DuPage',           tower:'7', runways:null},
-  {icao:'KARR', name:'Aurora',           tower:'8', runways:null},
-  {icao:'KGYY', name:'Gary',             tower:'9', runways:null},
-  {icao:'KLOT', name:'Lewis',            tower:'5', runways:null},
-  {icao:'KUGN', name:'Waukegan',         tower:'4', runways:null}
+  {icao:'KORD', name:"O'Hare",           tower:'T', lat:41.979594, lon:-87.904186, note:'ORD North or South tracks display Q (2-6.d)', runways:null},
+  {icao:'KMDW', name:'Midway',           tower:'R', lat:41.785983, lon:-87.752425, runways:null},
+  {icao:'KPWK', name:'Chicago Executive',tower:'6', lat:42.114181, lon:-87.901481, runways:null, note:'NSAT procedures 6-4'},
+  {icao:'KDPA', name:'DuPage',           tower:'7', lat:41.906883, lon:-88.248417, runways:null},
+  {icao:'KARR', name:'Aurora',           tower:'8', lat:41.771931, lon:-88.475658, runways:null},
+  {icao:'KGYY', name:'Gary',             tower:'9', lat:41.616272, lon:-87.412789, runways:null},
+  {icao:'KLOT', name:'Lewis',            tower:'5', lat:41.608097, lon:-88.096390, runways:null},
+  {icao:'KUGN', name:'Waukegan',         tower:'4', lat:42.422161, lon:-87.867908, runways:null}
 ];
 
 /* ---------- 7. The four ORD feeder gates ----------
@@ -331,15 +338,66 @@ var GATES = [
   {id:'FARMM', pos:'Y', fix:null, star:null}
 ];
 
-/* ---------- 8. Empty geometry ----------
+/* ---------- 8. The facility footprint ----------
+   From the VATGlasses ZAU dataset, vendored at ../_shared/source-vatglasses/ and decoded in
+   ../_shared/claude_ZAU_Sector_Geometry_Reference.md. The dataset is owned and maintained by
+   ZAU vARTCC, so these polygons come from the facility's own sector file rather than being
+   traced by a third party — but they still sit BELOW the facility orders: where the C90 SOP
+   disagrees, the SOP wins, and an owner-supplied boundary supersedes this one.
+
+   CC BY-NC-SA 4.0. Drawing these shapes obliges the page to credit VATGlasses, which the
+   footer and the data map do.
+
+   WHAT THIS IS: C90 as ONE polygon, surface to FL150, 35 vertices, shared by every position.
+   WHAT IT IS NOT: any internal sectorisation. There is no per-sector shape for any Feeder,
+   Final, Satellite or Departure sector — the dataset expresses the split as an ownership
+   priority chain over the single shape. So this answers "is this inside C90, and under its
+   lid" and never "which sector owns this". */
+var FOOTPRINT = {
+  ceiling:15000,
+  src:'VATGlasses ZAU (ZAU vARTCC-managed), pinned c469b42, pulled 2026-09-02',
+  points:[
+    [42.50000,-88.46111],[42.50000,-88.32889],[42.50000,-88.27500],[42.50000,-87.58333],
+    [42.50000,-87.42944],[42.33472,-87.41389],[42.34000,-87.31667],[42.35694,-87.00000],
+    [42.23611,-87.05833],[42.06889,-87.05944],[42.02556,-87.05833],[41.70000,-87.05833],
+    [41.43417,-87.13417],[41.43111,-87.13667],[41.35028,-87.20194],[41.38056,-87.33056],
+    [41.40556,-87.42778],[41.42500,-87.52611],[41.42222,-87.62222],[41.41444,-87.80083],
+    [41.40861,-87.95389],[41.39722,-88.21667],[41.40222,-88.25000],[41.40972,-88.30139],
+    [41.43444,-88.47917],[41.66250,-88.63889],[41.66389,-88.73333],[41.68056,-88.74583],
+    [41.79333,-88.82000],[41.84722,-88.81944],[41.86861,-88.81889],[42.03111,-88.81972],
+    [42.21583,-88.64889],[42.30944,-88.54444],[42.50000,-88.46111]
+  ]
+};
+var BOUNDARY = FOOTPRINT.points;
+/* Ray casting in degrees. Good enough at this latitude and this scale; the polygon is a
+   published sector-file shape, not a survey, so a metre of projection error is noise. */
+function inFootprint(lat,lon){
+  var p=FOOTPRINT.points, inside=false;
+  for(var i=0,j=p.length-1;i<p.length;j=i++){
+    var yi=p[i][0], xi=p[i][1], yj=p[j][0], xj=p[j][1];
+    if(((yi>lat)!==(yj>lat)) && (lon < (xj-xi)*(lat-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+function underLid(alt){ return alt<=FOOTPRINT.ceiling; }
+/* What the tool may say about a position. Never "which sector" — only inside-and-under. */
+function containment(lat,lon,alt){
+  var inside=inFootprint(lat,lon), under=underLid(alt);
+  return {inside:inside, under:under,
+    text: inside? (under? 'inside the footprint, under the lid'
+                        : 'inside the footprint laterally, above FL150')
+                : 'outside the C90 footprint'};
+}
+
+/* ---------- 8b. Still empty ----------
    Shapes are documented so filling them is mechanical:
    ROUTES[gate]  = {gate:'KUBBS', star:'name', fixes:[{f:'FIX',lat:,lon:,at:,spd:}]}
    DEPS[sid]     = {sid:'NAME', fixes:[{f:'FIX',lat:,lon:}], release:{...}}
-   BOUNDARY      = [{r:radial,d:dme}] around the RRCP
+   SPLITS[sym]   = polygon of that position's delegated airspace — NOT in any source we hold
    ADA[cfg]      = polygon of the Arrival Descent Area for that configuration */
 var ROUTES = {};
 var DEPS = {};
-var BOUNDARY = [];
+var SPLITS = {};
 var ADA = {};
 var MVA = [];
 
@@ -380,7 +438,8 @@ var GLOSSARY = [
    builder refuses to invent anything a slot says is empty. */
 var SLOTS = [
   {id:'positions', title:'Positions, callsigns and frequencies', state:'verified',
-   src:'vZAU C90 TRACON SOP 7110.65C 2-1', note:'All 17 positions.'},
+   src:'vZAU C90 TRACON SOP 7110.65C 2-1',
+   note:'All 17 positions. Cross-checked against the vendored VATGlasses ZAU dataset: the four positions it models — 119.000, 128.200, 135.075, 128.575 — match Z, Sector 1, PLANO and East Departure exactly. That it models four where the order defines seventeen is an owner question, not a correction to make here; the order is the authority.'},
   {id:'combining', title:'Position combining chain', state:'verified',
    src:'vZAU C90 TRACON SOP 7110.65C 2-2', note:'Everything folds to Z, the position that opens first.'},
   {id:'configs', title:'ORD arrival configurations', state:'verified',
@@ -409,8 +468,18 @@ var SLOTS = [
   {id:'deps', title:'Departure procedures (DEPS)', state:'empty',
    src:'ORD MDW STARs.pdf; charts',
    note:'ACCRA and UECKR are named in 5-6 and Appendix D as SIDs whose centrelines Departure separates from; their geometry is not carried.'},
-  {id:'boundary', title:'C90 lateral boundary', state:'empty',
-   src:'vZAU TRACON Boundaries.pdf; vZAU C90 Diagrams.zip'},
+  {id:'boundary', title:'C90 facility footprint and ceiling', state:'partial',
+   src:'VATGlasses ZAU, vendored ../_shared/source-vatglasses/, decoded in ../_shared/claude_ZAU_Sector_Geometry_Reference.md',
+   note:'One polygon, surface to FL150, 35 vertices, drawn on the scope. Community data from the ZAU vARTCC-managed dataset — second-tier, below the SOP, and superseded the moment an owner-supplied or facility-exported boundary arrives. It answers inside-and-under-the-lid and nothing finer.'},
+  {id:'splits', title:'Internal sectorisation — Feeder, Final, Satellite and Departure airspace', state:'empty',
+   src:'vZAU C90 TRACON SOP 7110.65C Appendices C-1 through C-11 and F-1 through F-9 (chart images); vZAU C90 Diagrams.zip',
+   note:'The community dataset does NOT carry this: it models C90 as one shape shared by four positions through an ownership chain, so there is no per-sector polygon to borrow. The engine therefore never says which sector owns a position.'},
+  {id:'coords', title:'Field coordinates', state:'partial',
+   src:'the vendored VATGlasses ZAU airports table',
+   note:'The eight fields plotted on the scope. Not from the SOP, which carries no coordinates; same second-tier community source as the footprint.'},
+  {id:'handoff', title:'Handoff identifiers — STARS IDs and Field E formats', state:'empty',
+   src:'vNAS: https://data-api.vnas.vatsim.net/api/artccs/ZAU',
+   note:'No ZAU vNAS record is held in this repository, and the community dataset carries none — its position keys are display handles, not STARS IDs. One curl closes this; see the geometry reference.'},
   {id:'ada', title:'Arrival Descent Area shapes', state:'empty',
    src:'vZAU C90 TRACON SOP 7110.65C Appendices C-1 through C-11',
    note:'Chart images. The ADA is referenced constantly in the order and cannot be inferred from the text.'},
@@ -459,6 +528,11 @@ function mkAc(o){
     gone:false
   };
   sim.ac.push(a);
+  var c=containment(a.lat,a.lon,a.alt);
+  if(!c.inside)
+    log(esc(a.cs)+' is placed '+c.text+'. Reminder, not a judgement &mdash; the footprint is a community polygon and the tool cannot say whose airspace it is instead.', 'coach');
+  else if(!c.under)
+    log(esc(a.cs)+' is inside the footprint laterally but above the FL150 lid, so it is Center\'s at that altitude.', 'coach');
   return a;
 }
 function acOf(cs){
@@ -581,13 +655,32 @@ function slotLink(id){ var s=slotOf(id); return s? '<span class="dd-cite">('+esc
 function scopeSvg(){
   var s='<svg class="dd-scope" viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">';
   s+='<rect width="700" height="510" fill="#0B120F"/>';
+  /* The facility footprint. One shape, no internal lines, because there are no
+     internal shapes to draw — see FOOTPRINT. */
+  var fp='';
+  for(var v=0;v<FOOTPRINT.points.length;v++){
+    var fq=px(FOOTPRINT.points[v][0], FOOTPRINT.points[v][1]);
+    fp += (v?'L':'M')+fq.x.toFixed(1)+' '+fq.y.toFixed(1);
+  }
+  s+='<path d="'+fp+'Z" fill="rgba(79,224,160,0.045)" stroke="#2C4A3E" stroke-width="1.3"/>';
+  /* Fields, from the same vendored dataset. */
+  for(var f=0;f<AIRPORTS.length;f++){
+    var ap=AIRPORTS[f];
+    if(ap.lat==null) continue;
+    var apq=px(ap.lat,ap.lon);
+    if(apq.x<0||apq.x>700||apq.y<0||apq.y>510) continue;
+    s+='<circle cx="'+apq.x.toFixed(1)+'" cy="'+apq.y.toFixed(1)+'" r="2.5" fill="#4FE0A0"/>';
+    s+='<text x="'+(apq.x+6)+'" y="'+(apq.y+3)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+ap.icao+'</text>';
+  }
   for(var i=0;i<RINGS.length;i++){
     var r=RINGS[i]*SC;
     s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+r+'" fill="none" stroke="#1E2925" stroke-width="1"/>';
     s+='<text x="'+(CX+2)+'" y="'+(CY-r+11)+'" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">RRCP '+RINGS[i]+'</text>';
   }
   s+='<circle cx="'+CX+'" cy="'+CY+'" r="3" fill="#4FE0A0"/>';
-  s+='<text x="'+(CX+7)+'" y="'+(CY+4)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">RRCP</text>';
+  /* RRCP sits about a mile west of KORD, so its label goes below-left to stay
+     clear of the field label. */
+  s+='<text x="'+(CX-30)+'" y="'+(CY+14)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">RRCP</text>';
   /* any routes that exist get drawn; none do yet */
   for(var k in ROUTES){
     if(!ROUTES.hasOwnProperty(k)) continue;
@@ -606,16 +699,21 @@ function scopeSvg(){
     s+='<text x="'+(q.x+8)+'" y="'+(q.y-4)+'" fill="'+col+'" font-family="IBM Plex Mono, monospace" font-size="9.5">'+esc(a.cs)+'</text>';
     s+='<text x="'+(q.x+8)+'" y="'+(q.y+7)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+Math.round(a.alt/100)+' '+Math.round(a.spd)+'</text>';
   }
+  /* CC BY-NC-SA 4.0 obliges the credit to be on the page, not only in a file. */
+  s+='<text x="12" y="20" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">Footprint surface&#8211;FL150. One shape, no internal sectorisation.</text>';
+  s+='<text x="12" y="498" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">Boundary and field positions: VATGlasses ZAU dataset (ZAU vARTCC), CC BY-NC-SA 4.0.</text>';
   s+='</svg>';
   return s;
 }
 function stripHtml(a){
   var rd=rdOf(a.lat,a.lon);
+  var c=containment(a.lat,a.lon,a.alt);
   return '<div class="dd-strip'+(sim.sel===a.cs?' sel':'')+(a.gone?' gone':'')+'" data-cs="'+esc(a.cs)+'">'
     +'<b>'+esc(a.cs)+'</b> '+esc(a.type)+'<br>'
     +esc(a.role)+(a.dest?' &rarr; '+esc(a.dest):'')+'<br>'
     +Math.round(a.alt/100)*100+' ft &middot; '+Math.round(a.spd)+' kt &middot; hdg '+('00'+Math.round(a.hdg)).slice(-3)+'<br>'
-    +'<span class="dd-cite">RRCP '+rd.d.toFixed(1)+' on the '+('00'+Math.round(rd.r)).slice(-3)+'</span>'
+    +'<span class="dd-cite">RRCP '+rd.d.toFixed(1)+' on the '+('00'+Math.round(rd.r)).slice(-3)+'</span><br>'
+    +'<span class="'+(c.inside&&c.under?'dd-cite':'warn')+'">'+c.text+'</span>'
     +(a.notes? '<br><span class="warn">'+esc(a.notes)+'</span>':'')
     +'</div>';
 }
@@ -741,7 +839,8 @@ function liveBody(){
     + '<div class="dd-cmdrow"><input id="dd-cmd" class="dd-cmd" placeholder="AAL123 descend and maintain 6,000, speed 210, heading 090"><button id="dd-go" class="dd-send">Transmit</button></div>'
     + '<div class="dd-quick" id="dd-quick"></div>'
     + '<div id="dd-feed" class="dd-feed"></div>'
-    + '<div class="dd-note">The engine flies heading, speed and altitude. It does not fly a published track: the arrival ladders are an empty slot, so a strip is placed by the bearing and distance from the RRCP you give it. Filling ROUTES is what turns this into a real sequencing drill.</div>';
+    + '<div class="dd-note">The engine flies heading, speed and altitude. It does not fly a published track: the arrival ladders are an empty slot, so a strip is placed by the bearing and distance from the RRCP you give it. Filling ROUTES is what turns this into a real sequencing drill.<br><br>'
+    + 'The scope now draws the facility footprint and each strip says whether it is inside it and under the FL150 lid. That is the whole claim: there is no per-sector polygon in any source we hold, so the tool never says which sector owns a position, and it never calls a boundary crossing. The shape is a community polygon from the ZAU vARTCC\'s own dataset &mdash; it sits below the SOP and an owner-supplied boundary replaces it.</div>';
 }
 function dataBody(){
   var out='';
@@ -758,6 +857,10 @@ function dataBody(){
   var g='';
   for(var k=0;k<GLOSSARY.length;k++) g+='<p style="margin:0 0 6px;font-size:12.5px;"><b class="dd-mono">'+esc(GLOSSARY[k].t)+'</b> &mdash; <span style="color:var(--dim)">'+esc(GLOSSARY[k].d)+'</span></p>';
   return '<div class="dd-panel" data-note="datamap">'+out+'</div>'
+    + '<div class="dd-panel" data-note="attribution"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 8px;">Where the boundary came from</h3>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">The footprint drawn on the scope and the field coordinates come from the <b>VATGlasses ZAU dataset</b> &mdash; <span class="dd-mono">vatglasses.uk</span>, repository <span class="dd-mono">github.com/lennycolton/vatglasses-data</span>, path <span class="dd-mono">data/zau/</span>, pinned at commit <span class="dd-mono">c469b42</span> and pulled 2026-09-02. Vendored at <span class="dd-mono">../_shared/source-vatglasses/</span>; decoded in <span class="dd-mono">../_shared/claude_ZAU_Sector_Geometry_Reference.md</span>.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">The dataset is <b>managed by ZAU vARTCC</b>, not by the VATGlasses team, so the polygon is pushed from the facility\'s own sector file rather than traced by a third party. That is why it may be used here. It is still <b>second-tier</b>: where the C90 SOP disagrees the SOP wins, and an owner-supplied or facility-exported boundary supersedes it outright.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0;">Licence <b>CC BY-NC-SA 4.0</b>. Attribution is required on the page, use is non-commercial, and share-alike binds anything derived from it.</p></div>'
     + '<div class="dd-panel" data-note="glossary"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 8px;">Glossary &mdash; Appendix A</h3>'+g+'</div>';
 }
 
@@ -872,7 +975,8 @@ window.DD = {
   CONFIGS:CONFIGS, MDW_CONFIGS:MDW_CONFIGS, FINALS:FINALS, finalFor:finalFor,
   CAPTURE:CAPTURE, AIRPORTS:AIRPORTS, GATES:GATES, BEACON:BEACON,
   NSAT_ALTS:NSAT_ALTS, SSAT_ALTS:SSAT_ALTS, GLOSSARY:GLOSSARY,
-  ROUTES:ROUTES, DEPS:DEPS, BOUNDARY:BOUNDARY, ADA:ADA, MVA:MVA,
+  ROUTES:ROUTES, DEPS:DEPS, BOUNDARY:BOUNDARY, SPLITS:SPLITS, ADA:ADA, MVA:MVA,
+  FOOTPRINT:FOOTPRINT, inFootprint:inFootprint, underLid:underLid, containment:containment,
   SLOTS:SLOTS, slotOf:slotOf, slotState:slotState, STANDING:STANDING,
   sim:sim, mkAc:mkAc, acOf:acOf, tick:tick, transmit:transmit,
   log:log, logHtml:logHtml, clock:clock, altText:altText, fmtAlt:fmtAlt, esc:esc,
@@ -1047,6 +1151,7 @@ function buildBody(){
     + '</div>'
     + '<div class="dd-panel" data-note="build.gaps"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
     + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is placed by bearing and distance because there is no published track to place it on. Until the arrival ladders exist, the tool cannot check a crossing restriction, a floor, a gate assignment or an in-trail interval &mdash; so it does not pretend to.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">What it <i>can</i> now check is containment: whether the strip is inside the facility footprint and under the FL150 lid. It cannot check which sector owns it, because no source we hold carries a per-sector shape.</p>'
     + '<div class="ddb-room">Room reserved: when ROUTES is filled, the gate selector below drives the track and this panel becomes the validation report.</div>'
     + '</div>';
 }

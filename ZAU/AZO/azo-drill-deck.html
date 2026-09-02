@@ -106,13 +106,15 @@
   <div class="hero">
     <div class="eyebrow">Drill deck</div>
     <h1>Set the sector, build the drill, fly it, bank what it taught.</h1>
-    <p>Kalamazoo ATCT works as <b>Great Lakes Approach</b>, the West Wall of the Great Lakes TRACON. The sectors, the departure areas, the inter-sector altitudes and the ZAU interface are carried from the vZAU documents; the published tracks are not carried yet, and every empty slot says so and names the document that fills it.</p>
+    <p>Kalamazoo ATCT works as <b>Great Lakes Approach</b>, the West Wall of the Great Lakes TRACON. The sectors, the departure areas, the inter-sector altitudes and the ZAU interface are carried from the vZAU documents, and the TRACON footprint from the ZAU vARTCC's own sector data. The West Wall sector boundaries and the published tracks are still not carried, and every empty slot says so and names the document that fills it.</p>
     <div class="note">Skeleton. Nothing here is invented: a number is either traced to a vZAU document by paragraph, or the slot is empty and marked empty.</div>
   </div>
   <div class="modnav" id="modnav"></div>
 
   <footer>
     Skeleton tool. Single file, no build step, no network, works from file://. Every operational number traces to the vZAU document set &mdash; see claude_Source_Documents_Index.md and claude_AZO_Reference.md.
+    <br><br>
+    TRACON footprint and field positions from the <b>VATGlasses ZAU dataset</b>, managed by ZAU vARTCC &mdash; vatglasses.uk, licensed <b>CC BY-NC-SA 4.0</b>. Second-tier data: the facility orders win over it, and an owner-supplied boundary supersedes it.
   </footer>
 
 </div>
@@ -187,24 +189,32 @@ var css = ''
 var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
 /* ---------- 2. Geometry ----------
-   The West Wall has no single published range-ring origin the way C90 does,
-   and the airspace appendices are chart images with no text layer. The scope
-   is therefore anchored on the AZO field and drawn as honest schematic
-   geometry: rings and a bearing rose, with the four primary fields plotted
-   at their published coordinates. Nothing here is a boundary. */
-var AZO0 = {lat:42.23472, lon:-85.55194};        /* KAZO field reference */
-var COSL = Math.cos(AZO0.lat*Math.PI/180);
-var CX=350, CY=255, SC=5.2;                       /* px centre + px per NM */
-function nmOf(lat,lon){ return {e:(lon-AZO0.lon)*60*COSL, n:(lat-AZO0.lat)*60}; }
+   The West Wall has no published range-ring origin the way C90 does, and every
+   airspace appendix in all three documents is a chart image. Two frames are
+   therefore in play and they are deliberately kept apart:
+
+   AZO0  — the KAZO field, which is what bearings and distances are quoted from,
+           because that is how a strip gets placed and how the tool reports it.
+   VIEW  — the centre of the projection, sitting in the middle of the facility
+           footprint so the whole shape fits on the scope. Nothing operational
+           is measured from it.
+
+   Coordinates for both come from the vendored VATGlasses ZAU airports table. */
+var AZO0 = {lat:42.234875, lon:-85.552058};      /* KAZO, vendored dataset */
+var VIEW = {lat:42.66000, lon:-85.83000};        /* projection centre only */
+var COSL = Math.cos(VIEW.lat*Math.PI/180);
+var CX=350, CY=255, SC=3.8;                       /* px centre + px per NM */
+function nmOf(lat,lon){ return {e:(lon-VIEW.lon)*60*COSL, n:(lat-VIEW.lat)*60}; }
 function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
-function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
 function rdToLatLon(r,d){
-  var a=r*Math.PI/180;
-  return {lat:AZO0.lat + (d*Math.cos(a))/60, lon:AZO0.lon + (d*Math.sin(a))/(60*COSL)};
+  var a=r*Math.PI/180, cs=Math.cos(AZO0.lat*Math.PI/180);
+  return {lat:AZO0.lat + (d*Math.cos(a))/60, lon:AZO0.lon + (d*Math.sin(a))/(60*cs)};
 }
+function pxRD(r,d){ var p=rdToLatLon(r,d); return px(p.lat,p.lon); }
 function rdOf(lat,lon){
-  var p=nmOf(lat,lon), d=Math.sqrt(p.e*p.e+p.n*p.n);
-  return {r:(Math.atan2(p.e,p.n)*180/Math.PI+360)%360, d:d};
+  var cs=Math.cos(AZO0.lat*Math.PI/180);
+  var e=(lon-AZO0.lon)*60*cs, n=(lat-AZO0.lat)*60;
+  return {r:(Math.atan2(e,n)*180/Math.PI+360)%360, d:Math.sqrt(e*e+n*n)};
 }
 var RINGS = [10,20,30,40];
 
@@ -248,24 +258,24 @@ var COORD_PAIRS = [
    runway pairs actually used at each field, and nowhere else. A field with no
    table gets no runway list rather than a guessed one.
 
-   The coordinates are field reference points from public airport data, NOT
-   from the vZAU document set — they are here so the scope has something real
-   to plot, and they are the one class of number in this file that is not
-   traced to a vZAU paragraph. They are good to about a tenth of a mile and
-   are not survey data; nothing operational should be derived from them. */
+   The coordinates come from the vendored VATGlasses ZAU dataset's own airports
+   table — the same ZAU vARTCC-managed source as the footprint, and second-tier
+   for the same reason. They are here so the scope has something real to plot;
+   nothing operational is derived from them. A field the dataset does not carry
+   gets no coordinates rather than a recalled pair. */
 var AIRPORTS = [
-  {icao:'KAZO', name:'Kalamazoo/Battle Creek', lat:42.23472, lon:-85.55194, sector:'BELLS/BRONCO',
+  {icao:'KAZO', name:'Kalamazoo/Battle Creek', lat:42.234875, lon:-85.552058, sector:'BELLS/BRONCO',
    runways:['17','35','9','27'], cite:'runway pairs from 4-4'},
-  {icao:'KBTL', name:'Battle Creek', lat:42.30722, lon:-85.25139, sector:'BELLS',
+  {icao:'KBTL', name:'Battle Creek Kellogg', lat:42.307278, lon:-85.251481, sector:'BELLS',
    runways:null, cite:'Class D procedures 4-6; no runway table in this order'},
-  {icao:'KGRR', name:'Gerald R. Ford', lat:42.88083, lon:-85.52278, sector:'GRIFFIN/WHITECAP',
+  {icao:'KGRR', name:'Gerald R. Ford', lat:42.880833, lon:-85.522806, sector:'GRIFFIN/WHITECAP',
    runways:['8L','8R','26L','26R','17','35'], cite:'runway pairs from 5-3'},
-  {icao:'KMKG', name:'Muskegon County', lat:43.16944, lon:-86.23806, sector:'SHORELINE/LUMBERTOWN',
+  {icao:'KMKG', name:'Muskegon County', lat:43.169489, lon:-86.238222, sector:'SHORELINE/LUMBERTOWN',
    runways:['6','24','14','32'], cite:'runway pairs from 6-3'},
-  {icao:'KBIV', name:'West Michigan Regional', lat:42.74250, lon:-86.10722, sector:'GRIFFIN/SHORELINE',
+  {icao:'KBIV', name:'West Michigan Regional', lat:42.743164, lon:-86.105039, sector:'GRIFFIN/SHORELINE',
    runways:null, cite:'named in 5-6 and 6-6'},
-  {icao:'KHLM', name:'Park Township', lat:42.79028, lon:-86.16222, sector:'GRIFFIN/SHORELINE',
-   runways:null, cite:'named in 5-6 and 6-6'}
+  {icao:'KHLM', name:'Park Township', lat:null, lon:null, sector:'GRIFFIN/SHORELINE',
+   runways:null, cite:'named in 5-6 and 6-6; not in the vendored dataset, so it does not plot'}
 ];
 function airportOf(icao){
   icao=(icao||'').toUpperCase();
@@ -326,7 +336,8 @@ var ZAU_IFACE = [
   {what:'Great Lakes releases departures to ZAU for speed and turns up to 30 degrees either side of route', cite:'6.c'},
   {what:'Beacon codes 0200-0277, 4200-4577 and 5500-5537 are allocated internally to Great Lakes Approach', cite:'7.b'},
   {what:'Aircraft transitioning between KUBBS and SHORELINE at or below 10,000 must be level at an appropriate altitude at least 5 NM from the boundary', cite:'7.f'},
-  {what:'ZAU coordinates with each Great Lakes sector, except that LUMBERTOWN/SHORELINE, WHITECAP/GRIFFIN, BELLS/BRONCO and CAPITOL/REYNOLDS are considered combined unless otherwise coordinated', cite:'7.h'}
+  {what:'ZAU coordinates with each Great Lakes sector, except that LUMBERTOWN/SHORELINE, WHITECAP/GRIFFIN, BELLS/BRONCO and CAPITOL/REYNOLDS are considered combined unless otherwise coordinated', cite:'7.h'},
+  {what:'The overlying ZAU sector is 26 KUBBS on 133.200. The vendored dataset names sector 26 as this facility\'s parent, and 7.f naming Kubbs as the sector traffic transitions with corroborates it. Community-sourced &mdash; the orders never say it outright', cite:'VATGlasses ZAU; corroborated by 7.f'}
 ];
 /* 3-7 of the SOP splits the code blocks by wall; the LOA quotes a single
    Great Lakes allocation. Both are carried, and where they differ the
@@ -360,10 +371,63 @@ var VIS_MINIMA = [
   {where:'SHORELINE / LUMBERTOWN', agl:'2,100 ft', msl:'2,800 ft', vis:'3 miles', cite:'6-7'}
 ];
 
-/* ---------- 10. Empty geometry ----------
+/* ---------- 10. The facility footprint ----------
+   From the VATGlasses ZAU dataset, vendored at ../_shared/source-vatglasses/ and decoded in
+   ../_shared/claude_ZAU_Sector_Geometry_Reference.md. The dataset is owned and maintained by
+   ZAU vARTCC, so the polygon comes from the facility's own sector file — but it sits BELOW
+   the orders: where the SOP or either LOA disagrees, the document wins.
+
+   CC BY-NC-SA 4.0. Drawing this shape obliges the page to credit VATGlasses, which the
+   footer and the data map do.
+
+   WHAT THIS IS: the whole Great Lakes TRACON as ONE polygon, surface to FL100, 32 vertices.
+   WHAT IT IS NOT: the West Wall sector boundaries. There is no per-sector shape for BELLS,
+   BRONCO, GRIFFIN, WHITECAP, SHORELINE or LUMBERTOWN in any source we hold — the dataset
+   models the facility as one shape shared by three positions through an ownership chain. So
+   SECTORS stays empty and the engine never says which sector owns a position.
+
+   Worth knowing: the dataset's FL100 ceiling and the SOP Appendix B legend — "AIRSPACE
+   DELEGATED TO GREAT LAKES TRACON AOB 10,000'" — are two independent sources agreeing on
+   the lid. That agreement is the reason the lid is treated as solid while the lateral shape
+   is still treated as second-tier.
+
+   Note the polygon covers BOTH walls: its eastern half is ZOB's East Wall. Being inside it
+   does not mean being in West Wall airspace. */
+var FOOTPRINT = {
+  ceiling:10000,
+  src:'VATGlasses ZAU (ZAU vARTCC-managed), pinned c469b42, pulled 2026-09-02',
+  points:[
+    [42.80000,-87.00000],[42.60417,-86.56250],[42.52389,-86.33833],[42.38333,-86.31667],
+    [42.38722,-86.20028],[42.38889,-86.01389],[42.26667,-86.02083],[42.16250,-86.02500],
+    [41.93333,-85.84167],[41.96667,-85.68333],[41.86667,-85.59444],[41.74167,-85.49167],
+    [41.67083,-85.47083],[41.64028,-85.04722],[41.62500,-84.83333],[41.80000,-84.76667],
+    [41.98694,-84.69528],[42.06250,-84.66667],[42.13833,-84.74444],[42.23333,-84.84167],
+    [42.43611,-84.82500],[42.59917,-85.00000],[42.62500,-85.02778],[42.68333,-85.05000],
+    [42.95000,-85.03333],[42.96667,-85.00000],[43.50000,-85.00000],[43.58667,-84.96361],
+    [43.62806,-85.74167],[43.65111,-86.21667],[43.68500,-87.00000],[42.80000,-87.00000]
+  ]
+};
+function inFootprint(lat,lon){
+  var p=FOOTPRINT.points, inside=false;
+  for(var i=0,j=p.length-1;i<p.length;j=i++){
+    var yi=p[i][0], xi=p[i][1], yj=p[j][0], xj=p[j][1];
+    if(((yi>lat)!==(yj>lat)) && (lon < (xj-xi)*(lat-yi)/(yj-yi)+xi)) inside=!inside;
+  }
+  return inside;
+}
+function underLid(alt){ return alt<=FOOTPRINT.ceiling; }
+function containment(lat,lon,alt){
+  var inside=inFootprint(lat,lon), under=underLid(alt);
+  return {inside:inside, under:under,
+    text: inside? (under? 'inside the TRACON, at or below 10,000'
+                        : 'inside the TRACON laterally, above the 10,000 delegation')
+                : 'outside the Great Lakes TRACON footprint'};
+}
+
+/* ---------- 10b. Still empty ----------
    ROUTES[id] = {id:'', fixes:[{f:'FIX',lat:,lon:,at:,spd:}]}
    DEPS[id]   = {id:'', fixes:[{f:'FIX',lat:,lon:}]}
-   SECTORS[name] = polygon of that sector's lateral boundary */
+   SECTORS[name] = polygon of that West Wall sector's lateral boundary */
 var ROUTES = {};
 var DEPS = {};
 var SECTORS = {};
@@ -372,7 +436,8 @@ var TRSA = null;
 /* ---------- 11. The data map ---------- */
 var SLOTS = [
   {id:'positions', title:'West Wall sectors, callsigns and frequencies', state:'verified',
-   src:'vGreat Lakes 7110.65A 2-2 and Appendix B'},
+   src:'vGreat Lakes 7110.65A 2-2 and Appendix B',
+   note:'Cross-checked against the vendored VATGlasses ZAU dataset: the three positions it models — 128.400, 119.800, 121.200 — match GRIFFIN, LUMBERTOWN and BRONCO exactly. That it models three where 2-2 defines six is an owner question, not a correction to make here; the order is the authority.'},
   {id:'hierarchy', title:'Position hierarchy', state:'verified',
    src:'vGreat Lakes 7110.65A 2-3',
    note:'GRIFFIN is the combined position; BRONCO carries the north/south split; BELLS the MKG/GRR/AZO split; the other three have no hierarchy.'},
@@ -380,8 +445,11 @@ var SLOTS = [
    src:'vGreat Lakes 7110.65A 2-1.b, Appendix B; vZAU-vZOB AZO ATCT LOA 3.b',
    note:'Six sectors are named; only three carry a frequency in the West Wall appendix. The documents spell the sector both CAPITAL (SOP 2-1.b, 4-9) and Capitol (Appendix B, LOA 7.h) — both spellings are in the source set and neither is corrected here.'},
   {id:'coords', title:'Field coordinates', state:'partial',
-   src:'public airport data, not the vZAU document set',
-   note:'The six field positions plotted on the scope. They are the only numbers in the tool that do not trace to a vZAU paragraph, and they exist so the scope has something real on it. Nothing operational is derived from them.'},
+   src:'the vendored VATGlasses ZAU airports table',
+   note:'Five of the six fields plot; KHLM is not in the dataset and therefore carries no coordinates rather than a recalled pair. Not from the vZAU orders, which carry no coordinates — same second-tier community source as the footprint, and nothing operational is derived from it.'},
+  {id:'handoff', title:'Handoff identifiers — STARS IDs and Field E formats', state:'empty',
+   src:'vNAS: https://data-api.vnas.vatsim.net/api/artccs/ZAU',
+   note:'No ZAU vNAS record is held in this repository, and the community dataset carries none — its position keys are display handles, not STARS IDs. One curl closes this; see the geometry reference.'},
   {id:'airports', title:'Fields and their runway pairs', state:'partial',
    src:'vGreat Lakes 7110.65A 4-4, 5-3, 6-3',
    note:'AZO, GRR and MKG runway pairs come out of the departure-area tables. BTL, BIV and HLM have no runway table in this order and carry none.'},
@@ -398,9 +466,12 @@ var SLOTS = [
    src:'vGreat Lakes 7110.65A 3-5, 3-6, 4-2, 4-3, 4-5, 4-6, 5-2, 5-4, 6-2'},
   {id:'minima', title:'Minimums to vector for a visual approach', state:'verified',
    src:'vGreat Lakes 7110.65A 4-10, 5-9, 6-7'},
-  {id:'boundary', title:'Sector boundaries', state:'empty',
+  {id:'footprint', title:'Great Lakes TRACON footprint and ceiling', state:'partial',
+   src:'VATGlasses ZAU, vendored ../_shared/source-vatglasses/, decoded in ../_shared/claude_ZAU_Sector_Geometry_Reference.md',
+   note:'One polygon, surface to 10,000, 32 vertices, drawn on the scope. It covers BOTH walls, so being inside it is not the same as being in West Wall airspace. Community data from the ZAU vARTCC-managed dataset — second-tier, below the orders. Its 10,000 lid and the SOP Appendix B legend agree independently, which is why the lid is trusted further than the lateral shape.'},
+  {id:'boundary', title:'West Wall sector boundaries', state:'empty',
    src:'vGreat Lakes 7110.65A Appendices A and B; ZAU-AZO LOA Appendix A; vZAU TRACON Boundaries.pdf',
-   note:'Chart images with no text layer. The appendix diagram gives the relative arrangement — Lumbertown and Whitecap north, Shoreline and Griffin centre, Bells and Bronco south — and nothing measurable.'},
+   note:'Chart images with no text layer. The appendix diagram gives the relative arrangement — Lumbertown and Whitecap north, Shoreline and Griffin centre, Bells and Bronco south — and nothing measurable. The community dataset does NOT close this: it models the facility as one shape shared by three positions, so there is no per-sector polygon to borrow and the engine never says which sector owns a position.'},
   {id:'trsa', title:'AZO TRSA dimensions', state:'empty',
    src:'charts.zauartcc.org; the AZO TRSA depiction',
    note:'4-3 requires TRSA service inside it; the order never draws it.'},
@@ -425,7 +496,13 @@ function mkAc(o){
     alt:o.alt==null?8000:o.alt, tgtAlt:o.alt==null?8000:o.alt,
     spd:o.spd==null?210:o.spd, tgtSpd:o.spd==null?210:o.spd,
     dest:o.dest||'', rwy:o.rwy||'', from:o.from||'', notes:o.notes||'', gone:false };
-  sim.ac.push(a); return a;
+  sim.ac.push(a);
+  var cn=containment(a.lat,a.lon,a.alt);
+  if(!cn.inside)
+    log(esc(a.cs)+' is placed '+cn.text+'. Reminder, not a judgement &mdash; the footprint is a community polygon and the tool cannot say whose airspace it is instead.', 'coach');
+  else if(!cn.under)
+    log(esc(a.cs)+' is inside the TRACON laterally but above the 10,000 delegation, so it is ZAU\'s at that altitude (SOP Appendix B legend, and the vendored dataset agrees).', 'coach');
+  return a;
 }
 function acOf(cs){
   cs=(cs||'').toUpperCase();
@@ -537,13 +614,26 @@ function codeCheck(code){
 function scopeSvg(){
   var s='<svg class="dd-scope" viewBox="0 0 700 510" xmlns="http://www.w3.org/2000/svg">';
   s+='<rect width="700" height="510" fill="#0B120F"/>';
+  /* The facility footprint: one shape covering BOTH walls, with no internal
+     lines, because there are no internal shapes to draw. */
+  var fp='';
+  for(var v=0;v<FOOTPRINT.points.length;v++){
+    var fq=px(FOOTPRINT.points[v][0], FOOTPRINT.points[v][1]);
+    fp += (v?'L':'M')+fq.x.toFixed(1)+' '+fq.y.toFixed(1);
+  }
+  s+='<path d="'+fp+'Z" fill="rgba(79,224,160,0.045)" stroke="#2C4A3E" stroke-width="1.3"/>';
+  /* Range rings are distance from the AZO field, so they centre on it, not on
+     the projection centre. */
+  var hub=px(AZO0.lat, AZO0.lon);
   for(var i=0;i<RINGS.length;i++){
     var r=RINGS[i]*SC;
-    s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+r+'" fill="none" stroke="#1E2925" stroke-width="1"/>';
-    s+='<text x="'+(CX+2)+'" y="'+(CY-r+11)+'" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">'+RINGS[i]+' NM</text>';
+    s+='<circle cx="'+hub.x.toFixed(1)+'" cy="'+hub.y.toFixed(1)+'" r="'+r.toFixed(1)+'" fill="none" stroke="#1E2925" stroke-width="1"/>';
+    s+='<text x="'+(hub.x+2)+'" y="'+(hub.y-r+11)+'" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">'+RINGS[i]+' NM</text>';
   }
   for(var f=0;f<AIRPORTS.length;f++){
-    var ap=AIRPORTS[f], p=px(ap.lat,ap.lon);
+    var ap=AIRPORTS[f];
+    if(ap.lat==null) continue;
+    var p=px(ap.lat,ap.lon);
     if(p.x<0||p.x>700||p.y<0||p.y>510) continue;
     s+='<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="2.5" fill="#4FE0A0"/>';
     s+='<text x="'+(p.x+6)+'" y="'+(p.y+3)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+ap.icao+'</text>';
@@ -559,17 +649,20 @@ function scopeSvg(){
     s+='<text x="'+(q.x+8)+'" y="'+(q.y-4)+'" fill="'+col+'" font-family="IBM Plex Mono, monospace" font-size="9.5">'+esc(a.cs)+'</text>';
     s+='<text x="'+(q.x+8)+'" y="'+(q.y+7)+'" fill="#6F8079" font-family="IBM Plex Mono, monospace" font-size="9">'+Math.round(a.alt/100)+' '+Math.round(a.spd)+'</text>';
   }
-  s+='<text x="12" y="20" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">Schematic. Fields at published coordinates; no sector boundary is carried.</text>';
+  s+='<text x="12" y="20" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">TRACON footprint surface&#8211;10,000, both walls. No West Wall sector boundary is carried.</text>';
+  s+='<text x="12" y="498" fill="#455049" font-family="IBM Plex Mono, monospace" font-size="9">Boundary and field positions: VATGlasses ZAU dataset (ZAU vARTCC), CC BY-NC-SA 4.0.</text>';
   s+='</svg>';
   return s;
 }
 function stripHtml(a){
   var rd=rdOf(a.lat,a.lon);
+  var cn=containment(a.lat,a.lon,a.alt);
   return '<div class="dd-strip'+(sim.sel===a.cs?' sel':'')+(a.gone?' gone':'')+'" data-cs="'+esc(a.cs)+'">'
     +'<b>'+esc(a.cs)+'</b> '+esc(a.type)+'<br>'
     +esc(a.role)+(a.dest?' &rarr; '+esc(a.dest):'')+'<br>'
     +Math.round(a.alt/100)*100+' ft &middot; '+Math.round(a.spd)+' kt &middot; hdg '+('00'+Math.round(a.hdg)).slice(-3)+'<br>'
-    +'<span class="dd-cite">'+rd.d.toFixed(1)+' NM on the '+('00'+Math.round(rd.r)).slice(-3)+' from AZO</span>'
+    +'<span class="dd-cite">'+rd.d.toFixed(1)+' NM on the '+('00'+Math.round(rd.r)).slice(-3)+' from AZO</span><br>'
+    +'<span class="'+(cn.inside&&cn.under?'dd-cite':'warn')+'">'+cn.text+'</span>'
     +(a.notes?'<br><span class="warn">'+esc(a.notes)+'</span>':'')
     +'</div>';
 }
@@ -688,7 +781,8 @@ function liveBody(){
     + '<div class="dd-cmdrow"><input id="dd-cmd" class="dd-cmd" placeholder="N123AB descend and maintain 7,000, speed 210, heading 090"><button id="dd-go" class="dd-send">Transmit</button></div>'
     + '<div class="dd-quick" id="dd-quick"></div>'
     + '<div id="dd-feed" class="dd-feed"></div>'
-    + '<div class="dd-note">The engine flies heading, speed and altitude, and reminds you of the published altitude a destination owes the next sector. It does not fly a published track and it does not know where a boundary is, so it never asserts that one was crossed.</div>';
+    + '<div class="dd-note">The engine flies heading, speed and altitude, and reminds you of the published altitude a destination owes the next sector. It does not fly a published track.<br><br>'
+    + 'The scope draws the TRACON footprint and each strip says whether it is inside it and at or below the 10,000 delegation. That is the whole claim. The footprint covers <b>both walls</b>, so inside it is not the same as inside West Wall airspace, and there is no per-sector shape in any source we hold &mdash; so the tool never says which sector owns a position and never calls a sector boundary crossing. The shape is a community polygon from the ZAU vARTCC\'s own dataset; it sits below the orders and an owner-supplied boundary replaces it.</div>';
 }
 function dataBody(){
   var order={verified:0, partial:1, empty:2}, out='';
@@ -700,7 +794,11 @@ function dataBody(){
       +(s.note? '<p>'+esc(s.note)+'</p>':'')
       +'<div class="dd-cite">'+esc(s.src)+'</div></div>';
   }
-  return '<div class="dd-panel" data-note="datamap">'+out+'</div>';
+  return '<div class="dd-panel" data-note="datamap">'+out+'</div>'
+    + '<div class="dd-panel" data-note="attribution"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 8px;">Where the footprint came from</h3>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">The footprint drawn on the scope and the field coordinates come from the <b>VATGlasses ZAU dataset</b> &mdash; <span class="dd-mono">vatglasses.uk</span>, repository <span class="dd-mono">github.com/lennycolton/vatglasses-data</span>, path <span class="dd-mono">data/zau/</span>, pinned at commit <span class="dd-mono">c469b42</span> and pulled 2026-09-02. Vendored at <span class="dd-mono">../_shared/source-vatglasses/</span>; decoded in <span class="dd-mono">../_shared/claude_ZAU_Sector_Geometry_Reference.md</span>.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">The dataset is <b>managed by ZAU vARTCC</b>, not by the VATGlasses team, so the polygon is pushed from the facility\'s own sector file rather than traced by a third party. That is why it may be used here. It is still <b>second-tier</b>: where the SOP or either letter of agreement disagrees, the document wins, and an owner-supplied boundary supersedes it outright.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0;">Licence <b>CC BY-NC-SA 4.0</b>. Attribution is required on the page, use is non-commercial, and share-alike binds anything derived from it.</p></div>';
 }
 function mountAll(){
   var wrap=document.querySelector('.wrap');
@@ -784,7 +882,8 @@ function wireLive(){
 /* ---------- 15. Export ---------- */
 window.DD = {
   version:0, skeleton:true, facility:'AZO', hooks:[],
-  AZO0:AZO0, RINGS:RINGS, px:px, pxRD:pxRD, nmOf:nmOf, rdOf:rdOf, rdToLatLon:rdToLatLon,
+  AZO0:AZO0, VIEW:VIEW, RINGS:RINGS, px:px, pxRD:pxRD, nmOf:nmOf, rdOf:rdOf, rdToLatLon:rdToLatLon,
+  FOOTPRINT:FOOTPRINT, inFootprint:inFootprint, underLid:underLid, containment:containment,
   POSITIONS:POSITIONS, POS:POS, posOf:posOf, posName:posName, EAST_WALL:EAST_WALL, COORD_PAIRS:COORD_PAIRS,
   AIRPORTS:AIRPORTS, airportOf:airportOf, DEP_AREAS:DEP_AREAS, HANDOFF_ALTS:HANDOFF_ALTS,
   ZAU_IFACE:ZAU_IFACE, BEACON:BEACON, LOCAL:LOCAL, VIS_MINIMA:VIS_MINIMA,
@@ -865,7 +964,7 @@ function buildBody(){
     + '<div class="dd-bar"><button id="ddb-place" class="dd-send">Place the strip</button><button id="ddb-clear">Clear the drill</button></div>'
     + '<div id="ddb-valid" class="dd-note"></div></div>'
     + '<div class="dd-panel"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
-    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">There are no published tracks and no sector boundaries in the document set, so a strip is placed by bearing and distance and flies a heading. What the tool can check is the altitude a destination owes the next sector, and whether a beacon code is inside the allocated block.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">There are no published tracks and no West Wall sector boundaries in any source we hold, so a strip is placed by bearing and distance and flies a heading. What the tool can check is the altitude a destination owes the next sector, whether a beacon code is inside the allocated block, and whether the strip is inside the TRACON footprint and under the 10,000 delegation.</p>'
     + '<div class="ddb-room">Room reserved: when the sector boundaries and the TRSA are traced, this panel becomes the validation report.</div></div>';
 }
 function notesBody(){

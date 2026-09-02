@@ -251,7 +251,47 @@ them off the rendered page. The prose alongside them **is** carried:
 - **North / Center / South Runway** — the northernmost, middle and southernmost arrival
   runway in use.
 
-## 12. Other general procedures worth knowing
+## 12. Facility footprint — community source, added 2026-09-02
+
+Not from the SOP. From the **VATGlasses ZAU dataset**, vendored at
+`../_shared/source-vatglasses/` and decoded in
+`../_shared/claude_ZAU_Sector_Geometry_Reference.md`. Read
+`../../claude_Community_Geometry_Sources.md` before using it anywhere else.
+
+- **One polygon, surface to FL150, 35 vertices**, extent 41.350–42.500 N / 87.000–88.820 W.
+  Carried in the tool as `FOOTPRINT`, drawn on the scope, and tested by `inFootprint()` and
+  `underLid()`.
+- **It is not a sectorisation.** The dataset models C90's four positions as an ownership
+  priority chain over that single shape, so there is no polygon for any Feeder, Final,
+  Satellite or Departure sector. The tool answers *inside the facility, under the lid* and
+  never *which sector owns this*, and never calls a boundary crossing.
+- **Trusted because ZAU vARTCC manages the dataset** — the polygon is pushed from the
+  facility's own sector file rather than traced by a third party. It is still **second-tier**:
+  where this order disagrees the order wins, and an owner-supplied or facility-exported
+  boundary supersedes it outright.
+- **Licence CC BY-NC-SA 4.0.** The tool credits VATGlasses in the footer, in the data map and
+  on the scope itself. That credit is a licence obligation, not decoration — do not remove it.
+- **Field coordinates** for the eight fields in §7 come from the same dataset's airports
+  table, for the same reason and with the same standing.
+
+**Cross-check on the position list.** The dataset models four C90 positions and their
+frequencies match this order exactly: 119.000 (Z), 128.200 (Sector 1), 135.075 (PLANO),
+128.575 (East Departure). That it carries four where 2-1 defines seventeen is an owner
+question, not a correction — the order is the authority.
+
+**No handoff identifiers anywhere.** The dataset's position keys (`O1Z`, `O1B`, `O1S`, `O1X`)
+are display handles, not STARS IDs. Every handoff ID comes from vNAS, and **no ZAU vNAS record
+is held in this repository**. One pull closes it:
+
+```bash
+curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZAU" -o ZAU_vnas.json
+```
+
+Endpoint verified 2026-09-02 — HTTP 200, 581 KB, carrying `starsId` and
+`singleCharacterStarsId`. It would also settle the position-count discrepancy above, since
+vNAS enumerates every adapted position.
+
+## 13. Other general procedures worth knowing
 
 - **P-ACP** — prearranged coordination procedures, 3-1. Not transcribed.
 - **Prominent obstruction** — 3-3. Not transcribed; M98's equivalent turned out to be the
@@ -264,7 +304,9 @@ them off the rendered page. The prose alongside them **is** carried:
 | Gap | What closes it |
 |---|---|
 | ORD and MDW STAR/SID geometry — the four gates' fixes, ladders and crossing restrictions | `ORD MDW STARs.pdf`, `ORD and MDW Cheatsheet v3.1.pdf`, charts.zauartcc.org |
-| C90 lateral boundary | `vZAU TRACON Boundaries.pdf`, `vZAU C90 Diagrams.zip` |
+| ~~C90 lateral boundary~~ — **closed 2026-09-02** as a footprint and ceiling only, see §12 | VATGlasses ZAU, vendored |
+| Internal sectorisation — which position owns which piece | Appendices C and F (chart images); **not** in any community source |
+| Handoff identifiers — STARS IDs, Field E formats | one `curl` against the vNAS ZAU record, §12 |
 | Feeder and Final delegated airspace, and the ADA shapes | Appendices C-1 through C-11 (chart images) |
 | SSAT delegated airspace by configuration | Appendices F-1 through F-9 (chart images) |
 | ACCRA/UECKR protection areas and the SSAT climb corridor boundary | Appendix D (chart image) |
