@@ -304,6 +304,68 @@ try {
   assert('the release rule is 25 DME or leaving 11,000',
     globalThis.DD.DEP_RELEASE.dme === 25 && globalThis.DD.DEP_RELEASE.alt === 11000);
 
+  /* ============ 3a-b. Departure gates and scratchpad #1 — M98 7110.26A ============ */
+  /* A gate is the fix a departure exits M98 through, and several SIDs share one.
+     Scratchpad #1 is the gate letter plus the two-digit altitude in thousands. */
+  const GATES = globalThis.DD.DEP_GATES;
+  assert('eight departure gates', Object.keys(GATES).length === 8);
+  assert('the gate letters are the 7110.26A set',
+    Object.keys(GATES).sort().join() === 'A,B,D,E,F,N,O,R');
+  assert('the two dual-fix gates carry their alternate',
+    GATES.B.alt === 'DLH' && GATES.O.alt === 'FOD');
+  assert('every gate names a fix', Object.values(GATES).every(g => !!g.fix));
+
+  const SG = globalThis.DD.SID_GATE;
+  assert('every SID in DEPS has a gate record',
+    Object.keys(SG).sort().join() === Object.keys(globalThis.DD.DEPS).sort().join());
+  assert('every lettered SID points at a real gate',
+    Object.values(SG).filter(g => g.gate).every(g => !!GATES[g.gate]));
+  assert('a SID gate fix matches that gate primary or alternate',
+    Object.values(SG).filter(g => g.gate)
+      .every(g => GATES[g.gate].fix === g.fix || GATES[g.gate].alt === g.fix));
+  assert('every SID carries the bearing the mapping was derived from',
+    Object.values(SG).every(g => typeof g.brg === 'number' && g.brg >= 0 && g.brg < 360));
+
+  /* SMERF and LEINY are drawn on the chart without a gate letter and are absent
+     from the 7110.26A list. They must stay null rather than being assigned one. */
+  assert('SMERF has no gate letter', globalThis.DD.gateForSid('SMERF') === null);
+  assert('LEINY has no gate letter', globalThis.DD.gateForSid('LEINY') === null);
+  assert('exactly two SIDs are ungated',
+    Object.values(SG).filter(g => g.gate === null).length === 2);
+  /* gates A and B are real but no turbojet SID in this set uses them */
+  assert('gates A and B are used by no SID in the turbojet set',
+    !Object.values(SG).some(g => g.gate === 'A' || g.gate === 'B'));
+
+  assert('COULT exits the DLL gate', globalThis.DD.gateForSid('COULT') === 'D');
+  assert('KBREW exits the FAR gate', globalThis.DD.gateForSid('KBREW') === 'F');
+  assert('ZMBRO exits the ODI gate', globalThis.DD.gateForSid('ZMBRO') === 'N');
+  assert('ORSKY and SCHEP share the O gate',
+    globalThis.DD.gateForSid('ORSKY') === 'O' && globalThis.DD.gateForSid('SCHEP') === 'O',
+    'a gate consists of several SIDs — this is the case that proves it');
+
+  /* the chart's own datablock example is BMJ59 / E11 — WLSTN out the EAU gate at 11,000 */
+  assert('scratchpad #1 reproduces the chart example E11',
+    globalThis.DD.scratchpadFor('WLSTN', 11000) === 'E11',
+    globalThis.DD.scratchpadFor('WLSTN', 11000));
+  assert('scratchpad #1 zero-pads a single-digit altitude',
+    globalThis.DD.scratchpadFor('COULT', 9000) === 'D09');
+  /* With no altitude the order's form (b) applies — the THREE-LETTER gate. A bare
+     letter would be one character and CRC will not take it (3-4 alphanumeric). */
+  assert('scratchpad #1 falls back to the three-letter gate, not a bare letter',
+    globalThis.DD.scratchpadFor('RST') === 'RST');
+  assert('the three-letter fallback is the SID own exit fix',
+    globalThis.DD.scratchpadFor('ORSKY') === 'FOD',
+    globalThis.DD.scratchpadFor('ORSKY'));
+  /* every generated entry must be enterable in the client */
+  assert('every generated scratchpad is a valid CRC entry',
+    Object.keys(SG).filter(s => SG[s].gate)
+      .every(s => globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor(s, 11000))
+                && globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor(s))));
+  assert('scratchpadValid rejects a bare gate letter', !globalThis.DD.scratchpadValid('R'));
+  assert('scratchpadValid rejects an over-long entry', !globalThis.DD.scratchpadValid('ABCDE'));
+  assert('scratchpad #1 is null for a SID with no gate, never invented',
+    globalThis.DD.scratchpadFor('SMERF', 12000) === null);
+
   /* ============ 3b. Wake class comes off the type, not off a dropdown ============ */
   const wk = globalThis.DD.wakeOf;
   assert('super is recognised', wk('A388').cls === 'super' && wk('A388').heavy);

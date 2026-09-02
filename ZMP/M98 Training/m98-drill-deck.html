@@ -141,7 +141,353 @@
 /* ================================================================
    DRILL DECK v1 — the live player and the drill library
    Fully self-contained: injects its own CSS, nav links, and sections.
-   Safe to paste as one block before </body> of any version of this tool.
+   Safe to paste as one block before 
+<script>
+/* ================================================================
+   M98 HANDOFF ID RESOLVER v0 — additive extension.
+   Requires the drill deck (window.DD) earlier in the page.
+
+   A handoff ID is a property of the PAIR, not of the receiver. From an
+   M98 seat there are four different forms and the trainee has to pick
+   the right one before they type anything:
+
+     another M98 radar seat   bare sector letter        N
+     an M98 tower or ground   subset + sector           2Y
+     a ZMP sector             C + two-digit sector      C05
+     RST                      delta + number + TCP      `1A
+
+   Values from the vNAS facility record for ZMP (ZMP/_vnas/ZMP_vnas.json,
+   lastUpdatedAt 2026-08-26). Composition rules from docs.virtualnas.net,
+   read 2026-09-01. Both are transcribed, with citations, in
+   claude_ZMP_Handoff_ID_Reference.md — which is authoritative.
+
+   Position names and frequencies are NOT copied here; they are read
+   through window.DD, per CLAUDE.md invariant 5.
+   ================================================================ */
+(function(){
+'use strict';
+
+var DD = window.DD;
+if(!DD){ return; }   /* deck absent — do nothing, per the block contract */
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.ddh-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px;}'
++ '@media(max-width:700px){.ddh-grid{grid-template-columns:1fr;}}'
++ '.ddh-grid label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;}'
++ '.ddh-grid select{width:100%;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 8px;}'
++ '.ddh-out{padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);}'
++ '.ddh-key{font-family:var(--mono);font-size:32px;font-weight:600;color:var(--green);letter-spacing:.06em;line-height:1.2;}'
++ '.ddh-key.none{color:var(--dim2);font-size:17px;}'
++ '.ddh-why{font-size:12.5px;color:var(--dim);margin:6px 0 0;max-width:64ch;}'
++ '.ddh-why b{color:var(--ink);font-weight:600;}'
++ '.ddh-rev{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);}'
++ '.ddh-rev .k{font-family:var(--mono);font-size:17px;color:var(--amber);font-weight:600;}'
++ '.ddh-tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px;}'
++ '.ddh-tbl th{text-align:left;color:var(--dim);font-weight:500;border-bottom:1px solid var(--line);padding:6px 8px;}'
++ '.ddh-tbl td{border-bottom:1px solid var(--line);padding:5px 8px;color:var(--ink);}'
++ '.ddh-tbl td.dim{color:var(--dim);}'
++ '.ddh-tbl tr:hover td{background:var(--panel2);}'
++ '.ddh-id{color:var(--green);font-weight:600;}'
++ '.ddh-warn{color:var(--amber);}'
+;
+
+/* ---------- 2. Handoff data ----------
+   M98 starsConfiguration.tcps joined to positions[].starsConfiguration.tcpId.
+   [sectorId, subset, name, callsign, kind]. kind drives grouping only.
+   EVERY M98 radar seat is subset 1; EVERY tower and ground position is
+   subset 2 or 3 — which is why radar-to-radar is a bare letter and
+   radar-to-tower must carry the subset digit. */
+var M98_TCP = [
+  ['D',1,'North Departure','MSP_D_DEP','radar'],
+  ['R',1,'South Departure','MSP_R_DEP','radar'],
+  ['L',1,'East Departure','MSP_L_DEP','radar'],
+  ['I',1,'North Feeder','MSP_I_APP','radar'],
+  ['H',1,'South Feeder','MSP_H_APP','radar'],
+  ['N',1,'North Final / Arrival','MSP_N_APP','radar'],
+  ['S',1,'South Final / Arrival','MSP_S_APP','radar'],
+  ['J',1,'17/35 West Final / Arrival','MSP_J_APP','radar'],
+  ['E',1,'Flying Cloud Satellite / Midnight','MSP_E_APP','radar'],
+  ['G',1,'St. Paul Satellite','MSP_G_APP','radar'],
+  ['K',1,'Crystal Satellite','MSP_K_APP','radar'],
+  ['A',1,'Arrival Overhead','MSP_A_APP','extra'],
+  ['W',1,'TMU','MSP_W_APP','extra'],
+  ['V',1,'MSP Local Control South','MSP_S_TWR','tower'],
+  ['T',1,'MSP Local Control North','MSP_N_TWR','tower'],
+  ['Y',1,'MSP Local Control West','MSP_W_TWR','tower'],
+  ['Y',2,'MSP Ground — North, South, West and Metering','MSP_*_GND','tower'],
+  ['6',1,'MSP Clearance Delivery','MSP_DEL','tower'],
+  ['P',2,'STP Local Control','STP_TWR','tower'],
+  ['P',3,'STP Ground Control','STP_GND','tower'],
+  ['O',2,'ANE Local Control','ANE_TWR','tower'],
+  ['O',3,'ANE Ground Control','ANE_GND','tower'],
+  ['F',2,'FCM Local Control South','FCM_S_TWR','tower'],
+  ['Z',2,'FCM Local Control North','FCM_N_TWR','tower'],
+  ['F',3,'FCM Ground Control','FCM_GND','tower'],
+  ['M',2,'MIC Local Control','MIC_TWR','tower'],
+  ['M',3,'MIC Ground Control','MIC_GND','tower'],
+  ['9',3,null,null,'empty'], ['Q',1,null,null,'empty'],
+  ['U',1,null,null,'empty'], ['X',1,null,null,'empty']
+];
+
+/* RST starsConfiguration.tcps — the only STARS facility M98 can reach.
+   M98 neighboringFacilityIds is ['RST'] and starsHandoffIds is {RST:1}. */
+var RST_TCP = [
+  ['A',1,'AR-RA','RST_A_APP'], ['W',1,'AR-RW','RST_W_APP'],
+  ['T',1,'Local Control','RST_TWR'], ['F',1,'Ground Control','RST_GND'],
+  ['M',1,null,null]
+];
+var DELTA_OUT = 1;   /* M98 -> RST */
+var DELTA_IN  = 2;   /* RST -> M98, from RST's own starsHandoffIds. NOT the same number. */
+
+/* The ZMP sectors M98 actually interfaces with, per
+   claude_ZMP_Sector_Reference.md "The M98 interface". The low tier is the
+   working interface; the high tier carries M98 procedures in 7200.1O.
+   Any adapted ZMP sector composes identically — these are the ones that
+   come up. */
+var ZMP_IFACE = [
+  ['05','ODI LO — delegated the LOA Attachment A airspace, 7,000 and below','low'],
+  ['06','TWINZ LO — the shelf above 05; normally combined at 16','low'],
+  ['07','FGT LO','low'], ['08','MKT LO','low'], ['09','RWF LO','low'],
+  ['10','GEP LO — the one sector whose common M98 boundary is stated in words','low'],
+  ['36','FOD LO — low tier despite feeding arrivals down to 07','low'],
+  ['16','EAU HI','high'], ['17','MCW HI','high'], ['30','FOD HI','high']
+];
+
+/* eramConfiguration.neighboringStarsConfigurations, the M98 record.
+   This is how ZMP addresses M98 — the inbound direction. */
+var M98_FROM_ZMP = { starsId:'MMM', two:'MM', one:'M', fmt:'OneLetterAndSubset' };
+
+var NAS_ZMP = 'P';   /* used only if M98 ever neighbours an ARTCC whose NAS ID is C */
+
+var OPEN_Q = [
+  { q:'Whether M98 can address any ARTCC other than ZMP',
+    why:'M98 neighboringFacilityIds is RST alone — no ARTCC appears. So the non-host form (NAS ID + sector) has nothing to point at from an M98 seat. Three ZMP TRACONs do neighbour ZAU; M98 is not one of them.',
+    close:'The Controller List with a non-ZMP centre sector online.' },
+  { q:'What the four empty M98 TCPs are for',
+    why:'9.3, Q.1, U.1 and X.1 are adapted TCPs with no position on them. They are valid handoff IDs with nobody behind them.',
+    close:'Owner or facility engineer.' }
+];
+
+/* ---------- 3. Composition ---------- */
+function tcpOf(row){ return String(row[1]) + row[0]; }
+function m98Row(sec, sub){
+  for(var i=0;i<M98_TCP.length;i++){ if(M98_TCP[i][0]===sec && M98_TCP[i][1]===+sub) return M98_TCP[i]; }
+  return null;
+}
+/* Intra-facility: bare sector when the subsets match, subset+sector when they do not. */
+function intra(fromSub, toSec, toSub){
+  var same = (+fromSub === +toSub);
+  return { id: same ? toSec : (String(toSub) + toSec),
+    why: same
+      ? 'Both seats are in <b>subset ' + toSub + '</b>, so the <b>bare sector ID</b> is enough.'
+      : 'You are in subset <b>' + fromSub + '</b> and the receiver is in subset <b>' + toSub + '</b>. '
+        + 'Crossing a subset means the ID must carry <b>subset then sector</b> — <b>' + toSub + toSec + '</b>, not <b>' + toSec + '</b>.' };
+}
+
+/* ---------- 4. Section ---------- */
+function optsM98(exclude){
+  var g = { radar:'M98 radar positions — subset 1', extra:'Adapted in vNAS, not an SOP 2-1 position', tower:'Towers and ground — subsets 2 and 3' };
+  var out = '';
+  for(var k in g){
+    out += '<optgroup label="' + g[k] + '">';
+    for(var i=0;i<M98_TCP.length;i++){
+      var r = M98_TCP[i];
+      if(r[4] !== k || !r[2]) continue;
+      if(exclude && r[0] === exclude[0] && r[1] === exclude[1]) continue;
+      out += '<option value="M|' + r[0] + '|' + r[1] + '">' + esc(r[2]) + ' (' + tcpOf(r) + ')</option>';
+    }
+    out += '</optgroup>';
+  }
+  return out;
+}
+function optsAll(){
+  var out = optsM98(null);
+  out += '<optgroup label="ZMP — host ARTCC">';
+  for(var i=0;i<ZMP_IFACE.length;i++){
+    out += '<option value="Z|' + ZMP_IFACE[i][0] + '">Sector ' + ZMP_IFACE[i][0] + ' — ' + esc(ZMP_IFACE[i][1]) + '</option>';
+  }
+  out += '</optgroup><optgroup label="RST — the only STARS neighbour">';
+  for(var j=0;j<RST_TCP.length;j++){
+    if(!RST_TCP[j][2]) continue;
+    out += '<option value="R|' + RST_TCP[j][0] + '|' + RST_TCP[j][1] + '">RST ' + esc(RST_TCP[j][2]) + ' (' + RST_TCP[j][1] + RST_TCP[j][0] + ')</option>';
+  }
+  return out + '</optgroup>';
+}
+function optsFrom(){
+  /* the seat YOU are working — an M98 position only */
+  return optsM98(null);
+}
+
+function tableM98(){
+  var rows = '';
+  var lastKind = null;
+  var labels = { radar:'Radar positions — subset 1', extra:'Adapted in vNAS, not SOP 2-1', tower:'Towers and ground — subsets 2 and 3', empty:'Adapted TCPs with no position' };
+  for(var i=0;i<M98_TCP.length;i++){
+    var r = M98_TCP[i];
+    if(r[4] !== lastKind){
+      lastKind = r[4];
+      rows += '<tr><td colspan="5" style="background:var(--panel2);color:var(--dim);padding-top:10px;">' + labels[lastKind] + '</td></tr>';
+    }
+    rows += '<tr>'
+      + '<td>' + (r[2] ? esc(r[2]) : '<span class="dim">—</span>') + '</td>'
+      + '<td class="dim">' + esc(r[3] || '') + '</td>'
+      + '<td class="ddh-id">' + tcpOf(r) + '</td>'
+      + '<td>' + (r[1] === 1 ? '<span class="ddh-id">' + r[0] + '</span>' : '<span class="dim">' + r[0] + ' only from subset ' + r[1] + '</span>') + '</td>'
+      + '<td class="dim">' + (r[2] ? M98_FROM_ZMP.one + r[1] + r[0] : '—') + '</td>'
+      + '</tr>';
+  }
+  return '<table class="ddh-tbl"><thead><tr><th>Position</th><th>Callsign</th><th>TCP</th><th>From a subset-1 seat</th><th>From a ZMP sector</th></tr></thead><tbody>'
+    + rows + '</tbody></table>';
+}
+
+function tableRst(){
+  var rows = '';
+  for(var i=0;i<RST_TCP.length;i++){
+    var r = RST_TCP[i];
+    rows += '<tr><td>' + (r[2] ? esc(r[2]) : '<span class="dim">— no position on this TCP</span>') + '</td>'
+      + '<td class="dim">' + esc(r[3] || '') + '</td>'
+      + '<td class="dim">' + r[1] + r[0] + '</td>'
+      + '<td class="ddh-id">' + (r[2] ? '`' + DELTA_OUT + r[1] + r[0] : '—') + '</td></tr>';
+  }
+  return '<table class="ddh-tbl"><thead><tr><th>RST position</th><th>Callsign</th><th>TCP</th><th>You type</th></tr></thead><tbody>'
+    + rows + '</tbody></table>';
+}
+
+function section(){
+  return ''
+  + '<section class="module dd-section" id="mod-handoff" data-mod="handoff" data-note="handoff">'
+  + '<div class="modhead"><div><span class="tag">IDS</span><h2>Handoff IDs</h2>'
+  + '<p class="modsub">Four different forms from one seat — the ID depends on where it is going, not on who is receiving</p></div></div>'
+
+  + '<div class="dd-panel">'
+  + '<div class="dd-sub a">What do I type?</div>'
+  + '<div class="ddh-grid">'
+  + '<div><label for="ddh-from">You are working</label><select id="ddh-from">' + optsFrom() + '</select></div>'
+  + '<div><label for="ddh-to">Handing off to</label><select id="ddh-to">' + optsAll() + '</select></div>'
+  + '</div>'
+  + '<div class="ddh-out" id="ddh-out"></div>'
+  + '</div>'
+
+  + '<div class="dd-panel"><div class="dd-sub">The rules, and the one that catches people</div>'
+  + '<p class="ddh-why"><b>Every M98 radar seat is subset 1. Every tower and ground position is subset 2 or 3.</b> '
+  + 'So radar-to-radar is a bare letter, and radar-to-tower must carry the subset digit. '
+  + 'MSP Local West is <b>Y</b>; MSP Ground is <b>2Y</b>. One digit apart, and they are different people.</p>'
+  + '<p class="ddh-why">The four MSP ground positions — North, South, West and Ground Metering — <b>share one TCP</b>. '
+  + 'A handoff to <b>2Y</b> reaches whoever is working ground and the ID cannot distinguish them.</p>'
+  + '<p class="ddh-why"><b>Δ is the backtick key.</b> M98 reaches RST with <b>`1</b>; '
+  + '<span class="ddh-warn">RST reaches M98 with `2</span> — the handoff number is assigned by the sender, so the pair does not agree.</p>'
+  + '<p class="ddh-why">The receiving sector may be omitted when only one position is open in the receiving ARTCC — '
+  + '<b>C</b> instead of <b>C05</b>. The Controller List always prints the full ID, so the short form is a convenience, '
+  + 'not the thing to learn first.</p>'
+  + '<p class="dd-hint" style="margin-top:8px;">docs.virtualnas.net crc/stars, crc/eram, crc/overview, data-admin/facilities — read 2026-09-01. '
+  + 'Values from the ZMP vNAS record, 2026-08-26. Both transcribed in claude_ZMP_Handoff_ID_Reference.md.</p>'
+  + '</div>'
+
+  + '<div class="dd-panel"><div class="dd-sub">Every M98 TCP</div>' + tableM98() + '</div>'
+  + '<div class="dd-panel"><div class="dd-sub">RST — the only STARS facility M98 can hand off to</div>'
+  + '<p class="ddh-why" style="margin:0 0 8px;">M98 <span class="dd-mono">starsHandoffIds</span> holds exactly one entry. '
+  + 'Every other facility is reached through ZMP.</p>' + tableRst() + '</div>'
+
+  + '<div class="dd-panel"><div class="dd-sub">Not answered by the sources</div>'
+  + OPEN_Q.map(function(o){ return '<p class="ddh-why"><b>' + esc(o.q) + '</b><br>' + esc(o.why)
+      + '<br><span class="dd-hint">Closes on: ' + esc(o.close) + '</span></p>'; }).join('')
+  + '</div>'
+  + '</section>';
+}
+
+/* ---------- 5. Resolve and render ---------- */
+function render(){
+  var f = document.getElementById('ddh-from'), t = document.getElementById('ddh-to');
+  var out = document.getElementById('ddh-out');
+  if(!f || !t || !out) return;
+
+  var fs = f.value.split('|'), ts = t.value.split('|');
+  var fromSec = fs[1], fromSub = +fs[2];
+  var r, rev = '';
+
+  if(ts[0] === 'M'){
+    var toSec = ts[1], toSub = +ts[2];
+    if(toSec === fromSec && toSub === fromSub){
+      r = { id:null, why:'That is the seat you are working. A handoff needs two seats.' };
+    } else {
+      r = intra(fromSub, toSec, toSub);
+      var back = intra(toSub, fromSec, fromSub);
+      rev = 'They reach you with <span class="k">' + back.id + '</span>';
+    }
+  } else if(ts[0] === 'Z'){
+    var zs = ts[1];
+    r = { id:'C' + zs,
+      why:'<b>C</b> is the host-ARTCC prefix and ZMP is M98’s host, then the two-digit sector. '
+        + 'M98 neighbours no ARTCC whose NAS ID is <b>C</b>, so there is no ambiguity here. '
+        + 'Drop the sector — just <b>C</b> — when only one ZMP position is open.' };
+    rev = 'ZMP Sector ' + zs + ' reaches you with <span class="k">' + M98_FROM_ZMP.one + fromSub + fromSec
+      + '</span> — the M98 letter <b>' + M98_FROM_ZMP.one + '</b>, then your subset, then your sector. '
+      + 'It also answers to ' + M98_FROM_ZMP.one + ', ' + M98_FROM_ZMP.starsId + ' and ' + M98_FROM_ZMP.starsId + fromSub + fromSec + '.';
+  } else {
+    var rsec = ts[1], rsub = ts[2];
+    r = { id:'`' + DELTA_OUT + rsub + rsec,
+      why:'RST is a separate STARS system, so the ID is <b>Δ</b> — the backtick key — then M98’s handoff number for RST, '
+        + 'which is <b>' + DELTA_OUT + '</b>, then RST’s TCP <b>' + rsub + rsec + '</b>. '
+        + '<span class="ddh-warn">A point-out cannot cross to another STARS facility</span>, so this is a handoff or nothing.' };
+    rev = 'RST reaches you with <span class="k">`' + DELTA_IN + fromSub + fromSec + '</span> — '
+      + 'note the <b>' + DELTA_IN + '</b>. The number is assigned by the sending facility, so it is not the same in both directions.';
+  }
+
+  out.innerHTML = ''
+    + '<div class="ddh-key' + (r.id ? '' : ' none') + '">' + (r.id ? esc(r.id) : 'no ID — see below') + '</div>'
+    + '<p class="ddh-why">' + r.why + '</p>'
+    + (rev ? '<div class="ddh-rev">' + rev + '</div>' : '');
+}
+
+/* ---------- 6. Mount ---------- */
+function mount(){
+  var style = document.createElement('style');
+  if(!style) return;
+  style.textContent = css;
+  if(document.head) document.head.appendChild(style);
+
+  var host = document.createElement('div');
+  host.innerHTML = section();
+  var sec = host.firstChild;
+  if(!sec) return;
+
+  /* buildPages() moved the existing sections into view wrappers. Land on the
+     reference page if it is there; otherwise fall back to the plain flow. */
+  var view = document.getElementById('ddb-view-notes');
+  if(view && view.appendChild){ view.appendChild(sec); }
+  else {
+    var wrap = document.querySelector('.wrap');
+    if(!wrap) return;
+    var footer = wrap.querySelector('footer');
+    if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+  }
+
+  var f = document.getElementById('ddh-from'), t = document.getElementById('ddh-to');
+  if(f) f.addEventListener('change', render);
+  if(t) t.addEventListener('change', render);
+  if(f) f.value = 'M|H|1';        /* the seat the engine actually flies */
+  if(t) t.value = 'M|N|1';
+  render();
+  /* No DD.log() here on purpose — that feed is the live drill's, and a mount
+     notice does not belong in a transcript the trainee is being graded on. */
+}
+
+window.ddh = {
+  M98_TCP:M98_TCP, RST_TCP:RST_TCP, ZMP_IFACE:ZMP_IFACE, M98_FROM_ZMP:M98_FROM_ZMP,
+  DELTA_OUT:DELTA_OUT, DELTA_IN:DELTA_IN, NAS_ZMP:NAS_ZMP, OPEN_Q:OPEN_Q,
+  intra:intra, m98Row:m98Row, tcpOf:tcpOf
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+
+</body> of any version of this tool.
    ================================================================ */
 (function(){
 'use strict';
@@ -826,6 +1172,80 @@ function inDDA(e, n, cfg){
 
 /* Where each departure gate ultimately runs, from the SID reference's gate
    table. Used to finish a route string past the join fixes M98 works. */
+/* ---------- Departure gates — M98 7110.26A, scratchpad #1 ----------
+   A departure gate is the fix through which an aircraft exits M98 airspace, and
+   SEVERAL SIDs can share one. The gate is not decoration: it is what goes in
+   scratchpad #1 for APO automated coordination, as the gate's first letter
+   followed by the two-digit requested altitude in thousands, "if other than the
+   aircraft's present altitude". The order's own example is B12 — the BRD/DLH
+   gate, assigned 12,000. Scratchpad #1 may instead carry the three-letter gate,
+   or the arrival airport.
+
+   Eight letters, transcribed from M98 7110.26A and confirmed against the owner's
+   "M98 SIDS & Pointout Fix Indicators" chart (owner-supplied 2026-09-01), which
+   also carries the datablock example BMJ59 / E11 / BE85 / G and a 20 NM ring. */
+var DEP_GATES = {
+ A:{fix:'ABR', name:'Aberdeen'},
+ B:{fix:'BRD', name:'Brainerd', alt:'DLH'},
+ D:{fix:'DLL', name:'Dells'},
+ E:{fix:'EAU', name:'Eau Claire'},
+ F:{fix:'FAR', name:'Fargo'},
+ N:{fix:'ODI', name:'Nodine'},
+ O:{fix:'ONL', name:'O’Neill', alt:'FOD'},
+ R:{fix:'RST', name:'Rochester'}
+};
+
+/* Which gate each of the nine turbojet SIDs exits through. Derived, not guessed:
+   each SID's terminal-fix bearing from the MSP VOR was computed and matched to
+   the gate's position on the chart, and every SID_DEST value that already named
+   a gate (DLL, FAR, ODI) agreed. Bearings are carried so the working is visible.
+
+   SMERF and LEINY are the two exceptions and they are deliberate: the chart draws
+   their exit fixes as SME and SMERF/LEI and LEINY WITHOUT a highlighted letter, and
+   neither appears in the 7110.26A list. They get no gate letter — gate is null.
+
+   Gates A (ABR) and B (BRD) have no turbojet SID in this set. They are real gates
+   used by non-SID and prop departures; the absence here is not an omission. */
+var SID_GATE = {
+ WLSTN:{gate:'E', fix:'EAU', brg:58},
+ COULT:{gate:'D', fix:'DLL', brg:115},
+ ZMBRO:{gate:'N', fix:'ODI', brg:134},
+ RST:  {gate:'R', fix:'RST', brg:159},
+ ORSKY:{gate:'O', fix:'FOD', brg:210},
+ SCHEP:{gate:'O', fix:'ONL', brg:234},
+ LEINY:{gate:null, fix:'LEI', brg:274},
+ SMERF:{gate:null, fix:'SME', brg:292},
+ KBREW:{gate:'F', fix:'FAR', brg:312}
+};
+function gateForSid(sid){ var g=SID_GATE[sid]; return g?g.gate:null; }
+function gateFixFor(sid){ var g=SID_GATE[sid]; return g?g.fix:null; }
+/* Build the scratchpad #1 entry. 7110.26A gives three permitted forms:
+     (a) gate letter + two-digit requested altitude in thousands, "if other than
+         the aircraft's present altitude"  — B12
+     (b) the three-letter departure gate                          — BRD
+     (c) the arrival airport
+   A CRC scratchpad is 3 or 4 alphanumeric characters (claude_CRC_Platform_Reference.md),
+   so form (a) with no altitude would be a bare one-character letter and is NOT
+   enterable in the client. With no altitude we therefore return form (b), the
+   three-letter gate, which is both what the order permits and what CRC accepts.
+   Returns null where the SID has no gate letter, rather than inventing one. */
+function scratchpadFor(sid, altFt){
+ var g=gateForSid(sid); if(!g) return null;
+ if(altFt===null||altFt===undefined) return gateFixFor(sid);   /* form (b) */
+ var th=Math.round(altFt/1000);
+ return g + (th<10?'0':'') + th;                               /* form (a) */
+}
+/* Is a string enterable as a CRC scratchpad? 3-4 chars, alphanumeric plus + . * / and
+   backtick. Used to keep any generated entry inside what the client can actually take. */
+function scratchpadValid(s){
+ return typeof s==='string' && s.length>=3 && s.length<=4 && /^[A-Z0-9+.*\/`]+$/i.test(s);
+}
+
+/* Where a SID ends up once it is out of M98. NOTE: this table is inconsistent by
+   inheritance — some values are departure gates (DLL, FAR, ODI), some are the SID
+   fix itself (LEINY, SMERF), some are downstream facilities or airports (GRB, ALO),
+   and some are en route fixes (ONTIJ, RXANN). Use SID_GATE for the gate; this stays
+   for the route text it already feeds. */
 var SID_DEST = {COULT:'DLL', KBREW:'FAR', LEINY:'LEINY', ORSKY:'ONTIJ', RST:'ALO',
                 SCHEP:'RXANN', SMERF:'SMERF', WLSTN:'GRB', ZMBRO:'ODI'};
 /* The route as a fix sequence, built from the coordinate data. Deliberately no
@@ -1955,6 +2375,9 @@ window.DD = {
  FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,
  sayDigits:sayDigits, altimIn:altimIn, simAltim:simAltim,
  routeTextFor:routeTextFor, SID_DEST:SID_DEST,
+ DEP_GATES:DEP_GATES, SID_GATE:SID_GATE,
+ gateForSid:gateForSid, gateFixFor:gateFixFor, scratchpadFor:scratchpadFor,
+ scratchpadValid:scratchpadValid,
  fmtAlt:fmtAlt, clock:clock, log:log, render:render, renderFeed:renderFeed,
  logHtml:logHtml, px:px, pxRD:pxRD, nmOf:nmOf
 };
