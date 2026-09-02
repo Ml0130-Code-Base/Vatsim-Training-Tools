@@ -76,6 +76,28 @@ rules (TRSA, Class D, noise, control for climb, transfer to tower) and the minim
 vector for a visual. Empty: sector boundaries, the TRSA depiction, all procedure geometry,
 the MVA map.
 
+### On the boundary slots, after the 2026-09-02 community-source pull
+
+Read `../claude_Community_Geometry_Sources.md` before moving either boundary slot, because
+what is available is **less than it first looks** and moving a `SLOTS` state too far would be
+exactly the "verified slot with an empty table" failure §11 warns about.
+
+**Available:** each facility's **outer footprint and its ceiling**, from VATGlasses ZAU —
+C90 as one polygon **surface–FL150** (35 vertices), AZO "Great Lakes" as one polygon
+**surface–FL100** (32 vertices). SimAware additionally splits the AZO footprint into `AZO` and
+`LAN` polygons. That answers *is this inside the facility, and under its lid*.
+
+**Not available:** **the internal sectorisation of either TRACON.** VATGlasses expresses C90's
+four positions (`O1Z`, `O1B`, `O1S`, `O1X`) and AZO's three (`Z1G`, `Z1R`, `Z1N`) as an
+*ownership priority chain over one shared polygon* — there is no per-sector shape. So **AZO's
+six West Wall sector boundaries and C90's internal splits remain empty**, and so do the TRSA
+depiction, the procedure geometry and the MVA map.
+
+It is also community data under **CC BY-NC-SA 4.0**, which sits below the facility orders and
+carries attribution and share-alike obligations. Nothing has been vendored; that is an owner
+decision. ZAU's 19 **en route** sectors *are* fully described with stratums, which matters only
+if a ZAU Center tool is ever built.
+
 ## Student notes — C90
 
 The C90 builder block carries a **note rail**: every panel, table and empty data slot has a

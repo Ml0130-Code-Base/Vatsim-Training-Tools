@@ -22,6 +22,35 @@ The columns were re-paired by order and then checked against the narrative parag
 
 The ZLC *Position and Frequency Info* sheet lists all twenty TRACON frequencies in one column, in the same order, and every one of them matches the facility SOP once the pairing is corrected. Three independent documents, no residual conflict.
 
+### Confirmed a fourth time, from outside the document set (2026-09-02)
+
+The re-pairing above was the weakest link in this file: it is a judgement about extraction
+order, and until now every source confirming it came from the same vZLC document set. It has
+now been checked against a **fully independent** source — the VATGlasses ZLC dataset
+(`lennycolton/vatglasses-data` @ `c469b42`, 2026-08-26), which is community-maintained by vACC
+staff and derived from no part of our pull. See `../../claude_Community_Geometry_Sources.md`.
+
+**All twenty frequencies match** — the nine S56 sectors, the three Big Sky sectors, and the
+eight neighbouring facilities in the table at the end of this file. Critically, VATGlasses
+sides with the **narrative paragraphs** on all three of the corrections above:
+
+| Sector | Raw table said | We adopted | VATGlasses key | VATGlasses says |
+|---|---|---|---|---|
+| BOI Sage | `126.900` | **119.600** | `B1S` "Big Sky - Sage" | **119.600** |
+| BOI Alpine | `118.975` | **126.900** | `B1A` "Big Sky - Alpine" | **126.900** |
+| BZN Bozeman | blank | **118.975** | `B1Z` "Big Sky - Bozeman" | **118.975** |
+
+The sector *names* attached to those frequencies match too, which is the part the raw table
+could not settle. **Treat the frequency column as settled.**
+
+**One divergence, recorded not resolved** (root `CLAUDE.md` §6): VATGlasses voices `M1S`
+(134.100) as **"Mountain Home Approach"**, and names its two Mountain Home airspace entries
+*"Mountain Home - Alpine/X-RAY South"* and *"Mountain Home - Sage/X-RAY South"* — **both South,
+neither North**. This file has `MUO_S_APP` voiced **"Cowboy Control"** sector *Cowboy*, and
+`MUO_N_APP` sector *X-Ray North*, from `MUO_NFCT_RAPCON.pdf`. The frequencies agree; the naming
+does not. **Ours is documentary and stands**; the disagreement is an owner question, not a
+correction to make here.
+
 ---
 
 ## Big Sky Approach

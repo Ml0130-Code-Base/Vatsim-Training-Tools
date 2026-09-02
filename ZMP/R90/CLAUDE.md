@@ -5,6 +5,18 @@ Single-file, offline-first HTML training tools for a VATSIM virtual air traffic 
 > **Skeleton status, 2026-09-01.** This folder was created as a *structural* skeleton alongside `../ZMP/`. The reference layer below is populated from the real source documents pulled the same day and is citable. **The tool itself (`r90-drill-deck.html`) is a working shell, not a finished engine.** **There are no R90 training notes yet**: no OJT sessions, no practice log, no owner-observed shortfalls. `STANDING` is therefore empty and `claude_R90_OJT_Session_Review.md` is an intake template, not a review. Nothing in the tool may present a document-derived guess as an observed weakness.
 >
 > **The blocking gap is geometry, and it is worse here than at ZMP.** Every R90 sector boundary — Omaha sectors, Lincoln sectors, Lincoln Final, RADAR Final, the prearranged-coordination airspace, and the LNK tower areas — is a picture with no text layer. **Not one boundary is described in words anywhere in the three R90-side documents.** The owner has offered to supply points; the specific asks are listed in `claude_R90_Gap_Analysis.md`.
+>
+> **The 2026-09-02 community-source pull does not change this.** VATGlasses — the source that
+> supplied real sector polygons with altitude stratums for ZLC and ZAU — **has no ZMP dataset
+> at all**, so it gives R90 nothing. SimAware carries only a *facility footprint*, no
+> altitudes, but it does split R90 into an **`OMA` polygon (19 vertices) and an `LNK` polygon
+> (9 vertices)**. That split is interesting because R90's ceiling is not uniform — at and below
+> 15,000 over East and West, at and below 10,000 over R90 LNK (ZMP-R90 LOA 3) — so the `LNK`
+> polygon is plausibly the lateral extent of the lower lid. **It is a lead, not a citation:**
+> SimAware carries no altitudes and cannot confirm either lid, and checking its M98 polygon
+> against our nine owner-verified radial/DME points showed agreement only to about two miles.
+> **Do not wire it in, and keep the owner-supplied-points ask exactly as it stands.** Detail in
+> `../../claude_Community_Geometry_Sources.md`.
 
 ## Repository layout
 

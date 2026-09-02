@@ -27,6 +27,11 @@ difference rather than hiding it.
 do in CRC, transcribed from `docs.virtualnas.net` on 2026-09-01. **Read it before designing a
 drill** — a drill that grades a decision the client cannot express is grading the wrong thing.
 
+`claude_Community_Geometry_Sources.md` sits alongside it: where sector geometry can be obtained
+from **outside** the facility document sets — VATGlasses, SimAware TRACON and VAT-Spy — what
+each actually contains, how far each may be trusted, and under what licence. Pulled and
+verified 2026-09-02. **Read it before writing anything spatial into a tool**, and see §7.
+
 ---
 
 ## 1. The invariants
@@ -272,16 +277,37 @@ corrected.
 
 ---
 
-## 7. Geometry — the standing blocker at every facility
+## 7. Geometry — the standing blocker at ZMP, and no longer at ZLC or ZAU
 
-**Every facility in this repo is blocked on the same thing: the boundaries are pictures.**
-Not one R90 sector boundary is described in words anywhere in its document set. Every ZMP
-sector map, the high-sector chart and the approach-sector chart are images. Every ZLC airspace
-appendix is a chart image. C90's Appendices B through G are chart images, and so are the AZO
-SOP's two West Wall appendices and the airspace attachments to both AZO LOAs. vNAS does not
-expose video-map GeoJSON (probed 2026-09-01; every candidate endpoint 404s).
+**In the facility documents, the boundaries are pictures everywhere.** Not one R90 sector
+boundary is described in words anywhere in its document set. Every ZMP sector map, the
+high-sector chart and the approach-sector chart are images. Every ZLC airspace appendix is a
+chart image. C90's Appendices B through G are chart images, and so are the AZO SOP's two West
+Wall appendices and the airspace attachments to both AZO LOAs. vNAS does not expose video-map
+GeoJSON (probed 2026-09-01; every candidate endpoint 404s), and its `eramConfiguration.sectors`
+carries only `{id, sectorId, name}` — no polygon, no stratum (re-probed 2026-09-02).
 
-Two paths have actually worked, and no third one should be invented:
+**A community source closes the gap for ZLC and ZAU, and not for ZMP.** VATGlasses publishes
+sector polygons **with altitude stratums and ownership chains** for both, and nothing at all
+for ZMP. SimAware publishes a lateral facility footprint — no altitudes — for all seven of our
+facilities. Both were pulled and verified on 2026-09-02; the coordinate decode was confirmed
+against six known field positions, and all twenty ZLC frequencies in
+`claude_ZLC_Positions_Reference.md` matched. **Full detail, licence terms and pull recipes in
+`claude_Community_Geometry_Sources.md` — read it before using any of it.** Three things about
+it are load-bearing:
+
+- **It is community data and it sits below the facility documents.** A conflict with an SOP is
+  resolved in the SOP's favour and *named, not silently corrected* (§6). One is already on the
+  books: Mountain Home's radio name and sector naming.
+- **VATGlasses is CC BY-NC-SA 4.0 and SimAware publishes no licence at all.** Attribution is
+  mandatory and share-alike binds derivatives, so **vendoring any of it into a tool is an owner
+  decision, not a drive-by.** Nothing has been vendored yet.
+- **ZAU's terminal facilities are a footprint and a ceiling, not a sectorisation.** C90 is one
+  polygon surface–FL150 shared by four positions; AZO is one polygon surface–FL100 shared by
+  three. Enough for *inside, and under the lid*; **not** enough for *which sector owns this*.
+
+**M98 and R90 are unchanged and remain blocked.** For them, two paths have actually worked, and
+no further one should be invented:
 
 1. **Carve the images out of the PDF and measure them.** This is how the M98 DDA polygon was
    recovered — the chart pages were extracted as embedded JPEGs and measured, good to about
@@ -305,6 +331,13 @@ Until geometry exists: **nothing spatial gets built, and the engine says so** (i
 Pick drill targets that need no geometry — R90's scratchpad encoding and STAR-gap heading
 bands, ZMP's AIT and Data Block Coordination conditions. Those were chosen for exactly this
 reason and they are the model for a new facility's first drill.
+
+**Where geometry now exists, it is still second-tier and the tool must say so.** Community
+polygons are drawn by a volunteer from the same charts we cannot read — surveyed by nobody.
+They carry a stated tolerance the way the traced M98 DDA polygon states half a mile: SimAware's
+footprints agree with the owner-verified M98 boundary to within about two miles, and that is
+the number to quote. **An owner-supplied or facility-exported boundary always supersedes one of
+these, and must never be overwritten by one.**
 
 ---
 
