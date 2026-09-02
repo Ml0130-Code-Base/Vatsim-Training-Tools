@@ -150,15 +150,28 @@ var css = ''
    Anything the documents do not state is null and is LABELLED as not stated.
    It is never guessed. */
 
-/* R90 7220.10B 2-1 — confirmed independently against vNAS, all six agree. */
+/* R90 7220.10B 2-1, checked against the vNAS facility record 2026-09-01.
+   FIVE of the six agree. Lincoln Final does not, and the disagreement is
+   carried in both columns rather than resolved — root CLAUDE.md §6.
+
+   starsId     = R90 7220.10B 2-1, the governing order.
+   starsIdVnas = the sectorId of the TCP that position points at in vNAS.
+   subset      = the TCP subset, needed to compose a cross-subset ID.
+
+   An earlier comment here claimed all six were confirmed to agree. That was
+   wrong: vNAS points LNK_F_APP at TCP O.1 — the same TCP as Radar Offutt —
+   and adapts no F sector anywhere in R90. See claude_ZMP_Handoff_ID_Reference.md
+   §5.1 for both readings and why neither source settles it. */
 var POSITIONS = {
-  RW:{ name:'Radar West',    freq:135.875, starsId:'W', callsign:'OMA_W_APP', field:'OMA' },
-  RE:{ name:'Radar East',    freq:124.500, starsId:'X', callsign:'OMA_X_APP', field:'OMA' },
-  RF:{ name:'Radar Final',   freq:133.325, starsId:'V', callsign:'OMA_V_APP', field:'OMA' },
-  RO:{ name:'Radar Offutt',  freq:124.950, starsId:'O', callsign:'OMA_O_APP', field:'OFF' },
-  RL:{ name:'Radar Lincoln', freq:124.000, starsId:'L', callsign:'LNK_L_APP', field:'LNK' },
-  LF:{ name:'Lincoln Final', freq:128.150, starsId:'F', callsign:'LNK_F_APP', field:'LNK' }
+  RW:{ name:'Radar West',    freq:135.875, starsId:'W', starsIdVnas:'W', subset:1, callsign:'OMA_W_APP', field:'OMA' },
+  RE:{ name:'Radar East',    freq:124.500, starsId:'X', starsIdVnas:'X', subset:1, callsign:'OMA_X_APP', field:'OMA' },
+  RF:{ name:'Radar Final',   freq:133.325, starsId:'V', starsIdVnas:'V', subset:1, callsign:'OMA_V_APP', field:'OMA' },
+  RO:{ name:'Radar Offutt',  freq:124.950, starsId:'O', starsIdVnas:'O', subset:1, callsign:'OMA_O_APP', field:'OFF' },
+  RL:{ name:'Radar Lincoln', freq:124.000, starsId:'L', starsIdVnas:'L', subset:1, callsign:'LNK_L_APP', field:'LNK' },
+  LF:{ name:'Lincoln Final', freq:128.150, starsId:'F', starsIdVnas:'O', subset:1, callsign:'LNK_F_APP', field:'LNK',
+       conflict:'R90 7220.10B 2-1 gives Lincoln Final the STARS ID F. vNAS points LNK_F_APP at TCP O.1 — Radar Offutt’s TCP — and adapts no F sector in R90 at all. Neither source can settle it, so the tool shows both and picks neither.' }
 };
+function rdStarsConflicted(id){ var p = POSITIONS[id]; return !!(p && p.starsId !== p.starsIdVnas); }
 var SUPERSEDED_FREQ = { RW:120.1 };  /* CHG 2 record of changes — must NOT be accepted */
 
 /* ZMP-R90 LOA 3 — the hard lid, and it is not uniform. */
@@ -366,8 +379,16 @@ function renderFeed(){
 function sectionPositions(){
   var rows = rdPositionIds().map(function(k){
     var p = POSITIONS[k];
-    return '<tr><td><b>' + k + '</b></td><td>' + p.name + '</td><td>' + fmtFreq(p.freq) + '</td>'
-      + '<td><span class="rd-tag id">' + p.starsId + '</span></td><td class="dim">' + p.callsign + '</td>'
+    /* Where the order and vNAS disagree BOTH values are shown. The tool does
+       not pick one — root CLAUDE.md §6. */
+    var id = rdStarsConflicted(k)
+      ? '<span class="rd-tag id">' + p.starsId + '</span> <span class="rd-gap">SOP</span>'
+        + ' <span class="rd-tag id" style="color:var(--amber);border-color:var(--amber);">' + p.starsIdVnas + '</span> <span class="rd-gap">vNAS</span>'
+      : '<span class="rd-tag id">' + p.starsId + '</span>';
+    return '<tr><td><b>' + k + '</b></td><td>' + p.name
+      + (p.conflict ? '<br><span class="rd-gap" style="font-size:10.5px;">' + p.conflict + '</span>' : '')
+      + '</td><td>' + fmtFreq(p.freq) + '</td>'
+      + '<td>' + id + '</td><td class="dim">' + p.callsign + '</td>'
       + '<td class="dim">' + p.field + '</td></tr>';
   }).join('');
   var apt = Object.keys(AIRPORTS).map(function(a){
@@ -544,7 +565,7 @@ window.RD = {
   POSITION_DUTIES:POSITION_DUTIES, UNREAD_GEOMETRY:UNREAD_GEOMETRY, STANDING:STANDING,
   rdPosition:rdPosition, rdPositionIds:rdPositionIds, rdCeilingOver:rdCeilingOver,
   rdRunwaysAt:rdRunwaysAt, rdRunwaysKnown:rdRunwaysKnown, rdByStarsId:rdByStarsId,
-  rdFreqAccepted:rdFreqAccepted,
+  rdFreqAccepted:rdFreqAccepted, rdStarsConflicted:rdStarsConflicted,
   fmtAlt:fmtAlt, fmtFreq:fmtFreq,
   log:log, logHtml:logHtml, renderFeed:renderFeed
 };
