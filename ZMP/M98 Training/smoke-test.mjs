@@ -9,9 +9,10 @@ const path = process.argv[2] || 'm98-drill-deck.html';
 const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is now an extension block, in dependency order:
-   Drill Deck, then Drill Builder. Evaluate them the way the browser would. */
+   Drill Deck, then Drill Builder, then the Handoff ID resolver.
+   Evaluate them the way the browser would. */
 const blocks = scripts;
-if (blocks.length !== 2) { console.error('FAIL: expected 2 extension blocks, found ' + blocks.length); process.exit(1); }
+if (blocks.length !== 3) { console.error("FAIL: expected 3 extension blocks, found " + blocks.length); process.exit(1); }
 
 /* ---- minimal DOM stubs ---- */
 const els = {};
@@ -1156,6 +1157,55 @@ try {
     md.includes('on record: 7, 10, 10R'), md.split('\n').filter(l => l.indexOf('Separation proof') >= 0).join(' | '));
   assert('markdown export lists every standing item',
     globalThis.DD.STANDING.every(s => md.includes(s.t.replace(/"/g, '"'))), md.length);
+
+  /* ============ 7. Handoff IDs ============
+     Values from the ZMP vNAS record, 2026-08-26; composition rules from
+     docs.virtualnas.net, 2026-09-01. Both transcribed in
+     claude_ZMP_Handoff_ID_Reference.md, which is authoritative. */
+  const H = globalThis.ddh;
+  assert('handoff block exports window.ddh', !!H);
+
+  /* The structural fact the whole M98 section turns on. */
+  const radar = H.M98_TCP.filter(r => r[4] === 'radar');
+  const towers = H.M98_TCP.filter(r => r[4] === 'tower');
+  assert('every M98 radar seat is subset 1', radar.every(r => r[1] === 1));
+  assert('every M98 tower or ground position is subset 2 or 3, except MSP local and delivery',
+    towers.every(r => r[1] >= 1 && r[1] <= 3));
+  assert('all eleven SOP 2-1 radar positions are present', radar.length === 11);
+  assert('every SOP 2-1 position in the deck has a TCP',
+    globalThis.DD.POS_NAME && Object.keys(globalThis.DD.POS_NAME)
+      .every(p => radar.some(r => r[0] === p)));
+
+  /* Same subset is a bare letter; crossing a subset must carry the digit. */
+  assert('radar to radar is a bare sector letter', H.intra(1, 'N', 1).id === 'N');
+  assert('radar to MSP ground carries the subset digit', H.intra(1, 'Y', 2).id === '2Y');
+  assert('MSP Local West and MSP Ground differ by one digit',
+    H.intra(1, 'Y', 1).id === 'Y' && H.intra(1, 'Y', 2).id === '2Y');
+  assert('a tower reaching a radar seat also crosses back', H.intra(2, 'H', 1).id === '1H');
+
+  /* The four MSP ground positions share one TCP and the ID cannot separate them. */
+  const groundY = H.M98_TCP.filter(r => r[0] === 'Y' && r[1] === 2);
+  assert('the MSP ground positions share a single TCP', groundY.length === 1);
+
+  /* STARS -> STARS. The number is assigned by the sender, so it is asymmetric. */
+  assert('M98 reaches RST on delta 1', H.DELTA_OUT === 1);
+  assert('RST reaches M98 on delta 2 — not the same number', H.DELTA_IN === 2);
+  assert('RST is the only STARS facility M98 can address', H.RST_TCP.length === 5);
+
+  /* ERAM inbound. */
+  assert('ZMP addresses M98 with the letter M', H.M98_FROM_ZMP.one === 'M');
+  assert('M98 is adapted OneLetterAndSubset', H.M98_FROM_ZMP.fmt === 'OneLetterAndSubset');
+
+  /* Honesty guards: adapted TCPs with nobody on them stay empty, and the
+     ZMP interface list is the reference set's, not an invention. */
+  assert('the four empty M98 TCPs are recorded as empty',
+    H.M98_TCP.filter(r => r[4] === 'empty' && r[2] === null).length === 4);
+  assert('the one empty RST TCP is recorded as empty',
+    H.RST_TCP.filter(r => r[2] === null).length === 1);
+  assert('every ZMP interface sector is two digits',
+    H.ZMP_IFACE.every(z => /^\d{2}$/.test(z[0])));
+  assert('open questions are rendered rather than guessed',
+    H.OPEN_Q.length === 2 && H.OPEN_Q.every(o => !!o.q && !!o.why && !!o.close));
 
   console.log('\nSMOKE PASS — ' + path + ' — ' + checks + ' checks');
 } catch (e) {

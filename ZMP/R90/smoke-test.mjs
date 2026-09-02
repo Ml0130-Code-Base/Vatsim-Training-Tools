@@ -9,9 +9,10 @@ const path = process.argv[2] || 'r90-drill-deck.html';
 const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is an extension block, in dependency order:
-   Radar Deck, then Drill Builder. Evaluate them the way the browser would. */
+   Radar Deck, then Drill Builder, then the Handoff ID resolver.
+   Evaluate them the way the browser would. */
 const blocks = scripts;
-if (blocks.length !== 2) { console.error('FAIL: expected 2 extension blocks, found ' + blocks.length); process.exit(1); }
+if (blocks.length !== 3) { console.error("FAIL: expected 3 extension blocks, found " + blocks.length); process.exit(1); }
 
 /* ---- minimal DOM stubs ---- */
 const els = {};
@@ -153,6 +154,63 @@ try {
   assert('the handoff freeze rule is carried', /verbal approval/i.test(RD.FREEZE_RULE));
   assert('three pages in workflow order',
     globalThis.rdb.PAGES.map(p => p.id).join(',') === 'setup,fly,notes');
+
+  /* ============ 7. Handoff IDs, and the Lincoln Final conflict ============
+     Values from the ZMP vNAS record, 2026-08-26; composition rules from
+     docs.virtualnas.net, 2026-09-01. Both transcribed in
+     claude_ZMP_Handoff_ID_Reference.md, which is authoritative. */
+
+  /* The conflict itself. R90 7220.10B 2-1 gives Lincoln Final the STARS ID F;
+     vNAS points LNK_F_APP at TCP O.1 — Radar Offutt's TCP — and adapts no F
+     sector in R90 at all. The tool carries BOTH and picks neither.
+     These assertions fail the day someone quietly resolves it. */
+  assert('exactly one R90 position is in conflict between the order and vNAS',
+    ids.filter(k => RD.rdStarsConflicted(k)).length === 1);
+  assert('the conflicted position is Lincoln Final', RD.rdStarsConflicted('LF') === true);
+  assert('Lincoln Final carries the order’s F', RD.POSITIONS.LF.starsId === 'F');
+  assert('Lincoln Final carries vNAS’s O alongside it', RD.POSITIONS.LF.starsIdVnas === 'O');
+  assert('the conflict is explained in the data, not just flagged',
+    typeof RD.POSITIONS.LF.conflict === 'string' && RD.POSITIONS.LF.conflict.length > 80);
+  assert('the other five positions agree between the two sources',
+    ids.filter(k => k !== 'LF').every(k => RD.POSITIONS[k].starsId === RD.POSITIONS[k].starsIdVnas));
+  assert('Lincoln Final and Radar Offutt collide under the vNAS reading',
+    RD.POSITIONS.LF.starsIdVnas === RD.POSITIONS.RO.starsIdVnas);
+
+  const H = globalThis.rdh;
+  assert('handoff block exports window.rdh', !!H);
+
+  /* All six radar seats are subset 1, so radar to radar is a bare letter. */
+  assert('every radar seat is subset 1', ids.every(k => RD.POSITIONS[k].subset === 1));
+  assert('radar to radar is a bare sector letter', H.intra(1, 'X', 1).id === 'X');
+  assert('radar to OMA ground carries the subset digit', H.intra(1, 'A', 2).id === '2A');
+  assert('OMA Local and OMA Ground differ by one digit',
+    H.intra(1, 'A', 1).id === 'A' && H.intra(1, 'A', 2).id === '2A');
+
+  /* Ground and Clearance Delivery share a TCP at both OMA and LNK. */
+  assert('OMA ground and clearance delivery share one TCP',
+    H.R90_TOWER.filter(r => r[0] === 'A' && r[1] === 2).length === 1);
+  assert('six tower and ground positions are carried', H.R90_TOWER.length === 6);
+
+  /* STARS -> STARS. Both directions are 1 here, but that is coincidence. */
+  assert('R90 reaches SUX on delta 1', H.DELTA_OUT === 1);
+  assert('SUX reaches R90 on delta 1', H.DELTA_IN === 1);
+  assert('SUX is the only STARS facility R90 can address', H.SUX_TCP.length === 5);
+
+  /* ERAM inbound and the ZMP interface. */
+  assert('ZMP addresses R90 with the letter O', H.R90_FROM_ZMP.one === 'O');
+  assert('R90 is adapted OneLetterAndSubset', H.R90_FROM_ZMP.fmt === 'OneLetterAndSubset');
+  assert('the three ZMP interface sectors are 26, 27 and 37',
+    H.ZMP_IFACE.map(z => z[0]).join(',') === '26,27,37');
+
+  /* Honesty guards. */
+  assert('the one empty R90 TCP is recorded as empty', H.R90_EMPTY.length === 1);
+  assert('the empty TCP is I.1', H.R90_EMPTY[0][0] === 'I' && H.R90_EMPTY[0][1] === 1);
+  assert('the one empty SUX TCP is recorded as empty',
+    H.SUX_TCP.filter(r => r[2] === null).length === 1);
+  assert('three open questions are rendered rather than guessed',
+    H.OPEN_Q.length === 3 && H.OPEN_Q.every(o => !!o.q && !!o.why && !!o.close));
+  assert('the Lincoln Final question is one of them',
+    H.OPEN_Q.some(o => /Lincoln Final/.test(o.q)));
 
   console.log('\n' + checks + ' checks passed.');
 } catch (e) {

@@ -9,9 +9,10 @@ const path = process.argv[2] || 'zmp-drill-deck.html';
 const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is an extension block, in dependency order:
-   Sector Deck, then Drill Builder. Evaluate them the way the browser would. */
+   Sector Deck, then Drill Builder, then the Handoff ID resolver.
+   Evaluate them the way the browser would. */
 const blocks = scripts;
-if (blocks.length !== 2) { console.error('FAIL: expected 2 extension blocks, found ' + blocks.length); process.exit(1); }
+if (blocks.length !== 3) { console.error('FAIL: expected 3 extension blocks, found ' + blocks.length); process.exit(1); }
 
 /* ---- minimal DOM stubs ---- */
 const els = {};
@@ -202,6 +203,74 @@ try {
   /* ============ 5. Pages ============ */
   assert('three pages in workflow order',
     globalThis.zdb.PAGES.map(p => p.id).join(',') === 'setup,fly,notes');
+
+  /* ============ 6. Handoff IDs ============
+     Values from the ZMP vNAS record; composition rules from
+     docs.virtualnas.net. Both transcribed in
+     claude_ZMP_Handoff_ID_Reference.md, which is authoritative. */
+  const H = globalThis.zdh;
+  assert('handoff block exports window.zdh', !!H);
+
+  assert('ZMP NAS ID is P', H.NAS_ID === 'P');
+  assert('all 29 neighbouring STARS facilities are carried', H.E2S.length === 29);
+  assert('seventeen are adapted for automated handoffs',
+    H.E2S.filter(e => e[4] === 'OneLetterAndSubset').length === 17);
+  assert('twelve are FullStarsIdOnly',
+    H.E2S.filter(e => e[4] === 'FullStarsIdOnly').length === 12);
+  assert('every neighbouring STARS facility has a STARS ID', H.E2S.every(e => !!e[1]));
+
+  /* ERAM -> STARS composes single char + subset + sector. */
+  assert('ZMP reaches M98 South Feeder with M1H', H.eramToStars('M98', 'H', 1).id === 'M1H');
+  assert('ZMP reaches R90 Radar East with O1X', H.eramToStars('R90', 'X', 1).id === 'O1X');
+  assert('ZMP reaches an MSP ground position with M2Y', H.eramToStars('M98', 'Y', 2).id === 'M2Y');
+  assert('a FullStarsIdOnly facility composes to its STARS ID alone',
+    H.eramToStars('MCI', 'A', 1).id === 'MCI');
+
+  /* The LAN anomaly is PRESERVED, not papered over — the record is adapted
+     OneLetterAndSubset with no single-character ID, and guessing one would
+     invent a keystroke. */
+  const lan = H.e2sFor('LAN');
+  assert('LAN is adapted OneLetterAndSubset', lan[4] === 'OneLetterAndSubset');
+  assert('LAN has no single-character ID in the record', lan[3] === null);
+  assert('LAN does not compose to an invented letter', H.eramToStars('LAN', 'A', 1).id === null);
+
+  /* STARS -> ERAM. C is the host prefix. The documented collision is with an
+     ARTCC whose NAS ID is literally C — that is ZOB — and no ZMP TRACON
+     neighbours ZOB, so every one of them addresses ZMP as C. */
+  assert('ZOB’s NAS ID is C', H.NEIGH_NASID.ZOB === 'C');
+  assert('no ZMP TRACON neighbours ZOB',
+    Object.keys(H.CAN_REACH).every(f => H.CAN_REACH[f].indexOf('ZOB') === -1));
+  assert('M98 reaches ZMP sector 05 with C05', H.starsToEram('M98', '05').id === 'C05');
+  assert('R90 reaches ZMP sector 27 with C27', H.starsToEram('R90', '27').id === 'C27');
+  assert('a single-digit sector is padded to two', H.starsToEram('M98', 5).id === 'C05');
+
+  /* STARS -> STARS. The handoff number is assigned by the SENDER, so a pair
+     does not agree — M98 reaches RST on 1, RST reaches M98 on 2. */
+  assert('M98 reaches RST on delta 1', H.DELTA.M98.RST === 1);
+  assert('RST reaches M98 on delta 2 — the number is not symmetric', H.DELTA.RST.M98 === 2);
+  assert('four ZMP TRACONs have no STARS-to-STARS neighbour',
+    Object.keys(H.DELTA).filter(f => Object.keys(H.DELTA[f]).length === 0).length === 4);
+
+  /* CAATS */
+  assert('both CAATS ACCs carry a handoff letter',
+    H.CAATS.length === 2 && H.CAATS.every(c => /^[A-Z]$/.test(c[1])));
+
+  /* Thirteen STARS facilities under ZMP, and every TCP row is well formed. */
+  assert('thirteen STARS facilities carry a TCP table', Object.keys(H.TCPS).length === 13);
+  assert('every TCP has a sector ID and a subset',
+    Object.keys(H.TCPS).every(f => H.TCPS[f].pos.every(p => !!p[0] && p[1] >= 1 && p[1] <= 3)));
+  assert('every facility with a TCP table is a known neighbour or child',
+    Object.keys(H.TCPS).every(f => !!H.e2sFor(f)));
+
+  /* Honesty guard: an adapted TCP with nobody on it is recorded as empty
+     rather than given an invented position name. */
+  assert('M98 carries its four empty TCPs',
+    H.TCPS.M98.pos.filter(p => p[2] === null).length === 4);
+  assert('R90 carries its one empty TCP',
+    H.TCPS.R90.pos.filter(p => p[2] === null).length === 1);
+  assert('four open questions are rendered rather than guessed', H.OPEN_Q.length === 4);
+  assert('every open question says what would close it',
+    H.OPEN_Q.every(o => !!o.q && !!o.why && !!o.close));
 
   console.log('\n' + checks + ' checks passed.');
 } catch (e) {

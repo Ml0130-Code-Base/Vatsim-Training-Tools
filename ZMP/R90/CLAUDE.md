@@ -8,7 +8,9 @@ Single-file, offline-first HTML training tools for a VATSIM virtual air traffic 
 
 ## Repository layout
 
-- `r90-drill-deck.html` — the tool. Two extension blocks before `</body>`: the Radar Deck (live player + drill library) and the Drill Builder + Training Notebook. Three pages mounted in workflow order and moved into view wrappers by `buildPages()` — **Set up a drill** (Position, Build) · **Fly it** (Live) · **Notes and log** (Notes, Log). Namespace is `window.RD`, not `DD`.
+- `r90-drill-deck.html` — the tool. **Three** extension blocks before `</body>`: the Radar Deck (live player + drill library), the Drill Builder + Training Notebook, and the **Handoff ID resolver** (`window.rdh`). Three pages mounted in workflow order and moved into view wrappers by `buildPages()` — **Set up a drill** (Position, Build) · **Fly it** (Live) · **Notes and log** (Notes, Log, Handoff IDs). Namespace is `window.RD`, not `DD`.
+
+  > **Splice new blocks before the LAST `</body>`, not the first.** The Radar Deck's own header comment contains the string `</body>` ("safe to paste as one block before `</body>`"), so a naive `s/<\/body>/.../` lands the new block *inside* block 1's comment and silently destroys the page — two `<script>` opens with no close between them, and the browser drops the builder entirely. This has already happened once.
 - `radar-deck-block.html` / `drill-builder-block.html` — the two blocks alone, paste material. Regenerate from the main file; never edit separately. *(Not yet split out while the engine is a shell.)*
 - `smoke-test.mjs` — the headless harness. `node smoke-test.mjs r90-drill-deck.html`.
 - `claude_*.md` — the authoritative reference set. **These win over anything hardcoded in HTML when they conflict.**
@@ -24,6 +26,7 @@ Single-file, offline-first HTML training tools for a VATSIM virtual air traffic 
   | `claude_R90_AI_Practice_Log.md` | **Empty.** The drill ledger, mirroring `PRIOR` |
   | `claude_R90_Gap_Analysis.md` | **Read this before building anything.** Every boundary is a picture; Part 1 is the ranked list of what the owner has offered to supply |
   | `claude_R90_TTS_Voicing.md` | Written → spoken forms. **All five STAR names are unspecified** and will mispronounce |
+  | `claude_ZMP_Handoff_ID_Reference.md` | **Shared, byte-identical with `../ZMP/` and `../M98 Training/`.** Every handoff ID under ZMP in all four directions, the composition rules quoted from `docs.virtualnas.net`, the neighbouring ARTCC NAS IDs, and §5.1 — the Lincoln Final conflict. **A change here must land in all three copies in the same commit; check with `md5sum`.** |
   | `claude_US_Carrier_Callsigns.md` | Callsign voicing rules. Copied verbatim from `../M98 Training/` |
 
 - `source-docs/` — 7 PDFs pulled from `minniecenter.org/docs` on 2026-09-01 with `pdftotext -layout` extractions in `source-docs/txt/`. Manifest and text-layer status in `claude_Source_Documents_Index.md`.
@@ -32,18 +35,19 @@ Single-file, offline-first HTML training tools for a VATSIM virtual air traffic 
 ## Verified operational data (2026-09-01)
 
 - **The governing order is R90 7220.10B CHG 2, effective 2024-10-27.** Its own cancellation line reads "vZMP R90 SOP **7110**.10B CHG 1" while the order is numbered **7220**.10B (R90 1-3) — an as-written discrepancy, preserved rather than corrected.
-- **R90 is six positions (R90 7220.10B 2-1)**, and the frequency, STARS ID and callsign of each are confirmed twice — once from the order, once from the vNAS facility record. **All six agree.**
+- **R90 is six positions (R90 7220.10B 2-1)**, and the frequency, STARS ID and callsign of each are checked twice — once from the order, once from the vNAS facility record. **Five of the six agree; Lincoln Final does not.**
 
-  | Position | Frequency | STARS ID | Callsign |
-  |---|---|---|---|
-  | Radar West | 135.875 | `W` | `OMA_W_APP` |
-  | Radar East | 124.500 | `X` | `OMA_X_APP` |
-  | Radar Final | 133.325 | `V` | `OMA_V_APP` |
-  | Radar Offutt | 124.950 | `O` | `OMA_O_APP` |
-  | Radar Lincoln | 124.000 | `L` | `LNK_L_APP` |
-  | Lincoln Final | 128.150 | `F` | `LNK_F_APP` |
+  | Position | Frequency | STARS ID (SOP) | vNAS TCP | Callsign |
+  |---|---|---|---|---|
+  | Radar West | 135.875 | `W` | `W.1` | `OMA_W_APP` |
+  | Radar East | 124.500 | `X` | `X.1` | `OMA_X_APP` |
+  | Radar Final | 133.325 | `V` | `V.1` | `OMA_V_APP` |
+  | Radar Offutt | 124.950 | `O` | `O.1` | `OMA_O_APP` |
+  | Radar Lincoln | 124.000 | `L` | `L.1` | `LNK_L_APP` |
+  | **Lincoln Final** | 128.150 | **`F`** | **`O.1`** | `LNK_F_APP` |
 
   Radar West moved from 120.1 to 135.875 in the CHG 2 record of changes — the old number will still be in circulation, so the tool must not accept it.
+- **The Lincoln Final STARS ID is a live conflict, and it is carried in both columns rather than resolved** (root `CLAUDE.md` §6). **R90 7220.10B 2-1 says `F`. vNAS points `LNK_F_APP` at TCP `O.1` — the same TCP as Radar Offutt — and adapts no `F` sector anywhere in R90.** The full R90 TCP set is `A.1 A.2 I.1 L.1 N.1 N.2 O.1 T.1 T.2 V.1 W.1 X.1`: there is an **unassigned `I.1`** and no `F`. If the order is right, vNAS has the position pointed at the wrong TCP; if vNAS is right, Lincoln Final and Radar Offutt share a TCP and a handoff to `O` reaches whichever is open. **Neither source settles it, so `POSITIONS.LF` carries `starsId:'F'` and `starsIdVnas:'O'`, the resolver renders `F or O`, and the smoke test asserts exactly one position is in conflict.** An earlier version of this file and of the deck claimed all six agreed — that was wrong and is corrected. This is a **live owner question**; see `claude_ZMP_Handoff_ID_Reference.md` §5.1.
 - **R90's delegated airspace has a hard ceiling and it is not uniform (ZMP-R90 LOA 3, eff. 2023-11-06): at and below 15,000 MSL over R90 East and West, at and below 10,000 MSL over R90 LNK.** This is the single most structurally important number in the facility and it has no M98 equivalent — M98's ceiling is a shelf structure, R90's is a flat lid that changes over Lincoln.
 - **The airports R90 works are not stated in any R90-side document.** The SOP confirms satellite airports exist (2-2.b "ensure auto-acquisition for departures at satellite airports", 3-8.d "Satellite Arrivals") but never enumerates them. **The inventory comes from vNAS**, where the R90 area lists underlying airports **OMA, OFF, LNK, CBF, MLE** and single-site-arrival airports **OMA, LNK, OFF, CBF**, with tower list ranges OMA 120, OFF 60, LNK 90 and an area visibility centre at 41.143 / −95.903722, surveillance range 150. Single-source — flag it as such wherever it is used.
 - **Runways, from the tower orders and corroborated by the scratchpad tables:** **OMA (Eppley) 14L, 14R, 18, 32L, 32R, 36** (OMA 7110.4A 4.a/4.b) · **LNK (Lincoln) 14, 17, 18, 32, 35, 36** (LNK 7110.6A 4.a/4.b/5.b) · **CBF 36 only**, from the scratchpad rule `I = ILS Rwy 36` (R90 3-10). **OFF's runways are not stated** — no Offutt tower order exists in the document set.
@@ -89,8 +93,9 @@ Absent by design — routes, a tick loop, aircraft objects, a parser, grading, a
 
 ## Testing
 
-- `node smoke-test.mjs r90-drill-deck.html` — same harness shape as M98's. Asserts the block count, that all six positions are present with unique frequencies and unique STARS IDs, that the East/West and LNK ceilings differ, that every runway list is either stated or explicitly null (never invented), that the five STARs carry no fabricated geometry, and that `STANDING` is empty.
+- `node smoke-test.mjs r90-drill-deck.html` — same harness shape as M98's. Asserts the block count (**now 3**), that all six positions are present with unique frequencies and unique SOP STARS IDs, that the East/West and LNK ceilings differ, that every runway list is either stated or explicitly null (never invented), that the five STARs carry no fabricated geometry, and that `STANDING` is empty. The handoff section adds: **exactly one position is in conflict and it is Lincoln Final**, that both its values are carried, that the other five agree, that a bare letter is used within a subset and a subset digit across one, and that the empty TCPs stay empty.
 - **No Node on the owner's machine** (checked 2026-09-01). The harness has **not been run**. Say so rather than implying it passed.
+- **What was actually verified for the handoff work (2026-09-01):** the folder was served over a local `HttpListener` and all three pages were driven in a real browser. Confirmed: three script blocks parse, the section mounts into the Notes page, the resolver composes correctly in every direction (`X`, `2A`, `C27`, `` `11N ``), **Lincoln Final renders as `F or O`**, both the deck's position table and the resolver show both values, and there are no console errors. That is a browser check, not a smoke-test run.
 
 ## Roadmap (owner-prioritized)
 

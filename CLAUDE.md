@@ -106,7 +106,8 @@ name.
 ```
 
 **Shared reference documents are copied, not linked.** `claude_US_Carrier_Callsigns.md` is
-byte-identical in three folders and `claude_Enroute_vs_Terminal_Reference.md` in two, on
+byte-identical in three folders, `claude_Enroute_vs_Terminal_Reference.md` in two, and
+`claude_ZMP_Handoff_ID_Reference.md` in three (`ZMP/ZMP/`, `ZMP/R90/`, `ZMP/M98 Training/`), on
 purpose: no facility folder may depend on another folder's files, because folders get worked
 on, moved and cleared independently. **The cost is that a change to a shared doc must land in
 every copy in the same commit.** Check with `md5sum` before assuming they are still in sync.
@@ -422,6 +423,14 @@ encode it the same way.
 - **Adding a section:** give its panel a `data-note` anchor.
 - **Adding a feature:** inside an existing block, or a new block after them. Extend behaviour
   by wrapping the deck's entry points and pushing a hook — **not by editing the deck**.
+- **Splice a new block before the LAST `</body>`, never the first.** Every deck block's header
+  comment carries the string `</body>` — *"safe to paste as one block before `</body>`"* — so a
+  naive `s{</body>}{$block</body>}` inserts the new block **inside block 1's own comment**. The
+  result is two `<script>` opens with no close between them: the browser silently drops the
+  builder, the page renders as a deck-only shell, and **the console stays clean**. This bit all
+  three ZMP tools on 2026-09-01. The tell is `document.querySelectorAll('script').length`
+  returning fewer than the file's `<script>` count — check tag *order*, not just the counts,
+  because opens and closes still balance.
 - **Never** keep a second copy of an operational number, add a second network call, write a
   literal closing script tag, introduce a font or an accent colour, or reintroduce a "seeded"
   tier in the ledger. **One ledger, no second class:** a drill from the practice log and a

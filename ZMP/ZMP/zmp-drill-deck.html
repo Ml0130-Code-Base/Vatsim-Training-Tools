@@ -108,476 +108,7 @@
    ZMP SECTOR DECK v0 — the data spine and the mount.
    Skeleton: carries verified sector data, mounts its own sections,
    and exposes window.ZD. No traffic model yet (see CLAUDE.md roadmap).
-   Safe to paste as one block before 
-<script>
-/* ================================================================
-   ZMP HANDOFF ID RESOLVER v0 — additive extension.
-   Requires the Sector Deck block (window.ZD) earlier in the page.
-
-   A handoff ID is a property of the PAIR, not of the receiver: the same
-   seat has a different address depending on which automation system is
-   sending. This block carries the ID data and composes the keystroke.
-
-   Every value and every composition rule is cited in
-   claude_ZMP_Handoff_ID_Reference.md, which is authoritative. Sector
-   numbers and frequencies are NOT copied here — they are read through
-   window.ZD, per CLAUDE.md invariant 5.
-   ================================================================ */
-(function(){
-'use strict';
-
-var ZD = window.ZD;
-if(!ZD){ return; }   /* deck absent — do nothing, per the block contract */
-
-/* ---------- 1. CSS ---------- */
-var css = ''
-+ '.zdh-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}'
-+ '@media(max-width:700px){.zdh-grid{grid-template-columns:1fr;}}'
-+ '.zdh-grid label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;}'
-+ '.zdh-grid select{width:100%;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 8px;}'
-+ '.zdh-out{margin:14px 0 0;padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);}'
-+ '.zdh-key{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--green);letter-spacing:.06em;line-height:1.2;}'
-+ '.zdh-key.none{color:var(--dim2);font-size:17px;}'
-+ '.zdh-why{font-size:12.5px;color:var(--dim);margin:6px 0 0;max-width:62ch;}'
-+ '.zdh-why b{color:var(--ink);font-weight:600;}'
-+ '.zdh-cite{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin:6px 0 0;}'
-+ '.zdh-rev{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);}'
-+ '.zdh-rev .k{font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:600;}'
-+ '.zdh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--dim);}'
-+ '.zdh-sub.warn{color:var(--amber);border-color:var(--amber);}'
-;
-
-/* ---------- 2. Handoff data ----------
-   Source: vNAS facility record for ZMP, ZMP/_vnas/ZMP_vnas.json,
-   lastUpdatedAt 2026-08-26. Composition rules from docs.virtualnas.net
-   (crc/stars, crc/eram, crc/overview, data-admin/facilities), read
-   2026-09-01. Both are transcribed in claude_ZMP_Handoff_ID_Reference.md. */
-
-var NAS_ID = 'P';                                    /* eramConfiguration.nasId */
-
-/* Neighbouring ARTCC NAS IDs — from each ARTCC's own vNAS record.
-   ZOB is 'C', which is also the generic "host ARTCC" prefix. See NOTE_C. */
-var NEIGH_NASID = { ZAU:'G', ZDV:'D', ZKC:'K', ZLC:'U', ZOB:'C' };
-
-/* ERAM sectors adapted in vNAS but absent from the deck's tables.
-   60/70/77 have no position; 99 is a position whose sector is not adapted. */
-var ERAM_EXTRA = {
-  '60':'adapted, no position', '70':'adapted, no position', '77':'adapted, no position',
-  '61':'ZMP TMU MSP', '62':'ZMP TMU NY', '63':'ZMP TMU DEN/MDW', '64':'ZMP TMU ORD',
-  '99':'ZMP Guard — position exists, sector NOT in the adapted list'
-};
-
-/* eramConfiguration.neighboringStarsConfigurations — all 29, verbatim.
-   [facilityId, starsId, twoCharacterStarsId, singleCharacterStarsId, fieldEFormat] */
-var E2S = [
-  ['M98','MMM','MM','M','OneLetterAndSubset'], ['R90','OOO','OO','O','OneLetterAndSubset'],
-  ['RST','TTT','TT','T','OneLetterAndSubset'], ['DSM','DDD','EE','E','OneLetterAndSubset'],
-  ['GRB','GGG','BB','B','OneLetterAndSubset'], ['DLH','LLL','LL','L','OneLetterAndSubset'],
-  ['FAR','HHH','HH','H','OneLetterAndSubset'], ['FSD','FFF','FF','F','OneLetterAndSubset'],
-  ['BIS','AAA','AA','A','OneLetterAndSubset'], ['SUX','YYY','YY','Y','OneLetterAndSubset'],
-  ['RDR','RRR','RR','R','OneLetterAndSubset'], ['MIB','III','II','I','OneLetterAndSubset'],
-  ['APN','ZZZ','ZZ','Z','OneLetterAndSubset'], ['AZO','SSS','SS','S','OneLetterAndSubset'],
-  ['VOK','JJJ','JJ','J','OneLetterAndSubset'], ['MKE','MKE','XX','X','OneLetterAndSubset'],
-  ['LAN','LAN','NN',null,'OneLetterAndSubset'],
-  ['CID','CID',null,null,'FullStarsIdOnly'], ['D21','DTW',null,null,'FullStarsIdOnly'],
-  ['MCI','MCI',null,null,'FullStarsIdOnly'], ['MLI','MLI',null,null,'FullStarsIdOnly'],
-  ['MSN','MSN',null,null,'FullStarsIdOnly'], ['MTC','MTC',null,null,'FullStarsIdOnly'],
-  ['ROC','ROC',null,null,'FullStarsIdOnly'], ['TOL','TOL',null,null,'FullStarsIdOnly'],
-  ['YNG','YNG',null,null,'FullStarsIdOnly'], ['BIL','BIL',null,null,'FullStarsIdOnly'],
-  ['GTF','GTF',null,null,'FullStarsIdOnly'], ['RCA','RCA',null,null,'FullStarsIdOnly']
-];
-
-/* eramConfiguration.neighboringCaatsConfigurations */
-var CAATS = [ ['CZWG','W','Winnipeg'], ['CZYZ','N','Toronto'] ];
-
-/* starsConfiguration.tcps joined to positions[].starsConfiguration.tcpId,
-   per facility. [sectorId, subset, position name, callsign]. A row with a
-   null callsign is an adapted TCP with nobody on it. */
-var TCPS = {
-  M98:{ name:'Minneapolis TRACON', pos:[
-    ['D',1,'North Departure','MSP_D_DEP'], ['R',1,'South Departure','MSP_R_DEP'],
-    ['L',1,'East Departure','MSP_L_DEP'], ['I',1,'North Feeder','MSP_I_APP'],
-    ['H',1,'South Feeder','MSP_H_APP'], ['N',1,'North Final / Arrival','MSP_N_APP'],
-    ['S',1,'South Final / Arrival','MSP_S_APP'], ['J',1,'17/35 West Final / Arrival','MSP_J_APP'],
-    ['E',1,'Flying Cloud Satellite / Midnight','MSP_E_APP'], ['G',1,'St. Paul Satellite','MSP_G_APP'],
-    ['K',1,'Crystal Satellite','MSP_K_APP'], ['A',1,'Arrival Overhead','MSP_A_APP'],
-    ['W',1,'TMU','MSP_W_APP'],
-    ['V',1,'MSP Local Control South','MSP_S_TWR'], ['T',1,'MSP Local Control North','MSP_N_TWR'],
-    ['Y',1,'MSP Local Control West','MSP_W_TWR'], ['Y',2,'MSP Ground (N/S/W) and Metering','MSP_*_GND'],
-    ['6',1,'MSP Clearance Delivery','MSP_DEL'],
-    ['P',2,'STP Local Control','STP_TWR'], ['P',3,'STP Ground Control','STP_GND'],
-    ['O',2,'ANE Local Control','ANE_TWR'], ['O',3,'ANE Ground Control','ANE_GND'],
-    ['F',2,'FCM Local Control South','FCM_S_TWR'], ['Z',2,'FCM Local Control North','FCM_N_TWR'],
-    ['F',3,'FCM Ground Control','FCM_GND'],
-    ['M',2,'MIC Local Control','MIC_TWR'], ['M',3,'MIC Ground Control','MIC_GND'],
-    ['9',3,null,null], ['Q',1,null,null], ['U',1,null,null], ['X',1,null,null]
-  ]},
-  R90:{ name:'Omaha TRACON', pos:[
-    ['W',1,'Radar West','OMA_W_APP'], ['X',1,'Radar East','OMA_X_APP'],
-    ['V',1,'Radar Final','OMA_V_APP'], ['O',1,'Radar Offutt (and Lincoln Final — see conflict)','OMA_O_APP'],
-    ['L',1,'Radar Lincoln','LNK_L_APP'],
-    ['A',1,'OMA Local Control','OMA_TWR'], ['A',2,'OMA Ground / Clearance Delivery','OMA_GND'],
-    ['N',1,'LNK Local Control','LNK_TWR'], ['N',2,'LNK Ground / Clearance Delivery','LNK_GND'],
-    ['T',1,'OFF Local Control','OFF_TWR'], ['T',2,'OFF Ground Control','OFF_GND'],
-    ['I',1,null,null]
-  ]},
-  GRB:{ name:'Green Bay', pos:[
-    ['G',1,'Arrival / Departure','GRB_G_APP'], ['S',1,'Satellite 2','GRB_S_APP'],
-    ['X',1,'Satellite 3','GRB_X_APP'], ['T',1,'GRB Local Control','GRB_TWR'],
-    ['T',2,'GRB Ground / Clearance Delivery','GRB_GND'],
-    ['A',1,'ATW Local Control','ATW_TWR'], ['A',2,'ATW Ground Control','ATW_GND'],
-    ['R',1,'TVC Local Control','TVC_TWR'], ['R',2,'TVC Ground Control','TVC_GND']
-  ]},
-  DSM:{ name:'Des Moines', pos:[
-    ['D',1,'AR/DR and DR','DSM_APP'], ['T',1,'AR/DR TRACAB and Local','DSM_TWR'],
-    ['A',1,'AR','DSM_A_APP'], ['S',1,'SR','DSM_S_APP'], ['U',1,'SR Spare','DSM_U_APP'],
-    ['W',1,'WR','DSM_W_APP'], ['V',1,'Ground / Clearance Delivery','DSM_GND'],
-    ['L',1,'ALO Local','ALO_TWR'], ['F',1,'ALO Ground','ALO_GND']
-  ]},
-  RST:{ name:'Rochester', pos:[
-    ['A',1,'AR-RA','RST_A_APP'], ['W',1,'AR-RW','RST_W_APP'],
-    ['T',1,'Local Control','RST_TWR'], ['F',1,'Ground Control','RST_GND'],
-    ['M',1,null,null]
-  ]},
-  DLH:{ name:'Duluth', pos:[
-    ['L',1,'AR/DR TRACAB','DLH_APP'], ['N',1,'AR/DR North','DLH_N_APP'],
-    ['S',1,'AR/DR South','DLH_S_APP'], ['T',1,'Local Control','DLH_TWR'],
-    ['T',2,'Ground Control','DLH_GND']
-  ]},
-  BIS:{ name:'Bismarck', pos:[
-    ['E',1,'RE','BIS_E_APP'], ['W',1,'RW','BIS_W_APP'],
-    ['T',1,'Local Control','BIS_TWR'], ['G',1,'Ground Control','BIS_GND']
-  ]},
-  FAR:{ name:'Fargo', pos:[
-    ['E',1,'RE','FAR_E_APP'], ['W',1,'RW','FAR_W_APP'],
-    ['T',1,'TRACAB and Local','FAR_TWR'], ['G',1,'Ground Control','FAR_GND']
-  ]},
-  SUX:{ name:'Sioux City', pos:[
-    ['N',1,'Arrival / Departure','SUX_APP'], ['R',1,'Arrival / Departure TRACAB','SUX_APP'],
-    ['T',1,'Local Control','SUX_TWR'], ['G',1,'Ground Control','SUX_GND'],
-    ['S',1,null,null]
-  ]},
-  FSD:{ name:'Sioux Falls', pos:[
-    ['E',1,'RE','FSD_E_APP'], ['W',1,'RW','FSD_W_APP'],
-    ['T',1,'TRACAB and Local','FSD_TWR'], ['G',1,'Ground Control','FSD_GND'],
-    ['A',1,null,null]
-  ]},
-  APN:{ name:'Alpena', pos:[
-    ['A',1,'AR/DR','APN_APP'], ['F',1,'GCA','APN_F_APP'],
-    ['Z',1,'Local Control','APN_TWR'], ['Z',2,'Ground Control','APN_GND']
-  ]},
-  RDR:{ name:'Grand Forks', pos:[
-    ['E',1,'RE','RDR_E_APP'], ['W',1,'RW','RDR_W_APP'],
-    ['A',1,'GFK AR','RDR_A_APP'], ['R',1,'RDR AR','RDR_R_APP'],
-    ['Z',1,'RDR Local Control','RDR_TWR'], ['Z',2,'RDR Ground Control','RDR_GND'],
-    ['U',1,'GFK Local Control 1','GFK_W_TWR'], ['G',1,'GFK Local Control 2','GFK_E_TWR'],
-    ['D',1,'GFK Ground / Clearance Delivery','GFK_GND']
-  ]},
-  MIB:{ name:'Minot', pos:[
-    ['B',1,'Approach Control','MIB_APP'],
-    ['M',1,'Local Control','MIB_TWR'], ['M',2,'Ground Control','MIB_GND']
-  ]}
-};
-
-/* starsConfiguration.starsHandoffIds, per facility — the number the SENDER
-   uses. Asymmetric by construction: M98 reaches RST with 1, RST reaches
-   M98 with 2. */
-var DELTA = {
-  M98:{ RST:1 }, R90:{ SUX:1 }, GRB:{ MKE:1 }, DSM:{ RST:1, CID:2 },
-  RST:{ DSM:1, M98:2 }, FAR:{ RDR:1 }, SUX:{ R90:1, FSD:2 }, FSD:{ SUX:1 },
-  RDR:{ FAR:1 }, DLH:{}, BIS:{}, APN:{}, MIB:{}
-};
-
-/* neighboringFacilityIds — which facilities each TRACON can address at all.
-   Carries ARTCCs as well as STARS facilities. */
-var CAN_REACH = {
-  M98:['RST'], R90:['SUX'], GRB:['MKE','ZAU'], DSM:['CID','RST','ZAU'],
-  RST:['DSM','M98','ZAU'], DLH:[], BIS:[], FAR:['RDR'], SUX:['FSD','R90'],
-  FSD:['SUX'], APN:[], RDR:['FAR'], MIB:[]
-};
-
-var NOTE_C = 'ZOB’s NAS ID is “C”, which is also the generic host-ARTCC prefix. '
-  + 'The platform rule is that a TRACON able to reach ZOB must address its own host by the host’s NAS ID instead. '
-  + 'No ZMP TRACON lists ZOB as a neighbour, so today every ZMP TRACON uses C for ZMP and there is no ambiguity — '
-  + 'but the rule is one adaptation change away from being live.';
-
-var OPEN_Q = [
-  { q:'How an ERAM sector addresses another ARTCC’s sector',
-    why:'crc/eram states the handoff form as a sector ID and says sector IDs come from the Controller List. It never states the cross-ARTCC form, and the facility record has no neighboringEramConfigurations — only STARS and CAATS. Symmetry with STARS suggests NAS ID + sector, but symmetry is not a citation.',
-    close:'One Controller List screenshot with an adjacent-ARTCC sector online.' },
-  { q:'LAN’s Field E letter',
-    why:'LAN is adapted OneLetterAndSubset, which needs a single character, and its record carries none — twoCharacterStarsId is NN and no Field E letter is set. Guessing N would be inventing a keystroke.',
-    close:'The LAN facility record, or a ZMP controller reading the Controller List with LAN online.' },
-  { q:'What ZMP sectors 60, 70 and 77 are',
-    why:'Adapted in eramConfiguration.sectors, named nowhere, and carrying no position.',
-    close:'Owner or facility engineer.' },
-  { q:'Whether R90 Lincoln Final is F or O',
-    why:'R90 7220.10B 2-1 says STARS ID F. vNAS points LNK_F_APP at TCP O.1 — the same TCP as Radar Offutt — and adapts no F sector in R90 at all. The two cannot both be right and neither source can settle it.',
-    close:'Owner, or a CRC session at LNK Final reading its own TCP.' }
-];
-
-/* ---------- 3. Composition ---------- */
-function e2sFor(fac){ for(var i=0;i<E2S.length;i++){ if(E2S[i][0]===fac) return E2S[i]; } return null; }
-function pad2(n){ n = String(n); return n.length < 2 ? '0'+n : n; }
-
-/* ERAM -> a STARS facility position. Returns {id, why, warn} or {id:null,...} */
-function eramToStars(fac, sec, sub){
-  var e = e2sFor(fac);
-  if(!e) return { id:null, why:'Not a neighbouring STARS facility of ZMP — not adaptable from an ERAM sector.' };
-  var starsId = e[1], two = e[2], one = e[3], fmt = e[4];
-  if(fmt === 'FullStarsIdOnly'){
-    return { id:starsId,
-      why:'<b>' + fac + '</b> is adapted <b>FullStarsIdOnly</b>, which the platform documents as "only for STARS facilities without automated handoffs". The STARS ID alone addresses the facility; there is no sector-level form.' };
-  }
-  if(!one){
-    return { id:null, warn:true,
-      why:'<b>' + fac + '</b> is adapted <b>OneLetterAndSubset</b>, which needs a single-character ID, and its vNAS record carries none. Its two-character ID is <b>' + two + '</b>. The letter is not recoverable from our sources and is not guessed here.' };
-  }
-  if(sec == null) return { id:one,
-    why:'<b>' + one + '</b> alone addresses the facility. Add subset and sector to address a seat.' };
-  return { id:one + sub + sec,
-    why:'<b>OneLetterAndSubset</b>: single-character ID <b>' + one + '</b>, then subset <b>' + sub + '</b>, then sector <b>' + sec + '</b>. '
-      + 'The same seat also answers to <b>' + one + '</b> (facility only), <b>' + starsId + '</b> (STARS ID) and <b>' + starsId + sub + sec + '</b>.' };
-}
-
-/* STARS -> ERAM, i.e. how a TRACON seat reaches a ZMP sector. */
-function starsToEram(fac, sector){
-  var reach = CAN_REACH[fac] || [];
-  var otherArtcc = reach.filter(function(f){ return NEIGH_NASID[f]; });
-  var collide = otherArtcc.indexOf('ZOB') > -1;
-  var pre = collide ? NAS_ID : 'C';
-  return { id:pre + pad2(sector),
-    why:(collide
-      ? 'This facility can reach ZOB, whose NAS ID is <b>C</b>, so ZMP must be addressed by its own NAS ID <b>' + NAS_ID + '</b>.'
-      : '<b>C</b> is the host-ARTCC prefix, then the two-digit sector. This facility neighbours no ARTCC whose NAS ID is C, so C is unambiguous.')
-      + ' The sector may be omitted when only one ZMP position is open.' };
-}
-
-/* ---------- 4. Section ---------- */
-function starsOptions(){
-  var out = '';
-  for(var fac in TCPS){
-    var f = TCPS[fac];
-    out += '<optgroup label="' + fac + ' — ' + f.name + '">';
-    for(var i=0;i<f.pos.length;i++){
-      var p = f.pos[i];
-      if(!p[2]) continue;   /* unassigned TCP — not a receiver */
-      out += '<option value="S|' + fac + '|' + p[0] + '|' + p[1] + '">' + p[2] + ' (' + p[1] + p[0] + ')</option>';
-    }
-    out += '</optgroup>';
-  }
-  return out;
-}
-function eramOptions(){
-  var out = '<optgroup label="ZMP sectors — 7200.1O">';
-  var s = ZD.allSectors();
-  for(var i=0;i<s.length;i++){ out += '<option value="E|' + s[i] + '">Sector ' + s[i] + ' — ' + ZD.zdArea(s[i]) + '</option>'; }
-  out += '</optgroup><optgroup label="ZMP sectors — adapted in vNAS only">';
-  for(var k in ZD.UNDOCUMENTED){ out += '<option value="E|' + k + '">Sector ' + k + '</option>'; }
-  for(var e in ERAM_EXTRA){ out += '<option value="E|' + e + '">Sector ' + e + ' — ' + ERAM_EXTRA[e] + '</option>'; }
-  out += '</optgroup>';
-  return out;
-}
-function caatsOptions(){
-  var out = '<optgroup label="Canadian — CAATS">';
-  for(var i=0;i<CAATS.length;i++){ out += '<option value="C|' + CAATS[i][0] + '">' + CAATS[i][0] + ' — ' + CAATS[i][2] + '</option>'; }
-  return out + '</optgroup>';
-}
-
-function tableE2S(){
-  var rows = '';
-  for(var i=0;i<E2S.length;i++){
-    var e = E2S[i], auto = e[4] !== 'FullStarsIdOnly';
-    rows += '<tr><td><b>' + e[0] + '</b></td><td class="dim">' + e[1] + '</td><td class="dim">' + (e[2]||'—') + '</td>'
-      + '<td>' + (e[3] ? '<b>' + e[3] + '</b>' : '<span class="zdh-sub warn">none</span>') + '</td>'
-      + '<td class="dim">' + e[4] + '</td>'
-      + '<td>' + (auto ? (e[3] ? e[3] + ' + subset + sector' : '<span class="zd-warn">not composable</span>') : e[1]) + '</td></tr>';
-  }
-  return '<div class="zd-scroll"><table class="zd-tbl"><thead><tr><th>Facility</th><th>STARS ID</th><th>2-char</th><th>1-char</th><th>Field E format</th><th>ZMP types</th></tr></thead><tbody>'
-    + rows + '</tbody></table></div>';
-}
-
-function tableTcps(){
-  var rows = '';
-  for(var fac in TCPS){
-    var f = TCPS[fac], d = DELTA[fac] || {}, dtxt = [];
-    for(var k in d) dtxt.push(k + ' = Δ' + d[k]);
-    rows += '<tr><td colspan="5" style="background:var(--panel2);color:var(--dim);padding-top:10px;">'
-      + '<b style="color:var(--ink)">' + fac + '</b> — ' + f.name
-      + (dtxt.length ? ' &middot; STARS-to-STARS out: ' + dtxt.join(', ') : ' &middot; no STARS-to-STARS neighbour')
-      + '</td></tr>';
-    for(var i=0;i<f.pos.length;i++){
-      var p = f.pos[i], e = e2sFor(fac), fromEram = '—';
-      if(e && e[3]) fromEram = e[3] + p[1] + p[0];
-      else if(e && e[4] === 'FullStarsIdOnly') fromEram = e[1];
-      rows += '<tr><td class="dim">' + fac + '</td>'
-        + '<td>' + (p[2] ? p[2] : '<span class="dim">— no position on this TCP</span>') + '</td>'
-        + '<td class="dim">' + (p[3] || '') + '</td>'
-        + '<td><b>' + p[1] + p[0] + '</b> <span class="dim">(' + p[0] + ' in subset)</span></td>'
-        + '<td>' + (p[2] ? fromEram : '—') + '</td></tr>';
-    }
-  }
-  return '<div class="zd-scroll"><table class="zd-tbl"><thead><tr><th>Fac</th><th>Position</th><th>Callsign</th><th>TCP</th><th>From a ZMP sector</th></tr></thead><tbody>'
-    + rows + '</tbody></table></div>';
-}
-
-function openQHtml(){
-  return OPEN_Q.map(function(o){
-    return '<div class="zd-panel"><b>' + o.q + '</b>'
-      + '<p class="zdh-why" style="margin-top:6px;">' + o.why + '</p>'
-      + '<p class="zdh-cite">Closes on: ' + o.close + '</p></div>';
-  }).join('');
-}
-
-function section(){
-  return ''
-  + '<section class="zd-section" id="zd-handoff" data-note="handoff">'
-  + '<h2>Handoff IDs</h2>'
-  + '<p class="lede">A handoff ID is a property of the <b>pair</b>, not of the receiver. The same seat has a '
-  + 'different address depending on whether ERAM or STARS is sending, and whether the receiver is inside the '
-  + 'facility, under this ARTCC, or across a boundary.</p>'
-
-  + '<div class="zd-panel">'
-  + '<div class="zdh-grid">'
-  + '<div><label for="zdh-from">You are working</label><select id="zdh-from">' + eramOptions() + '</select></div>'
-  + '<div><label for="zdh-to">Handing off to</label><select id="zdh-to">'
-  + eramOptions() + starsOptions() + caatsOptions() + '</select></div>'
-  + '</div>'
-  + '<div class="zdh-out" id="zdh-out"></div>'
-  + '</div>'
-
-  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">The rules</h3>'
-  + '<div class="zd-panel"><dl class="zd-kv">'
-  + '<dt>ERAM → ERAM</dt><dd>the two-digit sector, bare — <b>05</b></dd>'
-  + '<dt>ERAM → STARS</dt><dd>the facility letter, then subset, then sector — <b>M1H</b></dd>'
-  + '<dt>ERAM → CAATS</dt><dd>the ACC’s single handoff letter — <b>W</b></dd>'
-  + '<dt>STARS → ERAM</dt><dd><b>C</b> + two-digit sector for the host ARTCC — <b>C05</b></dd>'
-  + '<dt>STARS → STARS</dt><dd>same subset: the bare sector. Different subset: subset + sector — <b>2Y</b>. '
-  + 'Another facility: <b>Δ</b> + handoff number + TCP — <b>Δ1A</b>, where Δ is the backtick key.</dd>'
-  + '</dl>'
-  + '<p class="zdh-why" style="margin-top:10px;">The receiving sector may be omitted when only one position is open '
-  + 'in the receiving ARTCC. The Controller List always prints the <b>full</b> ID, so the short form is a convenience, '
-  + 'not the thing to learn first.</p>'
-  + '<p class="zdh-why"><span class="zd-warn">The C collision:</span> ' + NOTE_C + '</p>'
-  + '<p class="zdh-cite">docs.virtualnas.net crc/stars, crc/eram, crc/overview, data-admin/facilities — read 2026-09-01. '
-  + 'Transcribed in claude_ZMP_Handoff_ID_Reference.md.</p>'
-  + '</div>'
-
-  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">ERAM → STARS — all 29 neighbours</h3>'
-  + '<p class="lede">Seventeen are adapted for automated handoffs and take a sector-level ID. Twelve are '
-  + '<b>FullStarsIdOnly</b>, which the platform documents as facilities <i>without</i> automated handoffs — '
-  + 'the STARS ID addresses the facility and there is no seat-level form.</p>'
-  + tableE2S()
-
-  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">Every TCP under ZMP</h3>'
-  + '<p class="lede">Thirteen STARS facilities. The last column is what a ZMP sector types; the TCP column is what '
-  + 'a controller <i>inside</i> that facility types when crossing a subset.</p>'
-  + tableTcps()
-
-  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">Not answered by the sources</h3>'
-  + '<p class="lede">Four gaps, each with the reason it cannot be closed from the documents we hold. A note filed '
-  + 'against one of these is the thing that closes it.</p>'
-  + openQHtml()
-  + '</section>';
-}
-
-/* ---------- 5. Resolve and render ---------- */
-function render(){
-  var from = document.getElementById('zdh-from');
-  var to = document.getElementById('zdh-to');
-  var out = document.getElementById('zdh-out');
-  if(!from || !to || !out) return;
-
-  var fs = from.value.split('|');           /* always E|<sector> in this tool */
-  var ts = to.value.split('|');
-  var fromSec = fs[1];
-  var r, rev = '';
-
-  if(ts[0] === 'E'){
-    var toSec = ts[1];
-    if(toSec === fromSec){
-      r = { id:null, why:'That is the sector you are working. A handoff needs two seats.' };
-    } else {
-      r = { id:toSec, why:'Both seats are ERAM sectors in the same ARTCC, so the ID is the <b>bare two-digit sector</b>. '
-        + 'The command is implied — type the sector ID then the flight ID.' };
-      rev = 'Sector ' + toSec + ' reaches you the same way: <span class="k">' + fromSec + '</span>';
-    }
-  } else if(ts[0] === 'S'){
-    var fac = ts[1], sec = ts[2], sub = ts[3];
-    r = eramToStars(fac, sec, sub);
-    var back = starsToEram(fac, fromSec);
-    rev = fac + ' reaches you with <span class="k">' + back.id + '</span> — ' + back.why;
-  } else {
-    var acc = ts[1], letter = null, nm = '';
-    for(var i=0;i<CAATS.length;i++){ if(CAATS[i][0]===acc){ letter = CAATS[i][1]; nm = CAATS[i][2]; } }
-    r = { id:letter, why:'<b>' + acc + '</b> (' + nm + ') is a CAATS facility, addressed by its ACC’s single handoff letter. '
-      + 'Canadian approach facilities are children of an ACC and only the parent ACC is adapted, so this one letter covers all of them. '
-      + '<span class="zd-warn">Automated Information Transfer cannot ride this handoff</span> — 7200.1O 3.7 — which is why Winnipeg and Toronto are worked manually.' };
-  }
-
-  out.innerHTML = ''
-    + '<div class="zdh-key' + (r.id ? '' : ' none') + '">' + (r.id ? r.id : 'no ID — see below') + '</div>'
-    + '<p class="zdh-why">' + r.why + '</p>'
-    + (rev ? '<div class="zdh-rev">' + rev + '</div>' : '');
-}
-
-/* ---------- 6. Mount ---------- */
-function mount(){
-  var style = document.createElement('style');
-  style.textContent = css;
-  document.head.appendChild(style);
-
-  var wrap = document.querySelector('.wrap');
-  if(!wrap) return;
-
-  var host = document.createElement('div');
-  host.innerHTML = section();
-  var sec = host.firstChild;
-
-  /* The builder block moves sections into page wrappers. Land on the
-     reference page if it exists; otherwise fall back to the plain flow. */
-  var page = document.getElementById('zdb-page-notes');
-  if(page){ page.appendChild(sec); }
-  else {
-    var footer = wrap.querySelector('footer');
-    if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
-  }
-
-  var from = document.getElementById('zdh-from');
-  var to = document.getElementById('zdh-to');
-  if(from) from.addEventListener('change', render);
-  if(to) to.addEventListener('change', render);
-
-  /* follow the seat the builder already knows about, if there is one */
-  if(window.zdb && window.zdb.state){
-    var seat = window.zdb.state().seat;
-    if(seat && from){ from.value = 'E|' + seat; }
-  }
-  if(to){ to.value = 'S|M98|H|1'; }
-  render();
-
-  ZD.hooks.push(function(){
-    if(!window.zdb || !window.zdb.state) return;
-    var s = window.zdb.state().seat, f = document.getElementById('zdh-from');
-    if(s && f && f.value !== 'E|' + s){ f.value = 'E|' + s; render(); }
-  });
-
-  ZD.log('Handoff ID resolver mounted. ' + E2S.length + ' neighbouring STARS facilities, '
-    + Object.keys(TCPS).length + ' TCP tables, ' + OPEN_Q.length + ' open questions.');
-}
-
-window.zdh = {
-  NAS_ID:NAS_ID, NEIGH_NASID:NEIGH_NASID, E2S:E2S, CAATS:CAATS, TCPS:TCPS,
-  DELTA:DELTA, CAN_REACH:CAN_REACH, ERAM_EXTRA:ERAM_EXTRA, OPEN_Q:OPEN_Q,
-  eramToStars:eramToStars, starsToEram:starsToEram, e2sFor:e2sFor
-};
-
-if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
-else { mount(); }
-})();
-</script>
-
-</body> of any copy of this tool.
+   Safe to paste as one block before </body> of any copy of this tool.
    ================================================================ */
 (function(){
 'use strict';
@@ -1285,5 +816,474 @@ if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoad
 else { mount(); }
 })();
 </script>
+
+<script>
+/* ================================================================
+   ZMP HANDOFF ID RESOLVER v0 — additive extension.
+   Requires the Sector Deck block (window.ZD) earlier in the page.
+
+   A handoff ID is a property of the PAIR, not of the receiver: the same
+   seat has a different address depending on which automation system is
+   sending. This block carries the ID data and composes the keystroke.
+
+   Every value and every composition rule is cited in
+   claude_ZMP_Handoff_ID_Reference.md, which is authoritative. Sector
+   numbers and frequencies are NOT copied here — they are read through
+   window.ZD, per CLAUDE.md invariant 5.
+   ================================================================ */
+(function(){
+'use strict';
+
+var ZD = window.ZD;
+if(!ZD){ return; }   /* deck absent — do nothing, per the block contract */
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.zdh-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}'
++ '@media(max-width:700px){.zdh-grid{grid-template-columns:1fr;}}'
++ '.zdh-grid label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;}'
++ '.zdh-grid select{width:100%;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 8px;}'
++ '.zdh-out{margin:14px 0 0;padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);}'
++ '.zdh-key{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--green);letter-spacing:.06em;line-height:1.2;}'
++ '.zdh-key.none{color:var(--dim2);font-size:17px;}'
++ '.zdh-why{font-size:12.5px;color:var(--dim);margin:6px 0 0;max-width:62ch;}'
++ '.zdh-why b{color:var(--ink);font-weight:600;}'
++ '.zdh-cite{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin:6px 0 0;}'
++ '.zdh-rev{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);}'
++ '.zdh-rev .k{font-family:var(--mono);font-size:16px;color:var(--amber);font-weight:600;}'
++ '.zdh-sub{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);border-radius:3px;padding:1px 6px;color:var(--dim);}'
++ '.zdh-sub.warn{color:var(--amber);border-color:var(--amber);}'
+;
+
+/* ---------- 2. Handoff data ----------
+   Source: vNAS facility record for ZMP, ZMP/_vnas/ZMP_vnas.json,
+   lastUpdatedAt 2026-08-26. Composition rules from docs.virtualnas.net
+   (crc/stars, crc/eram, crc/overview, data-admin/facilities), read
+   2026-09-01. Both are transcribed in claude_ZMP_Handoff_ID_Reference.md. */
+
+var NAS_ID = 'P';                                    /* eramConfiguration.nasId */
+
+/* Neighbouring ARTCC NAS IDs — from each ARTCC's own vNAS record.
+   ZOB is 'C', which is also the generic "host ARTCC" prefix. See NOTE_C. */
+var NEIGH_NASID = { ZAU:'G', ZDV:'D', ZKC:'K', ZLC:'U', ZOB:'C' };
+
+/* ERAM sectors adapted in vNAS but absent from the deck's tables.
+   60/70/77 have no position; 99 is a position whose sector is not adapted. */
+var ERAM_EXTRA = {
+  '60':'adapted, no position', '70':'adapted, no position', '77':'adapted, no position',
+  '61':'ZMP TMU MSP', '62':'ZMP TMU NY', '63':'ZMP TMU DEN/MDW', '64':'ZMP TMU ORD',
+  '99':'ZMP Guard — position exists, sector NOT in the adapted list'
+};
+
+/* eramConfiguration.neighboringStarsConfigurations — all 29, verbatim.
+   [facilityId, starsId, twoCharacterStarsId, singleCharacterStarsId, fieldEFormat] */
+var E2S = [
+  ['M98','MMM','MM','M','OneLetterAndSubset'], ['R90','OOO','OO','O','OneLetterAndSubset'],
+  ['RST','TTT','TT','T','OneLetterAndSubset'], ['DSM','DDD','EE','E','OneLetterAndSubset'],
+  ['GRB','GGG','BB','B','OneLetterAndSubset'], ['DLH','LLL','LL','L','OneLetterAndSubset'],
+  ['FAR','HHH','HH','H','OneLetterAndSubset'], ['FSD','FFF','FF','F','OneLetterAndSubset'],
+  ['BIS','AAA','AA','A','OneLetterAndSubset'], ['SUX','YYY','YY','Y','OneLetterAndSubset'],
+  ['RDR','RRR','RR','R','OneLetterAndSubset'], ['MIB','III','II','I','OneLetterAndSubset'],
+  ['APN','ZZZ','ZZ','Z','OneLetterAndSubset'], ['AZO','SSS','SS','S','OneLetterAndSubset'],
+  ['VOK','JJJ','JJ','J','OneLetterAndSubset'], ['MKE','MKE','XX','X','OneLetterAndSubset'],
+  ['LAN','LAN','NN',null,'OneLetterAndSubset'],
+  ['CID','CID',null,null,'FullStarsIdOnly'], ['D21','DTW',null,null,'FullStarsIdOnly'],
+  ['MCI','MCI',null,null,'FullStarsIdOnly'], ['MLI','MLI',null,null,'FullStarsIdOnly'],
+  ['MSN','MSN',null,null,'FullStarsIdOnly'], ['MTC','MTC',null,null,'FullStarsIdOnly'],
+  ['ROC','ROC',null,null,'FullStarsIdOnly'], ['TOL','TOL',null,null,'FullStarsIdOnly'],
+  ['YNG','YNG',null,null,'FullStarsIdOnly'], ['BIL','BIL',null,null,'FullStarsIdOnly'],
+  ['GTF','GTF',null,null,'FullStarsIdOnly'], ['RCA','RCA',null,null,'FullStarsIdOnly']
+];
+
+/* eramConfiguration.neighboringCaatsConfigurations */
+var CAATS = [ ['CZWG','W','Winnipeg'], ['CZYZ','N','Toronto'] ];
+
+/* starsConfiguration.tcps joined to positions[].starsConfiguration.tcpId,
+   per facility. [sectorId, subset, position name, callsign]. A row with a
+   null callsign is an adapted TCP with nobody on it. */
+var TCPS = {
+  M98:{ name:'Minneapolis TRACON', pos:[
+    ['D',1,'North Departure','MSP_D_DEP'], ['R',1,'South Departure','MSP_R_DEP'],
+    ['L',1,'East Departure','MSP_L_DEP'], ['I',1,'North Feeder','MSP_I_APP'],
+    ['H',1,'South Feeder','MSP_H_APP'], ['N',1,'North Final / Arrival','MSP_N_APP'],
+    ['S',1,'South Final / Arrival','MSP_S_APP'], ['J',1,'17/35 West Final / Arrival','MSP_J_APP'],
+    ['E',1,'Flying Cloud Satellite / Midnight','MSP_E_APP'], ['G',1,'St. Paul Satellite','MSP_G_APP'],
+    ['K',1,'Crystal Satellite','MSP_K_APP'], ['A',1,'Arrival Overhead','MSP_A_APP'],
+    ['W',1,'TMU','MSP_W_APP'],
+    ['V',1,'MSP Local Control South','MSP_S_TWR'], ['T',1,'MSP Local Control North','MSP_N_TWR'],
+    ['Y',1,'MSP Local Control West','MSP_W_TWR'], ['Y',2,'MSP Ground (N/S/W) and Metering','MSP_*_GND'],
+    ['6',1,'MSP Clearance Delivery','MSP_DEL'],
+    ['P',2,'STP Local Control','STP_TWR'], ['P',3,'STP Ground Control','STP_GND'],
+    ['O',2,'ANE Local Control','ANE_TWR'], ['O',3,'ANE Ground Control','ANE_GND'],
+    ['F',2,'FCM Local Control South','FCM_S_TWR'], ['Z',2,'FCM Local Control North','FCM_N_TWR'],
+    ['F',3,'FCM Ground Control','FCM_GND'],
+    ['M',2,'MIC Local Control','MIC_TWR'], ['M',3,'MIC Ground Control','MIC_GND'],
+    ['9',3,null,null], ['Q',1,null,null], ['U',1,null,null], ['X',1,null,null]
+  ]},
+  R90:{ name:'Omaha TRACON', pos:[
+    ['W',1,'Radar West','OMA_W_APP'], ['X',1,'Radar East','OMA_X_APP'],
+    ['V',1,'Radar Final','OMA_V_APP'], ['O',1,'Radar Offutt (and Lincoln Final — see conflict)','OMA_O_APP'],
+    ['L',1,'Radar Lincoln','LNK_L_APP'],
+    ['A',1,'OMA Local Control','OMA_TWR'], ['A',2,'OMA Ground / Clearance Delivery','OMA_GND'],
+    ['N',1,'LNK Local Control','LNK_TWR'], ['N',2,'LNK Ground / Clearance Delivery','LNK_GND'],
+    ['T',1,'OFF Local Control','OFF_TWR'], ['T',2,'OFF Ground Control','OFF_GND'],
+    ['I',1,null,null]
+  ]},
+  GRB:{ name:'Green Bay', pos:[
+    ['G',1,'Arrival / Departure','GRB_G_APP'], ['S',1,'Satellite 2','GRB_S_APP'],
+    ['X',1,'Satellite 3','GRB_X_APP'], ['T',1,'GRB Local Control','GRB_TWR'],
+    ['T',2,'GRB Ground / Clearance Delivery','GRB_GND'],
+    ['A',1,'ATW Local Control','ATW_TWR'], ['A',2,'ATW Ground Control','ATW_GND'],
+    ['R',1,'TVC Local Control','TVC_TWR'], ['R',2,'TVC Ground Control','TVC_GND']
+  ]},
+  DSM:{ name:'Des Moines', pos:[
+    ['D',1,'AR/DR and DR','DSM_APP'], ['T',1,'AR/DR TRACAB and Local','DSM_TWR'],
+    ['A',1,'AR','DSM_A_APP'], ['S',1,'SR','DSM_S_APP'], ['U',1,'SR Spare','DSM_U_APP'],
+    ['W',1,'WR','DSM_W_APP'], ['V',1,'Ground / Clearance Delivery','DSM_GND'],
+    ['L',1,'ALO Local','ALO_TWR'], ['F',1,'ALO Ground','ALO_GND']
+  ]},
+  RST:{ name:'Rochester', pos:[
+    ['A',1,'AR-RA','RST_A_APP'], ['W',1,'AR-RW','RST_W_APP'],
+    ['T',1,'Local Control','RST_TWR'], ['F',1,'Ground Control','RST_GND'],
+    ['M',1,null,null]
+  ]},
+  DLH:{ name:'Duluth', pos:[
+    ['L',1,'AR/DR TRACAB','DLH_APP'], ['N',1,'AR/DR North','DLH_N_APP'],
+    ['S',1,'AR/DR South','DLH_S_APP'], ['T',1,'Local Control','DLH_TWR'],
+    ['T',2,'Ground Control','DLH_GND']
+  ]},
+  BIS:{ name:'Bismarck', pos:[
+    ['E',1,'RE','BIS_E_APP'], ['W',1,'RW','BIS_W_APP'],
+    ['T',1,'Local Control','BIS_TWR'], ['G',1,'Ground Control','BIS_GND']
+  ]},
+  FAR:{ name:'Fargo', pos:[
+    ['E',1,'RE','FAR_E_APP'], ['W',1,'RW','FAR_W_APP'],
+    ['T',1,'TRACAB and Local','FAR_TWR'], ['G',1,'Ground Control','FAR_GND']
+  ]},
+  SUX:{ name:'Sioux City', pos:[
+    ['N',1,'Arrival / Departure','SUX_APP'], ['R',1,'Arrival / Departure TRACAB','SUX_APP'],
+    ['T',1,'Local Control','SUX_TWR'], ['G',1,'Ground Control','SUX_GND'],
+    ['S',1,null,null]
+  ]},
+  FSD:{ name:'Sioux Falls', pos:[
+    ['E',1,'RE','FSD_E_APP'], ['W',1,'RW','FSD_W_APP'],
+    ['T',1,'TRACAB and Local','FSD_TWR'], ['G',1,'Ground Control','FSD_GND'],
+    ['A',1,null,null]
+  ]},
+  APN:{ name:'Alpena', pos:[
+    ['A',1,'AR/DR','APN_APP'], ['F',1,'GCA','APN_F_APP'],
+    ['Z',1,'Local Control','APN_TWR'], ['Z',2,'Ground Control','APN_GND']
+  ]},
+  RDR:{ name:'Grand Forks', pos:[
+    ['E',1,'RE','RDR_E_APP'], ['W',1,'RW','RDR_W_APP'],
+    ['A',1,'GFK AR','RDR_A_APP'], ['R',1,'RDR AR','RDR_R_APP'],
+    ['Z',1,'RDR Local Control','RDR_TWR'], ['Z',2,'RDR Ground Control','RDR_GND'],
+    ['U',1,'GFK Local Control 1','GFK_W_TWR'], ['G',1,'GFK Local Control 2','GFK_E_TWR'],
+    ['D',1,'GFK Ground / Clearance Delivery','GFK_GND']
+  ]},
+  MIB:{ name:'Minot', pos:[
+    ['B',1,'Approach Control','MIB_APP'],
+    ['M',1,'Local Control','MIB_TWR'], ['M',2,'Ground Control','MIB_GND']
+  ]}
+};
+
+/* starsConfiguration.starsHandoffIds, per facility — the number the SENDER
+   uses. Asymmetric by construction: M98 reaches RST with 1, RST reaches
+   M98 with 2. */
+var DELTA = {
+  M98:{ RST:1 }, R90:{ SUX:1 }, GRB:{ MKE:1 }, DSM:{ RST:1, CID:2 },
+  RST:{ DSM:1, M98:2 }, FAR:{ RDR:1 }, SUX:{ R90:1, FSD:2 }, FSD:{ SUX:1 },
+  RDR:{ FAR:1 }, DLH:{}, BIS:{}, APN:{}, MIB:{}
+};
+
+/* neighboringFacilityIds — which facilities each TRACON can address at all.
+   Carries ARTCCs as well as STARS facilities. */
+var CAN_REACH = {
+  M98:['RST'], R90:['SUX'], GRB:['MKE','ZAU'], DSM:['CID','RST','ZAU'],
+  RST:['DSM','M98','ZAU'], DLH:[], BIS:[], FAR:['RDR'], SUX:['FSD','R90'],
+  FSD:['SUX'], APN:[], RDR:['FAR'], MIB:[]
+};
+
+var NOTE_C = 'ZOB’s NAS ID is “C”, which is also the generic host-ARTCC prefix. '
+  + 'The platform rule is that a TRACON able to reach ZOB must address its own host by the host’s NAS ID instead. '
+  + 'No ZMP TRACON lists ZOB as a neighbour, so today every ZMP TRACON uses C for ZMP and there is no ambiguity — '
+  + 'but the rule is one adaptation change away from being live.';
+
+var OPEN_Q = [
+  { q:'How an ERAM sector addresses another ARTCC’s sector',
+    why:'crc/eram states the handoff form as a sector ID and says sector IDs come from the Controller List. It never states the cross-ARTCC form, and the facility record has no neighboringEramConfigurations — only STARS and CAATS. Symmetry with STARS suggests NAS ID + sector, but symmetry is not a citation.',
+    close:'One Controller List screenshot with an adjacent-ARTCC sector online.' },
+  { q:'LAN’s Field E letter',
+    why:'LAN is adapted OneLetterAndSubset, which needs a single character, and its record carries none — twoCharacterStarsId is NN and no Field E letter is set. Guessing N would be inventing a keystroke.',
+    close:'The LAN facility record, or a ZMP controller reading the Controller List with LAN online.' },
+  { q:'What ZMP sectors 60, 70 and 77 are',
+    why:'Adapted in eramConfiguration.sectors, named nowhere, and carrying no position.',
+    close:'Owner or facility engineer.' },
+  { q:'Whether R90 Lincoln Final is F or O',
+    why:'R90 7220.10B 2-1 says STARS ID F. vNAS points LNK_F_APP at TCP O.1 — the same TCP as Radar Offutt — and adapts no F sector in R90 at all. The two cannot both be right and neither source can settle it.',
+    close:'Owner, or a CRC session at LNK Final reading its own TCP.' }
+];
+
+/* ---------- 3. Composition ---------- */
+function e2sFor(fac){ for(var i=0;i<E2S.length;i++){ if(E2S[i][0]===fac) return E2S[i]; } return null; }
+function pad2(n){ n = String(n); return n.length < 2 ? '0'+n : n; }
+
+/* ERAM -> a STARS facility position. Returns {id, why, warn} or {id:null,...} */
+function eramToStars(fac, sec, sub){
+  var e = e2sFor(fac);
+  if(!e) return { id:null, why:'Not a neighbouring STARS facility of ZMP — not adaptable from an ERAM sector.' };
+  var starsId = e[1], two = e[2], one = e[3], fmt = e[4];
+  if(fmt === 'FullStarsIdOnly'){
+    return { id:starsId,
+      why:'<b>' + fac + '</b> is adapted <b>FullStarsIdOnly</b>, which the platform documents as "only for STARS facilities without automated handoffs". The STARS ID alone addresses the facility; there is no sector-level form.' };
+  }
+  if(!one){
+    return { id:null, warn:true,
+      why:'<b>' + fac + '</b> is adapted <b>OneLetterAndSubset</b>, which needs a single-character ID, and its vNAS record carries none. Its two-character ID is <b>' + two + '</b>. The letter is not recoverable from our sources and is not guessed here.' };
+  }
+  if(sec == null) return { id:one,
+    why:'<b>' + one + '</b> alone addresses the facility. Add subset and sector to address a seat.' };
+  return { id:one + sub + sec,
+    why:'<b>OneLetterAndSubset</b>: single-character ID <b>' + one + '</b>, then subset <b>' + sub + '</b>, then sector <b>' + sec + '</b>. '
+      + 'The same seat also answers to <b>' + one + '</b> (facility only), <b>' + starsId + '</b> (STARS ID) and <b>' + starsId + sub + sec + '</b>.' };
+}
+
+/* STARS -> ERAM, i.e. how a TRACON seat reaches a ZMP sector. */
+function starsToEram(fac, sector){
+  var reach = CAN_REACH[fac] || [];
+  var otherArtcc = reach.filter(function(f){ return NEIGH_NASID[f]; });
+  var collide = otherArtcc.indexOf('ZOB') > -1;
+  var pre = collide ? NAS_ID : 'C';
+  return { id:pre + pad2(sector),
+    why:(collide
+      ? 'This facility can reach ZOB, whose NAS ID is <b>C</b>, so ZMP must be addressed by its own NAS ID <b>' + NAS_ID + '</b>.'
+      : '<b>C</b> is the host-ARTCC prefix, then the two-digit sector. This facility neighbours no ARTCC whose NAS ID is C, so C is unambiguous.')
+      + ' The sector may be omitted when only one ZMP position is open.' };
+}
+
+/* ---------- 4. Section ---------- */
+function starsOptions(){
+  var out = '';
+  for(var fac in TCPS){
+    var f = TCPS[fac];
+    out += '<optgroup label="' + fac + ' — ' + f.name + '">';
+    for(var i=0;i<f.pos.length;i++){
+      var p = f.pos[i];
+      if(!p[2]) continue;   /* unassigned TCP — not a receiver */
+      out += '<option value="S|' + fac + '|' + p[0] + '|' + p[1] + '">' + p[2] + ' (' + p[1] + p[0] + ')</option>';
+    }
+    out += '</optgroup>';
+  }
+  return out;
+}
+function eramOptions(){
+  var out = '<optgroup label="ZMP sectors — 7200.1O">';
+  var s = ZD.allSectors();
+  for(var i=0;i<s.length;i++){ out += '<option value="E|' + s[i] + '">Sector ' + s[i] + ' — ' + ZD.zdArea(s[i]) + '</option>'; }
+  out += '</optgroup><optgroup label="ZMP sectors — adapted in vNAS only">';
+  for(var k in ZD.UNDOCUMENTED){ out += '<option value="E|' + k + '">Sector ' + k + '</option>'; }
+  for(var e in ERAM_EXTRA){ out += '<option value="E|' + e + '">Sector ' + e + ' — ' + ERAM_EXTRA[e] + '</option>'; }
+  out += '</optgroup>';
+  return out;
+}
+function caatsOptions(){
+  var out = '<optgroup label="Canadian — CAATS">';
+  for(var i=0;i<CAATS.length;i++){ out += '<option value="C|' + CAATS[i][0] + '">' + CAATS[i][0] + ' — ' + CAATS[i][2] + '</option>'; }
+  return out + '</optgroup>';
+}
+
+function tableE2S(){
+  var rows = '';
+  for(var i=0;i<E2S.length;i++){
+    var e = E2S[i], auto = e[4] !== 'FullStarsIdOnly';
+    rows += '<tr><td><b>' + e[0] + '</b></td><td class="dim">' + e[1] + '</td><td class="dim">' + (e[2]||'—') + '</td>'
+      + '<td>' + (e[3] ? '<b>' + e[3] + '</b>' : '<span class="zdh-sub warn">none</span>') + '</td>'
+      + '<td class="dim">' + e[4] + '</td>'
+      + '<td>' + (auto ? (e[3] ? e[3] + ' + subset + sector' : '<span class="zd-warn">not composable</span>') : e[1]) + '</td></tr>';
+  }
+  return '<div class="zd-scroll"><table class="zd-tbl"><thead><tr><th>Facility</th><th>STARS ID</th><th>2-char</th><th>1-char</th><th>Field E format</th><th>ZMP types</th></tr></thead><tbody>'
+    + rows + '</tbody></table></div>';
+}
+
+function tableTcps(){
+  var rows = '';
+  for(var fac in TCPS){
+    var f = TCPS[fac], d = DELTA[fac] || {}, dtxt = [];
+    for(var k in d) dtxt.push(k + ' = Δ' + d[k]);
+    rows += '<tr><td colspan="5" style="background:var(--panel2);color:var(--dim);padding-top:10px;">'
+      + '<b style="color:var(--ink)">' + fac + '</b> — ' + f.name
+      + (dtxt.length ? ' &middot; STARS-to-STARS out: ' + dtxt.join(', ') : ' &middot; no STARS-to-STARS neighbour')
+      + '</td></tr>';
+    for(var i=0;i<f.pos.length;i++){
+      var p = f.pos[i], e = e2sFor(fac), fromEram = '—';
+      if(e && e[3]) fromEram = e[3] + p[1] + p[0];
+      else if(e && e[4] === 'FullStarsIdOnly') fromEram = e[1];
+      rows += '<tr><td class="dim">' + fac + '</td>'
+        + '<td>' + (p[2] ? p[2] : '<span class="dim">— no position on this TCP</span>') + '</td>'
+        + '<td class="dim">' + (p[3] || '') + '</td>'
+        + '<td><b>' + p[1] + p[0] + '</b> <span class="dim">(' + p[0] + ' in subset)</span></td>'
+        + '<td>' + (p[2] ? fromEram : '—') + '</td></tr>';
+    }
+  }
+  return '<div class="zd-scroll"><table class="zd-tbl"><thead><tr><th>Fac</th><th>Position</th><th>Callsign</th><th>TCP</th><th>From a ZMP sector</th></tr></thead><tbody>'
+    + rows + '</tbody></table></div>';
+}
+
+function openQHtml(){
+  return OPEN_Q.map(function(o){
+    return '<div class="zd-panel"><b>' + o.q + '</b>'
+      + '<p class="zdh-why" style="margin-top:6px;">' + o.why + '</p>'
+      + '<p class="zdh-cite">Closes on: ' + o.close + '</p></div>';
+  }).join('');
+}
+
+function section(){
+  return ''
+  + '<section class="zd-section" id="zd-handoff" data-note="handoff">'
+  + '<h2>Handoff IDs</h2>'
+  + '<p class="lede">A handoff ID is a property of the <b>pair</b>, not of the receiver. The same seat has a '
+  + 'different address depending on whether ERAM or STARS is sending, and whether the receiver is inside the '
+  + 'facility, under this ARTCC, or across a boundary.</p>'
+
+  + '<div class="zd-panel">'
+  + '<div class="zdh-grid">'
+  + '<div><label for="zdh-from">You are working</label><select id="zdh-from">' + eramOptions() + '</select></div>'
+  + '<div><label for="zdh-to">Handing off to</label><select id="zdh-to">'
+  + eramOptions() + starsOptions() + caatsOptions() + '</select></div>'
+  + '</div>'
+  + '<div class="zdh-out" id="zdh-out"></div>'
+  + '</div>'
+
+  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">The rules</h3>'
+  + '<div class="zd-panel"><dl class="zd-kv">'
+  + '<dt>ERAM → ERAM</dt><dd>the two-digit sector, bare — <b>05</b></dd>'
+  + '<dt>ERAM → STARS</dt><dd>the facility letter, then subset, then sector — <b>M1H</b></dd>'
+  + '<dt>ERAM → CAATS</dt><dd>the ACC’s single handoff letter — <b>W</b></dd>'
+  + '<dt>STARS → ERAM</dt><dd><b>C</b> + two-digit sector for the host ARTCC — <b>C05</b></dd>'
+  + '<dt>STARS → STARS</dt><dd>same subset: the bare sector. Different subset: subset + sector — <b>2Y</b>. '
+  + 'Another facility: <b>Δ</b> + handoff number + TCP — <b>Δ1A</b>, where Δ is the backtick key.</dd>'
+  + '</dl>'
+  + '<p class="zdh-why" style="margin-top:10px;">The receiving sector may be omitted when only one position is open '
+  + 'in the receiving ARTCC. The Controller List always prints the <b>full</b> ID, so the short form is a convenience, '
+  + 'not the thing to learn first.</p>'
+  + '<p class="zdh-why"><span class="zd-warn">The C collision:</span> ' + NOTE_C + '</p>'
+  + '<p class="zdh-cite">docs.virtualnas.net crc/stars, crc/eram, crc/overview, data-admin/facilities — read 2026-09-01. '
+  + 'Transcribed in claude_ZMP_Handoff_ID_Reference.md.</p>'
+  + '</div>'
+
+  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">ERAM → STARS — all 29 neighbours</h3>'
+  + '<p class="lede">Seventeen are adapted for automated handoffs and take a sector-level ID. Twelve are '
+  + '<b>FullStarsIdOnly</b>, which the platform documents as facilities <i>without</i> automated handoffs — '
+  + 'the STARS ID addresses the facility and there is no seat-level form.</p>'
+  + tableE2S()
+
+  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">Every TCP under ZMP</h3>'
+  + '<p class="lede">Thirteen STARS facilities. The last column is what a ZMP sector types; the TCP column is what '
+  + 'a controller <i>inside</i> that facility types when crossing a subset.</p>'
+  + tableTcps()
+
+  + '<h3 style="font-family:var(--display);font-size:16px;margin:28px 0 4px;">Not answered by the sources</h3>'
+  + '<p class="lede">Four gaps, each with the reason it cannot be closed from the documents we hold. A note filed '
+  + 'against one of these is the thing that closes it.</p>'
+  + openQHtml()
+  + '</section>';
+}
+
+/* ---------- 5. Resolve and render ---------- */
+function render(){
+  var from = document.getElementById('zdh-from');
+  var to = document.getElementById('zdh-to');
+  var out = document.getElementById('zdh-out');
+  if(!from || !to || !out) return;
+
+  var fs = from.value.split('|');           /* always E|<sector> in this tool */
+  var ts = to.value.split('|');
+  var fromSec = fs[1];
+  var r, rev = '';
+
+  if(ts[0] === 'E'){
+    var toSec = ts[1];
+    if(toSec === fromSec){
+      r = { id:null, why:'That is the sector you are working. A handoff needs two seats.' };
+    } else {
+      r = { id:toSec, why:'Both seats are ERAM sectors in the same ARTCC, so the ID is the <b>bare two-digit sector</b>. '
+        + 'The command is implied — type the sector ID then the flight ID.' };
+      rev = 'Sector ' + toSec + ' reaches you the same way: <span class="k">' + fromSec + '</span>';
+    }
+  } else if(ts[0] === 'S'){
+    var fac = ts[1], sec = ts[2], sub = ts[3];
+    r = eramToStars(fac, sec, sub);
+    var back = starsToEram(fac, fromSec);
+    rev = fac + ' reaches you with <span class="k">' + back.id + '</span> — ' + back.why;
+  } else {
+    var acc = ts[1], letter = null, nm = '';
+    for(var i=0;i<CAATS.length;i++){ if(CAATS[i][0]===acc){ letter = CAATS[i][1]; nm = CAATS[i][2]; } }
+    r = { id:letter, why:'<b>' + acc + '</b> (' + nm + ') is a CAATS facility, addressed by its ACC’s single handoff letter. '
+      + 'Canadian approach facilities are children of an ACC and only the parent ACC is adapted, so this one letter covers all of them. '
+      + '<span class="zd-warn">Automated Information Transfer cannot ride this handoff</span> — 7200.1O 3.7 — which is why Winnipeg and Toronto are worked manually.' };
+  }
+
+  out.innerHTML = ''
+    + '<div class="zdh-key' + (r.id ? '' : ' none') + '">' + (r.id ? r.id : 'no ID — see below') + '</div>'
+    + '<p class="zdh-why">' + r.why + '</p>'
+    + (rev ? '<div class="zdh-rev">' + rev + '</div>' : '');
+}
+
+/* ---------- 6. Mount ---------- */
+function mount(){
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+
+  var host = document.createElement('div');
+  host.innerHTML = section();
+  var sec = host.firstChild;
+
+  /* The builder block moves sections into page wrappers. Land on the
+     reference page if it exists; otherwise fall back to the plain flow. */
+  var page = document.getElementById('zdb-page-notes');
+  if(page){ page.appendChild(sec); }
+  else {
+    var footer = wrap.querySelector('footer');
+    if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+  }
+
+  var from = document.getElementById('zdh-from');
+  var to = document.getElementById('zdh-to');
+  if(from) from.addEventListener('change', render);
+  if(to) to.addEventListener('change', render);
+
+  /* follow the seat the builder already knows about, if there is one */
+  if(window.zdb && window.zdb.state){
+    var seat = window.zdb.state().seat;
+    if(seat && from){ from.value = 'E|' + seat; }
+  }
+  if(to){ to.value = 'S|M98|H|1'; }
+  render();
+
+  ZD.hooks.push(function(){
+    if(!window.zdb || !window.zdb.state) return;
+    var s = window.zdb.state().seat, f = document.getElementById('zdh-from');
+    if(s && f && f.value !== 'E|' + s){ f.value = 'E|' + s; render(); }
+  });
+
+  ZD.log('Handoff ID resolver mounted. ' + E2S.length + ' neighbouring STARS facilities, '
+    + Object.keys(TCPS).length + ' TCP tables, ' + OPEN_Q.length + ' open questions.');
+}
+
+window.zdh = {
+  NAS_ID:NAS_ID, NEIGH_NASID:NEIGH_NASID, E2S:E2S, CAATS:CAATS, TCPS:TCPS,
+  DELTA:DELTA, CAN_REACH:CAN_REACH, ERAM_EXTRA:ERAM_EXTRA, OPEN_Q:OPEN_Q,
+  eramToStars:eramToStars, starsToEram:starsToEram, e2sFor:e2sFor
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+
 </body>
 </html>

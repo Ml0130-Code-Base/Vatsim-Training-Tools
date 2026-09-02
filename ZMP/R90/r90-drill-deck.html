@@ -399,7 +399,9 @@ function sectionPositions(){
   return ''
   + '<section class="rd-section" id="rd-positions">'
   + '<h2>The six positions</h2>'
-  + '<p class="lede">Confirmed twice — R90 7220.10B 2-1 and the vNAS facility record agree on all six.</p>'
+  + '<p class="lede">Checked twice, against R90 7220.10B 2-1 and the vNAS facility record. '
+  + '<b>Five of the six agree.</b> Lincoln Final does not, and both values are carried below — '
+  + 'the tool does not pick one.</p>'
   + '<table class="rd-tbl"><thead><tr><th></th><th>Position</th><th>Freq</th><th>STARS</th><th>Callsign</th><th>Field</th></tr></thead>'
   + '<tbody>' + rows + '</tbody></table>'
   + '<div class="rd-panel rd-warn rd-mono" style="font-size:11.5px;">Radar West moved from ' + fmtFreq(SUPERSEDED_FREQ.RW)
@@ -825,5 +827,352 @@ if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoad
 else { mount(); }
 })();
 </script>
+
+<script>
+/* ================================================================
+   R90 HANDOFF ID RESOLVER v0 — additive extension.
+   Requires the Radar Deck block (window.RD) earlier in the page.
+
+   A handoff ID is a property of the PAIR, not of the receiver. From an
+   R90 seat there are four forms:
+
+     another R90 radar seat   bare sector letter        X
+     an R90 tower or ground   subset + sector           2A
+     a ZMP sector             C + two-digit sector      C27
+     SUX                      delta + number + TCP      `1N
+
+   Values from the vNAS facility record for ZMP (../_vnas/ZMP_vnas.json,
+   lastUpdatedAt 2026-08-26), which carries R90 as a child TRACON.
+   Composition rules from docs.virtualnas.net, read 2026-09-01. Both are
+   transcribed, with citations, in claude_ZMP_Handoff_ID_Reference.md —
+   which is authoritative.
+
+   THE LINCOLN FINAL CONFLICT IS CARRIED THROUGH THIS RESOLVER. Where the
+   order and vNAS disagree the tool shows both and picks neither. Position
+   names, frequencies and the SOP STARS IDs are read through window.RD,
+   per Architecture rule 3 — not copied.
+   ================================================================ */
+(function(){
+'use strict';
+
+var RD = window.RD;
+if(!RD){ return; }   /* deck absent — do nothing, per the block contract */
+
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+/* ---------- 1. CSS ---------- */
+var css = ''
++ '.rdh-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px;}'
++ '@media(max-width:700px){.rdh-grid{grid-template-columns:1fr;}}'
++ '.rdh-grid label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;}'
++ '.rdh-grid select{width:100%;font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 8px;}'
++ '.rdh-out{padding:14px;border:1px solid var(--line);border-radius:6px;background:var(--panel2);}'
++ '.rdh-key{font-family:var(--mono);font-size:32px;font-weight:600;color:var(--green);letter-spacing:.06em;line-height:1.2;}'
++ '.rdh-key.none{color:var(--dim2);font-size:17px;}'
++ '.rdh-key.split{font-size:22px;color:var(--amber);}'
++ '.rdh-why{font-size:12.5px;color:var(--dim);margin:6px 0 0;max-width:64ch;}'
++ '.rdh-why b{color:var(--ink);font-weight:600;}'
++ '.rdh-rev{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--dim);}'
++ '.rdh-rev .k{font-family:var(--mono);font-size:17px;color:var(--amber);font-weight:600;}'
++ '.rdh-id{color:var(--green);font-weight:600;}'
++ '.rdh-scroll{max-height:460px;overflow:auto;border:1px solid var(--line);border-radius:6px;}'
+;
+
+/* ---------- 2. Handoff data ----------
+   R90 starsConfiguration.tcps joined to positions[].starsConfiguration.tcpId.
+   The six radar seats live in RD.POSITIONS and are NOT duplicated here — this
+   table is the tower and ground layer plus the adapted-but-empty TCP.
+   [sectorId, subset, name, callsign] */
+var R90_TOWER = [
+  ['A',1,'OMA Local Control','OMA_TWR'],
+  ['A',2,'OMA Ground Control and Clearance Delivery','OMA_GND'],
+  ['N',1,'LNK Local Control','LNK_TWR'],
+  ['N',2,'LNK Ground Control and Clearance Delivery','LNK_GND'],
+  ['T',1,'OFF Local Control','OFF_TWR'],
+  ['T',2,'OFF Ground Control','OFF_GND']
+];
+var R90_EMPTY = [ ['I',1] ];   /* adapted TCP with no position on it */
+
+/* SUX starsConfiguration.tcps — the only STARS facility R90 can reach.
+   R90 neighboringFacilityIds is ['SUX'] and starsHandoffIds is {SUX:1}. */
+var SUX_TCP = [
+  ['N',1,'Arrival / Departure','SUX_APP'],
+  ['R',1,'Arrival / Departure TRACAB','SUX_APP'],
+  ['T',1,'Local Control','SUX_TWR'],
+  ['G',1,'Ground Control','SUX_GND'],
+  ['S',1,null,null]
+];
+var DELTA_OUT = 1;   /* R90 -> SUX, from R90's starsHandoffIds */
+var DELTA_IN  = 1;   /* SUX -> R90, from SUX's own starsHandoffIds. Same number here,
+                        by coincidence rather than by rule — at M98/RST it is 1 out and 2 in. */
+
+/* The ZMP sectors R90 interfaces with. The LOA names 26 and 27; the vNAS
+   coordination records add 37. Same set as the deck's neighbour discussion. */
+var ZMP_IFACE = [
+  ['26','GRI LO — the 26/27 boundary anchors the departure heading bands'],
+  ['27','OMA LO — Lincoln arrivals from the east above 15,000 come through here'],
+  ['37','ONL LO — from the vNAS coordination records, not the LOA']
+];
+
+/* eramConfiguration.neighboringStarsConfigurations, the R90 record.
+   This is how ZMP addresses R90 — the inbound direction. */
+var R90_FROM_ZMP = { starsId:'OOO', two:'OO', one:'O', fmt:'OneLetterAndSubset' };
+
+var OPEN_Q = [
+  { q:'Whether Lincoln Final is F or O',
+    why:'R90 7220.10B 2-1 gives Lincoln Final the STARS ID F. vNAS points LNK_F_APP at TCP O.1 — the same TCP as Radar Offutt — and adapts no F sector in R90 at all. If the order is right, vNAS has the position pointed at the wrong TCP. If vNAS is right, Lincoln Final and Radar Offutt share a TCP and a handoff to O reaches whichever is open, with no way to address them separately. The full R90 TCP set is A.1 A.2 I.1 L.1 N.1 N.2 O.1 T.1 T.2 V.1 W.1 X.1 — there is an unassigned I.1 and no F.',
+    close:'Owner, or a CRC session at Lincoln Final reading its own TCP off the scope.' },
+  { q:'What R90’s adapted I.1 TCP is for',
+    why:'Adapted with no position on it. It is a valid handoff ID with nobody behind it — and it is the only spare letter in a facility that is one STARS ID short of its own SOP.',
+    close:'Owner or facility engineer. Worth asking alongside the Lincoln Final question — they may be the same answer.' },
+  { q:'Whether R90 can address any ARTCC other than ZMP',
+    why:'R90 neighboringFacilityIds is SUX alone — no ARTCC appears. So the non-host form (NAS ID + sector) has nothing to point at from an R90 seat.',
+    close:'The Controller List with a non-ZMP centre sector online.' }
+];
+
+/* ---------- 3. Composition ---------- */
+function intra(fromSub, toSec, toSub){
+  var same = (+fromSub === +toSub);
+  return { id: same ? toSec : (String(toSub) + toSec),
+    why: same
+      ? 'Both seats are in <b>subset ' + toSub + '</b>, so the <b>bare sector ID</b> is enough.'
+      : 'You are in subset <b>' + fromSub + '</b> and the receiver is in subset <b>' + toSub + '</b>. '
+        + 'Crossing a subset means the ID must carry <b>subset then sector</b> — <b>' + toSub + toSec + '</b>, not <b>' + toSec + '</b>.' };
+}
+
+/* ---------- 4. Section ---------- */
+function radarOpts(){
+  var out = '<optgroup label="R90 radar positions — 7220.10B 2-1, subset 1">';
+  RD.rdPositionIds().forEach(function(k){
+    var p = RD.POSITIONS[k];
+    var tag = RD.rdStarsConflicted(k) ? ' — SOP ' + p.starsId + ' / vNAS ' + p.starsIdVnas : ' (' + p.starsId + ')';
+    out += '<option value="P|' + k + '">' + esc(p.name) + esc(tag) + '</option>';
+  });
+  return out + '</optgroup>';
+}
+function towerOpts(){
+  var out = '<optgroup label="Towers and ground — subsets 1 and 2">';
+  for(var i=0;i<R90_TOWER.length;i++){
+    var r = R90_TOWER[i];
+    out += '<option value="T|' + r[0] + '|' + r[1] + '">' + esc(r[2]) + ' (' + r[1] + r[0] + ')</option>';
+  }
+  return out + '</optgroup>';
+}
+function outOpts(){
+  var out = '<optgroup label="ZMP — host ARTCC">';
+  for(var i=0;i<ZMP_IFACE.length;i++){
+    out += '<option value="Z|' + ZMP_IFACE[i][0] + '">Sector ' + ZMP_IFACE[i][0] + ' — ' + esc(ZMP_IFACE[i][1]) + '</option>';
+  }
+  out += '</optgroup><optgroup label="SUX — the only STARS neighbour">';
+  for(var j=0;j<SUX_TCP.length;j++){
+    if(!SUX_TCP[j][2]) continue;
+    out += '<option value="S|' + SUX_TCP[j][0] + '|' + SUX_TCP[j][1] + '">SUX ' + esc(SUX_TCP[j][2]) + ' (' + SUX_TCP[j][1] + SUX_TCP[j][0] + ')</option>';
+  }
+  return out + '</optgroup>';
+}
+
+function tableAll(){
+  var rows = '<tr><td colspan="5" style="background:var(--panel2);color:var(--dim);">Radar positions — 7220.10B 2-1</td></tr>';
+  RD.rdPositionIds().forEach(function(k){
+    var p = RD.POSITIONS[k], conf = RD.rdStarsConflicted(k);
+    rows += '<tr><td><b>' + esc(k) + '</b> ' + esc(p.name) + '</td><td class="dim">' + esc(p.callsign) + '</td>'
+      + '<td>' + (conf
+          ? '<span class="rdh-id">' + p.starsId + '</span> <span class="rd-gap">SOP</span> / <span class="rd-warn">' + p.starsIdVnas + '</span> <span class="rd-gap">vNAS</span>'
+          : '<span class="rdh-id">' + p.starsId + '</span>')
+      + '</td><td class="dim">' + p.subset + p.starsId + (conf ? ' / ' + p.subset + p.starsIdVnas : '') + '</td>'
+      + '<td class="dim">' + R90_FROM_ZMP.one + p.subset + p.starsId + (conf ? ' / ' + R90_FROM_ZMP.one + p.subset + p.starsIdVnas : '') + '</td></tr>';
+  });
+  rows += '<tr><td colspan="5" style="background:var(--panel2);color:var(--dim);padding-top:10px;">Towers and ground</td></tr>';
+  for(var i=0;i<R90_TOWER.length;i++){
+    var r = R90_TOWER[i];
+    rows += '<tr><td>' + esc(r[2]) + '</td><td class="dim">' + esc(r[3]) + '</td>'
+      + '<td><span class="rdh-id">' + (r[1] === 1 ? r[0] : r[1] + r[0]) + '</span></td>'
+      + '<td class="dim">' + r[1] + r[0] + '</td>'
+      + '<td class="dim">' + R90_FROM_ZMP.one + r[1] + r[0] + '</td></tr>';
+  }
+  rows += '<tr><td colspan="5" style="background:var(--panel2);color:var(--dim);padding-top:10px;">Adapted TCP with no position</td></tr>';
+  for(var j=0;j<R90_EMPTY.length;j++){
+    rows += '<tr><td class="dim">— nobody on this TCP</td><td class="dim"></td>'
+      + '<td class="dim">' + R90_EMPTY[j][0] + '</td><td class="dim">' + R90_EMPTY[j][1] + R90_EMPTY[j][0] + '</td><td class="dim">—</td></tr>';
+  }
+  return '<div class="rdh-scroll"><table class="rd-tbl"><thead><tr><th>Position</th><th>Callsign</th>'
+    + '<th>From a subset-1 seat</th><th>Full TCP</th><th>From a ZMP sector</th></tr></thead><tbody>'
+    + rows + '</tbody></table></div>';
+}
+
+function tableSux(){
+  var rows = '';
+  for(var i=0;i<SUX_TCP.length;i++){
+    var r = SUX_TCP[i];
+    rows += '<tr><td>' + (r[2] ? esc(r[2]) : '<span class="rd-gap">— no position on this TCP</span>') + '</td>'
+      + '<td class="dim">' + esc(r[3] || '') + '</td><td class="dim">' + r[1] + r[0] + '</td>'
+      + '<td class="rdh-id">' + (r[2] ? '`' + DELTA_OUT + r[1] + r[0] : '—') + '</td></tr>';
+  }
+  return '<table class="rd-tbl"><thead><tr><th>SUX position</th><th>Callsign</th><th>TCP</th><th>You type</th></tr></thead><tbody>'
+    + rows + '</tbody></table>';
+}
+
+function section(){
+  return ''
+  + '<section class="rd-section" id="rd-handoff" data-note="handoff">'
+  + '<h2>Handoff IDs</h2>'
+  + '<p class="lede">A handoff ID is a property of the <b>pair</b>, not of the receiver. The same seat has a '
+  + 'different address depending on whether ERAM or STARS is sending, and whether the receiver is inside R90, '
+  + 'under ZMP, or across the SUX boundary.</p>'
+
+  + '<div class="rd-panel">'
+  + '<div class="rdh-grid">'
+  + '<div><label for="rdh-from">You are working</label><select id="rdh-from">' + radarOpts() + towerOpts() + '</select></div>'
+  + '<div><label for="rdh-to">Handing off to</label><select id="rdh-to">' + radarOpts() + towerOpts() + outOpts() + '</select></div>'
+  + '</div>'
+  + '<div class="rdh-out" id="rdh-out"></div>'
+  + '</div>'
+
+  + '<div class="rd-panel">'
+  + '<p class="rdh-why"><b>All six R90 radar seats are subset 1</b>, so radar-to-radar is a bare letter. '
+  + 'OMA and LNK ground share subset 2 with their tower’s subset 1 — <b>A</b> is Omaha Local and <b>2A</b> is Omaha Ground, '
+  + 'one digit apart.</p>'
+  + '<p class="rdh-why"><b>Ground and Clearance Delivery share a TCP</b> at both OMA and LNK. A handoff to <b>2A</b> '
+  + 'reaches whoever is working either, and the ID cannot distinguish them.</p>'
+  + '<p class="rdh-why"><b>Δ is the backtick key.</b> R90 reaches SUX with <b>`1</b> and SUX reaches R90 with <b>`1</b> — '
+  + 'the same number here, but that is coincidence, not rule. The number is assigned by the sending facility. '
+  + '<span class="rd-warn">A point-out cannot cross to another STARS facility</span>, so SUX is a handoff or nothing.</p>'
+  + '<p class="rdh-why">The receiving sector may be omitted when only one position is open in the receiving ARTCC — '
+  + '<b>C</b> instead of <b>C27</b>. The Controller List always prints the full ID.</p>'
+  + '<p class="rd-gap" style="margin-top:8px;font-size:10.5px;">docs.virtualnas.net crc/stars, crc/eram, crc/overview, data-admin/facilities — read 2026-09-01. '
+  + 'Values from the ZMP vNAS record, 2026-08-26. Both transcribed in claude_ZMP_Handoff_ID_Reference.md.</p>'
+  + '</div>'
+
+  + '<div class="rd-panel"><b>Every R90 handoff ID</b>'
+  + '<p class="rdh-why" style="margin:4px 0 10px;">Where the order and vNAS disagree, both are shown. '
+  + 'The tool does not pick one.</p>' + tableAll() + '</div>'
+
+  + '<div class="rd-panel"><b>SUX — the only STARS facility R90 can hand off to</b>'
+  + '<p class="rdh-why" style="margin:4px 0 10px;">R90 <span class="rd-mono">starsHandoffIds</span> holds exactly one entry. '
+  + 'Every other facility is reached through ZMP.</p>' + tableSux() + '</div>'
+
+  + '<div class="rd-panel"><b>Not answered by the sources</b>'
+  + OPEN_Q.map(function(o){ return '<p class="rdh-why" style="margin-top:10px;"><b>' + esc(o.q) + '</b><br>' + esc(o.why)
+      + '<br><span class="rd-gap">Closes on: ' + esc(o.close) + '</span></p>'; }).join('')
+  + '</div>'
+  + '</section>';
+}
+
+/* ---------- 5. Resolve and render ---------- */
+/* A seat value is either P|<positionId> (a radar seat, read through RD) or
+   T|<sector>|<subset> (a tower). Returns {sec, sub, name, conflict}. */
+function seat(v){
+  var s = v.split('|');
+  if(s[0] === 'P'){
+    var p = RD.POSITIONS[s[1]];
+    return { sec:p.starsId, secVnas:p.starsIdVnas, sub:p.subset, name:p.name,
+             conflict:RD.rdStarsConflicted(s[1]) ? p.conflict : null, id:s[1] };
+  }
+  for(var i=0;i<R90_TOWER.length;i++){
+    if(R90_TOWER[i][0] === s[1] && R90_TOWER[i][1] === +s[2]){
+      return { sec:s[1], secVnas:s[1], sub:+s[2], name:R90_TOWER[i][2], conflict:null, id:null };
+    }
+  }
+  return null;
+}
+
+function render(){
+  var f = document.getElementById('rdh-from'), t = document.getElementById('rdh-to');
+  var out = document.getElementById('rdh-out');
+  if(!f || !t || !out) return;
+
+  var from = seat(f.value);
+  if(!from) return;
+  var ts = t.value.split('|');
+  var r, rev = '', split = false;
+
+  if(ts[0] === 'P' || ts[0] === 'T'){
+    var to = seat(t.value);
+    if(!to) return;
+    if(to.sec === from.sec && to.sub === from.sub && to.name === from.name){
+      r = { id:null, why:'That is the seat you are working. A handoff needs two seats.' };
+    } else if(to.conflict){
+      /* The receiver is the conflicted position — show BOTH candidate IDs. */
+      var a = intra(from.sub, to.sec, to.sub), b = intra(from.sub, to.secVnas, to.sub);
+      split = true;
+      r = { id:a.id + '   or   ' + b.id,
+        why:'<b>' + esc(to.name) + ' is the one position the sources disagree on.</b> '
+          + '<b>' + a.id + '</b> follows R90 7220.10B 2-1; <b>' + b.id + '</b> follows the vNAS record. '
+          + esc(to.conflict) + ' ' + a.why };
+    } else {
+      r = intra(from.sub, to.sec, to.sub);
+      var back = intra(to.sub, from.sec, from.sub);
+      rev = 'They reach you with <span class="k">' + back.id + '</span>'
+        + (from.conflict ? ' — or <span class="k">' + intra(to.sub, from.secVnas, from.sub).id + '</span> if the vNAS record is the right one.' : '');
+    }
+  } else if(ts[0] === 'Z'){
+    var zs = ts[1];
+    r = { id:'C' + zs,
+      why:'<b>C</b> is the host-ARTCC prefix and ZMP is R90’s host, then the two-digit sector. '
+        + 'R90 neighbours no ARTCC whose NAS ID is <b>C</b>, so there is no ambiguity. '
+        + 'Drop the sector — just <b>C</b> — when only one ZMP position is open.' };
+    rev = 'ZMP Sector ' + zs + ' reaches you with <span class="k">' + R90_FROM_ZMP.one + from.sub + from.sec + '</span>'
+      + (from.conflict ? ' — or <span class="k">' + R90_FROM_ZMP.one + from.sub + from.secVnas + '</span> under the vNAS reading' : '')
+      + ' — the R90 letter <b>' + R90_FROM_ZMP.one + '</b>, then your subset, then your sector.';
+  } else {
+    var ssec = ts[1], ssub = ts[2];
+    r = { id:'`' + DELTA_OUT + ssub + ssec,
+      why:'SUX is a separate STARS system, so the ID is <b>Δ</b> — the backtick key — then R90’s handoff number for SUX, '
+        + 'which is <b>' + DELTA_OUT + '</b>, then SUX’s TCP <b>' + ssub + ssec + '</b>.' };
+    rev = 'SUX reaches you with <span class="k">`' + DELTA_IN + from.sub + from.sec + '</span>. '
+      + 'Both directions are ' + DELTA_IN + ' here — but the number is assigned by the sender, so do not generalise it: '
+      + 'M98 reaches RST on `1 and RST reaches M98 on `2.';
+  }
+
+  out.innerHTML = ''
+    + '<div class="rdh-key' + (r.id ? (split ? ' split' : '') : ' none') + '">' + (r.id ? esc(r.id) : 'no ID — see below') + '</div>'
+    + '<p class="rdh-why">' + r.why + '</p>'
+    + (rev ? '<div class="rdh-rev">' + rev + '</div>' : '');
+}
+
+/* ---------- 6. Mount ---------- */
+function mount(){
+  var style = document.createElement('style');
+  style.textContent = css;
+  document.head.appendChild(style);
+
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+
+  var host = document.createElement('div');
+  host.innerHTML = section();
+  var sec = host.firstChild;
+  if(!sec) return;
+
+  var page = document.getElementById('rdb-page-notes');
+  if(page){ page.appendChild(sec); }
+  else {
+    var footer = wrap.querySelector('footer');
+    if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+  }
+
+  var f = document.getElementById('rdh-from'), t = document.getElementById('rdh-to');
+  if(f) f.addEventListener('change', render);
+  if(t) t.addEventListener('change', render);
+  if(f) f.value = 'P|RW';
+  if(t) t.value = 'P|RF';
+  render();
+
+  RD.log('Handoff ID resolver mounted. Lincoln Final carries both a SOP and a vNAS STARS ID — '
+    + 'the resolver shows both and picks neither.', 'warn');
+}
+
+window.rdh = {
+  R90_TOWER:R90_TOWER, R90_EMPTY:R90_EMPTY, SUX_TCP:SUX_TCP, ZMP_IFACE:ZMP_IFACE,
+  R90_FROM_ZMP:R90_FROM_ZMP, DELTA_OUT:DELTA_OUT, DELTA_IN:DELTA_IN, OPEN_Q:OPEN_Q,
+  intra:intra, seat:seat
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+
 </body>
 </html>
