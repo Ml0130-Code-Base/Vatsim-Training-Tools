@@ -255,9 +255,69 @@ include every single sub-sector."*
 
 ---
 
-## 6. How far these may be trusted, and the licence problem
+## 6. These are geometry sources. **Handoff IDs never come from here.**
 
-**They are community data, and they sit below the facility documents.** Root `CLAUDE.md`
+**Rule, from the owner, 2026-09-02: VATGlasses position keys are ERAM-side. Anything handed
+off from a STARS facility takes its ID from vNAS.** `claude_ZMP_Handoff_ID_Reference.md` is the
+authority, in all three of its copies. Nothing in this file may be used to derive, check or
+override a handoff ID.
+
+The trap is real and it is easy to fall into, because **VATGlasses looks like it has IDs and
+does not**. Its `positions` objects carry exactly five fields — `callsign`, `colours`,
+`frequency`, `pre`, `type` (verified across all 66 ZLC and all 46 ZAU positions). **There is no
+ID field of any kind.** So the only thing an implementer could reach for is the *airspace key*,
+and that key is a VATGlasses-internal display and ownership handle:
+
+- **For Center sectors the key resembles an ERAM sector number** and will often coincide with
+  it — ZAU's keys are `25 26 35 36 44 46 51 52 55 60 62 63 64 74 75 77 81 89 94`, ZLC's are
+  `03`–`47`. **Coincidence is not authority.** An ERAM-to-ERAM handoff inside ZMP is the bare
+  two-digit ID (`claude_ZMP_Handoff_ID_Reference.md` §2), and that number comes from vNAS.
+- **For terminal sectors the key is not an ID at all.** `S5A`, `B1Z`, `O1Z`, `Z1G` are
+  VATGlasses handles. The real STARS-side values — the STARS ID, the two- and
+  one-character IDs, the TCP and the Field E format that decides how an ERAM sector addresses
+  the facility — exist only in the vNAS facility record and are transcribed in
+  `claude_ZMP_Handoff_ID_Reference.md` §1.3 and §3.
+
+**Why it matters concretely.** The R90 Lincoln Final conflict (`ZMP/R90/CLAUDE.md`, handoff
+reference §5.1) turns on whether Lincoln Final's STARS ID is `F` per R90 7220.10B 2-1 or `O.1`
+per the vNAS TCP. That question is decided between the facility order and vNAS. **VATGlasses
+has no ZMP dataset and could not contribute to it even if it did** — it carries no STARS IDs
+for any facility, ZLC and ZAU included.
+
+**So: take geometry, ownership chains and stratums from here. Take frequencies from here only
+as a cross-check against the facility order. Take handoff IDs from vNAS, always.**
+
+---
+
+## 7. How far these may be trusted, and the licence problem
+
+### ZLC and ZAU are facility-maintained, and that raises the tier
+
+**Both datasets are owned by their vARTCC, not by the VATGlasses team.** The repository
+distinguishes the two explicitly (`Data-Sets.md`): sets *"Managed by Local Staff"* have *"a
+nominated vACC staff member, who is responsible for maintaining the set"*, against sets
+*"Managed by the VATGlasses Team"* which *"rely entirely on community support to remain
+current."* `Owners.xlsx` puts both of ours in the first category:
+
+| Set | Name | Owner | Manager | GitHub |
+|---|---|---|---|---|
+| `zlc` | Salt Lake City | **ZLC vARTCC** | Adam Earl | `shadeddude` |
+| `zau` | Chicago | **ZAU vARTCC** | Joe Nyquist | `Saluki00` |
+
+The consequence matters more than the names: locally managed sets *"are likely to receive
+periodic bulk updates when local sector files change."* **These polygons are pushed from the
+facility's own sector file**, which is the `.sct2` / FE Buddy lineage that root `CLAUDE.md` §7
+identifies as the authoritative geometry we otherwise cannot obtain. For ZLC and ZAU, the "ask
+the facility for a GeoJSON export" path in §7 has effectively already been answered — the
+facility published it.
+
+**This is the reason the boundaries may be used** (owner decision, 2026-09-02). It does **not**
+extend to SimAware, which has no equivalent ownership registry, and it does not extend to any
+other VATGlasses dataset without checking `Owners.xlsx` first.
+
+### What still holds
+
+**They remain second sources, and they sit below the facility documents.** Root `CLAUDE.md`
 invariant 1 requires every operational number to trace to a document and a paragraph;
 invariant 7 makes the reference markdown authoritative over anything hardcoded. Neither is
 weakened by this file:
@@ -267,9 +327,13 @@ weakened by this file:
    see below.
 2. **Cite the dataset and the commit, never "VATSIM Radar".** The geometry is VATGlasses'; the
    radar app is only where the trail started.
-3. **Geometry from here is second-tier and the tool must say so**, exactly as the traced M98
-   DDA polygon says half a mile. It is surveyed by nobody: it is drawn by a vACC volunteer
-   from the same charts we cannot read, then reviewed by a maintainer.
+3. **Label the provenance on the page, and keep the two tiers apart.** A **ZLC or ZAU
+   VATGlasses** boundary comes from the facility's own sector file via its named vARTCC
+   manager — it is the best geometry in this repository after an owner-supplied boundary, and
+   it needs attribution rather than a warning. **SimAware is the weaker tier**: no ownership
+   registry, no licence, and measured at about two miles against the one boundary we can check
+   (§4.1). Say which of the two a shape came from wherever it is drawn; never blend them into
+   one polygon.
 4. **It is a genuine second source, and it has already earned its keep.** All twenty ZLC
    frequencies in `claude_ZLC_Positions_Reference.md` match it, including the three Big Sky
    values our reference had to recover from a mis-split table.
@@ -285,25 +349,38 @@ frequencies agree; the radio name and the sector naming do not. **Recorded, not 
 Ours comes from `MUO_NFCT_RAPCON.pdf` and outranks community data, but the disagreement is
 worth an owner question.
 
-### Licence — decide before vendoring anything
+### Licence — decided 2026-09-02, use it with attribution
 
-**VATGlasses is CC BY-NC-SA 4.0.** For a personal training tool used by one controller this is
-comfortably within *non-commercial*, but two consequences are real and are the owner's call,
-not this file's:
+**The owner has decided to use the VATGlasses sector boundaries**, on the grounds that the ZLC
+and ZAU datasets are maintained by those facilities directly — which the ownership registry
+above confirms. That decision is recorded here so it is not re-litigated.
 
-- **Attribution is mandatory** wherever the data or a derivative is displayed — in the tool's
-  UI, not only in a markdown file.
+**VATGlasses is CC BY-NC-SA 4.0**, and the obligations that follow are now standing
+requirements, not open questions:
+
+- **Attribution is mandatory** wherever the data or a derivative is displayed — **in the tool's
+  UI, not only in a markdown file.** Every tool that draws one of these boundaries must name
+  VATGlasses, the dataset, and the licence on the page.
+- **Non-commercial.** A personal certification-training toolset for one controller is
+  comfortably inside this. It is a constraint on redistribution, not on use.
 - **Share-alike binds derivatives.** Polygons pasted into a `<NS>` data spine make that block
-  a derivative work. If this repository is ever public, that has licensing consequences for
-  the file it lands in.
-- **SimAware publishes no licence at all**, which is a weaker position than a restrictive one.
+  a derivative work. **If this repository is ever made public, that is a licensing decision
+  about the files the geometry lands in** — flag it then; it does not block use now.
+- **Attribute the dataset and its commit, not "VATSIM Radar".** Each vendored file carries its
+  upstream path and pinned SHA alongside it.
+
+**SimAware publishes no licence at all**, which is a weaker position than a restrictive one,
+and it has no ownership registry. **It stays unvendored** and is referenced only as the lead it
+is (§4.1, R90).
 
 The VAT-Spy wiki note is a useful precedent for the expected etiquette: *"copying coordinates
 directly from this repository will require you to add an attribution to each airport in your
 data set."*
 
-**Nothing from any of these three sources has been vendored into this repository.** This file
-records what is available and how to pull it; the pull recipes are in §7.
+**What is vendored, and where** — see `ZLC/_shared/source-vatglasses/` and
+`ZAU/_shared/source-vatglasses/`, each with an `ATTRIBUTION.md` carrying the pinned commit.
+Per root `CLAUDE.md` §2 no facility folder may depend on another's files, so the ZLC and ZAU
+copies are independent even though they come from one upstream repository.
 
 ---
 

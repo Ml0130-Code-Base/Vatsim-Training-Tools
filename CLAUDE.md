@@ -296,15 +296,30 @@ against six known field positions, and all twenty ZLC frequencies in
 `claude_Community_Geometry_Sources.md` — read it before using any of it.** Three things about
 it are load-bearing:
 
-- **It is community data and it sits below the facility documents.** A conflict with an SOP is
-  resolved in the SOP's favour and *named, not silently corrected* (§6). One is already on the
-  books: Mountain Home's radio name and sector naming.
-- **VATGlasses is CC BY-NC-SA 4.0 and SimAware publishes no licence at all.** Attribution is
-  mandatory and share-alike binds derivatives, so **vendoring any of it into a tool is an owner
-  decision, not a drive-by.** Nothing has been vendored yet.
+- **Handoff IDs never come from these sources.** VATGlasses carries none — its positions have
+  only `callsign`, `colours`, `frequency`, `pre`, `type`, and its airspace keys are display
+  handles that merely *resemble* ERAM sector numbers. **Anything handed off from a STARS
+  facility takes its ID from vNAS**, via `claude_ZMP_Handoff_ID_Reference.md`. Owner rule,
+  2026-09-02.
+- **The ZLC and ZAU datasets are owned by their vARTCCs**, not by the VATGlasses team —
+  upstream `Owners.xlsx` names the manager for each, and locally managed sets *"receive
+  periodic bulk updates when local sector files change."* **These polygons come from the
+  facility's own sector file**, which is the `.sct2` lineage the third path below is asking
+  for. That is why they may be used, and it does **not** extend to SimAware.
+- **Licence: VATGlasses is CC BY-NC-SA 4.0; SimAware publishes none.** The owner has decided to
+  use the VATGlasses boundaries (2026-09-02). **Attribution is mandatory in the tool's UI, not
+  just in a markdown file**, and share-alike binds any block the polygons land in. The ZLC and
+  ZAU datasets are vendored at `ZLC/_shared/source-vatglasses/` and
+  `ZAU/_shared/source-vatglasses/`, each with an `ATTRIBUTION.md` and a pinned commit.
+  **SimAware stays unvendored.**
 - **ZAU's terminal facilities are a footprint and a ceiling, not a sectorisation.** C90 is one
   polygon surface–FL150 shared by four positions; AZO is one polygon surface–FL100 shared by
   three. Enough for *inside, and under the lid*; **not** enough for *which sector owns this*.
+  AZO's six West Wall sector boundaries stay empty.
+- **ZLC's geometry carries the flow branch.** The runway gate on each block is the
+  configuration selector: `KSLC 34L/R,35` is North Flow and `16L/R,17` is South, `KBOI 10L/R`
+  is East and `28L/R` is West. Decoded per sector in
+  `ZLC/_shared/claude_ZLC_Sector_Geometry_Reference.md`.
 
 **M98 and R90 are unchanged and remain blocked.** For them, two paths have actually worked, and
 no further one should be invented:

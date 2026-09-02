@@ -93,10 +93,21 @@ four positions (`O1Z`, `O1B`, `O1S`, `O1X`) and AZO's three (`Z1G`, `Z1R`, `Z1N`
 six West Wall sector boundaries and C90's internal splits remain empty**, and so do the TRSA
 depiction, the procedure geometry and the MVA map.
 
-It is also community data under **CC BY-NC-SA 4.0**, which sits below the facility orders and
-carries attribution and share-alike obligations. Nothing has been vendored; that is an owner
-decision. ZAU's 19 **en route** sectors *are* fully described with stratums, which matters only
-if a ZAU Center tool is ever built.
+**Vendored 2026-09-02** at `_shared/source-vatglasses/`, decoded in
+**`_shared/claude_ZAU_Sector_Geometry_Reference.md`**. It is trusted because **ZAU vARTCC owns
+the dataset** — upstream `Owners.xlsx` names Joe Nyquist (`Saluki00`) as its manager, and
+locally managed sets receive *"periodic bulk updates when local sector files change"*, so the
+polygons come from the facility's own sector file. It still sits **below the facility orders**:
+where the C90 or AZO SOP disagrees, the SOP wins. Licence is **CC BY-NC-SA 4.0** — any tool
+drawing these shapes **must credit VATGlasses on the page**.
+
+**One discrepancy to resolve against the orders before relying on the position list:**
+VATGlasses models **four** C90 positions and **three** AZO positions, where AZO 2-2/2-3 define
+**six** West Wall sectors. Fewer positions than the order defines is an owner question, not a
+correction to make here.
+
+ZAU's 19 **en route** sectors *are* fully described with stratums, which matters only if a ZAU
+Center tool is ever built.
 
 ## Student notes — C90
 
