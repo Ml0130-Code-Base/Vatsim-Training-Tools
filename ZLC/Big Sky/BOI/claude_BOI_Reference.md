@@ -88,6 +88,24 @@ Local quick-looks the Alpine sector, and the Sage sector when Alpine is combined
 ## Not established
 
 - **Which positions are primary.** Table 1-2-1 ends "Bold designates a primary position"; bold does not survive text extraction.
-- **All airspace geometry.** Appendices 1A–1D, 2A–2B and 3A–3B are chart images with no text layer. Sector boundaries, the Ellis Corridor, the pre-arranged coordination areas and the arrival zones are names here, not shapes.
-- **Fix positions** for KOURT, SPUUD, SADYL, JIMMI, KYANN, BEWTE and TOILS.
+- **The Ellis Corridor, the pre-arranged coordination areas and the arrival zones.** Appendices 1A, 2A–2B and 3A–3B are chart images with no text layer. VATGlasses draws sectors, not gates, so it did not close these.
+- **Fix positions** for KOURT, SPUUD, SADYL, JIMMI, KYANN, BEWTE and TOILS. No MVA data either.
+- **Handoff identifiers — a live blocker.** No source anywhere in the repository. The community dataset carries none (`B1S`/`B1A` are display handles, not STARS IDs) and no ZLC vNAS record is held locally. Until `curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC"` is pulled, no drill may quote one.
+
+### Sector geometry — carried since 2026-09-02
+
+Both sectors now have a lateral extent, runway-gated altitude blocks and an ownership chain, decoded in [the geometry reference](../../_shared/claude_ZLC_Sector_Geometry_Reference.md) from the VATGlasses ZLC dataset (CC BY-NC-SA 4.0 — a tool drawing these **must credit VATGlasses on the page**).
+
+Both sectors span **42.972–44.216 N, 115.297–117.130 W**, and hold the same two bands over the same total airspace — but they **swap shapes** between flows:
+
+| Sector | Gate | Blocks |
+|---|---|---|
+| Sage | `KBOI 10L/R` East | 7,000–16,400 (30 vertices) · surface–6,900 (45) |
+| Sage | `KBOI 28L/R` West | 7,000–16,400 (17) · surface–6,900 (26) |
+| Alpine | `KBOI 10L/R` East | 7,000–16,400 (17) · surface–6,900 (26) |
+| Alpine | `KBOI 28L/R` West | 7,000–16,400 (30) · surface–6,900 (45) |
+
+That runway gate is the configuration selector, and it is how the tool models East and West Flow.
+
+**One divergence, named not resolved:** the SOP is directional — 3-3-1c says Sage assumes Alpine when combined — while VATGlasses lists the two as mutually covering (`B1A → B1S` and `B1S → B1A`). The SOP wins.
 - The ZLC frequency sheet's Boise worked example describes `BOI_S_APP` and `BOI_N_APP`. Those callsigns are in no current position table and appear to predate the rename to Sage and Alpine — treat that passage as stale.

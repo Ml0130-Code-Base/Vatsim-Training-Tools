@@ -39,7 +39,7 @@
   :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
   a{color:var(--green);}
 
-  .wrap{max-width:900px;margin:0 auto;padding:0 20px 80px;}
+  .wrap{max-width:940px;margin:0 auto;padding:0 20px 80px;}
 
   .topbar{
     display:flex;justify-content:space-between;align-items:center;
@@ -79,6 +79,7 @@
     margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
     font-size:12px;color:var(--dim2);
   }
+  footer a{color:var(--dim);}
 
   @media(max-width:640px){
     .hero h1{font-size:26px;}
@@ -97,28 +98,30 @@
 
   <div class="hero">
     <div class="eyebrow">Big Sky &mdash; skeleton</div>
-    <h1>Pick the area, open the sectors, see who owns what.</h1>
-    <p>Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector is built; the engine that flies traffic through it is not.</p>
+    <h1>Pick the area and the flow, open the sectors, see who owns what.</h1>
+    <p>Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector and the vertical structure are built; the engine that flies traffic through them is not.</p>
   </div>
   <div class="modnav" id="modnav"></div>
 
-  <footer>
-    Skeleton tool. Sector names, STARS identifiers, VATSIM callsigns and frequencies are verified against BOI ATCT/TRACON 7110.2B, BZN FCT and the ZLC Position and Frequency Info sheet &mdash; see BOI/claude_BOI_Reference.md, BZN/claude_BZN_Reference.md and _shared/claude_ZLC_Positions_Reference.md. Everything marked &ldquo;not built&rdquo; is an empty slot, not an omission. Single file, no build step, no network.
-  </footer>
+  <footer id="foot"></footer>
 
 </div>
 
 <script>
 /* ================================================================
-   BIG SKY POSITION SELECTOR v0 (skeleton)
+   BIG SKY POSITION SELECTOR v0.2 (skeleton)
    Self-contained: injects its own CSS, nav links and sections.
    Safe to paste as one block before the closing body tag of any
    version of this tool.
 
-   What is real here: the areas, the sectors, the combining chain,
-   the frequencies, and the ownership resolution. What is stubbed:
-   airspace geometry, the traffic engine, the notebook. Stubs say so
-   on the page rather than rendering something plausible and empty.
+   v0.2 (2026-09-02) — sector geometry arrived. Added: the flow
+   selector, the runway-gated altitude blocks, the lateral extents,
+   the VATGlasses ownership chain shown beside the documentary one,
+   and the licence credit the CC BY-NC-SA terms require on the page.
+
+   Real here: areas, sectors, combining, frequencies, ownership
+   resolution, vertical structure. Stubbed: gates, routes, MVAs,
+   traffic engine, grading, and — newly and importantly — handoff IDs.
    ================================================================ */
 (function(){
 'use strict';
@@ -129,7 +132,7 @@ var css = ''
 + '.zlc-section h2{font-family:var(--display);font-weight:600;font-size:24px;margin:6px 0 4px;letter-spacing:-0.01em;}'
 + '.zlc-tag{font-family:var(--mono);font-size:11px;letter-spacing:0.12em;color:var(--green);text-transform:uppercase;}'
 + '.zlc-tag.warn{color:var(--amber);}'
-+ '.zlc-sub{color:var(--dim);font-size:14px;margin:0 0 6px;max-width:70ch;}'
++ '.zlc-sub{color:var(--dim);font-size:14px;margin:0 0 6px;max-width:72ch;}'
 + '.zlc-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
 + '.zlc-panel h3{font-family:var(--display);font-weight:600;font-size:15px;margin:0 0 8px;}'
 + '.zlc-mono{font-family:var(--mono);}'
@@ -137,6 +140,7 @@ var css = ''
 + '.zlc-bar button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
 + '.zlc-bar button:hover{color:var(--ink);border-color:var(--dim2);}'
 + '.zlc-bar button.on{color:var(--green);border-color:var(--green);}'
++ '.zlc-bar .sub{font-family:var(--mono);font-size:11px;color:var(--dim2);margin-left:auto;}'
 + '.zlc-areas{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;}'
 + '.zlc-area{flex:1 1 300px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:12px 14px;cursor:pointer;color:var(--ink);font-family:var(--body);}'
 + '.zlc-area:hover{border-color:var(--dim2);}'
@@ -144,44 +148,91 @@ var css = ''
 + '.zlc-area .nm{font-family:var(--display);font-weight:600;font-size:16px;display:block;}'
 + '.zlc-area .loc{font-family:var(--mono);font-size:11px;color:var(--green);letter-spacing:0.08em;text-transform:uppercase;display:block;margin-top:3px;}'
 + '.zlc-area .d{color:var(--dim);font-size:12.5px;margin-top:6px;display:block;line-height:1.45;}'
-+ '.zlc-secs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}'
-+ '.zlc-sec{flex:1 1 250px;min-width:230px;text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:9px 11px;cursor:pointer;color:var(--ink);font-family:var(--body);}'
-+ '.zlc-sec:hover{border-color:var(--dim2);}'
++ '.zlc-secs{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:8px;margin:12px 0;}'
++ '.zlc-sec{background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:9px 11px;display:flex;flex-direction:column;}'
 + '.zlc-sec.open{border-color:var(--green);}'
 + '.zlc-sec.seat{border-color:var(--green);background:rgba(79,224,160,0.09);}'
-+ '.zlc-sec .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}'
++ '.zlc-sec .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;cursor:pointer;}'
 + '.zlc-sec .nm{font-family:var(--display);font-weight:600;font-size:14.5px;}'
 + '.zlc-sec .id{font-family:var(--mono);font-size:11px;color:var(--dim);}'
-+ '.zlc-sec .frq{font-family:var(--mono);font-size:12.5px;color:var(--green);margin-top:2px;}'
++ '.zlc-sec .frq{font-family:var(--mono);font-size:12.5px;color:var(--green);margin-top:2px;cursor:pointer;}'
 + '.zlc-sec .cs{font-family:var(--mono);font-size:10.5px;color:var(--dim2);letter-spacing:0.04em;}'
++ '.zlc-sec .vert{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:4px;}'
++ '.zlc-sec .vert b{color:var(--ink);font-weight:500;}'
++ '.zlc-sec .vert.none{color:var(--amber);}'
 + '.zlc-sec .st{font-size:11.5px;color:var(--dim);margin-top:5px;line-height:1.4;}'
 + '.zlc-sec .st b{color:var(--amber);font-weight:500;}'
++ '.zlc-sec .acts{display:flex;gap:6px;margin-top:8px;}'
++ '.zlc-sec .acts button{flex:1;font-family:var(--mono);font-size:10.5px;color:var(--dim);background:transparent;border:1px solid var(--line);border-radius:3px;padding:4px 6px;cursor:pointer;}'
++ '.zlc-sec .acts button:hover{color:var(--ink);border-color:var(--dim2);}'
 + '.zlc-tbl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px;}'
 + '.zlc-tbl th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--dim2);border-bottom:1px solid var(--line);padding:5px 8px 5px 0;font-weight:500;}'
 + '.zlc-tbl td{padding:6px 8px 6px 0;border-bottom:1px solid var(--line);vertical-align:top;}'
 + '.zlc-tbl td.m{font-family:var(--mono);color:var(--green);white-space:nowrap;}'
 + '.zlc-tbl td.d{color:var(--dim);}'
++ '.zlc-tbl td.n{font-family:var(--mono);color:var(--dim);white-space:nowrap;}'
 + '.zlc-note{font-size:12.5px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:14px;line-height:1.5;}'
 + '.zlc-note b{color:var(--amber);font-weight:500;}'
 + '.zlc-stub{background:var(--panel);border:1px dashed var(--dim2);border-radius:6px;padding:14px;margin:14px 0;}'
 + '.zlc-stub h3{font-family:var(--display);font-weight:600;font-size:14.5px;margin:0 0 4px;color:var(--dim);}'
 + '.zlc-stub p{margin:0;color:var(--dim2);font-size:12.5px;line-height:1.5;}'
 + '.zlc-stub .lbl{font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);display:block;margin-bottom:6px;}'
++ '.zlc-stub.part{border-color:var(--green);}'
++ '.zlc-stub.part .lbl{color:var(--green);}'
++ '.zlc-stub.block{border-color:var(--red);}'
++ '.zlc-stub.block .lbl{color:var(--red);}'
++ '.zlc-stub code{font-family:var(--mono);font-size:11px;color:var(--ink);background:var(--panel2);padding:1px 4px;border-radius:2px;}'
 + '.zlc-split{display:flex;gap:12px;flex-wrap:wrap;}'
-+ '.zlc-split > *{flex:1 1 300px;}';
++ '.zlc-split > *{flex:1 1 300px;}'
++ '.zlc-stack{display:flex;flex-direction:column-reverse;gap:3px;margin-top:8px;}'
++ '.zlc-blk{display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:3px;padding:5px 9px;font-family:var(--mono);font-size:11.5px;}'
++ '.zlc-blk .alt{color:var(--ink);min-width:150px;}'
++ '.zlc-blk .vtx{color:var(--dim2);margin-left:auto;}'
++ '.zlc-cred{font-size:11.5px;color:var(--dim2);line-height:1.5;border:1px solid var(--line);border-radius:4px;padding:9px 11px;margin-top:12px;background:var(--panel2);}'
++ '.zlc-cred b{color:var(--dim);font-weight:500;}'
++ '.zlc-cred a{color:var(--dim);}'
++ '.zlc-div{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;padding:10px 12px;margin-top:10px;}'
++ '.zlc-div .h{font-family:var(--mono);font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--amber);}'
++ '.zlc-div .b{font-size:12.5px;color:var(--dim);margin-top:5px;line-height:1.5;}'
++ '.zlc-div .b b{color:var(--ink);font-weight:500;}';
 
 var st=document.createElement('style');
 st.textContent=css;
 document.head.appendChild(st);
 
 /* ---------- 2. Data ----------
-   Verified 2026-09-01. Frequencies come from the narrative paragraphs
-   of the facility SOPs, which state them in prose; the position tables
-   in the same documents extract with a row offset and were used only
-   to confirm the callsign and the STARS identifier.
-   See _shared/claude_ZLC_Positions_Reference.md for the reconciliation. */
+   Positions and frequencies: verified 2026-09-01 from the narrative
+   paragraphs of BOI 7110.2B and BZN FCT, confirmed a fourth time
+   2026-09-02 against the VATGlasses ZLC dataset. See
+   ../_shared/claude_ZLC_Positions_Reference.md.
+
+   Geometry (extents, altitude blocks, runway gates, community
+   ownership chains): decoded from the VATGlasses ZLC dataset vendored
+   at ../_shared/source-vatglasses/, pinned commit c469b42 (2026-08-26),
+   pulled 2026-09-02. Decoded per sector in
+   ../_shared/claude_ZLC_Sector_Geometry_Reference.md.
+   Licence CC BY-NC-SA 4.0 — the credit below is required, not optional. */
 
 var RADIO = 'Big Sky Approach';   /* BOI 7110.2B 3-1-1 */
+
+var CREDIT = {
+ project:'VATGlasses',
+ url:'https://vatglasses.uk',
+ repo:'github.com/lennycolton/vatglasses-data',
+ dataset:'ZLC dataset, maintained by ZLC vARTCC',
+ commit:'c469b42 (2026-08-26)',
+ licence:'CC BY-NC-SA 4.0'
+};
+
+/* The runway gate on each airspace block is the configuration selector.
+   Four gates exist across the whole ZLC dataset; Big Sky uses two. */
+var FLOWS = {
+ BOI:[
+  {id:'E', label:'East Flow',  gate:'KBOI 10L/R'},
+  {id:'W', label:'West Flow',  gate:'KBOI 28L/R'}
+ ],
+ BZN:[]   /* Bozeman's blocks carry no runway gate — they exist in every configuration */
+};
 
 var AREAS = [
  {
@@ -189,11 +240,12 @@ var AREAS = [
   name:'BOI Area',
   where:'Boise, southwest Idaho',
   blurb:'Two radar sectors that combine with each other. Sage is the base: it assumes Alpine when they are combined.',
-  root:'SAG',                 /* who is left when everything folds */
-  upper:'SLC_30_CTR',         /* where the area folds when nobody is open */
+  root:'SAG',
+  upper:'SLC_30_CTR',
   upperName:'Salt Lake Center sector 30',
   range:'11 NM outside delegated airspace (3-2-3a, 3-3-2a)',
-  doc:'BOI ATCT/TRACON 7110.2B'
+  doc:'BOI ATCT/TRACON 7110.2B',
+  extent:'42.972–44.216 N, 115.297–117.130 W'
  },
  {
   id:'BZN',
@@ -204,46 +256,61 @@ var AREAS = [
   upper:'SLC_08_CTR',
   upperName:'Salt Lake Center sector 8',
   range:'10 NM outside delegated airspace (3-4-2a)',
-  doc:'BOI ATCT/TRACON 7110.2B ch.3 s.4, with BZN FCT'
+  doc:'BOI ATCT/TRACON 7110.2B ch.3 s.4, with BZN FCT',
+  extent:'45.117–46.269 N, 110.000–112.104 W'
  }
 ];
 
-/* Sectors carry their own area. `into` is the sector this one folds into
-   when it is closed, and it is ALWAYS inside the same area — the two areas
-   have no common airspace boundary, so a fold across them is not a thing
-   that can happen. `into:null` means the fold leaves Big Sky for Center. */
+/* `into` is the DOCUMENTARY combining chain — SOP 3-3-1c and the AFV
+   inheritance tree. It always stays inside its own area, because the two
+   areas share no airspace boundary. `vg` is the community chain from
+   VATGlasses ownership/default.json, shown beside it and never used to
+   resolve: a facility order outranks community data (root CLAUDE.md §6). */
 var SECTORS = [
- {id:'SAG', area:'BOI', name:'Sage Radar',    abbr:'SAG', stars:'G', cs:'BOI_G_APP', frq:'119.600',
-  into:null, airspace:'Appendix 1B (East Flow) / 1C (West Flow)',
+ {id:'SAG', area:'BOI', name:'Sage Radar', abbr:'SAG', stars:'G', cs:'BOI_G_APP', frq:'119.600',
+  into:null, vgKey:'B1S', vg:['B1S','B1A','31','30','41','40','43','44'],
+  airspace:'Appendix 1B (East Flow) / 1C (West Flow)',
+  extent:'42.972–44.216 N, 115.297–117.130 W',
+  blocks:{
+   E:[{f:70,c:164,v:30},{f:null,c:69,v:45}],
+   W:[{f:70,c:164,v:17},{f:null,c:69,v:26}]
+  },
   duty:'Sequences BOI IFR arrivals to Alpine per Table 3-2-1 (East) or 3-2-2 (West). Aircraft handed to Alpine are released for turns and descent, except arrivals in the southernmost downwind during East Flow.',
-  base:'Assumes Alpine responsibilities when combined (3-3-1c).',
   src:'BOI 7110.2B 3-3-1'},
 
- {id:'ALP', area:'BOI', name:'Alpine Radar',  abbr:'ALP', stars:'A', cs:'BOI_A_APP', frq:'126.900',
-  into:'SAG', airspace:'Appendix 1B (East Flow) / 1C (West Flow)',
+ {id:'ALP', area:'BOI', name:'Alpine Radar', abbr:'ALP', stars:'A', cs:'BOI_A_APP', frq:'126.900',
+  into:'SAG', vgKey:'B1A', vg:['B1A','B1S','30','31','41','40','43','44'],
+  airspace:'Appendix 1B (East Flow) / 1C (West Flow)',
+  extent:'42.972–44.216 N, 115.297–117.130 W',
+  blocks:{
+   E:[{f:70,c:164,v:17},{f:null,c:69,v:26}],
+   W:[{f:70,c:164,v:30},{f:null,c:69,v:45}]
+  },
   duty:'Sequences all arrivals to BOI except VFR handed to Local. Separates arrivals to the Local Control lateral boundary; to the threshold when wake turbulence minima apply. Transfers communications before the Local boundary and no further than 10 NM from the field.',
-  base:'',
   src:'BOI 7110.2B 3-2-1'},
 
- {id:'APB', area:'BZN', name:'Bozeman Radar', abbr:'APB', stars:null, cs:'BZN_APP',  frq:'118.975',
-  into:null, airspace:'Appendix 1D',
+ {id:'APB', area:'BZN', name:'Bozeman Radar', abbr:'APB', stars:null, cs:'BZN_APP', frq:'118.975',
+  into:null, vgKey:'B1Z', vg:['B1Z','06','14','04','44'],
+  airspace:'Appendix 1D',
+  extent:'45.117–46.269 N, 110.000–112.104 W',
+  blocks:{
+   any:[{f:75,c:164,v:32},{f:null,c:74,v:55}]
+  },
   duty:'Coordinates with Bozeman FCT for the approach in use on the ATIS, and for any aircraft cleared for an approach other than the one advertised. Provides separation for VFR aircraft on practice instrument approaches.',
-  base:'No sibling sector inside Big Sky.',
   src:'BOI 7110.2B 3-4-1'}
 ];
 
-/* Towers each area inherits top-down, from the AFV transceiver tree.
-   Listed so the seat panel can say plainly what else is yours. */
 var TOPDOWN = {
  BOI:[
-  {cs:'BOI_TWR', nm:'Boise Tower',      frq:'118.100', src:'BOI 7110.2B 2-3-1a'},
-  {cs:'BOI_GND', nm:'Boise Ground',     frq:'121.700', src:'BOI 7110.2B 2-2-1a'},
-  {cs:'BOI_DEL', nm:'Boise Clearance',  frq:'125.900', src:'BOI 7110.2B 2-1-1a'}
+  {cs:'BOI_TWR', nm:'Boise Tower',       frq:'118.100', src:'BOI 7110.2B 2-3-1a', shape:null},
+  {cs:'BOI_GND', nm:'Boise Ground',      frq:'121.700', src:'BOI 7110.2B 2-2-1a', shape:null},
+  {cs:'BOI_DEL', nm:'Boise Clearance',   frq:'125.900', src:'BOI 7110.2B 2-1-1a', shape:null}
  ],
  BZN:[
-  {cs:'BZN_TWR', nm:'Bozeman Tower',    frq:'118.200', src:'BZN FCT, Local 1'},
-  {cs:'BZN_GND', nm:'Bozeman Ground',   frq:'121.800', src:'BZN FCT, Ground 1'},
-  {cs:'BZN_DEL', nm:'Bozeman Clearance',frq:'124.050', src:'BZN FCT, Clearance 1'}
+  {cs:'BZN_TWR', nm:'Bozeman Tower',     frq:'118.200', src:'BZN FCT, Local 1',
+   shape:'surface– 7,400 (VATGlasses B1L, 22 vertices)'},
+  {cs:'BZN_GND', nm:'Bozeman Ground',    frq:'121.800', src:'BZN FCT, Ground 1', shape:null},
+  {cs:'BZN_DEL', nm:'Bozeman Clearance', frq:'124.050', src:'BZN FCT, Clearance 1', shape:null}
  ]
 };
 
@@ -257,17 +324,28 @@ var PRESETS = {
  ]
 };
 
+/* Divergences between the documents and the community dataset.
+   Named, not resolved — root CLAUDE.md §6. */
+var DIVERGE = {
+ BOI:[
+  {h:'Which of Sage and Alpine covers the other',
+   b:'The SOP is directional: <b>3-3-1c says Sage assumes Alpine’s responsibilities when combined</b>, and the AFV tree agrees. VATGlasses lists the two as <b>mutually covering</b> — <span class="zlc-mono">B1A → B1S</span> and <span class="zlc-mono">B1S → B1A</span> — so either can hold the other. The tool resolves on the SOP. The community listing is not wrong, it is just less specific about which direction is normal.'}
+ ],
+ BZN:[
+  {h:'Where Bozeman folds when it closes',
+   b:'The AFV tree in the ZLC frequency sheet gives <span class="zlc-mono">BZN_APP → SLC_08_CTR → SLC_06_CTR</span>. VATGlasses gives <span class="zlc-mono">B1Z → 06 → 14 → 04 → 44</span> — <b>straight to 06, never through 08</b>, although sector 08 exists in its position list. Both agree Bozeman folds into Center Area A and never into Boise. The tool shows the documentary chain; the disagreement is an owner question.'}
+ ]
+};
+
 /* ---------- 3. State ---------- */
 var state = {
  area:'BOI',
- open:{SAG:1},   /* which sectors are staffed */
- seat:'SAG'      /* which one the trainee is sitting in */
+ flow:{BOI:'E', BZN:null},
+ open:{SAG:1},
+ seat:'SAG'
 };
 
-/* ---------- 4. Resolution ----------
-   ownerOf walks the combining chain until it finds something open. It
-   cannot leave the area, because `into` never points across one. When
-   nothing in the area is open the answer is Center, not the other area. */
+/* ---------- 4. Resolution ---------- */
 function secById(id){
  for(var i=0;i<SECTORS.length;i++){ if(SECTORS[i].id===id) return SECTORS[i]; }
  return null;
@@ -288,26 +366,58 @@ function ownerOf(id){
   seen[s.id]=1;
   s = s.into ? secById(s.into) : null;
  }
- return null;   /* nobody in this area is open — it belongs to Center */
+ return null;
 }
-
-/* who answers on the frequency for a given sector's airspace */
 function answerFor(id){
  var own=ownerOf(id);
  if(own) return {kind:'sector', sec:own};
  var a=areaById(secById(id).area);
  return {kind:'center', cs:a.upper, name:a.upperName};
 }
-
 function openCount(area){
  return sectorsIn(area).filter(function(s){ return isOpen(s.id); }).length;
 }
+function flowsFor(area){ return FLOWS[area]||[]; }
+function curFlow(){ return state.flow[state.area]; }
+function flowObj(){
+ var f=curFlow(); if(!f) return null;
+ return flowsFor(state.area).filter(function(x){ return x.id===f; })[0]||null;
+}
+/* blocks for a sector under the currently selected flow */
+function blocksFor(s){
+ if(s.blocks.any) return s.blocks.any;
+ var f=curFlow();
+ return (f && s.blocks[f]) ? s.blocks[f] : [];
+}
 
-/* ---------- 5. Render helpers ---------- */
+/* ---------- 5. Helpers ---------- */
 function esc(s){
  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+/* upstream stores hundreds of feet, inclusive. FL69 is 6,900. */
+function ft(n){
+ if(n===null||n===undefined) return null;
+ var v=n*100, s=String(v), out='', c=0, i;
+ for(i=s.length-1;i>=0;i--){ out=s.charAt(i)+out; if(++c%3===0 && i>0) out=','+out; }
+ return out;
+}
+function floorTxt(b){ return b.f===null ? 'surface' : ft(b.f); }
+function ceilTxt(b){ return b.c===null ? 'unlimited' : ft(b.c); }
+function bandTxt(b){ return floorTxt(b)+' – '+ceilTxt(b); }
+/* lowest floor and highest ceiling across the blocks that exist now */
+function envelope(s){
+ var bs=blocksFor(s);
+ if(!bs.length) return null;
+ var lo=null, hi=null, i;
+ for(i=0;i<bs.length;i++){
+  var f=(bs[i].f===null?0:bs[i].f), c=bs[i].c;
+  if(lo===null || f<lo) lo=f;
+  if(hi===null || (c!==null && c>hi)) hi=c;
+ }
+ return {lo:lo, hi:hi};
+}
 
+/* ---------- 6. Render: chrome ---------- */
 function areasHtml(){
  return AREAS.map(function(a){
   var n=sectorsIn(a.id).length;
@@ -319,9 +429,20 @@ function areasHtml(){
  }).join('');
 }
 
+function flowHtml(){
+ var fs=flowsFor(state.area);
+ if(!fs.length){
+  return '<div class="zlc-bar"><span class="sub" style="margin-left:0">Bozeman’s airspace carries no runway gate — the same blocks exist in every configuration.</span></div>';
+ }
+ var h=fs.map(function(f){
+  return '<button class="'+(curFlow()===f.id?'on':'')+'" onclick="zlcFlow(\''+f.id+'\')">'+esc(f.label)+'</button>';
+ }).join('');
+ var fo=flowObj();
+ return '<div class="zlc-bar">'+h+'<span class="sub">gate '+esc(fo?fo.gate:'')+'</span></div>';
+}
+
 function sectorsHtml(){
- var list=sectorsIn(state.area);
- return list.map(function(s){
+ return sectorsIn(state.area).map(function(s){
   var open=isOpen(s.id), seat=(state.seat===s.id);
   var cls='zlc-sec'+(open?' open':'')+(seat?' seat':'');
   var status;
@@ -333,11 +454,17 @@ function sectorsHtml(){
      ? 'Closed &mdash; folds into <b>'+esc(ans.sec.name)+'</b> on '+esc(ans.sec.frq)+'.'
      : 'Closed &mdash; folds up to <b>'+esc(ans.name)+'</b>.';
   }
-  return '<button class="'+cls+'" onclick="zlcToggle(\''+s.id+'\')" oncontextmenu="return zlcSeat(\''+s.id+'\',event)">'
-   +'<span class="hd"><span class="nm">'+esc(s.name)+'</span><span class="id">'+esc(s.abbr)+(s.stars?' &middot; '+esc(s.stars):'')+'</span></span>'
-   +'<span class="frq">'+esc(s.frq)+' <span class="cs">'+esc(s.cs)+'</span></span>'
-   +'<span class="st">'+status+'</span>'
-   +'</button>';
+  var env=envelope(s), bs=blocksFor(s);
+  var vert = env
+   ? '<div class="vert"><b>'+esc(ft(env.lo)===null?'surface':(env.lo===0?'surface':ft(env.lo)))+' – '+esc(env.hi===null?'unlimited':ft(env.hi))+'</b> &middot; '+bs.length+' block'+(bs.length===1?'':'s')+'</div>'
+   : '<div class="vert none">no airspace block in this flow</div>';
+  return '<div class="'+cls+'">'
+   +'<div class="hd" onclick="zlcToggle(\''+s.id+'\')"><span class="nm">'+esc(s.name)+'</span><span class="id">'+esc(s.abbr)+(s.stars?' &middot; '+esc(s.stars):'')+'</span></div>'
+   +'<div class="frq" onclick="zlcToggle(\''+s.id+'\')">'+esc(s.frq)+' <span class="cs">'+esc(s.cs)+'</span></div>'
+   +vert
+   +'<div class="st">'+status+'</div>'
+   +'<div class="acts"><button onclick="zlcSeat(\''+s.id+'\')">Take seat</button></div>'
+   +'</div>';
  }).join('');
 }
 
@@ -355,21 +482,36 @@ function ownershipHtml(){
     ? esc(ans.sec.name)+(ans.sec.id===s.id?'':' <span class="zlc-mono" style="color:var(--dim2)">(combined)</span>')
     : esc(ans.name);
   var frq = ans.kind==='sector' ? ans.sec.frq : '&mdash;';
-  return '<tr><td>'+esc(s.name)+'</td><td class="d">'+esc(s.airspace)+'</td><td>'+who+'</td><td class="m">'+frq+'</td></tr>';
+  return '<tr><td>'+esc(s.name)+'</td><td class="d">'+esc(s.airspace)+'</td><td>'+who+'</td><td class="m">'+frq+'</td>'
+    +'<td class="n" style="color:var(--dim2)">'+esc(s.vg.join(' → '))+'</td></tr>';
  }).join('');
- return '<table class="zlc-tbl"><thead><tr><th>Airspace</th><th>Chart</th><th>Answered by</th><th>Frequency</th></tr></thead><tbody>'+rows+'</tbody></table>';
+ return '<table class="zlc-tbl"><thead><tr><th>Airspace</th><th>Chart</th><th>Answered by</th><th>Frequency</th><th>VATGlasses chain</th></tr></thead><tbody>'+rows+'</tbody></table>'
+  +'<div class="zlc-note">The last column is the community dataset’s ranked ownership list, shown for comparison only. <b>The tool resolves on the documentary chain</b> — the SOP and the AFV inheritance tree — because a facility order outranks community data.</div>';
+}
+
+function stackHtml(s){
+ var bs=blocksFor(s);
+ if(!bs.length){
+  return '<div class="zlc-note"><b>The dataset carries no airspace block for this sector in this flow.</b> That is what the data says, not a claim that the sector closes — see the gaps section.</div>';
+ }
+ /* sort by floor so the stack reads bottom-up */
+ var sorted=bs.slice().sort(function(a,b){ return (a.f===null?0:a.f)-(b.f===null?0:b.f); });
+ return '<div class="zlc-stack">'+sorted.map(function(b){
+  return '<div class="zlc-blk"><span class="alt">'+esc(bandTxt(b))+'</span><span class="vtx">'+b.v+' vertices</span></div>';
+ }).join('')+'</div>';
 }
 
 function seatHtml(){
  var s=secById(state.seat);
  if(!s || s.area!==state.area) return '<p class="zlc-sub">No seat taken in this area.</p>';
- var a=areaById(state.area);
+ var a=areaById(state.area), fo=flowObj();
  var folded=sectorsIn(state.area).filter(function(x){
   if(x.id===s.id) return false;
   var o=ownerOf(x.id); return o && o.id===s.id;
  });
  var td=TOPDOWN[state.area]||[];
- var h='<p class="zlc-sub">You are <b style="color:var(--ink)">'+esc(s.name)+'</b>, working as <b style="color:var(--ink)">'+esc(RADIO)+'</b> on <span class="zlc-mono" style="color:var(--green)">'+esc(s.frq)+'</span> &mdash; login <span class="zlc-mono">'+esc(s.cs)+'</span>.</p>';
+ var h='<p class="zlc-sub">You are <b style="color:var(--ink)">'+esc(s.name)+'</b>, working as <b style="color:var(--ink)">'+esc(RADIO)+'</b> on <span class="zlc-mono" style="color:var(--green)">'+esc(s.frq)+'</span> &mdash; login <span class="zlc-mono">'+esc(s.cs)+'</span>'
+   +(fo?', in <b style="color:var(--ink)">'+esc(fo.label)+'</b>':'')+'.</p>';
  h+='<p class="zlc-sub">'+esc(s.duty)+' <span style="color:var(--dim2)">('+esc(s.src)+')</span></p>';
  if(folded.length){
   h+='<p class="zlc-sub">Also yours right now, because nobody is in '+(folded.length===1?'it':'them')+': <b style="color:var(--amber)">'
@@ -377,92 +519,133 @@ function seatHtml(){
  } else {
   h+='<p class="zlc-sub">Nothing else in the area folds into you.</p>';
  }
- h+='<h3 style="margin-top:14px">Top-down from this seat</h3>';
+
+ h+='<h3 style="margin-top:16px">Vertical structure'+(fo?' &mdash; '+esc(fo.label):'')+'</h3>';
+ h+='<p class="zlc-sub" style="font-size:13px">One lateral shape sliced into blocks. Floors and ceilings are inclusive. Lateral extent '+esc(s.extent)+'.</p>';
+ h+=stackHtml(s);
+
+ h+='<h3 style="margin-top:16px">Top-down from this seat</h3>';
  h+='<table class="zlc-tbl"><thead><tr><th>Position</th><th>Login</th><th>Frequency</th><th>Source</th></tr></thead><tbody>'
    +td.map(function(t){
-     return '<tr><td>'+esc(t.nm)+'</td><td class="d zlc-mono">'+esc(t.cs)+'</td><td class="m">'+esc(t.frq)+'</td><td class="d">'+esc(t.src)+'</td></tr>';
+     return '<tr><td>'+esc(t.nm)+(t.shape?'<br><span class="zlc-mono" style="font-size:10.5px;color:var(--dim2)">'+esc(t.shape)+'</span>':'')
+       +'</td><td class="d zlc-mono">'+esc(t.cs)+'</td><td class="m">'+esc(t.frq)+'</td><td class="d">'+esc(t.src)+'</td></tr>';
    }).join('')
    +'</tbody></table>';
  h+='<div class="zlc-note">Radar range for this area: '+esc(a.range)+'. Source: '+esc(a.doc)+'.</div>';
  return h;
 }
 
+function divergeHtml(){
+ var list=DIVERGE[state.area]||[];
+ if(!list.length) return '';
+ return list.map(function(d){
+  return '<div class="zlc-div"><div class="h">Named, not resolved</div><div class="b"><b>'+esc(d.h)+'.</b> '+d.b+'</div></div>';
+ }).join('');
+}
+
 function boundaryNote(){
  var other=AREAS.filter(function(a){ return a.id!==state.area; })[0];
+ var me=areaById(state.area);
  return '<div class="zlc-note"><b>These two areas do not share an airspace boundary.</b> '
-  +esc(areaById(state.area).where.split(',')[0])+' and '+esc(other.where.split(',')[0])
+  +esc(me.where.split(',')[0])+' and '+esc(other.where.split(',')[0])
   +' are separated by most of a state, and nothing in '+esc(state.area)+' ever combines with, hands off to, or folds into '
   +esc(other.id)+'. When the last sector in an area closes, its airspace goes up to Center &mdash; '
-  +esc(areaById(state.area).upperName)+' for '+esc(state.area)+' &mdash; never sideways to the other area. '
+  +esc(me.upperName)+' for '+esc(state.area)+' &mdash; never sideways to the other area. '
+  +'The geometry confirms it: this area spans '+esc(me.extent)+' and the other spans '+esc(other.extent)+', more than fifty miles apart with no shared edge. '
   +'The one thing they share is the radio name: both answer as <span class="zlc-mono" style="color:var(--ink)">'+esc(RADIO)+'</span>.</div>';
 }
 
-/* ---------- 6. Sections ---------- */
+function creditHtml(){
+ return '<div class="zlc-cred"><b>Sector geometry credit.</b> The lateral extents, altitude blocks, runway gates and community ownership chains on this page are derived from the '
+  +'<b>'+esc(CREDIT.project)+'</b> '+esc(CREDIT.dataset)+' (<span class="zlc-mono">'+esc(CREDIT.repo)+'</span>, commit '+esc(CREDIT.commit)+'), '
+  +'licensed <b>'+esc(CREDIT.licence)+'</b>. Attribution and share-alike are conditions of that licence. '
+  +'The data is not a facility document: where a ZLC order disagrees with it, the order wins.</div>';
+}
+
+/* ---------- 7. Sections ---------- */
 function posHtml(){
  return '<section class="zlc-section" id="mod-area">'
   +'<div class="zlc-tag">Step one</div>'
-  +'<h2>Area</h2>'
-  +'<p class="zlc-sub">Big Sky is one facility and one radio name covering two separate pieces of the map. Pick the one you are working.</p>'
+  +'<h2>Area and flow</h2>'
+  +'<p class="zlc-sub">Big Sky is one facility and one radio name covering two separate pieces of the map. Pick the one you are working, then the runway configuration &mdash; the flow decides which airspace blocks exist.</p>'
   +'<div class="zlc-areas" id="zlc-areas"></div>'
+  +'<div id="zlc-flow"></div>'
   +'<div id="zlc-boundary"></div>'
   +'</section>'
 
   +'<section class="zlc-section" id="mod-pos">'
   +'<div class="zlc-tag">Step two</div>'
   +'<h2>Sectors</h2>'
-  +'<p class="zlc-sub">Click a sector to open or close it. Right-click one that is open to take that seat. Closed sectors show where their airspace goes.</p>'
+  +'<p class="zlc-sub">Click a sector name or frequency to open or close it. Each chip shows the vertical envelope that sector holds in the selected flow.</p>'
   +'<div class="zlc-bar" id="zlc-presets"></div>'
   +'<div class="zlc-secs" id="zlc-secs"></div>'
   +'<div class="zlc-panel"><h3>Who owns what, right now</h3><div id="zlc-own"></div></div>'
+  +'<div id="zlc-div"></div>'
   +'</section>'
 
   +'<section class="zlc-section" id="mod-seat">'
   +'<div class="zlc-tag">Step three</div>'
   +'<h2>Your seat</h2>'
   +'<div class="zlc-panel" id="zlc-seat"></div>'
+  +'<div id="zlc-credit"></div>'
   +'</section>';
 }
 
 function stubHtml(){
  return '<section class="zlc-section" id="mod-stubs">'
-  +'<div class="zlc-tag warn">Not built yet</div>'
-  +'<h2>Empty slots</h2>'
-  +'<p class="zlc-sub">Named so the gaps are visible rather than discovered later. Each one is a place a future block mounts, in this order.</p>'
+  +'<div class="zlc-tag warn">State of the data</div>'
+  +'<h2>What is filled, and what is not</h2>'
+  +'<p class="zlc-sub">Named so the gaps are visible rather than discovered later. Two of these moved on 2026-09-02 when the sector geometry arrived; one got worse.</p>'
 
   +'<div class="zlc-split">'
-  +'<div class="zlc-stub"><span class="lbl">Slot 1 &middot; geometry</span><h3>Delegated airspace</h3>'
-  +'<p>Appendices 1B, 1C and 1D are chart images with no text layer, so the sector boundaries, the Ellis Corridor and the arrival zones exist here as names without shapes. Recovering them means measuring the embedded images, the way the M98 DDA polygon was recovered. Until then nothing can be plotted.</p></div>'
 
-  +'<div class="zlc-stub"><span class="lbl">Slot 2 &middot; routes</span><h3>Arrival and departure routes</h3>'
-  +'<p>The BOI sequencing tables name KOURT, SPUUD, SADYL, JIMMI, KYANN, BEWTE and TOILS with descend-to altitudes, and BZN names the BGSKY, BOBKT, MEADO and HIA departures. None are plotted yet &mdash; they need fix positions this repo does not have.</p></div>'
+  +'<div class="zlc-stub part"><span class="lbl">Slot 1 &middot; partly filled</span><h3>Sector boundaries</h3>'
+  +'<p>Carried since 2026-09-02. All three Big Sky sectors have a lateral extent, runway-gated altitude blocks and an ownership chain, from the VATGlasses ZLC dataset &mdash; trusted because ZLC vARTCC owns and maintains it. <b>Still missing: the Ellis Corridor, the pre-arranged coordination areas and the arrival zones.</b> VATGlasses draws sectors, not gates, and Appendices 1B, 1C, 1D, 2 and 3 remain chart images with no text layer.</p></div>'
 
-  +'<div class="zlc-stub"><span class="lbl">Slot 3 &middot; engine</span><h3>Traffic and scope</h3>'
-  +'<p>No aircraft model, no scope, no clock. The M98 deck is the pattern to follow: geometry and reference values live in one place and downstream blocks read them through a single bridge object rather than keeping copies.</p></div>'
+  +'<div class="zlc-stub part"><span class="lbl">Slot 2 &middot; filled</span><h3>Flow</h3>'
+  +'<p>Also arrived with the geometry. Every block is gated on a runway configuration, and Big Sky uses two &mdash; <code>KBOI 10L/R</code> East and <code>KBOI 28L/R</code> West. Alpine and Sage hold the same two bands over the same total airspace and <b>swap shapes</b> between the flows: 17 and 26 vertices one way, 30 and 45 the other. The selector above now models this. Bozeman is not gated at all.</p></div>'
 
-  +'<div class="zlc-stub"><span class="lbl">Slot 4 &middot; grading</span><h3>Standing items and notebook</h3>'
-  +'<p>The standing training items for Big Sky have not been written. They should come out of real session notes, not be invented to fill the slot.</p></div>'
+  +'<div class="zlc-stub block"><span class="lbl">Slot 3 &middot; live blocker</span><h3>Handoff identifiers</h3>'
+  +'<p>Big Sky has <b>no handoff ID source at all today</b>, and the geometry did not help: the community dataset carries none, and its keys (<code>B1S</code>, <code>B1A</code>, <code>B1Z</code>) are display handles, not STARS IDs. STARS-side identifiers come from vNAS, always &mdash; and there is no ZLC vNAS record in this repository. One request closes it: <code>curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC"</code>. Endpoint verified 2026-09-02, 344 KB, and the payload does carry <code>starsId</code>.</p></div>'
+
+  +'<div class="zlc-stub"><span class="lbl">Slot 4 &middot; empty</span><h3>Routes, fixes and MVAs</h3>'
+  +'<p>The sequencing tables name KOURT, SPUUD, SADYL, JIMMI, KYANN, BEWTE and TOILS with descend-to altitudes, and BZN names the BGSKY, BOBKT, MEADO and HIA departures. None are located. No MVA data is present in any community source either.</p></div>'
+
+  +'<div class="zlc-stub"><span class="lbl">Slot 5 &middot; empty</span><h3>Traffic engine and grading</h3>'
+  +'<p>No aircraft model, no scope, no clock, no standing training items. The M98 deck is the pattern: geometry and reference values live in one place and downstream blocks read them through a single bridge object. Standing items should come out of real session notes, not be invented to fill the slot.</p></div>'
+
   +'</div>'
 
-  +'<div class="zlc-note"><b>Two things in the source documents are genuinely unresolved.</b> '
+  +'<div class="zlc-note"><b>Two things in the source documents are still unresolved.</b> '
   +'The SOP tables end with &ldquo;Bold designates a primary position&rdquo;, but bold is lost in text extraction, so which sectors are primary is not known. '
   +'And the ZLC frequency sheet’s worked example for Boise refers to <span class="zlc-mono">BOI_S_APP</span> and <span class="zlc-mono">BOI_N_APP</span>, callsigns that appear in no current position table &mdash; that example appears to predate the rename to Sage and Alpine. '
   +'Both are left empty here rather than guessed.</div>'
   +'</section>';
 }
 
-/* ---------- 7. Render ---------- */
+function footHtml(){
+ return 'Skeleton tool. Sector names, identifiers, callsigns and frequencies are verified against BOI ATCT/TRACON 7110.2B, BZN FCT and the ZLC Position and Frequency Info sheet, and confirmed independently by the VATGlasses ZLC dataset '
+  +'&mdash; see BOI/claude_BOI_Reference.md, BZN/claude_BZN_Reference.md, _shared/claude_ZLC_Positions_Reference.md and _shared/claude_ZLC_Sector_Geometry_Reference.md. '
+  +'Sector geometry &copy; '+esc(CREDIT.project)+' contributors (' + esc(CREDIT.dataset) + '), licensed '+esc(CREDIT.licence)+' &mdash; <a href="'+esc(CREDIT.url)+'">'+esc(CREDIT.url)+'</a>. '
+  +'Everything marked empty is an empty slot, not an omission. Single file, no build step, no network.';
+}
+
+/* ---------- 8. Render ---------- */
 function render(){
  var el;
  el=document.getElementById('zlc-areas');    if(el) el.innerHTML=areasHtml();
+ el=document.getElementById('zlc-flow');     if(el) el.innerHTML=flowHtml();
  el=document.getElementById('zlc-boundary'); if(el) el.innerHTML=boundaryNote();
  el=document.getElementById('zlc-presets');  if(el) el.innerHTML=presetsHtml();
  el=document.getElementById('zlc-secs');     if(el) el.innerHTML=sectorsHtml();
  el=document.getElementById('zlc-own');      if(el) el.innerHTML=ownershipHtml();
+ el=document.getElementById('zlc-div');      if(el) el.innerHTML=divergeHtml();
  el=document.getElementById('zlc-seat');     if(el) el.innerHTML=seatHtml();
+ el=document.getElementById('zlc-credit');   if(el) el.innerHTML=creditHtml();
  for(var i=0;i<ZLC.hooks.length;i++){ try{ ZLC.hooks[i](); }catch(e){} }
 }
 
-/* ---------- 8. Actions ---------- */
+/* ---------- 9. Actions ---------- */
 window.zlcArea=function(id){
  if(state.area===id) return;
  state.area=id;
@@ -472,12 +655,15 @@ window.zlcArea=function(id){
  state.seat = first ? first.id : null;
  render();
 };
-
+window.zlcFlow=function(f){
+ if(!flowsFor(state.area).length) return;
+ state.flow[state.area]=f;
+ render();
+};
 window.zlcToggle=function(id){
  var s=secById(id);
  if(!s) return;
  if(isOpen(id)){
-  /* the area root cannot close — something has to hold the airspace */
   var a=areaById(s.area);
   if(a.root===id && openCount(s.area)<=1){ return; }
   delete state.open[id];
@@ -490,15 +676,11 @@ window.zlcToggle=function(id){
  }
  render();
 };
-
-window.zlcSeat=function(id,ev){
- if(ev && ev.preventDefault) ev.preventDefault();
+window.zlcSeat=function(id){
  if(!isOpen(id)) state.open[id]=1;
  state.seat=id;
  render();
- return false;
 };
-
 window.zlcPreset=function(pid){
  var p=(PRESETS[state.area]||[]).filter(function(x){ return x.id===pid; })[0];
  if(!p) return;
@@ -510,29 +692,29 @@ window.zlcPreset=function(pid){
  render();
 };
 
-/* ---------- 9. Mount ---------- */
+/* ---------- 10. Mount ---------- */
 function mountAll(){
  var wrap=document.querySelector('.wrap')||document.body;
  if(!wrap) return;
  var mount=document.createElement('div');
  mount.innerHTML=posHtml()+stubHtml();
  var foot=wrap.querySelector('footer');
- if(foot){ wrap.insertBefore(mount, foot); } else { wrap.appendChild(mount); }
+ if(foot){ wrap.insertBefore(mount, foot); foot.innerHTML=footHtml(); } else { wrap.appendChild(mount); }
  var nav=document.getElementById('modnav');
- if(nav){ nav.innerHTML += '<a href="#mod-area">AREA</a><a href="#mod-pos">SECTORS</a><a href="#mod-seat">SEAT</a><a href="#mod-stubs">GAPS</a>'; }
+ if(nav){ nav.innerHTML += '<a href="#mod-area">AREA</a><a href="#mod-pos">SECTORS</a><a href="#mod-seat">SEAT</a><a href="#mod-stubs">DATA</a>'; }
  render();
 }
 
-/* ---------- 10. Extension bridge ----------
-   One copy of every operational number. Downstream blocks read the
-   sectors, the frequencies and the ownership resolution through this
-   object and never keep a second copy. */
+/* ---------- 11. Extension bridge ---------- */
 window.ZLC = {
- version:0, skeleton:true, facility:'BIGSKY', hooks:[],
- RADIO:RADIO, AREAS:AREAS, SECTORS:SECTORS, TOPDOWN:TOPDOWN, PRESETS:PRESETS,
+ version:0.2, skeleton:true, facility:'BIGSKY', hooks:[],
+ RADIO:RADIO, CREDIT:CREDIT, AREAS:AREAS, FLOWS:FLOWS, SECTORS:SECTORS,
+ TOPDOWN:TOPDOWN, PRESETS:PRESETS, DIVERGE:DIVERGE,
  state:state,
  secById:secById, areaById:areaById, sectorsIn:sectorsIn,
  isOpen:isOpen, ownerOf:ownerOf, answerFor:answerFor, openCount:openCount,
+ flowsFor:flowsFor, curFlow:curFlow, flowObj:flowObj, blocksFor:blocksFor,
+ envelope:envelope, ft:ft, bandTxt:bandTxt,
  render:render, esc:esc
 };
 

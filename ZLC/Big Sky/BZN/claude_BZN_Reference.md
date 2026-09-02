@@ -72,9 +72,25 @@ VFR aircraft, and IFR Category I/II aircraft going around off a visual, are inst
 
 ## Not established
 
-- **The STARS ID for Bozeman Radar.** Blank in BOI 7110.2B Table 1-2-1.
-- **Airspace geometry.** Appendix 1D is a chart image with no text layer — the delegated airspace is a name here, not a shape.
+- **The STARS ID for Bozeman Radar.** Blank in BOI 7110.2B Table 1-2-1, and the community dataset does not carry STARS IDs either.
 - **Whether Bozeman Radar has arrival sequencing tables** of the kind Boise has (3-2-1 / 3-2-2). None appear in the source.
+- **Handoff identifiers — a live blocker.** No source anywhere in the repository. `B1Z` is a VATGlasses display handle, not a STARS ID, and no ZLC vNAS record is held locally. Until `curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC"` is pulled, no drill may quote one.
+- **MVAs and any route geometry.** Not present in any source.
+
+### Sector geometry — carried since 2026-09-02
+
+Decoded in [the geometry reference](../../_shared/claude_ZLC_Sector_Geometry_Reference.md) from the VATGlasses ZLC dataset (CC BY-NC-SA 4.0 — a tool drawing these **must credit VATGlasses on the page**).
+
+| Entry | Position | Extent | Blocks |
+|---|---|---|---|
+| `B1Z` | Bozeman Radar, 118.975 | 45.117–46.269 N, 110.000–112.104 W | 7,500–16,400 (32 vertices) · surface–7,400 (55) |
+| `B1L` | Bozeman Tower, 118.200 | 45.669–45.859 N, 111.025–111.267 W | surface–7,400 (22) |
+
+**Neither is gated on a runway configuration** — unlike Boise, whose sectors swap shape between East and West Flow, Bozeman's blocks exist in every configuration.
+
+The geometry also confirms the structural constraint: this area spans 45.1–46.3 N while the BOI area spans 43.0–44.2 N / 115.3–117.1 W — **more than fifty miles apart with no shared edge**, and the two ownership chains diverge immediately (`06` for Bozeman, `30` for Boise).
+
+**One divergence, named not resolved:** the AFV tree gives `BZN_APP → SLC_08_CTR → SLC_06_CTR`; VATGlasses gives `B1Z → 06 → 14 → 04 → 44`, straight to 06 and never through 08, although sector 08 exists in its position list. Both agree Bozeman folds into Center Area A and never into Boise. The AFV tree is documentary and is what the tool shows.
 - BZN FCT Local §6 lists IFR arrivals as "N/A", which is unlikely to mean what it literally says. Worth asking about.
 
 ---
