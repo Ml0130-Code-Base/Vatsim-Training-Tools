@@ -23,6 +23,10 @@ between them is a bug in one of them.
 the frame is real and cited, the geometry is not carried, and the tool renders the
 difference rather than hiding it.
 
+`claude_CRC_Platform_Reference.md` sits alongside this file: what STARS and ERAM can actually
+do in CRC, transcribed from `docs.virtualnas.net` on 2026-09-01. **Read it before designing a
+drill** — a drill that grades a decision the client cannot express is grading the wrong thing.
+
 ---
 
 ## 1. The invariants
@@ -285,6 +289,16 @@ Two paths have actually worked, and no third one should be invented:
    `pdftotext`, `perl` and `curl` are present).
 2. **Owner-supplied points.** The M98 lateral boundary came in as nine MSP radial/DME pairs.
    This is what Part 1 of every gap analysis is for.
+
+**A third path exists on paper and has not been tried.** CRC video maps are authored in
+**GeoJSON**, stored centrally per ARTCC, and converted from the facility's legacy `.sct2` with
+FE Buddy — so every boundary we are missing already exists as a geometry file that someone with
+facility data-admin access holds. No public download endpoint is documented and our 2026-09-01
+API probe found none, so this is **an ask, not a capability**: *"can you export the
+sector-boundary GeoJSON, or send the `.sct2` the maps were built from?"* It is the same ask at
+every facility, it arrives surveyed rather than traced, and it is a cheaper "no" than a request
+for hand-measured points. Details in `claude_CRC_Platform_Reference.md` §5.1. **Until an export
+actually lands, treat this as untested** and keep the owner-supplied-points ask in place.
 
 Until geometry exists: **nothing spatial gets built, and the engine says so** (invariant 3).
 Pick drill targets that need no geometry — R90's scratchpad encoding and STAR-gap heading

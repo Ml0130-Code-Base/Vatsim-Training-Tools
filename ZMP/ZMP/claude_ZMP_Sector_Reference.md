@@ -175,16 +175,30 @@ The order never moves Sector 09's airspace to Sector 10, and never has a seat ow
 
 Encoded as `TRAINING_SPLIT` and `trainingSeatOwning(n)` in the Sector Deck block. The seat picker shows both directions: pick 09 and it says *owns 07, 08*; it also says *in the training split this airspace is worked from seat 10*.
 
-### Procedure names in these sectors that the M98 tool does not carry
+### Departure gates — the structure the M98 tool is missing
 
-Found while walking the M98 interface, and **not present** in `../M98 Training/CLAUDE.md`'s nine turbojet SIDs or its arrival set:
+**Owner-supplied correction, 2026-09-01: M98's departures are organised into *gates*, and a gate consists of several SIDs.** Confirmed in the source: **M98 7110.26A** gives the gate table outright, as the first letter of scratchpad #1.
 
-- **`DARWIN`** — named as an M98 departure SID in Sector 09. The M98 tool's SID list is COULT, KBREW, LEINY, ORSKY, RST, SCHEP, SMERF, WLSTN, ZMBRO. `DARWIN` is not among them.
-- **`SKETR`** — named as an M98 arrival STAR in Sector 09.
-- **`EAU` STAR** and **`GEP` STAR** — named as MSP arrivals in Sectors 05, 06, 10 and 16.
-- **`RRAZZ`, `JAGOW`, `FOD`** — arrival fixes in the Sector 30 satellite routing.
+| Letter | Gate | Letter | Gate |
+|---|---|---|---|
+| **E** | EAU | **R** | RST |
+| **D** | DLL | **F** | FAR |
+| **N** | ODI | **A** | ABR |
+| **B** | BRD/DLH | **O** | ONL/FOD |
 
-These are either genuinely additional procedures, ZMP-side names for arrivals the M98 tool knows by another name, or stale entries in one document or the other. **Not resolved.** Do not add them to either tool's route data until it is clear which.
+Scratchpad #1 carries **"the first letter of the departure gate through which the aircraft will exit M98 airspace, followed by the two-digit requested altitude in thousands of feet if other than the aircraft's present altitude."** The order's own example: **`B12` = the BRD/DLH gate, assigned 12,000.** Scratchpad #1 may alternatively carry the three-letter gate, or the arrival airport.
+
+**Eight gates, named for the exit navaid, and the nine turbojet SIDs route through them.** This resolves what `../M98 Training/CLAUDE.md` records as an open problem — it says there is *"no SID-to-ZMP-sector map"* and derives the receiving ZMP sector from the ZMP–M98 LOA Table 1 heading bands, calling that an inference. **The gate table is a better basis**: the gate names the exit point, and the scratchpad states it explicitly rather than requiring a bearing to be reverse-engineered. Worth carrying back into the M98 tool.
+
+> **Correcting an earlier note in this file.** `EAU` was previously listed here as an unexplained "new STAR". It is both — **EAU is a departure gate letter `E`** *and* the Eau Claire navaid over which a conventional MSP arrival runs. Same for `GEP` (Gopher) and the `BRD`/`DLH`/`RST`/`FAR`/`ABR`/`ODI`/`DLL`/`ONL`/`FOD` identifiers: they are navaids doing double duty as gate names. They are not undocumented procedures.
+
+### Still genuinely unresolved
+
+- **`SKETR`** — a real MSP arrival, and the order calls it **"MSP SKETR Arrival, Non-RNAV Turbojets & Turboprops"** (7200.1O Sector 09 arrival table). So it belongs to the **conventional/non-RNAV** arrival family alongside KASPR, which the M98 tool carries. It has a published holding fix: **SKETR, SW, 10 NM legs, 310 radial, left turns, 070–FL230.** Sectors 09 and 19 both sequence it. **The M98 tool does not carry SKETR at all** — a genuine gap in its conventional arrival set.
+- **`DARWIN`** — appears three times, always as *"SMERF, DARWIN, and LEINY SID aircraft"* (Sectors 09 and 15/19). Grouped with two names that **are** M98 SIDs. Whether DARWIN is a ninth-plus SID, a gate, or a stale name is **not resolved by any document in the corpus.**
+- **`RRAZZ`, `JAGOW`, `FOD`** — arrival fixes in the Sector 30 satellite routing. `FOD` is also half of the `O` gate (ONL/FOD).
+
+Do not add SKETR or DARWIN to either tool's route data until the owner confirms.
 
 > Sector 17's narrative writes the arrival as **`NITRZ`**. Every other occurrence in the corpus is `NITZR`. Transcribed as written; it reads as a typo in the order.
 
