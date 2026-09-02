@@ -8,7 +8,26 @@ Single-file, offline-first HTML training tools for a VATSIM virtual air traffic 
 
 - `zmp-drill-deck.html` — the tool. Two extension blocks before `</body>` and nothing else: the Sector Deck (live player + drill library) and the Drill Builder + Training Notebook. Three pages mounted in workflow order and moved into view wrappers by `buildPages()` — **Set up a drill** (Position, Build) · **Fly it** (Live) · **Notes and log** (Notes, Log). Namespace is `window.ZD`, not `DD` — see *Architecture rules* 3.
 - `sector-deck-block.html` / `drill-builder-block.html` — the two blocks alone, paste material. Regenerate from the main file; never edit separately. *(Not yet split out — the main file is the only copy while the engine is a shell.)*
+- `smoke-test.mjs` — the headless harness. `node smoke-test.mjs zmp-drill-deck.html`.
 - `claude_*.md` — the authoritative reference set. **These win over anything hardcoded in HTML when they conflict.**
+
+  | File | What it carries |
+  |---|---|
+  | `claude_Source_Documents_Index.md` | The manifest for `source-docs/` — what was pulled, effective dates, page counts, **which files are pictures**, and the curl recipe to re-pull |
+  | `claude_ZMP_SOP_Reference.md` | **ZMP 7200.1O CHG 2** — Chapters 1–3 and 10 and all three appendices in full; the per-sector chapters partly walked |
+  | `claude_ZMP_Sector_Reference.md` | **The center definition** — all 33 sectors with area, frequency, stratum, scope range, ERAM filter, combining, plus the adjacency map and the four frequency conflicts |
+  | `claude_ZMP_Enroute_LOA_Reference.md` | The six centre-to-centre LOAs (ZAU, ZKC, ZDV, ZLC, ZOB, CZWG) and the Tier 1 route reference |
+  | `claude_ZMP_TRACON_Interface_Reference.md` | The ten approach-control LOAs and the Minor TRACON Reference, one row per facility |
+  | `claude_ZMP_Training_Reference.md` | The certification path from 3120.4F, the administrative manual, and the en route strip-marking order |
+  | `claude_ZMP_Charts_Reference.md` | What each chart PDF's text layer actually yields, and what stays drawn-only |
+  | `claude_Enroute_vs_Terminal_Reference.md` | Shared with `../R90/` — how en route and terminal control differ, with 7110.65 citations |
+  | `claude_ZMP_Drill_Format.md` | How the coach frames and runs an en route drill |
+  | `claude_ZMP_OJT_Session_Review.md` | **Intake template — empty.** Where standing training items will come from |
+  | `claude_ZMP_AI_Practice_Log.md` | **Empty.** The drill ledger, mirroring `PRIOR` |
+  | `claude_ZMP_Gap_Analysis.md` | What the documents do not answer, ranked, and what the owner has offered to supply |
+  | `claude_ZMP_TTS_Voicing.md` | Written → spoken forms, so TTS pronounces sector numbers and identifiers correctly |
+  | `claude_US_Carrier_Callsigns.md` | Callsign voicing rules. Copied verbatim from `../M98 Training/` |
+
 - `source-docs/` — 28 PDFs pulled from `minniecenter.org/docs` on 2026-09-01, with `pdftotext -layout` extractions in `source-docs/txt/`. All 28 verified as genuine PDFs on `%PDF` magic bytes. Manifest and text-layer status in `claude_Source_Documents_Index.md`.
 - `../_vnas/ZMP_vnas.json` — the vNAS facility record for ZMP (853 KB, `lastUpdatedAt` 2026-08-26), pulled from `https://data-api.vnas.vatsim.net/api/artccs/ZMP`. **This is a second, independent source for the sector spine** and the only machine-readable source for the sector-to-neighbour adjacency map. See `claude_ZMP_Sector_Reference.md`.
 

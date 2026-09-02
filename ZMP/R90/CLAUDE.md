@@ -10,7 +10,22 @@ Single-file, offline-first HTML training tools for a VATSIM virtual air traffic 
 
 - `r90-drill-deck.html` — the tool. Two extension blocks before `</body>`: the Radar Deck (live player + drill library) and the Drill Builder + Training Notebook. Three pages mounted in workflow order and moved into view wrappers by `buildPages()` — **Set up a drill** (Position, Build) · **Fly it** (Live) · **Notes and log** (Notes, Log). Namespace is `window.RD`, not `DD`.
 - `radar-deck-block.html` / `drill-builder-block.html` — the two blocks alone, paste material. Regenerate from the main file; never edit separately. *(Not yet split out while the engine is a shell.)*
+- `smoke-test.mjs` — the headless harness. `node smoke-test.mjs r90-drill-deck.html`.
 - `claude_*.md` — the authoritative reference set. **These win over anything hardcoded in HTML when they conflict.**
+
+  | File | What it carries |
+  |---|---|
+  | `claude_Source_Documents_Index.md` | The manifest for `source-docs/` — what was pulled, effective dates, page counts, **the eleven picture-only pages**, and the curl recipe to re-pull |
+  | `claude_R90_SOP_Reference.md` | **R90 7220.10B CHG 2** in full, plus the **OMA 7110.4A** and **LNK 7110.6A** tower orders — positions, duties, arrival procedures, PACP, all four scratchpad tables, departure altitudes and headings, missed approaches, flow selection |
+  | `claude_R90_ZMP_LOA_Reference.md` | The **ZMP-R90 LOA** — delegated ceilings, arrival altitudes, the STAR window, control-for grants both ways, the five departure heading bands |
+  | `claude_Enroute_vs_Terminal_Reference.md` | Shared with `../ZMP/` — how terminal and en route control differ, with 7110.65 citations |
+  | `claude_R90_Drill_Format.md` | How the coach frames and runs an R90 drill, and the two frame elements M98 does not have |
+  | `claude_R90_OJT_Session_Review.md` | **Intake template — empty.** Where standing training items will come from |
+  | `claude_R90_AI_Practice_Log.md` | **Empty.** The drill ledger, mirroring `PRIOR` |
+  | `claude_R90_Gap_Analysis.md` | **Read this before building anything.** Every boundary is a picture; Part 1 is the ranked list of what the owner has offered to supply |
+  | `claude_R90_TTS_Voicing.md` | Written → spoken forms. **All five STAR names are unspecified** and will mispronounce |
+  | `claude_US_Carrier_Callsigns.md` | Callsign voicing rules. Copied verbatim from `../M98 Training/` |
+
 - `source-docs/` — 7 PDFs pulled from `minniecenter.org/docs` on 2026-09-01 with `pdftotext -layout` extractions in `source-docs/txt/`. Manifest and text-layer status in `claude_Source_Documents_Index.md`.
 - `../_vnas/ZMP_vnas.json` — the vNAS facility record for the whole ARTCC, which contains R90 as a child TRACON. **It is the only source for the R90 airport inventory**, which the SOP never states.
 
