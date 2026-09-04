@@ -121,4 +121,4 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 
 ## Session hygiene
 
-Commit after each completed subtask. When aviation data is involved, cite which document and paragraph the number came from in the commit message. Long sessions: `/clear` and let this file re-anchor context.
+Commit after each completed subtask. When aviation data is involved, cite which document and paragraph the number came from in the commit message. Long sessions: `/clear` and let this file re-anchor context. **One commit touches one ARTCC:** S56 and Big Sky may share a commit, and nothing under `ZMP/` or `ZAU/` may join it. Root `CLAUDE.md` §14.
