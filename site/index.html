@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VATSIM Training Toolset</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D0C;
+    --panel:#0F1614;
+    --panel2:#121A17;
+    --ink:#E7EDE9;
+    --dim:#6F8079;
+    --dim2:#455049;
+    --line:#1E2925;
+    --green:#4FE0A0;
+    --amber:#E8A23D;
+    --red:#E8604D;
+    --display:'Space Grotesk',sans-serif;
+    --body:'IBM Plex Sans',sans-serif;
+    --mono:'IBM Plex Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(79,224,160,0.05), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{background:rgba(79,224,160,0.25);}
+  :focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+  a{color:var(--green);}
+
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px 80px;}
+
+  .topbar{
+    display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--line);
+    padding:16px 20px;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--dim);
+    position:sticky;top:0;
+    background:rgba(10,13,12,0.9);
+    backdrop-filter:blur(6px);
+    z-index:20;
+  }
+  .topbar b{color:var(--ink);font-weight:600;}
+
+  .hero{padding:26px 0 4px;}
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--green);margin-bottom:10px;
+  }
+  .hero h1{
+    font-family:var(--display);font-weight:600;
+    font-size:clamp(20px,3vw,26px);
+    margin:0 0 6px;letter-spacing:-0.01em;
+  }
+  .hero p{color:var(--dim);max-width:64ch;margin:0 0 8px;font-size:15px;}
+
+  .idx-panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px 20px;
+    margin:26px 0;
+  }
+  .idx-panel h2{
+    font-family:var(--display);font-weight:600;font-size:16px;
+    margin:0 0 8px;letter-spacing:-0.01em;
+  }
+  .idx-panel p{margin:0 0 10px;font-size:14px;color:var(--dim);max-width:70ch;}
+  .idx-panel p:last-child{margin-bottom:0;}
+  .idx-panel b{color:var(--ink);font-weight:600;}
+
+  .idx-artcc{margin:34px 0 0;}
+  .idx-artcc > h2{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;
+    text-transform:uppercase;color:var(--dim);
+    margin:0 0 12px;padding-bottom:8px;
+    border-bottom:1px solid var(--line);
+  }
+  .idx-artcc > h2 b{color:var(--ink);font-weight:600;}
+
+  .idx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;}
+
+  .idx-card{
+    display:block;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    text-decoration:none;
+    color:var(--ink);
+    transition:border-color 0.15s ease, background 0.15s ease;
+  }
+  .idx-card:hover,.idx-card:focus-visible{
+    border-color:var(--dim2);
+    background:var(--panel2);
+  }
+  .idx-card .idx-top{
+    display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+    margin-bottom:6px;
+  }
+  .idx-card h3{
+    font-family:var(--display);font-weight:600;font-size:17px;
+    margin:0;letter-spacing:-0.01em;
+  }
+  .idx-card .idx-meta{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--dim2);
+    margin-bottom:8px;
+  }
+  .idx-card p{margin:0;font-size:13px;color:var(--dim);line-height:1.5;}
+
+  .idx-tier{
+    font-family:var(--mono);font-size:9px;letter-spacing:0.1em;
+    text-transform:uppercase;white-space:nowrap;
+    padding:3px 7px;border-radius:4px;border:1px solid;
+  }
+  .idx-tier.t2{color:var(--green);border-color:rgba(79,224,160,0.4);background:rgba(79,224,160,0.08);}
+  .idx-tier.t1{color:var(--amber);border-color:rgba(232,162,61,0.4);background:rgba(232,162,61,0.08);}
+  .idx-tier.t0{color:var(--dim);border-color:var(--line);background:var(--panel2);}
+
+  .idx-legend{
+    display:flex;gap:16px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:10px;letter-spacing:0.08em;
+    text-transform:uppercase;color:var(--dim2);
+    margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line);
+  }
+  .idx-legend span b{color:var(--dim);font-weight:500;}
+
+  footer{
+    margin-top:70px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--dim2);
+  }
+  footer p{margin:0 0 8px;max-width:78ch;}
+  footer a{color:var(--dim);}
+  .idx-mono{font-family:var(--mono);font-size:11px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span><b>VATSIM training toolset</b></span>
+  <span>Offline-first &middot; single file &middot; no build step</span>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Training toolset</div>
+    <h1>Seven drill decks, three air route traffic control centers, one honest account of what each one knows.</h1>
+    <p>Single-file training tools for one controller working toward certification at several facilities. Every operational number traces to a document and a paragraph, and every gap is rendered rather than hidden.</p>
+  </section>
+
+  <div class="idx-panel">
+    <h2>Read this before you fly anything here</h2>
+    <p><b>Only M98 has been flown.</b> Everything else is a skeleton, and the word is load-bearing: the frame is real and cited, the geometry is mostly not carried, and each tool renders the difference rather than papering over it.</p>
+    <p>A tool that does not carry sector boundaries <b>does not claim a boundary was crossed</b>. Where a check is weaker than it looks, the tool says so on the page. Read the &ldquo;what this tool knows&rdquo; registry inside each one before trusting a number in a drill.</p>
+    <p>These are study aids built by a trainee, <b>not facility training material and not endorsed by any virtual air route traffic control center</b>. The governing orders and letters of agreement always win.</p>
+  </div>
+
+  <div id="idx-tools"></div>
+
+  <div class="idx-legend">
+    <span><b>Tier 0</b> &mdash; reference and selector</span>
+    <span><b>Tier 1</b> &mdash; data spine and shell</span>
+    <span><b>Tier 2</b> &mdash; live engine</span>
+  </div>
+
+  <div class="idx-panel">
+    <h2>Working offline</h2>
+    <p>Every tool is one self-contained HTML file with no dependencies and no build step. <b>Save the page and it keeps working with the machine offline</b> &mdash; the web font is the only external reference, and each page is fully functional without it.</p>
+    <p>Progress is kept in your browser&rsquo;s local storage, per tool, on the device you used. <b>It does not follow you to another browser or another machine</b>, and there is no server holding a copy. The Markdown or JSON export inside each tool is the real backup.</p>
+  </div>
+
+  <div class="idx-panel">
+    <h2>What this site publishes, and what it does not</h2>
+    <p>This site carries <b>the tools only</b>. The facility source documents, the transcribed reference markdown, the gap analyses and the session logs stay in the repository and are not published here.</p>
+  </div>
+
+  <footer>
+    <p>Sector geometry in the Salt Lake, Big Sky, Chicago and Kalamazoo tools comes from the <b>VATGlasses</b> datasets for ZLC and ZAU, each managed by its own virtual air route traffic control center &mdash; <a href="https://vatglasses.uk">vatglasses.uk</a>, licensed <b>CC BY-NC-SA 4.0</b>. Second-tier data: the facility orders win over it, and an owner-supplied boundary supersedes it.</p>
+    <p>Aeronautical data here is for flight simulation on the VATSIM network. <b>Not for real-world navigation.</b></p>
+    <p class="idx-mono">Built by one controller in training. Every number carries its citation inside the tool that uses it.</p>
+  </footer>
+
+</div>
+
+<script>
+/* ============================================================================
+   VATSIM training toolset — the front door.
+
+   ONE manifest, and it is the only copy. build-site.sh parses these entries out
+   of this file to assemble the published site, so adding a tool is a single
+   line here and nothing else. Keep each entry on ONE line and keep the
+   slug/src key order — the build script greps for exactly that shape.
+
+   slug   the published path: /<slug>/ — lowercase, no spaces, and never
+          renamed once shared, because a renamed slug is a dead link that
+          somebody has already bookmarked
+   src    path to the tool inside the repository, relative to the repo root
+   tier   0 reference and selector · 1 data spine and shell · 2 live engine
+   ============================================================================ */
+(function(){
+  var TOOLS = [
+    {slug:'m98',    src:'ZMP/M98 Training/m98-drill-deck.html', artcc:'ZMP', name:'M98',     kind:'Minneapolis approach — terminal, STARS', ns:'DD',  tier:2, blurb:'Real M98 geometry, a deterministic engine, and a clock that keeps running while you think. The only tool here that has been flown.'},
+    {slug:'zmp',    src:'ZMP/ZMP/zmp-drill-deck.html',          artcc:'ZMP', name:'ZMP',     kind:'Minneapolis Center — en route, ERAM',    ns:'ZD',  tier:1, blurb:'Thirty-three sectors, six areas, and the en route procedures that actually get graded. Every number traces to ZMP 7200.1O or the vNAS facility record.'},
+    {slug:'r90',    src:'ZMP/R90/r90-drill-deck.html',          artcc:'ZMP', name:'R90',     kind:'Omaha TRACON — terminal, STARS',         ns:'RD',  tier:1, blurb:'Six positions, three fields, and a hard airspace lid that changes over Lincoln. Sector boundaries are pictures in every source document, so nothing spatial is claimed.'},
+    {slug:'c90',    src:'ZAU/C90/c90-drill-deck.html',          artcc:'ZAU', name:'C90',     kind:'Chicago TRACON — terminal',              ns:'DD',  tier:0, blurb:'Positions, combining, configurations, finals and capture points out of the vZAU documents, plus the facility footprint from the ZAU sector data. The internal sectorisation is not carried, and every empty slot names the document that would fill it.'},
+    {slug:'azo',    src:'ZAU/AZO/azo-drill-deck.html',          artcc:'ZAU', name:'AZO',     kind:'Great Lakes, West Wall — terminal',      ns:'DD',  tier:0, blurb:'Kalamazoo works the West Wall. The facility footprint and a ceiling are carried; the six West Wall sector boundaries are not, and the tool says which is which.'},
+    {slug:'s56',    src:'ZLC/S56/s56-drill-deck.html',          artcc:'ZLC', name:'S56',     kind:'Salt Lake approach — terminal',          ns:'ZLC', tier:0, blurb:'Nine sectors and a flow that reshapes them. The selector, the vertical structure and the flow branch are built; the engine is not. Every sector and every open question carries a note slot.'},
+    {slug:'bigsky', src:'ZLC/Big Sky/bigsky-drill-deck.html',   artcc:'ZLC', name:'Big Sky', kind:'Boise and Bozeman — terminal',           ns:'ZLC', tier:0, blurb:'Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector and the vertical structure are built; the engine that flies traffic through them is not.'}
+  ];
+
+  var ARTCC = {
+    ZMP:'Minneapolis Center and its terminal facilities',
+    ZAU:'Chicago Center terminal facilities',
+    ZLC:'Salt Lake City Center terminal facilities'
+  };
+
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* Published paths are flat and clean — /m98/, /bigsky/ — because the source
+     folders carry spaces, and a percent-encoded URL is a link that breaks the
+     moment somebody pastes it somewhere. Opened straight out of the repository
+     instead, those slug folders do not exist, so fall back to the real path. */
+  function hrefFor(t){
+    var published = /^https?:$/.test(location.protocol) && !/\.html$/i.test(location.pathname);
+    if(published) return t.slug + '/';
+    return '../' + t.src.split('/').map(encodeURIComponent).join('/');
+  }
+
+  var order = ['ZMP','ZAU','ZLC'], out = '', i, j;
+
+  for(i=0;i<order.length;i++){
+    var id = order[i];
+    var group = TOOLS.filter(function(t){ return t.artcc === id; });
+    if(!group.length) continue;
+
+    out += '<section class="idx-artcc">';
+    out += '<h2><b>' + esc(id) + '</b> &mdash; ' + esc(ARTCC[id] || '') + '</h2>';
+    out += '<div class="idx-grid">';
+
+    for(j=0;j<group.length;j++){
+      var t = group[j];
+      out += '<a class="idx-card" href="' + esc(hrefFor(t)) + '">';
+      out += '<div class="idx-top"><h3>' + esc(t.name) + '</h3>';
+      out += '<span class="idx-tier t' + t.tier + '">Tier ' + t.tier + '</span></div>';
+      out += '<div class="idx-meta">' + esc(t.kind) + '</div>';
+      out += '<p>' + esc(t.blurb) + '</p>';
+      out += '</a>';
+    }
+
+    out += '</div></section>';
+  }
+
+  document.getElementById('idx-tools').innerHTML = out;
+})();
+</script>
+
+</body>
+</html>

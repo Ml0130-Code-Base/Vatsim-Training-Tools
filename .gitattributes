@@ -1,0 +1,4 @@
+# Shell scripts must stay LF. Checked out with CRLF, sh reports
+# "$'\r': command not found" on the first line and the build dies for a reason
+# that looks nothing like line endings.
+*.sh text eol=lf

@@ -441,6 +441,9 @@ things nobody can cite.
 8. **Write the reference layer**: drill format, OJT intake template, empty practice log, TTS
    voicing, and a verbatim copy of the callsign doc.
 9. **Fly a session.** Standing items come from it, and only from it.
+10. **Add the tool to the site manifest** — one line in `site/index.html`, then
+    `sh build-site.sh`. See §13. A tool nobody can open from a phone is a tool that only gets
+    used at the desk it was written on.
 
 ### The combining model, which every facility needs
 
@@ -484,6 +487,8 @@ encode it the same way.
   tier in the ledger. **One ledger, no second class:** a drill from the practice log and a
   drill banked in the player contribute identically to exposures, flags, streak and staleness.
 - **Regenerate the block-only paste files from the main file**; never edit them separately.
+- **A change to a tool is not live until it is published.** Run `publish-site.ps1` after
+  committing; the hosted copy is a mirror, not a branch, and it does not update itself. See §13.
 - **Data-only scenario authoring.** Drills built in the tool live in `localStorage` and export
   as JSON or as a pasteable `SCENARIOS` entry. A build step is acceptable **only** if the
   deliverable remains one self-contained HTML file.
@@ -518,7 +523,64 @@ the note export carries its anchor and slot state" is a useful sentence. "Tests 
 
 ---
 
-## 13. Session hygiene
+## 13. Publishing — two repositories, and the boundary between them
+
+The tools are hosted so they can be opened from a phone or a second machine without copying
+files around. Hosting does not change what a tool is: every file published is byte-identical
+to the one in the tree, still single-file, still fully functional offline. The check that
+proves it is `md5sum` on both sides.
+
+**This repository is private and stays private.** It holds 87 facility PDFs, the transcribed
+reference markdown, the gap analyses, the practice logs and the OJT session notes. A second,
+**public** repository — `vatsim-training-tools-site` — holds the seven tools and a landing
+page, and nothing else. About 656 KB.
+
+The split is forced, not stylistic: **GitHub Pages cannot serve a private repository on a free
+account, and a Pages site cannot be put behind a login on any account short of Enterprise
+Cloud.** So the choice was never "private site or public site" — it was which files get a
+public URL. The answer is the tools, because they carry no personal data. The trainee's notes
+live here and in `localStorage` on the device; they never enter the staged site.
+
+The site is **unlisted, not secret** — `noindex` on the landing page, `robots.txt` disallowing
+everything, nothing linking in. Anyone holding the URL can read it. **That is exactly why the
+boundary is enforced in code rather than remembered**: `build-site.sh` fails the build if any
+file other than the tools, `.nojekyll` and `robots.txt` reaches `_site/`, and `publish-site.ps1`
+refuses to push if any reaches the public clone. Two guards, because a source document
+reaching a public URL is not the kind of mistake you get to notice later.
+
+```
+sh build-site.sh                                          stage into _site/
+powershell -ExecutionPolicy Bypass -File serve-site.ps1   preview at localhost:8080
+powershell -ExecutionPolicy Bypass -File publish-site.ps1 push to the public repository
+```
+
+**The manifest lives in `site/index.html` and nowhere else**, per invariant 5. It is one line
+per tool, and `build-site.sh` greps the entries out of the page it renders — so the landing
+page and the published paths cannot disagree. **Adding a future tool is that one line.** Keep
+each entry on one line and keep the `slug`/`src` key order; the build script matches that
+shape and fails loudly if it parses nothing.
+
+**A slug is a URL, and a URL is a promise.** `/m98/`, `/bigsky/` — lowercase, no spaces,
+because the source folders carry spaces and a percent-encoded link breaks the moment someone
+pastes it. Once a slug has been shared it is never renamed; a renamed slug is a dead
+bookmark. Removing a tool from the manifest does remove it from the site — the publish step
+mirrors rather than merges, deliberately, so a deleted tool does not linger at its old URL.
+
+**Pages is served from the site repository's branch** — Settings → Pages → deploy from `main`,
+folder `/` — not from an Actions workflow. There is nothing to build on a runner, and a
+workflow would only add a place for the publish surface to drift.
+
+Two things hosting does not change, and both are worth stating because they look like
+regressions and are not. **`localStorage` is per-origin and per-device**: work banked in the
+hosted M98 deck is not the same store as work banked in the local file, and neither follows
+you to another machine. The Markdown and JSON exports remain the real backup. And **M98's
+D-ATIS fetch is cross-origin from a Pages site**; if the endpoints refuse it the tool hands
+straight to the paste box, which is how it was built to fail (invariant 6). Both endpoints are
+already HTTPS, so nothing is blocked as mixed content.
+
+---
+
+## 14. Session hygiene
 
 - **Commit after each completed subtask.**
 - **When aviation data is involved, cite which document and which paragraph the number came
