@@ -722,5 +722,547 @@ if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded
 else { mountAll(); }
 })();
 </script>
+
+<script>
+/* ================================================================
+   Big Sky — D-ATIS AND WEATHER READER. Additive extension block.
+   Requires the Big Sky deck (window.ZLC) earlier in the page and
+   returns early without it, per the block contract.
+
+   WHICH FIELDS PUBLISH ONE WAS CHECKED, NOT ASSUMED. Six of the
+   twenty-three fields this repo works have a D-ATIS: KMSP, KOMA, KORD,
+   KMDW, KSLC, KBOI. Pulled 2026-09-04 from atis.info per field and from
+   datis.clowd.io/api/all as a list; both agreed on every field, present
+   and absent. The manifest, the pull recipe and the verbatim broadcasts
+   are in claude_DATIS_Field_Survey.md at the repository root.
+
+   "No D-ATIS" means no digital text feed, not no ATIS. Those fields have
+   a voice ATIS; it simply is not published as text, so there is nothing
+   to fetch and nothing to paste. A field without one gets the weather
+   half of this reader and says so.
+
+   THE READER IS GRAMMAR-DRIVEN, NOT MSP-SHAPED. Every field writes its
+   flow line differently, and two of them carry no notice heading at all:
+
+     KMSP  VISUAL RWY 30L APCH IN USE, VISUAL RWY 30R APCH IN USE.
+           DEPARTING RWY 30L, RWY 30R.
+     KOMA  VISUAL APCH 14R, 14L, 18 IN USE.        no runway keyword
+     KORD  ARR EXP VECTORS ILS RWY 27C APCH, ...   no "in use" at all
+           DEPS EXP RWYS 22L 28R                   space separated
+     KMDW  RNAV Y RWY 22L APCH IN USE. LNDG AND DEPG RWYS 22.
+     KSLC  ... ILS RY 16L RNAV Y RY 17 RNAV Z RY 16R OR VISUAL APCHS IN USE.
+     KBOI  RNAV RWY 28L APCHS IN USE. LNDG AND DEPG RWY 28L.
+
+   The sentence is the unit and it is classified before it is read. KORD
+   and KSLC run their closures straight on from the flow line with no
+   heading between, so cutting at the heading cannot be the only guard —
+   a sentence naming a runway as shut or out of service is disqualified
+   outright. That is what keeps ORD's thirteen out-of-service runways and
+   its closed 4L/22R pair out of the landing set.
+
+   Offline first: the paste box is the path that always works and needs
+   no network at all.
+   Where a field publishes one, a fetch button sits on top of that as a
+   convenience, and it is the only network call this tool makes.
+   ================================================================ */
+(function(){
+'use strict';
+
+ var DECK = (window.ZLC && window.ZLC.facility === 'BIGSKY') ? window.ZLC : null;
+if(!DECK){ return; }   /* deck absent — do nothing, per the block contract */
+
+/* ---------- 1. The fields this facility works ---------- */
+/* Big Sky works two fields and only Boise publishes a D-ATIS. Bozeman was
+   checked against both published sources on 2026-09-04 and is absent from
+   each, so it gets the weather half and no fetch.
+
+   STORE_KEY is deliberately empty: this tool has no persistence at all
+   (root CLAUDE.md §9), and introducing a storage key here would be the
+   drive-by that section warns against. What is pasted is held in memory
+   for the visit and the reader says so. */
+var STORE_KEY  = '';
+var DATIS_URL  = 'https://atis.info/api/';
+var DATIS_NAME = 'atis.info';
+var FIELDS = [
+ {id:'KBOI', name:'Boise',    datis:true},
+ {id:'KBZN', name:'Bozeman',  datis:false}
+];
+
+/* ---------- 2. The reader ----------
+   Copied byte for byte into every tool that carries it, the way the
+   shared reference documents are copied: no tool may depend on another
+   tool's file. A change here lands in every copy in the same commit. */
+
+var RWY_ONE = /\d{1,2}[LRC]?/.source;
+/* RY is a real spelling — KSLC writes every runway "RY 16L", and KOMA and
+   KBOI both use it in their notice sections. */
+var RWY_KEY = /(?:RWYS?|RUNWAYS?|RYS?)\s+/.source;
+/* Items divide on a comma, an AND, or plain whitespace — KORD writes
+   "RWYS 22L 28R" — and the keyword may repeat, as MSP's "RWY 30L, RWY
+   30R" does. */
+var RWY_SEP = '(?:' + /\s*(?:,|AND)\s*/.source + '|' + /\s+/.source + ')(?:' + RWY_KEY + ')?';
+var RWY_RUN = RWY_ONE + '(?:' + RWY_SEP + RWY_ONE + ')*';
+
+/* Any sentence naming a runway as shut, out of service or unusable
+   contributes nothing, whatever else it says. This is the guard that
+   stands in for the notice heading at the fields that have none. */
+var NOT_IN_USE = /\b(?:CLSD|CLOSED|OTS|OUT OF SERVICE|UNAVAILABLE|UNAVBL|UNAVL|UNUSABLE|CONDITION CODES?|DEICE|LAHSO|LAND AND HOLD SHORT)\b/;
+var LAND_MARK  = /\b(?:LAND|LANDING|LNDG|ARR|ARRIVAL|ARRIVALS|ARRIVING)\b/;
+var DEP_MARK   = /\b(?:DEPART|DEPARTING|DEPARTURE|DEPARTURES|DEPTG|DEPG|DEPS|DEP)\b/;
+var APCH_WORD  = /(?:APCH(?:ES|S)?|APPROACH(?:ES)?)/.source;
+var IN_USE     = new RegExp(APCH_WORD + /\s+IN\s+USE/.source);
+/* KOMA puts the runways BETWEEN the approach word and the phrase —
+   "VISUAL APCH 14R, 14L, 18 IN USE" — with no runway keyword anywhere. */
+var APCH_LIST  = new RegExp(APCH_WORD + /\s+/.source + '(' + RWY_RUN + ')' + /\s+IN\s+USE/.source);
+var LEAD_WORDS = /\b(?:ARR|ARRS|ARRIVAL|ARRIVALS|ARRIVING|DEP|DEPS|DEPG|DEPTG|DEPARTING|DEPARTURE|DEPARTURES|LAND|LANDING|LNDG|EXP|EXPECT|EXPECTED|VECTORS|AND|OR|IN|USE|TO|FOR|ALL|ACFT)\b/g;
+
+/* Read to the notices and never past them, where a heading exists. Both
+   spellings cut: the FAA redefined NOTAM as "notice to air missions" and
+   D-ATIS text is migrating to it a field at a time. */
+function wxClean(text){
+ return String(text == null ? '' : text)
+   .replace(/\s+/g, ' ')
+   .split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/)[0];
+}
+/* A split broadcast is segmented BEFORE it is cleaned. Each half carries
+   its own notice heading, so cleaning the joined text would cut at the
+   arrival half's heading and throw the departure broadcast away with it. */
+function wxSegments(text){
+ return String(text == null ? '' : text).split(/\n\s*\n/).map(wxClean);
+}
+function wxPush(list, r){ if(list.indexOf(r) < 0) list.push(r); }
+function wxItems(s){
+ var out = [], m = String(s || '').match(/\d{1,2}[LRC]?/g) || [];
+ m.forEach(function(r){ wxPush(out, r); });
+ return out;
+}
+function wxKeyed(s){
+ var re = new RegExp(RWY_KEY + '(' + RWY_RUN + ')', 'g'), out = [], m;
+ while((m = re.exec(String(s || '')))) wxItems(m[1]).forEach(function(r){ wxPush(out, r); });
+ return out;
+}
+function wxLabel(s){
+ return String(s || '')
+   .replace(new RegExp(APCH_WORD, 'g'), ' ')
+   .replace(LEAD_WORDS, ' ')
+   .replace(/[^A-Z0-9 \/-]/g, ' ')
+   .replace(/\s+/g, ' ').trim();
+}
+/* Pair each runway with the approach advertised to it, for the read-back.
+   Display only — the runway sets are the authority, so a phrasing this
+   cannot label still cannot lose a runway. The approach name sits
+   immediately ahead of the runway keyword in every form observed, and the
+   run of text between one runway and the next is the next name, which is
+   what reads SLC's interleaved list where no punctuation separates them. */
+function wxLabels(sent){
+ var re = new RegExp('([A-Z0-9 \\/-]*?)' + RWY_KEY + '(' + RWY_RUN + ')', 'g');
+ var out = [], m;
+ while((m = re.exec(sent))){
+  var rwys = wxItems(m[2]), name = wxLabel(m[1]);
+  /* No name means this was not an approach statement — "LNDG AND DEPG RWY
+     28L", or ORD's hold-short note about a runway already counted. The
+     runway is already in the sets; only the display row is dropped. */
+  if(!rwys.length || !name) continue;
+  out.push({rwys:rwys, apch:name});
+ }
+ if(!out.length){
+  var bare = sent.match(APCH_LIST);
+  if(bare){
+   var n = wxLabel(sent.slice(0, bare.index));
+   if(n) out.push({rwys:wxItems(bare[1]), apch:n});
+  }
+ }
+ return out;
+}
+function wxRunways(text){
+ var land = [], dep = [], apch = [], used = [];
+ wxSegments(text).forEach(function(seg){
+  seg.toUpperCase().split('.').forEach(function(sent){
+   if(!sent || NOT_IN_USE.test(sent)) return;
+   var rwys = wxKeyed(sent);
+   var bare = sent.match(APCH_LIST);
+   if(bare) wxItems(bare[1]).forEach(function(r){ wxPush(rwys, r); });
+   if(!rwys.length) return;
+   var isApch = IN_USE.test(sent) || !!bare;
+   var toLand = isApch || LAND_MARK.test(sent);
+   var toDep  = DEP_MARK.test(sent);
+   if(!toLand && !toDep) return;
+   used.push(sent.replace(/^\s+/, ''));
+   if(toLand) rwys.forEach(function(r){ wxPush(land, r); });
+   if(toDep)  rwys.forEach(function(r){ wxPush(dep, r); });
+   if(toLand) wxLabels(sent).forEach(function(c){ apch.push(c); });
+  });
+ });
+ return {land:land, dep:dep, apch:apch, sentences:used};
+}
+/* Coded, spoken, or a mix — the sources return all three. Whatever cannot
+   be read is listed rather than guessed at. */
+function wxObservation(text){
+ var segs = wxSegments(text), t = segs.join(' ').toUpperCase(), o = {missed:[]}, m;
+ if((m = t.match(/INFO(?:RMATION)? ([A-Z])\b/))) o.info = m[1];
+ var letters = [];
+ segs.forEach(function(seg){
+  var c = seg.toUpperCase().match(/INFO(?:RMATION)? ([A-Z])\b/);
+  if(c && letters.indexOf(c[1]) < 0) letters.push(c[1]);
+ });
+ if(letters.length > 1) o.letters = letters;
+ if(/\bWIND CALM\b|\b00000KT\b/.test(t)) o.wind = 'calm';
+ else if((m = t.match(/\b(\d{3}|VRB)(\d{2,3})(?:G(\d{2,3}))?KT\b/)))
+  o.wind = m[1] + '/' + parseInt(m[2], 10) + (m[3] ? ('G' + parseInt(m[3], 10)) : '');
+ else if((m = t.match(/\bWIND (\d{3}) AT (\d{1,3})(?: GUSTS? (?:TO )?(\d{1,3}))?/)))
+  o.wind = m[1] + '/' + parseInt(m[2], 10) + (m[3] ? ('G' + parseInt(m[3], 10)) : '');
+ else o.missed.push('wind');
+ if((m = t.match(/\b(\d{1,2}) (\d)\/(\d)SM\b/))) o.vis = parseInt(m[1], 10) + parseInt(m[2], 10) / parseInt(m[3], 10);
+ else if((m = t.match(/\b(\d{1,2})SM\b/))) o.vis = parseInt(m[1], 10);
+ else if((m = t.match(/\b(\d)\/(\d)SM\b/))) o.vis = parseInt(m[1], 10) / parseInt(m[2], 10);
+ else if((m = t.match(/VISIBILITY (\d{1,2})\b/))) o.vis = parseInt(m[1], 10);
+ else o.missed.push('visibility');
+ /* a ceiling is the lowest broken or overcast layer; few and scattered are
+    not ceilings, so a sky with neither is unlimited rather than unknown */
+ var lows = [], sawSky = false;
+ (t.match(/\b(?:BKN|OVC)\d{3}\b/g) || []).forEach(function(s){ sawSky = true; lows.push(parseInt(s.slice(3), 10) * 100); });
+ (t.match(/\b(?:BROKEN|OVERCAST) \d{3,5}\b/g) || []).forEach(function(s){
+  sawSky = true; var n = parseInt(s.replace(/\D+/g, ''), 10); lows.push(n < 1000 ? n * 100 : n); });
+ if(/\b(?:FEW|SCT|SKC|CLR|CAVOK|SCATTERED)\d*\b/.test(t)) sawSky = true;
+ if(lows.length) o.ceil = Math.min.apply(null, lows);
+ else if(sawSky) o.ceil = 12000;
+ else o.missed.push('ceiling');
+ if((m = t.match(/\bA(\d{4})\b/))) o.altim = m[1];
+ else if((m = t.match(/ALTIMETER ((?:\d ?){4})/))) o.altim = m[1].replace(/\D/g, '');
+ else o.missed.push('altimeter');
+ return o;
+}
+/* The NWS/AWC thresholds. */
+function wxCategory(ceil, vis){
+ var c = (ceil == null ? 99999 : ceil), v = (vis == null ? 99 : vis);
+ if(c < 500 || v < 1) return 'LIFR';
+ if(c < 1000 || v < 3) return 'IFR';
+ if(c <= 3000 || v <= 5) return 'MVFR';
+ return 'VFR';
+}
+/* General airmanship, not a facility procedure — nothing here is cited to
+   a Big Sky document and nothing here should be. */
+var TOOLBOX = {
+ VFR:'Visual approaches and visual separation are available.',
+ MVFR:'Marginal — a visual may still hold, but check the ceiling before you plan on one.',
+ IFR:'Instrument approaches only. No visual approaches and no visual separation.',
+ LIFR:'Instrument approaches only, and watch for below-minimums.'
+};
+function wxRead(text){
+ var src = String(text == null ? '' : text).trim();
+ if(!src) return null;
+ var o = wxObservation(src), f = wxRunways(src);
+ o.raw = src; o.land = f.land; o.dep = f.dep; o.apch = f.apch; o.flowLines = f.sentences;
+ if(!o.land.length && !o.dep.length) o.missed.push('the runways in use');
+ o.cat = wxCategory(o.ceil, o.vis);
+ return o;
+}
+
+/* ---------- 3. Which flow those runways describe ---------- */
+/* Big Sky's FLOWS are keyed by AREA, and only the BOI area has any:
+   "KBOI 10L/R" is East and "KBOI 28L/R" is West, decoded in
+   ZLC/_shared/claude_ZLC_Sector_Geometry_Reference.md. BZN's blocks carry
+   no runway gate — they exist in every configuration — which the deck
+   already records, so a Bozeman observation gets its weather read and no
+   flow, correctly rather than as a gap.
+
+   Runway numbers are read out of the deck's own FLOWS gates rather than
+   restated, per invariant 5. */
+function flowFor(land, dep){
+ var all = land.concat(dep);
+ var area = (state.field === 'KBOI') ? 'BOI' : 'BZN';
+ var FLOWS = (DECK && DECK.FLOWS && DECK.FLOWS[area]) || [];
+ if(!FLOWS.length){
+  return {text:'<span class="bskw-dim">' + esc(state.field)
+   + ' has no runway-gated blocks — its sectors exist in every configuration, so there is no '
+   + 'flow for a broadcast to set.</span>'};
+ }
+ if(!all.length) return {text:'<span class="bskw-dim">nothing advertised to match</span>'};
+ var nums = all.map(function(r){ return r.replace(/[LRC]$/, ''); });
+ var hit = [];
+ FLOWS.forEach(function(f){
+  var gnums = (String(f.gate || '').match(/\d{1,2}/g) || []);
+  if(nums.filter(function(n){ return gnums.indexOf(n) >= 0; }).length) hit.push(f);
+ });
+ if(hit.length === 1){
+  return {text:'<b>' + esc(hit[0].label) + '</b> <span class="bskw-dim">— ' + esc(hit[0].gate)
+   + '. Selecting it above switches the area blocks to that flow.</span>'};
+ }
+ if(hit.length > 1){
+  return {text:'<span class="bskw-note">ambiguous — ' + esc(hit.map(function(f){ return f.label; }).join(', '))
+   + '.</span> <span class="bskw-dim">The advertised runways appear in more than one flow gate.</span>'};
+ }
+ return {text:'<span class="bskw-note">no matching flow.</span> <span class="bskw-dim">'
+  + 'Neither flow gate names these runways.</span>'};
+}
+
+/* ---------- 4. State ---------- */
+var fieldIds = FIELDS.map(function(f){ return f.id; });
+var state = {field:fieldIds[0], text:{}, last:null, stored:true};
+
+function storeRead(){
+ try{
+  var raw = window.localStorage.getItem(STORE_KEY);
+  if(!raw) return null;
+  var o = JSON.parse(raw);
+  return (o && typeof o === 'object') ? o : null;
+ }catch(e){ state.stored = false; return null; }
+}
+function storeSave(){
+ if(!STORE_KEY){ state.stored = false; return; }
+ try{
+  var o = storeRead() || {};
+  o.wx = {field:state.field, text:state.text};
+  window.localStorage.setItem(STORE_KEY, JSON.stringify(o));
+ }catch(e){ state.stored = false; }
+}
+function storeLoad(){
+ var o = storeRead();
+ if(o && o.wx && typeof o.wx === 'object'){
+  if(o.wx.text && typeof o.wx.text === 'object') state.text = o.wx.text;
+  if(o.wx.field && fieldIds.indexOf(o.wx.field) >= 0) state.field = o.wx.field;
+ }
+}
+
+function fieldOf(id){
+ for(var i = 0; i < FIELDS.length; i++){ if(FIELDS[i].id === id) return FIELDS[i]; }
+ return FIELDS[0];
+}
+function textFor(id){ return state.text[id] || ''; }
+
+/* ---------- 5. Render ---------- */
+function esc(s){
+ return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+   .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+var css = ''
+ + '.bskw-sec{margin-top:22px;}'
+ + '.bskw-grid{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:10px;}'
+ + '.bskw-f{display:flex;flex-direction:column;gap:4px;}'
+ + '.bskw-lab{font:11px/1.4 var(--body);color:var(--dim);letter-spacing:.04em;}'
+ + '.bskw-in{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
+ + 'border-radius:4px;padding:6px 8px;font:12px/1.5 var(--body);min-width:180px;}'
+ + '.bskw-ta{width:100%;min-height:74px;resize:vertical;font:11.5px/1.5 var(--mono);}'
+ + '.bskw-btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
+ + 'border-radius:4px;padding:6px 11px;font:11px/1.4 var(--body);cursor:pointer;}'
+ + '.bskw-btn:hover{border-color:var(--dim);}'
+ + '.bskw-msg{margin-top:10px;font:12px/1.65 var(--body);color:var(--ink);}'
+ + '.bskw-chip{display:inline-block;padding:1px 7px;border-radius:3px;font:10px/1.6 var(--mono);'
+ + 'background:var(--panel2);border:1px solid var(--line);color:var(--dim);margin-right:6px;}'
+ + '.bskw-chip.good{color:var(--green);border-color:var(--green);}'
+ + '.bskw-chip.warn{color:var(--amber);border-color:var(--amber);}'
+ + '.bskw-note{color:var(--amber);}'
+ + '.bskw-dim{color:var(--dim);}'
+ + '.bskw-rows{margin-top:10px;border-top:1px solid var(--line);}'
+ + '.bskw-row{display:flex;gap:12px;padding:5px 0;border-bottom:1px solid var(--line);font:11.5px/1.5 var(--body);}'
+ + '.bskw-row b{color:var(--ink);font-weight:600;min-width:118px;}'
+ + '.bskw-row span{color:var(--dim2);}';
+
+function fieldPicker(){
+ if(FIELDS.length < 2) return '';
+ var opts = FIELDS.map(function(f){
+  return '<option value="' + esc(f.id) + '"' + (f.id === state.field ? ' selected' : '') + '>'
+   + esc(f.id) + ' — ' + esc(f.name) + (f.datis ? '' : ' (no D-ATIS)') + '</option>';
+ }).join('');
+ return '<div class="bskw-f"><span class="bskw-lab">Field</span>'
+  + '<select class="bskw-in" id="bskw-field">' + opts + '</select></div>';
+}
+
+function section(){
+ var f = fieldOf(state.field);
+ return '<section class="panel bskw-sec" id="mod-bskw" data-note="weather">'
+  + '<h2>Weather and the D-ATIS</h2>'
+  + '<p class="bskw-dim">Sets the wind, the visibility, the ceiling, the altimeter, the '
+  + 'information letter and the runways in use from the current broadcast. '
+  + 'Pasting is the path that always works and needs no network.</p>'
+  + '<div class="bskw-grid">' + fieldPicker()
+  + '<div class="bskw-f"><span class="bskw-lab">&nbsp;</span><div>'
+  + '<button class="bskw-btn" id="bskw-read">read what is pasted</button> '
+  + '<button class="bskw-btn" id="bskw-fetch">fetch the current one</button>'
+  + '</div></div></div>'
+  + '<div class="bskw-f"><span class="bskw-lab" id="bskw-boxlab"></span>'
+  + '<textarea class="bskw-in bskw-ta" id="bskw-text"></textarea></div>'
+  + '<div class="bskw-msg" id="bskw-msg"></div>'
+  + '<div class="bskw-rows" id="bskw-rows"></div>'
+  + '</section>';
+}
+
+function say(html){
+ var b = document.getElementById('bskw-msg');
+ if(b) b.innerHTML = html;
+}
+function rows(o){
+ var b = document.getElementById('bskw-rows');
+ if(!b) return;
+ if(!o){ b.innerHTML = ''; return; }
+ var r = [];
+ var add = function(k, v){ if(v !== '' && v != null) r.push('<div class="bskw-row"><b>' + k + '</b><span>' + v + '</span></div>'); };
+ add('Information', o.info ? esc(o.info) + (o.letters ? ' <span class="bskw-dim">(split broadcast — ' + esc(o.letters.join(' and ')) + ')</span>' : '') : '<span class="bskw-note">not read</span>');
+ add('Wind', o.wind ? esc(o.wind) : '<span class="bskw-note">not read</span>');
+ add('Visibility', o.vis != null ? esc(String(o.vis)) : '<span class="bskw-note">not read</span>');
+ add('Ceiling', o.ceil != null ? (o.ceil >= 12000 ? 'unlimited' : o.ceil.toLocaleString()) : '<span class="bskw-note">not read</span>');
+ add('Altimeter', o.altim ? esc(o.altim) : '<span class="bskw-note">not read</span>');
+ add('Flight category', esc(o.cat) + ' <span class="bskw-dim">' + esc(TOOLBOX[o.cat]) + '</span>');
+ add('Landing', o.land.length ? esc(o.land.join(', ')) : '<span class="bskw-note">not advertised</span>');
+ add('Departing', o.dep.length ? esc(o.dep.join(', ')) : '<span class="bskw-dim">not stated in this broadcast</span>');
+ if(o.apch.length) add('Approaches', o.apch.map(function(a){ return esc(a.apch) + ' to ' + esc(a.rwys.join(' and ')); }).join('; '));
+ var fl = flowFor(o.land, o.dep);
+ add('Flow', fl.text);
+ b.innerHTML = r.join('');
+}
+
+function doRead(from){
+ var f = fieldOf(state.field);
+ var ta = document.getElementById('bskw-text');
+ if(ta) state.text[state.field] = ta.value;
+ var o = wxRead(textFor(state.field));
+ state.last = o;
+ if(!o){
+  say('<span class="bskw-chip warn">nothing</span> The box is empty. Paste the current '
+   + esc(f.id) + ' ' + (f.datis ? 'D-ATIS' : 'observation') + ' and press read what is pasted.');
+  rows(null); storeSave(); return null;
+ }
+ var got = [];
+ if(o.info) got.push('information ' + esc(o.info));
+ if(o.wind) got.push('wind ' + esc(o.wind));
+ if(o.ceil != null) got.push('ceiling ' + (o.ceil >= 12000 ? 'unlimited' : o.ceil.toLocaleString()));
+ if(o.vis != null) got.push('visibility ' + esc(String(o.vis)));
+ if(o.altim) got.push('altimeter ' + esc(o.altim));
+ var msg = '<span class="bskw-chip good">read</span> ' + (from ? ('from ' + esc(from) + ' — ') : '')
+  + esc(f.id) + '. ' + (got.length ? ('Set ' + got.join(', ') + '.') : 'Nothing in the observation was recognised.')
+  + (o.land.length ? (' Landing ' + esc(o.land.join(', '))
+     + (o.dep.length ? (', departing ' + esc(o.dep.join(', '))) : '') + '.') : '')
+  + (o.apch.length ? (' Approaches advertised: ' + o.apch.map(function(a){
+      return esc(a.apch) + ' to ' + esc(a.rwys.join(' and ')); }).join('; ') + '.') : '')
+  + ' That is ' + esc(o.cat) + ' — ' + esc(TOOLBOX[o.cat]);
+ if(o.missed.length) msg += ' <span class="bskw-note">Could not read: ' + esc(o.missed.join(', ')) + '. Set those by hand.</span>';
+ if(!state.stored) msg += ' <span class="bskw-note">This browser will not keep what you paste, so it is held in memory only for this visit.</span>';
+ say(msg);
+ rows(o);
+ storeSave();
+ return o;
+}
+
+/* One network call, optional by construction: it is never on a path the
+   tool needs, every failure hands straight to the paste box, and the
+   parser it feeds is the same one paste uses. */
+function doFetch(){
+ var f = fieldOf(state.field);
+ if(!f.datis){
+  say('<span class="bskw-chip warn">no</span> ' + esc(f.id) + ' publishes no D-ATIS — '
+   + 'checked against both published sources on 2026-09-04 and absent from each. It has a voice '
+   + 'ATIS; it is simply not published as text, so there is nothing to fetch. '
+   + 'Paste the observation instead and this will read the weather off it.');
+  return;
+ }
+ if(typeof fetch !== 'function'){
+  say('<span class="bskw-chip warn">no</span> This browser gives the page no way to fetch. '
+   + 'Paste the D-ATIS text below and press read what is pasted.');
+  return;
+ }
+ say('<span class="bskw-chip">asking</span> Trying the published D-ATIS source for ' + esc(f.id) + '.');
+ var hand = function(){
+  say('<span class="bskw-chip warn">no</span> The source would not answer. That is the usual '
+   + 'result from a file page — it has no origin, so the server will not allow it, and this tool '
+   + 'is built to work offline anyway. Paste the current ' + esc(f.id) + ' D-ATIS below and press '
+   + '<b>read what is pasted</b>; that path always works.');
+ };
+ try{
+  fetch(DATIS_URL + f.id, {cache:'no-store'}).then(function(r){
+   if(!r || !r.ok) return hand();
+   return r.text().then(function(body){
+    var parts = [], re = /"datis"\s*:\s*"((?:[^"\\]|\\.)*)"/g, m;
+    while((m = re.exec(body))){
+     try{ parts.push(JSON.parse('"' + m[1] + '"')); }catch(e){ parts.push(m[1]); }
+    }
+    if(!parts.length){
+     try{
+      var s = JSON.parse(body);
+      if(typeof s === 'string') parts.push(s);
+     }catch(e2){ /* not JSON */ }
+    }
+    if(!parts.length) return hand();
+    state.text[f.id] = parts.join('\n\n');
+    var ta = document.getElementById('bskw-text');
+    if(ta) ta.value = state.text[f.id];
+    doRead(DATIS_NAME);
+   });
+  })['catch'](hand);
+ }catch(e){ hand(); }
+}
+
+function syncBox(){
+ var f = fieldOf(state.field);
+ var ta = document.getElementById('bskw-text');
+ var lab = document.getElementById('bskw-boxlab');
+ var fb = document.getElementById('bskw-fetch');
+ if(ta){
+  ta.value = textFor(state.field);
+  ta.setAttribute('placeholder', f.datis
+   ? ('Paste the current ' + f.id + ' D-ATIS here. A split broadcast goes in whole — put a blank line between the arrival half and the departure half.')
+   : ('Paste the current ' + f.id + ' observation here. ' + f.id + ' publishes no D-ATIS, so there are no runways to read — the weather and the flight category still come off it.'));
+ }
+ if(lab) lab.innerHTML = f.datis
+  ? ('The ' + esc(f.id) + ' D-ATIS — the approach in use and the weather')
+  : ('The ' + esc(f.id) + ' observation — <span class="bskw-note">this field publishes no D-ATIS</span>');
+ if(fb) fb.disabled = !f.datis;
+}
+
+/* ---------- 6. Mount ---------- */
+function mount(){
+ var style = document.createElement('style');
+ style.textContent = css;
+ document.head.appendChild(style);
+
+ var wrap = document.querySelector('.wrap');
+ if(!wrap) return;
+
+ var host = document.createElement('div');
+ host.innerHTML = section();
+ var sec = host.firstChild;
+ if(!sec) return;
+
+ var page = document.getElementById('zlc-page-notes');
+ if(page){ page.appendChild(sec); }
+ else {
+  var footer = wrap.querySelector('footer');
+  if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+ }
+
+ storeLoad();
+ syncBox();
+
+ var sel = document.getElementById('bskw-field');
+ if(sel) sel.addEventListener('change', function(){
+  var ta = document.getElementById('bskw-text');
+  if(ta) state.text[state.field] = ta.value;
+  state.field = sel.value;
+  syncBox(); say(''); rows(null); storeSave();
+ });
+ var rb = document.getElementById('bskw-read');
+ if(rb) rb.addEventListener('click', function(){ doRead(); });
+ var fb = document.getElementById('bskw-fetch');
+ /* Where NO field this facility works publishes a D-ATIS, the button is
+    removed rather than disabled — a control that can never do anything is
+    worse than no control, and the box label already says why. */
+ if(fb){
+  if(FIELDS.filter(function(x){ return x.datis; }).length) fb.addEventListener('click', doFetch);
+  else if(fb.parentNode) fb.parentNode.removeChild(fb);
+ }
+
+ if(textFor(state.field)) doRead('what was saved');
+ if(typeof DECK.log === 'function'){ DECK.log('Weather and D-ATIS reader mounted. Which fields publish a D-ATIS was checked against both published sources on 2026-09-04, not assumed.', 'info'); }
+}
+
+window.bskw = {
+ FIELDS:FIELDS, read:wxRead, runways:wxRunways, observation:wxObservation,
+ category:wxCategory, clean:wxClean, keyed:wxKeyed, labels:wxLabels,
+ flowFor:flowFor, state:state, doRead:doRead
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
 </body>
 </html>
