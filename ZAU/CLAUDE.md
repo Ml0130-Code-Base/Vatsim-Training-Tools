@@ -165,4 +165,6 @@ rather than implying a suite passed.
 ## Session hygiene
 
 Commit after each completed subtask. When aviation data is involved, cite which document and
-paragraph the number came from in the commit message.
+paragraph the number came from in the commit message. **One commit touches one ARTCC:** C90
+and AZO may share a commit, and nothing under `ZMP/` or `ZLC/` may join it. Root `CLAUDE.md`
+§14.
