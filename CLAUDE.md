@@ -560,6 +560,39 @@ powershell -ExecutionPolicy Bypass -File serve-site.ps1   preview at localhost:8
 git push                                                  publish (the workflow does the rest)
 ```
 
+### What the Pages documentation actually constrains
+
+Checked against `docs.github.com/en/pages` on 2026-09-04. The numbers are theirs; the second
+column is where we stand.
+
+| Limit | Us |
+|---|---|
+| Source repository — **recommended** 1 GB | 305 MB, and the PDF sets are growing (§6) |
+| Published site — hard 1 GB | 657 KB |
+| Bandwidth — soft 100 GB/month | not a factor for one trainee |
+| Builds — soft 10/hour, **waived for a custom Actions workflow** | ours is custom, so waived |
+| Artifact — `tar.gz`, under 10 GB, **no symbolic or hard links** | 657 KB, no links anywhere in the tree |
+| Deployment timeout — 10 minutes | seconds |
+
+**The plan rule, in their words:** *"If the account that owns the repository uses GitHub Free
+or GitHub Free for organizations, the repository must be public."* And private Pages sites —
+access control — require **GitHub Enterprise Cloud**, not Pro and not Team. Those two sentences
+are the whole reason this repository is public.
+
+**Two version traps in the workflow, both deliberate and both easy to "fix" into a bug:**
+
+- **`upload-pages-artifact` is pinned to v3, not v4 or v5.** v4.0.0 excludes dotfiles by
+  default, which silently drops `_site/.nojekyll`. v3 is also the pairing in GitHub's own
+  `pages/static.yml` starter workflow.
+- **`deploy-pages` is v5**, matching that same starter. The action's own README still shows v4;
+  the starter is the more current reference. The compatibility rule is that `deploy-pages@v4`
+  or newer is required for artifacts from `upload-pages-artifact@v3` or newer, so v3 + v5 is
+  inside the supported set.
+
+**`actions: read` is not required** — `contents: read`, `pages: write`, `id-token: write` is the
+complete permission set, confirmed against the `deploy-pages` README. Do not add permissions
+speculatively.
+
 **The manifest lives in `site/index.html` and nowhere else**, per invariant 5. It is one line
 per tool, and `build-site.sh` greps the entries out of the page it renders — so the landing
 page and the published paths cannot disagree. **Adding a future tool is that one line.** Keep

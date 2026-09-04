@@ -37,10 +37,13 @@ fi
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-# The landing page, and the marker that stops Pages running the whole tree
-# through Jekyll. Without .nojekyll every _shared/ and _vnas/ folder would be
-# silently dropped, and a file starting with an underscore would 404 with a
-# clean console and no error anywhere.
+# The landing page, plus .nojekyll as insurance rather than necessity: the
+# Actions deploy path serves the artifact as-is and never runs Jekyll, so this
+# is a no-op today. It earns its place if the Pages source is ever switched
+# back to deploy-from-branch, where Jekyll would silently drop every folder
+# starting with an underscore — _shared/, _vnas/ — with a clean console and no
+# error anywhere. It is also why the workflow pins upload-pages-artifact to v3,
+# which still includes dotfiles.
 cp "$SRC_INDEX" "$OUT/index.html"
 : > "$OUT/.nojekyll"
 

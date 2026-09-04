@@ -58,6 +58,9 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
+      # v3 on purpose, not a stale pin. upload-pages-artifact v4.0.0 excludes
+      # dotfiles by default, which would silently drop _site/.nojekyll. This is
+      # also the exact pairing in GitHub's own pages/static.yml starter.
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site
@@ -70,4 +73,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
