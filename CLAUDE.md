@@ -488,8 +488,9 @@ encode it the same way.
   tier in the ledger. **One ledger, no second class:** a drill from the practice log and a
   drill banked in the player contribute identically to exposures, flags, streak and staleness.
 - **Regenerate the block-only paste files from the main file**; never edit them separately.
-- **A change to a tool is not live until it is published.** Run `publish-site.ps1` after
-  committing; the hosted copy is a mirror, not a branch, and it does not update itself. See §13.
+- **A change to a tool goes live on push.** The Pages workflow rebuilds and redeploys on any
+  push to `main` that touches a drill deck, `site/`, or `build-site.sh`. Preview it locally
+  before pushing, because the published copy is the one people open. See §13.
 - **Data-only scenario authoring.** Drills built in the tool live in `localStorage` and export
   as JSON or as a pasteable `SCENARIOS` entry. A build step is acceptable **only** if the
   deliverable remains one self-contained HTML file.
@@ -524,35 +525,39 @@ the note export carries its anchor and slot state" is a useful sentence. "Tests 
 
 ---
 
-## 13. Publishing — two repositories, and the boundary between them
+## 13. Publishing — one public repository, and a staged publish surface
 
 The tools are hosted so they can be opened from a phone or a second machine without copying
 files around. Hosting does not change what a tool is: every file published is byte-identical
 to the one in the tree, still single-file, still fully functional offline. The check that
 proves it is `md5sum` on both sides.
 
-**This repository is private and stays private.** It holds 87 facility PDFs, the transcribed
-reference markdown, the gap analyses, the practice logs and the OJT session notes. A second,
-**public** repository — `vatsim-training-tools-site` — holds the seven tools and a landing
-page, and nothing else. About 656 KB.
+**The repository is public, and that was a decision, not a default.** GitHub Pages cannot
+serve a private repository on a free account, and no Pages site can be put behind a login
+below Enterprise Cloud — so hosting at all meant making the tree public. **Everything in it is
+public: the 87 facility PDFs, the gap analyses, the practice logs, and the OJT session
+reviews**, which are a session-by-session record of one trainee's own performance including
+flagged losses of separation, attached to a real name in the commit history. Owner decision,
+2026-09-04, taken with that spelled out. **Anything added here from now on is published by
+default** — that is the thing to hold in mind before writing a new note file, not after.
 
-The split is forced, not stylistic: **GitHub Pages cannot serve a private repository on a free
-account, and a Pages site cannot be put behind a login on any account short of Enterprise
-Cloud.** So the choice was never "private site or public site" — it was which files get a
-public URL. The answer is the tools, because they carry no personal data. The trainee's notes
-live here and in `localStorage` on the device; they never enter the staged site.
+**The site is still not the repository.** Pages publishes the staged `_site/` directory built
+by `build-site.sh`, which contains the landing page and the seven tools and nothing else —
+about 656 KB. `build-site.sh` fails the build if any other file reaches `_site/`. That guard
+is no longer about secrecy, since the repository is public either way; it is about the site
+staying the thing it claims to be, and about the next person who adds a data file not silently
+widening what the Pages domain serves.
 
-The site is **unlisted, not secret** — `noindex` on the landing page, `robots.txt` disallowing
-everything, nothing linking in. Anyone holding the URL can read it. **That is exactly why the
-boundary is enforced in code rather than remembered**: `build-site.sh` fails the build if any
-file other than the tools, `.nojekyll` and `robots.txt` reaches `_site/`, and `publish-site.ps1`
-refuses to push if any reaches the public clone. Two guards, because a source document
-reaching a public URL is not the kind of mistake you get to notice later.
+**Deploy from Actions, not from a branch.** Settings → Pages → Source: **GitHub Actions**; the
+workflow is `.github/workflows/pages.yml`. Serving the branch directly would put every tool
+behind a percent-encoded URL, because the source folders carry spaces — `M98 Training`,
+`Big Sky`. There is no build step in the sense invariant 6 forbids: nothing is bundled,
+minified or templated, and each tool is copied byte for byte.
 
 ```
 sh build-site.sh                                          stage into _site/
 powershell -ExecutionPolicy Bypass -File serve-site.ps1   preview at localhost:8080
-powershell -ExecutionPolicy Bypass -File publish-site.ps1 push to the public repository
+git push                                                  publish (the workflow does the rest)
 ```
 
 **The manifest lives in `site/index.html` and nowhere else**, per invariant 5. It is one line
@@ -561,15 +566,14 @@ page and the published paths cannot disagree. **Adding a future tool is that one
 each entry on one line and keep the `slug`/`src` key order; the build script matches that
 shape and fails loudly if it parses nothing.
 
-**A slug is a URL, and a URL is a promise.** `/m98/`, `/bigsky/` — lowercase, no spaces,
-because the source folders carry spaces and a percent-encoded link breaks the moment someone
-pastes it. Once a slug has been shared it is never renamed; a renamed slug is a dead
-bookmark. Removing a tool from the manifest does remove it from the site — the publish step
-mirrors rather than merges, deliberately, so a deleted tool does not linger at its old URL.
+**A slug is a URL, and a URL is a promise.** `/m98/`, `/bigsky/` — lowercase, no spaces. Once a
+slug has been shared it is never renamed; a renamed slug is a dead bookmark. Removing a tool
+from the manifest does remove it from the site, deliberately, so a deleted tool does not
+linger at its old URL.
 
-**Pages is served from the site repository's branch** — Settings → Pages → deploy from `main`,
-folder `/` — not from an Actions workflow. There is nothing to build on a runner, and a
-workflow would only add a place for the publish surface to drift.
+**The site is unlisted rather than advertised** — `noindex` on the landing page, `robots.txt`
+disallowing everything, nothing linking in. With a public repository this buys less than it
+did, and it is one line in each file to reverse if the tools are ever meant to be found.
 
 Two things hosting does not change, and both are worth stating because they look like
 regressions and are not. **`localStorage` is per-origin and per-device**: work banked in the
@@ -612,7 +616,7 @@ three commits — the root reference document, then ZLC, then ZAU.
 
 **Repo-level files are not a facility, and they do not launder a cross-ARTCC commit.** Root
 `CLAUDE.md`, `claude_CRC_Platform_Reference.md`, `claude_Community_Geometry_Sources.md` and the
-site harness (`build-site.sh`, `serve-site.ps1`, `publish-site.ps1`, `site/index.html`,
+site harness (`build-site.sh`, `serve-site.ps1`, `site/index.html`, `.github/workflows/`,
 `.gitignore`) may ride along with one ARTCC's commit when the change came out of that work — a
 house rule learned at C90 lands with the C90 change that taught it. A root change that stands
 on its own, or that came out of work in two trees, is its own commit and touches no facility
@@ -648,6 +652,7 @@ git diff --cached --name-only | cut -d/ -f1 | sort -u
 VATGlasses ZAU footprint into the C90 and AZO decks"* reads correctly under this rule;
 *"Vendor ZLC/ZAU sector geometry"* announces the violation.
 
-**The public site repository is outside this rule.** `publish-site.ps1` mirrors the staged
-tools into `vatsim-training-tools-site`; its commits are publish snapshots of all seven tools
-at once, written by the script rather than by hand, and they are not facility work (§13).
+**Publishing creates no commit, so it raises no boundary question.** The Pages workflow builds
+`_site/` on the runner and deploys the artifact; nothing is written back to the tree, and
+`_site/` is ignored. A commit that touches a drill deck is facility work under this rule like
+any other — that it also triggers a redeploy changes nothing about how it is staged (§13).

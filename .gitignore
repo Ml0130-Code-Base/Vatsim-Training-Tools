@@ -2,7 +2,3 @@
 # the tools themselves, rebuilt on every deploy — nothing in here is a source
 # file, and committing it would put a second copy of every tool in the tree.
 _site/
-
-# Working clone of the public site repository, maintained by publish-site.ps1.
-# It is a mirror of _site/ with its own .git — not a submodule, not a source.
-.site-publish/

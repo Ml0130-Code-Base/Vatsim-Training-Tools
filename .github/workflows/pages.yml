@@ -1,0 +1,73 @@
+# =============================================================================
+# Publish the training tools to GitHub Pages.
+#
+# Deliberately NOT the "deploy from a branch" setting, for two reasons that both
+# still hold now that the repository is public:
+#
+#   1. The source folders carry spaces — "M98 Training", "Big Sky" — so serving
+#      the tree straight would put every tool behind a percent-encoded URL that
+#      breaks the moment somebody pastes it. This workflow publishes the staged
+#      _site/, where build-site.sh has given each tool a flat slug: /m98/,
+#      /bigsky/, and so on.
+#   2. The site stays the tools and nothing else. Serving the branch would put
+#      87 PDFs and every reference file behind the Pages domain as well as the
+#      repository; there is no reason for the site to carry them.
+#
+# build-site.sh fails the run if anything but the tools, .nojekyll and
+# robots.txt reaches _site/, so the publish surface is enforced rather than
+# remembered.
+#
+# One-time setup, in Settings > Pages:
+#   Source: GitHub Actions
+# =============================================================================
+
+name: Publish tools to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'build-site.sh'
+      - '**/*-drill-deck.html'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and never cancel one in flight — a half-published site
+# is worse than a stale one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage the site
+        run: sh build-site.sh
+
+      - name: Show what will be published
+        run: find _site -type f | sort
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
