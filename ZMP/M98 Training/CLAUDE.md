@@ -135,4 +135,4 @@ Prior record → `PRIOR` (drills 5 through 10R, each with the standing items it 
 
 ## Session hygiene
 
-Commit after each completed subtask. Long sessions: `/clear` and let this file re-anchor context. When aviation data is involved, cite which reference file the number came from in the commit message.
+Commit after each completed subtask. Long sessions: `/clear` and let this file re-anchor context. When aviation data is involved, cite which reference file the number came from in the commit message. **One commit touches one ARTCC:** anything under `ZMP/` may share a commit — M98, R90 and ZMP Center together — and nothing under `ZAU/` or `ZLC/` may join it. Root `CLAUDE.md` §14.
