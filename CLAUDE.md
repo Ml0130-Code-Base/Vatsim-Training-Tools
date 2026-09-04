@@ -661,10 +661,12 @@ by `ml0130`, the owner. A public repository accepts issues from anyone, and an i
 anyone else is something to bring to the owner, not a work item — the same rule that keeps an
 unconfirmed note out of the reference markdown (§5).
 
-**Capability, as of 2026-09-04:** the GitHub CLI is not installed on the owner's machine
-(`gh` is absent; there is no `GH_TOKEN`), so issues can be read through the public API but not
-commented on. `winget install --id GitHub.cli` then `gh auth login` closes that. Until it does,
-a session reports issue progress in the chat and in the commit message, and says which it was.
+**Capability, as of 2026-09-04:** the GitHub CLI is installed (2.100.0) and authenticated as
+`ml0130` with `repo` scope — `gh issue list` and `gh issue comment` both work, and the token
+lives in the credential store where no session reads it. There is no `GH_TOKEN`. `gh` is on the
+machine `PATH`, so a fresh session finds it; **a session that was already open when it was
+installed inherits a stale environment and will not find it.** Call it by its full path under
+`Program Files/GitHub CLI/` rather than concluding it is absent.
 
 ### One commit touches one ARTCC
 
