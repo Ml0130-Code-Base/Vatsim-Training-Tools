@@ -1128,9 +1128,12 @@ else { start(); }
    its closed 4L/22R pair out of the landing set.
 
    Offline first: the paste box is the path that always works and needs
-   no network at all.
-   Where a field publishes one, a fetch button sits on top of that as a
-   convenience, and it is the only network call this tool makes.
+   no network at all. One fetch button sits on top of it and asks the
+   source that fits the field — the D-ATIS feed where the field publishes
+   one, the observation otherwise. That is ONE network call with a source
+   that follows the field, not a second network dependency: it is never on
+   a path the tool needs, every failure hands straight to the paste box,
+   and the parser it feeds is the same one paste uses.
    ================================================================ */
 (function(){
 'use strict';
@@ -1140,11 +1143,13 @@ if(!DECK){ return; }   /* deck absent — do nothing, per the block contract */
 
 /* ---------- 1. The fields this facility works ---------- */
 /* NONE of the six West Wall fields publishes a D-ATIS. Checked against
-   both published sources on 2026-09-04 and absent from each, so this tool
-   gets the weather half of the reader and no fetch button at all. Every
-   one of these fields has a voice ATIS; it is simply not published as
-   text, so there is nothing to fetch and nothing to paste but the
-   observation itself. */
+   both published sources on 2026-09-04 and absent from each. Every one of
+   them has a voice ATIS; it is simply not published as text, so there is
+   no flow to read and the weather comes off the METAR instead.
+
+   KHLM HAS NO REPORTING STATION AT ALL. api.weather.gov answers 404 for
+   Park Township, checked 2026-09-04, so the fetch tells you that rather
+   than failing vaguely. The other five all return an observation. */
 var STORE_KEY  = 'azo-drill-deck-v1';
 var DATIS_URL  = 'https://atis.info/api/';
 var DATIS_NAME = 'atis.info';
@@ -1480,7 +1485,12 @@ function doRead(from){
   + (o.apch.length ? (' Approaches advertised: ' + o.apch.map(function(a){
       return esc(a.apch) + ' to ' + esc(a.rwys.join(' and ')); }).join('; ') + '.') : '')
   + ' That is ' + esc(o.cat) + ' — ' + esc(TOOLBOX[o.cat]);
- if(o.missed.length) msg += ' <span class="azow-note">Could not read: ' + esc(o.missed.join(', ')) + '. Set those by hand.</span>';
+ /* An observation has no runways in it and never did, so at a field with no
+    D-ATIS that is not something the reader failed at — reporting it as a
+    failure would train you to ignore the line that matters when it is. */
+ var missed = f.datis ? o.missed
+  : o.missed.filter(function(x){ return x !== 'the runways in use'; });
+ if(missed.length) msg += ' <span class="azow-note">Could not read: ' + esc(missed.join(', ')) + '. Set those by hand.</span>';
  if(!state.stored) msg += ' <span class="azow-note">This browser will not keep what you paste, so it is held in memory only for this visit.</span>';
  say(msg);
  rows(o);
@@ -1488,51 +1498,129 @@ function doRead(from){
  return o;
 }
 
-/* One network call, optional by construction: it is never on a path the
-   tool needs, every failure hands straight to the paste box, and the
-   parser it feeds is the same one paste uses. */
+/* ---------- The observation, for a field with no D-ATIS ----------
+   AVIATIONWEATHER.GOV CANNOT BE FETCHED FROM A BROWSER. It serves the
+   METAR for every one of these fields, but it sends no
+   access-control-allow-origin header on any endpoint, so the request is
+   refused from every origin. Tested in a real browser on 2026-09-04:
+   both /api/data/metar and /cgi-bin/data/metar.php fail outright. It is
+   still the right place to READ one by hand, and the failure message
+   names it.
+
+   api.weather.gov is the same National Weather Service data and does send
+   the header, so that is what the button calls. Its `rawMessage` carries
+   the verbatim METAR where it is populated, and that is used unchanged.
+   For most of these fields it is EMPTY while the structured observation
+   is complete, so the line is rebuilt from that instead.
+
+   THE REBUILT LINE IS SHOWN IN THE BOX, not parsed behind your back — it
+   is the same text you would have pasted, so you can compare it against
+   the field's real METAR. The conversions were checked against stations
+   that return both forms: KLOT rebuilds digit for digit, and KCBF, KMLE
+   and KOFF match apart from the AUTO and RMK groups the parser ignores.
+   A null reading is OMITTED rather than guessed, so the parser lists it
+   as unread — which is what KGYY does when its wind is missing. */
+var METAR_URL  = 'https://api.weather.gov/stations/';
+var METAR_NAME = 'api.weather.gov';
+var METAR_BY_HAND = 'https://aviationweather.gov/';
+function pad(n, w){ n = String(n); while(n.length < w) n = '0' + n; return n; }
+function nwsMetar(id, j){
+ var p = (j && j.properties) || {};
+ if(p.rawMessage && String(p.rawMessage).trim()) return {text:String(p.rawMessage).trim(), built:false};
+ var v = function(o){ return (o && o.value != null) ? o.value : null; };
+ var bits = [id];
+ if(p.timestamp){
+  var d = new Date(p.timestamp);
+  bits.push(pad(d.getUTCDate(), 2) + pad(d.getUTCHours(), 2) + pad(d.getUTCMinutes(), 2) + 'Z');
+ }
+ var wd = v(p.windDirection), ws = v(p.windSpeed), wg = v(p.windGust);
+ if(ws != null){
+  var kt = Math.round(ws * 0.539957), gk = (wg != null) ? Math.round(wg * 0.539957) : null;
+  bits.push((wd == null ? 'VRB' : pad(Math.round(wd), 3)) + pad(kt, 2) + (gk ? ('G' + pad(gk, 2)) : '') + 'KT');
+ }
+ var vis = v(p.visibility);
+ if(vis != null) bits.push(Math.round(vis / 1609.344 * 10) / 10 + 'SM');
+ (p.cloudLayers || []).forEach(function(L){
+  var b = v(L.base);
+  bits.push(L.amount + ((b != null && L.amount !== 'CLR' && L.amount !== 'SKC')
+   ? pad(Math.round(b / 0.3048 / 100), 3) : ''));
+ });
+ var t = v(p.temperature), dp = v(p.dewpoint);
+ if(t != null && dp != null) bits.push(Math.round(t) + '/' + Math.round(dp));
+ var pa = v(p.barometricPressure);
+ if(pa != null) bits.push('A' + pad(Math.round(pa * 0.00029530 * 100), 4));
+ return {text:bits.join(' '), built:true};
+}
+
+/* ONE network call, and it stays optional by construction: it is never on
+   a path the tool needs, every failure hands straight to the paste box,
+   and the parser it feeds is the same one paste uses. Which source it
+   asks follows the field — the D-ATIS feed where the field publishes one,
+   the observation otherwise — so this is one call with a source that
+   fits, not a second network dependency. */
 function doFetch(){
  var f = fieldOf(state.field);
- if(!f.datis){
-  say('<span class="azow-chip warn">no</span> ' + esc(f.id) + ' publishes no D-ATIS — '
-   + 'checked against both published sources on 2026-09-04 and absent from each. It has a voice '
-   + 'ATIS; it is simply not published as text, so there is nothing to fetch. '
-   + 'Paste the observation instead and this will read the weather off it.');
-  return;
- }
  if(typeof fetch !== 'function'){
   say('<span class="azow-chip warn">no</span> This browser gives the page no way to fetch. '
-   + 'Paste the D-ATIS text below and press read what is pasted.');
+   + 'Paste the text below and press read what is pasted.');
   return;
  }
- say('<span class="azow-chip">asking</span> Trying the published D-ATIS source for ' + esc(f.id) + '.');
- var hand = function(){
-  say('<span class="azow-chip warn">no</span> The source would not answer. That is the usual '
-   + 'result from a file page — it has no origin, so the server will not allow it, and this tool '
-   + 'is built to work offline anyway. Paste the current ' + esc(f.id) + ' D-ATIS below and press '
+ var kind = f.datis ? 'D-ATIS' : 'observation';
+ say('<span class="azow-chip">asking</span> Trying the published ' + kind + ' source for ' + esc(f.id) + '.');
+ /* A specific reason replaces the generic one rather than being stacked on
+    top of it — "no reporting station" and "the browser would not allow the
+    request" are different problems and only one of them is worth retrying. */
+ var hand = function(why){
+  say('<span class="azow-chip warn">no</span> '
+   + (why
+      ? ('Nothing came back — ' + esc(why) + '.')
+      : ('The source would not answer. From a file page that is the usual result: the page has no '
+         + 'origin, so the server will not allow the request, and this tool is built to work '
+         + 'offline anyway.'))
+   + ' Read the current ' + esc(f.id) + ' ' + kind + ' at <b>'
+   + (f.datis ? 'atis.info' : METAR_BY_HAND) + '</b>, paste it below and press '
    + '<b>read what is pasted</b>; that path always works.');
  };
+ var put = function(text, note){
+  state.text[f.id] = text;
+  var ta = document.getElementById('azow-text');
+  if(ta) ta.value = text;
+  doRead(note);
+ };
  try{
-  fetch(DATIS_URL + f.id, {cache:'no-store'}).then(function(r){
-   if(!r || !r.ok) return hand();
-   return r.text().then(function(body){
-    var parts = [], re = /"datis"\s*:\s*"((?:[^"\\]|\\.)*)"/g, m;
-    while((m = re.exec(body))){
-     try{ parts.push(JSON.parse('"' + m[1] + '"')); }catch(e){ parts.push(m[1]); }
+  if(f.datis){
+   fetch(DATIS_URL + f.id, {cache:'no-store'}).then(function(r){
+    if(!r || !r.ok) return hand('http ' + (r ? r.status : '?'));
+    return r.text().then(function(body){
+     var parts = [], re = /"datis"\s*:\s*"((?:[^"\\]|\\.)*)"/g, m;
+     while((m = re.exec(body))){
+      try{ parts.push(JSON.parse('"' + m[1] + '"')); }catch(e){ parts.push(m[1]); }
+     }
+     if(!parts.length){
+      try{
+       var s = JSON.parse(body);
+       if(typeof s === 'string') parts.push(s);
+      }catch(e2){ /* not JSON */ }
+     }
+     if(!parts.length) return hand('nothing in the reply');
+     put(parts.join('\n\n'), DATIS_NAME);
+    });
+   })['catch'](function(){ hand(); });
+  } else {
+   fetch(METAR_URL + f.id + '/observations/latest', {cache:'no-store'}).then(function(r){
+    if(!r || !r.ok){
+     return hand(r && r.status === 404
+      ? (f.id + ' has no reporting station on this source')
+      : ('http ' + (r ? r.status : '?')));
     }
-    if(!parts.length){
-     try{
-      var s = JSON.parse(body);
-      if(typeof s === 'string') parts.push(s);
-     }catch(e2){ /* not JSON */ }
-    }
-    if(!parts.length) return hand();
-    state.text[f.id] = parts.join('\n\n');
-    var ta = document.getElementById('azow-text');
-    if(ta) ta.value = state.text[f.id];
-    doRead(DATIS_NAME);
-   });
-  })['catch'](hand);
+    return r.json().then(function(j){
+     var m = nwsMetar(f.id, j);
+     if(!m.text || m.text === f.id) return hand('the observation came back empty');
+     put(m.text, m.built ? (METAR_NAME + ', rebuilt from the structured observation')
+                         : METAR_NAME);
+    });
+   })['catch'](function(){ hand(); });
+  }
  }catch(e){ hand(); }
 }
 
@@ -1545,12 +1633,13 @@ function syncBox(){
   ta.value = textFor(state.field);
   ta.setAttribute('placeholder', f.datis
    ? ('Paste the current ' + f.id + ' D-ATIS here. A split broadcast goes in whole — put a blank line between the arrival half and the departure half.')
-   : ('Paste the current ' + f.id + ' observation here. ' + f.id + ' publishes no D-ATIS, so there are no runways to read — the weather and the flight category still come off it.'));
+   : ('Paste the current ' + f.id + ' METAR here, or press fetch. ' + f.id + ' publishes no D-ATIS, so there are no runways to read — the weather and the flight category still come off it.'));
  }
  if(lab) lab.innerHTML = f.datis
   ? ('The ' + esc(f.id) + ' D-ATIS — the approach in use and the weather')
-  : ('The ' + esc(f.id) + ' observation — <span class="azow-note">this field publishes no D-ATIS</span>');
- if(fb) fb.disabled = !f.datis;
+  : ('The ' + esc(f.id) + ' observation — <span class="azow-note">this field publishes no D-ATIS</span>'
+     + '<span class="azow-dim">, so the weather comes off the METAR and no runways are advertised</span>');
+ if(fb) fb.textContent = f.datis ? 'fetch the current one' : 'fetch the current observation';
 }
 
 /* ---------- 6. Mount ---------- */
@@ -1587,13 +1676,7 @@ function mount(){
  var rb = document.getElementById('azow-read');
  if(rb) rb.addEventListener('click', function(){ doRead(); });
  var fb = document.getElementById('azow-fetch');
- /* Where NO field this facility works publishes a D-ATIS, the button is
-    removed rather than disabled — a control that can never do anything is
-    worse than no control, and the box label already says why. */
- if(fb){
-  if(FIELDS.filter(function(x){ return x.datis; }).length) fb.addEventListener('click', doFetch);
-  else if(fb.parentNode) fb.parentNode.removeChild(fb);
- }
+ if(fb) fb.addEventListener('click', doFetch);
 
  if(textFor(state.field)) doRead('what was saved');
  if(typeof DECK.log === 'function'){ DECK.log('Weather and D-ATIS reader mounted. Which fields publish a D-ATIS was checked against both published sources on 2026-09-04, not assumed.', 'info'); }
