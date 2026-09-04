@@ -748,6 +748,65 @@ try {
       assert('a single advertised runway still matches its flow, and says it was a subset',
         live.cfg === '30' && live.partial === true);
     }
+    /* Issue #13. The real broadcast advertises one approach clause per runway,
+       and the parser stopped at the first one — a full 30s read as 30L alone,
+       took the subset branch, and told the trainee something was out of
+       service. Every assertion here is against text a real MSP D-ATIS carried
+       on 2026-09-04, or against the shared-clause form the same field uses.
+       Keep the LNDG line OUT of these: the old suite always supplied one, which
+       is why nothing failed while the approach branch was half-broken. */
+    {
+      const multi = globalThis.ddb.parseDatis(
+        'MSP ARR INFO K 1753Z. 01010KT 8SM OVC014 27/22 A2990 (TWO NINER NINER ZERO) RMK AO2 ' +
+        'PK WND 33026/1707 SLP120 T02720222 10289 20222 51016. SIMULTANEOUS DEPENDENT, ' +
+        'RNAV ZULU RWY 30L APCH IN USE, ILS RWY 30R APCH IN USE. NOTICE TO AIRMEN. ' +
+        'GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS.\n\n' +
+        'MSP DEP INFO X 1753Z. 01010KT 8SM OVC014 A2990. DEPTG RWY 30L, 30R. NOTICE TO AIRMEN.');
+      assert('one approach clause per runway reads every runway, not just the first',
+        multi.land.join(',') === '30L,30R', JSON.stringify(multi.land));
+      assert('and that is a whole 30s, with nothing reported out of service',
+        multi.cfg === '30' && !multi.partial, JSON.stringify([multi.cfg, multi.partial]));
+      assert('each runway is said back with the approach advertised to it',
+        multi.apch.length === 2 && multi.apch[0].apch === 'RNAV ZULU' && multi.apch[0].rwys.join(',') === '30L'
+        && multi.apch[1].apch === 'ILS' && multi.apch[1].rwys.join(',') === '30R', JSON.stringify(multi.apch));
+      assert('a runway named only in the notices is still never in use',
+        multi.land.indexOf('12R') < 0 && multi.land.indexOf('12L') < 0, JSON.stringify(multi.land));
+      /* the other half of the grammar: one clause, several runways, and the
+         comma inside it separates runways rather than approaches */
+      const shared = globalThis.ddb.parseDatis(
+        'KMSP INFO B. 15012KT 10SM SCT040 A3001. SIMUL ILS RWY 12L, 12R APCHS IN USE. DEPTG RWY 12L, 12R.');
+      assert('a continued runway list inside one clause stays whole',
+        shared.land.join(',') === '12L,12R' && shared.cfg === '12' && !shared.partial, JSON.stringify(shared.land));
+      assert('and the plural spellings all read — APCH, APCHS, APCHES, APPROACH, APPROACHES',
+        globalThis.ddb.approachRunways('ILS RWY 12L APCH IN USE.').join(',') === '12L'
+        && globalThis.ddb.approachRunways('ILS RWY 12L, ILS RWY 12R APCHS IN USE.').join(',') === '12L,12R'
+        && globalThis.ddb.approachRunways('ILS RWY 12L AND VISUAL RWY 12R APCHES IN USE.').join(',') === '12L,12R'
+        && globalThis.ddb.approachRunways('ILS RWY 30L APPROACH IN USE.').join(',') === '30L'
+        && globalThis.ddb.approachRunways('ILS RWY 30L, RNAV RWY 30R APPROACHES IN USE.').join(',') === '30L,30R');
+      /* the runway set is taken at sentence level and the clause split only
+         labels the approaches, so an unfamiliar phrasing cannot drop a runway */
+      assert('the runway set does not depend on the clause grammar',
+        globalThis.ddb.approachRunways('SIMULTANEOUS DEPENDENT, RNAV ZULU RWY 30L APCH IN USE, ILS RWY 30R APCH IN USE.')
+          .join(',') === '30L,30R');
+      /* a runway only ever comes off a RWY or RUNWAY keyword, so nothing in the
+         observation or the remarks can be read as one */
+      assert('the observation and the remarks never yield a runway',
+        globalThis.ddb.parseDatis(
+          'KMSP INFO K 1753Z 01010KT 8SM OVC014 27/22 A2990 RMK AO2 PK WND 33026/1707 SLP120 ' +
+          'T02720222 ILS RWY 30L APCH IN USE, ILS RWY 30R APCH IN USE').land.join(',') === '30L,30R');
+      /* three approaches, three runways — the CRO configuration */
+      assert('three clauses give a 30-35 rather than a narrowed 30s',
+        globalThis.ddb.parseDatis(
+          'KMSP INFO D. 34015KT 3SM OVC018 A2970. RNAV ZULU RWY 30L APCH IN USE, ILS RWY 30R APCH IN USE, ' +
+          'VISUAL RWY 35 APCH IN USE. DEPTG RWY 30L, 30R.').cfg === '30-35');
+      /* and a genuinely narrowed flow must still take the subset branch */
+      assert('one runway advertised on its own is still called a subset',
+        globalThis.ddb.parseDatis(
+          'KMSP INFO K. 01010KT 8SM OVC014 A2990. ILS RWY 30L APCH IN USE. DEPTG RWY 30L, 30R.').partial === true);
+      assert('landing the 30s and departing them is a 30s, not the noise default',
+        globalThis.ddb.parseDatis(
+          'KMSP INFO N. 30005KT 10SM CLR A2995. LNDG RWY 30L, 30R. DEPTG RWY 30L, 30R.').cfg === '30');
+    }
     /* the tool is offline first, so each broadcast gets pasted on its own */
     {
       const sp = globalThis.ddb.datisSplit([

@@ -222,6 +222,68 @@ function rwyList(s){
  m.forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
  return out;
 }
+/* A runway list the way a broadcast writes one — "30L", "12L, 12R",
+   "30L AND 30R" — read only where a RWY or RUNWAY keyword introduces it. That
+   keyword is what stops a wind group, a temperature or a remarks code being
+   read as a runway. Pass a lead to require one, "DEPTG RWYS 12L, 12R"; pass
+   nothing to take every runway list in the text. */
+var RWY_ONE=/\d{1,2}[LRC]?/.source;
+var RWY_RUN=RWY_ONE+'(?:'+/\s*(?:,|AND)\s*/.source+RWY_ONE+')*';
+function rwysAfter(text, lead){
+ var re=new RegExp((lead?'(?:'+lead+')'+/\s+/.source:'')+/(?:RWYS?|RUNWAYS?)\s+/.source+'('+RWY_RUN+')','g');
+ var out=[], m;
+ while((m=re.exec(String(text||'').toUpperCase())))
+  rwyList(m[1]).forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
+ return out;
+}
+/* MSP advertises one approach clause per runway — "RNAV ZULU RWY 30L APCH IN
+   USE, ILS RWY 30R APCH IN USE" — and also one clause covering several —
+   "ILS RWY 12L, ILS RWY 12R APCHS IN USE". Both are a single sentence carrying
+   the phrase, so the SENTENCE is the unit: every runway named inside one is in
+   use. Reading only the first clause is what made a full 30s parse as 30L
+   alone with the other runway apparently out of service (issue #13).
+   APCH, APCHS, APCHES, APPROACH, APPROACHES — the plural is written both ways,
+   and the old parser accepted a different pair of spellings on each of its two
+   branches, so "APCHS IN USE" was readable in one form and invisible in the
+   other. */
+var APCH_IN_USE=/(?:APCH(?:ES|S)?|APPROACH(?:ES)?)\s+IN\s+USE/;
+function apchSentences(text){
+ return String(text||'').toUpperCase().split('.').filter(function(s){ return APCH_IN_USE.test(s); });
+}
+/* The runways being landed on. This is the authority for the flow, and it is
+   deliberately blind to the clause grammar below: an unfamiliar phrasing may
+   mis-label which approach goes to which runway, but it can never silently
+   drop a runway, and dropping one is what changes the configuration. */
+function approachRunways(text){
+ var out=[];
+ apchSentences(text).forEach(function(s){
+  rwysAfter(s).forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
+ });
+ return out;
+}
+/* The same sentences split into clauses, so each runway can be shown with the
+   approach advertised to it. Display only.
+   Clauses divide on a comma or an AND that begins something new; one running
+   straight into another runway is a continued list — "RWY 12L, 12R" — and stays
+   whole. That distinction is the whole grammar: the same comma separates two
+   approaches in one broadcast and two runways in the next. The lookahead sits
+   inside the separator rather than after it, because a trailing \s* outside it
+   can give the match a second path and split the list anyway. */
+function approachesInUse(text){
+ var notRwy='(?!'+/\s*/.source+RWY_ONE+/\b/.source+')';
+ var cut=new RegExp(','+notRwy+/\s*/.source+'|'+/\s+AND/.source+notRwy+/\s+/.source);
+ var out=[];
+ apchSentences(text).forEach(function(sent){
+  sent.split(cut).forEach(function(cl){
+   var rwys=rwysAfter(cl);
+   if(!rwys.length) return;
+   /* whatever names the approach sits ahead of the runway — "RNAV ZULU",
+      "ILS", "VISUAL", "SIMUL ILS" */
+   out.push({rwys:rwys, apch:cl.split(/RWYS?\b|RUNWAYS?\b/)[0].replace(/\s+/g,' ').trim()});
+  });
+ });
+ return out;
+}
 /* Which configuration the landing and departing runways describe. The landing
    set picks the candidates and the departures break the tie — a 12s and a
    12s-Depart-17 land the same runways. */
@@ -291,13 +353,17 @@ function parseDatis(raw){
  else if((m=t.match(/ALTIMETER ((?:\d ?){4})/))) o.altim=m[1].replace(/\D/g,'');
  else o.missed.push('altimeter');
  /* the flow */
- /* the flow reads either as "landing runways 12L, 12R" or, when a single
-    approach is advertised, as "visual runway 30L approach in use" — the runway
-    sits ahead of the phrase in the second form */
- if((m=t.match(/(?:LAND(?:ING)?|LNDG) (?:RUNWAYS?|RWYS?) ([^.]*)/))) o.land=rwyList(m[1]);
- else if((m=t.match(/(?:APPROACHES?|APCHS?) IN USE ([^.]*)/))) o.land=rwyList(m[1]);
- else if((m=t.match(/([^.]*?) ?(?:APCH(?:ES)?|APPROACH(?:ES)?) IN USE/))) o.land=rwyList(m[1]);
- if((m=t.match(/(?:DEPART(?:ING)?|DEPTG) (?:RUNWAYS?|RWYS?) ([^.]*)/))) o.dep=rwyList(m[1]);
+ /* Two forms, and one broadcast may carry both: "LNDG RWYS 12L, 12R", and one
+    or more approach-in-use clauses — "RNAV ZULU RWY 30L APCH IN USE, ILS RWY
+    30R APCH IN USE". Every runway either form names is being landed on, so the
+    two are unioned. Reading only the first clause is what made a full 30s parse
+    as 30L alone with the other runway apparently out of service (issue #13). */
+ o.apch=approachesInUse(t);
+ var land=rwysAfter(t, 'LAND(?:ING)?|LNDG');
+ approachRunways(t).forEach(function(r){ if(land.indexOf(r)<0) land.push(r); });
+ if(land.length) o.land=land;
+ var dep=rwysAfter(t, 'DEPART(?:ING)?|DEPTG');
+ if(dep.length) o.dep=dep;
  o.cfg=configFromRunways(o.land||[], o.dep||[]);
  if(o.cfg && configById(o.cfg).land.slice().sort().join(',') !== (o.land||[]).slice().sort().join(','))
   o.partial=true;   /* matched on a subset — something is out of service */
@@ -1862,11 +1928,15 @@ window.ddbDatisApply=function(from){
  var msg='<span class="dd-chip good">read</span>'+(from?(' from '+esc(from)+' — '):' ')
   +(got.length?('set '+got.join(', ')+'.'):'nothing was recognised in that text.')
   +(o.land&&o.land.length?(' Landing '+esc(o.land.join(', '))+(o.dep&&o.dep.length?(', departing '+esc(o.dep.join(', '))):'')+'.'):'')
+  /* say back every approach clause that was read, one per runway — the way a
+     misread gets caught is by seeing what the parser thought it heard */
+  +(o.apch&&o.apch.length?(' Approaches advertised: '+esc(o.apch.map(function(a){
+     return (a.apch?a.apch+' to ':'')+a.rwys.join(' and '); }).join('; '))+'.'):'')
   +(o.atisDep&&o.atisDep!==o.atis?(' Split broadcast — arrival information '+esc(o.atis||'?')+', departure information '+esc(o.atisDep)+'.'):'')
   +' Read from the '+(have.arr&&have.dep?'arrival and departure broadcasts':(have.dep?'departure broadcast alone':'arrival broadcast alone'))+'.'
   +(!have.dep&&have.arr?' <span style="color:var(--amber)">Without the departure broadcast there is nothing to say which runways are being departed, and that is what separates a 12s from a 12s-Depart-17 or a 30s from a land-30s-depart-12s. Paste it in too if the configuration matters.</span>':'')
   +(!have.arr&&have.dep?' <span style="color:var(--amber)">Without the arrival broadcast there is no approach in use, so the landing runways had to come out of the departure text if they are in it at all.</span>':'')
-  +(o.partial?(' <span style="color:var(--amber)">Only '+esc((o.land||[]).join(', '))+' is advertised, so this matched '+esc(o.cfg)+' on a subset — something is out of service. Check before you build a full push on it.</span>'):'')
+  +(o.partial?(' <span style="color:var(--amber)">Only '+esc((o.land||[]).join(', '))+((o.land||[]).length>1?' are':' is')+' advertised, so this matched '+esc(o.cfg)+' on a subset — something is out of service. Check before you build a full push on it.</span>'):'')
   +' That is '+cat+' — '+TOOLBOX[cat];
  if(o.missed.length) msg+=' <span style="color:var(--amber)">Could not read: '+esc(o.missed.join(', '))+'. Set those by hand.</span>';
  if(o.cfg){
@@ -2306,6 +2376,7 @@ window.ddb = {
  seatIds:seatIds, isSeat:isSeat, seatPositions:seatPositions,
  mixOptions:mixOptions, mixGates:mixGates, seatGates:seatGates,
  parseDatis:parseDatis, datisText:datisText, datisSplit:datisSplit, datisJoined:datisJoined,
+ approachesInUse:approachesInUse, approachRunways:approachRunways, rwysAfter:rwysAfter,
  configFromRunways:configFromRunways, DATIS_SOURCES:DATIS_SOURCES,
  timingSummary:timingSummary, setDraft:function(d){ draft=d; renderEditor(); }, getDraft:function(){ return draft; }
 };
