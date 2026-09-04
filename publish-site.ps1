@@ -41,24 +41,56 @@ function Fail($msg) { Write-Host $msg -ForegroundColor Red; exit 1 }
 
 if (-not (Test-Path "site/index.html")) { Fail "Run me from the repository root." }
 
+# Git Bash ships sh.exe but does not put it on PowerShell's PATH, so calling
+# "sh" straight out of a .ps1 fails with CommandNotFound. Derive it from wherever
+# git itself lives rather than hardcoding Program Files.
+function Get-Sh {
+  $onPath = (Get-Command sh -ErrorAction SilentlyContinue).Source
+  if ($onPath) { return $onPath }
+
+  $git = (Get-Command git -ErrorAction SilentlyContinue).Source
+  if ($git) {
+    $root = Split-Path (Split-Path $git)          # ...\Git\cmd\git.exe -> ...\Git
+    foreach ($c in @("$root\bin\sh.exe", "$root\usr\bin\sh.exe")) {
+      if (Test-Path $c) { return $c }
+    }
+  }
+  return $null
+}
+
+$sh = Get-Sh
+if (-not $sh) { Fail "Could not find sh.exe (it ships with Git for Windows). Is git installed?" }
+
 # --- 1. stage -----------------------------------------------------------------
 Write-Host "`nStaging the site..." -ForegroundColor Cyan
-& sh build-site.sh
+& $sh build-site.sh
 if ($LASTEXITCODE -ne 0) { Fail "build-site.sh failed - nothing published." }
 
 $remote = "https://github.com/$Repo.git"
 
 # --- 2. working clone of the public repository --------------------------------
+# Native commands get no 2>&1 here on purpose: in Windows PowerShell 5.1 that
+# wraps each stderr line in a NativeCommandError and trips $ErrorActionPreference
+# even when git exited 0. Let git write to the console and read $LASTEXITCODE.
 if (-not (Test-Path $Work)) {
   Write-Host "`nCloning $Repo ..." -ForegroundColor Cyan
-  git clone $remote $Work 2>&1 | Write-Host
-  if (-not (Test-Path $Work)) {
-    Fail "Could not clone $remote. Create the empty public repository first - see the header of this file."
+  git clone $remote $Work
+  if ($LASTEXITCODE -ne 0 -or -not (Test-Path $Work)) {
+    if (Test-Path $Work) { Remove-Item $Work -Recurse -Force }
+    Write-Host ""
+    Write-Host "Could not clone $remote" -ForegroundColor Red
+    Write-Host ""
+    Write-Host "If this is the first publish, the repository does not exist yet. Create it:" -ForegroundColor Yellow
+    Write-Host "  https://github.com/new" -ForegroundColor Yellow
+    Write-Host "  Owner: $($Repo.Split('/')[0])   Name: $($Repo.Split('/')[1])" -ForegroundColor Yellow
+    Write-Host "  Public, and COMPLETELY EMPTY - no README, no .gitignore, no licence." -ForegroundColor Yellow
+    Write-Host ""
+    exit 1
   }
 } else {
   Write-Host "`nUpdating the working clone..." -ForegroundColor Cyan
-  git -C $Work fetch origin 2>&1 | Write-Host
-  git -C $Work reset --hard origin/main 2>&1 | Out-Null
+  git -C $Work fetch origin
+  git -C $Work reset --hard origin/main | Out-Null
 }
 
 # --- 3. mirror _site/ into it -------------------------------------------------
@@ -115,7 +147,8 @@ try {
 
   # An empty new repository has no main branch yet.
   git branch -M main
-  git push -u origin main 2>&1 | Write-Host
+  git push -u origin main
+  if ($LASTEXITCODE -ne 0) { Fail "Push failed - nothing published." }
 
   $owner = $Repo.Split('/')[0].ToLower()
   $name  = $Repo.Split('/')[1]
