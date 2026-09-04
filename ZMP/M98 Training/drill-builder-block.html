@@ -213,10 +213,17 @@ function datisSplit(payload){
 function datisJoined(d){
  return [(d&&d.datisArr)||'', (d&&d.datisDep)||''].filter(function(s){ return String(s).trim(); }).join('\n\n');
 }
-/* Everything past the notice to airmen is closures and field condition. It
-   names runways that are SHUT — "RWYS 12L, 30R CLSD" — so it must never be
-   read as a runway in use. */
-function datisClean(seg){ return String(seg).split(/NOTICE TO AIRMEN|NOTAMS?\b/)[0]; }
+/* THE PARSE WINDOW: a broadcast is read from its start up to where the notices
+   begin, and never past it. Everything past that point is closures and field
+   condition, and it names runways that are SHUT — "RWYS 12L, 30R CLSD" — or
+   equipment that is out — "GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS",
+   which is what the live 2026-09-04 broadcast carried. None of it is a runway
+   in use.
+   Both spellings of the heading are cut. The FAA redefined NOTAM as "notice to
+   air missions" and D-ATIS text is migrating to it a field at a time, so a
+   broadcast that used the new wording would have had its whole notice section
+   parsed as if it were the flow. */
+function datisClean(seg){ return String(seg).split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/)[0]; }
 function rwyList(s){
  var out=[], m=String(s||'').toUpperCase().match(/\d{1,2}[LRC]?/g)||[];
  m.forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
@@ -226,11 +233,19 @@ function rwyList(s){
    "30L AND 30R" — read only where a RWY or RUNWAY keyword introduces it. That
    keyword is what stops a wind group, a temperature or a remarks code being
    read as a runway. Pass a lead to require one, "DEPTG RWYS 12L, 12R"; pass
-   nothing to take every runway list in the text. */
+   nothing to take every runway list in the text.
+   MSP REPEATS THE KEYWORD on each item: the live 2026-09-04 departure broadcast
+   read "DEPARTING RWY 30L, RWY 30R", not "DEPTG RWYS 30L, 30R". A list that
+   stopped at the first comma read one runway out of two, and on a
+   "DEPARTING RWY 12L, RWY 12R, RWY 17" it dropped the 17 and turned a 12-17
+   into a plain 12s — the same wrong-flow failure as issue #13, one clause
+   further along. So the separator carries an optional repeat of the keyword. */
 var RWY_ONE=/\d{1,2}[LRC]?/.source;
-var RWY_RUN=RWY_ONE+'(?:'+/\s*(?:,|AND)\s*/.source+RWY_ONE+')*';
+var RWY_KEY=/(?:RWYS?|RUNWAYS?)\s+/.source;
+var RWY_SEP=/\s*(?:,|AND)\s*/.source+'(?:'+RWY_KEY+')?';
+var RWY_RUN=RWY_ONE+'(?:'+RWY_SEP+RWY_ONE+')*';
 function rwysAfter(text, lead){
- var re=new RegExp((lead?'(?:'+lead+')'+/\s+/.source:'')+/(?:RWYS?|RUNWAYS?)\s+/.source+'('+RWY_RUN+')','g');
+ var re=new RegExp((lead?'(?:'+lead+')'+/\s+/.source:'')+RWY_KEY+'('+RWY_RUN+')','g');
  var out=[], m;
  while((m=re.exec(String(text||'').toUpperCase())))
   rwyList(m[1]).forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
@@ -270,7 +285,7 @@ function approachRunways(text){
    inside the separator rather than after it, because a trailing \s* outside it
    can give the match a second path and split the list anyway. */
 function approachesInUse(text){
- var notRwy='(?!'+/\s*/.source+RWY_ONE+/\b/.source+')';
+ var notRwy='(?!'+/\s*/.source+'(?:'+RWY_KEY+')?'+RWY_ONE+/\b/.source+')';
  var cut=new RegExp(','+notRwy+/\s*/.source+'|'+/\s+AND/.source+notRwy+/\s+/.source);
  var out=[];
  apchSentences(text).forEach(function(sent){
@@ -2377,6 +2392,7 @@ window.ddb = {
  mixOptions:mixOptions, mixGates:mixGates, seatGates:seatGates,
  parseDatis:parseDatis, datisText:datisText, datisSplit:datisSplit, datisJoined:datisJoined,
  approachesInUse:approachesInUse, approachRunways:approachRunways, rwysAfter:rwysAfter,
+ datisClean:datisClean,
  configFromRunways:configFromRunways, DATIS_SOURCES:DATIS_SOURCES,
  timingSummary:timingSummary, setDraft:function(d){ draft=d; renderEditor(); }, getDraft:function(){ return draft; }
 };

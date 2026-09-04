@@ -807,6 +807,59 @@ try {
         globalThis.ddb.parseDatis(
           'KMSP INFO N. 30005KT 10SM CLR A2995. LNDG RWY 30L, 30R. DEPTG RWY 30L, 30R.').cfg === '30');
     }
+    /* Issue #13, second round. The live broadcast of 2026-09-04 1953Z, pulled
+       verbatim from atis.info, writes the departure list as
+       "DEPARTING RWY 30L, RWY 30R" — the RWY keyword REPEATED on each item,
+       not "DEPTG RWYS 30L, 30R". A list that stopped at the first comma read
+       one runway out of two, and on a 12-17 it dropped the 17 and reported a
+       plain 12s: the same wrong-flow failure one clause further along. */
+    {
+      const arr = 'MSP ARR INFO A 1953Z. 03007G18KT 10SM FEW017 29/22 A2990 (TWO NINER NINER ZERO) ' +
+        'RMK AO2 SLP119 T02890217. VISUAL RWY 30L APCH IN USE, VISUAL RWY 30R APCH IN USE. ' +
+        'NOTICE TO AIRMEN. TWY R4. R5. R6, CLOSED. TWY R BTWN R4 AND R6 CLSD. ' +
+        'GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS. ...ADVS YOU HAVE INFO A.';
+      const dep = 'MSP DEP INFO N 1953Z. 03007G18KT 10SM FEW017 29/22 A2990 (TWO NINER NINER ZERO) ' +
+        'RMK AO2 SLP119 T02890217. DEPARTING RWY 30L, RWY 30R. NOTICE TO AIRMEN. ' +
+        'TWY R4. R5. R6, CLOSED. ...ADVS YOU HAVE INFO N.';
+      const now = globalThis.ddb.parseDatis(globalThis.ddb.datisJoined({datisArr:arr, datisDep:dep}));
+      assert('the live broadcast lands 30L and 30R',
+        now.land.join(',') === '30L,30R', JSON.stringify(now.land));
+      assert('and departs both — a repeated RWY keyword does not end the list',
+        now.dep.join(',') === '30L,30R', JSON.stringify(now.dep));
+      assert('so it is a whole 30s with nothing reported out of service',
+        now.cfg === '30' && !now.partial, JSON.stringify([now.cfg, now.partial]));
+      assert('and the closures after the notices are still not runways in use',
+        now.land.indexOf('12R') < 0 && now.land.indexOf('12L') < 0 && now.dep.indexOf('12R') < 0,
+        JSON.stringify([now.land, now.dep]));
+      assert('the whole observation still reads off the live text',
+        now.atis === 'A' && now.atisDep === 'N' && now.wind === '030/7G18'
+        && now.vis === 10 && now.altim === '2990' && now.missed.length === 0, JSON.stringify(now));
+      /* the configuration this actually threatened */
+      assert('a repeated keyword no longer turns a 12-17 into a plain 12s',
+        globalThis.ddb.parseDatis(
+          'KMSP INFO B. 15012KT 10SM SCT040 A3001. ILS RWY 12L APCH IN USE, ILS RWY 12R APCH IN USE.\n\n' +
+          'KMSP DEP INFO C. 15012KT 10SM SCT040 A3001. DEPARTING RWY 12L, RWY 12R, RWY 17.').cfg === '12-17');
+      assert('both list forms read, repeated keyword or not, comma or AND',
+        globalThis.ddb.rwysAfter('DEPARTING RWY 30L, RWY 30R.', 'DEPART(?:ING)?|DEPTG').join(',') === '30L,30R'
+        && globalThis.ddb.rwysAfter('DEPARTING RWY 30L AND RWY 30R.', 'DEPART(?:ING)?|DEPTG').join(',') === '30L,30R'
+        && globalThis.ddb.rwysAfter('DEPTG RWY 12L, 12R, 17.', 'DEPART(?:ING)?|DEPTG').join(',') === '12L,12R,17'
+        && globalThis.ddb.rwysAfter('DEPARTING RUNWAYS 30L AND 30R.', 'DEPART(?:ING)?|DEPTG').join(',') === '30L,30R');
+      assert('a repeated keyword inside one approach clause keeps that clause whole',
+        JSON.stringify(globalThis.ddb.approachesInUse('SIMUL ILS RWY 30L, RWY 30R APCHS IN USE.'))
+          === '[{"rwys":["30L","30R"],"apch":"SIMUL ILS"}]',
+        JSON.stringify(globalThis.ddb.approachesInUse('SIMUL ILS RWY 30L, RWY 30R APCHS IN USE.')));
+      /* THE PARSE WINDOW — read to the notices and never past them. The FAA
+         redefined NOTAM as "notice to air missions" and D-ATIS text is
+         migrating a field at a time, so both headings have to cut. */
+      assert('the parse window ends at the notices, under either heading',
+        globalThis.ddb.datisClean('ILS RWY 30L APCH IN USE. NOTICE TO AIRMEN. RWY 12R CLSD.').indexOf('12R') < 0
+        && globalThis.ddb.datisClean('ILS RWY 30L APCH IN USE. NOTICE TO AIR MISSIONS. RWY 12R CLSD.').indexOf('12R') < 0
+        && globalThis.ddb.datisClean('ILS RWY 30L APCH IN USE. NOTAMS. RWY 12R CLSD.').indexOf('12R') < 0);
+      assert('an air-missions broadcast does not read its own closures as the flow',
+        globalThis.ddb.parseDatis(
+          'KMSP INFO A. 03007KT 10SM FEW017 A2990. VISUAL RWY 30L APCH IN USE, VISUAL RWY 30R APCH IN USE. ' +
+          'NOTICE TO AIR MISSIONS. GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS.').land.join(',') === '30L,30R');
+    }
     /* the tool is offline first, so each broadcast gets pasted on its own */
     {
       const sp = globalThis.ddb.datisSplit([
