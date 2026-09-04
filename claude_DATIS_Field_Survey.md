@@ -178,7 +178,58 @@ Not decisions to take unilaterally; each one is an owner call.
   none. Anchoring on the flow phrase is what MSP relies on, and ORD does not have one of those
   either.
 
-## 7. Fixtures
+## 7. The observation, for a field with no D-ATIS
+
+Added 2026-09-04, after the survey above. Seventeen of our fields publish no D-ATIS, and the
+weather still matters at every one of them, so the reader fetches an observation there instead.
+
+**`aviationweather.gov` cannot be fetched from a browser.** It serves the METAR for every one
+of these fields and is the right place to *read* one, but it sends **no
+`access-control-allow-origin` header** on any endpoint, so the request is refused from every
+origin. Tested three ways on 2026-09-04 and it fails all three: `curl -D -` shows no CORS
+header on either `/api/data/metar` or `/cgi-bin/data/metar.php`, and a real `fetch()` from a
+served page returns *"blocked by CORS policy"* for both. This corroborates the note already in
+the M98 roadmap — the same host was tried in 2026-09-01 and did not answer.
+
+**`api.weather.gov` is the same National Weather Service data and does send the header**, so
+that is what the button calls: `https://api.weather.gov/stations/<ID>/observations/latest`.
+
+| | |
+|---|---|
+| Fields returning a verbatim `rawMessage` | KOFF, KMLE, KCBF, KGYY, KLOT |
+| Fields with `rawMessage` **empty** but the structured observation complete | KLNK, KDPA, KPWK, KARR, KUGN, KAZO, KGRR, KMKG, KBTL, KBIV, KBZN |
+| Fields with **no reporting station** (404) | **KHLM** — Park Township |
+
+Where `rawMessage` is populated it is used unchanged. Where it is empty the line is **rebuilt**
+from the structured observation, and **the rebuilt line is put in the paste box rather than
+parsed behind your back** — it is the same text you would have pasted, so it can be compared
+against the field's real METAR.
+
+**The conversions were validated against ground truth**, using the stations that return *both*
+forms. Rebuilding those from structured data and comparing to their own `rawMessage`:
+
+```
+KLOT  raw    KLOT 042050Z 20007KT 10SM CLR 34/26 A2991
+      built  KLOT 042050Z 20007KT 10SM CLR 34/26 A2991      identical
+KOFF  raw    KOFF 042055Z 19009KT 10SM FEW120 BKN250 36/23 A2985 RMK AO2A SLP098 ...
+      built  KOFF 042055Z 19009KT 10SM FEW120 BKN250 36/23 A2985
+KCBF  raw    KCBF 042055Z AUTO 21009KT 9SM CLR 35/23 A2986 RMK AO2
+      built  KCBF 042055Z 21009KT 9SM CLR 35/23 A2986
+```
+
+Digit for digit on wind, visibility, cloud layers, temperature, dewpoint and altimeter; the
+only differences are the `AUTO` and `RMK` groups, which the parser ignores. **A null reading is
+omitted rather than guessed** — KGYY's wind is null in the structured feed, so the rebuilt line
+carries no wind group and the reader reports it as unread. That is the intended behaviour.
+
+**This is still ONE network call per tool**, and it stays optional by construction. The button
+asks the source that fits the field — the D-ATIS feed where the field publishes one, the
+observation otherwise — so it is one call with a source that follows the field rather than a
+second network dependency. It is never on a path the tool needs, every failure hands straight
+to the paste box, and the parser it feeds is the same one paste uses. That is the test
+invariant 6 sets, and this passes all three parts of it.
+
+## 8. Fixtures
 
 The raw pulls behind §3 were taken with the recipe in §1 at the times stated. **Take fixture
 text from a live pull, never from a document and never composed by hand** — both rounds of
