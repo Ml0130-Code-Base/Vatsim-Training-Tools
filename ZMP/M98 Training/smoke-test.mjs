@@ -127,16 +127,27 @@ try {
       fail('gate entry distance', g + ' plots at ' + d.toFixed(1) + ' NM, reference says ' + GATE_DME[g]);
   });
   ok('every arrival gate plots at its published distance from the MSP VOR');
-  assert('KKILR and MUSCL merge onto the GREAK tail with NITZR',
+  /* ZMP-M98 LOA Table 2 on the 12s: KKILR, NITZR, BLUEM and TORGY take the 12R
+     transition and BAINY and MUSCL take 12L. So KKILR merges onto the 12R trunk,
+     and MUSCL — on its own CMMOE/FSCOT tail — shares no tail with any gate. */
+  assert('KKILR merges onto the GREAK tail with NITZR, per Table 2',
     globalThis.DD.sharedTail(globalThis.DD.ROUTES.KKILR, globalThis.DD.ROUTES.NITZR).fix === 'GREAK');
+  assert('MUSCL flies its Table 2 12L tail and shares no tail with the 12R gates',
+    globalThis.DD.ROUTES.MUSCL.slice(-2).map(p => p.f).join(',') === 'CMMOE,FSCOT'
+    && ['NITZR','BLUEM','KKILR','TORGY','BAINY'].every(g =>
+         globalThis.DD.sharedTail(globalThis.DD.ROUTES.MUSCL, globalThis.DD.ROUTES[g]) === null),
+    globalThis.DD.ROUTES.MUSCL.map(p => p.f).join(','));
   assert('BAINY shares no tail with TORGY, so they are never compared in trail',
     globalThis.DD.sharedTail(globalThis.DD.ROUTES.BAINY, globalThis.DD.ROUTES.TORGY) === null);
   assert('every gate has a floor and a stated basis for it',
     Object.keys(globalThis.DD.ROUTES).every(g => globalThis.DD.FLOORS[g] && globalThis.DD.FLOOR_BASIS[g]));
-  /* near/far derived from SOP 4-4c(7): KKILR, MUSCL, NITZR, BLUEM near; TORGY, BAINY far */
+  /* near/far on a 12s, owner-verified: TORGY and BAINY are the near gates at
+     7,000, and NITZR, BLUEM, KKILR and MUSCL are far at 8,000. This assertion
+     was the wrong way round until 2026-09-04 — it was left behind by the
+     near/far correction and never caught, because the harness has never run. */
   assert('the near gates sit at 7,000 and the far gates at 8,000',
-    ['NITZR','BLUEM','KKILR','MUSCL'].every(g => globalThis.DD.FLOORS[g] === 7000)
-    && ['TORGY','BAINY'].every(g => globalThis.DD.FLOORS[g] === 8000),
+    ['TORGY','BAINY'].every(g => globalThis.DD.FLOORS[g] === 7000)
+    && ['NITZR','BLUEM','KKILR','MUSCL'].every(g => globalThis.DD.FLOORS[g] === 8000),
     JSON.stringify(globalThis.DD.FLOORS));
   assert('and each basis says it is derived, with Appendix A unread',
     Object.keys(globalThis.DD.FLOORS).every(g => globalThis.DD.FLOOR_BASIS[g].indexOf('4-4c(7)') >= 0));

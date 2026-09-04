@@ -285,9 +285,23 @@ var ROUTES = {
   {f:'SPUKI', lat:44.89850, lon:-93.70417, at:7000, spd:230},
   {f:'KRUGG', lat:44.92333, lon:-93.67283, at:7000, spd:210}
  ],
- /* KKILR and MUSCL take the 12R/35 transition and merge onto the same
-    GREAK/TIETN tail as NITZR and BLUEM. BAINY has its own 12L/12R tail
-    ending at KAYQU and never touches the trunk. */
+ /* Runway transitions are assigned by ZMP, not chosen here — ZMP-M98 LOA
+    Table 2. On the 12s that table reads BAINY 12L, MUSCL 12L, KKILR 12R,
+    NITZR 12R, BLUEM 12R, TORGY 12R, and the routes below are the 12s set.
+      KKILR takes the 12R/35 transition and merges onto the GREAK/TIETN
+    trunk with NITZR and BLUEM. SOP 4-5 reads the same way round — it
+    exempts a KKILR landing 12R from counting as a far-gate crossover.
+      MUSCL takes the 12L transition, CMMOE/FSCOT. It shares the common
+    BAYKS/WOLVS/LOOON/WDBRY/ZASKY spine with its own 12R variant but splits
+    after ZASKY, so it shares NO tail with the 12R gates and is never
+    measured in trail against them — and the LOA separates those cases:
+    5 NM in-trail on the same STAR, 7 NM staggered on parallel STARs.
+    Corrected 2026-09-04. MUSCL had been carrying the 12R tail, which drew
+    it on the wrong lateral path and merged it into a stream Table 2 never
+    assigns it to, while crossoverFor() was already calling a MUSCL to 12R
+    a far-gate crossover. Geometry and coordination now agree.
+      BAINY has one tail serving both 12L and 12R, ending at KAYQU, and
+    never touches the trunk. */
  KKILR: [
   {f:'KKILR', lat:44.85283, lon:-92.18567, aa:12000, spd:280},
   {f:'HUGGI', lat:44.86117, lon:-92.32300, aa:10000, spd:280},   /* 280 or slower cap */
@@ -303,8 +317,8 @@ var ROUTES = {
   {f:'LOOON', lat:44.98200, lon:-92.71133, aa:11000},
   {f:'WDBRY', lat:44.94517, lon:-92.93933, aa:10000, spd:250},
   {f:'ZASKY', lat:44.93033, lon:-93.03083, aa:9000},
-  {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
-  {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+  {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
+  {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
  ],
  BAINY: [
   {f:'BAINY', lat:45.75367, lon:-93.69950, aa:15000, spd:280},
