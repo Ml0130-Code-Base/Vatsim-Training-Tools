@@ -115,7 +115,8 @@ byte-identical in three folders, `claude_Enroute_vs_Terminal_Reference.md` in tw
 `claude_ZMP_Handoff_ID_Reference.md` in three (`ZMP/ZMP/`, `ZMP/R90/`, `ZMP/M98 Training/`), on
 purpose: no facility folder may depend on another folder's files, because folders get worked
 on, moved and cleared independently. **The cost is that a change to a shared doc must land in
-every copy in the same commit.** Check with `md5sum` before assuming they are still in sync.
+every copy in the same commit** — the one commit permitted to cross an ARTCC boundary, and it
+carries nothing else (§14). Check with `md5sum` before assuming they are still in sync.
 
 Cross-facility material that is genuinely one thing lives at the ARTCC level:
 `ZLC/_shared/` for the position and frequency reference the whole centre uses,
@@ -580,10 +581,73 @@ already HTTPS, so nothing is blocked as mixed content.
 
 ---
 
-## 14. Session hygiene
+## 14. Session hygiene, and the commit boundary
 
 - **Commit after each completed subtask.**
 - **When aviation data is involved, cite which document and which paragraph the number came
   from in the commit message.**
 - Long sessions: `/clear` and let the facility `CLAUDE.md` re-anchor context. That is what
   those files are for, and it is why they are written to be read cold.
+
+### One commit touches one ARTCC
+
+**`ZMP/`, `ZAU/` and `ZLC/` are the three trees, and no commit touches two of them.** A session
+that works ZMP and then works ZAU produces two commits, in either order. Finishing a session in
+a single commit is not a reason to cross the boundary — splitting is always the cheaper side of
+that trade.
+
+**Underlay facilities are not a second boundary.** Everything under one ARTCC may share a
+commit: M98, R90 and ZMP Center are all `ZMP/`, so a change spanning them is one commit, and
+the same holds for C90 + AZO under `ZAU/` and S56 + Big Sky under `ZLC/`. The ARTCC-level
+folders belong to their own tree and travel with it — `ZLC/_shared/`, `ZAU/_shared/`,
+`ZMP/_vnas/`.
+
+**Why:** §2 keeps shared documents as copies rather than links because folders get worked on,
+moved and cleared independently. The same reasoning governs the history. A cross-ARTCC commit
+makes `git log -- ZLC/` misreport when ZLC changed, and it makes reverting one facility's work
+drag another facility's out with it. Two commits already in the history do exactly this —
+`7b781f4` vendors ZLC and ZAU geometry together, and `048aa73` moves ZLC, ZAU and R90 at once.
+They are the reason for the rule, not a precedent for it: under it, `7b781f4` would have been
+three commits — the root reference document, then ZLC, then ZAU.
+
+**Repo-level files are not a facility, and they do not launder a cross-ARTCC commit.** Root
+`CLAUDE.md`, `claude_CRC_Platform_Reference.md`, `claude_Community_Geometry_Sources.md` and the
+site harness (`build-site.sh`, `serve-site.ps1`, `publish-site.ps1`, `site/index.html`,
+`.gitignore`) may ride along with one ARTCC's commit when the change came out of that work — a
+house rule learned at C90 lands with the C90 change that taught it. A root change that stands
+on its own, or that came out of work in two trees, is its own commit and touches no facility
+folder.
+
+**One declared exception: a synchronised shared-document update.** §2 requires every copy of a
+copied document to land in the same commit, and once a copy exists under two ARTCCs that commit
+has to cross. When it does, **it carries the sync and nothing else** — identical bytes in every
+copy, `md5sum` checked, no facility work riding along. All three copied documents
+(`claude_US_Carrier_Callsigns.md`, `claude_Enroute_vs_Terminal_Reference.md`,
+`claude_ZMP_Handoff_ID_Reference.md`) currently live entirely under `ZMP/`, so the exception is
+not yet live; it goes live the first time step 8 of §10 puts a callsign copy in `ZAU/` or
+`ZLC/`.
+
+**There is no second exception.** A mechanical edit that happens to touch two trees — a licence
+line in both `ATTRIBUTION.md` files, a link fix, a rename — splits by tree. That is the
+cheapest kind of change to commit twice.
+
+**Stage by path when a session's work already spans trees.** Never `git add -A`:
+
+```bash
+git add ZMP/ && git commit -m "Add the R90 scratchpad drill"
+git add ZAU/ && git commit -m "Move the C90 capture-point slot to partial"
+```
+
+**Check before every commit.** This prints one tree name, plus at most the repo-level files:
+
+```bash
+git diff --cached --name-only | cut -d/ -f1 | sort -u
+```
+
+**Name the scope in the subject line** — the ARTCC, or the facilities inside it. *"Wire the
+VATGlasses ZAU footprint into the C90 and AZO decks"* reads correctly under this rule;
+*"Vendor ZLC/ZAU sector geometry"* announces the violation.
+
+**The public site repository is outside this rule.** `publish-site.ps1` mirrors the staged
+tools into `vatsim-training-tools-site`; its commits are publish snapshots of all seven tools
+at once, written by the script rather than by hand, and they are not facility work (§13).
