@@ -121,12 +121,12 @@ function capAt(g, dist){
  return DD.FLOORS[g];
 }
 function fixAt(g, dist){
- var r=routeOf(g), best=null;
+ var r=routeOf(g), best=null; if(!r) return null;
  for(var i=0;i<r.length;i++){ if(r[i].cum>=dist-0.05){ best=r[i].f; break; } }
  return best||r[r.length-1].f;
 }
 function pubSpdAt(g, dist){
- var r=routeOf(g), sp=null;
+ var r=routeOf(g), sp=null; if(!r) return null;
  for(var i=0;i<r.length;i++){ if(r[i].cum<=dist && r[i].spd) sp=r[i].spd; }
  if(sp==null){ for(var j=0;j<r.length;j++){ if(r[j].spd){ sp=r[j].spd; break; } } }
  return sp||280;
@@ -307,11 +307,12 @@ function parseDatis(raw){
 }
 /* the arrival ladders the engine actually carries */
 function engineRunways(){ return RWYS; }
-function configCarried(cfg){
- var c=configById(cfg);
- for(var i=0;i<c.land.length;i++){ if(RWYS.indexOf(c.land[i])>=0) return true; }
- return false;
-}
+/* Whether the engine has arrival geometry for a configuration. It does when
+   ZMP-M98 LOA Table 2 gives that configuration a row of runway transitions —
+   12, 12-17, 30, 30-17, 30-35 and 17-22 — and it does not for 4, 22, 4-35 or
+   the 30/12 noise default, which Table 2 never names. This is not a runway
+   test: the question is whether ZMP assigns transitions, not what M98 lands. */
+function configCarried(cfg){ return DD.flowCarried(cfg); }
 
 /* Callsign voicing — claude_US_Carrier_Callsigns.md.
    Flight numbers group in twos; registrations spell straight; zero is
@@ -836,7 +837,7 @@ function gen(o){
       already wrong (SOP 4-4c(3)) */
    var base = Math.max(DD.FLOORS[gate], pub==null?0:pub);
    r.alt = Math.max(DD.FLOORS[gate], Math.min(24000, Math.round((base+margin)/100)*100));
-   r.ias = Math.round(pubSpdAt(gate, total-r.dtg));
+   r.ias = Math.round(pubSpdAt(gate, total-r.dtg)||280);
    if(focus==='sep' && i===1){ r.alt=ac[0].alt; r.ias=ac[0].ias+ri(rnd,20,40); }
    if(focus==='speed'){ r.mode='assigned'; r.asg=pick(rnd,[210,220,230,250]); r.ias=r.asg; }
    /* heavy jets take the 12R/30L transition in every config — ZMP Table 2c.
@@ -999,7 +1000,8 @@ function validate(rec){
   if(rec.vis!=null && rec.vis<cfg.min.vis) errs.push(cfg.id+' needs visibility of at least '+cfg.min.vis+' miles and you have set '+rec.vis+' ('+cfg.src+').');
  }
  if(cat!=='VFR') warns.push('Flight category is '+cat+'. '+TOOLBOX[cat]+' Whatever you had planned on a visual, plan again.');
- if(!configCarried(rec.cfg)) warns.push('The engine only carries the 12s arrival ladders, so the strips will fly NITZR, BLUEM and TORGY to '+RWYS.join(' / ')+' whatever the configuration line says. Everything else about the frame is real — brief it, work it, and know the geometry underneath is the 12s.');
+ if(!configCarried(rec.cfg)) warns.push('ZMP-M98 LOA Table 2 has no row for the '+configById(rec.cfg).id+' configuration, so the engine carries no arrival ladders for it and the scope draws no gate geometry. Table 2 covers 12, 12-17, 30, 30-17, 30-35 and 17-22. Everything else about the frame is real — brief it and work it — but which transition ZMP assigns here is not in the document, and the tool will not guess it from the landing runways.');
+ if(DD.TABLE2_FOOTNOTE[rec.cfg]) warns.push(DD.TABLE2_FOOTNOTE[rec.cfg]);
  (rec.ac||[]).forEach(function(a,i){
   var rules=(a.rules==='VFR')?'VFR':'IFR';
   var tag2=(a.cs||'Strip '+(i+1));
@@ -1276,6 +1278,12 @@ function readEditor(){
  var gc=function(id){ var e=document.getElementById(id); return !!(e&&e.checked); };
  draft.name=g('ddb-name')||draft.name;
  draft.cfg=g('ddb-cfg')||draft.cfg;
+ /* The arrival ladders follow the flow. ZMP-M98 LOA Table 2 assigns a runway
+    transition per gate per configuration, so changing the configuration
+    changes the geometry the scope draws, the tails the in-trail check pairs
+    on, and the floors the builder enforces. Idempotent and cheap — setFlow
+    returns immediately when the requested flow is already loaded. */
+ DD.setFlow(draft.cfg);
  draft.wind=g('ddb-wind')||draft.wind;
  draft.ceil=num(g('ddb-ceil'), draft.ceil);
  draft.vis=num(g('ddb-vis'), draft.vis);
@@ -1378,6 +1386,17 @@ function rowContext(a){
  }
  var total=totalOf(a.gate)||0, dist=Math.max(0,total-a.dtg);
  var cfgId=(draft&&draft.cfg)||'12', ow=DD.feederFor(cfgId, a.gate);
+ /* A gate with no ladder in this flow describes the gap rather than measuring
+    against a route that is not there. Two ways to land here: Table 2 has no
+    row for the configuration at all, or it marks this gate N/A — KKILR on a
+    17-22, where the arrival is prohibited outright (ZMP-M98 LOA 5.b(3)). */
+ if(!DD.ROUTES[a.gate]){
+  return a.gate+' has no arrival ladder in the '+cfgId+' configuration — '
+   +(DD.flowCarried(cfgId)
+     ? 'ZMP-M98 LOA Table 2 marks it N/A here, so the arrival is not flown in this configuration'
+     : 'ZMP-M98 LOA Table 2 has no row for this configuration, so which transition ZMP assigns is not documented')
+   +'. No ladder distance, published altitude or floor is asserted.';
+ }
  var toRwy=DD.runwaysAt(dest).filter(function(rw){ return DD.sideOfRunway(rw); }).map(function(rw){
   var v=DD.receiverFor({role:'arrival', gate:a.gate, rwy:rw}), x=DD.crossoverFor(a.gate, rw, cfgId);
   return rw+' → '+v.name+' '+v.frq+(x.type!=='none'?(' ('+x.type+'-gate crossover)'):'');

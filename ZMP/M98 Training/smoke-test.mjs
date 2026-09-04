@@ -152,6 +152,78 @@ try {
   assert('and each basis says it is derived, with Appendix A unread',
     Object.keys(globalThis.DD.FLOORS).every(g => globalThis.DD.FLOOR_BASIS[g].indexOf('4-4c(7)') >= 0));
 
+  /* ============ 3b. The flow — ZMP-M98 LOA Table 2 ============
+     ROUTES holds one configuration at a time. Every assertion after this
+     section assumes the 12s, so this block restores it before it ends. */
+  assert('Table 2 carries exactly the six rows the document has',
+    Object.keys(globalThis.DD.TABLE2).join(',') === '12,12-17,30,30-17,30-35,17-22',
+    Object.keys(globalThis.DD.TABLE2).join(','));
+  assert('Table 2 on the 12s: MUSCL and BAINY 12L, the other four 12R',
+    ['MUSCL','BAINY'].every(g => globalThis.DD.TABLE2['12'][g] === '12L')
+    && ['NITZR','BLUEM','TORGY','KKILR'].every(g => globalThis.DD.TABLE2['12'][g] === '12R'));
+  assert('Table 2 on the 30s: MUSCL and BAINY 30R, the other four 30L',
+    ['MUSCL','BAINY'].every(g => globalThis.DD.TABLE2['30'][g] === '30R')
+    && ['NITZR','BLUEM','TORGY','KKILR'].every(g => globalThis.DD.TABLE2['30'][g] === '30L'));
+
+  globalThis.DD.setFlow('30');
+  assert('the 30s loads all six gates, in the same order as the 12s',
+    globalThis.DD.routeCfg() === '30'
+    && Object.keys(globalThis.DD.ROUTES).join(',') === 'NITZR,BLUEM,TORGY,KKILR,MUSCL,BAINY',
+    globalThis.DD.routeCfg() + ' / ' + Object.keys(globalThis.DD.ROUTES).join(','));
+  assert('every 30s gate still plots at its published distance from the MSP VOR',
+    Object.keys(GATE_DME).every(g => {
+      const p = globalThis.DD.ROUTES[g][0];
+      return Math.abs(Math.sqrt(p.e*p.e + p.n*p.n) - GATE_DME[g]) <= 2;
+    }));
+  assert('the 30s ladders end where the STAR reference says they do',
+    globalThis.DD.ROUTES.NITZR.slice(-2).map(p=>p.f).join(',') === 'CANDD,HAPTN'
+    && globalThis.DD.ROUTES.BLUEM.slice(-2).map(p=>p.f).join(',') === 'CANDD,HAPTN'
+    && globalThis.DD.ROUTES.TORGY.slice(-2).map(p=>p.f).join(',') === 'MAUER,LEDRZ'
+    && globalThis.DD.ROUTES.KKILR.slice(-2).map(p=>p.f).join(',') === 'STUWE,GEEQU'
+    && globalThis.DD.ROUTES.MUSCL.slice(-2).map(p=>p.f).join(',') === 'KROIX,TRTEL'
+    && globalThis.DD.ROUTES.BAINY.slice(-2).map(p=>p.f).join(',') === 'PRRPL,OSMOH');
+  /* On the 30s NITZR and BLUEM genuinely merge, which is the mirror of KKILR
+     and NITZR merging on the 12s. MUSCL is on its own tail in both flows. */
+  assert('NITZR and BLUEM merge at CANDD on the 30s, and MUSCL shares no tail',
+    globalThis.DD.sharedTail(globalThis.DD.ROUTES.NITZR, globalThis.DD.ROUTES.BLUEM).fix === 'CANDD'
+    && ['NITZR','BLUEM','TORGY','KKILR','BAINY'].every(g =>
+         globalThis.DD.sharedTail(globalThis.DD.ROUTES.MUSCL, globalThis.DD.ROUTES[g]) === null));
+  /* Near and far belong to the flow: the 12s answer reverses on the 30s, and
+     the floors have to reverse with it or the two have drifted apart. */
+  assert('the floors reverse on the 30s',
+    ['NITZR','BLUEM','KKILR','MUSCL'].every(g => globalThis.DD.FLOORS[g] === 7000)
+    && ['TORGY','BAINY'].every(g => globalThis.DD.FLOORS[g] === 8000),
+    JSON.stringify(globalThis.DD.FLOORS));
+
+  /* A configuration Table 2 has no row for gets no geometry at all, rather
+     than borrowing another flow's. 4, 22, 4-35 and the 30/12 noise default. */
+  ['4','22','4-35','30/12'].forEach(c => {
+    globalThis.DD.setFlow(c);
+    if (globalThis.DD.routeCfg() !== null || Object.keys(globalThis.DD.ROUTES).length !== 0)
+      fail('uncarried configuration invents geometry', c + ' gave ' + globalThis.DD.routeCfg());
+    if (globalThis.DD.flowCarried(c)) fail('uncarried configuration reports carried', c);
+  });
+  ok('the four configurations Table 2 does not name carry no arrival geometry');
+
+  /* KKILR and WILDD arrivals are prohibited entirely on a 17-22 (LOA 5.b(3)),
+     which Table 2 records as N/A — so the gate must be absent, not empty. */
+  globalThis.DD.setFlow('17-22');
+  assert('KKILR is absent on a 17-22 and the other five load',
+    !globalThis.DD.ROUTES.KKILR
+    && Object.keys(globalThis.DD.ROUTES).join(',') === 'NITZR,BLUEM,TORGY,MUSCL,BAINY',
+    Object.keys(globalThis.DD.ROUTES).join(','));
+
+  /* An assigned runway overrides the Table 2 transition — that is a crossover,
+     and for most gate/runway pairs it is a real lateral reroute. */
+  globalThis.DD.setFlow('12');
+  assert('an assigned runway re-paths the gate off its Table 2 transition',
+    globalThis.DD.transitionFor('12','MUSCL') === '12L'
+    && globalThis.DD.ladderFor('12','MUSCL',null).slice(-2).map(p=>p.f).join(',') === 'CMMOE,FSCOT'
+    && globalThis.DD.ladderFor('12','MUSCL','12R').slice(-2).map(p=>p.f).join(',') === 'GREAK,TIETN');
+  assert('and the flow is back on the 12s for everything that follows',
+    globalThis.DD.routeCfg() === '12'
+    && globalThis.DD.ROUTES.MUSCL.slice(-2).map(p=>p.f).join(',') === 'CMMOE,FSCOT');
+
   /* the feeder north/south split — SOP 4-4d */
   assert('the 12s split puts BAINY, MUSCL and KKILR north and the rest south',
     globalThis.DD.FEEDER_SPLIT['12'].N.join(',') === 'BAINY,MUSCL,KKILR'

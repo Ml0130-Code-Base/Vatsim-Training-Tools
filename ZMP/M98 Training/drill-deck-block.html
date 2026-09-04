@@ -126,69 +126,235 @@ function trunkFor(gate){
   if(p.f==='SAVVG'){ q.at = (gate==='BLUEM')?9000:10000; } else { if(p.aa)q.aa=p.aa; if(p.at)q.at=p.at; }
   return q; });
 }
-var ROUTES = {
- NITZR: [
-  {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
-  {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
-  {f:'DAHRL', lat:44.36483, lon:-93.36683},
-  {f:'GDNEE', lat:44.51133, lon:-93.26633}
- ].concat(trunkFor('NITZR')),
- BLUEM: [
-  {f:'BLUEM', lat:44.18133, lon:-93.22383, aa:10000, spd:280},
-  {f:'HHAMR', lat:44.28433, lon:-93.21433, aa:10000, spd:280},
-  {f:'FARBO', lat:44.37450, lon:-93.20733}
- ].concat(trunkFor('BLUEM')),
- TORGY: [
-  {f:'TORGY', lat:44.64350, lon:-94.37533, aa:13000, spd:280},
-  {f:'OFSON', lat:44.67367, lon:-94.24133, aa:11000, spd:280},
-  {f:'HMBRG', lat:44.70117, lon:-94.11950, aa:10000, spd:280},
-  {f:'CONIA', lat:44.75283, lon:-93.88800},
-  {f:'SPUKI', lat:44.89850, lon:-93.70417, at:7000, spd:230},
-  {f:'KRUGG', lat:44.92333, lon:-93.67283, at:7000, spd:210}
- ],
- /* Runway transitions are assigned by ZMP, not chosen here — ZMP-M98 LOA
-    Table 2. On the 12s that table reads BAINY 12L, MUSCL 12L, KKILR 12R,
-    NITZR 12R, BLUEM 12R, TORGY 12R, and the routes below are the 12s set.
-      KKILR takes the 12R/35 transition and merges onto the GREAK/TIETN
-    trunk with NITZR and BLUEM. SOP 4-5 reads the same way round — it
-    exempts a KKILR landing 12R from counting as a far-gate crossover.
-      MUSCL takes the 12L transition, CMMOE/FSCOT. It shares the common
-    BAYKS/WOLVS/LOOON/WDBRY/ZASKY spine with its own 12R variant but splits
-    after ZASKY, so it shares NO tail with the 12R gates and is never
-    measured in trail against them — and the LOA separates those cases:
-    5 NM in-trail on the same STAR, 7 NM staggered on parallel STARs.
-    Corrected 2026-09-04. MUSCL had been carrying the 12R tail, which drew
-    it on the wrong lateral path and merged it into a stream Table 2 never
-    assigns it to, while crossoverFor() was already calling a MUSCL to 12R
-    a far-gate crossover. Geometry and coordination now agree.
-      BAINY has one tail serving both 12L and 12R, ending at KAYQU, and
-    never touches the trunk. */
- KKILR: [
-  {f:'KKILR', lat:44.85283, lon:-92.18567, aa:12000, spd:280},
-  {f:'HUGGI', lat:44.86117, lon:-92.32300, aa:10000, spd:280},   /* 280 or slower cap */
-  {f:'KRISP', lat:44.86917, lon:-92.48683},
-  {f:'AFTYN', lat:44.86450, lon:-92.79700, aa:10000, spd:250},
-  {f:'JONZY', lat:44.84117, lon:-93.00983, aa:9000},
-  {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
-  {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
- ],
- MUSCL: [
-  {f:'BAYKS', lat:45.06050, lon:-92.21483, aa:12000, spd:280},
-  {f:'WOLVS', lat:45.00417, lon:-92.57300},
-  {f:'LOOON', lat:44.98200, lon:-92.71133, aa:11000},
-  {f:'WDBRY', lat:44.94517, lon:-92.93933, aa:10000, spd:250},
-  {f:'ZASKY', lat:44.93033, lon:-93.03083, aa:9000},
-  {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
-  {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
- ],
- BAINY: [
-  {f:'BAINY', lat:45.75367, lon:-93.69950, aa:15000, spd:280},
-  {f:'LUCCY', lat:45.58450, lon:-93.60900, aa:11000, spd:280},
-  {f:'SAUGR', lat:45.34850, lon:-93.48117},
-  {f:'OGLVE', lat:45.31483, lon:-93.48200, aa:8000},
-  {f:'KAYQU', lat:45.18000, lon:-93.48600, at:7000, spd:210}
- ]
-};
+ /* ---------- Arrival ladders, by gate and by runway transition ----------
+    Fixes, coordinates and crossing/speed restrictions transcribed from
+    claude_MSP_STAR_Reference.md — "By arrival & runway transition" for the
+    restrictions and "Full fix coordinates (as provided)" for the positions.
+    aa = cross at-or-above (ft), at = cross at (ft), spd = published speed (kt).
+
+    A gate does not pick its transition: ZMP assigns it, per ZMP-M98 LOA
+    Table 2, which is TABLE2 below. Where the source groups several runways
+    onto one published tail — MUSCL 30L and 30R are a single ladder, NITZR 22
+    is its 12R ladder — the same array is listed under each runway it serves,
+    so a lookup never has to know which grouping the document used.
+    buildRoutes() clones before it finalizes, so sharing an array here is safe.
+
+    Every fix is written out per gate even where two gates cross the same one
+    (CANDD and HAPTN sit on both NITZR and BLUEM), because finalize() writes
+    cumulative distance onto the fix object and a shared object would carry one
+    gate's distances into the other.
+
+    SAVVG is the one arrival-specific altitude — 9,000 on BLUEM, 10,000 on
+    NITZR — so it is written into each ladder rather than shared. */
+ var LADDER = (function(){
+  var nitzr12R = [
+   {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
+   {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
+   {f:'DAHRL', lat:44.36483, lon:-93.36683},
+   {f:'GDNEE', lat:44.51133, lon:-93.26633},
+   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+   {f:'SAVVG', lat:44.69167, lon:-93.21933, at:10000},
+   {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
+   {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+  ];
+  var nitzr12L = [
+   {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
+   {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
+   {f:'DAHRL', lat:44.36483, lon:-93.36683},
+   {f:'GDNEE', lat:44.51133, lon:-93.26633},
+   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+   {f:'SAVVG', lat:44.69167, lon:-93.21933, at:10000},
+   {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
+   {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
+  ];
+  var nitzr30 = [
+   {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
+   {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
+   {f:'DAHRL', lat:44.36483, lon:-93.36683},
+   {f:'AANAH', lat:44.39450, lon:-93.34583, at:10000, spd:250},
+   {f:'WBSTR', lat:44.47583, lon:-93.28733, at:8000, spd:250},
+   {f:'CANDD', lat:44.60633, lon:-93.01417, at:7000, spd:230},
+   {f:'HAPTN', lat:44.62833, lon:-92.99183, at:7000, spd:210}
+  ];
+  var bluem12R = [
+   {f:'BLUEM', lat:44.18133, lon:-93.22383, aa:10000, spd:280},
+   {f:'HHAMR', lat:44.28433, lon:-93.21433, aa:10000, spd:280},
+   {f:'FARBO', lat:44.37450, lon:-93.20733},
+   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+   {f:'SAVVG', lat:44.69167, lon:-93.21933, at:9000},
+   {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
+   {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+  ];
+  var bluem12L = [
+   {f:'BLUEM', lat:44.18133, lon:-93.22383, aa:10000, spd:280},
+   {f:'HHAMR', lat:44.28433, lon:-93.21433, aa:10000, spd:280},
+   {f:'FARBO', lat:44.37450, lon:-93.20733},
+   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+   {f:'SAVVG', lat:44.69167, lon:-93.21933, at:9000},
+   {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
+   {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
+  ];
+  /* NOFLD is published as an 8,000-9,000 window ("NOFLD 8-9/250"). Only the
+     floor is carried, because at-or-above is all the engine grades; the window
+     itself stays in claude_MSP_STAR_Reference.md. */
+  var bluem30 = [
+   {f:'BLUEM', lat:44.18133, lon:-93.22383, aa:10000, spd:280},
+   {f:'HHAMR', lat:44.28433, lon:-93.21433, aa:10000, spd:280},
+   {f:'FARBO', lat:44.37450, lon:-93.20733},
+   {f:'NOFLD', lat:44.43117, lon:-93.18900, aa:8000, spd:250},
+   {f:'CANDD', lat:44.60633, lon:-93.01417, at:7000, spd:230},
+   {f:'HAPTN', lat:44.62833, lon:-92.99183, at:7000, spd:210}
+  ];
+  var torgy12 = [
+   {f:'TORGY', lat:44.64350, lon:-94.37533, aa:13000, spd:280},
+   {f:'OFSON', lat:44.67367, lon:-94.24133, aa:11000, spd:280},
+   {f:'HMBRG', lat:44.70117, lon:-94.11950, aa:10000, spd:280},
+   {f:'CONIA', lat:44.75283, lon:-93.88800},
+   {f:'SPUKI', lat:44.89850, lon:-93.70417, at:7000, spd:230},
+   {f:'KRUGG', lat:44.92333, lon:-93.67283, at:7000, spd:210}
+  ];
+  var torgy30L = [
+   {f:'TORGY', lat:44.64350, lon:-94.37533, aa:13000, spd:280},
+   {f:'OFSON', lat:44.67367, lon:-94.24133, aa:11000, spd:280},
+   {f:'HMBRG', lat:44.70117, lon:-94.11950, aa:10000, spd:280},
+   {f:'CONIA', lat:44.75283, lon:-93.88800},
+   {f:'JAEDN', lat:44.78900, lon:-93.72650, aa:10000, spd:250},
+   {f:'HDEEE', lat:44.85400, lon:-93.43100, aa:9000},
+   {f:'MAUER', lat:44.78167, lon:-93.26433, at:8000, spd:210},
+   {f:'LEDRZ', lat:44.75567, lon:-93.20433, at:8000, spd:210}
+  ];
+  var torgy30R = [
+   {f:'TORGY', lat:44.64350, lon:-94.37533, aa:13000, spd:280},
+   {f:'OFSON', lat:44.67367, lon:-94.24133, aa:11000, spd:280},
+   {f:'HMBRG', lat:44.70117, lon:-94.11950, aa:10000, spd:280},
+   {f:'CONIA', lat:44.75283, lon:-93.88800},
+   {f:'JAEDN', lat:44.78900, lon:-93.72650, aa:10000, spd:250},
+   {f:'HDEEE', lat:44.85400, lon:-93.43100, aa:9000},
+   {f:'WILKN', lat:44.97800, lon:-93.14167, at:8000, spd:210},
+   {f:'OSMOH', lat:44.96383, lon:-93.10950, at:8000, spd:210}
+  ];
+  var kkilr12R = [
+   {f:'KKILR', lat:44.85283, lon:-92.18567, aa:12000, spd:280},
+   {f:'HUGGI', lat:44.86117, lon:-92.32300, aa:10000, spd:280},
+   {f:'KRISP', lat:44.86917, lon:-92.48683},
+   {f:'AFTYN', lat:44.86450, lon:-92.79700, aa:10000, spd:250},
+   {f:'JONZY', lat:44.84117, lon:-93.00983, aa:9000},
+   {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
+   {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+  ];
+  var kkilr12L = [
+   {f:'KKILR', lat:44.85283, lon:-92.18567, aa:12000, spd:280},
+   {f:'HUGGI', lat:44.86117, lon:-92.32300, aa:10000, spd:280},
+   {f:'KRISP', lat:44.86917, lon:-92.48683},
+   {f:'AFTYN', lat:44.86450, lon:-92.79700, aa:10000, spd:250},
+   {f:'COOBA', lat:44.90150, lon:-92.91300, aa:9000},
+   {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
+   {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
+  ];
+  var kkilr30 = [
+   {f:'KKILR', lat:44.85283, lon:-92.18567, aa:12000, spd:280},
+   {f:'HUGGI', lat:44.86117, lon:-92.32300, aa:10000, spd:280},
+   {f:'KRISP', lat:44.86917, lon:-92.48683},
+   {f:'STUWE', lat:44.81317, lon:-92.64000, at:7000},
+   {f:'GEEQU', lat:44.77083, lon:-92.75533, at:7000, spd:210}
+  ];
+  var muscl12L = [
+   {f:'BAYKS', lat:45.06050, lon:-92.21483, aa:12000, spd:280},
+   {f:'WOLVS', lat:45.00417, lon:-92.57300},
+   {f:'LOOON', lat:44.98200, lon:-92.71133, aa:11000},
+   {f:'WDBRY', lat:44.94517, lon:-92.93933, aa:10000, spd:250},
+   {f:'ZASKY', lat:44.93033, lon:-93.03083, aa:9000},
+   {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
+   {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
+  ];
+  var muscl12R = [
+   {f:'BAYKS', lat:45.06050, lon:-92.21483, aa:12000, spd:280},
+   {f:'WOLVS', lat:45.00417, lon:-92.57300},
+   {f:'LOOON', lat:44.98200, lon:-92.71133, aa:11000},
+   {f:'WDBRY', lat:44.94517, lon:-92.93933, aa:10000, spd:250},
+   {f:'ZASKY', lat:44.93033, lon:-93.03083, aa:9000},
+   {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
+   {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
+  ];
+  var muscl30 = [
+   {f:'BAYKS', lat:45.06050, lon:-92.21483, aa:12000, spd:280},
+   {f:'WOLVS', lat:45.00417, lon:-92.57300},
+   {f:'LKLND', lat:44.96733, lon:-92.62333, aa:8000},
+   {f:'KROIX', lat:44.89000, lon:-92.72933, at:7000, spd:230},
+   {f:'TRTEL', lat:44.86600, lon:-92.76200, at:7000, spd:210}
+  ];
+  var bainy12 = [
+   {f:'BAINY', lat:45.75367, lon:-93.69950, aa:15000, spd:280},
+   {f:'LUCCY', lat:45.58450, lon:-93.60900, aa:11000, spd:280},
+   {f:'SAUGR', lat:45.34850, lon:-93.48117},
+   {f:'OGLVE', lat:45.31483, lon:-93.48200, aa:8000},
+   {f:'KAYQU', lat:45.18000, lon:-93.48600, at:7000, spd:210}
+  ];
+  var bainy30R = [
+   {f:'BAINY', lat:45.75367, lon:-93.69950, aa:15000, spd:280},
+   {f:'LUCCY', lat:45.58450, lon:-93.60900, aa:11000, spd:280},
+   {f:'SAUGR', lat:45.34850, lon:-93.48117},
+   {f:'GEP',   lat:45.14567, lon:-93.37317, aa:10000, spd:250},
+   {f:'PRRPL', lat:45.05233, lon:-93.31467, aa:9000},
+   {f:'OSMOH', lat:44.96383, lon:-93.10950, at:8000, spd:210}
+  ];
+  var bainy30L = [
+   {f:'BAINY', lat:45.75367, lon:-93.69950, aa:15000, spd:280},
+   {f:'LUCCY', lat:45.58450, lon:-93.60900, aa:11000, spd:280},
+   {f:'SAUGR', lat:45.34850, lon:-93.48117},
+   {f:'GEP',   lat:45.14567, lon:-93.37317, aa:10000, spd:250},
+   {f:'PRRPL', lat:45.05233, lon:-93.31467, aa:9000},
+   {f:'MAUER', lat:44.78167, lon:-93.26433, at:8000, spd:210},
+   {f:'LEDRZ', lat:44.75567, lon:-93.20433, at:8000, spd:210}
+  ];
+  /* Each runway a gate can be assigned points at the published ladder that
+     serves it. The source groups them as "MUSCL 12L/4/22/17", "TORGY
+     4/17/22/30L" and so on; those groupings are unpacked here so a lookup is
+     always gate + runway. */
+  return {
+   NITZR:{'12R':nitzr12R, '12L':nitzr12L, '30L':nitzr30,  '30R':nitzr30,  '4':nitzr12R, '22':nitzr12R, '17':nitzr12R},
+   BLUEM:{'12R':bluem12R, '12L':bluem12L, '30L':bluem30,  '30R':bluem30,  '4':bluem12R, '22':bluem12R, '17':bluem12R},
+   TORGY:{'12R':torgy12,  '12L':torgy12,  '30L':torgy30L, '30R':torgy30R, '4':torgy30L, '22':torgy30L, '17':torgy30L},
+   KKILR:{'12R':kkilr12R, '12L':kkilr12L, '30L':kkilr30,  '30R':kkilr30,  '4':kkilr12L, '22':kkilr12L, '17':kkilr12L},
+   MUSCL:{'12R':muscl12R, '12L':muscl12L, '30L':muscl30,  '30R':muscl30,  '4':muscl12L, '22':muscl12L, '17':muscl12L},
+   BAINY:{'12R':bainy12,  '12L':bainy12,  '30L':bainy30L, '30R':bainy30R, '4':bainy30R, '22':bainy30R, '17':bainy30R}
+  };
+ })();
+ /* ---------- ZMP-M98 LOA Table 2 — runway transitions assigned by ZMP ----------
+    Transcribed from claude_ZMP_Reference.md, "Table 2 — Runway transitions
+    assigned by ZMP". The document has exactly these six rows and no others, so
+    a configuration that is not a key here gets NO arrival geometry rather than
+    a guess — see buildRoutes(). Absent on purpose: 4, 22, 4-35, and the 30/12
+    noise-abatement default, which lands the 30s but is not a Table 2 row. That
+    is a question for the facility, not a gap to fill in from the runways.
+
+    The 30-35 row carries Table 2 footnote 1 on NITZR and BLUEM — M98 and ZMP
+    CIC/TMU collaborate on which aircraft get the Runway 35 transition — so 30L
+    is the assignment and a 35 transition is a coordinated exception.
+    KKILR is N/A on 17-22: KKILR and WILDD arrivals are prohibited entirely in
+    that configuration (ZMP-M98 LOA 5.b(3)). */
+ var TABLE2 = {
+  '12':    {NITZR:'12R', BLUEM:'12R', TORGY:'12R', KKILR:'12R', MUSCL:'12L', BAINY:'12L'},
+  '12-17': {NITZR:'12R', BLUEM:'12R', TORGY:'12R', KKILR:'12R', MUSCL:'12L', BAINY:'12L'},
+  '30':    {NITZR:'30L', BLUEM:'30L', TORGY:'30L', KKILR:'30L', MUSCL:'30R', BAINY:'30R'},
+  '30-17': {NITZR:'30L', BLUEM:'30L', TORGY:'30L', KKILR:'30L', MUSCL:'30R', BAINY:'30R'},
+  '30-35': {NITZR:'30L', BLUEM:'30L', TORGY:'30L', KKILR:'30L', MUSCL:'30R', BAINY:'30R'},
+  '17-22': {NITZR:'22',  BLUEM:'22',  TORGY:'17',  KKILR:null,  MUSCL:'22',  BAINY:'17'}
+ };
+ var TABLE2_FOOTNOTE = {
+  '30-35': 'NITZR and BLUEM carry Table 2 footnote 1 — M98 and ZMP CIC/TMU collaborate on which aircraft get the Runway 35 transition. The 30L ladder is the assignment; a 35 transition is a coordinated exception and is not drawn.',
+  '17-22': 'KKILR is N/A on Table 2 in this configuration — KKILR and WILDD arrivals are prohibited entirely (ZMP-M98 LOA 5.b(3)), so the gate carries no ladder here.'
+ };
+ /* Fixed gate order, so the gate list, the scope and the drill generator keep
+    one stable order whatever flow is loaded. */
+ var GATE_ORDER = ['NITZR','BLUEM','TORGY','KKILR','MUSCL','BAINY'];
+ /* ROUTES holds the ladders for the configuration currently loaded, and is the
+    same object for the life of the page: buildRoutes() empties and refills it
+    rather than replacing it, so every reference taken at load time (window.DD
+    .ROUTES included) stays live. ROUTE_CFG names what is in it, and is null
+    when Table 2 has no row for the configuration asked for. */
+ var ROUTES = {};
+ var ROUTE_CFG = null;
 /* Screen position, MSP-relative offsets and cumulative distance for every fix
    on a route. Used by the arrival ladders, the departure SIDs and the
    synthesised overflight tracks alike. */
@@ -203,7 +369,43 @@ function finalize(r){
  r.total=cum;
  return r;
 }
-Object.keys(ROUTES).forEach(function(k){ finalize(ROUTES[k]); });
+function cloneFix(p){ var q={}; for(var k in p){ if(Object.prototype.hasOwnProperty.call(p,k)) q[k]=p[k]; } return q; }
+/* The ladder a gate actually flies. The runway assigned to the strip wins when
+   there is one and it is published — that is a crossover, and it is a real
+   lateral reroute for most gate/runway pairs. With no runway assigned it falls
+   back to the transition ZMP gives the configuration in Table 2. Returns null
+   rather than a guess when neither resolves: an unknown configuration, or
+   KKILR on a 17-22 where the arrival is prohibited outright. */
+function ladderFor(cfg, gate, rwy){
+ var g=LADDER[gate]; if(!g) return null;
+ if(rwy && g[rwy]) return g[rwy];
+ var t=TABLE2[cfg]; if(!t) return null;
+ var a=t[gate];
+ return (a && g[a]) ? g[a] : null;
+}
+/* What Table 2 assigns this gate in this configuration, or null. */
+function transitionFor(cfg, gate){ var t=TABLE2[cfg]; return t ? (t[gate]||null) : null; }
+/* Load the arrival ladders for a configuration into ROUTES, in place. Each
+   ladder is cloned before it is finalized, because finalize() writes screen
+   position and cumulative distance onto every fix object — the LADDER tables
+   stay pure data and can be shared between runways. */
+function buildRoutes(cfg){
+ GATE_ORDER.forEach(function(g){ delete ROUTES[g]; });
+ ROUTE_CFG = TABLE2[cfg] ? cfg : null;
+ if(ROUTE_CFG){
+  GATE_ORDER.forEach(function(g){
+   var lad = ladderFor(ROUTE_CFG, g, null); if(!lad) return;
+   ROUTES[g] = finalize(lad.map(cloneFix));
+  });
+ }
+ rebuildFloors(ROUTE_CFG);
+ return ROUTES;
+}
+/* Switch flows. Ignores a falsy configuration rather than blanking the scope,
+   and does nothing when the requested flow is already loaded. */
+function setFlow(cfg){ if(!cfg || cfg===ROUTE_CFG) return ROUTES; return buildRoutes(cfg); }
+/* True when Table 2 gives this configuration arrival geometry at all. */
+function flowCarried(cfg){ return !!TABLE2[cfg]; }
 
 /* Turbojet SID routes, from claude_MSP_SID_Reference.md. Each runs from the
    MSP VOR out through the fixes that are direct-able inside 60 NM — which is
@@ -849,21 +1051,33 @@ function wakeOf(type){
  if(w>41000) return {cls:'large', label:'large', heavy:false, known:true, mtow:w};
  return {cls:'small', label:'small', heavy:false, known:true, mtow:w};
 }
-/* Feeder-to-Arrival handoff floors for the configuration the engine flies,
+/* Feeder-to-Arrival handoff floors for the configuration currently loaded,
    derived from NEAR_GATES and HANDOFF_ALT rather than written out a second
    time — so correcting near/far corrects the floor with it and the two cannot
-   drift apart. On a 12s that is TORGY and BAINY at 7,000 because they drop onto
-   the final, and NITZR, BLUEM, KKILR and MUSCL at 8,000 because they have to be
-   vectored to it. Running the 30s these reverse; the engine flies the 12s. */
+   drift apart. Near and far belong to the flow, not to the gate: on a 12s
+   TORGY and BAINY drop onto the final at 7,000 while NITZR, BLUEM, KKILR and
+   MUSCL have to be vectored to it at 8,000, and running the 30s that reverses.
+   Rebuilt by buildRoutes() every time the flow changes.
+     Two citations, and they are different facts: 4-4c(3) gives the altitudes,
+   4-4c(7) is what near and far are derived from. Appendix A is unread images,
+   so the classification is still a derived reading. */
 var FLOORS = {};
 var FLOOR_BASIS = {};
-Object.keys(ROUTES).forEach(function(g){
- var cls = nearFarFor('12', g);
- FLOORS[g] = floorFor('12', g);
- FLOOR_BASIS[g] = cls==='near'
-  ? 'near gate on a 12s — drops onto the final, so 7,000 (SOP 4-4c(3), near/far owner-verified). It becomes a far gate on the 30s.'
-  : 'far gate on a 12s — has to be vectored to the final, so 8,000 (SOP 4-4c(3), near/far owner-verified). It becomes a near gate on the 30s.';
-});
+function rebuildFloors(cfg){
+ Object.keys(FLOORS).forEach(function(k){ delete FLOORS[k]; });
+ Object.keys(FLOOR_BASIS).forEach(function(k){ delete FLOOR_BASIS[k]; });
+ Object.keys(ROUTES).forEach(function(g){
+  var cls = cfg ? nearFarFor(cfg, g) : null;
+  var alt = cfg ? floorFor(cfg, g) : null;
+  FLOORS[g] = alt;
+  FLOOR_BASIS[g] = (cls && alt!=null)
+   ? cls+' gate in the '+cfg+' configuration — '
+     +(cls==='near' ? 'drops onto the final' : 'has to be vectored to the final')
+     +', so '+alt.toLocaleString()+' (SOP 4-4c(3) for the altitude, 4-4c(7) for near/far, owner-verified). Near and far reverse between the 12s and the 30s.'
+   : 'SOP 4-4c(7) does not name near and far gates for the '+(cfg||'requested')+' configuration, so no handoff floor is asserted here.';
+ });
+}
+buildRoutes('12');
 var RECEIVER = {'12R':{pos:'S', frq:'126.95'}, '12L':{pos:'N', frq:'119.3'}};
 
 /* ---------- 3. Sim state ---------- */
@@ -1878,6 +2092,9 @@ function mountAll(){
 window.DD = {
  version:1, hooks:[],
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
+ LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
+ ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes,
+ setFlow:setFlow, flowCarried:flowCarried, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
