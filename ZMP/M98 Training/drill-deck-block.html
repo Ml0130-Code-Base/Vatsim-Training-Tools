@@ -1848,8 +1848,15 @@ function scopeSvg(){
   var p=posOf(a);
   var col = a.alive? (a===selAc()?'var(--amber)':'var(--ink)') : 'var(--dim2)';
   s+='<rect x="'+(p.x-4.5).toFixed(1)+'" y="'+(p.y-4.5).toFixed(1)+'" width="9" height="9" fill="'+(a.alive?'var(--green)':'var(--dim2)')+'" stroke="'+col+'" stroke-width="1"/>';
+  /* Data block. STARS FDB layout, claude_CRC_Platform_Reference.md "Data
+     blocks": line 1 is the callsign, line 2 right is ground speed
+     time-sharing with the aircraft TYPE. The real client alternates the two
+     in that field; a schematic scope has no reason to hide one, so both are
+     shown side by side — speed then type, in the order the client cycles
+     them. Wake stays on line 1 here, where this tool has always put it;
+     the client shows it after the ground speed. */
   s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="10.5">'+a.cs+(a.wake?' H':'')+'</text>';
-  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.rwy?' '+a.rwy:'')+'</text>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.type?" "+a.type:"")+(a.rwy?' '+a.rwy:'')+'</text>';
  });
  s+='</svg>';
  return s;

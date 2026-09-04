@@ -1559,7 +1559,7 @@ function previewSvg(rec){
   var col=a.ckdIn?'var(--amber)':'var(--dim2)';
   s+='<rect x="'+(p.x-4.5).toFixed(1)+'" y="'+(p.y-4.5).toFixed(1)+'" width="9" height="9" fill="'+(a.ckdIn?'var(--green)':'none')+'" stroke="'+col+'" stroke-width="1"/>';
   s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="10.5">'+esc(a.cs||'—')+'</text>';
-  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.ckdIn?'':' T+'+a.spawnAt)+'</text>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.type?" "+esc(a.type):"")+(a.ckdIn?'':' T+'+a.spawnAt)+'</text>';
  });
  s+='</svg>';
  return s;
