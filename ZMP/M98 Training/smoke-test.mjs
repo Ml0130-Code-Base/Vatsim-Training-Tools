@@ -728,6 +728,55 @@ try {
       v.errors.join(' | '));
   }
 
+  /* Issue #11 — a strip is placed by the fix it is running to and the distance
+     still to run, which is how it reads off a scope. `dtg` stays the stored
+     number so the generator, the validator, the scope and the export are all
+     untouched; these assert the round trip and that the fix list can only ever
+     name a fix on the arrival actually selected. */
+  {
+    const gates = ['NITZR','BLUEM','TORGY','KKILR','MUSCL','BAINY'];
+    assert('every arrival offers only the fixes on its own ladder',
+      gates.every(g => {
+        const on = globalThis.ddb.fixesOn(g);
+        const route = globalThis.DD.ROUTES[g].map(p => p.f);
+        return on.length > 0 && on.every(f => route.indexOf(f) >= 0);
+      }),
+      gates.map(g => g + ':' + globalThis.ddb.fixesOn(g).length).join(' '));
+    assert('a fix that is not on the arrival resolves to nothing',
+      globalThis.ddb.cumOf('NITZR', 'KRUGG') === null
+      && globalThis.ddb.dtgFrom('NITZR', 'KRUGG', 5) === null);
+    /* NM to go = (ladder total - the fix's cumulative distance) + miles to run */
+    assert('the fix and the miles to run give back the same distance to go',
+      gates.every(g => {
+        const r = globalThis.DD.ROUTES[g];
+        return globalThis.ddb.fixesOn(g).every(f => {
+          const cum = globalThis.ddb.cumOf(g, f);
+          return Math.abs(globalThis.ddb.dtgFrom(g, f, 5) - ((r.total - cum) + 5)) < 0.06;
+        });
+      }));
+    assert('and placing a distance back on the ladder round-trips to the same fix',
+      gates.every(g => globalThis.ddb.fixesOn(g).every(f => {
+        const dtg = globalThis.ddb.dtgFrom(g, f, 0);
+        const back = globalThis.ddb.placeFrom(g, dtg);
+        return back && back.fix === f && Math.abs(back.nm) < 0.06;
+      })));
+    /* a drill saved before this carries only dtg, and changing the arrival
+       must not leave a fix behind that is not on the new one */
+    {
+      const strip = {role:'arrival', gate:'NITZR', dtg:20};
+      globalThis.ddb.syncPlace(strip);
+      assert('a strip carrying only a distance is re-placed onto a named fix',
+        globalThis.DD.ROUTES.NITZR.map(p => p.f).indexOf(strip.dtgFix) >= 0
+        && Math.abs(globalThis.ddb.dtgFrom('NITZR', strip.dtgFix, strip.dtgNm) - 20) < 0.06,
+        JSON.stringify(strip));
+      strip.gate = 'TORGY';
+      globalThis.ddb.syncPlace(strip);
+      assert('and switching the arrival re-places it on the new ladder',
+        globalThis.DD.ROUTES.TORGY.map(p => p.f).indexOf(strip.dtgFix) >= 0,
+        JSON.stringify(strip));
+    }
+  }
+
   /* D-ATIS — the paste path, which is the one that works with no network */
   {
     const coded = globalThis.ddb.parseDatis(

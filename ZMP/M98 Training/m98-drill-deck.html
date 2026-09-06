@@ -2436,6 +2436,61 @@ function pubSpdAt(g, dist){
  return sp||280;
 }
 
+/* ---------- Placing a strip by the fix it is running to — issue #11 ----------
+   A bare "NM to go" is a number nobody reads off a scope. What a controller
+   actually has is a fix ahead and the distance still to run to it, so that is
+   what the strip asks for. The two are the same number in different clothes:
+
+     NM to go  =  (ladder total − the fix's cumulative distance)  +  miles to run
+
+   `dtg` stays the stored value and nothing downstream changes — the generator,
+   the validator, the scope and the scenario export all keep reading it. The
+   fix list comes off the SELECTED ARRIVAL'S OWN ROUTE, so only a fix actually
+   on that arrival can be picked, and changing the arrival re-derives the
+   placement rather than leaving a fix behind that is no longer on it. */
+function fixesOn(g){
+ var r=routeOf(g), out=[], i;
+ if(!r) return out;
+ for(i=0;i<r.length;i++) if(r[i].f && out.indexOf(r[i].f)<0) out.push(r[i].f);
+ return out;
+}
+function cumOf(g, fix){
+ var r=routeOf(g), i;
+ if(!r) return null;
+ for(i=0;i<r.length;i++) if(r[i].f===fix) return r[i].cum;
+ return null;
+}
+/* the next fix ahead of a strip, and how far it still is from it */
+function placeFrom(g, dtg){
+ var r=routeOf(g), i;
+ if(!r || !r.length) return null;
+ var dist=Math.max(0, r.total-(dtg||0));
+ for(i=0;i<r.length;i++){
+  if(r[i].cum >= dist-0.05) return {fix:r[i].f, nm:Math.round((r[i].cum-dist)*10)/10};
+ }
+ var last=r[r.length-1];
+ return {fix:last.f, nm:Math.round(Math.max(0,last.cum-dist)*10)/10};
+}
+/* and back the other way */
+function dtgFrom(g, fix, nm){
+ var r=routeOf(g);
+ if(!r) return null;
+ var c=cumOf(g, fix);
+ if(c==null) return null;
+ return Math.round(((r.total-c)+(+nm||0))*10)/10;
+}
+/* Keep a strip's fix and distance-to-it in step with its arrival and its dtg.
+   Called before the row renders, so switching the arrival re-places the strip
+   on the new ladder instead of carrying a fix that is not on it. */
+function syncPlace(a){
+ var fixes=fixesOn(a.gate);
+ if(!fixes.length){ a.dtgFix=null; return; }
+ if(!a.dtgFix || fixes.indexOf(a.dtgFix)<0){
+  var p=placeFrom(a.gate, a.dtg);
+  if(p){ a.dtgFix=p.fix; a.dtgNm=p.nm; }
+ }
+}
+
 /* ---------- 3b. Weather, configuration and voicing ----------
    Config follows the wind and the weather; it is never a free pick
    (claude_M98_Config_Reference.md, MSP-M98 LOA 9). Flight-category
@@ -3714,7 +3769,17 @@ function readEditor(){
   a.fromStart=num(g('ddb-fs'+i), a.fromStart);
   a.entryR=num(g('ddb-er'+i), a.entryR); a.entryD=num(g('ddb-ed'+i), a.entryD);
   a.exitR=num(g('ddb-xr'+i), a.exitR);   a.exitD=num(g('ddb-xd'+i), a.exitD);
-  a.dtg=num(g('ddb-dtg'+i), a.dtg);
+  /* Where the strip is placed by a fix, the box holds the miles still to run
+     to that fix and `dtg` is derived from the two; where there is no ladder to
+     name a fix on, the box is still the bare distance to go (issue #11). */
+  if(document.getElementById('ddb-dtgfix'+i)){
+   a.dtgFix=g('ddb-dtgfix'+i)||a.dtgFix;
+   a.dtgNm=num(g('ddb-dtg'+i), a.dtgNm);
+   var nd=dtgFrom(a.gate, a.dtgFix, a.dtgNm);
+   if(nd!=null) a.dtg=nd;
+  } else {
+   a.dtg=num(g('ddb-dtg'+i), a.dtg);
+  }
   a.alt=num(g('ddb-alt'+i), a.alt);
   a.ias=num(g('ddb-ias'+i), a.ias);
   a.mode=g('ddb-mode'+i)||a.mode;
@@ -3817,6 +3882,10 @@ function handedOffBy(a, role, radar, i){
 }
 function acRowHtml(a,i){
  var role=roleOf(a);
+ /* Re-place the strip on whatever ladder it is now on: a drill saved before
+    this carries only `dtg`, and changing the arrival leaves behind a fix that
+    is not on the new one (issue #11). */
+ if(role==='arrival') syncPlace(a);
  var wk=DD.wakeOf(a.type);
  var wkCol = wk.cls==='nowgt' ? 'var(--amber)' : (wk.heavy ? 'var(--green)' : 'var(--dim)');
  var rules=(a.rules==='VFR')?'VFR':'IFR';
@@ -3864,7 +3933,18 @@ function acRowHtml(a,i){
        var p=DD.ARRIVALS[g];
        return '<option'+(g===a.gate?' selected':'')+'>'+g+(p.rev?(' — '+p.rev):'')+(p.flies?'':' (frame only)')+'</option>';
       }).join('')+'</select>')
-   +f('NM to go','<input class="dd-in" id="ddb-dtg'+i+'" value="'+esc(a.dtg)+'" onchange="ddbSync()">')
+   /* Placed by the fix it is running to and the distance still to run — the
+      way it reads off a scope — with only the fixes on THIS arrival offered
+      (issue #11). A routing with no published ladder, which is every
+      satellite direct, keeps the bare distance. */
+   +(fixesOn(a.gate).length
+     ? (f('Miles from','<input class="dd-in" id="ddb-dtg'+i+'" value="'+esc(a.dtgNm)+'" onchange="ddbSync()">')
+       +f('Next fix','<select class="dd-sel" id="ddb-dtgfix'+i+'" onchange="ddbSync()">'
+         +fixesOn(a.gate).map(function(fx){
+           return '<option'+(fx===a.dtgFix?' selected':'')+'>'+esc(fx)+'</option>';
+          }).join('')+'</select>')
+       +f('NM to go','<div class="dd-in" style="color:var(--dim2);" title="the distance to the end of the '+esc(a.gate)+' ladder, which is what the engine flies">'+esc(a.dtg)+'</div>'))
+     : f('NM to go','<input class="dd-in" id="ddb-dtg'+i+'" value="'+esc(a.dtg)+'" onchange="ddbSync()">'))
    +f('Engine','<select class="dd-sel" id="ddb-eng'+i+'" onchange="ddbSync()">'
      +['jet','turboprop','piston'].map(function(e){return '<option'+(e===(a.engine||'jet')?' selected':'')+'>'+e+'</option>';}).join('')
      +'</select>')
@@ -4704,6 +4784,7 @@ window.ddb = {
  approachesInUse:approachesInUse, approachRunways:approachRunways, rwysAfter:rwysAfter,
  datisClean:datisClean,
  configFromRunways:configFromRunways, DATIS_SOURCES:DATIS_SOURCES,
+ fixesOn:fixesOn, cumOf:cumOf, placeFrom:placeFrom, dtgFrom:dtgFrom, syncPlace:syncPlace,
  timingSummary:timingSummary, setDraft:function(d){ draft=d; renderEditor(); }, getDraft:function(){ return draft; }
 };
 
