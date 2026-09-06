@@ -2002,5 +2002,135 @@ if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoad
 else { mount(); }
 })();
 </script>
+<script>
+/* ================================================================
+   S56 — PAGES. Additive extension block, and deliberately the last.
+
+   Everything before this mounts one long scroll with a row of anchor
+   links. This block moves the sections that already exist into three
+   view wrappers and turns #modnav into the page switcher the other
+   five decks use — house rule 4, "three pages, not one scroll", and
+   the ZLC divergence logged in house rule 9.
+
+   It edits no earlier block. It finds the sections by id AFTER they
+   have mounted, which is why it must stay last: its DOMContentLoaded
+   handler registers after theirs and so runs after them. Adding a
+   further block means adding it before this one, or naming its
+   section here.
+
+   Section ids survive the move (house rule 4), so the deck's own
+   getElementById calls and the note rail's data-note anchors keep
+   working untouched.
+
+   Note for whoever moves the weather block: it looks for
+   zlc-page-notes and falls back to the footer. That lookup misses
+   today because this block runs after it, and the placement is
+   decided here instead — mod-s56w is listed under 'fly' below.
+   ================================================================ */
+(function(){ 'use strict';
+
+var DECK = (window.ZLC && window.ZLC.facility === 'S56') ? window.ZLC : null;
+if(!DECK) return;
+
+var PAGES = [
+ {id:'setup', label:'Set up a drill', hint:'flow, sectors, who owns what, seat',
+  sections:['mod-pos','mod-seat']},
+ {id:'fly',   label:'Fly it',         hint:'the weather, and the strips it drives',
+  sections:['mod-s56w','mod-s56st']},
+ {id:'notes', label:'Notes and log',  hint:'what it taught, and what this tool knows',
+  sections:['mod-notes','mod-stubs']}
+];
+
+/* Copied from the M98 tab styling so the two read as one toolset. The
+   sticky offset is this deck's own topbar: 16px padding twice, an 11px
+   line and the bottom border. */
+var css =
+  '.zlc-view{display:none;}'
++ '.zlc-view.on{display:block;}'
++ '.zlc-view > *:first-child{margin-top:34px;}'
++ '.modnav.zlc-tabs{margin:28px 0 0;position:sticky;top:50px;'
++   'background:rgba(10,13,12,0.94);backdrop-filter:blur(6px);z-index:15;}'
++ '.modnav.zlc-tabs button{font-family:var(--mono);font-size:11.5px;letter-spacing:0.06em;'
++   'text-transform:uppercase;color:var(--dim);background:transparent;'
++   'border:1px solid var(--line);border-radius:3px;padding:7px 14px;cursor:pointer;}'
++ '.modnav.zlc-tabs button:hover{color:var(--ink);border-color:var(--dim2);}'
++ '.modnav.zlc-tabs button.on{color:var(--green);border-color:var(--green);'
++   'background:var(--panel);}'
++ '.modnav.zlc-tabs .sub{font-family:var(--mono);font-size:10.5px;color:var(--dim2);'
++   'align-self:center;margin-left:auto;}'
++ '@media (max-width:600px){.modnav.zlc-tabs{position:static;}'
++   '.modnav.zlc-tabs .sub{display:none;}}';
+
+function esc(s){
+ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function pageById(id){
+ for(var i=0;i<PAGES.length;i++){ if(PAGES[i].id===id) return PAGES[i]; }
+ return null;
+}
+
+var page = 'setup';
+
+window.zlcPage = function(id, keepScroll){
+ var p = pageById(id), i;
+ if(!p) return;
+ page = id;
+ for(i=0;i<PAGES.length;i++){
+  var v = document.getElementById('zlc-page-'+PAGES[i].id);
+  if(v && v.classList) v.classList.toggle('on', PAGES[i].id===id);
+ }
+ var nav = document.getElementById('modnav');
+ if(nav && nav.querySelectorAll){
+  var bs = nav.querySelectorAll('button');
+  for(i=0;i<bs.length;i++){
+   if(bs[i].classList) bs[i].classList.toggle('on', bs[i].getAttribute('data-p')===id);
+  }
+ }
+ var hint = document.getElementById('zlc-tabhint');
+ if(hint && typeof hint.textContent==='string') hint.textContent = p.hint;
+ if(!keepScroll && typeof window.scrollTo==='function'){
+  try{ window.scrollTo({top:0, behavior:'instant'}); }catch(e){ window.scrollTo(0,0); }
+ }
+};
+
+function buildPages(){
+ var wrap = document.querySelector('.wrap');
+ var nav  = document.getElementById('modnav');
+ if(!wrap || !nav || !document.createElement) return;
+
+ var st = document.createElement('style'); st.textContent = css;
+ if(document.head && document.head.appendChild) document.head.appendChild(st);
+
+ /* #modnav held anchor links. Those anchors point into views that are
+    now hidden, so the switcher replaces them rather than joining them. */
+ var html = '', i, j;
+ for(i=0;i<PAGES.length;i++){
+  html += '<button data-p="'+PAGES[i].id+'" onclick="zlcPage(\''+PAGES[i].id+'\')">'
+       +  esc(PAGES[i].label)+'</button>';
+ }
+ nav.innerHTML = html + '<span class="sub" id="zlc-tabhint"></span>';
+ nav.className = 'modnav zlc-tabs';
+
+ /* appendChild MOVES a node, so every section keeps its id, its
+    attributes and its event listeners. Insert each view at the same
+    anchor so the three land in declaration order. */
+ var anchor = nav.nextSibling;
+ for(i=0;i<PAGES.length;i++){
+  var v = document.createElement('div');
+  v.className = 'zlc-view'; v.id = 'zlc-page-'+PAGES[i].id;
+  wrap.insertBefore(v, anchor);
+  for(j=0;j<PAGES[i].sections.length;j++){
+   var sec = document.getElementById(PAGES[i].sections[j]);
+   if(sec && v.appendChild) v.appendChild(sec);
+  }
+ }
+ window.zlcPage(page, true);
+}
+
+if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', buildPages); }
+else { buildPages(); }
+})();
+</script>
 </body>
 </html>

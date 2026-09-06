@@ -396,19 +396,26 @@ time the relevant tool takes structural work, and **none should be fixed as a dr
 - **`window.ZLC` is shared by two tools** with a `facility` discriminator (`'BIGSKY'` /
   `'S56'`). Defensible — they are never on the same page — but it fails the same test.
   **Assert the discriminator in the builder's guard** rather than trusting it.
-- **Storage keys are inconsistent.** Five tools use `<basename>-v1`; S56 uses
-  `zlc-s56-skeleton-v1`; Big Sky has no persistence at all. **Rename S56's key when its notes
-  layer next changes, with a migration**, and don't ship another key with a status word in it.
+- **Storage keys.** Six tools use `<basename>-v1`, S56 included — its key was renamed off the
+  status word and the deck still reads `zlc-s56-skeleton-v1` once, to migrate. **Big Sky has no
+  persistence at all**, and deliberately: its weather block sets `STORE_KEY` to the empty string
+  and `storeSave()` returns early rather than inventing a key as a drive-by. Don't ship another
+  key with a status word in it.
 - **ZAU and ZLC have no drill-format, OJT-intake, practice-log or TTS layer**, and **no smoke
   test.** They are Tier 0. That is a legitimate place to be; it is not a legitimate place to
   start grading from. Add the reference layer before adding an engine.
 - **The notes layer exists at C90 (anchored rail) and S56 (typed notes against `OPEN_Q`), and
   nowhere else.** AZO has the practice-log half without the rail. **Copy the C90 rail rather
   than reinventing it.**
-- **The two ZLC tools are one script block and one scroll** — no builder block, no
-  `buildPages()`, no persistence in Big Sky. Everything else in the repo is two blocks and
-  three pages. **Split the block and add the wrapper when either ZLC tool grows a second
-  concern**, rather than letting a single block accumulate the builder's job.
+- **The two ZLC tools carry the three-page wrapper as of 2026-09-06.** Both were one long
+  scroll with a row of anchor links while the other five decks had tabs. A fourth block in each
+  moves the already-mounted sections into `zlc-view` wrappers and turns `#modnav` into the same
+  switcher (`zlcPage`), tab styling copied from M98 so the seven read as one toolset. That block
+  edits nothing before it and **must stay last** — it finds sections by id after they mount, so
+  a new block goes before it or names its section in `PAGES`. **Big Sky's third page is named
+  *what this tool knows*, not *notes and log***, because it has no notes layer: naming a page
+  after a section the tool does not have is the tool asserting something untrue. Giving Big Sky
+  a notes layer and persistence is the next unit of ZLC work.
 - **Two organisational shapes coexist:** one ARTCC-level `CLAUDE.md` covering several
   facilities (ZAU, ZLC) and one per facility (ZMP). Both work. Use the ARTCC-level file while
   the facilities are Tier 0, and split it when one reaches Tier 1 and its data section starts
