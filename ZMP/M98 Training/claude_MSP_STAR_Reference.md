@@ -138,7 +138,9 @@ On the **Runway 30/17** config, NITZR (WRSAW 11,000) and BLUEM (HHAMR 10,000) ar
 
 ## Published crossing restrictions (current AIRAC / Navigraph)
 
-**Verified by Michael against the current AIRAC plates (Navigraph)** — the sim is the current real-world revision, no version gap. Notation: **≥N** = at or above N,000 · **N** = cross at N,000 · **a–b** = cross-between window · **/nnn** = speed (kt) · a fix with no number = no published crossing (lateral point only). Shared fixes (common segments + merge tails) carry the same restriction on every STAR that feeds them — the one exception is **SAVVG**.
+**Verified by Michael against the current AIRAC plates (Navigraph)** — the sim is the current real-world revision, no version gap. Notation: **≥N** = at or above N,000 · **N** = cross at N,000 · **a–b** = cross-between window · **/nnn** = speed (kt) · a fix with no number = no published crossing (lateral point only). Shared fixes (common segments + merge tails) carry the same restriction on every STAR that feeds them — the exceptions are **SAVVG** and **ELLKO**, which both step 1,000 ft lower off BLUEM than off NITZR.
+
+> **ELLKO corrected 2026-09-06.** This section previously read *"the one exception is SAVVG"* and carried ELLKO at ≥10 on both arrivals. It is **≥11 off NITZR and ≥10 off BLUEM** — the same per-arrival split SAVVG has, applied one fix further up the trunk. Found by machine comparison against **CIFP 260903** (FAA Coded Instrument Flight Procedures, cycle 2026-09-03), which codes `NITZR46` ELLKO `+11000` and `BLUEM56` ELLKO `+10000` on *every* runway transition — RW04, RW12L, RW12R, RW17 and RW22 — exactly as it codes SAVVG 10,000 and 9,000. Owner-adjudicated 2026-09-06: CIFP is right and the rule above was applied one fix too narrowly. See `../../claude_CIFP_Source_Reference.md` §5–6. Seven of the other eight fixes on this ladder matched CIFP exactly, which is why the one that did not is worth trusting.
 
 **Shape:** gate ~10–15k / 280 → 10k / 250 → 9k → 8k shelf tails → 7k close in. Only the key fixes are restricted; blanks between are lateral points.
 
@@ -169,8 +171,8 @@ On the **Runway 30/17** config, NITZR (WRSAW 11,000) and BLUEM (HHAMR 10,000) ar
 *NITZR* — common **NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL**:
 - **→ 35:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · SHILD 9/230 · GDNEE · NNEWW 7
 - **→ 30L/30R:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · AANAH 10/250 · WBSTR 8/250 · CANDD 7/230 · HAPTN 7/210
-- **→ 12R/4/22/17:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · GDNEE · ELLKO ≥10/250 · **SAVVG 10** · GREAK 8/230 · TIETN 8/230
-- **→ 12L:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · GDNEE · ELLKO ≥10/250 · **SAVVG 10** · CMMOE 8/230 · FSCOT 8/230
+- **→ 12R/4/22/17:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · GDNEE · **ELLKO ≥11/250** · **SAVVG 10** · GREAK 8/230 · TIETN 8/230
+- **→ 12L:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · GDNEE · **ELLKO ≥11/250** · **SAVVG 10** · CMMOE 8/230 · FSCOT 8/230
 
 *TORGY* — common **TORGY ≥13/280 · OFSON ≥11/280 · HMBRG ≥10/280 · CONIA**:
 - **→ 12L/12R:** TORGY ≥13/280 · OFSON ≥11/280 · HMBRG ≥10/280 · CONIA · SPUKI 7/230 · KRUGG 7/210

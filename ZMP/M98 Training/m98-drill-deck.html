@@ -253,16 +253,25 @@ function neighbourAt(brg, alt){
 var BOUNDARY = [[295,41],[338,39],[29,40],[77,37],[118,40],[158,40],[196,39],[230,37],[254,40]];
 
 /* 12R runway-transition tails, coordinates + restrictions from claude_MSP_STAR_Reference.md.
-   aa = cross at-or-above (ft), at = cross at (ft), spd = published speed (kt). */
+   aa = cross at-or-above (ft), at = cross at (ft), spd = published speed (kt).
+   TWO fixes on this shared tail carry a different restriction depending on which
+   arrival reached them, so both are set per gate below — see trunkFor. */
 var TRUNK = [
- {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+ {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:null, spd:250},    /* aa set per gate below */
  {f:'SAVVG', lat:44.69167, lon:-93.21933, at:null, spd:null},   /* at set per gate below */
  {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000,  spd:230},
  {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000,  spd:230}
 ];
+/* ELLKO and SAVVG BOTH step 1,000 ft lower off BLUEM than off NITZR — they are
+   the same exception twice, not one exception and one shared value. Corrected
+   2026-09-06 from CIFP 260903, which codes ELLKO at or above 11,000 on every
+   NITZR46 transition and 10,000 on every BLUEM56 transition, exactly as it
+   codes SAVVG 10,000 and 9,000. Owner-adjudicated against the plates. */
 function trunkFor(gate){
  return TRUNK.map(function(p){ var q={f:p.f,lat:p.lat,lon:p.lon,spd:p.spd};
-  if(p.f==='SAVVG'){ q.at = (gate==='BLUEM')?9000:10000; } else { if(p.aa)q.aa=p.aa; if(p.at)q.at=p.at; }
+  if(p.f==='SAVVG'){ q.at = (gate==='BLUEM')?9000:10000; }
+  else if(p.f==='ELLKO'){ q.aa = (gate==='BLUEM')?10000:11000; }
+  else { if(p.aa)q.aa=p.aa; if(p.at)q.at=p.at; }
   return q; });
 }
  /* ---------- Arrival ladders, by gate and by runway transition ----------
@@ -291,7 +300,9 @@ function trunkFor(gate){
    {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
    {f:'DAHRL', lat:44.36483, lon:-93.36683},
    {f:'GDNEE', lat:44.51133, lon:-93.26633},
-   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+   /* 11,000 off NITZR and 10,000 off BLUEM — CIFP 260903, NITZR46 / BLUEM56,
+      every runway transition. The same per-arrival split SAVVG has. */
+   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:11000, spd:250},
    {f:'SAVVG', lat:44.69167, lon:-93.21933, at:10000},
    {f:'GREAK', lat:44.80533, lon:-93.31800, at:8000, spd:230},
    {f:'TIETN', lat:44.82483, lon:-93.36300, at:8000, spd:230}
@@ -301,7 +312,7 @@ function trunkFor(gate){
    {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
    {f:'DAHRL', lat:44.36483, lon:-93.36683},
    {f:'GDNEE', lat:44.51133, lon:-93.26633},
-   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:10000, spd:250},
+   {f:'ELLKO', lat:44.59517, lon:-93.20733, aa:11000, spd:250},   /* NITZR — CIFP 260903 */
    {f:'SAVVG', lat:44.69167, lon:-93.21933, at:10000},
    {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
    {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
@@ -2262,7 +2273,7 @@ window.DD = {
  version:1, hooks:[],
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
- ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes,
+ ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, receiverFor:receiverFor, dmeOf:dmeOf,

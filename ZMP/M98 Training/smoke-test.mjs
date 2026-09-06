@@ -479,6 +479,34 @@ try {
   assert('off draws no route geometry at all', lOff === 0, lOff);
   globalThis.ddLayers('tracked');
 
+  /* TWO fixes on the NITZR/BLUEM shared trunk carry a different restriction
+     depending on which arrival reached them, and they are the same exception
+     twice: ELLKO and SAVVG both step 1,000 ft lower off BLUEM. ELLKO was
+     flattened to 10,000 on both until 2026-09-06, when a machine comparison
+     against CIFP 260903 caught it — NITZR46 codes +11000 and BLUEM56 +10000 on
+     every runway transition, exactly as SAVVG is coded 10,000 and 9,000. The
+     assertion exists so the flattening cannot come back. */
+  {
+    const at = (gate, rwy, fix) => {
+      const lad = globalThis.DD.ladderFor('12', gate, rwy) || [];
+      const p = lad.filter(q => q.f === fix)[0];
+      return p ? (p.aa != null ? p.aa : p.at) : null;
+    };
+    assert('ELLKO crosses 1,000 ft higher off NITZR than off BLUEM',
+      at('NITZR','12R','ELLKO') === 11000 && at('BLUEM','12R','ELLKO') === 10000
+      && at('NITZR','12L','ELLKO') === 11000 && at('BLUEM','12L','ELLKO') === 10000,
+      JSON.stringify([at('NITZR','12R','ELLKO'), at('BLUEM','12R','ELLKO'),
+                      at('NITZR','12L','ELLKO'), at('BLUEM','12L','ELLKO')]));
+    assert('and SAVVG does the same, which is the pattern ELLKO was missing',
+      at('NITZR','12R','SAVVG') === 10000 && at('BLUEM','12R','SAVVG') === 9000,
+      JSON.stringify([at('NITZR','12R','SAVVG'), at('BLUEM','12R','SAVVG')]));
+    /* the legacy shared tail resolves both per gate rather than carrying one */
+    const tf = g => globalThis.DD.trunkFor(g).filter(p => p.f === 'ELLKO')[0];
+    assert('the legacy trunk sets ELLKO per gate too, not once for both',
+      tf('NITZR').aa === 11000 && tf('BLUEM').aa === 10000,
+      JSON.stringify([tf('NITZR').aa, tf('BLUEM').aa]));
+  }
+
   /* ============ 3d. Flight rules and route ============ */
   assert('a route is the fix sequence from the reference data, with no invented procedure name',
     globalThis.DD.routeTextFor({role:'arrival', gate:'NITZR'}) === 'NITZR WRSAW DAHRL GDNEE ELLKO SAVVG GREAK TIETN'
