@@ -618,7 +618,7 @@ already HTTPS, so nothing is blocked as mixed content.
 
 ---
 
-## 14. Session hygiene — the work queue, and the commit boundary
+## 14. Session hygiene — the work queue, the commit boundary, and the report
 
 - **Commit after each completed subtask.**
 - **When aviation data is involved, cite which document and which paragraph the number came
@@ -731,3 +731,38 @@ VATGlasses ZAU footprint into the C90 and AZO decks"* reads correctly under this
 `_site/` on the runner and deploys the artifact; nothing is written back to the tree, and
 `_site/` is ignored. A commit that touches a drill deck is facility work under this rule like
 any other — that it also triggers a redeploy changes nothing about how it is staged (§13).
+
+### Report once per boundary, not once per tool batch
+
+**The behaviour this replaces:** a line of prose, five commands, another line, two more tools,
+another line — three or four messages for one piece of work, none of them worth reading alone.
+Do the work, then report.
+
+**Any task with more than one step banks its prose until the work is done.** A single lookup or
+a one-line answer still replies immediately. Everything else waits.
+
+**Where the report lands depends on how wide the session reaches:**
+
+| The session touches | One response per |
+|---|---|
+| two or more ARTCCs | **ARTCC** — AZO + C90 land together as ZAU, S56 lands separately as ZLC |
+| one ARTCC, several facilities | **facility** — M98 lands, then R90 lands |
+| one facility | the whole task |
+
+That is one idea, not three: **report at the widest unit that has more than one instance in
+play.** Spanning ZAU and ZLC makes the ARTCC the chunk. Working two facilities inside ZMP makes
+the facility the chunk.
+
+**Commit at the boundary you report at**, so a report that says *committed* is true by the time
+it is read. The commit rule above permits facilities under one ARTCC to share a commit; it does
+not require it, and a per-facility report wants a per-facility commit behind it.
+
+**Three things do not wait for the end:**
+
+- **A blocker.** A decision only the owner can make, or a finding that makes the task wrong as
+  specified, interrupts immediately. Silence is for progress, never for problems.
+- **The issue thread.** Pickup and landing comments keep their own schedule (the work queue,
+  above). That is the channel to watch while the chat is quiet, and it is what makes a long
+  silence legible rather than opaque.
+- **The tool calls**, which stay visible throughout. What collapses is the commentary between
+  them, not the work.
