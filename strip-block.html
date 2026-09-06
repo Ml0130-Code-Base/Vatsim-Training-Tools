@@ -1,0 +1,314 @@
+<script>
+/* ================================================================
+   MASTER STRIP BLOCK — the flight-strip entry row, facility-agnostic.
+
+   Extracted from the M98 drill builder and generalised so the same row
+   can serve every deck. Paste it in, give it a facility contract, and it
+   renders the strip and enforces that every procedure on it belongs to
+   the facility working the strip.
+
+   THE POINT OF THIS FILE IS THE ENFORCEMENT, not the markup. A strip is
+   a statement about a real aircraft on a real procedure, and most of the
+   ways it can be wrong are combinations that look fine field by field:
+
+     - an M98 arrival landing at a field M98 does not work
+     - a KSLC STAR on an M98 strip, or an MSP STAR on an S56 one
+     - an MSP SID flown off a satellite field that does not have it
+     - a runway that is not at the airport selected
+
+   Every one of those is refused BY NAME, saying what would have been
+   valid instead, because a silent drop teaches the wrong thing and a
+   generic "invalid" teaches nothing.
+
+   ---------- THE CONTRACT ----------
+
+   The deck defines window.STRIP_FACILITY before this block runs:
+
+     window.STRIP_FACILITY = {
+       id: 'M98',                       // facility label, used in messages
+       airports: {
+         KMSP: {name:'Minneapolis-St Paul', rwys:['12L','12R','30L','30R']},
+         KFCM: {name:'Flying Cloud', rwys:['10L','10R','28L','28R','18','36']}
+       },
+       arrivals: {
+         NITZR: {serves:['KMSP'], flies:true},
+         AGUDE: {serves:['KFCM','KANE'], rev:'AGUDE FIVE', flies:true}
+       },
+       departures: {
+         COULT: {from:['KMSP'], flies:true}
+       }
+     };
+
+   `serves` is the list of airports an ARRIVAL actually ends at.
+   `from`   is the list of airports a DEPARTURE actually leaves from.
+
+   BOTH ARE LISTS BECAUSE A PROCEDURE BELONGING TO SEVERAL FIELDS IS THE
+   NORMAL CASE, not an exception — AGUDE serves Flying Cloud and Airlake,
+   the GEP hub serves MSP and every satellite. The question here is never
+   "which field owns this procedure"; it is "is this procedure valid at
+   the field on this strip", which is membership in a list. A facility
+   whose departures genuinely serve every field it works writes every
+   field into `from`, and the control then offers them everywhere — a
+   declaration rather than an accident.
+
+   Both are REQUIRED and neither defaults to "everywhere". A procedure
+   with an empty list is offered nowhere, which is the safe direction: a
+   missing entry shows up as a procedure you cannot pick, not as a
+   procedure that silently works at the wrong field.
+
+   `rwys` may be omitted or null where the field's runways are not in the
+   reference set — the runway control then offers nothing rather than
+   inventing an inventory. That is the KLVN case at M98.
+
+   ---------- WHAT THIS BLOCK DOES NOT DO ----------
+
+   It does not fly anything, grade anything, or know what a ladder is. It
+   renders a row, reads it back, and answers whether the combination is
+   legal for this facility. A deck with a traffic model wires its own
+   engine to the values; a deck without one still gets a correct strip.
+   ================================================================ */
+(function(){
+'use strict';
+
+var F = window.STRIP_FACILITY;
+if(!F || !F.airports){ return; }   /* no contract — do nothing, per the block contract */
+
+var FID = F.id || 'this facility';
+var AP  = F.airports || {};
+var ARR = F.arrivals || {};
+var DEP = F.departures || {};
+
+/* ---------- 1. What this facility can legally put on a strip ---------- */
+
+function airportsHere(){ return Object.keys(AP); }
+function worksAirport(icao){ return !!(icao && AP[icao]); }
+function airportName(icao){ return (AP[icao] && AP[icao].name) || icao; }
+
+/* Runways at a field, or nothing where the inventory is not in the
+   reference set. Never invent one — an empty list is an honest answer and
+   an invented runway is a strip that trains a wrong readback. */
+function runwaysAt(icao){
+ var a = AP[icao];
+ return (a && a.rwys) ? a.rwys.slice() : [];
+}
+
+/* The arrivals that actually END at this field, and the departures that
+   actually LEAVE it. These two functions are the whole guard: every
+   dropdown is built from them, so an out-of-facility procedure is never
+   offered in the first place. */
+function arrivalsFor(icao){
+ return Object.keys(ARR).filter(function(k){
+  return (ARR[k].serves || []).indexOf(icao) >= 0;
+ });
+}
+function departuresFor(icao){
+ return Object.keys(DEP).filter(function(k){
+  return (DEP[k].from || []).indexOf(icao) >= 0;
+ });
+}
+function arrivalServes(proc, icao){ return arrivalsFor(icao).indexOf(proc) >= 0; }
+function departureLeaves(proc, icao){ return departuresFor(proc ? icao : icao).indexOf(proc) >= 0; }
+
+/* Where a procedure IS valid, for the refusal message. A procedure this
+   facility does not have at all is named as foreign rather than as
+   missing, because those are different mistakes. */
+function servesList(proc){ return (ARR[proc] && ARR[proc].serves) || null; }
+function fromList(proc){ return (DEP[proc] && DEP[proc].from) || null; }
+
+/* ---------- 2. The check ----------
+   Returns a list of plain-language errors. Empty means the combination is
+   legal for this facility. Each message names the offending value and
+   what would have been valid, in that order. */
+function checkStrip(s, label){
+ var e = [], tag = label || (s && s.cs) || 'that strip';
+ if(!s) return ['there is no strip to check'];
+ var role = s.role || 'arrival';
+
+ if(role === 'arrival'){
+  var dest = s.dest;
+  if(!worksAirport(dest)){
+   e.push(tag + ' is landing at ' + (dest || 'nowhere') + ', and ' + FID
+     + ' does not work that field. It works ' + airportsHere().join(', ') + '.');
+  } else if(s.gate){
+   if(!ARR[s.gate]){
+    e.push(tag + ' is on the ' + s.gate + ' arrival, which is not a ' + FID
+      + ' procedure at all. ' + airportName(dest) + ' is served by '
+      + (arrivalsFor(dest).join(', ') || 'no arrival in the reference set') + '.');
+   } else if(!arrivalServes(s.gate, dest)){
+    var sv = servesList(s.gate);
+    e.push(tag + ' is landing ' + dest + ' on the ' + s.gate
+      + ' arrival, and ' + s.gate + ' does not serve that field — it serves '
+      + (sv && sv.length ? sv.join(', ') : 'no field in the reference set')
+      + '. ' + airportName(dest) + ' is served by '
+      + (arrivalsFor(dest).join(', ') || 'no arrival in the reference set') + '.');
+   }
+  }
+  if(s.rwy && runwaysAt(dest).indexOf(s.rwy) < 0){
+   var rw = runwaysAt(dest);
+   e.push(tag + ' is assigned runway ' + s.rwy + ' at ' + dest + ', which '
+     + (rw.length ? ('does not have it — it has ' + rw.join(', '))
+                  : 'has no runway inventory in the reference set') + '.');
+  }
+ }
+
+ if(role === 'departure'){
+  var dep = s.dep;
+  if(!worksAirport(dep)){
+   e.push(tag + ' departed ' + (dep || 'nowhere') + ', and ' + FID
+     + ' does not work that field. It works ' + airportsHere().join(', ') + '.');
+  } else if(s.sid){
+   if(!DEP[s.sid]){
+    e.push(tag + ' is on the ' + s.sid + ' departure, which is not a ' + FID
+      + ' procedure at all. ' + airportName(dep) + ' has '
+      + (departuresFor(dep).join(', ') || 'no departure in the reference set') + '.');
+   } else if(departuresFor(dep).indexOf(s.sid) < 0){
+    var fr = fromList(s.sid);
+    e.push(tag + ' departed ' + dep + ' on the ' + s.sid
+      + ' departure, and ' + s.sid + ' does not leave that field — it leaves '
+      + (fr && fr.length ? fr.join(', ') : 'no field in the reference set')
+      + '. ' + airportName(dep) + ' has '
+      + (departuresFor(dep).join(', ') || 'no departure in the reference set') + '.');
+   }
+  }
+  if(s.depRwy && runwaysAt(dep).indexOf(s.depRwy) < 0){
+   var dr = runwaysAt(dep);
+   e.push(tag + ' departed runway ' + s.depRwy + ' at ' + dep + ', which '
+     + (dr.length ? ('does not have it — it has ' + dr.join(', '))
+                  : 'has no runway inventory in the reference set') + '.');
+  }
+ }
+
+ return e;
+}
+
+/* Bring a stored strip back inside the contract rather than leaving it in
+   a state the row cannot display. A drill saved at another facility, or
+   before a procedure was renamed, resolves to something legal here and
+   the caller is told what moved. */
+function normStrip(s){
+ var moved = [];
+ if(!s) return {strip:s, moved:moved};
+ var role = s.role || 'arrival';
+ var here = airportsHere();
+ if(role === 'arrival'){
+  if(!worksAirport(s.dest)){ moved.push('landing ' + s.dest + ' -> ' + here[0]); s.dest = here[0]; }
+  var av = arrivalsFor(s.dest);
+  if(s.gate && av.indexOf(s.gate) < 0){ moved.push('arrival ' + s.gate + ' -> ' + (av[0] || 'none')); s.gate = av[0] || ''; }
+  if(s.rwy && runwaysAt(s.dest).indexOf(s.rwy) < 0){ moved.push('runway ' + s.rwy + ' -> not issued'); s.rwy = ''; }
+ }
+ if(role === 'departure'){
+  if(!worksAirport(s.dep)){ moved.push('departed ' + s.dep + ' -> ' + here[0]); s.dep = here[0]; }
+  var dv = departuresFor(s.dep);
+  if(s.sid && dv.indexOf(s.sid) < 0){ moved.push('departure ' + s.sid + ' -> ' + (dv[0] || 'none')); s.sid = dv[0] || ''; }
+  if(s.depRwy && runwaysAt(s.dep).indexOf(s.depRwy) < 0){ moved.push('runway ' + s.depRwy + ' -> not stated'); s.depRwy = ''; }
+ }
+ return {strip:s, moved:moved};
+}
+
+/* ---------- 3. The row ----------
+   Ids are prefixed so a deck can host this alongside its own controls.
+   `onchange` calls the deck's sync function by name if it has one, which
+   keeps this block from depending on any particular builder. */
+var PFX  = (F.prefix || 'strip');
+var SYNC = (F.sync ? (F.sync + '()') : '');
+function esc(s){
+ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ev(){ return SYNC ? (' onchange="' + SYNC + '"') : ''; }
+function fld(lab, ctl){
+ return '<div class="' + PFX + '-f"><span class="' + PFX + '-lab">' + lab + '</span>' + ctl + '</div>';
+}
+function opts(list, sel, fmt){
+ return list.map(function(v){
+  return '<option value="' + esc(v) + '"' + (v === sel ? ' selected' : '') + '>'
+    + esc(fmt ? fmt(v) : v) + '</option>';
+ }).join('');
+}
+
+/* The airport control offers THIS FACILITY'S FIELDS AND NOTHING ELSE.
+   That single fact is what makes a cross-facility strip unbuildable
+   rather than merely refused after the fact. */
+function airportControl(id, sel){
+ return '<select class="' + PFX + '-sel" id="' + id + '"' + ev() + '>'
+   + opts(airportsHere(), sel, function(k){ return k + ' — ' + airportName(k); })
+   + '</select>';
+}
+function procControl(id, list, sel, meta, empty){
+ if(!list.length){
+  return '<div class="' + PFX + '-sel ' + PFX + '-none">' + esc(empty) + '</div>';
+ }
+ return '<select class="' + PFX + '-sel" id="' + id + '"' + ev() + '>'
+   + list.map(function(p){
+      var m = meta[p] || {};
+      return '<option value="' + esc(p) + '"' + (p === sel ? ' selected' : '') + '>'
+        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '') + (m.flies === false ? ' (frame only)' : '')
+        + '</option>';
+     }).join('')
+   + '</select>';
+}
+function runwayControl(id, icao, sel, blank){
+ var rw = runwaysAt(icao);
+ if(!rw.length){
+  return '<div class="' + PFX + '-sel ' + PFX + '-none">no runway inventory for ' + esc(icao) + '</div>';
+ }
+ return '<select class="' + PFX + '-sel" id="' + id + '"' + ev() + '>'
+   + '<option value=""' + (sel ? '' : ' selected') + '>' + esc(blank) + '</option>'
+   + opts(rw, sel) + '</select>';
+}
+
+/* The job half of the row — the part that differs by what the aircraft is
+   doing, and the only part that carries a procedure. */
+function jobFields(s, i){
+ var role = s.role || 'arrival';
+ if(role === 'departure'){
+  var dep = worksAirport(s.dep) ? s.dep : airportsHere()[0];
+  var dl  = departuresFor(dep);
+  return fld('Departed', airportControl(PFX + '-dep' + i, dep))
+   + fld('Runway', runwayControl(PFX + '-drwy' + i, dep, s.depRwy, 'not stated'))
+   + fld('Departure', procControl(PFX + '-sid' + i, dl, s.sid, DEP,
+       'no departure procedure at ' + dep + ' in the reference set'));
+ }
+ if(role === 'overflight'){
+  return fld('Entry radial', '<input class="' + PFX + '-in" id="' + PFX + '-er' + i + '" value="' + esc(s.entryR) + '"' + ev() + '>')
+   + fld('Entry DME', '<input class="' + PFX + '-in" id="' + PFX + '-ed' + i + '" value="' + esc(s.entryD) + '"' + ev() + '>')
+   + fld('Exit radial', '<input class="' + PFX + '-in" id="' + PFX + '-xr' + i + '" value="' + esc(s.exitR) + '"' + ev() + '>')
+   + fld('Exit DME', '<input class="' + PFX + '-in" id="' + PFX + '-xd' + i + '" value="' + esc(s.exitD) + '"' + ev() + '>');
+ }
+ var dest = worksAirport(s.dest) ? s.dest : airportsHere()[0];
+ var al   = arrivalsFor(dest);
+ return fld('Landing', airportControl(PFX + '-dest' + i, dest))
+  + fld('Arrival', procControl(PFX + '-gate' + i, al, s.gate, ARR,
+      'no arrival procedure at ' + dest + ' in the reference set'))
+  + fld('Runway', runwayControl(PFX + '-rwy' + i, dest, s.rwy, 'not yet issued'));
+}
+
+/* ---------- 4. Read back ---------- */
+function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
+function readJob(s, i){
+ var role = s.role || 'arrival';
+ if(role === 'departure'){
+  s.dep    = g(PFX + '-dep' + i)  || s.dep;
+  s.sid    = (g(PFX + '-sid' + i) != null) ? g(PFX + '-sid' + i) : s.sid;
+  s.depRwy = (g(PFX + '-drwy' + i) != null) ? g(PFX + '-drwy' + i) : s.depRwy;
+ } else if(role === 'overflight'){
+  s.entryR = g(PFX + '-er' + i) || s.entryR; s.entryD = g(PFX + '-ed' + i) || s.entryD;
+  s.exitR  = g(PFX + '-xr' + i) || s.exitR;  s.exitD  = g(PFX + '-xd' + i) || s.exitD;
+ } else {
+  s.dest = g(PFX + '-dest' + i) || s.dest;
+  s.gate = (g(PFX + '-gate' + i) != null) ? g(PFX + '-gate' + i) : s.gate;
+  s.rwy  = (g(PFX + '-rwy' + i)  != null) ? g(PFX + '-rwy' + i)  : s.rwy;
+ }
+ /* changing the field can strand the procedure that was on it */
+ return normStrip(s);
+}
+
+window.strip = {
+ FACILITY:F, airportsHere:airportsHere, worksAirport:worksAirport, airportName:airportName,
+ runwaysAt:runwaysAt, arrivalsFor:arrivalsFor, departuresFor:departuresFor,
+ arrivalServes:arrivalServes, checkStrip:checkStrip, normStrip:normStrip,
+ jobFields:jobFields, readJob:readJob, prefix:PFX
+};
+
+})();
+</script>
