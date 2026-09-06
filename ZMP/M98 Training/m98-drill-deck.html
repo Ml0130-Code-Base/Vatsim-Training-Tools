@@ -1269,9 +1269,32 @@ function radarStatesFor(role, rules){
 /* Stored drills predate the five states and carry only established/none, where
    "none" meant a pop-up on an IFR strip and a cold call on a VFR one. */
 function normRadar(r, rules, role){
- if(RADAR_STATES[r] && radarStatesFor(role, rules).indexOf(r)>=0) return r;
- if(r==='none')  return (rules==='VFR') ? 'none' : 'popup';
- if(RADAR_STATES[r]) return r;
+ var legal = radarStatesFor(role, rules);
+ if(RADAR_STATES[r] && legal.indexOf(r)>=0) return r;
+ /* Translate the legacy "none" and then FALL THROUGH to the legality check
+    rather than returning: an IFR departure stored as "none" is not a pop-up
+    either, because it is off a tower with a code and a clearance already. */
+ if(r==='none') r = (rules==='VFR') ? 'none' : 'popup';
+ if(RADAR_STATES[r] && legal.indexOf(r)>=0) return r;
+ /* A KNOWN STATE THAT THIS JOB AND THESE FLIGHT RULES CANNOT BE IN. Pick
+    "VFR asking for flight following", then switch the strip to IFR: the box
+    correctly stops offering it, but this used to hand the illegal state back
+    unchanged, so the row DISPLAYED "established" while the strip was STORED
+    as "following" — an IFR aircraft asking for a service it already has, and
+    the export carried it. Keep what the state MEANT and take the legal state
+    that means the same thing: no service yet stays no service yet, and
+    anything already identified or squawking falls back to the default.
+    The replacement comes from the LEGAL SET rather than being named, because
+    it is not the same at every job — a pop-up is the no-service state for an
+    IFR arrival, but an IFR departure has none at all, being off a tower with
+    a code and a clearance already. */
+ var st = RADAR_STATES[r], i, c;
+ if(st && !st.code && !st.ident){
+  for(i=0; i<legal.length; i++){
+   c = RADAR_STATES[legal[i]];
+   if(c && !c.code && !c.ident) return legal[i];
+  }
+ }
  return (role==='departure' && rules!=='VFR') ? 'departure' : 'established';
 }
 /* Who hands it to you, worked out from the job rather than typed. A departure
@@ -3697,6 +3720,12 @@ function readEditor(){
   a.mode=g('ddb-mode'+i)||a.mode;
   a.engine=g('ddb-eng'+i)||a.engine||'jet';
   a.asg=num(g('ddb-asg'+i), a.asg);
+  /* Published means there is no Center-advised speed, so the box is EMPTIED as
+     well as disabled. A greyed box still holding 210 stores a speed the strip
+     is not flying, shows it back to you as though it were set, and reinstates
+     it silently the moment the mode flips — the entry has to be gone, not just
+     unreachable (issue #10). */
+  if(a.mode!=='assigned') a.asg='';
   a.rwy=g('ddb-rwy'+i);
   a.ckdIn=gc('ddb-ck'+i);
   a.altim=gc('ddb-al'+i);

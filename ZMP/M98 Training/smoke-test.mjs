@@ -588,6 +588,39 @@ try {
     globalThis.DD.normRadar('none','IFR','arrival') === 'popup'
     && globalThis.DD.normRadar('none','VFR','overflight') === 'none'
     && globalThis.DD.normRadar('established','IFR','arrival') === 'established');
+  /* Issue #12. The box already offered only the states the rules allow, but
+     normRadar handed an illegal-but-known state straight back, so picking
+     "flight following" on a VFR strip and switching it to IFR left the row
+     DISPLAYING established while the strip was STORED as following — and the
+     export carried the stored one. */
+  assert('the radar state can never be one these flight rules forbid',
+    globalThis.DD.normRadar('following','IFR','arrival') === 'popup'
+    && globalThis.DD.normRadar('popup','VFR','arrival') === 'following'
+    && globalThis.DD.normRadar('departure','IFR','arrival') === 'established',
+    [globalThis.DD.normRadar('following','IFR','arrival'),
+     globalThis.DD.normRadar('popup','VFR','arrival'),
+     globalThis.DD.normRadar('departure','IFR','arrival')].join(','));
+  /* An IFR departure has NO no-service state — it is off a tower, so it
+     already carries a code and a clearance — which is why the replacement is
+     taken from the legal set rather than named. */
+  assert('and a job with no no-service state falls back to its own default',
+    globalThis.DD.normRadar('following','IFR','departure') === 'departure'
+    && globalThis.DD.normRadar('popup','IFR','departure') === 'departure',
+    [globalThis.DD.normRadar('following','IFR','departure'),
+     globalThis.DD.normRadar('popup','IFR','departure')].join(','));
+  /* the exhaustive check is the one that matters: every state, every job,
+     both flight rules, must land somewhere the box can actually display */
+  assert('and what it settles on means the same thing it did before the flip',
+    ['arrival','overflight','departure'].every(role =>
+      ['established','departure','popup','following','none'].every(st =>
+        ['IFR','VFR'].every(rules =>
+          globalThis.DD.radarStatesFor(role, rules)
+            .indexOf(globalThis.DD.normRadar(st, rules, role)) >= 0))),
+    'some role/rules/state triple still normalises to an illegal state');
+  assert('a state that is already legal is left alone',
+    globalThis.DD.normRadar('popup','IFR','arrival') === 'popup'
+    && globalThis.DD.normRadar('following','VFR','arrival') === 'following'
+    && globalThis.DD.normRadar('departure','IFR','departure') === 'departure');
 
   /* handed off by follows the job */
   assert('a departure is handed off by the tower at the field it left',

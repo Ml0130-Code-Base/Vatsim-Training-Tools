@@ -1416,6 +1416,12 @@ function readEditor(){
   a.mode=g('ddb-mode'+i)||a.mode;
   a.engine=g('ddb-eng'+i)||a.engine||'jet';
   a.asg=num(g('ddb-asg'+i), a.asg);
+  /* Published means there is no Center-advised speed, so the box is EMPTIED as
+     well as disabled. A greyed box still holding 210 stores a speed the strip
+     is not flying, shows it back to you as though it were set, and reinstates
+     it silently the moment the mode flips — the entry has to be gone, not just
+     unreachable (issue #10). */
+  if(a.mode!=='assigned') a.asg='';
   a.rwy=g('ddb-rwy'+i);
   a.ckdIn=gc('ddb-ck'+i);
   a.altim=gc('ddb-al'+i);
