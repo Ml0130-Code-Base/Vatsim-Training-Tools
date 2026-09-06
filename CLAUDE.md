@@ -560,6 +560,28 @@ powershell -ExecutionPolicy Bypass -File serve-site.ps1   preview at localhost:8
 git push                                                  publish (the workflow does the rest)
 ```
 
+**That setting is live state, not a line in this file, and it has drifted once.** On 2026-09-06
+the Pages source was found set to **Deploy from a branch** (`main`, `/`), and had been for the
+life of the site. That put two publishers on one URL. GitHub's built-in `pages-build-deployment`
+fires on **every** push to `main` and renders `README.md` with Jekyll; this workflow fires only
+on the paths it filters and publishes `_site/`. Both deploy to the same domain and neither waits
+for the other, so whichever finished last won — and the landing page alternated, commit to
+commit, between the dark tool index and the README rendered as a table of paragraphs. **While
+Jekyll held the site, all seven tool URLs returned 404**, because `/m98/` exists only in the
+staged directory. Fixed by setting the source to GitHub Actions, which disables the legacy
+builder outright rather than out-racing it.
+
+**The tell, and the check.** The signature is a landing page carrying
+`<meta name="generator" content="Jekyll">` where the dark index should be, plus a `/m98/` that
+404s — and, in the deployment list, two entries per commit, one `by=github-actions` and one
+`by=github-pages`. `build_type` must read `workflow`; `legacy` means the branch builder is back.
+The `source` field still reports `main` `/` even when the setting is right — it is vestigial
+under `workflow`, so read `build_type` and ignore `source`.
+
+```bash
+gh api repos/Ml0130-Code-Base/Vatsim-Training-Tools/pages --jq '{build_type, status}'
+```
+
 ### What the Pages documentation actually constrains
 
 Checked against `docs.github.com/en/pages` on 2026-09-04. The numbers are theirs; the second

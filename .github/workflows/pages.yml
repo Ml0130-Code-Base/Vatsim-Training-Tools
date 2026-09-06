@@ -17,8 +17,17 @@
 # robots.txt reaches _site/, so the publish surface is enforced rather than
 # remembered.
 #
-# One-time setup, in Settings > Pages:
-#   Source: GitHub Actions
+# REQUIRED SETTING, and it is not optional garnish — Settings > Pages > Source:
+# **GitHub Actions**. Left on "Deploy from a branch", GitHub's own
+# pages-build-deployment ALSO publishes, on every push to main, rendering
+# README.md with Jekyll. Two publishers, one URL, no ordering between them: the
+# landing page then flips between this staged site and the README, and every
+# tool URL 404s whenever Jekyll wins. That was the live state until 2026-09-06.
+#
+# Verify (build_type must be "workflow"; "legacy" means the branch builder is
+# back). The "source" field still says main / under workflow — ignore it:
+#
+#   gh api repos/Ml0130-Code-Base/Vatsim-Training-Tools/pages --jq .build_type
 # =============================================================================
 
 name: Publish tools to GitHub Pages
