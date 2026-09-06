@@ -1,102 +1,108 @@
-# SID and STAR data from CIFP — KSLC
+# SID, STAR and approach data from CIFP — S56, Salt Lake approach
 
 Generated **2026-09-06** from **CIFP 260903** (FAA Coded Instrument Flight Procedures,
-cycle effective 2026-09-03). Pull recipe, record layout and the licence are in
+cycle effective 2026-09-03). Pull recipe, record layout and licence in
 `claude_CIFP_Source_Reference.md` at the repository root.
 
-**The cycle is the citation.** A value here is true for 28 days by construction, so quote
-it as `CIFP 260903` and re-pull before trusting it in a later cycle.
+**The cycle is the citation.** A value here is true for 28 days by construction — quote it
+as `CIFP 260903` and re-pull before trusting it in a later cycle.
 
 **This is the published procedure, not the facility's use of it.** CIFP lists every
 transition that exists and is silent on which one the facility assigns in a given
-configuration — that is an LOA question with no CIFP equivalent. Nothing here says who
-owns what airspace, and nothing here is a sector boundary.
+configuration — that is an LOA question with no CIFP equivalent. Nothing here is a sector
+boundary and nothing here says who owns what airspace.
 
 ## Notation
 
-| written | means | CIFP descriptor |
-|---|---|---|
-| `>=N` | at or above N thousand | `+` |
-| `<=N` | at or below N thousand | `-` |
-| `N` | cross AT N thousand | (blank) |
-| `L - H` | cross between L and H | `B` |
-| `FLnnn` | flight level | |
-| `/nnn` | speed limit, knots | |
-| a fix with no number | no published crossing — lateral point only | |
+| written | means |
+|---|---|
+| `>=N` | at or above N |
+| `<=N` | at or below N |
+| `N` | cross AT N |
+| `L - H` | cross between L and H |
+| `FLnnn` | flight level |
+| `/nnn` | speed limit, knots |
+| a fix with no number | no published crossing — lateral point only |
 
-A **`[XX leg - not a fix]`** entry is a leg that terminates on a heading, an altitude or a
-manual vector rather than on a waypoint — `FM`, `VM`, `VI`, `VA`, `CA`. **It cannot be drawn
-as a point** and a fix-sequence ladder has to end there. Arrivals are almost all `TF`/`IF`
-and carry few of these; departures carry many, which is why SIDs do not map cleanly.
+**SIDs and STARs are written in thousands** (`>=11` is 11,000). **Approaches are written in
+full feet** (`>=2800`), because an approach works at altitudes where thousands read badly.
+
+A **`[XX leg - not a fix]`** entry terminates on a heading, an altitude or a manual vector
+rather than a waypoint — `FM`, `VM`, `VI`, `VA`, `CA`. **It cannot be drawn as a point** and a
+fix-sequence track has to end there.
+
+**An approach's `(final)` segment includes the missed approach**, which is why a fix can
+appear twice with a hold-like repetition at the end. That is the published coding, not a
+duplication error.
 
 ## KSLC
 
 ### STARs
 
-- **BEARR5 -> BYI:** BYI | EFFTA | NORDD | BLIDA | BEARR
-- **BEARR5 -> LCU:** LCU | BEARR
-- **BEARR5 -> PIH:** PIH | MLD | TEALZ | BEARR
-- **BEARR5 -> RW14:** BEARR | OGD >=11
-- **BEARR5 -> RW16B:** BEARR | OGD >=11
-- **BEARR5 -> RW17:** BEARR | OGD >=11
-- **BEARR5 -> RW32:** BEARR | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
-- **BEARR5 -> RW34B:** BEARR | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
-- **BEARR5 -> RW35:** BEARR | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
-- **BVL2 -> ALL:** BVL | KNOLE | WAATS
-- **CARTR1 -> BOBRT:** BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
-- **CARTR1 -> CKW:** CKW | SSIGN | BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
-- **CARTR1 -> DBS:** DBS | LAVAH | LHO >=14 | CARTR
-- **CARTR1 -> DDY:** DDY | STOPP | BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
-- **CARTR1 -> JAC:** JAC | LAVAH | LHO >=14 | CARTR
-- **CARTR1 -> OCS:** OCS | BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
-- **CARTR1 -> RW16B:** CARTR | WEBER >=12 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **CARTR1 -> RW17:** CARTR | WEBER >=12 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **CARTR1 -> RW34B:** CARTR | SETTT >=14 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **CARTR1 -> RW35:** CARTR | SETTT >=14 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **JAMMN5 -> BCE:** BCE | SLINA | DTA | LAZLO | JAMMN
-- **JAMMN5 -> MLF:** MLF | BEVRR | DTA | LAZLO | JAMMN
-- **JAMMN5 -> ALL:** JAMMN | SPIEK | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
-- **JAZZZ1 -> HELPR:** HELPR | GOSHU | SPANE 15/250
-- **JAZZZ1 -> MTU:** MTU | THISL | SPANE 15/250
-- **JAZZZ1 -> RACER:** RACER | MTU | THISL | SPANE 15/250
-- **JAZZZ1 -> ALL:** SPANE 15/250 | RUSHN >=13 | JAZZZ >=12/230 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **LHO5 -> BPI:** BPI | LHO
-- **LHO5 -> DBS:** DBS | LAVAH | LHO
-- **LHO5 -> JAC:** JAC | ELKHO | LAVAH | LHO
-- **LHO5 -> OCS:** OCS | LHO
-- **LHO5 -> RW16L:** LHO | CARTR >=14 | [VM leg - not a fix]  *(1 non-fix leg)*
-- **LHO5 -> RW34L:** LHO | CARTR >=14 | OGD | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
-- **PITTT2 -> BCE:** BCE | SLINA >=17 | DTA | JAMMN 17/280 | DRAPR 14 - 15 | SPIEK 13 - 14 | HEIRY | PITTT 12
-- **PITTT2 -> EKR:** EKR | RACER | MTU | THISL | SPANE FL190/280 | LEEHY | FFU 17 | DRYVE >=15 | PITTT 12
-- **PITTT2 -> HELPR:** HELPR | GOSHU | SPANE FL190/280 | LEEHY | FFU 17 | DRYVE >=15 | PITTT 12
-- **PITTT2 -> MLF:** MLF | BEVRR | DTA | JAMMN 17/280 | DRAPR 14 - 15 | SPIEK 13 - 14 | HEIRY | PITTT 12
-- **PITTT2 -> MTU:** MTU | THISL | SPANE FL190/280 | LEEHY | FFU 17 | DRYVE >=15 | PITTT 12
-- **PITTT2 -> RW16B:** PITTT 12 | MAGNE | QUIPA | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **PITTT2 -> RW17:** PITTT 12 | MAGNE | QUIPA | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **QWENN7 -> BCE:** BCE | HOPIN <=FL300 | LEEVT | JAMMN 15/250
-- **QWENN7 -> DTA:** DTA | LAZLO | JAMMN 15/250
-- **QWENN7 -> MLF:** MLF | BEVRR <=FL310 | DTA | LAZLO | JAMMN 15/250
-- **QWENN7 -> ALL:** JAMMN 15/250 | SCHAW 12 | QWENN 11/230 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **SKEES6 -> BYI:** BYI | EFFTA | BLIDA >=13 | BEARR
-- **SKEES6 -> PIH:** PIH | MLD | SLOAP | BEARR
-- **SKEES6 -> common route:** BEARR | SKEES
-- **SKEES6 -> RW16B:** SKEES | EKKHO 11/250 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **SKEES6 -> RW17:** SKEES | EKKHO 11/250 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **SKEES6 -> RW34B:** SKEES | HUUPR <=13 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **SKEES6 -> RW35:** SKEES | HUUPR <=13 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **SPANE8 -> EKR:** EKR | RACER | MTU | THISL | SPANE
-- **SPANE8 -> HELPR:** HELPR | GOSHU | SPANE
-- **SPANE8 -> RW14:** SPANE | BOAGY | FFU | DRYVE | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
-- **SPANE8 -> RW16B:** SPANE | BOAGY | FFU | DRYVE | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
-- **SPANE8 -> RW17:** SPANE | BOAGY | FFU | DRYVE | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
-- **SPANE8 -> RW32:** SPANE | BOAGY | FFU
-- **SPANE8 -> RW34B:** SPANE | BOAGY | FFU
-- **SPANE8 -> RW35:** SPANE | BOAGY | FFU
-- **YUTES2 -> FLECC:** FLECC | BVL | KNOLE 17/250 | SKWAH >=14 | YUTES
-- **YUTES2 -> RW16B:** YUTES | DUGGY | JAXXX 12 | MAGNE | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **YUTES2 -> RW17:** YUTES | DUGGY | JAXXX 12 | MAGNE | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **YUTES2 -> RW34B:** YUTES | GOGGL | BUSHH 12 | MARYZ | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
-- **YUTES2 -> RW35:** YUTES | GOGGL | BUSHH 12 | MARYZ | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **BYI:** BYI | EFFTA | NORDD | BLIDA | BEARR
+- **LCU:** LCU | BEARR
+- **PIH:** PIH | MLD | TEALZ | BEARR
+- **RW14:** BEARR | OGD >=11
+- **RW16B:** BEARR | OGD >=11
+- **RW17:** BEARR | OGD >=11
+- **RW32:** BEARR | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW34B:** BEARR | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW35:** BEARR | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
+- **ALL:** BVL | KNOLE | WAATS
+- **BOBRT:** BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
+- **CKW:** CKW | SSIGN | BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
+- **DBS:** DBS | LAVAH | LHO >=14 | CARTR
+- **DDY:** DDY | STOPP | BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
+- **JAC:** JAC | LAVAH | LHO >=14 | CARTR
+- **OCS:** OCS | BOBRT <=FL300 | KRANC | LHO >=14 | CARTR
+- **RW16B:** CARTR | WEBER >=12 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** CARTR | WEBER >=12 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW34B:** CARTR | SETTT >=14 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW35:** CARTR | SETTT >=14 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **BCE:** BCE | SLINA | DTA | LAZLO | JAMMN
+- **MLF:** MLF | BEVRR | DTA | LAZLO | JAMMN
+- **ALL:** JAMMN | SPIEK | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
+- **HELPR:** HELPR | GOSHU | SPANE 15/250
+- **MTU:** MTU | THISL | SPANE 15/250
+- **RACER:** RACER | MTU | THISL | SPANE 15/250
+- **ALL:** SPANE 15/250 | RUSHN >=13 | JAZZZ >=12/230 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **BPI:** BPI | LHO
+- **DBS:** DBS | LAVAH | LHO
+- **JAC:** JAC | ELKHO | LAVAH | LHO
+- **OCS:** OCS | LHO
+- **RW16L:** LHO | CARTR >=14 | [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW34L:** LHO | CARTR >=14 | OGD | DYANN >=11 | [VM leg - not a fix]  *(1 non-fix leg)*
+- **BCE:** BCE | SLINA >=17 | DTA | JAMMN 17/280 | DRAPR 14 - 15 | SPIEK 13 - 14 | HEIRY | PITTT 12
+- **EKR:** EKR | RACER | MTU | THISL | SPANE FL190/280 | LEEHY | FFU 17 | DRYVE >=15 | PITTT 12
+- **HELPR:** HELPR | GOSHU | SPANE FL190/280 | LEEHY | FFU 17 | DRYVE >=15 | PITTT 12
+- **MLF:** MLF | BEVRR | DTA | JAMMN 17/280 | DRAPR 14 - 15 | SPIEK 13 - 14 | HEIRY | PITTT 12
+- **MTU:** MTU | THISL | SPANE FL190/280 | LEEHY | FFU 17 | DRYVE >=15 | PITTT 12
+- **RW16B:** PITTT 12 | MAGNE | QUIPA | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** PITTT 12 | MAGNE | QUIPA | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **BCE:** BCE | HOPIN <=FL300 | LEEVT | JAMMN 15/250
+- **DTA:** DTA | LAZLO | JAMMN 15/250
+- **MLF:** MLF | BEVRR <=FL310 | DTA | LAZLO | JAMMN 15/250
+- **ALL:** JAMMN 15/250 | SCHAW 12 | QWENN 11/230 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **BYI:** BYI | EFFTA | BLIDA >=13 | BEARR
+- **PIH:** PIH | MLD | SLOAP | BEARR
+- **(final):** BEARR | SKEES
+- **RW16B:** SKEES | EKKHO 11/250 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** SKEES | EKKHO 11/250 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW34B:** SKEES | HUUPR <=13 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW35:** SKEES | HUUPR <=13 | DYANN >=11 | ANNTY 11 | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **EKR:** EKR | RACER | MTU | THISL | SPANE
+- **HELPR:** HELPR | GOSHU | SPANE
+- **RW14:** SPANE | BOAGY | FFU | DRYVE | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW16B:** SPANE | BOAGY | FFU | DRYVE | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** SPANE | BOAGY | FFU | DRYVE | CHHIP | [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW32:** SPANE | BOAGY | FFU
+- **RW34B:** SPANE | BOAGY | FFU
+- **RW35:** SPANE | BOAGY | FFU
+- **FLECC:** FLECC | BVL | KNOLE 17/250 | SKWAH >=14 | YUTES
+- **RW16B:** YUTES | DUGGY | JAXXX 12 | MAGNE | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** YUTES | DUGGY | JAXXX 12 | MAGNE | LAWVA 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW34B:** YUTES | GOGGL | BUSHH 12 | MARYZ | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
+- **RW35:** YUTES | GOGGL | BUSHH 12 | MARYZ | SURYP 11 | [FM leg - not a fix]  *(1 non-fix leg)*
 
 ### Fix coordinates
 
@@ -179,56 +185,56 @@ and carry few of these; departures carry many, which is why SIDs do not map clea
 
 ### SIDs
 
-- **ARCHZ1 -> RW34B:** SCANT >=10 | ARCHZ >=13
-- **ARCHZ1 -> RW35:** SCANT >=10 | ARCHZ >=13
-- **ARCHZ1 -> KROST:** ARCHZ >=13 | TRILA >=FL190 | EDETH | GAROT | KROST
-- **ARCHZ1 -> MLF:** ARCHZ >=13 | TRILA >=FL190 | EDETH | SEVYR | MLF
-- **ARCHZ1 -> WINEN:** ARCHZ >=13 | TRILA >=FL190 | EDETH | WINEN
-- **CGULL1 -> RW16B:** CORVR >=13 | CGULL >=15
-- **CGULL1 -> RW17:** CORVR >=13 | CGULL >=15
-- **CGULL1 -> RW34B:** CORVR >=13 | CGULL >=15
-- **CGULL1 -> RW35:** CORVR >=13 | CGULL >=15
-- **CGULL1 -> DRYAD:** CGULL >=15 | MOFER | SCOVL | DRYAD
-- **CGULL1 -> TWF:** CGULL >=15 | MOFER | SCOVL | DRYAD | TWF
-- **DEZRT2 -> RW16B:** DURCH >=12 | BONNE >=14 | DEZRT >=15
-- **DEZRT2 -> RW17:** DURCH >=12 | BONNE >=14 | DEZRT >=15
-- **DEZRT2 -> RW34B:** DURCH >=12 | BONNE >=14 | DEZRT >=15
-- **DEZRT2 -> RW35:** DURCH >=12 | BONNE >=14 | DEZRT >=15
-- **DEZRT2 -> BAM:** DEZRT | TIPTN | PECOP | ANTMO | BAM
-- **DEZRT2 -> MVA:** DEZRT | TIPTN | PECOP | ASTNN | MVA
-- **FFU9 -> RW16B:** [VM leg - not a fix]  *(1 non-fix leg)*
-- **FFU9 -> RW17:** [VM leg - not a fix]  *(1 non-fix leg)*
-- **FFU9 -> BCE:** FFU | LODUY | URNUW | BCE
-- **FFU9 -> HVE:** FFU | OHQES | HVE
-- **FFU9 -> MLF:** FFU | LODUY | URNUW | MLF
-- **FFU9 -> OAL:** FFU | LODUY | URNUW | MLF | ILC | TPH | OAL
-- **RUGGD3 -> RW16B:** BUBBY >=11 | RUGGD >=12
-- **RUGGD3 -> RW17:** BUBBY >=11 | RUGGD >=12
-- **RUGGD3 -> RW34B:** BUBBY >=11 | RUGGD >=12
-- **RUGGD3 -> RW35:** BUBBY >=11 | RUGGD >=12
-- **RUGGD3 -> EKR:** RUGGD | UPJAR | BORZI | EKR
-- **RUGGD3 -> HOLTR:** RUGGD | KLOUD | SAWGI | HOLTR
-- **RUGGD3 -> KIERA:** RUGGD | LOFOG | LEGBE | KIERA
-- **RUGGD3 -> OCS:** RUGGD | SPINE | SKIII | POPLE | OCS
-- **RUGGD3 -> PERTY:** RUGGD | HERTS | PERTY
-- **SEVYR3 -> RW32:** [CA leg - not a fix] | [VM leg - not a fix] | TCH  *(2 non-fix legs)*
-- **SEVYR3 -> RW34B:** [CA leg - not a fix] | [VM leg - not a fix] | TCH  *(2 non-fix legs)*
-- **SEVYR3 -> RW35:** [CA leg - not a fix] | [VM leg - not a fix] | TCH  *(2 non-fix legs)*
-- **SEVYR3 -> MLF:** TCH | EDETH | SEVYR | MLF
-- **SEVYR3 -> OAL:** TCH | EDETH | SEVYR | OAL
-- **SLC4 -> RW14:** [CA leg - not a fix] | [VM leg - not a fix]  *(2 non-fix legs)*
-- **SLC4 -> RW16B:** [VM leg - not a fix]  *(1 non-fix leg)*
-- **SLC4 -> RW17:** [VM leg - not a fix]  *(1 non-fix leg)*
-- **SLC4 -> RW32:** [CA leg - not a fix] | [VM leg - not a fix]  *(2 non-fix legs)*
-- **SLC4 -> RW34B:** [VM leg - not a fix]  *(1 non-fix leg)*
-- **SLC4 -> RW35:** [VM leg - not a fix]  *(1 non-fix leg)*
-- **ZIONZ1 -> RW16B:** HOPTO >=9 | ZIONZ
-- **ZIONZ1 -> RW17:** HOPTO >=9 | ZIONZ
-- **ZIONZ1 -> BCE:** ZIONZ | GITLN | LODUY >=14 | URNUW | BCE
-- **ZIONZ1 -> EHK:** ZIONZ | GITLN | LODUY >=14 | URNUW | EHK
-- **ZIONZ1 -> EYELO:** ZIONZ | KOOGR >=13 | ROMMN <=FL190 | PLEZZ | EYELO
-- **ZIONZ1 -> KIMMR:** ZIONZ | KOOGR >=13 | ROMMN <=FL190 | KIMMR
-- **ZIONZ1 -> KROST:** ZIONZ | GITLN | LODUY >=14 | KROST
+- **RW34B:** SCANT >=10 | ARCHZ >=13
+- **RW35:** SCANT >=10 | ARCHZ >=13
+- **KROST:** ARCHZ >=13 | TRILA >=FL190 | EDETH | GAROT | KROST
+- **MLF:** ARCHZ >=13 | TRILA >=FL190 | EDETH | SEVYR | MLF
+- **WINEN:** ARCHZ >=13 | TRILA >=FL190 | EDETH | WINEN
+- **RW16B:** CORVR >=13 | CGULL >=15
+- **RW17:** CORVR >=13 | CGULL >=15
+- **RW34B:** CORVR >=13 | CGULL >=15
+- **RW35:** CORVR >=13 | CGULL >=15
+- **DRYAD:** CGULL >=15 | MOFER | SCOVL | DRYAD
+- **TWF:** CGULL >=15 | MOFER | SCOVL | DRYAD | TWF
+- **RW16B:** DURCH >=12 | BONNE >=14 | DEZRT >=15
+- **RW17:** DURCH >=12 | BONNE >=14 | DEZRT >=15
+- **RW34B:** DURCH >=12 | BONNE >=14 | DEZRT >=15
+- **RW35:** DURCH >=12 | BONNE >=14 | DEZRT >=15
+- **BAM:** DEZRT | TIPTN | PECOP | ANTMO | BAM
+- **MVA:** DEZRT | TIPTN | PECOP | ASTNN | MVA
+- **RW16B:** [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** [VM leg - not a fix]  *(1 non-fix leg)*
+- **BCE:** FFU | LODUY | URNUW | BCE
+- **HVE:** FFU | OHQES | HVE
+- **MLF:** FFU | LODUY | URNUW | MLF
+- **OAL:** FFU | LODUY | URNUW | MLF | ILC | TPH | OAL
+- **RW16B:** BUBBY >=11 | RUGGD >=12
+- **RW17:** BUBBY >=11 | RUGGD >=12
+- **RW34B:** BUBBY >=11 | RUGGD >=12
+- **RW35:** BUBBY >=11 | RUGGD >=12
+- **EKR:** RUGGD | UPJAR | BORZI | EKR
+- **HOLTR:** RUGGD | KLOUD | SAWGI | HOLTR
+- **KIERA:** RUGGD | LOFOG | LEGBE | KIERA
+- **OCS:** RUGGD | SPINE | SKIII | POPLE | OCS
+- **PERTY:** RUGGD | HERTS | PERTY
+- **RW32:** [CA leg - not a fix] | [VM leg - not a fix] | TCH  *(2 non-fix legs)*
+- **RW34B:** [CA leg - not a fix] | [VM leg - not a fix] | TCH  *(2 non-fix legs)*
+- **RW35:** [CA leg - not a fix] | [VM leg - not a fix] | TCH  *(2 non-fix legs)*
+- **MLF:** TCH | EDETH | SEVYR | MLF
+- **OAL:** TCH | EDETH | SEVYR | OAL
+- **RW14:** [CA leg - not a fix] | [VM leg - not a fix]  *(2 non-fix legs)*
+- **RW16B:** [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW17:** [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW32:** [CA leg - not a fix] | [VM leg - not a fix]  *(2 non-fix legs)*
+- **RW34B:** [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW35:** [VM leg - not a fix]  *(1 non-fix leg)*
+- **RW16B:** HOPTO >=9 | ZIONZ
+- **RW17:** HOPTO >=9 | ZIONZ
+- **BCE:** ZIONZ | GITLN | LODUY >=14 | URNUW | BCE
+- **EHK:** ZIONZ | GITLN | LODUY >=14 | URNUW | EHK
+- **EYELO:** ZIONZ | KOOGR >=13 | ROMMN <=FL190 | PLEZZ | EYELO
+- **KIMMR:** ZIONZ | KOOGR >=13 | ROMMN <=FL190 | KIMMR
+- **KROST:** ZIONZ | GITLN | LODUY >=14 | KROST
 
 ### Fix coordinates
 
@@ -292,4 +298,234 @@ and carry few of these; departures carry many, which is why SIDs do not map clea
 - **PLEZZ** N39 33.46 / W111 23.34 -- `39.55763, -111.38902`
 - **EYELO** N38 45.47 / W110 46.92 -- `38.75789, -110.78194`
 - **KIMMR** N39 13.75 / W109 57.50 -- `39.22923, -109.95836`
+
+### Approaches
+
+
+**H16LZ** — RNAV (RNP) RWY 16LZ
+
+- **EKKHO:** EKKHO 11000/250 | IRRON >=10000/230
+- **WEBER:** WEBER >=12000 | IRRON >=10000/230
+- **(final):** IRRON >=10000/230 | YAWVA >=9000 | LGOON >=7500 | YYIPP >=6000 | YYIPP 0 | RW16L 4284 | [CA leg - not a fix] | RULFO | FFU >=10000 | FFU >=10000  *(1 non-fix leg)*
+
+**H16RZ** — RNAV (RNP) RWY 16RZ
+
+- **EKKHO:** EKKHO 11000/250 | RRUFF >=9000/230 | JICCU >=8000 | BHIVE >=7500 | DILEE >=6600
+- **LAWVA:** LAWVA 11000 | BEKAY >=9000/190 | CAMDI >=7500 | DILEE >=6600
+- **WEBER:** WEBER >=12000 | RRUFF >=9000/230 | JICCU >=8000 | BHIVE >=7500 | DILEE >=6600
+- **(final):** DILEE >=6600 | BNKER >=6000 | BNKER 0 | RW16R 4278 | [CA leg - not a fix] | STACO >=8100 | STACO >=8100  *(1 non-fix leg)*
+
+**H17-Z** — RNAV (RNP) RWY 17 Z
+
+- **EKKHO:** EKKHO 11000/250 | UDUZU >=11000 | IVOCY >=9000
+- **WEBER:** WEBER >=12000 | GORPS >=11000 | UDUZU >=11000 | IVOCY >=9000
+- **(final):** IVOCY >=9000 | PRYES >=7500 | TIFUL >=6000 | TIFUL 0 | RW17 4277 | [CA leg - not a fix] | FFU >=10000 | FFU >=10000  *(1 non-fix leg)*
+
+**H34LZ** — RNAV (RNP) RWY 34LZ
+
+- **JAZZZ:** JAZZZ >=12000/230 | PUTER >=10000/210 | CAMRI >=9000 | DUNLP >=8000 | HEPSO >=7900
+- **QWENN:** QWENN 11000/230 | PUTER >=10000/210 | CAMRI >=9000 | DUNLP >=8000 | HEPSO >=7900
+- **SURYP:** SURYP 11000 | PEFNO >=9000/190 | HEPSO >=7900
+- **(final):** HEPSO >=7900 | FLLAG >=6100 | FLLAG 0/1 | RW34L 4284 | [CA leg - not a fix] | STACO >=8100 | STACO >=8100  *(1 non-fix leg)*
+
+**H34RZ** — RNAV (RNP) RWY 34RZ
+
+- **JAZZZ:** JAZZZ >=12000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **QWENN:** QWENN 11000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **(final):** ALGIE >=10000/210 | HAKKR >=9000/190 | CHEVL >=6100 | CHEVL 0 | RW34R 4280 | [CA leg - not a fix] | TCH | OGD >=9000 | OGD >=9000  *(1 non-fix leg)*
+
+**I16L** — ILS RWY 16L
+
+- **EKKHO:** EKKHO 11000/250 | IRRON >=11000
+- **OGD:** OGD >=11000 | IRRON >=11000
+- **WEBER:** WEBER >=12000 | IRRON >=11000
+- **(final):** IRRON 11000 | TOOME >=9000 | LGOON >=7500 | YYIPP 6000 | RW16L 4284 | [CA leg - not a fix] | FFU >=10000 | FFU >=10000  *(1 non-fix leg)*
+
+**I16R** — ILS RWY 16R
+
+- **EKKHO:** EKKHO 11000/250 | RRUFF >=9000
+- **FANDS:** FANDS | RRUFF >=9000
+- **OGD:** OGD >=9000 | RRUFF >=9000
+- **WEBER:** WEBER >=12000 | RRUFF >=9000
+- **(final):** RRUFF 9000 | UFEMY >=8000 | BHIVE >=7500 | BNKER 6000 | RW16R 4278 | [CA leg - not a fix] | [VI leg - not a fix] | STACO >=8100 | STACO >=8100  *(2 non-fix legs)*
+
+**I17** — ILS RWY 17
+
+- **EKKHO:** EKKHO 11000/250 | UDUZU >=11000 | IVOCY >=9000
+- **OGD:** OGD | UDUZU >=11000 | IVOCY >=9000
+- **TUKTE:** TUKTE | UDUZU >=11000 | IVOCY >=9000
+- **WEBER:** WEBER >=12000 | GORPS >=11000 | UDUZU >=11000 | IVOCY >=9000
+- **(final):** IVOCY 9000 | PRYES >=7500 | TIFUL >=6000 | RW17 4277 | FFU >=10000 | FFU >=10000
+
+**I34L** — ILS RWY 34L
+
+- **FFU:** FFU | PUTER >=10000/210 | CAMRI >=9000
+- **JAZZZ:** JAZZZ >=12000/230 | PUTER >=10000/210 | CAMRI >=9000
+- **QWENN:** QWENN 11000/230 | PUTER >=10000/210 | CAMRI >=9000
+- **(final):** CAMRI 9000/210 | DUNLP >=8000 | FLLAG 6100 | RW34L 4284 | [CA leg - not a fix] | STACO >=8100 | STACO >=8100  *(1 non-fix leg)*
+
+**I34R** — ILS RWY 34R
+
+- **FFU:** FFU | PLAGE >=11000/210 | ALGIE >=10000
+- **JAZZZ:** JAZZZ >=12000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **QWENN:** QWENN 11000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **(final):** ALGIE 10000/210 | HAKKR >=9000 | CHEVL 6100 | RW34R 4280 | TCH | OGD >=9000 | OGD >=9000
+
+**L16L** — LOC RWY 16L
+
+- **EKKHO:** EKKHO 11000/250 | IRRON >=11000
+- **OGD:** OGD >=11000 | IRRON >=11000
+- **WEBER:** WEBER >=12000 | IRRON >=11000
+- **(final):** IRRON >=11000 | TOOME >=9000 | LGOON >=7500 | YYIPP >=6000 | RW16L 4284 | [CA leg - not a fix] | FFU >=10000 | FFU >=10000  *(1 non-fix leg)*
+
+**L16R** — LOC RWY 16R
+
+- **EKKHO:** EKKHO 11000/250 | RRUFF >=9000
+- **FANDS:** FANDS | RRUFF >=9000
+- **OGD:** OGD >=9000 | RRUFF >=9000
+- **WEBER:** WEBER >=12000 | RRUFF >=9000
+- **(final):** RRUFF >=9000 | UFEMY >=8000 | BHIVE >=7500 | BNKER >=6000 | RW16R 4278 | [CA leg - not a fix] | [VI leg - not a fix] | STACO >=8100 | STACO >=8100  *(2 non-fix legs)*
+
+**L17** — LOC RWY 17
+
+- **EKKHO:** EKKHO 11000/250 | UDUZU >=11000 | IVOCY >=9000
+- **OGD:** OGD | UDUZU >=11000 | IVOCY >=9000
+- **TUKTE:** TUKTE | UDUZU >=11000 | IVOCY >=9000
+- **WEBER:** WEBER >=12000 | GORPS >=11000 | UDUZU >=11000 | IVOCY >=9000
+- **(final):** IVOCY >=9000 | PRYES >=7500 | TIFUL >=6000 | RW17 4277 | FFU >=10000 | FFU >=10000
+
+**L34L** — LOC RWY 34L
+
+- **FFU:** FFU | PUTER >=10000/210 | CAMRI >=9000
+- **JAZZZ:** JAZZZ >=12000/230 | PUTER >=10000/210 | CAMRI >=9000
+- **QWENN:** QWENN 11000/230 | PUTER >=10000/210 | CAMRI >=9000
+- **(final):** CAMRI >=9000/210 | DUNLP >=8000 | FLLAG >=6100 | JUGOX >=4780 | FALEM 4430 | [CA leg - not a fix] | STACO >=8100 | STACO >=8100  *(1 non-fix leg)*
+
+**L34R** — LOC RWY 34R
+
+- **FFU:** FFU | PLAGE >=11000/210 | ALGIE >=10000
+- **JAZZZ:** JAZZZ >=12000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **QWENN:** QWENN 11000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **(final):** ALGIE >=10000/210 | HAKKR >=9000 | CHEVL >=6100 | IRUYU >=4900 | GITBE 4429 | TCH | OGD >=9000 | OGD >=9000
+
+**R16LY** — RNAV (GPS) RWY 16LY
+
+- **EKKHO:** EKKHO 11000/250 | IRRON >=10000/230
+- **OGD:** OGD | IRRON >=10000/230
+- **WEBER:** WEBER >=12000 | IRRON >=10000/230
+- **(final):** IRRON >=10000/230 | YAWVA >=9000 | LGOON >=7500 | YYIPP >=6000 | YYIPP | RW16L 4284 | [CA leg - not a fix] | RULFO | FFU >=10000 | FFU >=10000  *(1 non-fix leg)*
+
+**R16RY** — RNAV (GPS) RWY 16RY
+
+- **EKKHO:** EKKHO 11000/250 | RRUFF >=9000/230
+- **OGD:** OGD | RRUFF >=9000/230
+- **WEBER:** WEBER >=12000 | RRUFF >=9000/230
+- **(final):** RRUFF >=9000/230 | JICCU >=8000 | BHIVE >=7500 | BNKER >=6000 | BNKER | RW16R 4278 | [CA leg - not a fix] | SLOPS | STACO >=8900 | STACO >=8900  *(1 non-fix leg)*
+
+**R17-Y** — RNAV (GPS) RWY 17 Y
+
+- **EKKHO:** EKKHO 11000/250 | UDUZU >=11000 | IVOCY >=9000
+- **OGD:** OGD | UDUZU >=11000 | IVOCY >=9000
+- **TUKTE:** TUKTE | UDUZU >=11000 | IVOCY >=9000
+- **WEBER:** WEBER >=12000 | GORPS >=11000 | UDUZU >=11000 | IVOCY >=9000
+- **(final):** IVOCY >=9000 | PRYES >=7500 | TIFUL >=6000 | TIFUL | RW17 4277 | [CA leg - not a fix] | FFU >=10000 | FFU >=10000  *(1 non-fix leg)*
+
+**R34LY** — RNAV (GPS) RWY 34LY
+
+- **FFU:** FFU | PUTER >=10000/210 | CAMRI >=9000
+- **JAZZZ:** JAZZZ >=12000/230 | PUTER >=10000/210 | CAMRI >=9000
+- **QWENN:** QWENN 11000/230 | PUTER >=10000/210 | CAMRI >=9000
+- **(final):** CAMRI >=9000/210 | DUNLP >=8000 | FLLAG >=6100 | FLLAG | JOMVA 5100 | RW34L 4284 | [CA leg - not a fix] | STACO >=8100 | STACO >=8100  *(1 non-fix leg)*
+
+**R34RY** — RNAV (GPS) RWY 34RY
+
+- **FFU:** FFU | PLAGE >=11000/210 | ALGIE >=10000
+- **JAZZZ:** JAZZZ >=12000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **QWENN:** QWENN 11000/230 | PLAGE >=11000/210 | ALGIE >=10000
+- **(final):** ALGIE >=10000/210 | HAKKR >=9000 | CHEVL >=6100 | CHEVL | IRUYU 4900 | RW34R 4280 | [CA leg - not a fix] | TCH | OGD >=9000 | OGD >=9000  *(1 non-fix leg)*
+
+**R35** — RNAV (GPS) RWY 35
+
+- **FFU:** FFU | HLMET >=11000/210 | PEDLE >=10000
+- **HLMET:** HLMET/210 | PEDLE >=10000
+- **JAZZZ:** JAZZZ >=12000/230 | HLMET >=11000/210 | PEDLE >=10000
+- **QWENN:** QWENN 11000/230 | HLMET >=11000/210 | PEDLE >=10000
+- **(final):** PEDLE >=10000/210 | ZEPOG >=9000 | KERNN >=6100 | KERNN | WEEEL 4900 | FORXS 4420 | [CA leg - not a fix] | KNOBY | OGD >=9000 | OGD >=9000  *(1 non-fix leg)*
+
+**X35** — LDA RWY 35
+
+- **FFU:** FFU | HLMET >=11000/210 | PEDLE >=10000
+- **HLMET:** HLMET/210 | PEDLE >=10000
+- **JAZZZ:** JAZZZ >=12000/230 | HLMET >=11000/210 | PEDLE >=10000
+- **QWENN:** QWENN 11000/230 | HLMET >=11000/210 | PEDLE >=10000
+- **(final):** PEDLE >=10000/210 | ZEPOG >=9000 | DRAPE >=6900 | KERNN >=6100 | WEEEL >=4900 | FORXS 4419 | [CA leg - not a fix] | TCH | OGD >=9000 | OGD >=9000  *(1 non-fix leg)*
+
+### Entry fixes — every published way in
+
+The approach transitions, which is where traffic is fed from:
+
+`EKKHO`, `WEBER`, `LAWVA`, `JAZZZ`, `QWENN`, `SURYP`, `OGD`, `FANDS`, `TUKTE`, `FFU`, `HLMET`
+
+### Fix coordinates
+
+- **EKKHO** N41 13.45 / W112 04.59 -- `41.22421, -112.07655`
+- **IRRON** N41 08.65 / W112 00.97 -- `41.14417, -112.01621`
+- **WEBER** N41 15.23 / W112 01.75 -- `41.25388, -112.02913`
+- **YAWVA** N41 03.70 / W112 00.40 -- `41.06161, -112.00659`
+- **LGOON** N40 58.51 / W111 59.79 -- `40.97510, -111.99644`
+- **YYIPP** N40 53.82 / W111 59.24 -- `40.89697, -111.98733`
+- **RW16L** N38 58.74 / W104 49.14 -- `38.97894, -104.81905`
+- **RULFO** N40 40.31 / W111 57.67 -- `40.67177, -111.96121`
+- **FFU** N40 16.49 / W111 56.43 -- `40.27489, -111.94053`
+- **RRUFF** N41 08.66 / W112 02.32 -- `41.14428, -112.03864`
+- **JICCU** N41 04.23 / W112 01.80 -- `41.07048, -112.02998`
+- **BHIVE** N40 58.51 / W112 01.13 -- `40.97510, -112.01882`
+- **DILEE** N40 56.26 / W112 00.87 -- `40.93765, -112.01443`
+- **LAWVA** N40 49.67 / W112 06.06 -- `40.82790, -112.10094`
+- **BEKAY** N40 55.86 / W112 06.79 -- `40.93095, -112.11319`
+- **CAMDI** N40 58.31 / W112 04.09 -- `40.97177, -112.06824`
+- **BNKER** N40 53.86 / W112 00.59 -- `40.89760, -112.00976`
+- **RW16R** N38 58.71 / W104 49.41 -- `38.97846, -104.82342`
+- **STACO** N40 49.33 / W112 25.18 -- `40.82220, -112.41960`
+- **UDUZU** N41 07.95 / W111 57.73 -- `41.13255, -111.96215`
+- **IVOCY** N41 02.78 / W111 57.73 -- `41.04640, -111.96213`
+- **GORPS** N41 13.70 / W112 00.02 -- `41.22835, -112.00038`
+- **PRYES** N40 58.06 / W111 57.73 -- `40.96769, -111.96211`
+- **TIFUL** N40 53.35 / W111 57.72 -- `40.88914, -111.96208`
+- **RW17** N62 06.58 / W150 06.54 -- `62.10971, -150.10896`
+- **JAZZZ** N40 20.69 / W111 52.78 -- `40.34480, -111.87960`
+- **PUTER** N40 26.11 / W111 57.37 -- `40.43521, -111.95618`
+- **CAMRI** N40 28.48 / W111 57.64 -- `40.47461, -111.96071`
+- **DUNLP** N40 31.63 / W111 58.01 -- `40.52715, -111.96677`
+- **HEPSO** N40 35.02 / W111 58.40 -- `40.58372, -111.97328`
+- **QWENN** N40 19.24 / W111 58.01 -- `40.32068, -111.96691`
+- **SURYP** N40 41.87 / W112 05.14 -- `40.69786, -112.08564`
+- **PEFNO** N40 34.63 / W112 04.31 -- `40.57714, -112.07184`
+- **FLLAG** N40 40.82 / W111 59.07 -- `40.68025, -111.98447`
+- **RW34L** N38 57.98 / W104 49.23 -- `38.96632, -104.82053`
+- **PLAGE** N40 26.20 / W111 56.05 -- `40.43669, -111.93412`
+- **ALGIE** N40 28.56 / W111 56.32 -- `40.47604, -111.93864`
+- **HAKKR** N40 31.69 / W111 56.68 -- `40.52819, -111.94464`
+- **CHEVL** N40 40.78 / W111 57.73 -- `40.67969, -111.96214`
+- **RW34R** N38 58.17 / W104 49.01 -- `38.96945, -104.81681`
+- **TCH** N40 51.02 / W111 58.91 -- `40.85026, -111.98191`
+- **OGD** N41 13.45 / W112 05.89 -- `41.22409, -112.09824`
+- **TOOME** N41 03.22 / W112 00.34 -- `41.05361, -112.00561`
+- **FANDS** N41 16.23 / W112 03.21 -- `41.27052, -112.05351`
+- **UFEMY** N41 02.55 / W112 01.60 -- `41.04252, -112.02670`
+- **TUKTE** N41 18.95 / W111 57.73 -- `41.31589, -111.96219`
+- **JUGOX** N40 44.90 / W111 59.54 -- `40.74839, -111.99238`
+- **FALEM** N40 46.04 / W111 59.68 -- `40.76741, -111.99459`
+- **IRUYU** N40 44.52 / W111 58.16 -- `40.74202, -111.96934`
+- **GITBE** N40 46.02 / W111 58.33 -- `40.76697, -111.97224`
+- **SLOPS** N40 50.33 / W112 14.64 -- `40.83882, -112.24399`
+- **JOMVA** N40 43.91 / W111 59.43 -- `40.73178, -111.99045`
+- **HLMET** N40 25.35 / W111 55.34 -- `40.42246, -111.92232`
+- **PEDLE** N40 28.48 / W111 55.70 -- `40.47468, -111.92833`
+- **ZEPOG** N40 31.61 / W111 56.06 -- `40.52691, -111.93435`
+- **KERNN** N40 40.72 / W111 57.11 -- `40.67862, -111.95190`
+- **WEEEL** N40 44.47 / W111 57.55 -- `40.74121, -111.95916`
+- **FORXS** N40 45.98 / W111 57.72 -- `40.76628, -111.96207`
+- **KNOBY** N40 51.90 / W111 58.31 -- `40.86503, -111.97190`
+- **DRAPE** N40 36.60 / W111 56.64 -- `40.60997, -111.94395`
 
