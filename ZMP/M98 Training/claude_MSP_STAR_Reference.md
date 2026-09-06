@@ -170,7 +170,9 @@ On the **Runway 30/17** config, NITZR (WRSAW 11,000) and BLUEM (HHAMR 10,000) ar
 
 *NITZR* — common **NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL**:
 - **→ 35:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · SHILD 9/230 · GDNEE · NNEWW 7
-- **→ 30L/30R:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · AANAH 10/250 · WBSTR 8/250 · CANDD 7/230 · HAPTN 7/210
+- **→ 30L/30R:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · **AANAH 10/250 ‡** · WBSTR 8/250 · CANDD 7/230 · HAPTN 7/210
+
+> **‡ AANAH — open conflict, 2026-09-06, not resolved.** This document says **cross at 10,000, speed 250**. **CIFP 260903** codes `NITZR46 RW30B AANAH` as **`+ 09000` with no speed** — at or above 9,000. Three differences at once: the altitude, the kind of restriction, and whether a speed is published at all. Everything else on this ladder matches CIFP exactly. This document stands and the tool flies 10/250 until the owner adjudicates, the way ELLKO was settled — root `CLAUDE.md` §6, conflicts are named, not resolved. **Worth a plate check**, because a wrong floor here is graded.
 - **→ 12R/4/22/17:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · GDNEE · **ELLKO ≥11/250** · **SAVVG 10** · GREAK 8/230 · TIETN 8/230
 - **→ 12L:** NITZR ≥11/280 · WRSAW ≥11/280 · DAHRL · GDNEE · **ELLKO ≥11/250** · **SAVVG 10** · CMMOE 8/230 · FSCOT 8/230
 

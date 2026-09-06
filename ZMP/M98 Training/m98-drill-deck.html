@@ -272,9 +272,25 @@ function trunkFor(gate){
   if(p.f==='SAVVG'){ q.at = (gate==='BLUEM')?9000:10000; }
   else if(p.f==='ELLKO'){ q.aa = (gate==='BLUEM')?10000:11000; }
   else { if(p.aa)q.aa=p.aa; if(p.at)q.at=p.at; }
+  if(p.ab)q.ab=p.ab;
   return q; });
 }
- /* ---------- Arrival ladders, by gate and by runway transition ----------
+ /* ---------- How a crossing restriction is written here ----------
+    Four forms, and they map one-to-one onto the ARINC 424 altitude
+    descriptor CIFP uses, so a value can be checked against the coded source
+    without translating in your head (claude_CIFP_Source_Reference.md):
+
+      aa: N           at or above N          CIFP descriptor  +
+      at: N           cross AT N             CIFP descriptor  (blank)
+      ab: N           at or below N          CIFP descriptor  -
+      aa: L, ab: H    cross between L and H  CIFP descriptor  B, alt1 H alt2 L
+
+    `ab` was added 2026-09-06. Before it, a window could only be stored as its
+    floor and the ceiling lived in the reference markdown alone — see NOFLD.
+    `capAt` still returns the FLOOR, because the floor is what a descend-via
+    is graded against; the ceiling is carried but nothing grades it yet.
+
+   ---------- Arrival ladders, by gate and by runway transition ----------
     Fixes, coordinates and crossing/speed restrictions transcribed from
     claude_MSP_STAR_Reference.md — "By arrival & runway transition" for the
     restrictions and "Full fix coordinates (as provided)" for the positions.
@@ -321,6 +337,13 @@ function trunkFor(gate){
    {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
    {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
    {f:'DAHRL', lat:44.36483, lon:-93.36683},
+   /* CONFLICT, unresolved. claude_MSP_STAR_Reference.md says AANAH 10/250 —
+      cross at 10,000, speed 250 — and is owner-verified against the plates.
+      CIFP 260903 codes NITZR46 RW30B AANAH as "+ 09000" with NO speed: at or
+      above 9,000. Three differences at once — the value, the kind of
+      restriction, and whether a speed is published at all. The reference
+      stands until the owner adjudicates, per root CLAUDE.md §6, which is how
+      ELLKO was settled. Do not silently switch this to CIFP. */
    {f:'AANAH', lat:44.39450, lon:-93.34583, at:10000, spd:250},
    {f:'WBSTR', lat:44.47583, lon:-93.28733, at:8000, spd:250},
    {f:'CANDD', lat:44.60633, lon:-93.01417, at:7000, spd:230},
@@ -344,14 +367,17 @@ function trunkFor(gate){
    {f:'CMMOE', lat:44.96100, lon:-93.10217, at:8000, spd:230},
    {f:'FSCOT', lat:44.98217, lon:-93.15200, at:8000, spd:230}
   ];
-  /* NOFLD is published as an 8,000-9,000 window ("NOFLD 8-9/250"). Only the
-     floor is carried, because at-or-above is all the engine grades; the window
-     itself stays in claude_MSP_STAR_Reference.md. */
+  /* NOFLD is published as an 8,000-9,000 window — "NOFLD 8-9/250" in
+     claude_MSP_STAR_Reference.md, and B 09000 08000 250 in CIFP 260903, which
+     agree. The whole window is carried now that `ab` exists; before
+     2026-09-06 only the floor was, because the model had no ceiling to put it
+     in. Nothing grades the ceiling yet — it is data the engine can reach, not
+     a check. */
   var bluem30 = [
    {f:'BLUEM', lat:44.18133, lon:-93.22383, aa:10000, spd:280},
    {f:'HHAMR', lat:44.28433, lon:-93.21433, aa:10000, spd:280},
    {f:'FARBO', lat:44.37450, lon:-93.20733},
-   {f:'NOFLD', lat:44.43117, lon:-93.18900, aa:8000, spd:250},
+   {f:'NOFLD', lat:44.43117, lon:-93.18900, aa:8000, ab:9000, spd:250},
    {f:'CANDD', lat:44.60633, lon:-93.01417, at:7000, spd:230},
    {f:'HAPTN', lat:44.62833, lon:-92.99183, at:7000, spd:210}
   ];
