@@ -1540,6 +1540,39 @@ else { mount(); }
    NAME. serves and from are LISTS because a procedure belonging to
    several fields is the normal case.
 
+   EIGHT FIELDS, AND THE LIST IS THE SOP'S OWN. Table 2-3-7, "VFR
+   Practice Approach Airport Designators", names exactly these eight and
+   gives each the letter that goes third in a practice-approach
+   scratchpad entry — which is what `pa` carries. Three of them are named
+   in the SOP by the very procedure CIFP codes: 3-4-2b's Brigham City
+   clearance is the OGD1, 3-7-2d's Tooele clearance is the STACO2, and
+   3-8-2b's South Valley clearance is the SVALY#. The inventory and the
+   local procedure agree by name and not by coincidence.
+
+   `pa` IS A SCRATCHPAD CHARACTER, NOT A SECTOR. South Valley's is K and
+   so is Lake's sector letter; they are unrelated. Nothing here says who
+   owns any airspace.
+
+   HILL AFB CARRIES NO PROCEDURE, and the empty lists are the point.
+   CIFP codes no SID, STAR or approach for KHIF and no TACAN approach
+   anywhere in the cycle, so the HI-ILS and HI-TACAN that SOP 3-3 makes
+   Hart approve are not in this source at all. The field stays in the
+   list with nothing under it, because a controller who can select the
+   field and find it empty has learned something true; a field quietly
+   left out teaches nothing.
+
+   SOUTH VALLEY REGIONAL IS KSVR. Checked in the CIFP airport record,
+   not assumed from the old U42 identifier, which cycle 260903 does not
+   carry. The VATGlasses ZLC dataset agrees.
+
+   `approaches` IS A LOCAL EXTENSION TO THE CONTRACT. The master strip
+   block below reads id, prefix, airports, arrivals and departures and
+   ignores everything else, so this key costs it nothing — it is read
+   only by this deck's own mount, which renders the inventory. It is
+   keyed BY AIRPORT rather than flat because approach idents collide
+   across fields: R35 is both a KSLC and a KBMC approach, and I17/L17
+   belong to KSLC and KTVY alike. A flat map would silently lose one.
+
    Procedure inventory from CIFP 260903 — see the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
    no traffic model, so nothing here is flown.
@@ -1548,7 +1581,14 @@ else { mount(); }
 window.STRIP_FACILITY = {
  id:'S56', prefix:'s56st',
  airports:{
-  KSLC:{name:"Salt Lake City", rwys:['14','16L','16R','17','32','34L','34R','35']},
+  KSLC:{pa:'A', name:"Salt Lake City", rwys:['14','16L','16R','17','32','34L','34R','35']},
+  KBMC:{pa:'C', name:"Brigham City Regional", rwys:['17','35']},
+  KHIF:{pa:'Z', name:"Hill Air Force Base", rwys:['14','32']},
+  KOGD:{pa:'O', name:"Ogden-Hinckley", rwys:['03','17','21','35']},
+  KPVU:{pa:'J', name:"Provo Municipal", rwys:['13','18','31','36']},
+  KSPK:{pa:'S', name:"Spanish Fork Municipal", rwys:['12','30']},
+  KTVY:{pa:'T', name:"Bolinder Field-Tooele Valley", rwys:['17','35']},
+  KSVR:{pa:'K', name:"South Valley Regional", rwys:['16','34']},
  },
  arrivals:{
   BEARR5:{serves:['KSLC'], flies:false},
@@ -1562,6 +1602,8 @@ window.STRIP_FACILITY = {
   SKEES6:{serves:['KSLC'], flies:false},
   SPANE8:{serves:['KSLC'], flies:false},
   YUTES2:{serves:['KSLC'], flies:false},
+  WLKRR1:{serves:['KOGD'], flies:false},
+  TAYTR4:{serves:['KPVU'], flies:false},
  },
  departures:{
   ARCHZ1:{from:['KSLC'], flies:false},
@@ -1572,6 +1614,66 @@ window.STRIP_FACILITY = {
   SEVYR3:{from:['KSLC'], flies:false},
   SLC4:{from:['KSLC'], flies:false},
   ZIONZ1:{from:['KSLC'], flies:false},
+  OGD1:{from:['KBMC'], flies:false},
+  EMONT3:{from:['KOGD'], flies:false},
+  DITTI1:{from:['KPVU'], flies:false},
+  PROVO4:{from:['KPVU'], flies:false},
+  SPK1:{from:['KSPK'], flies:false},
+  STACO2:{from:['KTVY'], flies:false},
+  SVALY2:{from:['KSVR'], flies:false},
+ },
+ approaches:{
+  KSLC:[
+   {id:'H16LZ', name:'RNAV (RNP) Z RWY 16L'},
+   {id:'H16RZ', name:'RNAV (RNP) Z RWY 16R'},
+   {id:'H17-Z', name:'RNAV (RNP) Z RWY 17'},
+   {id:'H34LZ', name:'RNAV (RNP) Z RWY 34L'},
+   {id:'H34RZ', name:'RNAV (RNP) Z RWY 34R'},
+   {id:'I16L', name:'ILS RWY 16L'},
+   {id:'I16R', name:'ILS RWY 16R'},
+   {id:'I17', name:'ILS RWY 17'},
+   {id:'I34L', name:'ILS RWY 34L'},
+   {id:'I34R', name:'ILS RWY 34R'},
+   {id:'L16L', name:'LOC RWY 16L'},
+   {id:'L16R', name:'LOC RWY 16R'},
+   {id:'L17', name:'LOC RWY 17'},
+   {id:'L34L', name:'LOC RWY 34L'},
+   {id:'L34R', name:'LOC RWY 34R'},
+   {id:'R16LY', name:'RNAV (GPS) Y RWY 16L'},
+   {id:'R16RY', name:'RNAV (GPS) Y RWY 16R'},
+   {id:'R17-Y', name:'RNAV (GPS) Y RWY 17'},
+   {id:'R34LY', name:'RNAV (GPS) Y RWY 34L'},
+   {id:'R34RY', name:'RNAV (GPS) Y RWY 34R'},
+   {id:'R35', name:'RNAV (GPS) RWY 35'},
+   {id:'X35', name:'LDA RWY 35'}
+  ],
+  KBMC:[
+   {id:'R35', name:'RNAV (GPS) RWY 35'}
+  ],
+  KHIF:[],
+  KOGD:[
+   {id:'I03', name:'ILS RWY 03'},
+   {id:'L03', name:'LOC RWY 03'},
+   {id:'R03', name:'RNAV (GPS) RWY 03'},
+   {id:'VOR-A', name:'VOR circling A'}
+  ],
+  KPVU:[
+   {id:'I13', name:'ILS RWY 13'},
+   {id:'L13', name:'LOC RWY 13'},
+   {id:'R13', name:'RNAV (GPS) RWY 13'}
+  ],
+  KSPK:[
+   {id:'R12', name:'RNAV (GPS) RWY 12'},
+   {id:'RNV-A', name:'RNAV circling A'}
+  ],
+  KTVY:[
+   {id:'I17', name:'ILS RWY 17'},
+   {id:'L17', name:'LOC RWY 17'},
+   {id:'R17', name:'RNAV (GPS) RWY 17'}
+  ],
+  KSVR:[
+   {id:'R34', name:'RNAV (GPS) RWY 34'}
+  ],
  }
 };
 })();
@@ -1912,7 +2014,22 @@ var css = ''
  + '.' + P + '-btn:hover{border-color:var(--dim);}'
  + '.' + P + '-err{color:var(--red);font:11.5px/1.6 var(--body);margin-top:6px;}'
  + '.' + P + '-ok{color:var(--green);font:11.5px/1.6 var(--body);margin-top:6px;}'
- + '.' + P + '-dim{color:var(--dim);font:11.5px/1.65 var(--body);}';
+ + '.' + P + '-dim{color:var(--dim);font:11.5px/1.65 var(--body);}'
+ /* The inventory table. It scrolls inside itself rather than widening the
+    page, because KSLC alone carries twenty-two approaches. */
+ + '.' + P + '-invwrap{overflow-x:auto;margin:14px 0 4px;}'
+ + '.' + P + '-inv{border-collapse:collapse;width:100%;min-width:640px;}'
+ + '.' + P + '-inv th,.' + P + '-inv td{border-top:1px solid var(--line);padding:7px 10px;'
+ + 'text-align:left;vertical-align:top;font:11.5px/1.55 var(--body);}'
+ + '.' + P + '-inv th{color:var(--dim);font-family:var(--mono);font-size:10.5px;'
+ + 'letter-spacing:.06em;text-transform:uppercase;border-top:none;}'
+ + '.' + P + '-inv td.' + P + '-fld{white-space:nowrap;color:var(--ink);}'
+ + '.' + P + '-inv td.' + P + '-fld b{font-family:var(--mono);color:var(--green);}'
+ + '.' + P + '-inv td.' + P + '-pa{font-family:var(--mono);color:var(--green);'
+ + 'text-align:center;width:1px;}'
+ + '.' + P + '-proc{font-family:var(--mono);font-size:11px;color:var(--ink);}'
+ + '.' + P + '-empty{color:var(--amber);font-style:italic;}'
+ + '.' + P + '-rwys{font-family:var(--mono);font-size:11px;color:var(--dim);}';
 
 var rows = [];
 function blank(){
@@ -1952,9 +2069,14 @@ function check(s, i){
  if(!box) return;
  var errs = S.checkStrip(s, s.cs || ('strip ' + (i + 1)));
  box.className = errs.length ? (P + '-err') : (P + '-ok');
+ /* Name the field this strip is actually at. A departure keeps whatever
+    dest it had before the job changed, so reading dest first would print
+    the old airport under a departure — with eight fields in the list that
+    is a wrong field on a strip, not a cosmetic slip. */
+ var at = s.role === 'departure' ? s.dep : s.role === 'overflight' ? '' : s.dest;
  box.innerHTML = errs.length
    ? errs.map(function(e){ return '&#9888; ' + esc(e); }).join('<br>')
-   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(s.dest || s.dep || 'the boundary');
+   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(at || 'the boundary');
 }
 function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
 
@@ -1971,10 +2093,62 @@ window[P + 'Sync'] = function(){
 window[P + 'Add']  = function(){ rows.push(blank()); render(); };
 window[P + 'Drop'] = function(i){ if(rows.length > 1){ rows.splice(i, 1); render(); } };
 
+/* ---------- The inventory ----------
+   What every field this facility works actually publishes. It reads the
+   same contract the strip row reads, so the table and the dropdowns can
+   never disagree — house rule 5, one copy of the numbers.
+
+   An empty cell is rendered, not hidden. Hill AFB has no coded procedure
+   of any kind and the row says so in words, because a field silently
+   left off the table is a gap someone discovers mid-drill. */
+function procCell(list){
+ if(!list || !list.length){
+  return '<span class="' + P + '-empty">none coded</span>';
+ }
+ return '<span class="' + P + '-proc">' + list.map(esc).join(', ') + '</span>';
+}
+function appCell(list){
+ if(!list || !list.length){
+  return '<span class="' + P + '-empty">none coded</span>';
+ }
+ return '<span class="' + P + '-proc">' + list.map(function(a){
+  return esc(a.id) + ' <span class="' + P + '-dim">' + esc(a.name) + '</span>';
+ }).join('<br>') + '</span>';
+}
+function inventory(){
+ var f = S.FACILITY, apps = f.approaches || {};
+ var rows = S.airportsHere().map(function(a){
+  var ap = f.airports[a] || {}, rw = ap.rwys || [];
+  return '<tr>'
+   + '<td class="' + P + '-pa">' + esc(ap.pa || '—') + '</td>'
+   + '<td class="' + P + '-fld"><b>' + esc(a) + '</b><br>' + esc(ap.name) + '</td>'
+   + '<td class="' + P + '-rwys">' + (rw.length ? rw.map(esc).join(', ')
+        : '<span class="' + P + '-empty">no inventory</span>') + '</td>'
+   + '<td>' + procCell(S.arrivalsFor(a)) + '</td>'
+   + '<td>' + procCell(S.departuresFor(a)) + '</td>'
+   + '<td>' + appCell(apps[a]) + '</td>'
+   + '</tr>';
+ }).join('');
+ return '<div class="' + P + '-invwrap"><table class="' + P + '-inv">'
+  + '<tr><th title="Table 2-3-7 practice-approach designator">PA</th><th>Field</th>'
+  + '<th>Runways</th><th>STARs</th><th>SIDs</th><th>Approaches</th></tr>'
+  + rows + '</table></div>';
+}
+
 function section(){
  var f = S.FACILITY;
  return '<section class="panel ' + P + '-sec" id="mod-' + P + '" data-note="strips">'
-  + '<h2>Flight strips</h2>'
+  + '<h2>Fields and procedures</h2>'
+  + '<p class="' + P + '-dim">The eight fields of <b>SOP Table 2-3-7</b>, and everything '
+  + 'CIFP 260903 publishes at each. <b>PA</b> is that table\'s practice-approach scratchpad '
+  + 'letter &mdash; a character, not a sector. <b>Hill Air Force Base carries no coded '
+  + 'procedure at all</b>: CIFP has no SID, STAR or approach for it and no TACAN approach '
+  + 'anywhere in the cycle, so the HI-ILS and HI-TACAN that 3-3-3a makes Hart approve have to '
+  + 'come from the facility. The row is shown empty rather than left out. Approach names are '
+  + 'the plate form, suffix before the runway &mdash; <i>RNAV (GPS) Y RWY 17</i>, the way '
+  + 'Table 2-3-3 and 2-4-4 write it.</p>'
+  + inventory()
+  + '<h2 style="margin-top:26px;">Flight strips</h2>'
   + '<p class="' + P + '-dim">Every procedure offered here belongs to <b>' + esc(f.id) + '</b>. '
   + 'The field list is this facility\'s and nothing else, so a strip for another facility cannot '
   + 'be built; anything that arrives another way — a stored drill, a pasted scenario — is named '

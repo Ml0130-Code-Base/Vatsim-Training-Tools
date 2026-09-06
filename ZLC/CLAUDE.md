@@ -103,7 +103,30 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    **It is trusted because ZLC vARTCC owns the dataset.** Upstream `Owners.xlsx` names Adam Earl (`shadeddude`) as its manager, and locally managed sets receive *"periodic bulk updates when local sector files change"* — so these polygons come from the facility's own sector file. It also confirmed all twenty ZLC frequencies in `_shared/claude_ZLC_Positions_Reference.md`. It is still **not a facility document**: an SOP outranks it, and one divergence is already recorded (the Bozeman fold, `B1Z → 06` against the AFV tree's `08 → 06`). Licence is **CC BY-NC-SA 4.0** — any tool drawing these shapes **must credit VATGlasses on the page**.
 
    **Still names without shapes:** the gates, the P2/P3/P4 areas and the Heber Shelf line. VATGlasses draws sectors, not gates. Recovering those still means carving the images out of the PDFs and measuring them, the way `claude_M98_DDA_Geometry.md` was produced.
-2. **Routes and fixes.** Named but not located: KOURT, SPUUD, SADYL, JIMMI, KYANN, BEWTE, TOILS (BOI); BGSKY, BOBKT, MEADO, HIA (BZN); UDUZU, IRRON, NICHOL, HLMET, STACO (S56).
+2. **Routes and fixes — almost entirely closed by CIFP (2026-09-06).** The two
+   `claude_*_CIFP_Procedures.md` files carry every published SID, STAR and approach at both
+   facilities, with each fix's crossing altitude, speed limit and coordinates. Of the fixes
+   this section used to list as names without positions, **all but one are now located**:
+   KOURT, SPUUD, SADYL, JIMMI, BEWTE, TOILS, BGSKY, BOBKT, MEADO, HIA, and UDUZU, IRRON,
+   HLMET and STACO at S56.
+
+   **Two things did not close, and they are different kinds of gap.**
+
+   - **NICHOL (S56) is not in CIFP at all** — no fix of that name exists anywhere in cycle
+     260903. SOP 3-5 uses it as the South Flow descent line (*"no descent below 11,000 until
+     established downwind and north of NICHOL"*), so it reads as a local point off the video
+     map rather than a published waypoint. It stays an owner ask.
+   - **KYANN (BOI) may be a transcription error for KYAAN.** The BOI SOP transcription in
+     `Big Sky/BOI/claude_BOI_Reference.md` spells it `KYANN`; CIFP codes the KBOI STAR as
+     **`KYAAN4`** and its fix as `KYAAN`, and there is no `KYANN` in the cycle. **Not resolved
+     here** — root `CLAUDE.md` §6, conflicts are named. Settling it means re-reading the BOI
+     SOP paragraph; if the document really says KYANN, that is an as-written anomaly to
+     preserve, and if the extraction dropped a letter, four files need the fix
+     (`claude_BOI_Reference.md` twice, `bigsky-drill-deck.html`, and
+     `_shared/claude_ZLC_Sector_Geometry_Reference.md`).
+
+   **CIFP is procedures, not airspace.** It closes fix positions and nothing else — the gates,
+   the P2/P3/P4 areas and the Heber Shelf line in item 1 are untouched by it.
 3. **Configuration.** S56 procedures branch on North Flow vs South Flow almost everywhere; the selector does not model flow yet, so duty text shows both branches. BOI branches on East vs West Flow the same way.
 
    **The geometry now carries the branch**, which is the natural way to model it when the selector grows one: every airspace block in `_shared/source-vatglasses/airspace.json` is gated on a runway configuration, and there are exactly four across the dataset — `KSLC 34L/R, 35` (North), `KSLC 16L/R, 17` (South), `KBOI 10L/R` (East), `KBOI 28L/R` (West). Selecting a flow selects which blocks exist. Big Sky shows it most clearly: Alpine and Sage **swap shapes** between east and west flow over the same total airspace.
