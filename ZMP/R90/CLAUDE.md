@@ -120,10 +120,12 @@ restriction, speed limit and coordinates. The block exposes `RD.STARS`, `RD.PFIX
 its **Procedure identifiers** table is what attributes a block of transitions to a procedure.
 
 **Two zeros, and both are written down rather than left unchecked.** KOMA has **no coded SIDs**
-and Lincoln has **neither a SID nor a STAR**. A radar-vector or conventional departure is
-outside what CIFP carries, so read a zero as a coding gap and not as a field without
-departures. `STARS_LIST` in the deck was already the five names; it is now backed by the
-ladders.
+and Lincoln has **neither a SID nor a STAR**. Read a zero as a coding gap and not as a field
+without departures — and as a gap **at these fields** rather than a limit of the dataset: CIFP
+does carry radar-vectored departures, ARINC 424 route type `T`, Vector SID, as at Salt Lake
+City and Boise. It codes no SID of any type at either R90 field. Corrected 2026-09-07; root
+`claude_CIFP_Source_Reference.md` §3.1. `STARS_LIST` in the deck was already the five names; it
+is now backed by the ladders.
 
 **This changes nothing about roadmap item 1.** CIFP is procedures, not airspace. Not one R90
 sector boundary is described in words anywhere, the STARs do not imply one, and the deck still
