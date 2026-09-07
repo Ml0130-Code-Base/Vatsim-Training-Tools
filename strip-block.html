@@ -60,6 +60,22 @@
    reference set — the runway control then offers nothing rather than
    inventing an inventory. That is the KLVN case at M98.
 
+   `flies` and `track` are DIFFERENT CLAIMS, and the row labels them
+   differently. Conflating them is what let a deck holding a complete
+   published ladder still describe itself as a frame.
+
+     flies  this deck's engine has geometry it can actually FLY.
+            False everywhere but M98, and false for a reason that has
+            nothing to do with the data: a deck with no traffic model
+            flies nothing, however much it knows.
+     track  the published track IS carried — fixes, crossing
+            restrictions, speed limits. Set by the procedures block,
+            which reads the FAA's coded source.
+
+   flies:false with track:true renders "(track only)". flies:false
+   with no track renders "(frame only)". Neither is a defect; saying
+   which of the two is true is the entire point.
+
    ---------- WHAT THIS BLOCK DOES NOT DO ----------
 
    It does not fly anything, grade anything, or know what a ladder is. It
@@ -242,7 +258,8 @@ function procControl(id, list, sel, meta, empty){
    + list.map(function(p){
       var m = meta[p] || {};
       return '<option value="' + esc(p) + '"' + (p === sel ? ' selected' : '') + '>'
-        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '') + (m.flies === false ? ' (frame only)' : '')
+        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '')
+        + (m.flies === false ? (m.track ? ' (track only)' : ' (frame only)') : '')
         + '</option>';
      }).join('')
    + '</select>';

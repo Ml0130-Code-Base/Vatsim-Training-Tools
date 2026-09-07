@@ -101,6 +101,9 @@ name.
 │                                          page counts, WHICH PAGES ARE PICTURES, pull recipe
 ├── claude_<FAC>_SOP_Reference.md          the governing order, transcribed by paragraph
 ├── claude_<FAC>_<NBR>_LOA_Reference.md    one per interface that matters
+├── claude_<FAC>_CIFP_Procedures.md        published SIDs, STARs and approaches from the
+│                                          FAA coded source — §10.1. WRITE IT EVEN WHEN THE
+│                                          ANSWER IS "no field here has one"
 ├── claude_<FAC>_Gap_Analysis.md           what the documents do not answer, ranked
 ├── claude_<FAC>_Drill_Format.md           how the coach frames and runs a drill here
 ├── claude_<FAC>_OJT_Session_Review.md     intake template until a session is flown
@@ -407,6 +410,16 @@ time the relevant tool takes structural work, and **none should be fixed as a dr
 - **The notes layer exists at C90 (anchored rail) and S56 (typed notes against `OPEN_Q`), and
   nowhere else.** AZO has the practice-log half without the rail. **Copy the C90 rail rather
   than reinventing it.**
+- **S56's copy of the master strip block is one revision behind, as of 2026-09-06.** The block
+  gained a `track` flag that separates *this deck's engine can fly it* (`flies`) from *the
+  published ladder is carried* (`track`), so a deck holding a full CIFP ladder renders
+  *"track only"* rather than *"frame only"*. It landed in `strip-block.html` and in the C90,
+  AZO, R90 and Big Sky copies; **S56 was deliberately skipped**, because it was being worked in
+  another session and a concurrent edit to the same file would have lost one side. The change
+  is additive and S56 is not broken by it — with no `track` set, its rows read *"frame only"*
+  exactly as before. **Land it in S56 with that facility's CIFP wiring**, and this bullet goes
+  away. It is the §2 "every copy in the same commit" rule bent once, knowingly, and recorded
+  here because that is the price of bending it.
 - **The two ZLC tools carry the three-page wrapper as of 2026-09-06.** Both were one long
   scroll with a row of anchor links while the other five decks had tabs. A fourth block in each
   moves the already-mounted sections into `zlc-view` wrappers and turns `#modnav` into the same
@@ -425,31 +438,100 @@ time the relevant tool takes structural work, and **none should be fixed as a dr
 
 ## 10. Standing up a new facility
 
-The order below is the one that has worked three times. **Steps 1–5 are all documentation, and
-that is not an accident** — every attempt to start at step 6 produces a tool that asserts
+### The four sources, and the order to pull them
+
+**Every facility has the same four sources. Check all four before writing a line of reference
+markdown, and record the result of each — including the ones that come back empty.** A source
+checked and found empty is a finding worth citing; a source never checked is a hole that gets
+discovered later, usually by a trainee.
+
+They are pulled in this order because each one narrows what the next has to answer:
+
+| # | Source | What only it can answer | Where |
+|---|---|---|---|
+| 1 | **The facility orders** — SOP, and one LOA per interface that matters | Positions, frequencies, the combining chain, delegation, local rules, who owns what and when | the vARTCC's document library |
+| 2 | **CIFP** — the FAA's coded procedures | Every published SID, STAR and approach: fixes, crossing restrictions, speed limits, coordinates | `aeronav.faa.gov`, §10.1 below |
+| 3 | **vNAS** — the machine-readable facility record | Airport inventories, sector adjacency, **and every handoff identifier** | `data-api.vnas.vatsim.net/api/artccs/<ID>` |
+| 4 | **Community geometry** — VATGlasses, SimAware | Sector polygons with altitude stratums, where the vARTCC owns the dataset | §7 and `claude_Community_Geometry_Sources.md` |
+
+**The order is not arbitrary and skipping ahead wastes work.** The orders name the positions
+that everything else is indexed by. CIFP then closes the procedure half of the reference
+markdown outright, so writing that half by hand first is work thrown away. vNAS is the only
+handoff-identifier source there is — **never take one from community geometry** (§7). And the
+geometry pull is last because it is the one whose licence and provenance have to be reasoned
+about before anything is drawn.
+
+**Each source answers a different question, and none substitutes for another.** The most
+expensive mistake here is treating a hit in one as coverage in another: CIFP carries the
+published procedure and says nothing about which transition the facility assigns; VATGlasses
+carries a polygon and no handoff ID; the SOP names a gate and may never give it a coordinate.
+**Record which source a value came from at the point of use**, so the next session can tell a
+gap in our pull from a gap in the world.
+
+### 10.1 CIFP — pull it, and record the answer even when it is zero
+
+**Pull CIFP for every field a new facility works, at step 2 of the ladder below, before
+writing the procedure half of any reference markdown.** It is one unauthenticated download,
+it is the same recipe at every facility, and where it has data it replaces hours of plotting
+with a citation. Full record layout, column offsets and the licence in
+`claude_CIFP_Source_Reference.md`.
+
+```bash
+curl -sL https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/
+curl -sL -o CIFP_<YYMMDD>.zip https://aeronav.faa.gov/Upload_313-d/cifp/CIFP_<YYMMDD>.zip
+```
+
+- **The cycle is the citation.** 28-day cycles, and the URL carries the cycle start. A value
+  is true for 28 days by construction — write `CIFP 260903` beside it, in the markdown, in the
+  tool and in the commit message. **A 404 means the cycle rolled**, not that the path is
+  wrong: read the current cycle off the download page rather than guessing forward.
+- **Read `IN_CIFP.txt` first.** A tab-separated manifest of every airport and procedure that
+  is coded, so "does this field have a STAR" is one line of `awk` and not a scan of 50 MB.
+  It is the CIFP equivalent of writing the source index before the reference files (§6).
+- **A ZERO IS A FINDING, AND IT IS NOT THE SAME AS "THIS FIELD HAS NO DEPARTURES."** CIFP codes
+  what is codeable for RNAV navigation; a conventional or radar-vector procedure is simply not
+  in it. O'Hare and Midway have eleven and three coded STARs and **zero** coded SIDs, and the
+  four AZO fields have nothing at all. **Write the zero down, in the slot and in the facility
+  `CLAUDE.md`, as "checked and empty" with the cycle** — that is a second independent source
+  agreeing with the document set, and it is worth more than an unchecked slot.
+- **A procedure identifier is not unique across fields.** ADELL EIGHT is published at four
+  Chicago satellites with a different set of runway transitions at each; PANGG SEVEN has a
+  different common segment at Gary than at Midway. **Key procedure data by airport, then by
+  procedure.** Keyed on the identifier alone, several fields' legs concatenate into a track no
+  aircraft could fly — and it looks entirely plausible on the page.
+- **CIFP is the published procedure and nothing more.** It does not say which transition the
+  facility assigns in a given configuration — that is an SOP and LOA question with no CIFP
+  answer — and it carries no boundary, no MVA and no delegation. It closes §7 for nobody.
+
+### The ladder
+
+The order below is the one that has worked three times. **Steps 1–6 are all documentation, and
+that is not an accident** — every attempt to start at step 7 produces a tool that asserts
 things nobody can cite.
 
 1. **Find the document library and pull it.** Write `claude_Source_Documents_Index.md` first:
    manifest, effective dates, page counts, **which pages are pictures**, and the curl recipe.
 2. **Extract.** `pdftotext -layout` into `source-docs/txt/`, `-raw` where a table misaligns.
    Reconcile every table against the narrative prose (§6).
-3. **Write the reference markdown.** Positions, frequencies and the combining chain first —
+3. **Pull CIFP** for every field the facility works, per §10.1, and write
+   `claude_<FAC>_CIFP_Procedures.md` — including the fields that come back empty.
+4. **Write the reference markdown.** Positions, frequencies and the combining chain first —
    they are the spine of the tool and the thing a trainee needs on night one. Then the LOA
    interfaces, then the local rules. Cite by paragraph, in line.
-4. **Get the second source** (vNAS) and reconcile. Name conflicts; do not resolve them. Flag
-   single-sourced values.
-5. **Write the gap analysis**, Part 1 ranked by training value and phrased as answerable asks.
-6. **Build the tool.** Copy the nearest existing shell — terminal from R90, en route from ZMP,
+5. **Get the second source** (vNAS) and reconcile. Name conflicts; do not resolve them. Flag
+   single-sourced values. This is the **only** handoff-identifier source.
+6. **Write the gap analysis**, Part 1 ranked by training value and phrased as answerable asks.
+7. **Build the tool.** Copy the nearest existing shell — terminal from R90, en route from ZMP,
    Tier 0 selector from S56. Set the namespace and the storage key. Build the data spine, the
    `SLOTS` registry, the combining functions and the three pages. **Ship with `STANDING = []`.**
-7. **Write the smoke test.** Assert the block count, the spine (every position present, unique
+8. **Write the smoke test.** Assert the block count, the spine (every position present, unique
    frequencies, decoded strata, areas partitioning cleanly), that nothing spatial is
    fabricated, and **that `STANDING` is empty** — a guard that fails loudly the day someone
    invents training items.
-8. **Write the reference layer**: drill format, OJT intake template, empty practice log, TTS
+9. **Write the reference layer**: drill format, OJT intake template, empty practice log, TTS
    voicing, and a verbatim copy of the callsign doc.
-9. **Fly a session.** Standing items come from it, and only from it.
-10. **Add the tool to the site manifest** — one line in `site/index.html`, then
+10. **Fly a session.** Standing items come from it, and only from it.
+11. **Add the tool to the site manifest** — one line in `site/index.html`, then
     `sh build-site.sh`. See §13. A tool nobody can open from a phone is a tool that only gets
     used at the desk it was written on.
 
@@ -495,6 +577,12 @@ encode it the same way.
   tier in the ledger. **One ledger, no second class:** a drill from the practice log and a
   drill banked in the player contribute identically to exposures, flags, streak and staleness.
 - **Regenerate the block-only paste files from the main file**; never edit them separately.
+- **CIFP data expires; re-pull it rather than editing it.** Every procedure table in a deck
+  carries the cycle it came from. When the cycle rolls, re-run the pull (§10.1) and regenerate
+  the whole table — **never hand-patch a fix or a crossing into a table stamped with an older
+  cycle**, because the stamp is the citation and a patched table is a table that lies about
+  where its numbers came from. A deck a cycle or two behind is fine and honest; a deck claiming
+  a cycle it does not hold is not.
 - **A change to a tool goes live on push.** The Pages workflow rebuilds and redeploys on any
   push to `main` that touches a drill deck, `site/`, or `build-site.sh`. Preview it locally
   before pushing, because the published copy is the one people open. See §13.
