@@ -744,7 +744,7 @@ function render(){
   if(sp){
     var out='';
     for(var i=0;i<sim.ac.length;i++) out+=stripHtml(sim.ac[i]);
-    sp.innerHTML = out || '<div class="dd-note">No strips. Build one on the set-up page, or press <b>Add a strip</b> below to place one by bearing and distance from the RRCP.</div>';
+    sp.innerHTML = out || '<div class="dd-note">No strips. Build one on the set-up page &mdash; that is the only place a strip is created, so every strip on this scope has been checked against what C90 actually works. <b>Add a strip</b> takes you there.</div>';
     var nodes=sp.querySelectorAll('.dd-strip');
     for(var n=0;n<nodes.length;n++){
       nodes[n].onclick=(function(cs){ return function(){ sim.sel=cs; render(); }; })(nodes[n].getAttribute('data-cs'));
@@ -1136,82 +1136,24 @@ function renderNotes(anchor){
 }
 /* Anchor every node that asked for one, plus one anchor per section. */
 function mountAllRails(){
-  var nodes=document.querySelectorAll('[data-note]');
+  mountRailsIn(document);
+}
+/* The same, over one subtree. A block that mounts AFTER start() — the
+   weather, procedures and flight-strip blocks all do — cannot call
+   mountAllRails(), because mountRail() appends and would hang a second
+   rail on every anchor that already has one. This lets a late block ask
+   for rails on the section it just added and nothing else. */
+function mountRailsIn(root){
+  if(!root) return;
+  var nodes=root.querySelectorAll('[data-note]');
   for(var i=0;i<nodes.length;i++){
     var a=nodes[i].getAttribute('data-note');
     mountRail(nodes[i], a, a);
   }
-}
-
-/* ---------- Build page ---------- */
-function buildBody(){
-  return '<div class="dd-panel" data-note="build">'
-    + '<div class="dd-grid">'
-    + fld('Callsign','ddb-cs','text','AAL123')
-    + fld('Type','ddb-type','text','B738')
-    + sel('Role','ddb-role',['arrival','departure','overflight'])
-    + sel('Rules','ddb-rules',['IFR','VFR'])
-    + '</div><div class="dd-grid" style="margin-top:8px;">'
-    + fld('Bearing from RRCP','ddb-brg','number','270')
-    + fld('Distance NM','ddb-dist','number','35')
-    + fld('Altitude','ddb-alt','number','10000')
-    + fld('Speed','ddb-spd','number','250')
-    + fld('Heading','ddb-hdg','number','090')
-    + '</div><div class="dd-grid" style="margin-top:8px;">'
-    + selGate()
-    + fld('Destination','ddb-dest','text','KORD')
-    + fld('Handed off by','ddb-from','text','ZAU')
-    + '</div>'
-    + '<div class="dd-bar"><button id="ddb-place" class="dd-send">Place the strip</button>'
-    + '<button id="ddb-clear">Clear the drill</button></div>'
-    + '<div id="ddb-valid" class="dd-note"></div>'
-    + '</div>'
-    + '<div class="dd-panel" data-note="build.gaps"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
-    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is still placed by bearing and distance, because this deck has no traffic model to fly a track with. What changed is that the track now exists: every published crossing restriction and speed limit is carried on the procedures page. What is missing is the engine that would hold a strip to one, and the facility knowledge of which transition C90 assigns in a given configuration &mdash; so the tool shows the published ladder and grades nothing against it.</p>'
-    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">What it <i>can</i> now check is containment: whether the strip is inside the facility footprint and under the FL150 lid. It cannot check which sector owns it, because no source we hold carries a per-sector shape.</p>'
-    + '<div class="ddb-room">Room reserved: when a traffic model exists, the procedure on the strip drives the track and this panel becomes the validation report. The ladder it would read is already here.</div>'
-    + '</div>';
-}
-function fld(label,id,type,ph){
-  return '<div class="dd-fld"><label for="'+id+'">'+label+'</label><input id="'+id+'" type="'+type+'" placeholder="'+ph+'"></div>';
-}
-function sel(label,id,opts){
-  var o='';
-  for(var i=0;i<opts.length;i++) o+='<option value="'+opts[i]+'">'+opts[i]+'</option>';
-  return '<div class="dd-fld"><label for="'+id+'">'+label+'</label><select id="'+id+'">'+o+'</select></div>';
-}
-function selGate(){
-  var o='<option value="">(none carried)</option>';
-  for(var i=0;i<DD.GATES.length;i++){
-    var g=DD.GATES[i];
-    o+='<option value="'+g.id+'">'+g.id+' &mdash; '+DD.posName(g.pos)+'</option>';
+  if(root.getAttribute && root.getAttribute('data-note')){
+    var ra=root.getAttribute('data-note');
+    mountRail(root, ra, ra);
   }
-  return '<div class="dd-fld"><label for="ddb-gate">Feeder gate</label><select id="ddb-gate">'+o+'</select></div>';
-}
-function wireBuild(){
-  var place=document.getElementById('ddb-place');
-  if(!place) return;
-  place.onclick=function(){
-    function v(id,d){ var e=document.getElementById(id); var x=e? e.value.trim() : ''; return x===''? d : x; }
-    function n(id,d){ var x=parseFloat(v(id,'')); return isNaN(x)? d : x; }
-    var cs=v('ddb-cs','').toUpperCase();
-    var msgs=[];
-    if(!cs) msgs.push('A strip needs a callsign.');
-    if(DD.acOf(cs)) msgs.push('That callsign is already on frequency.');
-    var gate=v('ddb-gate','');
-    if(gate) msgs.push('Gate '+gate+' is still a name, not a track: no published O’Hare or Midway STAR names it as a fix, so nothing links the gate to a ladder and the strip flies the heading you gave it. The STARs themselves are on the procedures page.');
-    if(msgs.length && !cs){ document.getElementById('ddb-valid').innerHTML=msgs.join(' '); return; }
-    DD.mkAc({cs:cs, type:v('ddb-type','').toUpperCase(), role:v('ddb-role','arrival'), rules:v('ddb-rules','IFR'),
-      bearing:n('ddb-brg',270), dist:n('ddb-dist',35), alt:n('ddb-alt',10000), spd:n('ddb-spd',250),
-      hdg:n('ddb-hdg',90), gate:gate, dest:v('ddb-dest',''), from:v('ddb-from','')});
-    document.getElementById('ddb-valid').innerHTML = msgs.length? msgs.join(' ') : 'Placed. Fly it on the next page.';
-    DD.render();
-    page('fly');
-  };
-  document.getElementById('ddb-clear').onclick=function(){
-    DD.sim.ac=[]; DD.sim.sel=null; DD.render();
-    document.getElementById('ddb-valid').innerHTML='Drill cleared.';
-  };
 }
 
 /* ---------- Notes page ---------- */
@@ -1316,7 +1258,13 @@ function wireNotes(){
 
 /* ---------- Pages ---------- */
 var PAGES=[
-  {id:'setup', label:'Set up a drill', secs:['dd-position','dd-frame','ddb-build']},
+  /* No ddb-build. The strip form that used to live here was a second,
+     older strip entry sitting on the same page as the master strip row,
+     and the two disagreed about what a strip is. One section does both
+     jobs now and it is the master one: mod-c90st, from the flight-strips
+     block, which appends itself to ddb-page-setup after this runs. It is
+     not named here because it does not exist yet when buildPages() runs. */
+  {id:'setup', label:'Set up a drill', secs:['dd-position','dd-frame']},
   {id:'fly',   label:'Fly it',         secs:['dd-live']},
   {id:'notes', label:'Notes and map',  secs:['ddb-notes','dd-data']}
 ];
@@ -1333,7 +1281,6 @@ function buildPages(){
   var wrap=document.querySelector('.wrap');
   var foot=wrap.querySelector('footer');
   /* the two sections this block owns */
-  wrap.insertBefore(DD.sec('ddb-build','Build','Build a drill','Place the strips you want to work. The tool says plainly what it cannot check yet.', buildBody()), foot);
   wrap.insertBefore(DD.sec('ddb-notes','Notes','Student notes','Everything you wrote, grouped by where you wrote it, exportable as Markdown addressed to that anchor.', notesBody()), foot);
   /* page wrappers */
   var tabs=document.createElement('div');
@@ -1361,7 +1308,6 @@ function buildPages(){
 
 function start(){
   buildPages();
-  wireBuild();
   wireNotes();
   mountAllRails();
   renderNotebook();
@@ -1373,6 +1319,7 @@ function start(){
 }
 window.ddb = {
   state:state, addNote:addNote, notesFor:notesFor, toMd:toMd, page:page, save:save,
+  mountRailsIn:mountRailsIn,
   onFrame:function(){ /* the frame changed; nothing depends on it yet */ }
 };
 if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', start); }
@@ -3143,15 +3090,37 @@ window.strip = {
 
 })();
 /* ---------- 3. Mount ----------
-   A minimal strip authoring section. It exists so the facility contract
-   above can be SEEN and exercised: add a strip, change the field, watch
-   the procedure list follow it, and read back what the check says. It is
-   not a drill builder and does not pretend to be one — C90 has no
-   traffic model, so nothing here flies. */
+   THE SINGLE STRIP ENTRY FOR THIS DECK. Until 2026-09-06 there were two:
+   this one, and an older "Place the strip" form in the builder block's
+   ddb-build section, built before the master row existed. They disagreed
+   about what a strip is — the old form offered a free-text destination
+   and a feeder gate and checked neither, this one offers the facility's
+   own fields and refuses a foreign procedure by name — and they sat on
+   different parts of the page, because this block mounted after the page
+   builder had already run and so landed outside the page system.
+
+   The old form is gone and its facility half is here. The job half of
+   the row is the master block's, untouched: role, callsign, type, the
+   procedure controls, altitude. What this mount adds around it is the
+   part that is C90's and not portable — flight rules, the placement
+   bearing and distance from the RRCP, speed, heading, the feeder gate
+   from 2-1, who handed it off — plus the button that puts the strip on
+   the scope through DD.mkAc.
+
+   THE CHECK NOW RUNS BEFORE THE PLACEMENT, which is the point of the
+   merge. The old form placed anything with a callsign; a strip landing
+   at a field C90 does not work reached the scope silently. Placement now
+   refuses an illegal strip by name and says what would have been valid.
+
+   What it still does not do is fly. C90 has no traffic model, so the
+   procedure on the strip drives nothing — the published ladder is on the
+   procedures page and the strip flies the heading you gave it. That is
+   the panel below the rows, kept verbatim from the form it replaces. */
 (function(){
 'use strict';
 if(!window.strip) return;
 var S = window.strip, P = S.prefix;
+var DD = window.DD || null;
 
 var css = ''
  + '.' + P + '-sec{margin-top:22px;}'
@@ -3159,27 +3128,75 @@ var css = ''
  + '.' + P + '-lab{display:block;font:11px/1.6 var(--body);color:var(--dim);letter-spacing:.04em;}'
  + '.' + P + '-in,.' + P + '-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
  + 'border-radius:4px;padding:6px 8px;font:12px/1.4 var(--body);min-width:150px;}'
+ + '.' + P + '-in.' + P + '-num{min-width:96px;}'
  + '.' + P + '-none{color:var(--amber);font-style:italic;display:inline-block;padding:6px 8px;'
  + 'border:1px dashed var(--line);border-radius:4px;font-size:11.5px;min-width:150px;}'
  + '.' + P + '-row{border-top:1px solid var(--line);padding:12px 0;}'
+ + '.' + P + '-place{border-left:2px solid var(--line);padding-left:12px;margin-left:2px;}'
  + '.' + P + '-btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
  + 'border-radius:4px;padding:6px 11px;font:11px/1.4 var(--body);cursor:pointer;}'
  + '.' + P + '-btn:hover{border-color:var(--dim);}'
+ + '.' + P + '-btn.' + P + '-go{color:var(--green);border-color:var(--green);}'
  + '.' + P + '-err{color:var(--red);font:11.5px/1.6 var(--body);margin-top:6px;}'
  + '.' + P + '-ok{color:var(--green);font:11.5px/1.6 var(--body);margin-top:6px;}'
+ + '.' + P + '-said{color:var(--dim);font:11.5px/1.6 var(--body);margin-top:6px;}'
  + '.' + P + '-dim{color:var(--dim);font:11.5px/1.65 var(--body);}';
 
 var rows = [];
 function blank(){
  var a = S.airportsHere()[0];
  var av = S.arrivalsFor(a);
- return {role:'arrival', cs:'', type:'B738', dest:a, gate:av[0] || '', rwy:'', alt:'10000'};
+ return {role:'arrival', cs:'', type:'B738', dest:a, gate:av[0] || '', rwy:'', alt:'10000',
+         rules:'IFR', brg:'270', dist:'35', spd:'250', hdg:'090', feeder:'', from:''};
 }
 function esc(s){
  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 function fld(l, c){ return '<div class="' + P + '-f"><span class="' + P + '-lab">' + l + '</span>' + c + '</div>'; }
+function num(l, k, i, v){
+ return fld(l, '<input class="' + P + '-in ' + P + '-num" id="' + P + '-' + k + i + '" value="'
+   + esc(v) + '" onchange="' + P + 'Sync()">');
+}
+function pick(l, k, i, list, cur, fmt){
+ return fld(l, '<select class="' + P + '-sel" id="' + P + '-' + k + i + '" onchange="' + P + 'Sync()">'
+   + list.map(function(v){
+      return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>'
+        + esc(fmt ? fmt(v) : v) + '</option>';
+     }).join('')
+   + '</select>');
+}
+
+/* The feeder gates of 2-1, offered by name. GATES carries no fix and no
+   STAR — no published ORD or MDW arrival names one of them as a fix — so
+   this is a label on the strip and nothing links it to a track. The row
+   says so when one is set rather than letting it look like a ladder. */
+function feederPick(s, i){
+ if(!DD || !DD.GATES || !DD.GATES.length) return '';
+ var ids = [''].concat(DD.GATES.map(function(g){ return g.id; }));
+ return pick('Feeder gate', 'feeder', i, ids, s.feeder, function(v){
+  if(!v) return '(none carried)';
+  for(var k = 0; k < DD.GATES.length; k++){
+   if(DD.GATES[k].id === v) return v + ' — ' + DD.posName(DD.GATES[k].pos);
+  }
+  return v;
+ });
+}
+
+/* The facility half: everything DD.mkAc needs that the master row does
+   not carry, because none of it is portable between facilities. */
+function placeFields(s, i){
+ return '<div class="' + P + '-place">'
+  + pick('Flight rules', 'rules', i, ['IFR','VFR'], s.rules)
+  + num('Bearing from RRCP', 'brg', i, s.brg)
+  + num('Distance NM', 'dist', i, s.dist)
+  + num('Speed', 'spd', i, s.spd)
+  + num('Heading', 'hdg', i, s.hdg)
+  + feederPick(s, i)
+  + fld('Handed off by', '<input class="' + P + '-in" id="' + P + '-from' + i + '" value="'
+      + esc(s.from) + '" placeholder="ZAU" onchange="' + P + 'Sync()">')
+  + '</div>';
+}
 
 function rowHtml(s, i){
  var roles = ['arrival','departure','overflight'];
@@ -3191,8 +3208,11 @@ function rowHtml(s, i){
   + fld('Type', '<input class="' + P + '-in" id="' + P + '-type' + i + '" value="' + esc(s.type) + '" onchange="' + P + 'Sync()">')
   + S.jobFields(s, i)
   + fld('Altitude', '<input class="' + P + '-in" id="' + P + '-alt' + i + '" value="' + esc(s.alt) + '" onchange="' + P + 'Sync()">')
+  + placeFields(s, i)
+  + fld('&nbsp;', '<button class="' + P + '-btn ' + P + '-go" onclick="' + P + 'Place(' + i + ')">place on the scope</button>')
   + fld('&nbsp;', '<button class="' + P + '-btn" onclick="' + P + 'Drop(' + i + ')">remove</button>')
   + '<div id="' + P + '-msg' + i + '"></div>'
+  + '<div id="' + P + '-said' + i + '" class="' + P + '-said"></div>'
   + '</div>';
 }
 
@@ -3207,11 +3227,23 @@ function check(s, i){
  if(!box) return;
  var errs = S.checkStrip(s, s.cs || ('strip ' + (i + 1)));
  box.className = errs.length ? (P + '-err') : (P + '-ok');
+ /* Name the field this strip is actually at. A departure keeps whatever
+    dest it had before the job changed, so reading dest first would print
+    the old airport under a departure — with eight fields in the list that
+    is a wrong field on a strip, not a cosmetic slip. Taken from the S56
+    mount, which fixed it first. */
+ var at = s.role === 'departure' ? s.dep : s.role === 'overflight' ? '' : s.dest;
  box.innerHTML = errs.length
    ? errs.map(function(e){ return '&#9888; ' + esc(e); }).join('<br>')
-   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(s.dest || s.dep || 'the boundary');
+   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(at || 'the boundary');
+ return errs;
+}
+function say(i, html){
+ var el = document.getElementById(P + '-said' + i);
+ if(el) el.innerHTML = html;
 }
 function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
+function nOf(v, d){ var x = parseFloat(v); return isNaN(x) ? d : x; }
 
 window[P + 'Sync'] = function(){
  rows.forEach(function(s, i){
@@ -3219,6 +3251,13 @@ window[P + 'Sync'] = function(){
   s.cs   = (g(P + '-cs' + i) || '').toUpperCase().replace(/\s+/g,'');
   s.type = (g(P + '-type' + i) || s.type).toUpperCase();
   s.alt  = g(P + '-alt' + i) || s.alt;
+  s.rules  = g(P + '-rules' + i)  || s.rules;
+  s.brg    = g(P + '-brg' + i)    != null ? g(P + '-brg' + i)  : s.brg;
+  s.dist   = g(P + '-dist' + i)   != null ? g(P + '-dist' + i) : s.dist;
+  s.spd    = g(P + '-spd' + i)    != null ? g(P + '-spd' + i)  : s.spd;
+  s.hdg    = g(P + '-hdg' + i)    != null ? g(P + '-hdg' + i)  : s.hdg;
+  s.feeder = g(P + '-feeder' + i) != null ? g(P + '-feeder' + i) : s.feeder;
+  s.from   = g(P + '-from' + i)   != null ? g(P + '-from' + i) : s.from;
   S.readJob(s, i);          /* also re-places a procedure the new field cannot carry */
  });
  render();
@@ -3226,17 +3265,69 @@ window[P + 'Sync'] = function(){
 window[P + 'Add']  = function(){ rows.push(blank()); render(); };
 window[P + 'Drop'] = function(i){ if(rows.length > 1){ rows.splice(i, 1); render(); } };
 
+/* Place the strip on the scope. The contract check runs FIRST — the form
+   this replaces placed anything with a callsign, so a strip landing at a
+   field C90 does not work reached the scope with nothing said. */
+window[P + 'Place'] = function(i){
+ var s = rows[i];
+ if(!s) return;
+ if(!DD || !DD.mkAc){ say(i, 'No deck engine on this page, so there is nothing to place onto.'); return; }
+ var errs = check(s, i) || [];
+ if(errs.length){ say(i, 'Not placed. Fix what is named above first.'); return; }
+ if(!s.cs){ say(i, 'A strip needs a callsign before it can be placed.'); return; }
+ if(DD.acOf && DD.acOf(s.cs)){ say(i, esc(s.cs) + ' is already on frequency.'); return; }
+
+ var dest = (s.role === 'departure') ? '' : (s.dest || '');
+ var rwy  = (s.role === 'departure') ? (s.depRwy || '') : (s.rwy || '');
+ DD.mkAc({
+  cs:s.cs, type:s.type, rules:s.rules, role:s.role,
+  bearing:nOf(s.brg, 270), dist:nOf(s.dist, 35), alt:nOf(s.alt, 10000),
+  spd:nOf(s.spd, 250), hdg:nOf(s.hdg, 90),
+  gate:s.feeder || '', dest:dest, rwy:rwy, from:s.from || ''
+ });
+
+ var notes = [];
+ var proc = (s.role === 'departure') ? s.sid : s.gate;
+ if(proc){
+  notes.push('On the ' + esc(proc) + '. The published ladder is on the procedures page; this '
+    + 'deck has no traffic model, so the strip flies the heading you gave it rather than the track.');
+ }
+ if(s.feeder){
+  notes.push('Feeder gate ' + esc(s.feeder) + ' is a name, not a track: no published O&rsquo;Hare or '
+    + 'Midway arrival names it as a fix, so nothing links the gate to a ladder.');
+ }
+ say(i, 'Placed. ' + notes.join(' '));
+ DD.render();
+ if(window.ddb && window.ddb.page) window.ddb.page('fly');
+};
+
+window[P + 'Clear'] = function(){
+ if(!DD || !DD.sim) return;
+ DD.sim.ac = []; DD.sim.sel = null;
+ if(DD.render) DD.render();
+ rows.forEach(function(s, i){ say(i, 'Drill cleared. Nothing is on the scope.'); });
+};
+
 function section(){
  var f = S.FACILITY;
  return '<section class="panel ' + P + '-sec" id="mod-' + P + '" data-note="strips">'
   + '<h2>Flight strips</h2>'
-  + '<p class="' + P + '-dim">Every procedure offered here belongs to <b>' + esc(f.id) + '</b>. '
+  + '<p class="' + P + '-dim">Build the drill here. Every procedure offered belongs to <b>' + esc(f.id) + '</b>. '
   + 'The field list is this facility\'s and nothing else, so a strip for another facility cannot '
   + 'be built; anything that arrives another way — a stored drill, a pasted scenario — is named '
-  + 'and refused below rather than silently dropped. '
+  + 'and refused below rather than silently dropped, and a strip is refused before it reaches '
+  + 'the scope rather than after. '
   + 'Procedure inventory from CIFP 260903.</p>'
-  + '<div style="margin:10px 0;"><button class="' + P + '-btn" onclick="' + P + 'Add()">add a strip</button></div>'
+  + '<div style="margin:10px 0;">'
+  + '<button class="' + P + '-btn" onclick="' + P + 'Add()">add a strip</button> '
+  + '<button class="' + P + '-btn" onclick="' + P + 'Clear()">clear the drill</button>'
+  + '</div>'
   + '<div id="' + P + '-rows"></div>'
+  + '<div class="dd-panel" data-note="build.gaps"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
+  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is still placed by bearing and distance, because this deck has no traffic model to fly a track with. What changed is that the track now exists: every published crossing restriction and speed limit is carried on the procedures page. What is missing is the engine that would hold a strip to one, and the facility knowledge of which transition C90 assigns in a given configuration &mdash; so the tool shows the published ladder and grades nothing against it.</p>'
+  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">What it <i>can</i> now check is containment: whether the strip is inside the facility footprint and under the FL150 lid. It cannot check which sector owns it, because no source we hold carries a per-sector shape.</p>'
+  + '<div class="ddb-room">Room reserved: when a traffic model exists, the procedure on the strip drives the track and this panel becomes the validation report. The ladder it would read is already here.</div>'
+  + '</div>'
   + '</section>';
 }
 
@@ -3248,10 +3339,50 @@ function mount(){
  host.innerHTML = section();
  var sec = host.firstChild;
  if(!sec) return;
- var footer = wrap.querySelector('footer');
- if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+ /* Land on the page the deck already built, the way the weather and
+    procedures blocks do. Without this the section is appended to .wrap
+    AFTER the page wrappers exist, so it sits outside the page system and
+    renders under all three tabs — which is half of what made the strip
+    entry look like two sections. Building a strip is set-up work, so it
+    goes where the form it replaces was. */
+ var page = document.getElementById('ddb-page-setup');
+ if(page){ page.appendChild(sec); }
+ else {
+  var footer = wrap.querySelector('footer');
+  if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+ }
  rows.push(blank());
  render();
+ /* The old form carried a student-note rail and this section must too.
+    Subtree only: mountAllRails() already ran in the builder's start(),
+    and calling it again would hang a second rail on every anchor. */
+ if(window.ddb && window.ddb.mountRailsIn) window.ddb.mountRailsIn(sec);
+ repointLiveAdd();
+}
+
+/* THE THIRD STRIP ENTRY, and the one that checked least. The live page's
+   "Add a strip" button read a comma-separated prompt() and handed it
+   straight to mkAc — no field list, no procedure, no check at all. It is
+   a strip entry that cannot be wrong about a procedure only because it
+   never carried one, and it put traffic on the scope that this section
+   would have refused.
+
+   Repointed, not deleted, and repointed from HERE rather than by editing
+   the deck (house rule 11: wrap the entry point, do not edit block 1).
+   The button now takes you to the one place a strip is created. That is
+   what makes "one strip entry" true of the deck and not just of the
+   set-up page. */
+function repointLiveAdd(){
+ var b = document.getElementById('dd-add');
+ if(!b) return;
+ b.onclick = function(){
+  if(window.ddb && window.ddb.page) window.ddb.page('setup');
+  window[P + 'Add']();
+  var sec = document.getElementById('mod-' + P);
+  if(sec && sec.scrollIntoView) sec.scrollIntoView();
+  var last = document.getElementById(P + '-cs' + (rows.length - 1));
+  if(last && last.focus) last.focus();
+ };
 }
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
 else { mount(); }
