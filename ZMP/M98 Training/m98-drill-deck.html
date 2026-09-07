@@ -587,7 +587,23 @@ function flowCarried(cfg){ return !!TABLE2[cfg]; }
    MSP VOR out through the fixes that are direct-able inside 60 NM — which is
    the join limit in ZMP-M98 LOA 4.f, and as far as M98 ever takes them.
    The initial track off the runway is dispersal (a tower function), not the
-   SID's ultimate direction, so these are the join points after the turn. */
+   SID's ultimate direction, so these are the join points after the turn.
+
+   NINE, AND CIFP CODES TWELVE. THE DIFFERENCE IS DELIBERATE — DO NOT CLOSE IT.
+   CIFP 260903 also carries HSTIN6, MEDOW5 and SLAYR4, all three Runway 17
+   departures. They are technically valid for the airport and are NEVER
+   ASSIGNED: a flight plan filing one is auto-corrected off it, so none of
+   them ever reaches a controller (Michael, 2026-09-07). Adding them would
+   put a clearance in the picker that the trainee will never give and the
+   system would reject — which is worse than a gap, because it looks right.
+
+   So a diff against the coded source showing three missing SIDs is the
+   expected result, not a finding. The three are identified in
+   claude_MSP_SID_Reference.md so nobody has to rediscover them.
+
+   The other reason not to reach for CIFP here: these entries are join points
+   truncated at the LOA's 60 NM limit and carry no crossing restrictions,
+   where CIFP legs are published ladders. One table, one provenance. */
 var DEPS = {
  COULT: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'TAXEE',lat:44.70250,lon:-92.49267},{f:'COULT',lat:44.55667,lon:-92.20850}],
  KBREW: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'GEP',lat:45.14567,lon:-93.37317},{f:'HRBEK',lat:45.31450,lon:-93.80700},{f:'HOMUR',lat:45.41817,lon:-94.07683}],

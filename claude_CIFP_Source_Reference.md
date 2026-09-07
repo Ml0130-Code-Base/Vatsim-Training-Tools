@@ -171,11 +171,26 @@ leg — but it is coded as a common route, not as route type `T`, so it does not
 Vector SID table above. Worth knowing before anyone concludes MSP has no vectored departure
 coded.
 
-**Do not hand-patch these three into `DEPS`.** Its entries are join points truncated at the
-LOA's 60 NM limit and carry no crossing restrictions; CIFP legs are published ladders. Mixing
-the two provenances in one table is what root `CLAUDE.md` §11 forbids, and M98 has no CIFP
-file to stamp them with. **The right move is an M98 CIFP pull of its own**, the way #1 through
-#5 were done.
+**And the three must not be added at all — settled by the owner, 2026-09-07:**
+
+> *"HSTIN, MEDOW and SLAYR from MSP are technically valid for the airport but they are never
+> assigned, or auto-corrected when the aircraft files a flight plan."*
+
+So they never reach a controller. **This changes what §3.2 originally recommended.** Nine
+against twelve is not a gap to close; it is the assignable set against the published set, and
+the deck is already right. **A drill offering one would be teaching a clearance the trainee
+will never give and the system would reject — worse than a missing procedure, because it looks
+correct.** Recorded at the point of use in `ZMP/M98 Training/claude_MSP_SID_Reference.md` and
+in a comment on the deck's own `DEPS`, so the next session that diffs against the coded source
+reads it as the expected result rather than a finding.
+
+**An M98 CIFP pull is still worth doing, for a different reason.** Not to add procedures — to
+back the nine assignable ones with their published ladders, crossing restrictions and speeds,
+the way #1 through #5 were done, and to settle the AANAH row still open on #22. `DEPS` today
+carries join points truncated at the LOA's 60 NM limit and no crossing restrictions. **When
+that pull happens, the three stay out of the assignable list**, and whatever carries them is
+labelled published-but-never-assigned rather than merged into `DEPS`. One table, one
+provenance — root `CLAUDE.md` §11.
 - **AZO gets nothing but approaches.** None of KAZO, KGRR, KMKG or KBTL has a coded SID or
   STAR. #4's AZO half is not closed by this at all, and that is a property of the fields
   rather than of the dataset.

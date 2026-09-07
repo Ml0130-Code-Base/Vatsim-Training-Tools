@@ -53,7 +53,40 @@ Distances are NM from MSP VOR (N44 53.79 / W093 14.19).
 - WLSTN — E/ENE to GRB. Direct-able: SNINE (33), DWIYT (47). [WLSTN fix 100 = outside]
 - ZMBRO — SE to ODI. Direct-able: JEDET (34), ZMBRO (47).
 
-Note: initial heading off the runway follows **dispersal** (an LC/tower function), not the SID's ultimate direction (e.g., COULT ultimately runs SE to DLL but its 30s-departure dispersal track is ~360°). Dispersal tracks — **MSP tower order §6-3-1**, mirroring **MSP-M98 LOA 9.e**: KBREW ~320°, WLSTN ~340°, COULT ~360° (MINNEAPOLIS Nine: FAR 320 / BRD-DLH-HYR-EAU-GRB 340 / DLL 360). The fixes above are join points once M98 turns them on course. All nine turbojet SIDs captured; STARs are in the companion doc.
+Note: initial heading off the runway follows **dispersal** (an LC/tower function), not the SID's ultimate direction (e.g., COULT ultimately runs SE to DLL but its 30s-departure dispersal track is ~360°). Dispersal tracks — **MSP tower order §6-3-1**, mirroring **MSP-M98 LOA 9.e**: KBREW ~320°, WLSTN ~340°, COULT ~360° (MINNEAPOLIS Nine: FAR 320 / BRD-DLH-HYR-EAU-GRB 340 / DLL 360). The fixes above are join points once M98 turns them on course. These nine are the assignable set — see below; STARs are in the companion doc.
+
+## MSP publishes twelve SIDs. Nine are assignable. Three are not.
+
+**CIFP 260903 codes twelve SIDs at KMSP.** The nine above, plus **HSTIN6, MEDOW5 and
+SLAYR4** — and **every one of those three has `RW17` as its only runway transition.**
+
+> **HSTIN, MEDOW and SLAYR are technically valid for the airport but are never assigned. A
+> flight plan filing one is auto-corrected off it, so they never reach a controller.**
+> — Michael, 2026-09-07.
+
+**That is a facility fact, and it is the reason this document carries nine and not twelve.**
+It is not an omission to be tidied up later, and it is the answer to anyone who diffs our
+`DEPS` against the coded source and finds three missing. **Do not add them to the deck's
+assignable SID list.** A drill that issues one would be teaching a clearance the trainee will
+never give and the system would reject.
+
+Carried here for identification only, decoded from CIFP 260903 — so a future session
+recognises them rather than rediscovering them as a gap:
+
+```
+HSTIN6   RW17    [VI leg] BDOGG MNDEE PRAMN HITTL NANCZ HSTIN
+         DABOY   HSTIN YUPER DABOY
+         ZZEEE   HSTIN BBERD ZZEEE
+MEDOW5   RW17    HUSHH [VM leg]
+SLAYR4   RW17    [VI leg] BDOGG CLIKR KEYPR MCONL SLAYR
+         TEYOU   SLAYR TTOSS TEYOU
+```
+
+**Note what this does *not* say.** It does not say MSP has no radar-vectored departure — MEDOW5
+is one in everything but its ARINC 424 route type, a single fix then a `VM` leg. It says that
+one is among the three nobody is ever cleared on. And it does not say Runway 17 is never used;
+it says these three procedures are not assigned. Neither of those was stated and neither should
+be inferred.
 
 ## Full fix coordinates (as provided)
 - COULT: TAXEE N44 42.15/W092 29.56 · COULT N44 33.40/W092 12.51 · LMFRY N44 22.24/W091 51.03 · DLL(VOR) N43 33.05/W089 45.82
