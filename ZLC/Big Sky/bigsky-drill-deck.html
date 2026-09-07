@@ -2276,9 +2276,15 @@ function check(s, i){
  if(!box) return;
  var errs = S.checkStrip(s, s.cs || ('strip ' + (i + 1)));
  box.className = errs.length ? (P + '-err') : (P + '-ok');
+ /* Name the field this strip is actually at. A departure keeps whatever
+    dest it had before the job changed, so reading dest first would print
+    the old airport under a departure — and with Boise and Bozeman in two
+    areas that do not share a boundary, that is a wrong field on a strip,
+    not a cosmetic slip. Taken from the S56 mount, which fixed it first. */
+ var at = s.role === 'departure' ? s.dep : s.role === 'overflight' ? '' : s.dest;
  box.innerHTML = errs.length
    ? errs.map(function(e){ return '&#9888; ' + esc(e); }).join('<br>')
-   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(s.dest || s.dep || 'the boundary');
+   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(at || 'the boundary');
 }
 function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
 

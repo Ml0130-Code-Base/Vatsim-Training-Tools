@@ -410,16 +410,17 @@ time the relevant tool takes structural work, and **none should be fixed as a dr
 - **The notes layer exists at C90 (anchored rail) and S56 (typed notes against `OPEN_Q`), and
   nowhere else.** AZO has the practice-log half without the rail. **Copy the C90 rail rather
   than reinventing it.**
-- **S56's copy of the master strip block is one revision behind, as of 2026-09-06.** The block
-  gained a `track` flag that separates *this deck's engine can fly it* (`flies`) from *the
-  published ladder is carried* (`track`), so a deck holding a full CIFP ladder renders
-  *"track only"* rather than *"frame only"*. It landed in `strip-block.html` and in the C90,
-  AZO, R90 and Big Sky copies; **S56 was deliberately skipped**, because it was being worked in
-  another session and a concurrent edit to the same file would have lost one side. The change
-  is additive and S56 is not broken by it — with no `track` set, its rows read *"frame only"*
-  exactly as before. **Land it in S56 with that facility's CIFP wiring**, and this bullet goes
-  away. It is the §2 "every copy in the same commit" rule bent once, knowingly, and recorded
-  here because that is the price of bending it.
+- **S56's copy of the master strip block was one revision behind, and caught up 2026-09-06.**
+  The block had gained a `track` flag separating *this deck's engine can fly it* (`flies`) from
+  *the published ladder is carried* (`track`); it landed everywhere but S56, which was being
+  worked in another session where a concurrent edit would have lost one side. **All five copies
+  — R90, C90, AZO, S56, Big Sky — are now byte-identical to `strip-block.html`**, checked with
+  `diff`, and that is the check to re-run before assuming it. **S56's rows still read *"frame
+  only"*, and that is the right answer rather than a leftover**: its contract hand-lists CIFP
+  procedure names, not ladders, so `track` stays unset and the row says which of the two is
+  true. It reads *"track only"* the day S56 gets a procedures block. Left here as the record of
+  the §2 "every copy in the same commit" rule bent once, knowingly, and of what it cost:
+  a copy out of step for a day, and a second session needed to close it.
 - **The two ZLC tools carry the three-page wrapper as of 2026-09-06.** Both were one long
   scroll with a row of anchor links while the other five decks had tabs. A fourth block in each
   moves the already-mounted sections into `zlc-view` wrappers and turns `#modnav` into the same

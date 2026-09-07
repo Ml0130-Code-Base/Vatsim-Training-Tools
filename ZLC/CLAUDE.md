@@ -144,8 +144,16 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    geometry (item 3), and nothing in this block touches it.
 
    **S56 was deliberately left out of this pass** at the owner's direction, so its deck carries
-   no procedures block and its copy of the strip block predates the `track` flag. Root
-   `CLAUDE.md` §9 records that divergence; landing S56's CIFP wiring closes it.
+   no procedures block: its strip contract hand-lists the CIFP 260903 procedure *names* per
+   field, not the ladders behind them.
+
+   **Its copy of the master strip block caught up 2026-09-06.** All five decks that carry the
+   block — R90, C90, AZO, S56, Big Sky — are now byte-identical to root `strip-block.html`,
+   checked with `diff`. **S56's rows still read *"frame only"*, and that is correct, not
+   leftover**: `track` says the published ladder is carried, S56 carries names, so the flag
+   stays unset and the row says which of the two is true. It becomes *"track only"* the day
+   S56 gets a procedures block. Root `CLAUDE.md` §9 recorded the divergence; this closes the
+   block half of it.
 3. **Configuration.** S56 procedures branch on North Flow vs South Flow almost everywhere; the selector does not model flow yet, so duty text shows both branches. BOI branches on East vs West Flow the same way.
 
    **The geometry now carries the branch**, which is the natural way to model it when the selector grows one: every airspace block in `_shared/source-vatglasses/airspace.json` is gated on a runway configuration, and there are exactly four across the dataset — `KSLC 34L/R, 35` (North), `KSLC 16L/R, 17` (South), `KBOI 10L/R` (East), `KBOI 28L/R` (West). Selecting a flow selects which blocks exist. Big Sky shows it most clearly: Alpine and Sage **swap shapes** between east and west flow over the same total airspace.
