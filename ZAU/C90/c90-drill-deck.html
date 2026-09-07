@@ -2762,11 +2762,103 @@ window.STRIP_FACILITY = {
     track:true is the separate claim that the published ladder IS
     carried, and the row labels the two differently. */
  arrivals:   PROCS ? PROCS.stripProcs('STAR') : {},
- departures: PROCS ? PROCS.stripProcs('SID')  : {}
+ departures: PROCS ? PROCS.stripProcs('SID')  : {},
+
+ /* ---- the facility half of the row, per the master block's contract ----
+    Each one is optional and each has a stated fallback, so what is left
+    out here is a statement that C90 cannot answer it rather than an
+    oversight. What is left out, and why:
+
+      spoken      no TTS layer at ZAU and no callsign voicing reference
+                  in this tree, so the header prints the bare callsign
+                  instead of a pronunciation nobody verified.
+      handoffFor  C90 holds no tower LOA and no handoff identifier for
+                  any of its eight fields — the `handoff` slot is empty
+                  and says so — so who hands a departure to you is typed,
+                  not derived. Deriving it would invent a coordination
+                  fact. */
+
+ /* Every fix ON THIS PROCEDURE, in published order, whichever transition
+    it is on. CIFP splits a procedure into entry transitions, a common
+    segment and runway transitions, and SOME CARRY NOTHING IN COMMON —
+    BGMAN1 into Bozeman has an empty common segment and all its fixes on
+    the KARTS transition. Reading only the common segment said BGMAN1 had
+    no ladder, which is false and is exactly the kind of quiet wrong
+    answer this row exists to avoid. A vector leg carries no fix, so it
+    contributes nothing and the list stays a list of places an aircraft
+    can actually be.
+
+    The union is the right answer to the question the row asks, which is
+    "is this fix on the arrival selected" — a fix on the KARTS transition
+    of BGMAN1 is on BGMAN1. Narrowing it to one transition needs a
+    transition selector on the strip, and that is a bigger change than
+    this: no deck here knows which transition its facility assigns in a
+    given configuration, which is an SOP and LOA question with no CIFP
+    answer. */
+ fixesOn: function(s){
+  if(!PROCS || !PROCS.procOf) return [];
+  var dep = (s.role === 'departure');
+  var apt = dep ? s.dep : s.dest;
+  var id  = dep ? s.sid : s.gate;
+  if(!apt || !id) return [];
+  var p = PROCS.procOf(apt, id);
+  if(!p) return [];
+  var segs = [], k;
+  if(dep){
+   for(k in (p.rwy || {}))   segs.push(p.rwy[k]);
+   segs.push(p.common);
+   for(k in (p.trans || {})) segs.push(p.trans[k]);
+  } else {
+   for(k in (p.trans || {})) segs.push(p.trans[k]);
+   segs.push(p.common);
+   for(k in (p.rwy || {}))   segs.push(p.rwy[k]);
+  }
+  var out = [];
+  for(var i = 0; i < segs.length; i++){
+   var seg = segs[i] || [];
+   for(var j = 0; j < seg.length; j++){
+    if(seg[j].f && out.indexOf(seg[j].f) < 0) out.push(seg[j].f);
+   }
+  }
+  return out;
+ },
+
+ /* The filed route as the published track reads it. Placeholder only
+    until the controller presses "fill from the procedure", so a strip
+    never carries a route nobody typed. */
+ routeTextFor: function(s){
+  var fx = window.STRIP_FACILITY.fixesOn(s);
+  return fx.length ? fx.join(' ') : '';
+ },
+
+ /* One line saying what this strip is doing. Names the procedure and
+    what is known about it, and says plainly where the claim stops —
+    this deck flies nothing. */
+ context: function(s){
+  if(s.role === 'overflight') return 'crossing the airspace on the radial and distance given';
+  var dep = (s.role === 'departure');
+  var id  = dep ? s.sid : s.gate;
+  if(!id) return dep ? 'no departure procedure selected' : 'no arrival selected';
+  var n = window.STRIP_FACILITY.fixesOn(s).length;
+  return id + (n ? (' · ' + n + ' published fixes carried') : ' · no ladder carried')
+    + ' · nothing is flown along it, this deck has no traffic model';
+ },
+
+ roleHints: {
+  arrival:    'Inbound to one of the eight fields C90 works.',
+  departure:  'Off one of those fields. O’Hare and Midway have no coded SID — a radar-vector departure is outside what CIFP carries.',
+  overflight: 'Crosses the airspace and has to be handed off or pointed out before the far side.'
+ },
+
+ /* The deck's own boxes — bearing, distance, heading, feeder gate and
+    the place button. Defined by the mount, which owns them. */
+ extraFields: function(s, i){
+  return window.C90_STRIP_EXTRA ? window.C90_STRIP_EXTRA(s, i) : '';
+ }
 };
 })();
 /* ================================================================
-   MASTER STRIP BLOCK — the flight-strip entry row, facility-agnostic.
+   MASTER STRIP BLOCK — the flight-strip row, facility-agnostic.
 
    Extracted from the M98 drill builder and generalised so the same row
    can serve every deck. Paste it in, give it a facility contract, and it
@@ -2786,45 +2878,63 @@ window.STRIP_FACILITY = {
    valid instead, because a silent drop teaches the wrong thing and a
    generic "invalid" teaches nothing.
 
-   ---------- THE CONTRACT ----------
+   IT NOW CARRIES THE WHOLE ROW, NOT HALF OF IT. Until 2026-09-07 this
+   block held only the job half — the part that names a procedure — and
+   each deck wrote its own callsign, type and altitude boxes. That made
+   the strip a different shape at every facility, and it meant the work
+   M98 had already done on flight rules, radar service, wake class,
+   speeds and check-in timing reached nobody else. Owner's call: the M98
+   row is the format, so the format lives here.
 
-   The deck defines window.STRIP_FACILITY before this block runs:
+   WHAT IS GENERIC AND WHAT IS THE FACILITY'S. The row's shape, and every
+   field whose meaning is national, is here: the five radar-service
+   states and which of them a job and a set of flight rules can legally
+   be in, the wake class by maximum certificated takeoff weight, the
+   published-versus-Center-advised speed pair, the check-in clock. What
+   is the facility's is passed IN, through optional functions on the
+   contract — who hands this aircraft off, which fixes are on the
+   procedure it is flying, what its filed route reads as, what the strip
+   is doing in one line. A deck that cannot answer one of those gets the
+   honest fallback: a plain box, or nothing, never a guess.
 
-     window.STRIP_FACILITY = {
-       id: 'M98',                       // facility label, used in messages
-       airports: {
-         KMSP: {name:'Minneapolis-St Paul', rwys:['12L','12R','30L','30R']},
-         KFCM: {name:'Flying Cloud', rwys:['10L','10R','28L','28R','18','36']}
-       },
-       arrivals: {
-         NITZR: {serves:['KMSP'], flies:true},
-         AGUDE: {serves:['KFCM','KANE'], rev:'AGUDE FIVE', flies:true}
-       },
-       departures: {
-         COULT: {from:['KMSP'], flies:true}
-       }
-     };
+   ---------------------------------------------------------------
+   THE CONTRACT
+
+   window.STRIP_FACILITY = {
+     id: 'M98',                    // facility label, used in every message
+     prefix: 'strip',              // id/class prefix, so it can sit beside
+                                   //   a deck's own controls
+     sync: 'ddbSync',              // OPTIONAL OVERRIDE. Defaults to
+                                   //   '<prefix>Sync', which every mount
+                                   //   defines. See "the re-render" below.
+     airports: {
+       KMSP: {name:'Minneapolis-St Paul', rwys:['12L','12R','30L','30R']},
+       KLVN: {name:'Airlake',             rwys:null}   // not in the reference set
+     },
+     arrivals:   { NITZR:{serves:['KMSP'], flies:true} },
+     departures: { COULT:{from:['KMSP'],   flies:true} },
+
+     // ---- all optional; each one has a stated fallback ----
+     spoken:       function(cs){...},        // callsign in spoken form
+     context:      function(strip){...},     // one line: what this strip is doing
+     handoffFor:   function(strip, role, radarState){...},
+     fixesOn:      function(strip){...},     // fixes on the procedure it is on
+     routeTextFor: function(strip){...},     // the filed route, for the placeholder
+     roleHints:    {arrival:'...', departure:'...', overflight:'...'},
+     extraFields:  function(strip, i){...}   // the deck's own boxes, after the tail
+   };
 
    `serves` is the list of airports an ARRIVAL actually ends at.
-   `from`   is the list of airports a DEPARTURE actually leaves from.
+   `from` is the list of airports a DEPARTURE actually leaves from.
 
-   BOTH ARE LISTS BECAUSE A PROCEDURE BELONGING TO SEVERAL FIELDS IS THE
-   NORMAL CASE, not an exception — AGUDE serves Flying Cloud and Airlake,
-   the GEP hub serves MSP and every satellite. The question here is never
-   "which field owns this procedure"; it is "is this procedure valid at
-   the field on this strip", which is membership in a list. A facility
-   whose departures genuinely serve every field it works writes every
-   field into `from`, and the control then offers them everywhere — a
-   declaration rather than an accident.
+   BOTH ARE REQUIRED AND NEITHER DEFAULTS TO "EVERYWHERE". A procedure
+   with an empty list is offered nowhere. That is the safe direction: a
+   missing entry shows up as a procedure you cannot pick, never as one
+   that silently works at the wrong field.
 
-   Both are REQUIRED and neither defaults to "everywhere". A procedure
-   with an empty list is offered nowhere, which is the safe direction: a
-   missing entry shows up as a procedure you cannot pick, not as a
-   procedure that silently works at the wrong field.
-
-   `rwys` may be omitted or null where the field's runways are not in the
-   reference set — the runway control then offers nothing rather than
-   inventing an inventory. That is the KLVN case at M98.
+   `rwys: null` where a field's runways are not in the reference set. The
+   control then says "no runway inventory for KLVN" rather than rendering
+   an empty box or inventing one.
 
    `flies` and `track` are DIFFERENT CLAIMS, and the row labels them
    differently. Conflating them is what let a deck holding a complete
@@ -2842,12 +2952,62 @@ window.STRIP_FACILITY = {
    with no track renders "(frame only)". Neither is a defect; saying
    which of the two is true is the entire point.
 
-   ---------- WHAT THIS BLOCK DOES NOT DO ----------
+   ---------------------------------------------------------------
+   THE OPTIONAL HOOKS, AND WHAT HAPPENS WITHOUT THEM
 
-   It does not fly anything, grade anything, or know what a ladder is. It
-   renders a row, reads it back, and answers whether the combination is
-   legal for this facility. A deck with a traffic model wires its own
-   engine to the values; a deck without one still gets a correct strip.
+     spoken       header reads Strip 1 — "Delta five eight nine".
+                  WITHOUT IT the header prints the bare callsign. It is
+                  not defaulted, because callsign voicing is a national
+                  reference a facility either carries or does not, and a
+                  deck with no TTS layer inventing a pronunciation is
+                  exactly what claude_US_Carrier_Callsigns.md forbids.
+     context      the grey line beside the strip number.
+                  WITHOUT IT the line is empty.
+     handoffFor   returns {name, freq} for a job whose handoff the
+                  facility can derive — a departure off a known tower.
+                  Return null to let the controller type it.
+                  WITHOUT IT every job gets the plain input.
+     fixesOn      the fixes on the procedure this strip is on, in order.
+                  With it, the row asks for MILES FROM A NAMED FIX and
+                  offers only fixes on that procedure. WITHOUT IT, or
+                  where it returns nothing, the row falls back to a bare
+                  distance-to-go box — which is what M98 does for a
+                  routing with no published ladder.
+     routeTextFor the placeholder in the route box, and it enables the
+                  "fill from the procedure" button.
+                  WITHOUT IT the placeholder reads "filed route" and the
+                  button is not offered, because there is nothing to fill
+                  from.
+     roleHints    the title text on the job selector.
+     extraFields  html appended after the tail, for boxes only this deck
+                  needs — C90 and AZO place a strip on their scope by
+                  bearing and distance, which no other deck does.
+
+   ---------------------------------------------------------------
+   THE RE-RENDER IS NOT OPT-IN
+
+   Every control here carries an onchange that calls <prefix>Sync,
+   through window and guarded, so the block still names the deck's
+   re-render function rather than depending on any particular builder.
+
+   IT USED TO BE OPT-IN AND THAT WAS A REAL BUG, FOUND 2026-09-07. With
+   no `sync` in the contract this emitted no handler at all, so the
+   airport, procedure and runway controls were inert. Changing the
+   landing field left the arrival list showing the PREVIOUS field's
+   STARs; a KORD STAR could be selected on a strip landing Midway; and
+   the check line went on reporting the stale combination as legal.
+
+   All five decks carrying the block shipped without `sync`. Five
+   contracts do not forget the same field independently — the default was
+   wrong. The filtering was never broken: jobFields has always built the
+   list from arrivalsFor(dest), and normStrip has always re-placed a
+   procedure the new field cannot carry. Nothing ever ran them.
+
+   AND WRITE THE OPTION'S VALUE OUT. With none, an option's value is its
+   own label text, so any decoration — a revision name, a "(frame only)"
+   tag — reads back as part of the key. This block has always done it;
+   M98's own row had not, and six of its sixteen arrivals could not be
+   selected at all.
    ================================================================ */
 (function(){
 'use strict';
@@ -2976,51 +3136,157 @@ function normStrip(s){
   if(!worksAirport(s.dest)){ moved.push('landing ' + s.dest + ' -> ' + here[0]); s.dest = here[0]; }
   var av = arrivalsFor(s.dest);
   if(s.gate && av.indexOf(s.gate) < 0){ moved.push('arrival ' + s.gate + ' -> ' + (av[0] || 'none')); s.gate = av[0] || ''; }
+  /* THE MODEL MATCHES WHAT THE CONTROL CAN EXPRESS. The procedure picker
+     has no blank option, so with nothing set the browser shows the first
+     one — and the strip would then be carrying an arrival the row was
+     displaying but the model did not have, which is how a context line
+     comes to say "no arrival selected" under a control reading BEWTE4.
+     Not a move: nothing was displaced, this is the default the control
+     was already showing. */
+  if(!s.gate && av.length) s.gate = av[0];
   if(s.rwy && runwaysAt(s.dest).indexOf(s.rwy) < 0){ moved.push('runway ' + s.rwy + ' -> not issued'); s.rwy = ''; }
  }
  if(role === 'departure'){
   if(!worksAirport(s.dep)){ moved.push('departed ' + s.dep + ' -> ' + here[0]); s.dep = here[0]; }
   var dv = departuresFor(s.dep);
   if(s.sid && dv.indexOf(s.sid) < 0){ moved.push('departure ' + s.sid + ' -> ' + (dv[0] || 'none')); s.sid = dv[0] || ''; }
+  if(!s.sid && dv.length) s.sid = dv[0];
   if(s.depRwy && runwaysAt(s.dep).indexOf(s.depRwy) < 0){ moved.push('runway ' + s.depRwy + ' -> not stated'); s.depRwy = ''; }
  }
  return {strip:s, moved:moved};
 }
 
-/* ---------- 3. The row ----------
+/* ---------- 3. The generic half of the strip ----------
+   Everything here is national, which is why it belongs in this file
+   rather than in a facility's deck. Wake class is a weight, radar
+   service is a set of states an aircraft can be in, and neither
+   changes at a TRACON boundary. */
+
+/* Maximum certificated takeoff weight, pounds, by ICAO type. The class
+   thresholds are the 7110.65 ones: super is the two named airframes,
+   heavy is 300,000 or more, large is over 41,000, small is the rest. A
+   type that is not in the table is NOT guessed — it tags NOWGT, which
+   is what a real STARS system does, and the note says what that costs
+   in separation. */
+var MTOW = {
+ /* super */
+ A388:1268000, A225:1410958,
+ /* heavy */
+ B742:833000, B744:875000, B748:987000, B752:255000, B753:240000,
+ B763:412000, B764:450000, B772:656000, B77L:766000, B77W:775000,
+ B788:502500, B789:557000, B78X:560000, A306:363800, A310:361600,
+ A332:513700, A333:535700, A339:551000, A342:606300, A343:606300,
+ A345:811300, A346:811300, A359:590800, A35K:696700, MD11:630500,
+ IL76:418871, C17:585000, KC35:322500, B703:333600,
+ /* large */
+ B712:121000, B722:209500, B732:116000, B733:138500, B734:150000,
+ B735:133500, B736:143500, B737:155500, B738:174200, B739:187700,
+ B38M:181200, B39M:194700, B3XM:194700, A318:150800, A319:166400,
+ A320:171500, A321:206100, A19N:166400, A20N:174200, A21N:206100,
+ MD82:149500, MD83:160000, MD88:149500, MD90:168000, DC93:98000,
+ E135:41888, E145:48500, E170:82000, E75L:89000, E75S:89000,
+ E190:114200, E195:124300, E290:134500, CRJ2:53000, CRJ7:72750,
+ CRJ9:84500, CRJX:90500, CL30:39600, CL35:40600, CL60:47600,
+ GLF4:74600, GLF5:91000, GLF6:99600, GL5T:92750, GLEX:99500,
+ F2TH:39700, FA7X:70000, FA8X:73000, C550:13300, C56X:20200,
+ C680:30300, C68A:31000, C700:39500, C750:36100, LJ45:21500,
+ LJ60:23500, H25B:28000, DH8A:36300, DH8B:36300, DH8C:41100,
+ DH8D:64500, AT43:36817, AT45:41005, AT72:50265, AT75:50265,
+ AT76:50265, SF34:29000, SW4:16500, B190:17120, JS41:24000,
+ PC12:10450, TBM9:7394, PC24:18300, C208:8750, C25A:10700,
+ C25B:13870, C25C:17110, E55P:18500, E50P:10472, HDJT:6000,
+ /* small */
+ C172:2450, C182:3100, C206:3600, SR20:3050, SR22:3600,
+ PA46:4340, PA34:4570, PA28:2550, DA40:2646, DA42:4189, DA62:5071,
+ M20P:2740, M20T:3374, C310:5500, BE58:5500, AC11:3800
+};
+var B757_CLASS = {B752:1, B753:1};
+function wakeOf(type){
+ var t = (type || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+ if(t === 'A388' || t === 'A225')
+  return {cls:'super', label:'super', heavy:true, known:true, mtow:MTOW[t]};
+ var w = MTOW[t];
+ if(w == null) return {cls:'nowgt', label:'NOWGT — weight unverified', heavy:false, known:false,
+   note:'This type is not in the table, so it tags NOWGT: 10 NM ahead and behind until the weight is verified.'};
+ if(w >= 300000) return {cls:'heavy', label:'heavy', heavy:true, known:true, mtow:w};
+ if(B757_CLASS[t]) return {cls:'large', label:'large — B757 class', heavy:false, known:true, mtow:w,
+   note:'A 757 is a Large, so it carries its own wake requirement behind it.'};
+ if(w > 41000) return {cls:'large', label:'large', heavy:false, known:true, mtow:w};
+ return {cls:'small', label:'small', heavy:false, known:true, mtow:w};
+}
+
+/* The five states an aircraft can be in when it first speaks to you, and
+   what each one has already got. `ident` is radar identified, `code` is
+   a discrete beacon code, `cleared` is an IFR clearance. */
+var RADAR_STATES = {
+ established:{ident:true,  code:true,  cleared:true,  label:'established — handed off by another radar facility'},
+ departure:  {ident:false, code:true,  cleared:true,  label:'off the tower — owes a radar contact'},
+ popup:      {ident:false, code:false, cleared:false, label:'pop-up IFR — airborne, asking for a clearance'},
+ following:  {ident:false, code:false, cleared:false, label:'VFR asking for flight following'},
+ none:       {ident:false, code:false, cleared:false, label:'cold call — nothing on it'}
+};
+/* Which states a strip can legally be in, given what it is doing and
+   whether it is IFR. An arrival is never "off the tower"; an IFR
+   aircraft never wants flight following, because it already has a
+   clearance. The pop-up stays available on IFR, which is the case that
+   makes the box worth having at all. */
+function radarStatesFor(role, rules){
+ if(rules === 'VFR') return (role === 'departure')
+   ? ['departure','following','none','established']
+   : ['established','following','none'];
+ return (role === 'departure') ? ['departure','established'] : ['established','popup'];
+}
+/* Stored drills predate the five states and carry only established/none,
+   where "none" meant a pop-up on an IFR strip and a cold call on a VFR
+   one. */
+function normRadar(r, rules, role){
+ var legal = radarStatesFor(role, rules);
+ if(RADAR_STATES[r] && legal.indexOf(r) >= 0) return r;
+ if(r === 'none') r = (rules === 'VFR') ? 'none' : 'popup';
+ if(RADAR_STATES[r] && legal.indexOf(r) >= 0) return r;
+ /* A KNOWN STATE THAT THIS JOB AND THESE FLIGHT RULES CANNOT BE IN. Pick
+    "VFR asking for flight following", then switch the strip to IFR: the
+    box correctly stops offering it, but handing the illegal state back
+    unchanged would leave the row DISPLAYING "established" while the
+    strip was STORED as "following". Keep what the state MEANT and take
+    the legal state that means the same thing. */
+ var st = RADAR_STATES[r], i, c;
+ if(st && !st.code && !st.ident){
+  for(i = 0; i < legal.length; i++){
+   c = RADAR_STATES[legal[i]];
+   if(c && !c.code && !c.ident) return legal[i];
+  }
+ }
+ return (role === 'departure' && rules !== 'VFR') ? 'departure' : 'established';
+}
+
+var ROLES = ['arrival','departure','overflight'];
+function roleOf(s){
+ var r = s && s.role;
+ return (ROLES.indexOf(r) >= 0) ? r : 'arrival';
+}
+var ROLE_HINT_DEFAULT = {
+ arrival:    'Inbound to a field this facility works.',
+ departure:  'Off a field this facility works, climbing out.',
+ overflight: 'Crosses the airspace and has to be handed off or pointed out before the far side.'
+};
+
+/* ---------- 4. The row ----------
    Ids are prefixed so a deck can host this alongside its own controls.
 
-   `onchange` calls the deck's re-render function BY NAME, through window,
-   so this block still depends on no particular builder. What it no longer
-   does is wait to be asked: the name defaults to <prefix>Sync, which is
-   what every mount defines.
-
-   THE RE-RENDER USED TO BE OPT-IN, AND THAT WAS A REAL BUG, FOUND
-   2026-09-07. With no `sync` in the contract this emitted no handler at
-   all, so the three controls that matter most — the airport, the
-   procedure and the runway — were inert. Changing the landing field left
-   the arrival list showing the PREVIOUS field's STARs; a KORD STAR could
-   be selected on a strip landing Midway; and the check line went on
-   reporting the stale combination as legal, which is the tool asserting
-   something untrue rather than merely failing to help.
-
-   All five decks carrying this block shipped without `sync`. Five
-   contracts do not forget the same field independently — the default was
-   wrong. The filtering was never broken: `jobFields` has always built the
-   list from `arrivalsFor(dest)`, and `normStrip` has always re-placed a
-   procedure the new field cannot carry. Nothing ever ran them.
-
-   Guarded, so a host that defines no such function gets an inert control
-   rather than a console error on every change. */
+   `onchange` calls the deck's re-render function BY NAME, through
+   window, so this block still depends on no particular builder. The name
+   defaults to <prefix>Sync, which is what every mount defines; `sync` in
+   the contract overrides it. Guarded, so a host that defines no such
+   function gets an inert control rather than a console error. */
 var PFX  = (F.prefix || 'strip');
 var SYNC = F.sync || (PFX + 'Sync');
 function esc(s){
  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function ev(){
- return ' onchange="window[\'' + SYNC + '\'] && window[\'' + SYNC + '\']()"';
-}
+function call(fn){ return 'window[\'' + fn + '\'] && window[\'' + fn + '\']()'; }
+function ev(){ return ' onchange="' + call(SYNC) + '"'; }
 function fld(lab, ctl){
  return '<div class="' + PFX + '-f"><span class="' + PFX + '-lab">' + lab + '</span>' + ctl + '</div>';
 }
@@ -3030,20 +3296,31 @@ function opts(list, sel, fmt){
     + esc(fmt ? fmt(v) : v) + '</option>';
  }).join('');
 }
+function inp(id, val, ph, extra){
+ return '<input class="' + PFX + '-in" id="' + PFX + '-' + id + '" value="' + esc(val)
+   + '"' + (ph ? (' placeholder="' + esc(ph) + '"') : '') + (extra || '') + ev() + '>';
+}
+function pick(id, list, sel, fmt){
+ return '<select class="' + PFX + '-sel" id="' + PFX + '-' + id + '"' + ev() + '>'
+   + opts(list, sel, fmt) + '</select>';
+}
+/* A derived value the controller reads but cannot type. */
+function shown(txt, title){
+ return '<div class="' + PFX + '-in ' + PFX + '-derived"'
+   + (title ? (' title="' + esc(title) + '"') : '') + '>' + esc(txt) + '</div>';
+}
 
 /* The airport control offers THIS FACILITY'S FIELDS AND NOTHING ELSE.
    That single fact is what makes a cross-facility strip unbuildable
    rather than merely refused after the fact. */
 function airportControl(id, sel){
- return '<select class="' + PFX + '-sel" id="' + id + '"' + ev() + '>'
-   + opts(airportsHere(), sel, function(k){ return k + ' — ' + airportName(k); })
-   + '</select>';
+ return pick(id, airportsHere(), sel, function(k){ return k + ' — ' + airportName(k); });
 }
 function procControl(id, list, sel, meta, empty){
  if(!list.length){
   return '<div class="' + PFX + '-sel ' + PFX + '-none">' + esc(empty) + '</div>';
  }
- return '<select class="' + PFX + '-sel" id="' + id + '"' + ev() + '>'
+ return '<select class="' + PFX + '-sel" id="' + PFX + '-' + id + '"' + ev() + '>'
    + list.map(function(p){
       var m = meta[p] || {};
       return '<option value="' + esc(p) + '"' + (p === sel ? ' selected' : '') + '>'
@@ -3058,198 +3335,410 @@ function runwayControl(id, icao, sel, blank){
  if(!rw.length){
   return '<div class="' + PFX + '-sel ' + PFX + '-none">no runway inventory for ' + esc(icao) + '</div>';
  }
- return '<select class="' + PFX + '-sel" id="' + id + '"' + ev() + '>'
+ return '<select class="' + PFX + '-sel" id="' + PFX + '-' + id + '"' + ev() + '>'
    + '<option value=""' + (sel ? '' : ' selected') + '>' + esc(blank) + '</option>'
    + opts(rw, sel) + '</select>';
 }
 
-/* The job half of the row — the part that differs by what the aircraft is
-   doing, and the only part that carries a procedure. */
+/* Who handed it to you follows the job, not the typing. Anything with no
+   service on it was handed off by nobody at all, and the facility gets
+   first refusal on deriving the rest — a departure off a tower this
+   facility knows is not something the controller should have to type. */
+function handoffControl(s, i){
+ var st = RADAR_STATES[s.radar];
+ if(st && !st.code && !st.ident){
+  return shown('nobody — it calls you itself');
+ }
+ var d = F.handoffFor ? F.handoffFor(s, roleOf(s), s.radar) : null;
+ if(d && d.name){
+  return shown(d.name + (d.freq ? ('  ' + d.freq) : ''), d.why || '');
+ }
+ return inp('from' + i, s.from, 'the facility that handed it off');
+}
+
+/* The job half — the part that differs by what the aircraft is doing,
+   and the only part that carries a procedure. */
 function jobFields(s, i){
- var role = s.role || 'arrival';
+ var role = roleOf(s);
  if(role === 'departure'){
   var dep = worksAirport(s.dep) ? s.dep : airportsHere()[0];
   var dl  = departuresFor(dep);
-  return fld('Departed', airportControl(PFX + '-dep' + i, dep))
-   + fld('Runway', runwayControl(PFX + '-drwy' + i, dep, s.depRwy, 'not stated'))
-   + fld('Departure', procControl(PFX + '-sid' + i, dl, s.sid, DEP,
-       'no departure procedure at ' + dep + ' in the reference set'));
+  return fld('Departed', airportControl('dep' + i, dep))
+   + fld('Runway', runwayControl('drwy' + i, dep, s.depRwy, 'not stated'))
+   + fld('Departure', procControl('sid' + i, dl, s.sid, DEP,
+       'no departure procedure at ' + dep + ' in the reference set'))
+   + fld('NM from the field', inp('fs' + i, s.fromStart));
  }
  if(role === 'overflight'){
-  return fld('Entry radial', '<input class="' + PFX + '-in" id="' + PFX + '-er' + i + '" value="' + esc(s.entryR) + '"' + ev() + '>')
-   + fld('Entry DME', '<input class="' + PFX + '-in" id="' + PFX + '-ed' + i + '" value="' + esc(s.entryD) + '"' + ev() + '>')
-   + fld('Exit radial', '<input class="' + PFX + '-in" id="' + PFX + '-xr' + i + '" value="' + esc(s.exitR) + '"' + ev() + '>')
-   + fld('Exit DME', '<input class="' + PFX + '-in" id="' + PFX + '-xd' + i + '" value="' + esc(s.exitD) + '"' + ev() + '>');
+  return fld('Entry radial', inp('er' + i, s.entryR))
+   + fld('Entry DME',   inp('ed' + i, s.entryD))
+   + fld('Exit radial', inp('xr' + i, s.exitR))
+   + fld('Exit DME',    inp('xd' + i, s.exitD));
  }
  var dest = worksAirport(s.dest) ? s.dest : airportsHere()[0];
  var al   = arrivalsFor(dest);
- return fld('Landing', airportControl(PFX + '-dest' + i, dest))
-  + fld('Arrival', procControl(PFX + '-gate' + i, al, s.gate, ARR,
+ return fld('Landing', airportControl('dest' + i, dest))
+  + fld('Arrival', procControl('gate' + i, al, s.gate, ARR,
       'no arrival procedure at ' + dest + ' in the reference set'))
-  + fld('Runway', runwayControl(PFX + '-rwy' + i, dest, s.rwy, 'not yet issued'));
+  + placeOnTrack(s, i)
+  + fld('Engine', pick('eng' + i, ['jet','turboprop','piston'], s.engine || 'jet'));
 }
 
-/* ---------- 4. Read back ---------- */
-function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
+/* Placed by the fix it is running to and the distance still to run — the
+   way it reads off a scope — with ONLY the fixes on THIS procedure
+   offered. A routing with no published ladder keeps the bare distance,
+   which is the honest fallback rather than an empty fix picker. */
+function fixesFor(s){
+ if(!F.fixesOn) return [];
+ var out = F.fixesOn(s);
+ return (out && out.length) ? out : [];
+}
+function placeOnTrack(s, i){
+ var fx = fixesFor(s);
+ if(!fx.length) return fld('NM to go', inp('dtg' + i, s.dtg));
+ var sel = (fx.indexOf(s.dtgFix) >= 0) ? s.dtgFix : fx[0];
+ return fld('Miles from', inp('dtgnm' + i, s.dtgNm))
+  + fld('Next fix', pick('dtgfix' + i, fx, sel));
+}
+
+function rowHtml(s, i){
+ var role  = roleOf(s);
+ var rules = (s.rules === 'VFR') ? 'VFR' : 'IFR';
+ var radar = normRadar(s.radar, rules, role);
+ var wk    = wakeOf(s.type);
+ var hints = F.roleHints || ROLE_HINT_DEFAULT;
+
+ var head = fld('Job', '<select class="' + PFX + '-sel" id="' + PFX + '-role' + i + '"'
+     + ' title="' + esc(hints[role] || '') + '"' + ev() + '>' + opts(ROLES, role) + '</select>')
+  + fld('Callsign', inp('cs' + i, s.cs, 'DAL589'))
+  + fld('Flight rules', pick('rules' + i, ['IFR','VFR'], rules))
+  /* The states this job and these flight rules can legally be in, and
+     no others — an IFR arrival is never asking for flight following. */
+  + fld('Radar service', '<select class="' + PFX + '-sel" id="' + PFX + '-radar' + i + '"' + ev() + '>'
+      + opts(radarStatesFor(role, rules), radar, function(k){ return RADAR_STATES[k].label; })
+      + '</select>')
+  + fld('Handed off by', handoffControl(s, i))
+  + fld('Type', inp('type' + i, s.type))
+  /* The class, not the weight — the box is what a controller reads off a
+     data block, and a data block carries the class. The weight is in the
+     tooltip, where the citation for the class belongs. */
+  + fld('Wake class', '<div class="' + PFX + '-in ' + PFX + '-wake-' + wk.cls + '" title="'
+      + esc(wk.note || ('Maximum certificated takeoff weight '
+          + (wk.mtow ? (wk.mtow.toLocaleString() + ' lb') : 'not in the table')))
+      + '">' + esc(wk.label) + '</div>');
+
+ var tail = fld('Altitude', inp('alt' + i, s.alt))
+  + fld('Speed', inp('ias' + i, s.ias));
+
+ if(role === 'arrival'){
+  /* An arrival on an optimized profile descent flies the speeds printed
+     on the arrival. The only reason it is doing anything else is that
+     Center called and said so, which is a coordination event and not a
+     strip setting — so there are two options and the second names where
+     it came from. The box is DISABLED under "published", because there
+     is nothing Center advised to write in it. */
+  var mode = (s.mode === 'assigned') ? 'assigned' : 'published';
+  var dest = worksAirport(s.dest) ? s.dest : airportsHere()[0];
+  tail += fld('Speed', '<select class="' + PFX + '-sel" id="' + PFX + '-mode' + i + '"' + ev() + '>'
+      + '<option value="published"' + (mode === 'published' ? ' selected' : '') + '>published — descend via the arrival</option>'
+      + '<option value="assigned"'  + (mode === 'assigned'  ? ' selected' : '') + '>Center advised something other than published</option>'
+      + '</select>')
+   + fld('Center advised', inp('asg' + i, s.asg, '', mode === 'assigned' ? '' : ' disabled'))
+   + fld('Runway', runwayControl('rwy' + i, dest, s.rwy, 'not yet issued'));
+ }
+
+ tail += fld('Checks in at', inp('sp' + i, s.spawnAt, '', s.ckdIn ? ' disabled' : ''))
+  + '<label class="' + PFX + '-chk"><input type="checkbox" id="' + PFX + '-ck' + i + '"'
+    + (s.ckdIn ? ' checked' : '') + ev() + '>already on frequency</label>';
+ if(role === 'arrival'){
+  tail += '<label class="' + PFX + '-chk"><input type="checkbox" id="' + PFX + '-al' + i + '"'
+    + (s.altim ? ' checked' : '') + ev() + '>altimeter given</label>';
+ }
+ if(F.extraFields) tail += F.extraFields(s, i);
+
+ /* The route sits on its own line — it is the longest field on the strip. */
+ var fill = F.routeTextFor
+   ? (' <button class="' + PFX + '-btn ' + PFX + '-sm" onclick="window[\'' + PFX
+      + 'FillRoute\'] && window[\'' + PFX + 'FillRoute\'](' + i + ')">fill from the procedure</button>')
+   : '';
+ var routeLab = (rules === 'IFR')
+   ? ((radar === 'popup' || radar === 'none')
+       ? 'Route — what the pop-up is asking for, optional'
+       : 'Route — required on an IFR strip')
+   : 'Intentions — optional, this one is VFR';
+ var ph = (rules === 'IFR')
+   ? ((F.routeTextFor && F.routeTextFor(s)) || 'filed route')
+   : 'northeast bound, request Bravo transition';
+ var routeRow = '<div class="' + PFX + '-routerow"><span class="' + PFX + '-lab">'
+   + routeLab + (rules === 'IFR' ? fill : '') + '</span>'
+   + '<input class="' + PFX + '-in" id="' + PFX + '-route' + i + '" value="' + esc(s.route || '')
+   + '" placeholder="' + esc(ph) + '"' + ev() + '></div>';
+
+ var spokenCs = (F.spoken && s.cs) ? F.spoken(s.cs) : '';
+ var ctx = F.context ? (F.context(s) || '') : '';
+ return '<div class="' + PFX + '-row" id="' + PFX + '-row' + i + '">'
+  + '<div class="' + PFX + '-rowhead"><b>Strip ' + (i + 1)
+    + (s.cs ? (' — ' + (spokenCs ? ('“' + esc(spokenCs) + '”') : esc(s.cs))) : '') + '</b>'
+    + '<span>' + esc(ctx) + '</span>'
+    + '<button class="' + PFX + '-btn ' + PFX + '-sm" onclick="window[\'' + PFX
+      + 'Drop\'] && window[\'' + PFX + 'Drop\'](' + i + ')">remove</button></div>'
+  + '<div class="' + PFX + '-grid">' + head + jobFields(s, i) + tail + '</div>'
+  + routeRow
+  + '<div id="' + PFX + '-msg' + i + '"></div>'
+  + '<div id="' + PFX + '-moved' + i + '" class="' + PFX + '-moved"></div>'
+  + '</div>';
+}
+
+/* ---------- 5. Read back ---------- */
+function g(id){ var e = document.getElementById(PFX + '-' + id); return e ? e.value : null; }
+function chk(id){ var e = document.getElementById(PFX + '-' + id); return e ? !!e.checked : null; }
+function keep(cur, v){ return (v != null) ? v : cur; }
+
 function readJob(s, i){
- var role = s.role || 'arrival';
+ var role = roleOf(s);
  if(role === 'departure'){
-  s.dep    = g(PFX + '-dep' + i)  || s.dep;
-  s.sid    = (g(PFX + '-sid' + i) != null) ? g(PFX + '-sid' + i) : s.sid;
-  s.depRwy = (g(PFX + '-drwy' + i) != null) ? g(PFX + '-drwy' + i) : s.depRwy;
+  s.dep    = keep(s.dep,    g('dep' + i));
+  s.sid    = keep(s.sid,    g('sid' + i));
+  s.depRwy = keep(s.depRwy, g('drwy' + i));
+  s.fromStart = keep(s.fromStart, g('fs' + i));
  } else if(role === 'overflight'){
-  s.entryR = g(PFX + '-er' + i) || s.entryR; s.entryD = g(PFX + '-ed' + i) || s.entryD;
-  s.exitR  = g(PFX + '-xr' + i) || s.exitR;  s.exitD  = g(PFX + '-xd' + i) || s.exitD;
+  s.entryR = keep(s.entryR, g('er' + i)); s.entryD = keep(s.entryD, g('ed' + i));
+  s.exitR  = keep(s.exitR,  g('xr' + i)); s.exitD  = keep(s.exitD,  g('xd' + i));
  } else {
-  s.dest = g(PFX + '-dest' + i) || s.dest;
-  s.gate = (g(PFX + '-gate' + i) != null) ? g(PFX + '-gate' + i) : s.gate;
-  s.rwy  = (g(PFX + '-rwy' + i)  != null) ? g(PFX + '-rwy' + i)  : s.rwy;
+  s.dest = keep(s.dest, g('dest' + i));
+  s.gate = keep(s.gate, g('gate' + i));
+  s.rwy  = keep(s.rwy,  g('rwy' + i));
+  s.engine = keep(s.engine, g('eng' + i));
+  if(document.getElementById(PFX + '-dtgfix' + i)){
+   s.dtgFix = keep(s.dtgFix, g('dtgfix' + i));
+   s.dtgNm  = keep(s.dtgNm,  g('dtgnm' + i));
+  } else {
+   s.dtg = keep(s.dtg, g('dtg' + i));
+  }
  }
  /* changing the field can strand the procedure that was on it */
  return normStrip(s);
+}
+
+/* The whole row, generic half included. A mount calls this one. */
+function readRow(s, i){
+ s.role = keep(s.role, g('role' + i));
+ s.cs   = (g('cs' + i) != null) ? String(g('cs' + i)).toUpperCase().replace(/\s+/g,'') : s.cs;
+ s.type = (g('type' + i) != null) ? String(g('type' + i)).toUpperCase() : s.type;
+ s.rules = keep(s.rules, g('rules' + i));
+ s.rules = (s.rules === 'VFR') ? 'VFR' : 'IFR';
+ s.radar = normRadar(keep(s.radar, g('radar' + i)), s.rules, roleOf(s));
+ /* Derived where the facility can derive it, typed where it cannot. */
+ var st = RADAR_STATES[s.radar];
+ if(st && !st.code && !st.ident){ s.from = ''; }
+ else {
+  var d = F.handoffFor ? F.handoffFor(s, roleOf(s), s.radar) : null;
+  s.from = (d && d.name) ? d.name : keep(s.from, g('from' + i));
+ }
+ s.alt = keep(s.alt, g('alt' + i));
+ s.ias = keep(s.ias, g('ias' + i));
+ s.mode = keep(s.mode, g('mode' + i));
+ s.asg  = keep(s.asg,  g('asg' + i));
+ /* Published speeds are the arrival's own, so there is nothing Center
+    advised to carry. Clear it rather than keeping a stale number behind
+    a disabled box, which would export a speed nobody assigned. */
+ if(s.mode !== 'assigned') s.asg = '';
+ s.spawnAt = keep(s.spawnAt, g('sp' + i));
+ var c = chk('ck' + i); if(c != null) s.ckdIn = c;
+ var a = chk('al' + i); if(a != null) s.altim = a;
+ s.route = keep(s.route, g('route' + i));
+ return readJob(s, i);
+}
+
+/* Fill the route from the procedure, where the facility can say what it
+   reads as. Named on window so the row's button can reach it without the
+   mount having to wire anything. */
+window[PFX + 'FillRoute'] = function(i){
+ if(!F.routeTextFor || !window[PFX + 'RowAt']) return;
+ var s = window[PFX + 'RowAt'](i);
+ if(!s) return;
+ var box = document.getElementById(PFX + '-route' + i);
+ var txt = F.routeTextFor(s);
+ if(box && txt){ box.value = txt; s.route = txt; }
+};
+
+/* ---------- 6. The look ----------
+   The row's CSS lives here so the strip is the same shape at every
+   facility. Namespaced by prefix, and it uses only the design system's
+   own custom properties — no new colours, no new fonts. */
+var CSS = ''
+ + '.' + PFX + '-row{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:10px 12px;margin:8px 0;}'
+ + '.' + PFX + '-rowhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:8px;}'
+ + '.' + PFX + '-rowhead b{font-family:var(--mono);font-size:12px;color:var(--ink);}'
+ + '.' + PFX + '-rowhead span{font-family:var(--mono);font-size:10.5px;color:var(--dim2);flex:1 1 auto;}'
+ + '.' + PFX + '-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;}'
+ + '.' + PFX + '-f{display:flex;flex-direction:column;gap:4px;min-width:0;}'
+ + '.' + PFX + '-lab{font-family:var(--mono);font-size:9.5px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);}'
+ + '.' + PFX + '-in,.' + PFX + '-sel{background:var(--bg);border:1px solid var(--line);border-radius:4px;'
+ +   'color:var(--ink);font-family:var(--mono);font-size:12px;padding:7px 8px;width:100%;box-sizing:border-box;}'
+ + '.' + PFX + '-in:focus,.' + PFX + '-sel:focus{outline:2px solid var(--green);outline-offset:1px;}'
+ + '.' + PFX + '-in[disabled]{color:var(--dim2);}'
+ + '.' + PFX + '-derived{color:var(--dim);}'
+ + '.' + PFX + '-wake-nowgt{color:var(--amber);}'
+ + '.' + PFX + '-wake-heavy,.' + PFX + '-wake-super{color:var(--green);}'
+ + '.' + PFX + '-wake-large,.' + PFX + '-wake-small{color:var(--dim);}'
+ + '.' + PFX + '-none{color:var(--amber);font-style:italic;padding:7px 8px;'
+ +   'border:1px dashed var(--line);border-radius:4px;font-size:11.5px;box-sizing:border-box;}'
+ + '.' + PFX + '-chk{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;'
+ +   'color:var(--dim);cursor:pointer;padding-top:14px;}'
+ + '.' + PFX + '-chk input{accent-color:var(--green);width:14px;height:14px;}'
+ + '.' + PFX + '-routerow{display:flex;flex-direction:column;gap:4px;margin-top:8px;}'
+ + '.' + PFX + '-btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
+ +   'border-radius:4px;padding:6px 11px;font:11px/1.4 var(--body);cursor:pointer;}'
+ + '.' + PFX + '-btn:hover{border-color:var(--dim);}'
+ + '.' + PFX + '-sm{font-size:10.5px;padding:4px 8px;}'
+ + '.' + PFX + '-err{color:var(--red);font:11.5px/1.6 var(--body);margin-top:6px;}'
+ + '.' + PFX + '-ok{color:var(--green);font:11.5px/1.6 var(--body);margin-top:6px;}'
+ + '.' + PFX + '-moved{color:var(--amber);font:11.5px/1.6 var(--body);margin-top:4px;}'
+ + '.' + PFX + '-dim{color:var(--dim);font:11.5px/1.65 var(--body);}'
+ + '@media (max-width:600px){.' + PFX + '-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr));}}';
+function mountCss(){
+ if(document.getElementById(PFX + '-css')) return;
+ var st = document.createElement('style');
+ st.id = PFX + '-css';
+ st.textContent = CSS;
+ document.head.appendChild(st);
+}
+
+/* A blank strip that is legal here from the moment it appears. */
+function blankStrip(){
+ var a = airportsHere()[0];
+ var av = arrivalsFor(a);
+ return {role:'arrival', cs:'', type:'B738', rules:'IFR', radar:'established', from:'',
+         dest:a, gate:av[0] || '', rwy:'', engine:'jet', dtg:'', dtgFix:'', dtgNm:'',
+         dep:a, sid:'', depRwy:'', fromStart:'',
+         entryR:'', entryD:'', exitR:'', exitD:'',
+         alt:'', ias:'', mode:'published', asg:'', spawnAt:'', ckdIn:false, altim:false, route:''};
 }
 
 window.strip = {
  FACILITY:F, airportsHere:airportsHere, worksAirport:worksAirport, airportName:airportName,
  runwaysAt:runwaysAt, arrivalsFor:arrivalsFor, departuresFor:departuresFor,
  arrivalServes:arrivalServes, checkStrip:checkStrip, normStrip:normStrip,
- jobFields:jobFields, readJob:readJob, prefix:PFX
+ jobFields:jobFields, readJob:readJob,
+ row:rowHtml, readRow:readRow, blank:blankStrip, mountCss:mountCss, esc:esc,
+ wakeOf:wakeOf, RADAR_STATES:RADAR_STATES, radarStatesFor:radarStatesFor, normRadar:normRadar,
+ ROLES:ROLES, roleOf:roleOf, fixesFor:fixesFor, prefix:PFX
 };
 
 })();
 /* ---------- 3. Mount ----------
-   THE SINGLE STRIP ENTRY FOR THIS DECK. Until 2026-09-06 there were two:
-   this one, and an older "Place the strip" form in the builder block's
-   ddb-build section, built before the master row existed. They disagreed
-   about what a strip is — the old form offered a free-text destination
-   and a feeder gate and checked neither, this one offers the facility's
-   own fields and refuses a foreign procedure by name — and they sat on
-   different parts of the page, because this block mounted after the page
-   builder had already run and so landed outside the page system.
+   THE SINGLE STRIP ENTRY FOR THIS DECK, AND IT IS NOW M98'S ROW.
 
-   The old form is gone and its facility half is here. The job half of
-   the row is the master block's, untouched: role, callsign, type, the
-   procedure controls, altitude. What this mount adds around it is the
-   part that is C90's and not portable — flight rules, the placement
-   bearing and distance from the RRCP, speed, heading, the feeder gate
-   from 2-1, who handed it off — plus the button that puts the strip on
-   the scope through DD.mkAc.
+   Until 2026-09-06 there were three ways to build a strip here: an older
+   "Place the strip" form in the builder's ddb-build section, this one,
+   and a comma-separated prompt() on the live page. They disagreed about
+   what a strip even is. One section does the job now.
 
-   THE CHECK NOW RUNS BEFORE THE PLACEMENT, which is the point of the
-   merge. The old form placed anything with a callsign; a strip landing
-   at a field C90 does not work reached the scope silently. Placement now
-   refuses an illegal strip by name and says what would have been valid.
+   Until 2026-09-07 the surviving one was still only half a strip — the
+   master block carried the job fields and this mount wrote its own
+   callsign, type and altitude boxes, so C90's strip was a different
+   shape from M98's. Owner's call: the M98 row is the format. The whole
+   row now comes from the master block, and what is left here is the
+   section around it plus the two things that are genuinely C90's.
 
-   What it still does not do is fly. C90 has no traffic model, so the
-   procedure on the strip drives nothing — the published ladder is on the
-   procedures page and the strip flies the heading you gave it. That is
-   the panel below the rows, kept verbatim from the form it replaces. */
+   WHAT THIS MOUNT STILL OWNS, AND WHY EACH ONE IS NOT PORTABLE:
+
+     the placement fields   bearing and distance from the RRCP, speed
+                            over the ground, heading, and the feeder gate
+                            of SOP 2-1. C90 has no traffic model, so a
+                            strip is placed on the scope by bearing and
+                            distance rather than flown down a ladder.
+                            They ride in through the contract's
+                            extraFields hook.
+     place on the scope     runs checkStrip FIRST and refuses an illegal
+                            strip by name, then hands DD.mkAc the values.
+
+   THE CONTRACT'S HOOKS, and what C90 can actually answer:
+
+     fixesOn        yes — the procedures block carries every published
+                    ORD and MDW ladder from CIFP 260903, so the row asks
+                    for miles from a NAMED FIX and offers only the fixes
+                    on the arrival selected.
+     routeTextFor   yes, from the same ladder.
+     context        yes — the procedure and what is known about it.
+     handoffFor     NO, and it is left unanswered rather than guessed.
+                    C90 holds no tower LOA and no handoff identifier for
+                    any of its eight fields — the `handoff` slot is empty
+                    and says so — so the row gives a plain box for the
+                    controller to type into. Deriving it would be
+                    inventing a coordination fact.
+     spoken         NO. There is no TTS layer at ZAU and no callsign
+                    voicing reference in this tree, so the header prints
+                    the bare callsign rather than a pronunciation nobody
+                    verified. */
 (function(){
 'use strict';
 if(!window.strip) return;
 var S = window.strip, P = S.prefix;
 var DD = window.DD || null;
+var esc = S.esc;
 
 var css = ''
  + '.' + P + '-sec{margin-top:22px;}'
- + '.' + P + '-f{display:inline-block;margin:0 12px 10px 0;vertical-align:top;}'
- + '.' + P + '-lab{display:block;font:11px/1.6 var(--body);color:var(--dim);letter-spacing:.04em;}'
- + '.' + P + '-in,.' + P + '-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
- + 'border-radius:4px;padding:6px 8px;font:12px/1.4 var(--body);min-width:150px;}'
- + '.' + P + '-in.' + P + '-num{min-width:96px;}'
- + '.' + P + '-none{color:var(--amber);font-style:italic;display:inline-block;padding:6px 8px;'
- + 'border:1px dashed var(--line);border-radius:4px;font-size:11.5px;min-width:150px;}'
- + '.' + P + '-row{border-top:1px solid var(--line);padding:12px 0;}'
- + '.' + P + '-place{border-left:2px solid var(--line);padding-left:12px;margin-left:2px;}'
- + '.' + P + '-btn{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
- + 'border-radius:4px;padding:6px 11px;font:11px/1.4 var(--body);cursor:pointer;}'
- + '.' + P + '-btn:hover{border-color:var(--dim);}'
- + '.' + P + '-btn.' + P + '-go{color:var(--green);border-color:var(--green);}'
- + '.' + P + '-err{color:var(--red);font:11.5px/1.6 var(--body);margin-top:6px;}'
- + '.' + P + '-ok{color:var(--green);font:11.5px/1.6 var(--body);margin-top:6px;}'
- + '.' + P + '-said{color:var(--dim);font:11.5px/1.6 var(--body);margin-top:6px;}'
- + '.' + P + '-moved{color:var(--amber);font:11.5px/1.6 var(--body);margin-top:4px;}'
- + '.' + P + '-dim{color:var(--dim);font:11.5px/1.65 var(--body);}';
+ + '.' + P + '-place{grid-column:1/-1;display:grid;'
+ +   'grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;'
+ +   'border-top:1px dashed var(--line);margin-top:6px;padding-top:8px;}'
+ + '.' + P + '-go{color:var(--green);border-color:var(--green);}'
+ + '.' + P + '-said{grid-column:1/-1;color:var(--dim);font:11.5px/1.6 var(--body);margin-top:6px;}';
 
 var rows = [];
+
+/* The master block's blank, plus the placement values this deck needs.
+   The defaults are the ones the form this replaced used. */
 function blank(){
- var a = S.airportsHere()[0];
- var av = S.arrivalsFor(a);
- return {role:'arrival', cs:'', type:'B738', dest:a, gate:av[0] || '', rwy:'', alt:'10000',
-         rules:'IFR', brg:'270', dist:'35', spd:'250', hdg:'090', feeder:'', from:''};
-}
-function esc(s){
- return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-   .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+ var s = S.blank();
+ s.type = 'B738'; s.alt = '10000'; s.ias = '250';
+ s.brg = '270'; s.dist = '35'; s.hdg = '090'; s.feeder = '';
+ return s;
 }
 function fld(l, c){ return '<div class="' + P + '-f"><span class="' + P + '-lab">' + l + '</span>' + c + '</div>'; }
 function num(l, k, i, v){
- return fld(l, '<input class="' + P + '-in ' + P + '-num" id="' + P + '-' + k + i + '" value="'
-   + esc(v) + '" onchange="' + P + 'Sync()">');
-}
-function pick(l, k, i, list, cur, fmt){
- return fld(l, '<select class="' + P + '-sel" id="' + P + '-' + k + i + '" onchange="' + P + 'Sync()">'
-   + list.map(function(v){
-      return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>'
-        + esc(fmt ? fmt(v) : v) + '</option>';
-     }).join('')
-   + '</select>');
+ return fld(l, '<input class="' + P + '-in" id="' + P + '-' + k + i + '" value="'
+   + esc(v) + '" onchange="window[\'' + P + 'Sync\'] && window[\'' + P + 'Sync\']()">');
 }
 
 /* The feeder gates of 2-1, offered by name. GATES carries no fix and no
    STAR — no published ORD or MDW arrival names one of them as a fix — so
-   this is a label on the strip and nothing links it to a track. The row
-   says so when one is set rather than letting it look like a ladder. */
+   this is a label on the strip and nothing links it to a track. */
 function feederPick(s, i){
  if(!DD || !DD.GATES || !DD.GATES.length) return '';
- var ids = [''].concat(DD.GATES.map(function(g){ return g.id; }));
- return pick('Feeder gate', 'feeder', i, ids, s.feeder, function(v){
-  if(!v) return '(none carried)';
-  for(var k = 0; k < DD.GATES.length; k++){
-   if(DD.GATES[k].id === v) return v + ' — ' + DD.posName(DD.GATES[k].pos);
-  }
-  return v;
- });
+ var o = '<option value=""' + (s.feeder ? '' : ' selected') + '>(none carried)</option>';
+ for(var k = 0; k < DD.GATES.length; k++){
+  var g = DD.GATES[k];
+  o += '<option value="' + esc(g.id) + '"' + (g.id === s.feeder ? ' selected' : '') + '>'
+     + esc(g.id) + ' — ' + esc(DD.posName(g.pos)) + '</option>';
+ }
+ return fld('Feeder gate', '<select class="' + P + '-sel" id="' + P + '-feeder' + i + '"'
+   + ' onchange="window[\'' + P + 'Sync\'] && window[\'' + P + 'Sync\']()">' + o + '</select>');
 }
 
-/* The facility half: everything DD.mkAc needs that the master row does
-   not carry, because none of it is portable between facilities. */
-function placeFields(s, i){
+/* Passed to the master row through the contract, so the deck's own boxes
+   sit inside the same grid as everything else rather than in a strip of
+   their own underneath. */
+window.C90_STRIP_EXTRA = function(s, i){
  return '<div class="' + P + '-place">'
-  + pick('Flight rules', 'rules', i, ['IFR','VFR'], s.rules)
   + num('Bearing from RRCP', 'brg', i, s.brg)
   + num('Distance NM', 'dist', i, s.dist)
-  + num('Speed', 'spd', i, s.spd)
   + num('Heading', 'hdg', i, s.hdg)
   + feederPick(s, i)
-  + fld('Handed off by', '<input class="' + P + '-in" id="' + P + '-from' + i + '" value="'
-      + esc(s.from) + '" placeholder="ZAU" onchange="' + P + 'Sync()">')
-  + '</div>';
-}
-
-function rowHtml(s, i){
- var roles = ['arrival','departure','overflight'];
- return '<div class="' + P + '-row" id="' + P + '-row' + i + '">'
-  + fld('Job', '<select class="' + P + '-sel" id="' + P + '-role' + i + '" onchange="' + P + 'Sync()">'
-      + roles.map(function(r){ return '<option' + (r === s.role ? ' selected' : '') + '>' + r + '</option>'; }).join('')
-      + '</select>')
-  + fld('Callsign', '<input class="' + P + '-in" id="' + P + '-cs' + i + '" value="' + esc(s.cs) + '" placeholder="DAL589" onchange="' + P + 'Sync()">')
-  + fld('Type', '<input class="' + P + '-in" id="' + P + '-type' + i + '" value="' + esc(s.type) + '" onchange="' + P + 'Sync()">')
-  + S.jobFields(s, i)
-  + fld('Altitude', '<input class="' + P + '-in" id="' + P + '-alt' + i + '" value="' + esc(s.alt) + '" onchange="' + P + 'Sync()">')
-  + placeFields(s, i)
-  + fld('&nbsp;', '<button class="' + P + '-btn ' + P + '-go" onclick="' + P + 'Place(' + i + ')">place on the scope</button>')
-  + fld('&nbsp;', '<button class="' + P + '-btn" onclick="' + P + 'Drop(' + i + ')">remove</button>')
-  + '<div id="' + P + '-msg' + i + '"></div>'
-  + '<div id="' + P + '-moved' + i + '" class="' + P + '-moved"></div>'
+  + fld('&nbsp;', '<button class="' + P + '-btn ' + P + '-go" onclick="window[\'' + P
+      + 'Place\'] && window[\'' + P + 'Place\'](' + i + ')">place on the scope</button>')
+  /* What the placement said. It belongs to the deck's half of the row,
+     because placing onto a scope is something only C90 and AZO do. */
   + '<div id="' + P + '-said' + i + '" class="' + P + '-said"></div>'
   + '</div>';
-}
+};
 
 function render(){
  var host = document.getElementById(P + '-rows');
  if(!host) return;
- host.innerHTML = rows.map(rowHtml).join('');
+ host.innerHTML = rows.map(function(s, i){ return S.row(s, i); }).join('');
  rows.forEach(check);
 }
 function check(s, i){
@@ -3260,17 +3749,14 @@ function check(s, i){
  /* Name the field this strip is actually at. A departure keeps whatever
     dest it had before the job changed, so reading dest first would print
     the old airport under a departure — with eight fields in the list that
-    is a wrong field on a strip, not a cosmetic slip. Taken from the S56
-    mount, which fixed it first. */
+    is a wrong field on a strip, not a cosmetic slip. */
  var at = s.role === 'departure' ? s.dep : s.role === 'overflight' ? '' : s.dest;
  box.innerHTML = errs.length
    ? errs.map(function(e){ return '&#9888; ' + esc(e); }).join('<br>')
    : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(at || 'the boundary');
- /* Say what the field change moved. normStrip has always worked this
-    out and every mount used to throw it away, so a procedure that could
-    not follow the new field was swapped in silence. A list that follows
-    the field is only trustworthy if the tool admits when it moved
-    something the controller had already chosen. */
+ /* Say what the field change moved. normStrip works this out and it used
+    to be thrown away, so a procedure that could not follow the new field
+    was swapped in silence. */
  var mv = document.getElementById(P + '-moved' + i);
  if(mv) mv.innerHTML = (s.moved && s.moved.length)
    ? ('&#8635; the field changed, so what could not follow it moved: '
@@ -3282,27 +3768,17 @@ function say(i, html){
  var el = document.getElementById(P + '-said' + i);
  if(el) el.innerHTML = html;
 }
-function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
+function g(id){ var e = document.getElementById(P + '-' + id); return e ? e.value : null; }
 function nOf(v, d){ var x = parseFloat(v); return isNaN(x) ? d : x; }
 
+window[P + 'RowAt'] = function(i){ return rows[i] || null; };
 window[P + 'Sync'] = function(){
  rows.forEach(function(s, i){
-  s.role = g(P + '-role' + i) || s.role;
-  s.cs   = (g(P + '-cs' + i) || '').toUpperCase().replace(/\s+/g,'');
-  s.type = (g(P + '-type' + i) || s.type).toUpperCase();
-  s.alt  = g(P + '-alt' + i) || s.alt;
-  s.rules  = g(P + '-rules' + i)  || s.rules;
-  s.brg    = g(P + '-brg' + i)    != null ? g(P + '-brg' + i)  : s.brg;
-  s.dist   = g(P + '-dist' + i)   != null ? g(P + '-dist' + i) : s.dist;
-  s.spd    = g(P + '-spd' + i)    != null ? g(P + '-spd' + i)  : s.spd;
-  s.hdg    = g(P + '-hdg' + i)    != null ? g(P + '-hdg' + i)  : s.hdg;
-  s.feeder = g(P + '-feeder' + i) != null ? g(P + '-feeder' + i) : s.feeder;
-  s.from   = g(P + '-from' + i)   != null ? g(P + '-from' + i) : s.from;
-  /* Re-places a procedure the new field cannot carry, and SAYS SO. The
-     return was thrown away before, so changing the landing field swapped
-     the STAR under you in silence. A list that follows the field is only
-     trustworthy if the tool admits when it moved something. */
-  var res = S.readJob(s, i);
+  s.brg    = (g('brg' + i)    != null) ? g('brg' + i)    : s.brg;
+  s.dist   = (g('dist' + i)   != null) ? g('dist' + i)   : s.dist;
+  s.hdg    = (g('hdg' + i)    != null) ? g('hdg' + i)    : s.hdg;
+  s.feeder = (g('feeder' + i) != null) ? g('feeder' + i) : s.feeder;
+  var res = S.readRow(s, i);
   s.moved = (res && res.moved && res.moved.length) ? res.moved : null;
  });
  render();
@@ -3311,7 +3787,7 @@ window[P + 'Add']  = function(){ rows.push(blank()); render(); };
 window[P + 'Drop'] = function(i){ if(rows.length > 1){ rows.splice(i, 1); render(); } };
 
 /* Place the strip on the scope. The contract check runs FIRST — the form
-   this replaces placed anything with a callsign, so a strip landing at a
+   this replaced placed anything with a callsign, so a strip landing at a
    field C90 does not work reached the scope with nothing said. */
 window[P + 'Place'] = function(i){
  var s = rows[i];
@@ -3327,7 +3803,7 @@ window[P + 'Place'] = function(i){
  DD.mkAc({
   cs:s.cs, type:s.type, rules:s.rules, role:s.role,
   bearing:nOf(s.brg, 270), dist:nOf(s.dist, 35), alt:nOf(s.alt, 10000),
-  spd:nOf(s.spd, 250), hdg:nOf(s.hdg, 90),
+  spd:nOf(s.ias, 250), hdg:nOf(s.hdg, 90),
   gate:s.feeder || '', dest:dest, rwy:rwy, from:s.from || ''
  });
 
@@ -3357,26 +3833,28 @@ function section(){
  var f = S.FACILITY;
  return '<section class="panel ' + P + '-sec" id="mod-' + P + '" data-note="strips">'
   + '<h2>Flight strips</h2>'
-  + '<p class="' + P + '-dim">Build the drill here. Every procedure offered belongs to <b>' + esc(f.id) + '</b>. '
-  + 'The field list is this facility\'s and nothing else, so a strip for another facility cannot '
-  + 'be built; anything that arrives another way — a stored drill, a pasted scenario — is named '
-  + 'and refused below rather than silently dropped, and a strip is refused before it reaches '
-  + 'the scope rather than after. '
-  + 'Procedure inventory from CIFP 260903.</p>'
+  + '<p class="' + P + '-dim">Build the drill here, on the same strip the M98 deck uses. '
+  + 'Every procedure offered belongs to <b>' + esc(f.id) + '</b>: the field list is this '
+  + 'facility\'s and nothing else, so a strip for another facility cannot be built, and '
+  + 'anything that arrives another way — a stored drill, a pasted scenario — is named and '
+  + 'refused rather than silently dropped. A strip is refused before it reaches the scope '
+  + 'rather than after. Procedure inventory from CIFP 260903.</p>'
   + '<div style="margin:10px 0;">'
-  + '<button class="' + P + '-btn" onclick="' + P + 'Add()">add a strip</button> '
-  + '<button class="' + P + '-btn" onclick="' + P + 'Clear()">clear the drill</button>'
+  + '<button class="' + P + '-btn" onclick="window[\'' + P + 'Add\']()">add a strip</button> '
+  + '<button class="' + P + '-btn" onclick="window[\'' + P + 'Clear\']()">clear the drill</button>'
   + '</div>'
   + '<div id="' + P + '-rows"></div>'
   + '<div class="dd-panel" data-note="build.gaps"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
-  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is still placed by bearing and distance, because this deck has no traffic model to fly a track with. What changed is that the track now exists: every published crossing restriction and speed limit is carried on the procedures page. What is missing is the engine that would hold a strip to one, and the facility knowledge of which transition C90 assigns in a given configuration &mdash; so the tool shows the published ladder and grades nothing against it.</p>'
+  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is still placed by bearing and distance, because this deck has no traffic model to fly a track with. What changed is that the track now exists: every published crossing restriction and speed limit is carried on the procedures page, and the strip now asks for the miles to a named fix on the arrival selected rather than a bare distance. What is missing is the engine that would hold a strip to the ladder, and the facility knowledge of which transition C90 assigns in a given configuration &mdash; so the tool shows the published ladder and grades nothing against it.</p>'
   + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">What it <i>can</i> now check is containment: whether the strip is inside the facility footprint and under the FL150 lid. It cannot check which sector owns it, because no source we hold carries a per-sector shape.</p>'
+  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;"><b>Handed off by is typed, not derived.</b> C90 holds no tower letter of agreement and no handoff identifier for any of its eight fields, so the row cannot say who hands a departure to you and does not pretend to.</p>'
   + '<div class="ddb-room">Room reserved: when a traffic model exists, the procedure on the strip drives the track and this panel becomes the validation report. The ladder it would read is already here.</div>'
   + '</div>'
   + '</section>';
 }
 
 function mount(){
+ S.mountCss();
  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
  var wrap = document.querySelector('.wrap');
  if(!wrap) return;
@@ -3387,8 +3865,7 @@ function mount(){
  /* Land on the page the deck already built, the way the weather and
     procedures blocks do. Without this the section is appended to .wrap
     AFTER the page wrappers exist, so it sits outside the page system and
-    renders under all three tabs — which is half of what made the strip
-    entry look like two sections. Building a strip is set-up work, so it
+    renders under all three tabs. Building a strip is set-up work, so it
     goes where the form it replaces was. */
  var page = document.getElementById('ddb-page-setup');
  if(page){ page.appendChild(sec); }
@@ -3408,15 +3885,8 @@ function mount(){
 /* THE THIRD STRIP ENTRY, and the one that checked least. The live page's
    "Add a strip" button read a comma-separated prompt() and handed it
    straight to mkAc — no field list, no procedure, no check at all. It is
-   a strip entry that cannot be wrong about a procedure only because it
-   never carried one, and it put traffic on the scope that this section
-   would have refused.
-
-   Repointed, not deleted, and repointed from HERE rather than by editing
-   the deck (house rule 11: wrap the entry point, do not edit block 1).
-   The button now takes you to the one place a strip is created. That is
-   what makes "one strip entry" true of the deck and not just of the
-   set-up page. */
+   repointed here rather than by editing the deck (house rule 11: wrap the
+   entry point, do not edit block 1). */
 function repointLiveAdd(){
  var b = document.getElementById('dd-add');
  if(!b) return;
