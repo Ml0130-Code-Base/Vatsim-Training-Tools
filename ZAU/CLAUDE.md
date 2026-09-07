@@ -95,9 +95,12 @@ filled by the procedures block, so there is one copy and `DD.ROUTES` means what 
 Slots moved: `routes` → **verified**, `deps` → **partial**.
 
 - **`deps` is partial, not verified, and the reason matters.** O'Hare and Midway have **zero**
-  coded SIDs — a conventional or radar-vector departure is outside what CIFP carries. The
-  eight SIDs are the six shared by DuPage, Aurora, Gary and Lewis and the two shared by
-  Chicago Executive and Waukegan. **A zero is a coding gap, not a field without departures.**
+  coded SIDs. The eight SIDs are the six shared by DuPage, Aurora, Gary and Lewis and the two
+  shared by Chicago Executive and Waukegan. **A zero is a coding gap, not a field without
+  departures.** And it is a gap **at those two fields**, not a limit of the dataset: CIFP does
+  carry radar-vectored departures — ARINC 424 route type `T`, Vector SID, as at Salt Lake City
+  and Boise — it simply codes no SID of any type at O'Hare or Midway. Corrected 2026-09-07;
+  root `claude_CIFP_Source_Reference.md` §3.1.
 - **`gates` stays empty, and CIFP narrowed it without closing it.** No KORD or KMDW STAR names
   PLANO, KUBBS, OKK or FARMM as a fix, so nothing links a Feeder position to a ladder. CIFP
   does carry enroute waypoints named PLANO, KUBBS and FARMM, but **nothing in the document set

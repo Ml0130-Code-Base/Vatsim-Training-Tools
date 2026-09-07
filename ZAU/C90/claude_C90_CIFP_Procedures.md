@@ -471,8 +471,11 @@ name, so none is written here.
 
 ### SIDs
 
-**None coded.** A radar-vector or conventional departure is outside what CIFP
-carries, so this is a coding gap rather than an absence of departures.
+**None coded, and that is a gap at this field rather than a limit of the dataset.**
+CIFP does carry radar-vectored departures — ARINC 424 route type `T`, Vector SID — and
+uses it at Salt Lake City (SLC4) and Boise (BOI3). It simply codes no SID of any type
+here. So this is a coding gap and not an absence of departures; the chart is the only
+source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 
 ### Approaches
 
@@ -1002,8 +1005,11 @@ The approach transitions, which is where traffic is fed from:
 
 ### SIDs
 
-**None coded.** A radar-vector or conventional departure is outside what CIFP
-carries, so this is a coding gap rather than an absence of departures.
+**None coded, and that is a gap at this field rather than a limit of the dataset.**
+CIFP does carry radar-vectored departures — ARINC 424 route type `T`, Vector SID — and
+uses it at Salt Lake City (SLC4) and Boise (BOI3). It simply codes no SID of any type
+here. So this is a coding gap and not an absence of departures; the chart is the only
+source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 
 ### Approaches
 
