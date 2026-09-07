@@ -127,6 +127,25 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 
    **CIFP is procedures, not airspace.** It closes fix positions and nothing else — the gates,
    the P2/P3/P4 areas and the Heber Shelf line in item 1 are untouched by it.
+
+   **Wired into the Big Sky deck 2026-09-06.** A **PUBLISHED PROCEDURES** block carries all ten
+   STARs and seven SIDs across both areas — five STARs and two SIDs at Boise, five and five at
+   Bozeman — with every transition, 94 fixes, and each fix's crossing restriction and speed
+   limit. It exposes `ZLC.STARS`, `ZLC.SIDS`, `ZLC.PFIX` and `ZLC.trackTo()`, and its guard
+   **asserts the `facility === 'BIGSKY'` discriminator** rather than trusting that only one ZLC
+   tool is on the page — the fix root `CLAUDE.md` §9 asks for. The block sits **before** the
+   PAGES block, which stays last, and `mod-bskp` is named in that block's `fly` page.
+
+   Three things to keep true here. **Procedures are keyed by airport, then by procedure**,
+   because an identifier is not unique across fields. **`flies` stays false** — Big Sky has no
+   traffic model — while `track:true` says the ladder is carried, and the strip row renders
+   *"track only"* rather than *"frame only"* for the difference. And a **runway transition
+   named `RW10L` is the procedure's runway, not the flow**: the flow branch lives in the
+   geometry (item 3), and nothing in this block touches it.
+
+   **S56 was deliberately left out of this pass** at the owner's direction, so its deck carries
+   no procedures block and its copy of the strip block predates the `track` flag. Root
+   `CLAUDE.md` §9 records that divergence; landing S56's CIFP wiring closes it.
 3. **Configuration.** S56 procedures branch on North Flow vs South Flow almost everywhere; the selector does not model flow yet, so duty text shows both branches. BOI branches on East vs West Flow the same way.
 
    **The geometry now carries the branch**, which is the natural way to model it when the selector grows one: every airspace block in `_shared/source-vatglasses/airspace.json` is gated on a runway configuration, and there are exactly four across the dataset — `KSLC 34L/R, 35` (North), `KSLC 16L/R, 17` (South), `KBOI 10L/R` (East), `KBOI 28L/R` (West). Selecting a flow selects which blocks exist. Big Sky shows it most clearly: Alpine and Sage **swap shapes** between east and west flow over the same total airspace.

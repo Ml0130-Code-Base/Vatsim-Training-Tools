@@ -1348,6 +1348,494 @@ else { mount(); }
 
 <script>
 /* ================================================================
+   Big Sky — PUBLISHED PROCEDURES. Additive extension block.
+
+   The SIDs and STARs this facility's fields actually have, taken from
+   the FAA's coded source rather than traced off a chart image.
+
+   SOURCE. CIFP cycle 260903, effective 2026-09-03, pulled 2026-09-06.
+   Pull recipe, record layout and licence in the root
+   claude_CIFP_Source_Reference.md; the same data written out for
+   reading in claude_BigSky_CIFP_Procedures.md beside this file.
+   THE CYCLE IS THE CITATION — every value here is true for 28 days by
+   construction. Re-pull before trusting it in a later cycle.
+
+   COVERAGE. Both areas are fully coded — five STARs and two SIDs at
+   Boise, five STARs and five SIDs at Bozeman — so this is the one
+   facility in scope where CIFP answers the whole question for every
+   field the tool works.
+
+   Nothing here is a sector boundary. The ZLC polygons and the flow
+   branch they carry stay where they are, in
+   ../_shared/claude_ZLC_Sector_Geometry_Reference.md, and a runway
+   transition named RW10L is the PROCEDURE's runway, not a statement
+   about which flow is running.
+
+   KEYED BY AIRPORT, THEN BY PROCEDURE, and that is load-bearing. A
+   procedure identifier is NOT unique across fields: ADELL EIGHT is
+   published at DuPage, Aurora, Gary and Lewis with a different set of
+   runway transitions at each, and PANGG SEVEN has a different common
+   segment at Gary than at Midway. Keyed on the identifier alone, four
+   fields' legs concatenate into a track no aircraft could fly. Every
+   lookup below therefore takes the field first.
+
+   WHAT A PROCEDURE CARRIES. Three parts, in the order an aircraft
+   flies them. A STAR runs trans -> common -> rwy; a SID runs
+   rwy -> common -> trans. Either outer part may be absent, because
+   the published procedure does not have it.
+
+     trans   entry transitions, keyed by the fix each starts at
+     common  the segment every aircraft on the procedure flies
+     rwy     runway transitions, keyed by RWnn
+
+   A LEG IS ONE ROW OF THE PUBLISHED TABLE.
+
+     {f:'BENKY', at:12000, t:'TF'}      cross BENKY at 12,000
+     {f:'BFORD', above:22000}           at or above
+     {f:'MINCE', below:10000}           at or below
+     {f:'BYLAW', lo:20000, hi:23000}    between, inclusive
+     {f:'PTERZ', above:6000, spd:220}   with a published speed limit
+     {from:'BRIKK', vec:'FM'}           LEAVES BRIKK ON A VECTOR
+
+   The last one is the one that matters. FM, VM, VA, CA and VI do not
+   terminate at a waypoint — the fix on the record is where the leg
+   STARTS, not a point the aircraft crosses. Emitting that as `f`
+   would draw a crossing the procedure does not have and would repeat
+   the fix before it, so a vector leg never carries `f`. Anything
+   walking a track has to stop there; `trackTo` does.
+
+   Altitudes are feet, never thousands. Coordinates live once in PFIX
+   and a leg names its fix rather than repeating the numbers, because
+   a fix on seven transitions is still one pair of numbers (house
+   rule 5, one copy of every operational number).
+
+   WHAT THIS IS NOT, AND THE PART TO READ BEFORE BUILDING A DRILL ON
+   IT. CIFP is the published procedure and nothing else.
+
+     - It does not say which transition Big Sky ASSIGNS in a given
+       configuration. That is an LOA and SOP question and CIFP has no
+       answer to it, so the tool offers every published transition and
+       never claims one is the right one.
+     - It carries no sector boundary, no MVA, no delegation and no
+       ownership. Nothing here narrows house rule 7.
+     - It does not say the procedure is FLOWN here. This deck has no
+       traffic model, so `flies` stays false on every strip and the
+       row says "track only" rather than pretending otherwise.
+   ================================================================ */
+(function(){
+'use strict';
+
+var NS = (window.ZLC && window.ZLC.facility === 'BIGSKY') ? window.ZLC : null;
+if(!NS) return;                    /* deck absent — do nothing, per the block contract */
+
+var CYCLE = '260903';
+
+var PFIX = {
+  AALNG:[45.76129,-110.87350], AIDDN:[45.69310,-111.38696], ALNYT:[45.64091,-111.78814], APISE:[43.50211,-116.44150],
+  BEARY:[45.81186,-111.50504], BEWTE:[44.00815,-116.43144], BGMAN:[45.53619,-112.04211], BGSKY:[45.65209,-111.20104],
+  BIL:[45.80856,-108.62465], BOBKT:[45.64619,-110.80050], BOI:[43.55281,-116.19213], BOLLS:[43.43664,-115.54122],
+  BOY:[43.46315,-108.29971], BRIGR:[45.66230,-111.46722], BROPH:[42.72103,-114.87550], BZN:[45.78390,-111.15546],
+  CAMML:[43.68123,-116.34637], CELOR:[43.38059,-115.81544], CHRIE:[43.89423,-116.40132], CHUKA:[44.20486,-116.48105],
+  COLLR:[44.38091,-116.31395], COLUS:[45.78364,-109.09967], CREKK:[46.03679,-108.47869], DBS:[44.08885,-112.20934],
+  DERSO:[43.36184,-115.13379], DEVLE:[44.21209,-117.24906], DIKAC:[43.41271,-116.21425], DOXIE:[45.83895,-115.17136],
+  DREAA:[45.33636,-111.13468], DYYLN:[43.63211,-116.20465], EATZZ:[45.98330,-112.03051], EKEME:[43.49138,-116.27008],
+  ELUMY:[43.46446,-116.19123], EREXE:[43.44581,-115.59160], FALDI:[43.35125,-115.88548], FARVE:[45.58493,-111.67198],
+  FIMGU:[43.44104,-116.39180], GARNT:[45.41062,-111.20249], GRZZY:[43.49071,-115.72950], HERAH:[45.62073,-111.11387],
+  HIA:[45.86179,-112.16961], JAPER:[45.66451,-110.98862], JAZMN:[45.67004,-111.71627], JIMMI:[43.64766,-116.47115],
+  JIROS:[46.80337,-114.67133], JOLIE:[45.99651,-110.67192], KARTS:[44.06917,-113.88934], KICDO:[46.01556,-111.28984],
+  KIYLE:[45.56985,-111.09671], KOLKE:[43.61314,-116.10489], KOURT:[43.39647,-115.32200], KYAAN:[43.82998,-116.64540],
+  LEAFS:[43.51784,-115.81318], LIBYY:[43.77961,-116.37113], LIILY:[45.82721,-111.48053], LIITL:[43.45004,-115.67896],
+  LOSST:[45.13417,-110.95114], LUKKS:[45.58246,-111.63142], LVM:[45.70248,-110.44245], MAALR:[43.96903,-116.93157],
+  MASSH:[43.22836,-115.61151], MAXMS:[44.49769,-116.55553], MEADO:[45.91766,-111.34860], MRFEE:[43.18254,-116.56938],
+  NEERO:[41.81760,-118.02480], ORYDA:[42.91542,-115.15494], PELYT:[42.78007,-117.25449], POWDA:[45.96824,-110.19995],
+  PRISN:[43.36170,-116.29330], PRNCS:[42.44324,-117.81460], REAPS:[43.16320,-114.09291], REEPO:[45.75956,-109.52688],
+  ROWBI:[43.59181,-116.04264], RUFSS:[46.02147,-111.11924], RYYDE:[45.90434,-110.99573], SABAT:[44.01659,-111.66529],
+  SADYL:[43.04357,-116.80497], SKANA:[44.20931,-116.37002], SOLDE:[43.25644,-114.57460], SPUUD:[43.27382,-115.67825],
+  SUBKY:[45.73350,-109.96035], SUMOQ:[44.93097,-116.66719], SWAAN:[43.37411,-116.49289], TAUTT:[43.14408,-115.48807],
+  THESE:[45.95044,-111.54086], TOCUD:[44.06465,-110.13844], TOOLS:[44.94326,-110.15211], UPLOW:[45.29753,-111.80527],
+  USEET:[45.57521,-111.74663], VECTR:[45.96552,-111.76167], VVNUS:[46.00796,-111.21624], WASAT:[45.90116,-111.60051],
+  YODOG:[45.30944,-110.49222], ZORKE:[45.50685,-110.67039]
+};
+
+var STARS = {
+ KBOI:{
+  BEWTE4:{rnav:true,
+   trans:{'COLLR':[{f:'COLLR',above:15000,t:'IF'},{f:'SKANA',above:11000,t:'TF'},{f:'BEWTE',above:10000,spd:250,t:'TF'}],'MAXMS':[{f:'MAXMS',above:15000,t:'IF'},{f:'CHUKA',above:11000,t:'TF'},{f:'BEWTE',above:10000,spd:250,t:'TF'}],'SUMOQ':[{f:'SUMOQ',t:'IF'},{f:'MAXMS',above:15000,t:'TF'},{f:'CHUKA',above:11000,t:'TF'},{f:'BEWTE',above:10000,spd:250,t:'TF'}]},
+   common:[{f:'BEWTE',above:10000,t:'IF'},{f:'CHRIE',above:8100,t:'TF'}],
+   rwy:{'RW10B':[{f:'CHRIE',above:8100,t:'IF'},{f:'LIBYY',at:7000,spd:210,t:'TF'}],'RW28B':[{f:'CHRIE',above:8100,t:'IF'},{f:'CAMML',at:8000,spd:210,t:'TF'},{f:'DYYLN',t:'TF'},{from:'DYYLN',vec:'FM'}]},
+  },
+  KOURT4:{rnav:true,
+   trans:{'DERSO':[{f:'DERSO',above:14000,t:'IF'},{f:'KOURT',above:12500,t:'TF'}],'REAPS':[{f:'REAPS',above:24000,t:'IF'},{f:'SOLDE',above:19000,t:'TF'},{f:'DERSO',above:14000,t:'TF'},{f:'KOURT',above:12500,t:'TF'}]},
+   common:[{f:'KOURT',above:12500,t:'IF'},{f:'BOLLS',above:9900,t:'TF'},{f:'EREXE',above:9600,spd:250,t:'TF'}],
+   rwy:{'RW10B':[{f:'EREXE',above:9600,t:'IF'},{f:'GRZZY',above:8900,t:'TF'},{f:'LEAFS',t:'TF'},{f:'ROWBI',above:8100,t:'TF'},{f:'KOLKE',at:8000,spd:210,t:'TF'},{from:'KOLKE',vec:'FM'}],'RW28B':[{f:'EREXE',above:9600,t:'IF'},{f:'LIITL',above:9000,t:'TF'}]},
+  },
+  KYAAN4:{rnav:true,
+   trans:{'DEVLE':[{f:'DEVLE',above:16000,t:'IF'},{f:'MAALR',above:10000,t:'TF'},{f:'KYAAN',above:8000,spd:250,t:'TF'}]},
+   rwy:{'RW10B':[{f:'KYAAN',above:8000,t:'IF'},{f:'JIMMI',above:6000,spd:210,t:'TF'}],'RW28B':[{f:'KYAAN',above:8000,t:'IF'},{f:'CAMML',at:8000,spd:210,t:'TF'},{from:'CAMML',vec:'FM'}]},
+  },
+  SADYL4:{rnav:true,
+   trans:{'NEERO':[{f:'NEERO',t:'IF'},{f:'PRNCS',t:'TF'},{f:'PELYT',above:21000,t:'TF'}],'PRNCS':[{f:'PRNCS',t:'IF'},{f:'PELYT',above:21000,t:'TF'}]},
+   common:[{f:'PELYT',above:21000,t:'IF'},{f:'SADYL',above:14000,t:'TF'},{f:'MRFEE',above:10100,spd:250,t:'TF'}],
+   rwy:{'RW10B':[{f:'MRFEE',above:10100,t:'IF'},{f:'SWAAN',above:7000,t:'TF'},{f:'APISE',at:6000,spd:210,t:'TF'}],'RW28B':[{f:'MRFEE',above:10100,t:'IF'},{f:'PRISN',t:'TF'},{f:'DIKAC',at:7000,spd:210,t:'TF'},{from:'DIKAC',vec:'VM'}]},
+  },
+  SPUUD4:{rnav:true,
+   trans:{'BROPH':[{f:'BROPH',t:'IF'},{f:'ORYDA',t:'TF'},{f:'TAUTT',above:11000,t:'TF'},{f:'MASSH',above:11000,spd:250,t:'TF'},{f:'SPUUD',above:10000,t:'TF'}],'ORYDA':[{f:'ORYDA',t:'IF'},{f:'TAUTT',above:11000,t:'TF'},{f:'MASSH',above:11000,spd:250,t:'TF'},{f:'SPUUD',above:10000,t:'TF'}]},
+   rwy:{'RW10B':[{f:'SPUUD',above:10000,t:'IF'},{f:'FALDI',above:8000,t:'TF'},{f:'ELUMY',t:'TF'},{f:'EKEME',at:7000,spd:210,t:'TF'},{from:'EKEME',vec:'FM'}],'RW28B':[{f:'SPUUD',above:10000,t:'IF'},{f:'CELOR',above:8000,spd:230,t:'TF'}]},
+  },
+ },
+ KBZN:{
+  BGMAN1:{rnav:true,
+   trans:{'KARTS':[{f:'KARTS',t:'IF'},{f:'BGMAN',at:17000,spd:250,t:'TF'}]},
+   rwy:{'RW12':[{f:'BGMAN',at:17000,spd:250,t:'IF'},{f:'ALNYT',above:13000,t:'TF'},{f:'JAZMN',above:12000,t:'TF'},{from:'JAZMN',vec:'FM'}],'RW30':[{f:'BGMAN',at:17000,spd:250,t:'IF'},{f:'USEET',above:13000,t:'TF'},{f:'FARVE',above:12000,t:'TF'},{from:'FARVE',vec:'FM'}]},
+  },
+  EATZZ1:{rnav:true,
+   trans:{'DOXIE':[{f:'DOXIE',t:'IF'},{f:'EATZZ',lo:15600,hi:17000,spd:250,t:'TF'}],'JIROS':[{f:'JIROS',t:'IF'},{f:'EATZZ',lo:15600,hi:17000,spd:250,t:'TF'}]},
+   rwy:{'RW12':[{f:'EATZZ',lo:15600,hi:17000,spd:250,t:'IF'},{f:'VECTR',above:12000,t:'TF'},{f:'THESE',above:9000,t:'TF'},{from:'THESE',vec:'FM'}],'RW30':[{f:'EATZZ',lo:15600,hi:17000,spd:250,t:'IF'},{f:'BEARY',at:12000,t:'TF'},{from:'BEARY',vec:'FM'}]},
+  },
+  LOSST1:{rnav:true,
+   trans:{'SABAT':[{f:'SABAT',t:'IF'},{f:'LOSST',at:17000,spd:250,t:'TF'}],'TOCUD':[{f:'TOCUD',t:'IF'},{f:'LOSST',at:17000,spd:250,t:'TF'}]},
+   rwy:{'RW12':[{f:'LOSST',at:17000,spd:250,t:'IF'},{f:'KIYLE',above:13000,t:'TF'},{f:'HERAH',above:12000,t:'TF'},{from:'HERAH',vec:'FM'}],'RW30':[{f:'LOSST',at:17000,spd:250,t:'IF'},{f:'DREAA',above:13000,t:'TF'},{f:'GARNT',above:12000,spd:230,t:'TF'},{from:'GARNT',vec:'FM'}]},
+  },
+  POWDA2:{rnav:true,
+   common:[{f:'CREKK',above:18000,t:'IF'},{f:'POWDA',at:17000,spd:250,t:'TF'},{f:'JOLIE',above:14000,t:'TF'},{f:'RUFSS',above:11000,t:'TF'},{f:'KICDO',above:10000,spd:220,t:'TF'}],
+  },
+  SUBKY1:{rnav:true,
+   common:[{f:'BIL',above:18000,t:'IF'},{f:'SUBKY',at:17000,spd:250,t:'TF'},{f:'LVM',at:13000,t:'TF'},{from:'LVM',vec:'FM'}],
+  },
+ },
+};
+var SIDS = {
+ KBOI:{
+  BOI3:{rnav:false,
+   rwy:{'RW10B':[{from:'BOI',at:16000,vec:'FM'}],'RW28B':[{from:'BOI',at:16000,vec:'FM'}]},
+  },
+  GOWEN4:{rnav:false,
+   rwy:{'RW10B':[{above:3600,vec:'VA'},{vec:'VI'},{f:'FIMGU',above:5300,t:'CF'}],'RW28B':[{above:3271,vec:'CA'},{vec:'VI'},{f:'FIMGU',above:5300,t:'CF'}]},
+   common:[{f:'FIMGU',above:5300,t:'IF'},{f:'BOI',t:'TF'}],
+  },
+ },
+ KBZN:{
+  BGSKY2:{rnav:true,
+   rwy:{'RW12':[{above:4973,vec:'VA'},{f:'BGSKY',lo:7700,hi:9000,spd:230,t:'DF'}]},
+   trans:{'DBS':[{f:'BGSKY',t:'IF'},{f:'LUKKS',t:'TF'},{f:'UPLOW',above:11000,t:'TF'},{f:'DBS',t:'TF'}],'HIA':[{f:'BGSKY',t:'IF'},{f:'AIDDN',above:11000,t:'TF'},{f:'HIA',t:'TF'}],'UPLOW':[{f:'BGSKY',t:'IF'},{f:'LUKKS',t:'TF'},{f:'UPLOW',above:11000,t:'TF'}]},
+  },
+  BOBKT5:{rnav:true,
+   rwy:{'RW12':[{f:'JAPER',t:'DF'},{f:'BOBKT',above:9600,t:'TF'}]},
+   trans:{'BIL':[{f:'BOBKT',t:'IF'},{f:'LVM',t:'TF'},{f:'SUBKY',t:'TF'},{f:'REEPO',t:'TF'},{f:'COLUS',t:'TF'},{f:'BIL',t:'TF'}],'BOY':[{f:'BOBKT',t:'IF'},{f:'ZORKE',above:12500,t:'TF'},{f:'TOOLS',t:'TF'},{f:'BOY',t:'TF'}]},
+  },
+  BZN6:{rnav:false,
+   rwy:{'RW12':[{above:4873,vec:'CA'},{vec:'VI'},{f:'BRIGR',t:'CF'},{f:'BZN',t:'DF'}],'RW30':[{above:4873,vec:'CA'},{vec:'VI'},{f:'BRIGR',t:'CF'},{f:'BZN',t:'DF'}]},
+  },
+  HIA5:{rnav:false,
+   rwy:{'RW12':[{above:4873,vec:'CA'},{vec:'VI'},{f:'BRIGR',t:'CF'},{f:'HIA',t:'TF'}],'RW30':[{above:4873,vec:'CA'},{vec:'VI'},{f:'BRIGR',t:'CF'},{f:'HIA',t:'TF'}]},
+  },
+  MEADO2:{rnav:true,
+   rwy:{'RW30':[{f:'MEADO',above:9200,t:'DF'}]},
+   trans:{'CREKK':[{f:'MEADO',t:'IF'},{f:'VVNUS',above:10800,spd:250,t:'TF'},{f:'POWDA',t:'TF'},{f:'CREKK',t:'TF'}],'DBS':[{f:'MEADO',t:'IF'},{f:'LIILY',above:13000,t:'TF'},{f:'UPLOW',t:'TF'},{f:'DBS',t:'TF'}],'HIA':[{f:'MEADO',t:'IF'},{f:'WASAT',above:13000,t:'TF'},{f:'HIA',t:'TF'}],'TOOLS':[{f:'MEADO',t:'IF'},{f:'VVNUS',above:10800,spd:250,t:'TF'},{f:'RYYDE',above:11800,t:'TF'},{f:'AALNG',above:14000,t:'TF'},{f:'YODOG',t:'TF'},{f:'TOOLS',t:'TF'}],'UPLOW':[{f:'MEADO',t:'IF'},{f:'LIILY',above:13000,t:'TF'},{f:'UPLOW',t:'TF'}]},
+  },
+ },
+};
+
+/* ---------- resolution ----------
+   Everything below reads through PFIX/STARS/SIDS and keeps no second
+   copy of any number. */
+
+/* A PROCEDURE IS SCOPED TO ITS AIRPORT, and that is not a detail. A
+   procedure identifier is not unique across fields: ADELL EIGHT exists
+   at DuPage, Aurora, Gary and Lewis with a different set of runway
+   transitions at each, and PANGG SEVEN has a different common segment
+   at Gary than at Midway. Keyed on the identifier alone, four fields'
+   legs concatenate into one track no aircraft could fly. So every
+   lookup here takes the field first. */
+function procOf(apt, id){
+  return (STARS[apt] && STARS[apt][id]) || (SIDS[apt] && SIDS[apt][id]) || null;
+}
+function kindOf(apt, id){
+  if(STARS[apt] && STARS[apt][id]) return 'STAR';
+  if(SIDS[apt]  && SIDS[apt][id])  return 'SID';
+  return null;
+}
+function fixLL(name){ var c = PFIX[name]; return c ? [c[0],c[1]] : null; }
+
+function procsAt(icao, kind){
+  var src = (kind === 'SID' ? SIDS : STARS)[icao];
+  return src ? Object.keys(src).sort() : [];
+}
+/* Every field at which a procedure of this name is published. This is
+   what `serves` and `from` on a strip are asking, and it is a scan
+   rather than a stored list precisely so it cannot disagree with the
+   tables above. */
+function fieldsWith(id, kind){
+  var src = kind === 'SID' ? SIDS : STARS, out = [];
+  for(var a in src){ if(src[a][id]) out.push(a); }
+  return out.sort();
+}
+function transitionsOf(apt, id){
+  var p = procOf(apt, id); if(!p) return {trans:[], rwy:[]};
+  return { trans: p.trans ? Object.keys(p.trans).sort() : [],
+           rwy:   p.rwy   ? Object.keys(p.rwy).sort()   : [] };
+}
+
+/* The whole track, in flying order, with the joins de-duplicated: a
+   transition ends on the fix the next part begins on, and printing it
+   twice reads as two crossings of one fix. Returns legs only — it
+   asserts nothing about whether the aircraft is cleared for them. */
+function trackTo(apt, id, entry, rwy){
+  var p = procOf(apt, id); if(!p) return [];
+  var order = kindOf(apt, id) === 'SID'
+    ? [ p.rwy && p.rwy[rwy], p.common, p.trans && p.trans[entry] ]
+    : [ p.trans && p.trans[entry], p.common, p.rwy && p.rwy[rwy] ];
+  var out = [];
+  for(var i = 0; i < order.length; i++){
+    var seg = order[i]; if(!seg) continue;
+    for(var j = 0; j < seg.length; j++){
+      var g = seg[j], last = out[out.length-1];
+      if(last && g.f && last.f === g.f && !g.vec && !last.vec){ continue; }
+      out.push(g);
+    }
+  }
+  return out;
+}
+
+/* Does the track stop on a vector rather than at a fix? A drill that
+   sequences to a point has to know that the published data runs out. */
+function endsOnVector(legs){
+  var l = legs[legs.length-1];
+  return !!(l && l.vec);
+}
+
+/* ---------- the strip contract ----------
+   The flight-strips block reads window.STRIP_FACILITY. Building its
+   arrivals and departures from THIS data rather than a hand-typed
+   list is what keeps the two from drifting, and it is what stops a
+   procedure serving several fields from being written several times
+   under one key — an object literal keeps only the last of those, so
+   a hand-typed list silently loses every field but one. */
+function stripProcs(kind){
+  var src = kind === 'SID' ? SIDS : STARS, out = {};
+  for(var a in src){
+    for(var k in src[a]){
+      if(out[k]) continue;                    /* already scanned for every field */
+      out[k] = kind === 'SID'
+        ? { from:  fieldsWith(k, 'SID'),  flies:false, track:true }
+        : { serves:fieldsWith(k, 'STAR'), flies:false, track:true };
+    }
+  }
+  return out;
+}
+
+/* ---------- rendering ---------- */
+function esc(s){
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ft(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+/* The crossing, written the way the chart writes it. A leg with no
+   number has no published crossing, and the cell says so rather than
+   leaving a blank that reads as unrestricted. */
+function crossing(g){
+  var a = g.at    != null ? 'cross at ' + ft(g.at)
+        : g.lo    != null ? ft(g.lo) + ' &ndash; ' + ft(g.hi)
+        : g.above != null ? 'at or above ' + ft(g.above)
+        : g.below != null ? 'at or below ' + ft(g.below)
+        : '';
+  /* A vector leg can still carry an altitude — a VA or CA climbs on a
+     course TO one. Print the altitude AND the fact that it does not end
+     at a waypoint; dropping either would misstate the leg. */
+  if(g.vec) return (a ? a + ' &middot; ' : '')
+    + '<span class="bskp-vec">terminates on a vector</span>';
+  return a || '<span class="bskp-none">no published crossing</span>';
+}
+
+/* The fix cell. Three cases, and the third is why this is not just
+   `g.f`: a leg may end at a fix, may leave one on a vector, or — a VA
+   or CA off the runway — may name no fix at all. */
+function fixCell(g){
+  if(g.f)    return esc(g.f);
+  if(g.from) return '<span class="bskp-none">from</span> ' + esc(g.from);
+  return '<span class="bskp-none">no fix</span>';
+}
+function legRow(g){
+  var ll = g.f ? fixLL(g.f) : null;
+  return '<tr>'
+    + '<td class="bskp-fix">' + fixCell(g) + '</td>'
+    + '<td>' + crossing(g) + '</td>'
+    + '<td>' + (g.spd != null ? (esc(g.spd) + ' kt') : '<span class="bskp-none">&mdash;</span>') + '</td>'
+    + '<td class="bskp-t">' + esc(g.t || g.vec || '') + '</td>'
+    + '<td class="bskp-ll">' + (ll ? (ll[0].toFixed(4) + ', ' + ll[1].toFixed(4))
+                                      : '<span class="bskp-none">&mdash;</span>') + '</td>'
+    + '</tr>';
+}
+
+var state = { apt:'', kind:'STAR', proc:'', entry:'', rwy:'' };
+
+function fields(){
+  var apts = {}, a;
+  for(a in STARS) apts[a] = 1;
+  for(a in SIDS)  apts[a] = 1;
+  return Object.keys(apts).sort();
+}
+
+function sel(id, list, cur, fmt){
+  return '<select class="bskp-sel" id="bskp-' + id + '" onchange="bskpPick(\'' + id + '\',this.value)">'
+    + list.map(function(v){
+        return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>'
+          + esc(fmt ? fmt(v) : v) + '</option>';
+      }).join('')
+    + '</select>';
+}
+
+function body(){
+  var apts = fields();
+  if(!apts.length){
+    return '<div class="bskp-empty">CIFP codes no SID and no STAR for any field this facility works. '
+      + 'That is a coverage fact about the published data, not a gap in this tool &mdash; see the '
+      + 'facility CLAUDE.md and claude_BigSky_CIFP_Procedures.md.</div>';
+  }
+  if(!state.apt || apts.indexOf(state.apt) < 0) state.apt = apts[0];
+
+  var here = procsAt(state.apt, state.kind);
+  if(!here.length){
+    var other = state.kind === 'STAR' ? 'SID' : 'STAR';
+    if(procsAt(state.apt, other).length){ state.kind = other; here = procsAt(state.apt, other); }
+  }
+  if(!state.proc || here.indexOf(state.proc) < 0) state.proc = here[0] || '';
+
+  var tr = transitionsOf(state.apt, state.proc);
+  if(tr.trans.indexOf(state.entry) < 0) state.entry = tr.trans[0] || '';
+  if(tr.rwy.indexOf(state.rwy)     < 0) state.rwy   = tr.rwy[0]   || '';
+
+  var p = procOf(state.apt, state.proc);
+  var legs = state.proc ? trackTo(state.apt, state.proc, state.entry, state.rwy) : [];
+
+  var h = '<div class="bskp-picks">'
+    + '<div class="bskp-f"><span class="bskp-lab">Field</span>' + sel('apt', apts, state.apt) + '</div>'
+    + '<div class="bskp-f"><span class="bskp-lab">Kind</span>'
+    +   sel('kind', ['STAR','SID'], state.kind, function(v){ return v === 'STAR' ? 'arrival (STAR)' : 'departure (SID)'; })
+    + '</div>';
+
+  if(!here.length){
+    return h + '</div><div class="bskp-empty">CIFP codes no '
+      + (state.kind === 'SID' ? 'SID' : 'STAR') + ' at ' + esc(state.apt) + '. '
+      + 'A radar-vector or conventional procedure is outside what CIFP carries, so a zero here is a '
+      + 'coding gap and not proof the field has none.</div>';
+  }
+
+  h += '<div class="bskp-f"><span class="bskp-lab">Procedure</span>'
+    +   sel('proc', here, state.proc) + '</div>';
+  if(tr.trans.length)
+    h += '<div class="bskp-f"><span class="bskp-lab">'
+      +  (state.kind === 'SID' ? 'Exit transition' : 'Entry transition') + '</span>'
+      +  sel('entry', tr.trans, state.entry) + '</div>';
+  if(tr.rwy.length)
+    h += '<div class="bskp-f"><span class="bskp-lab">Runway transition</span>'
+      +  sel('rwy', tr.rwy, state.rwy) + '</div>';
+  h += '</div>';
+
+  var also = fieldsWith(state.proc, state.kind);
+  h += '<div class="bskp-meta">' + esc(state.proc) + ' at ' + esc(state.apt) + ' &middot; '
+    + (p && p.rnav ? 'RNAV' : 'conventional') + ' &middot; CIFP ' + CYCLE
+    + (also.length > 1
+        ? (' &middot; also published at ' + esc(also.filter(function(a){ return a !== state.apt; }).join(', '))
+           + ', with that field\'s own runway transitions')
+        : '')
+    + '</div>';
+
+  h += '<div class="bskp-scroll"><table class="bskp-tbl">'
+    + '<thead><tr><th>Fix</th><th>Crossing</th><th>Speed</th><th>Leg</th><th>Coordinates</th></tr></thead><tbody>'
+    + legs.map(legRow).join('')
+    + '</tbody></table></div>';
+
+  if(endsOnVector(legs))
+    h += '<div class="bskp-warn">This track ends on a vector, not at a fix. The published data '
+      +  'stops there and so does anything that walks it &mdash; the rest is the controller\'s.</div>';
+
+  h += '<div class="bskp-note">CIFP ' + CYCLE + ' lists every transition that EXISTS. It does not say '
+    +  'which one Big Sky assigns in a given configuration, and this tool does not guess: that is an SOP '
+    +  'and LOA question. Nothing on this page is a boundary, an MVA or a delegation.</div>';
+  return h;
+}
+
+window['bskpPick'] = function(what, val){
+  state[what] = val;
+  if(what === 'apt' || what === 'kind'){ state.proc = ''; state.entry = ''; state.rwy = ''; }
+  if(what === 'proc'){ state.entry = ''; state.rwy = ''; }
+  render();
+};
+
+function render(){
+  var el = document.getElementById('bskp-body');
+  if(el) el.innerHTML = body();
+}
+
+var css =
+  '.bskp-picks{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 14px;}'
++ '.bskp-f{display:flex;flex-direction:column;gap:3px;}'
++ '.bskp-lab{font:11px/1.2 var(--body);color:var(--dim2);text-transform:uppercase;letter-spacing:.06em;}'
++ '.bskp-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
++   'border-radius:4px;padding:5px 7px;font:13px/1.3 var(--body);}'
++ '.bskp-meta{font:12px/1.4 var(--mono);color:var(--dim);margin:0 0 8px;}'
++ '.bskp-scroll{overflow-x:auto;}'
++ '.bskp-tbl{border-collapse:collapse;width:100%;font:12px/1.5 var(--mono);}'
++ '.bskp-tbl th{text-align:left;color:var(--dim2);font:11px/1.3 var(--body);'
++   'text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line);padding:5px 9px 5px 0;}'
++ '.bskp-tbl td{border-bottom:1px solid var(--line);padding:5px 9px 5px 0;vertical-align:top;}'
++ '.bskp-fix{color:var(--ink);font-weight:600;white-space:nowrap;}'
++ '.bskp-t,.bskp-ll{color:var(--dim);white-space:nowrap;}'
++ '.bskp-none{color:var(--dim2);}'
++ '.bskp-vec{color:var(--amber);}'
++ '.bskp-warn{margin-top:10px;border-left:2px solid var(--amber);padding:7px 10px;'
++   'font:12px/1.5 var(--body);color:var(--dim);}'
++ '.bskp-note,.bskp-empty{margin-top:10px;font:12px/1.5 var(--body);color:var(--dim2);}'
++ '.bskp-empty{border-left:2px solid var(--line);padding:7px 10px;}';
+
+function section(){
+  return '<section class="panel bskp-sec" id="mod-bskp">'
+    + '<h2>Published procedures</h2>'
+    + '<p class="bskp-note" style="margin-top:0;">Every SID and STAR the FAA codes for the fields '
+    + 'Big Sky works, from CIFP ' + CYCLE + ' &mdash; fixes, crossing restrictions, speed limits and '
+    + 'coordinates, as published. This is the procedure, not this facility\'s use of it.</p>'
+    + '<div id="bskp-body"></div>'
+    + '</section>';
+}
+
+function mount(){
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var holder = document.createElement('div');
+  holder.innerHTML = section();
+  var sec = holder.firstChild;
+  if(!sec) return;
+  /* Land on the page the deck already built, where it built one. This
+     block runs after the page builder and before the strips block, so
+     the wrapper exists by now; without one, fall in above the footer. */
+  var page = null, ids = [];
+  for(var i = 0; i < ids.length && !page; i++) page = document.getElementById(ids[i]);
+  if(page){ page.appendChild(sec); }
+  else {
+    var foot = wrap.querySelector('footer');
+    if(foot) wrap.insertBefore(sec, foot); else wrap.appendChild(sec);
+  }
+  render();
+}
+
+/* ---------- export ----------
+   One copy, reachable through the deck's namespace (house rule 5). */
+/* This deck declares no ROUTES or DEPS of its own, so the procedure
+   tables below ARE the deck's copy and hang directly on the namespace. */
+NS.PFIX = PFIX; NS.STARS = STARS; NS.SIDS = SIDS; NS.CIFP_CYCLE = CYCLE;
+NS.procOf = procOf; NS.kindOf = kindOf; NS.fixLL = fixLL;
+NS.procsAt = procsAt; NS.fieldsWith = fieldsWith; NS.transitionsOf = transitionsOf;
+NS.trackTo = trackTo; NS.endsOnVector = endsOnVector; NS.stripProcs = stripProcs;
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+<script>
+/* ================================================================
    Big Sky — FLIGHT STRIPS. Additive extension block.
 
    Three parts, in order: the facility contract, the master strip
@@ -1362,38 +1850,36 @@ else { mount(); }
    NAME. serves and from are LISTS because a procedure belonging to
    several fields is the normal case.
 
-   Procedure inventory from CIFP 260903 — see the facility's
+   Procedure inventory is DERIVED from the PUBLISHED PROCEDURES block
+   above — CIFP 260903, see that block and the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
-   no traffic model, so nothing here is flown.
+   no traffic model, so nothing here is flown. That is not the same
+   claim as "no track data", which is what track:true records.
    ================================================================ */
 (function(){ 'use strict';
+var PROCS = (window.ZLC && window.ZLC.facility === 'BIGSKY') ? window.ZLC : null;
 window.STRIP_FACILITY = {
  id:'Big Sky', prefix:'bskst',
  airports:{
   KBOI:{name:"Boise", rwys:['10L','10R','28L','28R']},
   KBZN:{name:"Bozeman", rwys:['03','11','11G','12','21','29','29G','30']},
  },
- arrivals:{
-  BEWTE4:{serves:['KBOI'], flies:false},
-  KOURT4:{serves:['KBOI'], flies:false},
-  KYAAN4:{serves:['KBOI'], flies:false},
-  SADYL4:{serves:['KBOI'], flies:false},
-  SPUUD4:{serves:['KBOI'], flies:false},
-  BGMAN1:{serves:['KBZN'], flies:false},
-  EATZZ1:{serves:['KBZN'], flies:false},
-  LOSST1:{serves:['KBZN'], flies:false},
-  POWDA2:{serves:['KBZN'], flies:false},
-  SUBKY1:{serves:['KBZN'], flies:false},
- },
- departures:{
-  BOI3:{from:['KBOI'], flies:false},
-  GOWEN4:{from:['KBOI'], flies:false},
-  BGSKY2:{from:['KBZN'], flies:false},
-  BOBKT5:{from:['KBZN'], flies:false},
-  BZN6:{from:['KBZN'], flies:false},
-  HIA5:{from:['KBZN'], flies:false},
-  MEADO2:{from:['KBZN'], flies:false},
- }
+ /* DERIVED, not typed out again. Two reasons, and the second is a bug
+    this replaces. A hand-typed inventory is a second copy of numbers
+    the procedures block already holds (house rule 5). And a procedure
+    serving several fields has to appear once per field under ONE key —
+    an object literal keeps only the LAST of those, so ADELL EIGHT off
+    DuPage, Aurora and Gary silently collapsed to a Lewis-only
+    departure, and the strip row refused three valid combinations.
+    `serves` and `from` are lists exactly so that cannot happen;
+    building them from the coded source is what makes them lists in
+    fact rather than in intent.
+
+    flies:false throughout, because this deck has no traffic model.
+    track:true is the separate claim that the published ladder IS
+    carried, and the row labels the two differently. */
+ arrivals:   PROCS ? PROCS.stripProcs('STAR') : {},
+ departures: PROCS ? PROCS.stripProcs('SID')  : {}
 };
 })();
 /* ================================================================
@@ -1456,6 +1942,22 @@ window.STRIP_FACILITY = {
    `rwys` may be omitted or null where the field's runways are not in the
    reference set — the runway control then offers nothing rather than
    inventing an inventory. That is the KLVN case at M98.
+
+   `flies` and `track` are DIFFERENT CLAIMS, and the row labels them
+   differently. Conflating them is what let a deck holding a complete
+   published ladder still describe itself as a frame.
+
+     flies  this deck's engine has geometry it can actually FLY.
+            False everywhere but M98, and false for a reason that has
+            nothing to do with the data: a deck with no traffic model
+            flies nothing, however much it knows.
+     track  the published track IS carried — fixes, crossing
+            restrictions, speed limits. Set by the procedures block,
+            which reads the FAA's coded source.
+
+   flies:false with track:true renders "(track only)". flies:false
+   with no track renders "(frame only)". Neither is a defect; saying
+   which of the two is true is the entire point.
 
    ---------- WHAT THIS BLOCK DOES NOT DO ----------
 
@@ -1639,7 +2141,8 @@ function procControl(id, list, sel, meta, empty){
    + list.map(function(p){
       var m = meta[p] || {};
       return '<option value="' + esc(p) + '"' + (p === sel ? ' selected' : '') + '>'
-        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '') + (m.flies === false ? ' (frame only)' : '')
+        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '')
+        + (m.flies === false ? (m.track ? ' (track only)' : ' (frame only)') : '')
         + '</option>';
      }).join('')
    + '</select>';
@@ -1859,8 +2362,8 @@ if(!DECK) return;
 var PAGES = [
  {id:'setup', label:'Set up a drill', hint:'area, flow, sectors, who owns what, seat',
   sections:['mod-area','mod-pos','mod-seat']},
- {id:'fly',   label:'Fly it',         hint:'the weather, and the strips it drives',
-  sections:['mod-bskw','mod-bskst']},
+ {id:'fly',   label:'Fly it',         hint:'the weather, the strips it drives, and the published procedures',
+  sections:['mod-bskw','mod-bskst','mod-bskp']},
  {id:'data',  label:'What this tool knows', hint:'the slots that are filled, and the ones that are not',
   sections:['mod-stubs']}
 ];

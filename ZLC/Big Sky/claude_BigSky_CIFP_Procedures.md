@@ -35,6 +35,57 @@ fix-sequence track has to end there.
 appear twice with a hold-like repetition at the end. That is the published coding, not a
 duplication error.
 
+## Procedure identifiers
+
+**Which procedure each block of transitions below belongs to.** The transition
+listings further down are grouped by procedure but do not name it, so this table is
+what turns a block into an attributable citation. Identifiers are as CIFP codes them
+— the six-character field, revision digit included. CIFP does not carry the spoken
+name, so none is written here.
+
+### KBOI
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **BOI3** | conventional | — | RW10B RW28B |
+| **GOWEN4** | conventional | — | RW10B RW28B |
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **BEWTE4** | RNAV | COLLR MAXMS SUMOQ | RW10B RW28B |
+| **KOURT4** | RNAV | DERSO REAPS | RW10B RW28B |
+| **KYAAN4** | RNAV | DEVLE | RW10B RW28B |
+| **SADYL4** | RNAV | NEERO PRNCS | RW10B RW28B |
+| **SPUUD4** | RNAV | BROPH ORYDA | RW10B RW28B |
+
+### KBZN
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **BGSKY2** | RNAV | DBS HIA UPLOW | RW12 |
+| **BOBKT5** | RNAV | BIL BOY | RW12 |
+| **BZN6** | conventional | — | RW12 RW30 |
+| **HIA5** | conventional | — | RW12 RW30 |
+| **MEADO2** | RNAV | CREKK DBS HIA TOOLS UPLOW | RW30 |
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **BGMAN1** | RNAV | KARTS | RW12 RW30 |
+| **EATZZ1** | RNAV | DOXIE JIROS | RW12 RW30 |
+| **LOSST1** | RNAV | SABAT TOCUD | RW12 RW30 |
+| **POWDA2** | RNAV | — | ALL |
+| **SUBKY1** | RNAV | — | ALL |
+
+---
+
 ## KBOI
 
 ### STARs
