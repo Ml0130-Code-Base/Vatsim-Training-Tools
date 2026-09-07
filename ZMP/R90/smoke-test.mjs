@@ -9,10 +9,19 @@ const path = process.argv[2] || 'r90-drill-deck.html';
 const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is an extension block, in dependency order:
-   Radar Deck, then Drill Builder, then the Handoff ID resolver.
-   Evaluate them the way the browser would. */
+   Radar Deck, Drill Builder, Handoff ID resolver, D-ATIS and weather,
+   Published procedures, Flight strips.
+   Evaluate them the way the browser would.
+
+   THIS COUNT IS A GUARD, NOT A FORMALITY. It was left at 3 while the
+   weather and strips blocks landed, so the harness would have refused
+   to run against the very deck it describes — and nobody noticed,
+   because there is no Node on the owner's machine and it has never
+   been executed (root CLAUDE.md §12). Update it in the same commit
+   that adds a block. */
+const EXPECTED_BLOCKS = 6;
 const blocks = scripts;
-if (blocks.length !== 3) { console.error("FAIL: expected 3 extension blocks, found " + blocks.length); process.exit(1); }
+if (blocks.length !== EXPECTED_BLOCKS) { console.error("FAIL: expected " + EXPECTED_BLOCKS + " extension blocks, found " + blocks.length); process.exit(1); }
 
 /* ---- minimal DOM stubs ---- */
 const els = {};
@@ -211,6 +220,54 @@ try {
     H.OPEN_Q.length === 3 && H.OPEN_Q.every(o => !!o.q && !!o.why && !!o.close));
   assert('the Lincoln Final question is one of them',
     H.OPEN_Q.some(o => /Lincoln Final/.test(o.q)));
+
+  /* ============ 5. Published procedures (CIFP 260903) ============ */
+  const P = globalThis.window.RD;
+
+  assert('the five KOMA STARs are carried',
+    P.procsAt('KOMA', 'STAR').join(',') === 'AANDY2,HOWRY3,LANTK2,MARWI4,TIMMO1');
+
+  /* The two zeros are ASSERTED, not merely absent. A coding gap that
+     quietly becomes a populated table is the failure this catches. */
+  assert('KOMA has no coded SIDs, and that stays true',
+    P.procsAt('KOMA', 'SID').length === 0);
+  assert('Lincoln has neither a SID nor a STAR',
+    P.procsAt('KLNK', 'STAR').length === 0 && P.procsAt('KLNK', 'SID').length === 0);
+
+  /* Procedures are keyed by airport first: an ident is not unique across
+     fields, and flattening that concatenates two fields' legs. */
+  assert('STARS is keyed by airport, and KOMA is the only one',
+    Object.keys(P.STARS).join(',') === 'KOMA');
+
+  /* Every fix a leg names must resolve in the one fix table — a leg
+     pointing at a fix with no coordinates is a track with a hole. */
+  let legs = 0, named = 0;
+  for (const apt of Object.keys(P.STARS)) {
+    for (const id of Object.keys(P.STARS[apt])) {
+      const p = P.STARS[apt][id];
+      for (const seg of [p.common, ...Object.values(p.trans || {}), ...Object.values(p.rwy || {})]) {
+        for (const g of (seg || [])) {
+          legs++;
+          if (g.f) { named++; if (!P.fixLL(g.f)) fail('unresolved fix', apt + ' ' + id + ' ' + g.f); }
+          /* a vector leg must NOT carry a crossing fix */
+          if (g.vec && g.f) fail('vector leg carries a fix', apt + ' ' + id + ' ' + g.f);
+        }
+      }
+    }
+  }
+  assert('every named fix resolves to coordinates', legs > 0 && named > 0);
+  assert('AANDY2 ends its RW32B track on a vector',
+    P.endsOnVector(P.trackTo('KOMA', 'AANDY2', 'MZEEE', 'RW32B')));
+  assert('the BRKSR join is not printed twice',
+    P.trackTo('KOMA', 'AANDY2', 'MZEEE', 'RW32B').filter(g => g.f === 'BRKSR').length === 1);
+
+  /* The strip contract is derived from the tables above, never typed. */
+  const SP = P.stripProcs('STAR');
+  assert('the strip contract carries the same five arrivals',
+    Object.keys(SP).sort().join(',') === 'AANDY2,HOWRY3,LANTK2,MARWI4,TIMMO1');
+  assert('no arrival claims to be flown, and each declares its track',
+    Object.values(SP).every(v => v.flies === false && v.track === true));
+  assert('serves is a list and names KOMA', SP.AANDY2.serves.join(',') === 'KOMA');
 
   console.log('\n' + checks + ' checks passed.');
 } catch (e) {

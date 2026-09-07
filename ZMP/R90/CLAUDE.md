@@ -105,9 +105,36 @@ Absent by design — routes, a tick loop, aircraft objects, a parser, grading, a
 
 ## Testing
 
-- `node smoke-test.mjs r90-drill-deck.html` — same harness shape as M98's. Asserts the block count (**now 3**), that all six positions are present with unique frequencies and unique SOP STARS IDs, that the East/West and LNK ceilings differ, that every runway list is either stated or explicitly null (never invented), that the five STARs carry no fabricated geometry, and that `STANDING` is empty. The handoff section adds: **exactly one position is in conflict and it is Lincoln Final**, that both its values are carried, that the other five agree, that a bare letter is used within a subset and a subset digit across one, and that the empty TCPs stay empty.
+- `node smoke-test.mjs r90-drill-deck.html` — same harness shape as M98's. Asserts the block count (**now 6**), that all six positions are present with unique frequencies and unique SOP STARS IDs, that the East/West and LNK ceilings differ, that every runway list is either stated or explicitly null (never invented), and that `STANDING` is empty. The handoff section adds: **exactly one position is in conflict and it is Lincoln Final**, that both its values are carried, that the other five agree, that a bare letter is used within a subset and a subset digit across one, and that the empty TCPs stay empty. The procedures section adds: the five KOMA STARs by name, **that KOMA's zero SIDs and Lincoln's zero procedures stay zero**, that `STARS` is keyed by airport, that every fix a leg names resolves in `PFIX`, that no vector leg carries a crossing fix, that a track join is not printed twice, and that the derived strip contract declares `flies:false` with `track:true`.
+- **The block count was stale at 3 until 2026-09-06**, while the deck had grown to five blocks — so the harness would have refused to run against the deck it describes, and nothing caught it because it has never been executed. **Update `EXPECTED_BLOCKS` in the same commit that adds a block.**
 - **No Node on the owner's machine** (checked 2026-09-01). The harness has **not been run**. Say so rather than implying it passed.
 - **What was actually verified for the handoff work (2026-09-01):** the folder was served over a local `HttpListener` and all three pages were driven in a real browser. Confirmed: three script blocks parse, the section mounts into the Notes page, the resolver composes correctly in every direction (`X`, `2A`, `C27`, `` `11N ``), **Lincoln Final renders as `F or O`**, both the deck's position table and the resolver show both values, and there are no console errors. That is a browser check, not a smoke-test run.
+
+## CIFP — the five Omaha STARs are carried (2026-09-06, cycle 260903)
+
+Root `CLAUDE.md` §10.1. The deck carries a **PUBLISHED PROCEDURES** block: all five KOMA
+STARs — AANDY2, HOWRY3, LANTK2, MARWI4, TIMMO1 — with every entry transition, the common
+segment, every runway transition, and each of 32 fixes carrying its published crossing
+restriction, speed limit and coordinates. The block exposes `RD.STARS`, `RD.PFIX`,
+`RD.trackTo()` and friends; `claude_R90_CIFP_Procedures.md` is the same data for reading, and
+its **Procedure identifiers** table is what attributes a block of transitions to a procedure.
+
+**Two zeros, and both are written down rather than left unchecked.** KOMA has **no coded SIDs**
+and Lincoln has **neither a SID nor a STAR**. A radar-vector or conventional departure is
+outside what CIFP carries, so read a zero as a coding gap and not as a field without
+departures. `STARS_LIST` in the deck was already the five names; it is now backed by the
+ladders.
+
+**This changes nothing about roadmap item 1.** CIFP is procedures, not airspace. Not one R90
+sector boundary is described in words anywhere, the STARs do not imply one, and the deck still
+asserts nothing spatial. What it does change is that items 3 and 4 — the scratchpad drill and
+the STAR-gap heading bands — can now name real fixes with real crossing altitudes instead of
+bare identifiers.
+
+**`flies` stays false, and the strip row now says why.** The deck has no traffic model, so
+nothing is flown along a ladder. The strip contract is derived from the procedures block
+rather than hand-typed, and a procedure with a carried ladder renders **"track only"** where
+it used to render "frame only" — two different claims that were previously one label.
 
 ## Roadmap (owner-prioritized)
 

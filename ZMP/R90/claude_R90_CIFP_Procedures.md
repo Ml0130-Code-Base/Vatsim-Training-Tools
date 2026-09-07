@@ -35,6 +35,28 @@ fix-sequence track has to end there.
 appear twice with a hold-like repetition at the end. That is the published coding, not a
 duplication error.
 
+## Procedure identifiers
+
+**Which procedure each block of transitions below belongs to.** The transition
+listings further down are grouped by procedure but do not name it, so this table is
+what turns a block into an attributable citation. Identifiers are as CIFP codes them
+— the six-character field, revision digit included. CIFP does not carry the spoken
+name, so none is written here.
+
+### KOMA
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **AANDY2** | RNAV | MZEEE | RW14L RW14R RW18 RW32B |
+| **HOWRY3** | conventional | GRI ONL | RW14B RW18 RW32B RW36 |
+| **LANTK2** | conventional | DABOY DSM | ALL |
+| **MARWI4** | conventional | LMN STJ | RW14B RW18 RW32B RW36 |
+| **TIMMO1** | RNAV | HTHWY | RW14B RW18 RW32B RW36 |
+
+---
+
 ## KOMA
 
 ### STARs

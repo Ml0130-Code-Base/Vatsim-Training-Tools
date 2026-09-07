@@ -1779,6 +1779,428 @@ else { mount(); }
 
 <script>
 /* ================================================================
+   R90 — PUBLISHED PROCEDURES. Additive extension block.
+
+   The SIDs and STARs this facility's fields actually have, taken from
+   the FAA's coded source rather than traced off a chart image.
+
+   SOURCE. CIFP cycle 260903, effective 2026-09-03, pulled 2026-09-06.
+   Pull recipe, record layout and licence in the root
+   claude_CIFP_Source_Reference.md; the same data written out for
+   reading in claude_R90_CIFP_Procedures.md beside this file.
+   THE CYCLE IS THE CITATION — every value here is true for 28 days by
+   construction. Re-pull before trusting it in a later cycle.
+
+   COVERAGE. Five STARs at Eppley, and nothing else. KOMA has ZERO
+   coded SIDs, and Lincoln has neither a SID nor a STAR. A radar-
+   vector or conventional departure is outside what CIFP carries, so
+   read a zero as a coding gap rather than as a field that has no
+   departures.
+
+   This is arrival data only, and it closes none of house rule 7:
+   R90 still has no sector boundary in words anywhere, and nothing
+   here is one.
+
+   KEYED BY AIRPORT, THEN BY PROCEDURE, and that is load-bearing. A
+   procedure identifier is NOT unique across fields: ADELL EIGHT is
+   published at DuPage, Aurora, Gary and Lewis with a different set of
+   runway transitions at each, and PANGG SEVEN has a different common
+   segment at Gary than at Midway. Keyed on the identifier alone, four
+   fields' legs concatenate into a track no aircraft could fly. Every
+   lookup below therefore takes the field first.
+
+   WHAT A PROCEDURE CARRIES. Three parts, in the order an aircraft
+   flies them. A STAR runs trans -> common -> rwy; a SID runs
+   rwy -> common -> trans. Either outer part may be absent, because
+   the published procedure does not have it.
+
+     trans   entry transitions, keyed by the fix each starts at
+     common  the segment every aircraft on the procedure flies
+     rwy     runway transitions, keyed by RWnn
+
+   A LEG IS ONE ROW OF THE PUBLISHED TABLE.
+
+     {f:'BENKY', at:12000, t:'TF'}      cross BENKY at 12,000
+     {f:'BFORD', above:22000}           at or above
+     {f:'MINCE', below:10000}           at or below
+     {f:'BYLAW', lo:20000, hi:23000}    between, inclusive
+     {f:'PTERZ', above:6000, spd:220}   with a published speed limit
+     {from:'BRIKK', vec:'FM'}           LEAVES BRIKK ON A VECTOR
+
+   The last one is the one that matters. FM, VM, VA, CA and VI do not
+   terminate at a waypoint — the fix on the record is where the leg
+   STARTS, not a point the aircraft crosses. Emitting that as `f`
+   would draw a crossing the procedure does not have and would repeat
+   the fix before it, so a vector leg never carries `f`. Anything
+   walking a track has to stop there; `trackTo` does.
+
+   Altitudes are feet, never thousands. Coordinates live once in PFIX
+   and a leg names its fix rather than repeating the numbers, because
+   a fix on seven transitions is still one pair of numbers (house
+   rule 5, one copy of every operational number).
+
+   WHAT THIS IS NOT, AND THE PART TO READ BEFORE BUILDING A DRILL ON
+   IT. CIFP is the published procedure and nothing else.
+
+     - It does not say which transition R90 ASSIGNS in a given
+       configuration. That is an LOA and SOP question and CIFP has no
+       answer to it, so the tool offers every published transition and
+       never claims one is the right one.
+     - It carries no sector boundary, no MVA, no delegation and no
+       ownership. Nothing here narrows house rule 7.
+     - It does not say the procedure is FLOWN here. This deck has no
+       traffic model, so `flies` stays false on every strip and the
+       row says "track only" rather than pretending otherwise.
+   ================================================================ */
+(function(){
+'use strict';
+
+var NS = window.RD;
+if(!NS) return;                    /* deck absent — do nothing, per the block contract */
+
+var CYCLE = '260903';
+
+var PFIX = {
+  AANDY:[41.82167,-96.06528], BAARK:[41.13573,-95.89536], BLUFS:[41.52254,-96.06503], BOYSS:[41.26458,-96.27368],
+  BRIKK:[41.34138,-95.79415], BRKSR:[42.07293,-96.18452], CANIO:[41.64669,-95.97306], CRPET:[41.26852,-96.04891],
+  DABOY:[41.88862,-94.45952], DSM:[41.43762,-93.64856], ERRLE:[41.52079,-96.07649], GEEZR:[41.21088,-95.97510],
+  GRI:[40.98403,-98.31478], HILRS:[40.52671,-96.15623], HOWRY:[41.36679,-96.85377], HTHWY:[40.20054,-96.20625],
+  KOMA:[41.30317,-95.89406], LANTK:[41.51246,-95.13241], LICIS:[41.45309,-96.03334], LMN:[40.59676,-93.96759],
+  MARWI:[40.77804,-95.08445], MOONR:[40.90038,-96.10460], MZEEE:[42.34463,-96.32348], OLU:[41.45003,-97.34082],
+  ONL:[42.47050,-98.68693], OTSEE:[41.45611,-96.04160], OVR:[41.16717,-95.73685], PTERZ:[41.42161,-95.82430],
+  STJ:[39.96058,-94.92522], SWAAB:[40.99236,-95.44189], TASKY:[41.50473,-95.89358], TIMMO:[40.65739,-96.14014]
+};
+
+var STARS = {
+ KOMA:{
+  AANDY2:{rnav:true,
+   trans:{'MZEEE':[{f:'MZEEE',t:'IF'},{f:'BRKSR',above:11000,t:'TF'}]},
+   common:[{f:'BRKSR',above:11000,t:'IF'},{f:'AANDY',t:'TF'},{f:'CANIO',t:'TF'}],
+   rwy:{'RW14L':[{f:'CANIO',t:'IF'},{f:'BLUFS',t:'TF'},{f:'LICIS',above:4000,t:'TF'}],'RW14R':[{f:'CANIO',t:'IF'},{f:'ERRLE',t:'TF'},{f:'OTSEE',at:4000,t:'TF'}],'RW18':[{f:'CANIO',t:'IF'},{f:'TASKY',at:4000,t:'TF'}],'RW32B':[{f:'CANIO',t:'IF'},{f:'PTERZ',above:6000,spd:220,t:'TF'},{f:'BRIKK',above:5000,spd:210,t:'TF'},{from:'BRIKK',vec:'FM'}]},
+  },
+  HOWRY3:{rnav:false,
+   trans:{'GRI':[{f:'GRI',t:'IF'},{f:'HOWRY',t:'TF'}],'ONL':[{f:'ONL',t:'IF'},{f:'OLU',t:'TF'},{f:'HOWRY',t:'TF'}]},
+   common:[{f:'HOWRY',t:'IF'},{f:'BOYSS',t:'TF'}],
+   rwy:{'RW14B':[{f:'BOYSS',t:'IF'},{from:'KOMA',vec:'VM'}],'RW18':[{f:'BOYSS',t:'IF'},{from:'KOMA',vec:'VM'}],'RW32B':[{f:'BOYSS',t:'IF'},{f:'GEEZR',t:'TF'},{from:'KOMA',vec:'VM'}],'RW36':[{f:'BOYSS',t:'IF'},{f:'GEEZR',t:'TF'},{from:'KOMA',vec:'VM'}]},
+  },
+  LANTK2:{rnav:false,
+   trans:{'DABOY':[{f:'DABOY',t:'IF'},{f:'LANTK',t:'TF'}],'DSM':[{f:'DSM',t:'IF'},{f:'LANTK',t:'TF'}]},
+   common:[{f:'LANTK',t:'IF'},{from:'KOMA',vec:'VM'}],
+  },
+  MARWI4:{rnav:false,
+   trans:{'LMN':[{f:'LMN',t:'IF'},{f:'MARWI',t:'TF'}],'STJ':[{f:'STJ',t:'IF'},{f:'MARWI',t:'TF'}]},
+   rwy:{'RW14B':[{f:'MARWI',t:'IF'},{f:'SWAAB',t:'TF'},{from:'KOMA',vec:'VM'}],'RW18':[{f:'MARWI',t:'IF'},{f:'SWAAB',t:'TF'},{from:'KOMA',vec:'VM'}],'RW32B':[{f:'MARWI',t:'IF'},{f:'SWAAB',t:'TF'},{f:'OVR',t:'TF'}],'RW36':[{f:'MARWI',t:'IF'},{f:'SWAAB',t:'TF'},{f:'OVR',t:'TF'}]},
+  },
+  TIMMO1:{rnav:true,
+   trans:{'HTHWY':[{f:'HTHWY',t:'IF'},{f:'HILRS',above:11000,t:'TF'}]},
+   common:[{f:'HILRS',above:11000,t:'IF'},{f:'TIMMO',t:'TF'},{f:'MOONR',t:'TF'}],
+   rwy:{'RW14B':[{f:'MOONR',t:'IF'},{f:'CRPET',at:5000,spd:210,t:'TF'},{from:'KOMA',vec:'VM'}],'RW18':[{f:'MOONR',t:'IF'},{f:'CRPET',at:5000,spd:210,t:'TF'},{from:'KOMA',vec:'VM'}],'RW32B':[{f:'MOONR',t:'IF'},{f:'BAARK',at:4000,t:'TF'},{from:'BAARK',vec:'FM'}],'RW36':[{f:'MOONR',t:'IF'},{f:'BAARK',at:4000,t:'TF'},{from:'BAARK',vec:'FM'}]},
+  },
+ },
+};
+var SIDS = {
+};
+
+/* ---------- resolution ----------
+   Everything below reads through PFIX/STARS/SIDS and keeps no second
+   copy of any number. */
+
+/* A PROCEDURE IS SCOPED TO ITS AIRPORT, and that is not a detail. A
+   procedure identifier is not unique across fields: ADELL EIGHT exists
+   at DuPage, Aurora, Gary and Lewis with a different set of runway
+   transitions at each, and PANGG SEVEN has a different common segment
+   at Gary than at Midway. Keyed on the identifier alone, four fields'
+   legs concatenate into one track no aircraft could fly. So every
+   lookup here takes the field first. */
+function procOf(apt, id){
+  return (STARS[apt] && STARS[apt][id]) || (SIDS[apt] && SIDS[apt][id]) || null;
+}
+function kindOf(apt, id){
+  if(STARS[apt] && STARS[apt][id]) return 'STAR';
+  if(SIDS[apt]  && SIDS[apt][id])  return 'SID';
+  return null;
+}
+function fixLL(name){ var c = PFIX[name]; return c ? [c[0],c[1]] : null; }
+
+function procsAt(icao, kind){
+  var src = (kind === 'SID' ? SIDS : STARS)[icao];
+  return src ? Object.keys(src).sort() : [];
+}
+/* Every field at which a procedure of this name is published. This is
+   what `serves` and `from` on a strip are asking, and it is a scan
+   rather than a stored list precisely so it cannot disagree with the
+   tables above. */
+function fieldsWith(id, kind){
+  var src = kind === 'SID' ? SIDS : STARS, out = [];
+  for(var a in src){ if(src[a][id]) out.push(a); }
+  return out.sort();
+}
+function transitionsOf(apt, id){
+  var p = procOf(apt, id); if(!p) return {trans:[], rwy:[]};
+  return { trans: p.trans ? Object.keys(p.trans).sort() : [],
+           rwy:   p.rwy   ? Object.keys(p.rwy).sort()   : [] };
+}
+
+/* The whole track, in flying order, with the joins de-duplicated: a
+   transition ends on the fix the next part begins on, and printing it
+   twice reads as two crossings of one fix. Returns legs only — it
+   asserts nothing about whether the aircraft is cleared for them. */
+function trackTo(apt, id, entry, rwy){
+  var p = procOf(apt, id); if(!p) return [];
+  var order = kindOf(apt, id) === 'SID'
+    ? [ p.rwy && p.rwy[rwy], p.common, p.trans && p.trans[entry] ]
+    : [ p.trans && p.trans[entry], p.common, p.rwy && p.rwy[rwy] ];
+  var out = [];
+  for(var i = 0; i < order.length; i++){
+    var seg = order[i]; if(!seg) continue;
+    for(var j = 0; j < seg.length; j++){
+      var g = seg[j], last = out[out.length-1];
+      if(last && g.f && last.f === g.f && !g.vec && !last.vec){ continue; }
+      out.push(g);
+    }
+  }
+  return out;
+}
+
+/* Does the track stop on a vector rather than at a fix? A drill that
+   sequences to a point has to know that the published data runs out. */
+function endsOnVector(legs){
+  var l = legs[legs.length-1];
+  return !!(l && l.vec);
+}
+
+/* ---------- the strip contract ----------
+   The flight-strips block reads window.STRIP_FACILITY. Building its
+   arrivals and departures from THIS data rather than a hand-typed
+   list is what keeps the two from drifting, and it is what stops a
+   procedure serving several fields from being written several times
+   under one key — an object literal keeps only the last of those, so
+   a hand-typed list silently loses every field but one. */
+function stripProcs(kind){
+  var src = kind === 'SID' ? SIDS : STARS, out = {};
+  for(var a in src){
+    for(var k in src[a]){
+      if(out[k]) continue;                    /* already scanned for every field */
+      out[k] = kind === 'SID'
+        ? { from:  fieldsWith(k, 'SID'),  flies:false, track:true }
+        : { serves:fieldsWith(k, 'STAR'), flies:false, track:true };
+    }
+  }
+  return out;
+}
+
+/* ---------- rendering ---------- */
+function esc(s){
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ft(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+/* The crossing, written the way the chart writes it. A leg with no
+   number has no published crossing, and the cell says so rather than
+   leaving a blank that reads as unrestricted. */
+function crossing(g){
+  var a = g.at    != null ? 'cross at ' + ft(g.at)
+        : g.lo    != null ? ft(g.lo) + ' &ndash; ' + ft(g.hi)
+        : g.above != null ? 'at or above ' + ft(g.above)
+        : g.below != null ? 'at or below ' + ft(g.below)
+        : '';
+  /* A vector leg can still carry an altitude — a VA or CA climbs on a
+     course TO one. Print the altitude AND the fact that it does not end
+     at a waypoint; dropping either would misstate the leg. */
+  if(g.vec) return (a ? a + ' &middot; ' : '')
+    + '<span class="rdp-vec">terminates on a vector</span>';
+  return a || '<span class="rdp-none">no published crossing</span>';
+}
+
+/* The fix cell. Three cases, and the third is why this is not just
+   `g.f`: a leg may end at a fix, may leave one on a vector, or — a VA
+   or CA off the runway — may name no fix at all. */
+function fixCell(g){
+  if(g.f)    return esc(g.f);
+  if(g.from) return '<span class="rdp-none">from</span> ' + esc(g.from);
+  return '<span class="rdp-none">no fix</span>';
+}
+function legRow(g){
+  var ll = g.f ? fixLL(g.f) : null;
+  return '<tr>'
+    + '<td class="rdp-fix">' + fixCell(g) + '</td>'
+    + '<td>' + crossing(g) + '</td>'
+    + '<td>' + (g.spd != null ? (esc(g.spd) + ' kt') : '<span class="rdp-none">&mdash;</span>') + '</td>'
+    + '<td class="rdp-t">' + esc(g.t || g.vec || '') + '</td>'
+    + '<td class="rdp-ll">' + (ll ? (ll[0].toFixed(4) + ', ' + ll[1].toFixed(4))
+                                      : '<span class="rdp-none">&mdash;</span>') + '</td>'
+    + '</tr>';
+}
+
+var state = { apt:'', kind:'STAR', proc:'', entry:'', rwy:'' };
+
+function fields(){
+  var apts = {}, a;
+  for(a in STARS) apts[a] = 1;
+  for(a in SIDS)  apts[a] = 1;
+  return Object.keys(apts).sort();
+}
+
+function sel(id, list, cur, fmt){
+  return '<select class="rdp-sel" id="rdp-' + id + '" onchange="rdpPick(\'' + id + '\',this.value)">'
+    + list.map(function(v){
+        return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>'
+          + esc(fmt ? fmt(v) : v) + '</option>';
+      }).join('')
+    + '</select>';
+}
+
+function body(){
+  var apts = fields();
+  if(!apts.length){
+    return '<div class="rdp-empty">CIFP codes no SID and no STAR for any field this facility works. '
+      + 'That is a coverage fact about the published data, not a gap in this tool &mdash; see the '
+      + 'facility CLAUDE.md and claude_R90_CIFP_Procedures.md.</div>';
+  }
+  if(!state.apt || apts.indexOf(state.apt) < 0) state.apt = apts[0];
+
+  var here = procsAt(state.apt, state.kind);
+  if(!here.length){
+    var other = state.kind === 'STAR' ? 'SID' : 'STAR';
+    if(procsAt(state.apt, other).length){ state.kind = other; here = procsAt(state.apt, other); }
+  }
+  if(!state.proc || here.indexOf(state.proc) < 0) state.proc = here[0] || '';
+
+  var tr = transitionsOf(state.apt, state.proc);
+  if(tr.trans.indexOf(state.entry) < 0) state.entry = tr.trans[0] || '';
+  if(tr.rwy.indexOf(state.rwy)     < 0) state.rwy   = tr.rwy[0]   || '';
+
+  var p = procOf(state.apt, state.proc);
+  var legs = state.proc ? trackTo(state.apt, state.proc, state.entry, state.rwy) : [];
+
+  var h = '<div class="rdp-picks">'
+    + '<div class="rdp-f"><span class="rdp-lab">Field</span>' + sel('apt', apts, state.apt) + '</div>'
+    + '<div class="rdp-f"><span class="rdp-lab">Kind</span>'
+    +   sel('kind', ['STAR','SID'], state.kind, function(v){ return v === 'STAR' ? 'arrival (STAR)' : 'departure (SID)'; })
+    + '</div>';
+
+  if(!here.length){
+    return h + '</div><div class="rdp-empty">CIFP codes no '
+      + (state.kind === 'SID' ? 'SID' : 'STAR') + ' at ' + esc(state.apt) + '. '
+      + 'A radar-vector or conventional procedure is outside what CIFP carries, so a zero here is a '
+      + 'coding gap and not proof the field has none.</div>';
+  }
+
+  h += '<div class="rdp-f"><span class="rdp-lab">Procedure</span>'
+    +   sel('proc', here, state.proc) + '</div>';
+  if(tr.trans.length)
+    h += '<div class="rdp-f"><span class="rdp-lab">'
+      +  (state.kind === 'SID' ? 'Exit transition' : 'Entry transition') + '</span>'
+      +  sel('entry', tr.trans, state.entry) + '</div>';
+  if(tr.rwy.length)
+    h += '<div class="rdp-f"><span class="rdp-lab">Runway transition</span>'
+      +  sel('rwy', tr.rwy, state.rwy) + '</div>';
+  h += '</div>';
+
+  var also = fieldsWith(state.proc, state.kind);
+  h += '<div class="rdp-meta">' + esc(state.proc) + ' at ' + esc(state.apt) + ' &middot; '
+    + (p && p.rnav ? 'RNAV' : 'conventional') + ' &middot; CIFP ' + CYCLE
+    + (also.length > 1
+        ? (' &middot; also published at ' + esc(also.filter(function(a){ return a !== state.apt; }).join(', '))
+           + ', with that field\'s own runway transitions')
+        : '')
+    + '</div>';
+
+  h += '<div class="rdp-scroll"><table class="rdp-tbl">'
+    + '<thead><tr><th>Fix</th><th>Crossing</th><th>Speed</th><th>Leg</th><th>Coordinates</th></tr></thead><tbody>'
+    + legs.map(legRow).join('')
+    + '</tbody></table></div>';
+
+  if(endsOnVector(legs))
+    h += '<div class="rdp-warn">This track ends on a vector, not at a fix. The published data '
+      +  'stops there and so does anything that walks it &mdash; the rest is the controller\'s.</div>';
+
+  h += '<div class="rdp-note">CIFP ' + CYCLE + ' lists every transition that EXISTS. It does not say '
+    +  'which one R90 assigns in a given configuration, and this tool does not guess: that is an SOP '
+    +  'and LOA question. Nothing on this page is a boundary, an MVA or a delegation.</div>';
+  return h;
+}
+
+window['rdpPick'] = function(what, val){
+  state[what] = val;
+  if(what === 'apt' || what === 'kind'){ state.proc = ''; state.entry = ''; state.rwy = ''; }
+  if(what === 'proc'){ state.entry = ''; state.rwy = ''; }
+  render();
+};
+
+function render(){
+  var el = document.getElementById('rdp-body');
+  if(el) el.innerHTML = body();
+}
+
+var css =
+  '.rdp-picks{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 14px;}'
++ '.rdp-f{display:flex;flex-direction:column;gap:3px;}'
++ '.rdp-lab{font:11px/1.2 var(--body);color:var(--dim2);text-transform:uppercase;letter-spacing:.06em;}'
++ '.rdp-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
++   'border-radius:4px;padding:5px 7px;font:13px/1.3 var(--body);}'
++ '.rdp-meta{font:12px/1.4 var(--mono);color:var(--dim);margin:0 0 8px;}'
++ '.rdp-scroll{overflow-x:auto;}'
++ '.rdp-tbl{border-collapse:collapse;width:100%;font:12px/1.5 var(--mono);}'
++ '.rdp-tbl th{text-align:left;color:var(--dim2);font:11px/1.3 var(--body);'
++   'text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line);padding:5px 9px 5px 0;}'
++ '.rdp-tbl td{border-bottom:1px solid var(--line);padding:5px 9px 5px 0;vertical-align:top;}'
++ '.rdp-fix{color:var(--ink);font-weight:600;white-space:nowrap;}'
++ '.rdp-t,.rdp-ll{color:var(--dim);white-space:nowrap;}'
++ '.rdp-none{color:var(--dim2);}'
++ '.rdp-vec{color:var(--amber);}'
++ '.rdp-warn{margin-top:10px;border-left:2px solid var(--amber);padding:7px 10px;'
++   'font:12px/1.5 var(--body);color:var(--dim);}'
++ '.rdp-note,.rdp-empty{margin-top:10px;font:12px/1.5 var(--body);color:var(--dim2);}'
++ '.rdp-empty{border-left:2px solid var(--line);padding:7px 10px;}';
+
+function section(){
+  return '<section class="rd-section" id="rd-procs">'
+    + '<h2>Published procedures</h2>'
+    + '<p class="rdp-note" style="margin-top:0;">Every SID and STAR the FAA codes for the fields '
+    + 'R90 works, from CIFP ' + CYCLE + ' &mdash; fixes, crossing restrictions, speed limits and '
+    + 'coordinates, as published. This is the procedure, not this facility\'s use of it.</p>'
+    + '<div id="rdp-body"></div>'
+    + '</section>';
+}
+
+function mount(){
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var holder = document.createElement('div');
+  holder.innerHTML = section();
+  var sec = holder.firstChild;
+  if(!sec) return;
+  /* Land on the page the deck already built, where it built one. This
+     block runs after the page builder and before the strips block, so
+     the wrapper exists by now; without one, fall in above the footer. */
+  var page = null, ids = ['rdb-page-fly'];
+  for(var i = 0; i < ids.length && !page; i++) page = document.getElementById(ids[i]);
+  if(page){ page.appendChild(sec); }
+  else {
+    var foot = wrap.querySelector('footer');
+    if(foot) wrap.insertBefore(sec, foot); else wrap.appendChild(sec);
+  }
+  render();
+}
+
+/* ---------- export ----------
+   One copy, reachable through the deck's namespace (house rule 5). */
+/* This deck declares no ROUTES or DEPS of its own, so the procedure
+   tables below ARE the deck's copy and hang directly on the namespace. */
+NS.PFIX = PFIX; NS.STARS = STARS; NS.SIDS = SIDS; NS.CIFP_CYCLE = CYCLE;
+NS.procOf = procOf; NS.kindOf = kindOf; NS.fixLL = fixLL;
+NS.procsAt = procsAt; NS.fieldsWith = fieldsWith; NS.transitionsOf = transitionsOf;
+NS.trackTo = trackTo; NS.endsOnVector = endsOnVector; NS.stripProcs = stripProcs;
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+<script>
+/* ================================================================
    R90 — FLIGHT STRIPS. Additive extension block.
 
    Three parts, in order: the facility contract, the master strip
@@ -1793,11 +2215,14 @@ else { mount(); }
    NAME. serves and from are LISTS because a procedure belonging to
    several fields is the normal case.
 
-   Procedure inventory from CIFP 260903 — see the facility's
+   Procedure inventory is DERIVED from the PUBLISHED PROCEDURES block
+   above — CIFP 260903, see that block and the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
-   no traffic model, so nothing here is flown.
+   no traffic model, so nothing here is flown. That is not the same
+   claim as "no track data", which is what track:true records.
    ================================================================ */
 (function(){ 'use strict';
+var PROCS = window.RD;
 window.STRIP_FACILITY = {
  id:'R90', prefix:'rdst',
  airports:{
@@ -1807,15 +2232,22 @@ window.STRIP_FACILITY = {
   KMLE:{name:"Millard", rwys:['12','30']},
   KCBF:{name:"Council Bluffs", rwys:['14','18','32','36']},
  },
- arrivals:{
-  AANDY2:{serves:['KOMA'], flies:false},
-  HOWRY3:{serves:['KOMA'], flies:false},
-  LANTK2:{serves:['KOMA'], flies:false},
-  MARWI4:{serves:['KOMA'], flies:false},
-  TIMMO1:{serves:['KOMA'], flies:false},
- },
- departures:{
- }
+ /* DERIVED, not typed out again. Two reasons, and the second is a bug
+    this replaces. A hand-typed inventory is a second copy of numbers
+    the procedures block already holds (house rule 5). And a procedure
+    serving several fields has to appear once per field under ONE key —
+    an object literal keeps only the LAST of those, so ADELL EIGHT off
+    DuPage, Aurora and Gary silently collapsed to a Lewis-only
+    departure, and the strip row refused three valid combinations.
+    `serves` and `from` are lists exactly so that cannot happen;
+    building them from the coded source is what makes them lists in
+    fact rather than in intent.
+
+    flies:false throughout, because this deck has no traffic model.
+    track:true is the separate claim that the published ladder IS
+    carried, and the row labels the two differently. */
+ arrivals:   PROCS ? PROCS.stripProcs('STAR') : {},
+ departures: PROCS ? PROCS.stripProcs('SID')  : {}
 };
 })();
 /* ================================================================
@@ -1878,6 +2310,22 @@ window.STRIP_FACILITY = {
    `rwys` may be omitted or null where the field's runways are not in the
    reference set — the runway control then offers nothing rather than
    inventing an inventory. That is the KLVN case at M98.
+
+   `flies` and `track` are DIFFERENT CLAIMS, and the row labels them
+   differently. Conflating them is what let a deck holding a complete
+   published ladder still describe itself as a frame.
+
+     flies  this deck's engine has geometry it can actually FLY.
+            False everywhere but M98, and false for a reason that has
+            nothing to do with the data: a deck with no traffic model
+            flies nothing, however much it knows.
+     track  the published track IS carried — fixes, crossing
+            restrictions, speed limits. Set by the procedures block,
+            which reads the FAA's coded source.
+
+   flies:false with track:true renders "(track only)". flies:false
+   with no track renders "(frame only)". Neither is a defect; saying
+   which of the two is true is the entire point.
 
    ---------- WHAT THIS BLOCK DOES NOT DO ----------
 
@@ -2061,7 +2509,8 @@ function procControl(id, list, sel, meta, empty){
    + list.map(function(p){
       var m = meta[p] || {};
       return '<option value="' + esc(p) + '"' + (p === sel ? ' selected' : '') + '>'
-        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '') + (m.flies === false ? ' (frame only)' : '')
+        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '')
+        + (m.flies === false ? (m.track ? ' (track only)' : ' (frame only)') : '')
         + '</option>';
      }).join('')
    + '</select>';
