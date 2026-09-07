@@ -850,14 +850,20 @@ function wireLive(){
     };
   }
   rate(1,'dd-x1'); rate(2,'dd-x2'); rate(4,'dd-x4');
+  /* "Add a strip" belongs to the flight-strips block, which repoints this
+     handler at the one place a strip is created. It used to read a
+     comma-separated prompt() and hand it straight to mkAc — including a
+     FREE-TEXT DESTINATION, so a KSLC arrival could be put on a West Wall
+     scope and nothing would say a word. That made it a third way to build
+     a strip and the one that checked least.
+
+     Left INERT here rather than left working. If the strips block is not
+     on the page there is no checked way to build a strip, and an
+     unchecked one is not a fallback worth having: the safe direction is
+     the button that says what it wants, not the one that quietly puts
+     traffic on the scope this facility could not have. */
   document.getElementById('dd-add').onclick=function(){
-    var v=prompt('Callsign, type, role, destination, bearing from AZO, distance NM, altitude, speed, heading\ne.g. N123AB, C172, arrival, KAZO, 300, 22, 8000, 150, 120');
-    if(!v) return;
-    var p=v.split(',');
-    function num(i,d){ var x=parseFloat((p[i]||'').trim()); return isNaN(x)?d:x; }
-    mkAc({cs:(p[0]||'').trim().toUpperCase(), type:(p[1]||'').trim().toUpperCase(), role:(p[2]||'arrival').trim(),
-      dest:(p[3]||'').trim().toUpperCase(), bearing:num(4,300), dist:num(5,25), alt:num(6,8000), spd:num(7,180), hdg:num(8,120)});
-    render();
+    log('Build the strip on the set-up page &mdash; that is the one place a strip is created, and the only one that checks it against the six fields the West Wall works.', 'coach');
   };
   document.getElementById('dd-clear').onclick=function(){ sim.ac=[]; sim.sel=null; sim.feed=[]; renderFeed(); render(); };
   document.getElementById('dd-go').onclick=function(){

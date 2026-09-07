@@ -954,14 +954,19 @@ function wireLive(){
     };
   }
   rate(1,'dd-x1'); rate(2,'dd-x2'); rate(4,'dd-x4');
+  /* "Add a strip" belongs to the flight-strips block, which repoints this
+     handler at the one place a strip is created. It used to read a
+     comma-separated prompt() and hand it straight to mkAc — no field
+     list, no procedure, no check of any kind — which made it a third way
+     to build a strip and the one that checked least.
+
+     Left INERT here rather than left working. If the strips block is not
+     on the page there is no checked way to build a strip, and an
+     unchecked one is not a fallback worth having: the safe direction is
+     the button that says what it wants, not the one that quietly puts
+     traffic on the scope this facility could not have. */
   document.getElementById('dd-add').onclick=function(){
-    var cs=prompt('Callsign, type, role (arrival/departure/overflight), bearing from RRCP, distance NM, altitude, speed, heading\ne.g. AAL123, B738, arrival, 270, 35, 10000, 250, 090');
-    if(!cs) return;
-    var p=cs.split(',');
-    function num(i,d){ var v=parseFloat((p[i]||'').trim()); return isNaN(v)? d : v; }
-    mkAc({cs:(p[0]||'').trim().toUpperCase(), type:(p[1]||'').trim().toUpperCase(), role:(p[2]||'arrival').trim(),
-          bearing:num(3,270), dist:num(4,35), alt:num(5,10000), spd:num(6,250), hdg:num(7,90)});
-    render();
+    log('Build the strip on the set-up page &mdash; that is the one place a strip is created, and the only one that checks it against the fields and procedures C90 actually works.', 'coach');
   };
   document.getElementById('dd-clear').onclick=function(){ sim.ac=[]; sim.sel=null; sim.feed=[]; renderFeed(); render(); };
   document.getElementById('dd-go').onclick=function(){
