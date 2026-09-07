@@ -87,7 +87,7 @@ Counted from `IN_CIFP.txt`, cycle 260903.
 
 | Field | SIDs | STARs | Approaches | Facility / issue |
 |---|---|---|---|---|
-| KMSP | **12** | **8** | 26 | M98 — already carried, used here as the check |
+| KMSP | **12** | **8** | 26 | M98 — **9 of the 12 SIDs carried**, see §3.1 |
 | KOMA | 0 | **5** | 24 | R90 — #5 |
 | KLNK | 0 | 0 | 10 | R90 — #5 |
 | KORD | **0** | **11** | 50 | C90 — #1 |
@@ -115,11 +115,67 @@ KOMA   AANDY2 HOWRY3 LANTK2 MARWI4 TIMMO1
 
 - **STARs are well covered where a field has them**, and that is the expensive half to plot.
   #1, #3, #4 and #5 all get their arrival data.
-- **SIDs are patchy and ORD has none at all.** CIFP codes what is codeable for RNAV
-  navigation; a conventional or radar-vector departure is not in it. KMSP, KSLC and KBZN do
-  well; KORD, KMDW, KOMA and KLNK get nothing. **Do not read a zero as "this field has no
-  SIDs"** — read it as "CIFP does not code them", which is a different statement and leaves
-  the chart as the only source.
+- **SIDs are patchy and ORD has none at all.** KMSP, KSLC and KBZN do well; KORD, KMDW, KOMA
+  and KLNK get nothing. **Do not read a zero as "this field has no SIDs"** — read it as "CIFP
+  does not code them at this field", which is a different statement and leaves the chart as
+  the only source.
+
+### 3.1 A radar-vectored departure is NOT automatically outside CIFP — corrected 2026-09-07
+
+**This file used to say a conventional or radar-vector departure "is not in" CIFP. That is
+wrong, and the owner's question is what caught it.**
+
+ARINC 424 has a route type for exactly that procedure — **`T`, Vector SID**, in the route-type
+column (character 20 of a section-D record). Re-pulled and counted across all twenty-two fields
+this repository works, cycle 260903:
+
+| Field | Vector SID coded | Carried by |
+|---|---|---|
+| **KSLC** | **SLC4** — every runway transition is a `CA` leg then a `VM` leg and nothing else | S56 ✓ |
+| **KBOI** | **BOI3** — same shape, vectors only | Big Sky ✓ |
+| every other field | **none** | — |
+
+So the category is expressible and CIFP does use it. **What is true at ORD and Midway is
+narrower and worse: CIFP codes no SID of any type there at all** — not a vector one, not an
+RNAV one, nothing. KMKE has two SIDs and neither is a Vector SID. KMSP has twelve and none is.
+
+**The honest sentence, and the one that replaced the old claim everywhere it appeared:** CIFP
+*can* express a radar-vectored departure and does at Salt Lake City and Boise; where a field
+shows zero it is a gap **at that field**, not a category the dataset cannot carry. Those fields
+plainly do run radar-vector departures; the chart is the only source for them.
+
+### 3.2 M98 carries nine of the twelve MSP SIDs, and the three it lacks are the Runway 17 set
+
+`IN_CIFP.txt` lists twelve SIDs at KMSP. The M98 deck's `DEPS` carries nine — COULT, KBREW,
+LEINY, ORSKY, RST, SCHEP, SMERF, WLSTN, ZMBRO. Missing: **HSTIN6, MEDOW5, SLAYR4**, and
+**every one of them has `RW17` as its only runway transition.**
+
+That is a scope, not an oversight: `claude_MSP_SID_Reference.md` says in terms *"all nine
+turbojet SIDs captured"*, and M98's `DEPS` are LOA-truncated join points inside 60 NM rather
+than published ladders. **M98 has never had a CIFP pull** — issue #7 named #1 through #5, which
+are C90, S56, Big Sky and R90, and not M98.
+
+Decoded from cycle 260903:
+
+```
+HSTIN6   RW17    [VI leg] BDOGG MNDEE PRAMN HITTL NANCZ HSTIN
+         DABOY   HSTIN YUPER DABOY
+         ZZEEE   HSTIN BBERD ZZEEE
+MEDOW5   RW17    HUSHH [VM leg]
+SLAYR4   RW17    [VI leg] BDOGG CLIKR KEYPR MCONL SLAYR
+         TEYOU   SLAYR TTOSS TEYOU
+```
+
+**MEDOW5 is a vectored departure in everything but its route type** — one fix and then a `VM`
+leg — but it is coded as a common route, not as route type `T`, so it does not appear in the
+Vector SID table above. Worth knowing before anyone concludes MSP has no vectored departure
+coded.
+
+**Do not hand-patch these three into `DEPS`.** Its entries are join points truncated at the
+LOA's 60 NM limit and carry no crossing restrictions; CIFP legs are published ladders. Mixing
+the two provenances in one table is what root `CLAUDE.md` §11 forbids, and M98 has no CIFP
+file to stamp them with. **The right move is an M98 CIFP pull of its own**, the way #1 through
+#5 were done.
 - **AZO gets nothing but approaches.** None of KAZO, KGRR, KMKG or KBTL has a coded SID or
   STAR. #4's AZO half is not closed by this at all, and that is a property of the fields
   rather than of the dataset.

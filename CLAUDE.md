@@ -489,12 +489,20 @@ curl -sL -o CIFP_<YYMMDD>.zip https://aeronav.faa.gov/Upload_313-d/cifp/CIFP_<YY
 - **Read `IN_CIFP.txt` first.** A tab-separated manifest of every airport and procedure that
   is coded, so "does this field have a STAR" is one line of `awk` and not a scan of 50 MB.
   It is the CIFP equivalent of writing the source index before the reference files (§6).
-- **A ZERO IS A FINDING, AND IT IS NOT THE SAME AS "THIS FIELD HAS NO DEPARTURES."** CIFP codes
-  what is codeable for RNAV navigation; a conventional or radar-vector procedure is simply not
-  in it. O'Hare and Midway have eleven and three coded STARs and **zero** coded SIDs, and the
-  four AZO fields have nothing at all. **Write the zero down, in the slot and in the facility
-  `CLAUDE.md`, as "checked and empty" with the cycle** — that is a second independent source
-  agreeing with the document set, and it is worth more than an unchecked slot.
+- **A ZERO IS A FINDING, AND IT IS NOT THE SAME AS "THIS FIELD HAS NO DEPARTURES."** O'Hare and
+  Midway have eleven and three coded STARs and **zero** coded SIDs, and the four AZO fields have
+  nothing at all. **Write the zero down, in the slot and in the facility `CLAUDE.md`, as
+  "checked and empty" with the cycle** — that is a second independent source agreeing with the
+  document set, and it is worth more than an unchecked slot.
+- **But do not explain a zero by saying CIFP cannot carry that kind of procedure.** This file
+  used to say a conventional or radar-vector departure "is simply not in it", and that is
+  **wrong** — corrected 2026-09-07 after an owner question. ARINC 424 has a route type for
+  exactly that procedure, **`T`, Vector SID**, and CIFP uses it: **SLC4 at Salt Lake City and
+  BOI3 at Boise** are radar-vectored departures, coded, and both are already carried by S56 and
+  Big Sky. No other field this repository works has one. So a zero means *not coded at this
+  field*, which is narrower and worse than *outside the dataset* — at O'Hare and Midway CIFP
+  codes **no SID of any type at all**. Detail, and the per-field count, in
+  `claude_CIFP_Source_Reference.md` §3.1.
 - **A procedure identifier is not unique across fields.** ADELL EIGHT is published at four
   Chicago satellites with a different set of runway transitions at each; PANGG SEVEN has a
   different common segment at Gary than at Midway. **Key procedure data by airport, then by
