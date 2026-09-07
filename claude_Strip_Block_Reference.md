@@ -1,7 +1,9 @@
 # The master strip block — one strip row, every facility, no foreign procedures
 
 `strip-block.html` at the repository root. Extracted from the M98 drill builder on
-**2026-09-06** and generalised so the same flight-strip row can serve every deck.
+**2026-09-06** and generalised so the same flight-strip row can serve every deck. On
+**2026-09-07** it grew from the job half to the WHOLE row, so every facility writes the strip
+M98 writes — see §4.
 
 **The point of the file is the enforcement, not the markup.** A strip is a statement about a
 real aircraft on a real procedure, and most of the ways it can be wrong are combinations that
@@ -123,30 +125,84 @@ GEP:   {serves:['KMSP','KANE','KFCM','KMIC','KSTP']} // the shared hub — MSP a
 question the block answers is never *"which single field owns this procedure"* — it is
 **"is this procedure valid at the field on this strip"**, which is membership in a list.
 
-**So do not read M98's unfiltered SID dropdown as a defect.** It builds the list as
-`SIDS = Object.keys(DD.DEPS)` and offers all of them at every field, and for M98 as it stands
-that happens to be harmless — the nine turbojet SIDs are MSP procedures and MSP is where
-departures are built. What it is, is **unstated**: the relationship exists in nobody's data,
-so nothing can check it and nothing can be relied on when the assumption stops holding.
+**So do not read M98's unfiltered SID dropdown as a defect** — and the owner has settled that
+directly, 2026-09-07: *"SIDs and STARs can be valid for more than one airport."* It builds the
+list as `SIDS = Object.keys(DD.DEPS)` and offers all of them at every field. `DD.DEPS` carries a
+fix ladder per SID and no `from` list, so nothing in the deck's data says which fields a SID
+leaves; filtering it would mean asserting a relationship no source states, which is the thing
+invariant 1 forbids. **Leave it offering all of them.** The relationship is unstated, not
+wrong, and an unfiltered list is the honest rendering of an unstated relationship.
 
 The contract's job is to make the relationship explicit wherever it matters, and to be
 indifferent to how many fields a procedure covers — one, several, or all of them. A facility
 whose SIDs genuinely serve every field it works writes every field into `from` and the control
 correctly offers them everywhere. That is a declaration, not an accident.
 
-**M98 is not changed by this file.** Swapping its strip row for the block is its own piece of
-work and its own decision.
+**M98 keeps its own row.** It is the source this format came from, its row is wired into the
+ladder engine and the grading in a way the other six are not, and swapping it for the block
+remains its own piece of work and its own decision. What DID change on 2026-09-07 is the
+direction of travel: the format moved out of M98 into this file, so the other five decks write
+the same strip. Its one fix in that pass was the missing option value (§2.1).
 
-## 4. What it deliberately does not do
+## 4. It carries the whole row, and what it still does not do
 
 It does not fly anything, grade anything, or know what a ladder is. It renders the row, reads
 it back, and answers whether the combination is legal for this facility. A deck with a traffic
 model wires its own engine to the values; a deck without one still gets a correct strip.
 
-It also carries **only the job half** of M98's row — the part that names a procedure, which is
-the part that can be wrong across facilities. The generic half (callsign, type, wake class,
-flight rules, radar service, altitude, speed) is unchanged from M98 and is not facility-
-specific, so it was left where it is rather than moved for the sake of moving it.
+**Until 2026-09-07 it carried only the job half** — the part that names a procedure — and each
+deck wrote its own callsign, type and altitude boxes. That made the strip a different shape at
+every facility, and the work M98 had already done on flight rules, radar service, wake class,
+speeds and check-in timing reached nobody else. **Owner's call: the M98 row is the format, so
+the format lives here.**
+
+### 4.1 What is generic, and what the facility passes in
+
+**Generic, and therefore in this file** — every field whose meaning is national:
+
+| Field | What makes it national |
+|---|---|
+| Job, callsign, type | the strip itself |
+| Flight rules | IFR/VFR |
+| **Radar service** | the five states an aircraft can be in when it first speaks to you, and **which of them a job and a set of flight rules can legally be in** — an IFR arrival is never asking for flight following. Issue #12. |
+| **Wake class** | by maximum certificated takeoff weight, 7110.65 thresholds. A type not in the table tags **NOWGT** rather than being guessed, which is what a real STARS system does. |
+| Altitude, speed | — |
+| **Published vs Center advised** | an arrival on an optimized profile descent flies the arrival's own speeds; anything else is a coordination event. The Center-advised box is **disabled under "published"**, because there is nothing advised to write in it. Issue #10. |
+| Checks in at, already on frequency, altimeter given | the drill clock |
+| Route / Intentions | label follows the flight rules |
+
+**The facility's, and therefore passed in** — optional functions on the contract, each with a
+stated fallback, so leaving one out is a statement that the facility cannot answer it rather
+than an oversight:
+
+| Hook | Without it |
+|---|---|
+| `spoken` | the header prints the bare callsign. **Not defaulted:** callsign voicing is a national reference a facility either carries or does not, and a deck with no TTS layer inventing a pronunciation is what `claude_US_Carrier_Callsigns.md` forbids. |
+| `context` | the grey line beside the strip number is empty |
+| `handoffFor` | every job gets a plain input. A facility with no handoff identifier does **not** derive one. |
+| `fixesOn` | **the row asks for a bare distance to go instead of miles from a named fix.** Issue #11. |
+| `routeTextFor` | placeholder reads "filed route" and the *fill from the procedure* button is not offered |
+| `roleHints` | generic title text on the job selector |
+| `extraFields` | nothing appended — C90 and AZO use it for the bearing and distance their scope needs |
+
+**`fixesOn` returns every fix on the procedure, whichever transition it is on.** CIFP splits a
+procedure into entry transitions, a common segment and runway transitions, and **some carry
+nothing in common** — BGMAN1 into Bozeman has an empty common segment and all six of its fixes
+on the KARTS transition. Reading only the common segment said BGMAN1 had no ladder, which is
+false. Narrowing to one transition needs a transition selector on the strip, and no deck knows
+which transition its facility assigns in a given configuration: an SOP and LOA question with no
+CIFP answer.
+
+**A procedure with only vector legs correctly reports no ladder.** BOI3 off Boise is exactly
+that, and the bare distance box is the right rendering — not a gap.
+
+### 4.2 The model matches what the control can express
+
+The procedure picker has no blank option, so with nothing set the browser shows the first one.
+`normStrip` therefore adopts that first procedure rather than leaving the model empty, and
+**does not report it as a move** — nothing was displaced. Without this the row displayed BOI3
+while the context line read *"no departure procedure selected"*: the two halves of one strip
+disagreeing, which is the failure the whole block exists to prevent.
 
 ## 5. Ready-made contracts
 
@@ -208,8 +264,26 @@ issued*; R90 KOMA → KLNK empties to a statement; S56's departure side moves `A
 EMONT3` on KSLC → KOGD. On M98, `KASPR` and `GEP` are selectable and stick where they
 previously snapped back, and the list still follows the field.
 
+### Re-verified again 2026-09-07, after the row moved here
+
+All five decks driven over local HTTP with real change events. Per deck the row now carries the
+same twenty fields M98's does, and each behaviour was exercised rather than assumed: radar
+service offers `established, popup` on an IFR arrival and `established, following, none` on a
+VFR one; the Center-advised box is disabled under *published* and enabled under *Center
+advised*; the fix picker follows the procedure (C90 BENKY6 gives BENKY NEWRK AHSTN PETAH,
+WYNDE3 gives WYNDE FIYER ERNNY PAPPI TUBEZ); wake class reads `super` for A388, `large` for
+B738 and `NOWGT — weight unverified` for a type not in the table; *fill from the procedure*
+writes the twenty fixes of PANGG7 into the route box; and a legal strip still places on the
+C90 and AZO scopes and jumps to Fly.
+
+Where a deck cannot answer a hook, the fallback was checked rather than assumed: AZO and S56
+render the bare distance box and no *fill from the procedure* button, because neither carries a
+ladder — AZO has no coded procedure at any field and S56 has no procedures block.
+
 ### Wiring status
 
-Wired into **R90, C90, AZO, S56 and Big Sky**. C90 and AZO host it as the deck's only strip
-entry, with the facility's placement fields alongside the job half. **M98 still uses its own
-row** — swapping it remains its own decision.
+Wired into **R90, C90, AZO, S56 and Big Sky**, all five byte-identical to this file. C90 and
+AZO host it as the deck's only strip entry, with the facility's placement fields alongside
+through `extraFields`. **M98 still uses its own row** — it is the source the format came from,
+its row is wired into the ladder engine and the grading, and swapping it remains its own
+decision.
