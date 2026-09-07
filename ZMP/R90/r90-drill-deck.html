@@ -688,6 +688,7 @@ function sectionBuild(){
   + '<section class="rd-section" id="rdb-build">'
   + '<h2>Build a drill</h2>'
   + '<div class="rd-empty">Authoring is not built yet.<br><br>'
+  + 'What you <i>can</i> build is the flight strips below — the fields R90 works, the procedures published at each, and a check that refuses a combination this facility could not have. That is a strip, not a drill: nothing flies and nothing is graded, because this deck has no traffic model.<br><br>'
   + 'Roadmap item 3 is the first drill that needs no geometry: scratchpad-encoded approach clearances, graded against the complete R90 3-10 tables — including the rule that a runway alone means a visual.<br>'
   + 'Roadmap item 4 is the five STAR-gap departure heading bands.<br>'
   + 'See CLAUDE.md, Roadmap.</div>'
@@ -2644,9 +2645,15 @@ function check(s, i){
  if(!box) return;
  var errs = S.checkStrip(s, s.cs || ('strip ' + (i + 1)));
  box.className = errs.length ? (P + '-err') : (P + '-ok');
+ /* Name the field this strip is actually at. A departure keeps whatever
+    dest it had before the job changed, so reading dest first would print
+    the old airport under a departure — with five fields in the list, two
+    of them military or reliever, that is a wrong field on a strip, not a
+    cosmetic slip. Taken from the S56 mount, which fixed it first. */
+ var at = s.role === 'departure' ? s.dep : s.role === 'overflight' ? '' : s.dest;
  box.innerHTML = errs.length
    ? errs.map(function(e){ return '&#9888; ' + esc(e); }).join('<br>')
-   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(s.dest || s.dep || 'the boundary');
+   : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(at || 'the boundary');
 }
 function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
 
@@ -2685,8 +2692,18 @@ function mount(){
  host.innerHTML = section();
  var sec = host.firstChild;
  if(!sec) return;
- var footer = wrap.querySelector('footer');
- if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+ /* Land on the page the deck already built, the way the handoff, weather
+    and procedures blocks all do. Without this the section is appended to
+    .wrap AFTER the page wrappers, so it sits outside the page system and
+    renders under all three tabs at once — which is what made the strip
+    row look like a second, duplicate section. Building a strip is set-up
+    work, so it lands beside the authoring note on the set-up page. */
+ var page = document.getElementById('rdb-page-setup');
+ if(page){ page.appendChild(sec); }
+ else {
+  var footer = wrap.querySelector('footer');
+  if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
+ }
  rows.push(blank());
  render();
 }
