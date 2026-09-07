@@ -35,6 +35,132 @@ fix-sequence track has to end there.
 appear twice with a hold-like repetition at the end. That is the published coding, not a
 duplication error.
 
+## Procedure identifiers
+
+**Which procedure each block of transitions below belongs to.** The transition
+listings further down are grouped by procedure but do not name it, so this table is
+what turns a block into an attributable citation. Identifiers are as CIFP codes them
+— the six-character field, revision digit included. CIFP does not carry the spoken
+name, so none is written here.
+
+### KARR
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **ADELL8** | RNAV | AKMIE ARLYN | RW09 RW15 RW18 RW27 RW33 RW36 |
+| **BLOKR8** | RNAV | BEKKI RBS | RW09 RW15 RW18 RW27 RW33 RW36 |
+| **CARYN8** | RNAV | CYBIL | RW09 RW15 RW18 RW27 RW33 RW36 |
+| **DARCY8** | RNAV | DONVE SCOTO | RW09 RW15 RW18 RW27 RW33 RW36 |
+| **ELANR9** | RNAV | EMEGE EMMLY ERECO | RW09 RW15 RW18 RW27 RW33 RW36 |
+| **OBENE3** | RNAV | ELYNA IANNA JORDY MNOSO NITWT OGALE ROEZZ ROTTN SMIDD | RW09 RW15 RW18 RW27 RW33 RW36 |
+
+### KDPA
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **ADELL8** | RNAV | AKMIE ARLYN | RW02B RW10 RW15 RW20B RW28 RW33 |
+| **BLOKR8** | RNAV | BEKKI RBS | RW02B RW10 RW15 RW20B RW28 RW33 |
+| **CARYN8** | RNAV | CYBIL | RW02B RW10 RW15 RW20B RW28 RW33 |
+| **DARCY8** | RNAV | DONVE SCOTO | RW02B RW10 RW15 RW20B RW28 RW33 |
+| **ELANR9** | RNAV | EMEGE EMMLY ERECO | RW02L RW02R RW10 RW15 RW20L RW20R RW28 RW33 |
+| **OBENE3** | RNAV | ELYNA IANNA JORDY MNOSO NITWT OGALE ROEZZ ROTTN SMIDD | RW02B RW10 RW15 RW20B RW28 RW33 |
+
+### KGYY
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **ADELL8** | RNAV | AKMIE ARLYN | RW02 RW12 RW20 RW30 |
+| **BLOKR8** | RNAV | BEKKI RBS | RW02 RW12 RW20 RW30 |
+| **CARYN8** | RNAV | CYBIL | RW02 RW12 RW20 RW30 |
+| **DARCY8** | RNAV | DONVE SCOTO | RW02 RW12 RW20 RW30 |
+| **ELANR9** | RNAV | EMEGE EMMLY ERECO | RW02 RW12 RW20 RW30 |
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **LUCIT3** | RNAV | COOKS EDENS HERWK HLMIT MACES SOHOW | ALL |
+| **PANGG7** | RNAV | ASHEN BAGEL FWA LLTCH | ALL |
+
+### KLOT
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **ADELL8** | RNAV | AKMIE ARLYN | RW02 RW09 RW20 RW27 |
+| **BLOKR8** | RNAV | BEKKI RBS | RW02 RW09 RW20 RW27 |
+| **CARYN8** | RNAV | CYBIL | RW02 RW09 RW20 RW27 |
+| **DARCY8** | RNAV | DONVE SCOTO | RW02 RW09 RW20 RW27 |
+| **ELANR9** | RNAV | EMEGE EMMLY ERECO | RW02 RW09 RW20 RW27 |
+| **OBENE3** | RNAV | ELYNA IANNA JORDY MNOSO NITWT OGALE ROEZZ ROTTN SMIDD | RW02 RW09 RW20 RW27 |
+
+### KMDW
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **ENDEE8** | RNAV | CHUMP DARKK EDENS FUDDD IRK JALAP KAMBL LLVSS MAGOO NANEE OHHMY PHEEB POOGY UGGLY | RW04R RW13L RW22L RW31R |
+| **FISSK7** | RNAV | DROSE | RW04R RW13L RW22L RW31R |
+| **PANGG7** | RNAV | ASHEN BAGEL FWA LLTCH | RW04R RW13L RW22L RW31R |
+
+### KORD
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **BENKY6** | RNAV | BFORD BYLAW CASHN DRAMS IRK LOAMY TRICH | RW04B RW09B RW10B RW22B RW27C RW27L RW27R RW28C RW28L RW28R |
+| **ERNNY8** | RNAV | CHDRR FAALZ FGHRN KOHLL LYNNI OVETE PIRPL STASH VIIKS YOLUR | RW04B RW09B RW10B RW22B RW27B RW28B |
+| **ESSPO5** | RNAV | BONNT FWA NOLNN WATSN | RW04B RW09C RW09L RW09R RW10B RW22B RW27B RW28B |
+| **FYTTE7** | RNAV | BENNR BHAWK BOWNN CHMPN MYRRS SHIKY TEEOO ZZIPR | RW04B RW09B RW10B RW22B RW27C RW27L RW27R RW28C RW28L RW28R |
+| **JVL1** | conventional | MCW | ALL |
+| **MADII7** | RNAV | CHDRR FAALZ FGHRN KOHLL OVETE PIRPL VIIKS ZANDI | RW04B RW09B RW10B RW22B RW27C RW27L RW27R RW28C RW28L RW28R |
+| **SHAIN2** | RNAV | BFORD CASHN DRAMS FTZ IRK LOAMY PNTAC STL TRIDE VINCA WELTS | ALL |
+| **TRTLL6** | RNAV | BYLAW CASHN FTZ MAROC PNTAC STL VINCA WELTS | RW04B RW09B RW10B RW22B RW27C RW27L RW27R RW28C RW28L RW28R |
+| **VEECK5** | RNAV | BONNT FWA | RW04B RW09C RW09L RW09R RW10B RW22B RW27B RW28B |
+| **WATSN4** | RNAV | BONNT DAIFE FWA ROD ZANLA | ALL |
+| **WYNDE3** | RNAV | FNT KAYYS OBSTR ODAXY SMUUV SSM TVC UFDUH VIO | RW04R RW09B RW10B RW22B RW27B RW28B |
+
+### KPWK
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **JORJO5** | RNAV | AKMIE ARLYN BEKKI RBS | RW12 RW16 RW30 RW34 |
+| **MONKZ5** | RNAV | CYBIL DONVE ELANR EMEGE EMMLY ERECO SCOTO | RW12 RW16 RW30 RW34 |
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **GOPAC3** | RNAV | CHZHD LEEDN OGECA | ALL |
+
+### KUGN
+
+**SIDs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **JORJO5** | RNAV | AKMIE ARLYN BEKKI RBS | RW05 RW14 RW23 RW32 |
+| **MONKZ5** | RNAV | CYBIL DONVE ELANR EMEGE EMMLY ERECO SCOTO | RW05 RW14 RW23 RW32 |
+
+**STARs**
+
+| identifier | coding | entry / exit transitions | runway transitions |
+|---|---|---|---|
+| **GOPAC3** | RNAV | CHZHD LEEDN OGECA | ALL |
+
+---
+
 ## KORD
 
 ### STARs

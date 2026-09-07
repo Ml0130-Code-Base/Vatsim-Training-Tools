@@ -66,10 +66,11 @@ configurations and the four MDW configurations, Final runway responsibility by c
 (4-3.b.1), turn-on altitudes and capture points for dual, triple and visual approaches
 (4-4, 4-5, 4-6), beacon blocks (2-4), the airport list with tower position symbols (2-6.d),
 NSAT entry altitudes (6-2.c) and the Appendix A glossary. Plus, from the community pull below,
-the facility footprint (one polygon, surface–FL150) and the eight field positions. Empty: the
-STAR and SID geometry, the internal sectorisation, the Arrival Descent Area shapes, the MVA
-map, the ZAU LOA interface, the tower LOAs and every handoff identifier. Partial: the four
-SSAT altitude matrices in 7-4, the footprint, the field coordinates.
+the facility footprint (one polygon, surface–FL150) and the eight field positions. **Plus,
+from CIFP 260903 (2026-09-06), every published SID and STAR at all eight fields** — see below.
+Empty: the internal sectorisation, the Arrival Descent Area shapes, the MVA map, the ZAU LOA
+interface, the tower LOAs and every handoff identifier. Partial: the four SSAT altitude
+matrices in 7-4, the footprint, the field coordinates, the departure procedures.
 
 **AZO** — the six West Wall sectors with callsigns, frequencies and hierarchy (2-2, 2-3,
 Appendix B), the East Wall neighbours, the departure areas for AZO, GRR and MKG (4-4, 5-3,
@@ -80,6 +81,56 @@ covering both walls, surface–10,000) and five of the six field positions. Empt
 sector boundaries, the TRSA depiction, all procedure geometry, the MVA map, every handoff
 identifier, and KHLM's coordinates. Partial: the footprint, the field coordinates, the East
 Wall list, the beacon blocks.
+
+### CIFP, and the SID/STAR slots — pulled 2026-09-06, cycle 260903
+
+Root `CLAUDE.md` §10.1. Both decks carry a **PUBLISHED PROCEDURES** block, and the two
+facilities got opposite answers from the same pull — which is the point of writing the zero
+down rather than leaving the slot unchecked.
+
+**C90 — 18 STAR records and 27 SID records across the eight fields**, every entry transition,
+common segment and runway transition, each fix with its published crossing restriction, speed
+limit and coordinates (293 fixes). `ROUTES` and `DEPS` are declared empty in block 1 and
+filled by the procedures block, so there is one copy and `DD.ROUTES` means what it says.
+Slots moved: `routes` → **verified**, `deps` → **partial**.
+
+- **`deps` is partial, not verified, and the reason matters.** O'Hare and Midway have **zero**
+  coded SIDs — a conventional or radar-vector departure is outside what CIFP carries. The
+  eight SIDs are the six shared by DuPage, Aurora, Gary and Lewis and the two shared by
+  Chicago Executive and Waukegan. **A zero is a coding gap, not a field without departures.**
+- **`gates` stays empty, and CIFP narrowed it without closing it.** No KORD or KMDW STAR names
+  PLANO, KUBBS, OKK or FARMM as a fix, so nothing links a Feeder position to a ladder. CIFP
+  does carry enroute waypoints named PLANO, KUBBS and FARMM, but **nothing in the document set
+  says a position is named for the fix that shares its name** — so those coordinates stay out
+  of `GATES`. Confirming the gate-to-fix identity is a Part 1 owner ask and a cheap one.
+- **Procedures are keyed by airport, then by procedure.** ADELL EIGHT is published at four
+  satellites with a **different set of runway transitions at each**, and PANGG SEVEN has a
+  different common segment at Gary than at Midway. Keyed on the identifier alone they
+  concatenate into a track no aircraft could fly. Do not flatten this.
+
+**AZO — nothing, and that is now a two-source finding.** CIFP codes no SID and no STAR at any
+of the six West Wall fields. The `routes` slot **stays empty** and its note now carries both
+citations rather than one. The fields do have coded approaches (six at Kalamazoo, thirteen at
+Grand Rapids, eight at Muskegon, five at Battle Creek); they are in
+`claude_AZO_CIFP_Procedures.md` and are **not** SID or STAR data, and the deck does not carry
+them. The deck renders the empty answer in words rather than showing a blank picker.
+
+**Neither pull touches geometry.** CIFP is procedures. The internal sectorisation, the TRSA,
+the MVA map and the West Wall sector boundaries are exactly where they were.
+
+### The strip contract is now derived, and that fixed a live bug
+
+Both decks build `STRIP_FACILITY.arrivals` and `.departures` from the procedures block instead
+of a hand-typed list. C90's hand-typed list had written each shared procedure **once per
+field under one key** — and an object literal keeps only the last, so `ADELL8` silently
+collapsed to `from:['KLOT']` and the strip row refused three otherwise valid combinations.
+`serves` and `from` are lists precisely so that cannot happen; deriving them from the coded
+source is what makes them lists in fact rather than in intent.
+
+The row also distinguishes two claims it used to conflate. **`flies`** means this deck's engine
+has geometry it can fly — false at both, because neither has a traffic model. **`track`** means
+the published ladder is carried. `flies:false, track:true` renders **"track only"**; no track
+still renders "frame only".
 
 ### On the boundary slots, after the 2026-09-02 community-source pull
 

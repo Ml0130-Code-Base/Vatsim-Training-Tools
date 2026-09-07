@@ -106,7 +106,7 @@
   <div class="hero">
     <div class="eyebrow">Drill deck</div>
     <h1>Set the seat, build the drill, fly it, bank what it taught.</h1>
-    <p>The Chicago TRACON frame &mdash; positions, combining, configurations, finals, capture points &mdash; carried out of the vZAU documents, and the facility footprint from the ZAU vARTCC's own sector data. The internal sectorisation and the procedure geometry are still not carried, and every empty slot says so and names the document that fills it.</p>
+    <p>The Chicago TRACON frame &mdash; positions, combining, configurations, finals, capture points &mdash; carried out of the vZAU documents, and the facility footprint from the ZAU vARTCC's own sector data. The published SIDs and STARs are carried from the FAA's coded source. The internal sectorisation is still not, and every empty slot says so and names the document that fills it.</p>
     <div class="note">Skeleton. Nothing here is invented: a number is either traced to a vZAU document by paragraph, or the slot is empty and marked empty. Student notes attach to any section, any table row and any empty slot, and export as Markdown to be folded back into the reference set.</div>
   </div>
   <div class="modnav" id="modnav"></div>
@@ -389,12 +389,20 @@ function containment(lat,lon,alt){
                 : 'outside the C90 footprint'};
 }
 
-/* ---------- 8b. Still empty ----------
-   Shapes are documented so filling them is mechanical:
-   ROUTES[gate]  = {gate:'KUBBS', star:'name', fixes:[{f:'FIX',lat:,lon:,at:,spd:}]}
-   DEPS[sid]     = {sid:'NAME', fixes:[{f:'FIX',lat:,lon:}], release:{...}}
-   SPLITS[sym]   = polygon of that position's delegated airspace — NOT in any source we hold
-   ADA[cfg]      = polygon of the Arrival Descent Area for that configuration */
+/* ---------- 8b. Declared here, FILLED BY THE PROCEDURES BLOCK ----------
+   ROUTES and DEPS are declared empty here and exported by reference;
+   the PUBLISHED PROCEDURES block fills them from CIFP 260903 rather
+   than declaring a second pair, so there is one copy of every number
+   and DD.ROUTES means what it says (house rule 5).
+
+   ROUTES[apt][proc] = {rnav:true,
+                       trans:{FIX:[leg,...]}, common:[leg,...], rwy:{RWnn:[leg,...]}}
+   DEPS[apt][proc]   = same shape, flown rwy -> common -> trans
+   a leg        = {f:'FIX', at|above|below|lo+hi:ft, spd:kt, t:'TF'}
+                  or {from:'FIX', vec:'FM'} where it ends on a vector
+
+   Read the procedures block before changing either shape; it documents
+   what a leg means and why a vector leg carries no `f`. */
 var ROUTES = {};
 var DEPS = {};
 var SPLITS = {};
@@ -461,13 +469,13 @@ var SLOTS = [
    note:'Four side-by-side tables. Read them off the page; the text layer interleaves the columns and a number in the wrong column is a wrong altitude.'},
   {id:'gates', title:'Feeder gate fixes and their STARs', state:'empty',
    src:'ORD MDW STARs.pdf; ORD and MDW Cheatsheet v3.1; charts.zauartcc.org',
-   note:'The four gate names are known from the position titles. Coordinates, ladders and crossing restrictions are not.'},
-  {id:'routes', title:'Arrival ladders (ROUTES)', state:'empty',
-   src:'ORD MDW STARs.pdf; charts',
-   note:'Until this is filled the engine flies what the student gives it: a bearing and a distance from the RRCP, a heading, an altitude and a speed.'},
-  {id:'deps', title:'Departure procedures (DEPS)', state:'empty',
-   src:'ORD MDW STARs.pdf; charts',
-   note:'ACCRA and UECKR are named in 5-6 and Appendix D as SIDs whose centrelines Departure separates from; their geometry is not carried.'},
+   note:'The four gate names are known from the position titles in 2-1. CIFP 260903 narrowed this without closing it: no KORD or KMDW STAR names PLANO, KUBBS, OKK or FARMM as a fix, so the arrival ladders do not link the gates to a track. CIFP does carry enroute waypoints named PLANO, KUBBS and FARMM, but nothing in the document set says a Feeder position is named for the fix that shares its name — so the coordinates stay out of GATES and this slot stays empty. Asking the owner to confirm the gate-to-fix identity is the cheapest way to close it.'},
+  {id:'routes', title:'Arrival ladders (ROUTES)', state:'verified',
+   src:'CIFP 260903, effective 2026-09-03; see ../../claude_CIFP_Source_Reference.md and claude_C90_CIFP_Procedures.md',
+   note:'Sixteen STARs across the eight fields C90 works, with every entry transition, the common segment, every runway transition, and each fix carrying its published crossing restriction, speed limit and coordinates. What it does NOT carry is which transition C90 assigns in a given configuration — that is an SOP and LOA question and CIFP has no answer to it, so the tool offers every published transition and calls none of them the right one.'},
+  {id:'deps', title:'Departure procedures (DEPS)', state:'partial',
+   src:'CIFP 260903; vZAU C90 TRACON SOP 7110.65C 5-6 and Appendix D for ACCRA and UECKR',
+   note:'The eight satellite SIDs are carried in full — six shared by DuPage, Aurora, Gary and Lewis, two shared by Chicago Executive and Waukegan. O\'Hare and Midway have ZERO coded SIDs, because a conventional or radar-vector departure is outside what CIFP carries; that is a coding gap, not a field without departures. ACCRA and UECKR are named in 5-6 and Appendix D as SIDs whose centrelines Departure separates from, and their geometry is still not carried.'},
   {id:'boundary', title:'C90 facility footprint and ceiling', state:'partial',
    src:'VATGlasses ZAU, vendored ../_shared/source-vatglasses/, decoded in ../_shared/claude_ZAU_Sector_Geometry_Reference.md',
    note:'One polygon, surface to FL150, 35 vertices, drawn on the scope. Community data from the ZAU vARTCC-managed dataset — second-tier, below the SOP, and superseded the moment an owner-supplied or facility-exported boundary arrives. It answers inside-and-under-the-lid and nothing finer.'},
@@ -499,9 +507,14 @@ function slotState(id){ var s=slotOf(id); return s? s.state : 'empty'; }
 
 /* ---------- 13. Sim spine ----------
    The engine flies dead reckoning: heading, speed, and a vertical rate toward
-   whatever altitude is assigned. That is all it can honestly do until ROUTES
-   exists — there is no published track to fly, so a strip is placed by the
-   bearing and distance from the RRCP that the student states. */
+   whatever altitude is assigned. A strip is placed by the bearing and distance
+   from the RRCP that the student states.
+
+   ROUTES now EXISTS — the procedures block fills it from CIFP — and that has
+   not changed this paragraph, which is the distinction worth holding on to.
+   Having the published track is not the same as having a traffic model to fly
+   it along. Wiring the ladder into the tick is its own piece of work, and
+   until it is done the engine says what it does rather than implying more. */
 var sim = {t:0, running:false, rate:1, ac:[], feed:[], sel:null, cfg:'west', mdw:'31R', open:['Z'], seats:['Z']};
 var acSeq = 0;
 
@@ -618,8 +631,10 @@ function transmit(text){
   m = t.match(/\bdirect\s+([a-z]{3,5})\b/);
   if(m){
     var fix=m[1].toUpperCase();
-    if(!ROUTES[fix] && !hasFix(fix)){
-      log('Direct '+esc(fix)+' read back, but no fix geometry is carried &mdash; the track does not change. '+slotLink('routes'), 'coach');
+    if(!hasFix(fix)){
+      log('Direct '+esc(fix)+' read back, but '+esc(fix)+' is not a fix on any published procedure this tool carries &mdash; the track does not change. '+slotLink('routes'), 'coach');
+    } else {
+      log('Direct '+esc(fix)+' read back. The fix is carried with its coordinates, but this deck has no traffic model, so the strip does not turn &mdash; reminder, not a judgement.', 'coach');
     }
     reads.push('direct '+fix);
   }
@@ -641,12 +656,14 @@ function transmit(text){
   else log('Nothing in that transmission parsed. Verbs carried: descend/climb and maintain, speed, heading, direct, cleared approach, squawk, radar contact, contact.', 'coach');
   render();
 }
+/* Is this a fix the tool actually knows? The PUBLISHED PROCEDURES block
+   publishes one table of every fix any published SID or STAR names. That
+   block loads after this one, so the lookup is late-bound on purpose —
+   asking DD for it at call time rather than closing over an empty table
+   at parse time. */
 function hasFix(f){
-  for(var k in ROUTES){ if(!ROUTES.hasOwnProperty(k)) continue;
-    var fx=ROUTES[k].fixes||[];
-    for(var i=0;i<fx.length;i++) if(fx[i].f===f) return true;
-  }
-  return false;
+  var t = window.DD && window.DD.PFIX;
+  return !!(t && t[f]);
 }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function slotLink(id){ var s=slotOf(id); return s? '<span class="dd-cite">('+esc(s.title)+' &mdash; '+esc(s.src)+')</span>' : ''; }
@@ -839,7 +856,7 @@ function liveBody(){
     + '<div class="dd-cmdrow"><input id="dd-cmd" class="dd-cmd" placeholder="AAL123 descend and maintain 6,000, speed 210, heading 090"><button id="dd-go" class="dd-send">Transmit</button></div>'
     + '<div class="dd-quick" id="dd-quick"></div>'
     + '<div id="dd-feed" class="dd-feed"></div>'
-    + '<div class="dd-note">The engine flies heading, speed and altitude. It does not fly a published track: the arrival ladders are an empty slot, so a strip is placed by the bearing and distance from the RRCP you give it. Filling ROUTES is what turns this into a real sequencing drill.<br><br>'
+    + '<div class="dd-note">The engine flies heading, speed and altitude, and a strip is placed by the bearing and distance from the RRCP you give it. The arrival ladders are no longer empty &mdash; every published STAR and satellite SID is carried on the procedures page, with its crossing restrictions and speeds &mdash; but this deck still has no traffic model, so nothing is flown along one. Wiring the ladder into the tick is what turns this into a real sequencing drill.<br><br>'
     + 'The scope now draws the facility footprint and each strip says whether it is inside it and under the FL150 lid. That is the whole claim: there is no per-sector polygon in any source we hold, so the tool never says which sector owns a position, and it never calls a boundary crossing. The shape is a community polygon from the ZAU vARTCC\'s own dataset &mdash; it sits below the SOP and an owner-supplied boundary replaces it.</div>';
 }
 function dataBody(){
@@ -1150,9 +1167,9 @@ function buildBody(){
     + '<div id="ddb-valid" class="dd-note"></div>'
     + '</div>'
     + '<div class="dd-panel" data-note="build.gaps"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
-    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is placed by bearing and distance because there is no published track to place it on. Until the arrival ladders exist, the tool cannot check a crossing restriction, a floor, a gate assignment or an in-trail interval &mdash; so it does not pretend to.</p>'
+    + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">A strip is still placed by bearing and distance, because this deck has no traffic model to fly a track with. What changed is that the track now exists: every published crossing restriction and speed limit is carried on the procedures page. What is missing is the engine that would hold a strip to one, and the facility knowledge of which transition C90 assigns in a given configuration &mdash; so the tool shows the published ladder and grades nothing against it.</p>'
     + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">What it <i>can</i> now check is containment: whether the strip is inside the facility footprint and under the FL150 lid. It cannot check which sector owns it, because no source we hold carries a per-sector shape.</p>'
-    + '<div class="ddb-room">Room reserved: when ROUTES is filled, the gate selector below drives the track and this panel becomes the validation report.</div>'
+    + '<div class="ddb-room">Room reserved: when a traffic model exists, the procedure on the strip drives the track and this panel becomes the validation report. The ladder it would read is already here.</div>'
     + '</div>';
 }
 function fld(label,id,type,ph){
@@ -1182,7 +1199,7 @@ function wireBuild(){
     if(!cs) msgs.push('A strip needs a callsign.');
     if(DD.acOf(cs)) msgs.push('That callsign is already on frequency.');
     var gate=v('ddb-gate','');
-    if(gate) msgs.push('Gate '+gate+' is a name, not a track: the ladder for it is an empty slot, so the strip flies the heading you gave it.');
+    if(gate) msgs.push('Gate '+gate+' is still a name, not a track: no published O’Hare or Midway STAR names it as a fix, so nothing links the gate to a ladder and the strip flies the heading you gave it. The STARs themselves are on the procedures page.');
     if(msgs.length && !cs){ document.getElementById('ddb-valid').innerHTML=msgs.join(' '); return; }
     DD.mkAc({cs:cs, type:v('ddb-type','').toUpperCase(), role:v('ddb-role','arrival'), rules:v('ddb-rules','IFR'),
       bearing:n('ddb-brg',270), dist:n('ddb-dist',35), alt:n('ddb-alt',10000), spd:n('ddb-spd',250),
@@ -2029,6 +2046,721 @@ else { mount(); }
 
 <script>
 /* ================================================================
+   C90 — PUBLISHED PROCEDURES. Additive extension block.
+
+   The SIDs and STARs this facility's fields actually have, taken from
+   the FAA's coded source rather than traced off a chart image.
+
+   SOURCE. CIFP cycle 260903, effective 2026-09-03, pulled 2026-09-06.
+   Pull recipe, record layout and licence in the root
+   claude_CIFP_Source_Reference.md; the same data written out for
+   reading in claude_C90_CIFP_Procedures.md beside this file.
+   THE CYCLE IS THE CITATION — every value here is true for 28 days by
+   construction. Re-pull before trusting it in a later cycle.
+
+   COVERAGE, AND THE SHAPE OF THE GAP IT LEAVES. Sixteen STARs across
+   the eight fields C90 works, and eight SIDs — none of them at
+   O'Hare or Midway. KORD and KMDW have ZERO coded SIDs, because a
+   conventional or radar-vector departure is not something CIFP
+   carries. Read a zero as a coding gap, never as "this field has no
+   departures". The eight SIDs are the six shared by DuPage, Aurora,
+   Gary and Lewis, plus the two shared by Chicago Executive and
+   Waukegan.
+
+   NONE OF THIS FILLS THE FEEDER GATES. PLANO, KUBBS, OKK and FARMM
+   are position names out of SOP 2-1, and no KORD or KMDW STAR names
+   any of the four as a fix. CIFP does carry enroute waypoints under
+   three of those names, but nothing in the document set says a
+   position is named for the fix that shares its name — so GATES
+   stays as it was and the gates slot stays empty. That is an ask for
+   the owner, not an inference to make here.
+
+   KEYED BY AIRPORT, THEN BY PROCEDURE, and that is load-bearing. A
+   procedure identifier is NOT unique across fields: ADELL EIGHT is
+   published at DuPage, Aurora, Gary and Lewis with a different set of
+   runway transitions at each, and PANGG SEVEN has a different common
+   segment at Gary than at Midway. Keyed on the identifier alone, four
+   fields' legs concatenate into a track no aircraft could fly. Every
+   lookup below therefore takes the field first.
+
+   WHAT A PROCEDURE CARRIES. Three parts, in the order an aircraft
+   flies them. A STAR runs trans -> common -> rwy; a SID runs
+   rwy -> common -> trans. Either outer part may be absent, because
+   the published procedure does not have it.
+
+     trans   entry transitions, keyed by the fix each starts at
+     common  the segment every aircraft on the procedure flies
+     rwy     runway transitions, keyed by RWnn
+
+   A LEG IS ONE ROW OF THE PUBLISHED TABLE.
+
+     {f:'BENKY', at:12000, t:'TF'}      cross BENKY at 12,000
+     {f:'BFORD', above:22000}           at or above
+     {f:'MINCE', below:10000}           at or below
+     {f:'BYLAW', lo:20000, hi:23000}    between, inclusive
+     {f:'PTERZ', above:6000, spd:220}   with a published speed limit
+     {from:'BRIKK', vec:'FM'}           LEAVES BRIKK ON A VECTOR
+
+   The last one is the one that matters. FM, VM, VA, CA and VI do not
+   terminate at a waypoint — the fix on the record is where the leg
+   STARTS, not a point the aircraft crosses. Emitting that as `f`
+   would draw a crossing the procedure does not have and would repeat
+   the fix before it, so a vector leg never carries `f`. Anything
+   walking a track has to stop there; `trackTo` does.
+
+   Altitudes are feet, never thousands. Coordinates live once in PFIX
+   and a leg names its fix rather than repeating the numbers, because
+   a fix on seven transitions is still one pair of numbers (house
+   rule 5, one copy of every operational number).
+
+   WHAT THIS IS NOT, AND THE PART TO READ BEFORE BUILDING A DRILL ON
+   IT. CIFP is the published procedure and nothing else.
+
+     - It does not say which transition C90 ASSIGNS in a given
+       configuration. That is an LOA and SOP question and CIFP has no
+       answer to it, so the tool offers every published transition and
+       never claims one is the right one.
+     - It carries no sector boundary, no MVA, no delegation and no
+       ownership. Nothing here narrows house rule 7.
+     - It does not say the procedure is FLOWN here. This deck has no
+       traffic model, so `flies` stays false on every strip and the
+       row says "track only" rather than pretending otherwise.
+   ================================================================ */
+(function(){
+'use strict';
+
+var NS = window.DD;
+if(!NS) return;                    /* deck absent — do nothing, per the block contract */
+
+var CYCLE = '260903';
+
+var PFIX = {
+  ACITO:[41.39861,-88.18333], ADELL:[41.24972,-88.25000], AGONY:[41.85685,-90.54249], AHLOU:[41.65083,-88.12445],
+  AHSTN:[41.71266,-88.35734], AKMIE:[40.71077,-88.49112], ALQUE:[41.56942,-88.02394], ARLYN:[40.31667,-88.66667],
+  ASHEN:[41.48049,-84.64675], AWSUM:[41.52215,-86.57315], AZUMO:[41.45776,-87.00480], BACEN:[41.40667,-88.02972],
+  BAGEL:[41.51597,-85.61369], BAMBB:[42.09097,-88.27537], BEKKI:[40.31667,-88.34833], BENKY:[41.51183,-88.70902],
+  BENNR:[42.52647,-90.82066], BFORD:[41.16009,-89.58741], BHAWK:[42.51847,-89.77689], BITTR:[43.12158,-85.94394],
+  BLOKR:[41.24972,-88.08333], BOCAH:[41.85022,-87.33764], BONNT:[40.49365,-85.67938], BOOKK:[40.70435,-90.31306],
+  BOONE:[41.36376,-87.19215], BOWNN:[43.58569,-88.67805], BRBIE:[41.65083,-88.02276], BRIBE:[42.79833,-89.94036],
+  BRTTN:[41.57064,-85.52989], BULLZ:[42.45757,-88.77130], BURUU:[40.54067,-90.16789], BYLAW:[41.28635,-89.27584],
+  CABIJ:[41.88834,-87.61024], CARET:[40.78333,-91.51667], CARVR:[41.00050,-85.54750], CARYN:[41.24972,-87.89250],
+  CASHN:[39.95889,-90.25944], CATER:[41.65083,-87.83972], CENAK:[41.99611,-86.97528], CHDRR:[43.33636,-87.87207],
+  CHMPN:[42.42987,-89.05880], CHUMP:[41.37645,-89.99057], CHZHD:[41.01839,-88.62174], CLSBY:[42.40911,-88.89374],
+  CLUSO:[41.65473,-87.49489], CMSKY:[41.41306,-87.87722], COGSS:[42.34427,-88.39490], COOKS:[40.54523,-88.76516],
+  CSTLO:[43.18066,-85.37574], CUUPP:[42.43791,-89.12151], CYBIL:[40.31667,-87.86444], DABOZ:[40.66384,-88.50210],
+  DAIFE:[41.26889,-85.85528], DAJON:[40.45777,-89.10546], DARCY:[41.20222,-87.72583], DARKK:[40.25349,-90.49999],
+  DENNT:[41.41917,-87.72472], DETIE:[42.35934,-88.36344], DITCA:[42.74616,-85.72330], DONVE:[39.98639,-87.62583],
+  DRAMS:[40.82590,-90.59827], DREGS:[40.31667,-87.60750], DROSE:[40.52761,-86.05801], DUMGE:[39.98639,-87.39833],
+  DWANE:[41.65083,-87.73474], DWEEB:[41.86583,-86.82944], EARND:[41.42528,-87.57222], EDENS:[41.11639,-90.04853],
+  EERAE:[40.68333,-92.70000], ELANR:[41.20167,-87.53333], ELLJO:[41.58140,-87.38124], ELYNA:[40.44766,-93.31793],
+  EMEGE:[39.71306,-86.67778], EMMLY:[40.45000,-87.33333], ENDEE:[41.37406,-88.50897], ENNZO:[40.36061,-91.43639],
+  ERECO:[39.98639,-87.11667], ERNNY:[42.33872,-87.53418], ESSPO:[41.58174,-87.24408], ETAME:[39.98444,-86.90000],
+  EZRAH:[41.65083,-87.63524], EZZRA:[41.26186,-89.45644], FAALZ:[43.76862,-87.84876], FARCE:[41.63782,-90.29048],
+  FGHRN:[44.10222,-87.80250], FISSK:[41.04917,-86.43278], FIYER:[42.39777,-87.32117], FNBAR:[41.28472,-89.24111],
+  FNLYY:[41.51232,-85.50287], FNT:[42.96677,-83.74699], FRIDG:[40.76217,-85.78367], FTZ:[38.69433,-90.97127],
+  FUDDD:[40.47961,-91.05541], FWA:[40.97906,-85.18806], FYTTE:[42.38006,-88.66779], GAGGA:[41.55889,-87.70917],
+  GAULT:[44.07689,-85.09365], GERMN:[41.70183,-87.25183], GIWFY:[42.76211,-89.01795], GOPAC:[42.81674,-88.41585],
+  GORLC:[41.64749,-88.14043], GOTNE:[40.96127,-86.04804], GRIDZ:[40.96644,-87.28224], GROOV:[39.43131,-90.56908],
+  GURNN:[43.50726,-87.82688], HAAYQ:[40.28659,-89.21412], HALIE:[41.51607,-87.15888], HANNI:[41.50316,-87.35898],
+  HAUPO:[41.34258,-86.54310], HEDOC:[41.22720,-89.82206], HERWK:[41.18846,-88.49845], HIHRY:[41.61515,-88.32029],
+  HILLS:[41.62372,-87.52616], HIMGO:[42.09107,-87.50886], HLMIT:[40.64796,-87.11089], HOPSS:[42.70535,-88.27994],
+  HTDOG:[41.39356,-87.29144], HULLS:[41.65667,-86.79333], HUNKA:[42.53256,-88.28709], HYYDE:[43.18636,-88.85292],
+  IANNA:[42.50708,-93.08189], ILIAD:[40.76028,-89.90667], IRK:[40.13502,-92.59171], IROCK:[41.51909,-86.90520],
+  IZARD:[41.78696,-87.49769], JAKSA:[42.84390,-89.04519], JALAP:[40.83833,-93.56333], JBAGS:[42.52297,-90.31682],
+  JIBOR:[42.84040,-90.09181], JILLZ:[41.21288,-88.96807], JILYN:[41.99285,-87.98626], JNSNN:[42.02168,-90.73430],
+  JODEE:[45.27869,-84.70105], JORDY:[42.08654,-93.52578], JORJO:[41.88448,-87.98855], JOSSH:[41.50995,-87.22493],
+  JUMPN:[41.81728,-89.05800], JVL:[42.55801,-89.10526], KAMBL:[41.06417,-90.70906], KAYTO:[41.73216,-87.58302],
+  KAYYS:[42.88443,-84.58067], KELTS:[41.12423,-89.26951], KEOKK:[40.55340,-91.40367], KKOPA:[40.18046,-86.83311],
+  KNARF:[42.73882,-88.43287], KOHLL:[43.63805,-87.84139], KOOKS:[41.17712,-89.12536], KORD:[41.97694,-87.90815],
+  KPACK:[42.76812,-88.86167], KRENA:[42.37488,-88.49946], KURKK:[42.09184,-88.02720], LAACY:[41.69973,-87.40010],
+  LARVA:[42.88227,-90.55166], LEEDN:[41.71316,-88.31635], LEEDR:[42.79654,-88.53213], LLTCH:[42.06227,-84.76547],
+  LLVSS:[40.86889,-89.75500], LNANE:[41.75511,-87.27859], LOAMY:[40.42453,-91.78440], LTOUR:[42.84936,-84.91831],
+  LUCIT:[41.23234,-87.42372], LYNNI:[42.83460,-87.58144], MACES:[40.00368,-86.72295], MADII:[42.30096,-88.31381],
+  MAGOO:[40.02492,-90.76183], MAKKI:[41.44452,-85.55656], MAROC:[40.73701,-89.37464], MCDEE:[39.55167,-90.91556],
+  MCW:[43.09476,-93.32987], MEGGZ:[41.52341,-86.39574], MIGGS:[41.08505,-90.44839], MINCE:[42.16232,-87.06419],
+  MITEE:[42.70159,-90.27944], MKITA:[41.40000,-86.69278], MMEGG:[41.18376,-88.63388], MNOSO:[42.38220,-92.55749],
+  MONKZ:[41.88433,-87.80180], MONNY:[42.07895,-91.28106], MOOPS:[42.65748,-88.89252], MOTRR:[42.35849,-88.50288],
+  MOWSR:[42.54816,-88.39603], MUMPR:[42.24358,-88.34980], MUSKY:[42.15329,-86.93713], MYRRS:[42.52389,-92.05992],
+  MYTCH:[42.74029,-89.73623], NANEE:[40.86745,-88.84043], NEWRK:[41.56612,-88.57112], NIGHT:[41.83833,-91.77361],
+  NITWT:[41.73472,-93.41417], NOLNN:[41.23438,-84.63667], NUNWS:[41.91861,-88.96084], NYLEN:[40.86667,-85.81667],
+  OBENE:[41.85011,-89.72016], OBSTR:[43.69506,-85.21487], OCCHO:[41.15811,-89.41645], ODAXY:[44.63357,-83.20451],
+  OGALE:[41.40250,-93.48139], OGECA:[42.64015,-92.08363], OHHMY:[42.88139,-91.75833], OHLIE:[42.72582,-90.19743],
+  OLCYK:[41.54019,-87.60446], OREOS:[41.90021,-89.20929], OVETE:[44.85422,-87.68788], OZZEY:[41.39917,-86.93350],
+  PAITN:[42.56103,-86.72261], PANGG:[41.52501,-86.07233], PAPPI:[42.26997,-87.60720], PEALE:[40.99319,-89.47301],
+  PECOK:[44.00769,-85.72075], PETAH:[41.88552,-88.15006], PHEEB:[40.26412,-89.27334], PHRLY:[42.72416,-87.52381],
+  PINKK:[41.83174,-87.69460], PIRPL:[44.28449,-87.77499], PKACH:[41.58032,-88.13171], PNTAC:[40.82203,-88.73367],
+  POOGY:[40.39817,-89.14365], POSOC:[40.80815,-87.19980], POSSM:[41.87466,-88.27518], PRADY:[41.97813,-86.75974],
+  PRISE:[41.53556,-86.78139], PRONK:[41.17827,-85.47734], PURTY:[41.13866,-89.72117], RAGSS:[41.72445,-89.10676],
+  RBS:[40.58170,-88.16427], RHIVR:[42.64596,-86.27060], RINNO:[41.80543,-88.09338], ROD:[40.28780,-84.04310],
+  ROEPR:[40.91436,-87.95743], ROEZZ:[40.37470,-92.71674], ROTTN:[40.99583,-93.52556], ROYKO:[41.02000,-85.88333],
+  RREGY:[41.87393,-87.48975], RYELY:[41.03333,-89.97250], SAAYY:[42.52707,-91.42905], SCOTO:[39.16915,-86.85472],
+  SHAIN:[41.64361,-89.13583], SHIKY:[44.19444,-88.41806], SMIDD:[42.75084,-92.62112], SMUUV:[42.46633,-86.12732],
+  SOHOW:[39.84038,-89.67706], SOOLU:[42.19637,-88.14769], SSM:[46.41211,-84.31487], STASH:[41.77086,-86.32314],
+  STKNY:[41.50678,-88.29044], STL:[38.86072,-90.48235], STNLE:[42.47279,-89.40404], STYLE:[41.77397,-86.80838],
+  SUZYQ:[43.01474,-92.17444], SWIIS:[42.52506,-87.50950], TAAIL:[42.85122,-88.27983], TACTT:[41.85023,-87.43799],
+  TEDDY:[42.41966,-88.64628], TEEOO:[42.85767,-90.71718], TINLY:[41.55530,-87.84932], TMRAA:[41.27432,-88.79392],
+  TOLCA:[41.14707,-89.12022], TONIE:[41.88371,-87.49076], TOWNE:[41.88736,-86.62737], TRICH:[41.20943,-88.80755],
+  TRIDE:[41.46651,-89.19935], TROLY:[40.69454,-86.05419], TRTLL:[41.37056,-88.61161], TRUDO:[42.68402,-88.41980],
+  TUBEZ:[42.18092,-87.70080], TUURN:[41.75448,-87.75269], TVC:[44.66792,-85.55001], UFDUH:[43.70998,-85.79638],
+  UGGLY:[42.17871,-90.91831], UJEAN:[41.20726,-88.08715], USTIS:[40.76223,-88.29655], VEECK:[41.12528,-86.61917],
+  VIIKS:[44.27972,-87.12722], VIKNG:[42.96602,-91.54325], VINCA:[40.34535,-89.82352], VIO:[42.78672,-85.49707],
+  VULCN:[42.09176,-87.79417], WADLL:[41.76022,-87.62917], WATSN:[41.28345,-86.03534], WELCM:[43.05130,-91.27038],
+  WELTS:[39.00638,-91.77282], WLTER:[42.68650,-86.05109], WNNRS:[41.54561,-87.86076], WUNTZ:[40.42585,-89.07196],
+  WYDIK:[41.00359,-87.75677], WYNDE:[42.45576,-87.11017], YEDSU:[42.75872,-89.17688], YOLUR:[42.15054,-86.62345],
+  ZANDI:[42.82834,-88.24088], ZANLA:[41.18972,-84.84639], ZOWRO:[42.77285,-88.66568], ZYDEK:[41.99230,-87.81440],
+  ZZIPR:[43.18583,-91.65917]
+};
+
+var STARS = {
+ KGYY:{
+  LUCIT3:{rnav:true,
+   trans:{'COOKS':[{f:'COOKS',at:17000,t:'IF'},{f:'DABOZ',at:17000,t:'TF'},{f:'USTIS',at:15000,t:'TF'},{f:'ROEPR',lo:11000,hi:13000,t:'TF'},{f:'WYDIK',lo:8000,hi:11000,t:'TF'},{f:'LUCIT',at:4000,t:'TF'}],'EDENS':[{f:'EDENS',t:'IF'},{f:'HERWK',at:10000,t:'TF'},{f:'UJEAN',at:10000,t:'TF'},{f:'LUCIT',at:4000,t:'TF'}],'HERWK':[{f:'HERWK',at:10000,t:'IF'},{f:'UJEAN',at:10000,t:'TF'},{f:'LUCIT',at:4000,t:'TF'}],'HLMIT':[{f:'HLMIT',at:12000,t:'IF'},{f:'POSOC',at:11000,t:'TF'},{f:'GRIDZ',lo:8000,hi:10000,t:'TF'},{f:'LUCIT',at:4000,t:'TF'}],'MACES':[{f:'MACES',t:'IF'},{f:'KKOPA',at:24000,t:'TF'},{f:'HLMIT',at:12000,t:'TF'},{f:'POSOC',at:11000,t:'TF'},{f:'GRIDZ',lo:8000,hi:10000,t:'TF'},{f:'LUCIT',at:4000,t:'TF'}],'SOHOW':[{f:'SOHOW',t:'IF'},{f:'HAAYQ',at:24000,t:'TF'},{f:'WUNTZ',t:'TF'},{f:'COOKS',at:17000,t:'TF'},{f:'DABOZ',at:17000,t:'TF'},{f:'USTIS',at:15000,t:'TF'},{f:'ROEPR',lo:11000,hi:13000,t:'TF'},{f:'WYDIK',lo:8000,hi:11000,t:'TF'},{f:'LUCIT',at:4000,t:'TF'}]},
+   common:[{f:'LUCIT',at:4000,t:'IF'},{f:'HTDOG',at:4000,t:'TF'},{from:'HTDOG',vec:'FM'}],
+  },
+  PANGG7:{rnav:true,
+   trans:{'ASHEN':[{f:'ASHEN',t:'IF'},{f:'FNLYY',at:24000,t:'TF'},{f:'BAGEL',t:'TF'},{f:'PANGG',t:'TF'}],'BAGEL':[{f:'BAGEL',t:'IF'},{f:'PANGG',t:'TF'}],'FWA':[{f:'FWA',t:'IF'},{f:'MAKKI',at:24000,t:'TF'},{f:'BAGEL',t:'TF'},{f:'PANGG',t:'TF'}],'LLTCH':[{f:'LLTCH',t:'IF'},{f:'BRTTN',at:24000,t:'TF'},{f:'BAGEL',t:'TF'},{f:'PANGG',t:'TF'}]},
+   common:[{f:'PANGG',t:'IF'},{f:'MEGGZ',at:11000,t:'TF'},{f:'AWSUM',at:10000,t:'TF'},{f:'IROCK',t:'TF'},{f:'HALIE',at:6000,t:'TF'},{f:'JOSSH',at:6000,t:'TF'},{from:'JOSSH',vec:'FM'}],
+  },
+ },
+ KMDW:{
+  ENDEE8:{rnav:true,
+   trans:{'CHUMP':[{f:'CHUMP',lo:17000,hi:21000,t:'IF'},{f:'HEDOC',t:'TF'},{f:'PURTY',lo:15000,hi:19000,t:'TF'},{f:'OCCHO',lo:14000,hi:16000,t:'TF'},{f:'KOOKS',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'DARKK':[{f:'DARKK',at:31000,t:'IF'},{f:'BURUU',lo:24000,hi:29000,t:'TF'},{f:'ILIAD',t:'TF'},{f:'LLVSS',lo:19000,hi:21000,t:'TF'},{f:'PEALE',lo:16000,hi:19000,t:'TF'},{f:'TOLCA',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'EDENS':[{f:'EDENS',lo:19000,hi:21000,t:'IF'},{f:'PURTY',lo:15000,hi:19000,t:'TF'},{f:'OCCHO',lo:14000,hi:16000,t:'TF'},{f:'KOOKS',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'FUDDD':[{f:'FUDDD',at:31000,t:'IF'},{f:'BOOKK',lo:24000,hi:29000,t:'TF'},{f:'LLVSS',lo:19000,hi:21000,t:'TF'},{f:'PEALE',lo:16000,hi:19000,t:'TF'},{f:'TOLCA',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'IRK':[{f:'IRK',t:'IF'},{f:'ENNZO',t:'TF'},{f:'FUDDD',at:31000,t:'TF'},{f:'BOOKK',lo:24000,hi:29000,t:'TF'},{f:'LLVSS',lo:19000,hi:21000,t:'TF'},{f:'PEALE',lo:16000,hi:19000,t:'TF'},{f:'TOLCA',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'JALAP':[{f:'JALAP',t:'IF'},{f:'KAMBL',lo:24000,hi:27000,t:'TF'},{f:'MIGGS',lo:21000,hi:23000,t:'TF'},{f:'EDENS',lo:19000,hi:21000,t:'TF'},{f:'PURTY',lo:15000,hi:19000,t:'TF'},{f:'OCCHO',lo:14000,hi:16000,t:'TF'},{f:'KOOKS',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'KAMBL':[{f:'KAMBL',lo:24000,hi:27000,t:'IF'},{f:'MIGGS',lo:21000,hi:23000,t:'TF'},{f:'EDENS',lo:19000,hi:21000,t:'TF'},{f:'PURTY',lo:15000,hi:19000,t:'TF'},{f:'OCCHO',lo:14000,hi:16000,t:'TF'},{f:'KOOKS',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'LLVSS':[{f:'LLVSS',lo:19000,hi:21000,t:'IF'},{f:'PEALE',lo:16000,hi:19000,t:'TF'},{f:'TOLCA',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'MAGOO':[{f:'MAGOO',t:'IF'},{f:'DARKK',at:31000,t:'TF'},{f:'BURUU',lo:24000,hi:29000,t:'TF'},{f:'ILIAD',t:'TF'},{f:'LLVSS',lo:19000,hi:21000,t:'TF'},{f:'PEALE',lo:16000,hi:19000,t:'TF'},{f:'TOLCA',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'NANEE':[{f:'NANEE',lo:14000,hi:16000,t:'IF'},{f:'MMEGG',below:9000,t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'OHHMY':[{f:'OHHMY',t:'IF'},{f:'UGGLY',at:24000,t:'TF'},{f:'JNSNN',at:24000,t:'TF'},{f:'AGONY',lo:21000,hi:23000,t:'TF'},{f:'FARCE',t:'TF'},{f:'CHUMP',lo:17000,hi:21000,t:'TF'},{f:'HEDOC',t:'TF'},{f:'PURTY',lo:15000,hi:19000,t:'TF'},{f:'OCCHO',lo:14000,hi:16000,t:'TF'},{f:'KOOKS',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'PHEEB':[{f:'PHEEB',t:'IF'},{f:'POOGY',at:24000,t:'TF'},{f:'DAJON',below:23000,t:'TF'},{f:'NANEE',lo:14000,hi:16000,t:'TF'},{f:'MMEGG',below:9000,t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'POOGY':[{f:'POOGY',at:24000,t:'IF'},{f:'DAJON',below:23000,t:'TF'},{f:'NANEE',lo:14000,hi:16000,t:'TF'},{f:'MMEGG',below:9000,t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}],'UGGLY':[{f:'UGGLY',at:24000,t:'IF'},{f:'JNSNN',at:24000,t:'TF'},{f:'AGONY',lo:21000,hi:23000,t:'TF'},{f:'FARCE',t:'TF'},{f:'CHUMP',lo:17000,hi:21000,t:'TF'},{f:'HEDOC',t:'TF'},{f:'PURTY',lo:15000,hi:19000,t:'TF'},{f:'OCCHO',lo:14000,hi:16000,t:'TF'},{f:'KOOKS',lo:10000,hi:13000,t:'TF'},{f:'JILLZ',at:10000,t:'TF'},{f:'TMRAA',t:'TF'},{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'TF'}]},
+   common:[{f:'ENDEE',lo:6000,hi:7000,spd:250,t:'IF'},{f:'STKNY',at:6000,t:'TF'}],
+   rwy:{'RW04R':[{f:'STKNY',at:6000,t:'IF'},{f:'ALQUE',at:6000,t:'TF'},{from:'ALQUE',vec:'FM'}],'RW13L':[{f:'STKNY',at:6000,t:'IF'},{f:'GORLC',t:'TF'},{from:'GORLC',vec:'FM'}],'RW22L':[{f:'STKNY',at:6000,t:'IF'},{f:'PKACH',at:6000,t:'TF'},{f:'TUURN',t:'TF'},{f:'WADLL',t:'TF'},{from:'WADLL',vec:'FM'}],'RW31R':[{f:'STKNY',at:6000,t:'IF'},{f:'WNNRS',t:'TF'},{f:'GAGGA',t:'TF'},{from:'GAGGA',vec:'FM'}]},
+  },
+  FISSK7:{rnav:true,
+   trans:{'DROSE':[{f:'DROSE',t:'IF'},{f:'TROLY',t:'TF'},{f:'GOTNE',t:'TF'},{f:'FISSK',at:11000,t:'TF'}]},
+   common:[{f:'FISSK',at:11000,t:'IF'},{f:'VEECK',t:'TF'},{f:'OZZEY',t:'TF'},{f:'AZUMO',t:'TF'},{f:'HALIE',at:6000,t:'TF'}],
+   rwy:{'RW04R':[{f:'HALIE',at:6000,t:'IF'},{f:'OLCYK',above:4000,t:'TF'},{from:'OLCYK',vec:'FM'}],'RW13L':[{f:'HALIE',at:6000,t:'IF'},{f:'TINLY',above:4000,t:'TF'},{from:'TINLY',vec:'FM'}],'RW22L':[{f:'HALIE',at:6000,t:'IF'},{f:'GERMN',above:4000,t:'TF'},{f:'LNANE',t:'TF'},{f:'BOCAH',t:'TF'},{f:'TACTT',at:3000,t:'TF'}],'RW31R':[{f:'HALIE',at:6000,t:'IF'},{f:'ELLJO',at:6000,t:'TF'},{f:'HILLS',at:5000,spd:240,t:'TF'}]},
+  },
+  PANGG7:{rnav:true,
+   trans:{'ASHEN':[{f:'ASHEN',t:'IF'},{f:'FNLYY',at:24000,t:'TF'},{f:'BAGEL',t:'TF'},{f:'PANGG',t:'TF'}],'BAGEL':[{f:'BAGEL',t:'IF'},{f:'PANGG',t:'TF'}],'FWA':[{f:'FWA',t:'IF'},{f:'MAKKI',at:24000,t:'TF'},{f:'BAGEL',t:'TF'},{f:'PANGG',t:'TF'}],'LLTCH':[{f:'LLTCH',t:'IF'},{f:'BRTTN',at:24000,t:'TF'},{f:'BAGEL',t:'TF'},{f:'PANGG',t:'TF'}]},
+   common:[{f:'PANGG',t:'IF'},{f:'MEGGZ',at:11000,t:'TF'},{f:'AWSUM',at:10000,t:'TF'},{f:'IROCK',t:'TF'},{f:'HALIE',at:6000,t:'TF'}],
+   rwy:{'RW04R':[{f:'HALIE',at:6000,t:'IF'},{f:'OLCYK',above:4000,t:'TF'},{from:'OLCYK',vec:'FM'}],'RW13L':[{f:'HALIE',at:6000,t:'IF'},{f:'TINLY',above:4000,t:'TF'},{from:'TINLY',vec:'FM'}],'RW22L':[{f:'HALIE',at:6000,t:'IF'},{f:'GERMN',above:4000,t:'TF'},{f:'LNANE',t:'TF'},{f:'BOCAH',t:'TF'},{f:'TACTT',at:3000,t:'TF'}],'RW31R':[{f:'HALIE',at:6000,t:'IF'},{f:'ELLJO',at:6000,t:'TF'},{f:'HILLS',at:5000,spd:240,t:'TF'}]},
+  },
+ },
+ KORD:{
+  BENKY6:{rnav:true,
+   trans:{'BFORD':[{f:'BFORD',above:22000,t:'IF'},{f:'BYLAW',lo:20000,hi:23000,t:'TF'},{f:'BENKY',at:12000,t:'TF'}],'BYLAW':[{f:'BYLAW',lo:20000,hi:23000,t:'IF'},{f:'BENKY',at:12000,t:'TF'}],'CASHN':[{f:'CASHN',t:'IF'},{f:'BFORD',above:22000,t:'TF'},{f:'BYLAW',lo:20000,hi:23000,t:'TF'},{f:'BENKY',at:12000,t:'TF'}],'DRAMS':[{f:'DRAMS',t:'IF'},{f:'RYELY',above:24000,t:'TF'},{f:'BFORD',above:22000,t:'TF'},{f:'BYLAW',lo:20000,hi:23000,t:'TF'},{f:'BENKY',at:12000,t:'TF'}],'IRK':[{f:'IRK',t:'IF'},{f:'LOAMY',t:'TF'},{f:'KEOKK',t:'TF'},{f:'DRAMS',t:'TF'},{f:'RYELY',above:24000,t:'TF'},{f:'BFORD',above:22000,t:'TF'},{f:'BYLAW',lo:20000,hi:23000,t:'TF'},{f:'BENKY',at:12000,t:'TF'}],'LOAMY':[{f:'LOAMY',t:'IF'},{f:'KEOKK',t:'TF'},{f:'DRAMS',t:'TF'},{f:'RYELY',above:24000,t:'TF'},{f:'BFORD',above:22000,t:'TF'},{f:'BYLAW',lo:20000,hi:23000,t:'TF'},{f:'BENKY',at:12000,t:'TF'}],'TRICH':[{f:'TRICH',lo:14000,hi:15000,t:'IF'},{f:'BENKY',at:12000,t:'TF'}]},
+   common:[{f:'BENKY',at:12000,t:'IF'},{f:'NEWRK',t:'TF'},{f:'AHSTN',t:'TF'},{f:'PETAH',t:'TF'}],
+   rwy:{'RW04B':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW09B':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW10B':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW22B':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27C':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27L':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27R':[{f:'PETAH',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW28C':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW28L':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'RREGY',t:'TF'},{from:'RREGY',vec:'FM'}],'RW28R':[{f:'PETAH',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}]},
+  },
+  ERNNY8:{rnav:true,
+   trans:{'CHDRR':[{f:'CHDRR',at:14000,t:'IF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'FAALZ':[{f:'FAALZ',t:'IF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'FGHRN':[{f:'FGHRN',t:'IF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'KOHLL':[{f:'KOHLL',lo:19000,hi:21000,t:'IF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'LYNNI':[{f:'LYNNI',t:'IF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'OVETE':[{f:'OVETE',t:'IF'},{f:'PIRPL',t:'TF'},{f:'FGHRN',t:'TF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'PIRPL':[{f:'PIRPL',t:'IF'},{f:'FGHRN',t:'TF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'STASH':[{f:'STASH',t:'IF'},{f:'TOWNE',t:'TF'},{f:'PRADY',t:'TF'},{f:'MUSKY',t:'TF'},{f:'MINCE',below:10000,t:'TF'},{f:'ERNNY',t:'TF'}],'VIIKS':[{f:'VIIKS',t:'IF'},{f:'FGHRN',t:'TF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'LYNNI',t:'TF'},{f:'PHRLY',t:'TF'},{f:'SWIIS',t:'TF'},{f:'ERNNY',t:'TF'}],'YOLUR':[{f:'YOLUR',t:'IF'},{f:'MUSKY',t:'TF'},{f:'MINCE',below:10000,t:'TF'},{f:'ERNNY',t:'TF'}]},
+   common:[{f:'ERNNY',t:'IF'},{f:'PAPPI',t:'TF'},{f:'TUBEZ',t:'TF'}],
+   rwy:{'RW04B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW09B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW10B':[{f:'TUBEZ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW22B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW27B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW28B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}]},
+  },
+  ESSPO5:{rnav:true,
+   trans:{'BONNT':[{f:'BONNT',t:'IF'},{f:'FRIDG',t:'TF'},{f:'WATSN',t:'TF'},{f:'MKITA',t:'TF'},{f:'ESSPO',t:'TF'}],'FWA':[{f:'FWA',t:'IF'},{f:'PRONK',t:'TF'},{f:'DAIFE',t:'TF'},{f:'WATSN',t:'TF'},{f:'MKITA',t:'TF'},{f:'ESSPO',t:'TF'}],'NOLNN':[{f:'NOLNN',t:'IF'},{f:'DAIFE',t:'TF'},{f:'WATSN',t:'TF'},{f:'MKITA',t:'TF'},{f:'ESSPO',t:'TF'}],'WATSN':[{f:'WATSN',t:'IF'},{f:'MKITA',t:'TF'},{f:'ESSPO',t:'TF'}]},
+   common:[{f:'ESSPO',t:'IF'},{f:'LAACY',t:'TF'},{f:'IZARD',t:'TF'},{f:'CABIJ',t:'TF'}],
+   rwy:{'RW04B':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW09C':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW09L':[{f:'CABIJ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW09R':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW10B':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW22B':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW27B':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW28B':[{f:'CABIJ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}]},
+  },
+  FYTTE7:{rnav:true,
+   trans:{'BENNR':[{f:'BENNR',t:'IF'},{f:'JBAGS',t:'TF'},{f:'BHAWK',lo:21000,hi:26000,t:'TF'},{f:'STNLE',lo:17000,hi:21000,spd:280,t:'TF'},{f:'CUUPP',t:'TF'},{f:'CHMPN',t:'TF'},{f:'CLSBY',lo:13000,hi:15000,spd:270,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'BHAWK':[{f:'BHAWK',lo:21000,hi:26000,t:'IF'},{f:'STNLE',lo:17000,hi:21000,spd:280,t:'TF'},{f:'CUUPP',t:'TF'},{f:'CHMPN',t:'TF'},{f:'CLSBY',lo:13000,hi:15000,spd:270,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'BOWNN':[{f:'BOWNN',above:24000,t:'IF'},{f:'HYYDE',lo:17000,hi:22000,t:'TF'},{f:'JAKSA',at:15000,spd:280,t:'TF'},{f:'MOOPS',above:14000,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'CHMPN':[{f:'CHMPN',t:'IF'},{f:'CLSBY',lo:13000,hi:15000,spd:270,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'MYRRS':[{f:'MYRRS',t:'IF'},{f:'SAAYY',t:'TF'},{f:'BENNR',t:'TF'},{f:'JBAGS',t:'TF'},{f:'BHAWK',lo:21000,hi:26000,t:'TF'},{f:'STNLE',lo:17000,hi:21000,spd:280,t:'TF'},{f:'CUUPP',t:'TF'},{f:'CHMPN',t:'TF'},{f:'CLSBY',lo:13000,hi:15000,spd:270,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'SHIKY':[{f:'SHIKY',t:'IF'},{f:'BOWNN',above:24000,t:'TF'},{f:'HYYDE',lo:17000,hi:22000,t:'TF'},{f:'JAKSA',at:15000,spd:280,t:'TF'},{f:'MOOPS',above:14000,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'TEEOO':[{f:'TEEOO',t:'IF'},{f:'MITEE',t:'TF'},{f:'BHAWK',lo:21000,hi:26000,t:'TF'},{f:'STNLE',lo:17000,hi:21000,spd:280,t:'TF'},{f:'CUUPP',t:'TF'},{f:'CHMPN',t:'TF'},{f:'CLSBY',lo:13000,hi:15000,spd:270,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}],'ZZIPR':[{f:'ZZIPR',t:'IF'},{f:'WELCM',t:'TF'},{f:'TEEOO',t:'TF'},{f:'MITEE',t:'TF'},{f:'BHAWK',lo:21000,hi:26000,t:'TF'},{f:'STNLE',lo:17000,hi:21000,spd:280,t:'TF'},{f:'CUUPP',t:'TF'},{f:'CHMPN',t:'TF'},{f:'CLSBY',lo:13000,hi:15000,spd:270,t:'TF'},{f:'FYTTE',at:11000,spd:250,t:'TF'}]},
+   common:[{f:'FYTTE',at:11000,spd:250,t:'IF'},{f:'MOTRR',t:'TF'},{f:'COGSS',t:'TF'},{f:'MADII',t:'TF'},{f:'SOOLU',t:'TF'}],
+   rwy:{'RW04B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW09B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW10B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW22B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW27C':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27L':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW27R':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW28C':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW28L':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'RREGY',t:'TF'},{from:'RREGY',vec:'FM'}],'RW28R':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}]},
+  },
+  JVL1:{rnav:false,
+   trans:{'MCW':[{f:'MCW',t:'IF'},{f:'SUZYQ',t:'TF'},{f:'VIKNG',t:'TF'},{f:'LARVA',t:'TF'},{f:'JIBOR',t:'TF'},{f:'BRIBE',t:'TF'},{f:'MYTCH',t:'TF'},{f:'JVL',t:'TF'}]},
+   common:[{f:'JVL',t:'IF'},{f:'BULLZ',t:'TF'},{f:'TEDDY',t:'TF'},{f:'KRENA',at:11000,t:'TF'},{from:'KORD',vec:'VM'}],
+  },
+  MADII7:{rnav:true,
+   trans:{'CHDRR':[{f:'CHDRR',at:14000,t:'IF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'FAALZ':[{f:'FAALZ',t:'IF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'FGHRN':[{f:'FGHRN',t:'IF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'KOHLL':[{f:'KOHLL',lo:19000,hi:21000,t:'IF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'OVETE':[{f:'OVETE',t:'IF'},{f:'PIRPL',t:'TF'},{f:'FGHRN',t:'TF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'PIRPL':[{f:'PIRPL',t:'IF'},{f:'FGHRN',t:'TF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'VIIKS':[{f:'VIIKS',t:'IF'},{f:'FGHRN',t:'TF'},{f:'FAALZ',t:'TF'},{f:'KOHLL',lo:19000,hi:21000,t:'TF'},{f:'GURNN',t:'TF'},{f:'CHDRR',at:14000,t:'TF'},{f:'ZANDI',t:'TF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}],'ZANDI':[{f:'ZANDI',t:'IF'},{f:'HOPSS',t:'TF'},{f:'HUNKA',t:'TF'},{f:'MADII',t:'TF'}]},
+   common:[{f:'MADII',t:'IF'},{f:'SOOLU',t:'TF'}],
+   rwy:{'RW04B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW09B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW10B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW22B':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW27C':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27L':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW27R':[{f:'SOOLU',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW28C':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW28L':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'RREGY',t:'TF'},{from:'RREGY',vec:'FM'}],'RW28R':[{f:'SOOLU',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}]},
+  },
+  SHAIN2:{rnav:true,
+   trans:{'BFORD':[{f:'BFORD',above:22000,t:'IF'},{f:'EZZRA',above:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'CASHN':[{f:'CASHN',t:'IF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'KELTS',above:20000,t:'TF'},{f:'FNBAR',lo:17000,hi:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'DRAMS':[{f:'DRAMS',t:'IF'},{f:'RYELY',above:24000,t:'TF'},{f:'BFORD',above:22000,t:'TF'},{f:'EZZRA',above:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'FTZ':[{f:'FTZ',t:'IF'},{f:'GROOV',t:'TF'},{f:'CASHN',t:'TF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'KELTS',above:20000,t:'TF'},{f:'FNBAR',lo:17000,hi:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'IRK':[{f:'IRK',t:'IF'},{f:'LOAMY',t:'TF'},{f:'KEOKK',t:'TF'},{f:'DRAMS',t:'TF'},{f:'RYELY',above:24000,t:'TF'},{f:'BFORD',above:22000,t:'TF'},{f:'EZZRA',above:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'LOAMY':[{f:'LOAMY',t:'IF'},{f:'KEOKK',t:'TF'},{f:'DRAMS',t:'TF'},{f:'RYELY',above:24000,t:'TF'},{f:'BFORD',above:22000,t:'TF'},{f:'EZZRA',above:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'PNTAC':[{f:'PNTAC',t:'IF'},{f:'TRICH',t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'STL':[{f:'STL',t:'IF'},{f:'GROOV',t:'TF'},{f:'CASHN',t:'TF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'KELTS',above:20000,t:'TF'},{f:'FNBAR',lo:17000,hi:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'TRIDE':[{f:'TRIDE',lo:15000,hi:16000,t:'IF'},{f:'SHAIN',at:12000,t:'TF'}],'VINCA':[{f:'VINCA',t:'IF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'KELTS',above:20000,t:'TF'},{f:'FNBAR',lo:17000,hi:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}],'WELTS':[{f:'WELTS',t:'IF'},{f:'MCDEE',t:'TF'},{f:'CASHN',t:'TF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'KELTS',above:20000,t:'TF'},{f:'FNBAR',lo:17000,hi:20000,t:'TF'},{f:'TRIDE',lo:15000,hi:16000,t:'TF'},{f:'SHAIN',at:12000,t:'TF'}]},
+   common:[{f:'SHAIN',at:12000,t:'IF'},{f:'RAGSS',t:'TF'},{f:'JUMPN',t:'TF'},{f:'NUNWS',t:'TF'},{from:'NUNWS',vec:'FM'}],
+  },
+  TRTLL6:{rnav:true,
+   trans:{'BYLAW':[{f:'BYLAW',lo:20000,hi:23000,t:'IF'},{f:'TRTLL',at:11000,t:'TF'}],'CASHN':[{f:'CASHN',t:'IF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}],'FTZ':[{f:'FTZ',t:'IF'},{f:'GROOV',t:'TF'},{f:'CASHN',t:'TF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}],'MAROC':[{f:'MAROC',lo:24000,hi:27000,t:'IF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}],'PNTAC':[{f:'PNTAC',t:'IF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}],'STL':[{f:'STL',t:'IF'},{f:'GROOV',t:'TF'},{f:'CASHN',t:'TF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}],'VINCA':[{f:'VINCA',t:'IF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}],'WELTS':[{f:'WELTS',t:'IF'},{f:'MCDEE',t:'TF'},{f:'CASHN',t:'TF'},{f:'VINCA',t:'TF'},{f:'MAROC',lo:24000,hi:27000,t:'TF'},{f:'TRICH',lo:14000,hi:15000,t:'TF'},{f:'TRTLL',at:11000,t:'TF'}]},
+   common:[{f:'TRTLL',at:11000,t:'IF'},{f:'HIHRY',t:'TF'},{f:'RINNO',t:'TF'}],
+   rwy:{'RW04B':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW09B':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW10B':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW22B':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27C':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27L':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW27R':[{f:'RINNO',t:'IF'},{f:'KURKK',t:'TF'},{f:'VULCN',t:'TF'},{f:'HIMGO',t:'TF'},{from:'HIMGO',vec:'FM'}],'RW28C':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}],'RW28L':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'RREGY',t:'TF'},{from:'RREGY',vec:'FM'}],'RW28R':[{f:'RINNO',t:'IF'},{f:'JORJO',t:'TF'},{f:'MONKZ',t:'TF'},{f:'TONIE',t:'TF'},{from:'TONIE',vec:'FM'}]},
+  },
+  VEECK5:{rnav:true,
+   trans:{'BONNT':[{f:'BONNT',t:'IF'},{f:'NYLEN',t:'TF'},{f:'VEECK',t:'TF'}],'FWA':[{f:'FWA',t:'IF'},{f:'CARVR',t:'TF'},{f:'ROYKO',t:'TF'},{f:'VEECK',t:'TF'}]},
+   common:[{f:'VEECK',t:'IF'},{f:'BOONE',t:'TF'},{f:'HANNI',t:'TF'},{f:'CLUSO',t:'TF'},{f:'KAYTO',t:'TF'},{f:'PINKK',t:'TF'}],
+   rwy:{'RW04B':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW09C':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW09L':[{f:'PINKK',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW09R':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW10B':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW22B':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW27B':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW28B':[{f:'PINKK',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}]},
+  },
+  WATSN4:{rnav:true,
+   trans:{'BONNT':[{f:'BONNT',t:'IF'},{f:'FRIDG',t:'TF'},{f:'WATSN',t:'TF'}],'DAIFE':[{f:'DAIFE',t:'IF'},{f:'WATSN',t:'TF'}],'FWA':[{f:'FWA',t:'IF'},{f:'PRONK',t:'TF'},{f:'DAIFE',t:'TF'},{f:'WATSN',t:'TF'}],'ROD':[{f:'ROD',t:'IF'},{f:'FWA',t:'TF'},{f:'PRONK',t:'TF'},{f:'DAIFE',t:'TF'},{f:'WATSN',t:'TF'}],'ZANLA':[{f:'ZANLA',t:'IF'},{f:'DAIFE',t:'TF'},{f:'WATSN',t:'TF'}]},
+   common:[{f:'WATSN',t:'IF'},{f:'HAUPO',t:'TF'},{f:'MKITA',t:'TF'},{f:'PRISE',t:'TF'},{f:'HULLS',t:'TF'},{f:'STYLE',t:'TF'},{f:'DWEEB',t:'TF'},{f:'CENAK',t:'TF'},{from:'KORD',vec:'VM'}],
+  },
+  WYNDE3:{rnav:true,
+   trans:{'FNT':[{f:'FNT',t:'IF'},{f:'KAYYS',t:'TF'},{f:'LTOUR',t:'TF'},{f:'VIO',t:'TF'},{f:'DITCA',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'KAYYS':[{f:'KAYYS',t:'IF'},{f:'LTOUR',t:'TF'},{f:'VIO',t:'TF'},{f:'DITCA',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'OBSTR':[{f:'OBSTR',t:'IF'},{f:'CSTLO',t:'TF'},{f:'VIO',t:'TF'},{f:'DITCA',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'ODAXY':[{f:'ODAXY',t:'IF'},{f:'GAULT',t:'TF'},{f:'OBSTR',t:'TF'},{f:'CSTLO',t:'TF'},{f:'VIO',t:'TF'},{f:'DITCA',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'SMUUV':[{f:'SMUUV',t:'IF'},{f:'WYNDE',t:'TF'}],'SSM':[{f:'SSM',t:'IF'},{f:'JODEE',t:'TF'},{f:'GAULT',t:'TF'},{f:'OBSTR',t:'TF'},{f:'CSTLO',t:'TF'},{f:'VIO',t:'TF'},{f:'DITCA',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'TVC':[{f:'TVC',below:24000,t:'IF'},{f:'PECOK',t:'TF'},{f:'UFDUH',below:24000,t:'TF'},{f:'BITTR',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'UFDUH':[{f:'UFDUH',below:24000,t:'IF'},{f:'BITTR',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}],'VIO':[{f:'VIO',t:'IF'},{f:'DITCA',t:'TF'},{f:'WLTER',t:'TF'},{f:'RHIVR',t:'TF'},{f:'PAITN',t:'TF'},{f:'WYNDE',t:'TF'}]},
+   common:[{f:'WYNDE',t:'IF'},{f:'FIYER',t:'TF'},{f:'ERNNY',t:'TF'},{f:'PAPPI',t:'TF'},{f:'TUBEZ',t:'TF'}],
+   rwy:{'RW04R':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW09B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW10B':[{f:'TUBEZ',t:'IF'},{f:'MONKZ',t:'TF'},{f:'JORJO',t:'TF'},{f:'POSSM',t:'TF'},{from:'POSSM',vec:'FM'}],'RW22B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW27B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}],'RW28B':[{f:'TUBEZ',t:'IF'},{f:'VULCN',t:'TF'},{f:'KURKK',t:'TF'},{f:'BAMBB',t:'TF'},{from:'BAMBB',vec:'FM'}]},
+  },
+ },
+ KPWK:{
+  GOPAC3:{rnav:true,
+   trans:{'CHZHD':[{f:'CHZHD',t:'IF'},{f:'LEEDN',t:'TF'},{f:'MUMPR',t:'TF'},{f:'DETIE',t:'TF'},{f:'MOWSR',t:'TF'},{f:'TRUDO',spd:250,t:'TF'},{f:'KNARF',t:'TF'},{f:'GOPAC',t:'TF'}],'LEEDN':[{f:'LEEDN',t:'IF'},{f:'MUMPR',t:'TF'},{f:'DETIE',t:'TF'},{f:'MOWSR',t:'TF'},{f:'TRUDO',spd:250,t:'TF'},{f:'KNARF',t:'TF'},{f:'GOPAC',t:'TF'}],'OGECA':[{f:'OGECA',t:'IF'},{f:'OHLIE',t:'TF'},{f:'YEDSU',t:'TF'},{f:'GIWFY',t:'TF'},{f:'KPACK',t:'TF'},{f:'ZOWRO',t:'TF'},{f:'LEEDR',spd:250,t:'TF'},{f:'GOPAC',t:'TF'}]},
+   common:[{f:'GOPAC',t:'IF'},{f:'TAAIL',t:'TF'},{from:'TAAIL',vec:'FM'}],
+  },
+ },
+ KUGN:{
+  GOPAC3:{rnav:true,
+   trans:{'CHZHD':[{f:'CHZHD',t:'IF'},{f:'LEEDN',t:'TF'},{f:'MUMPR',t:'TF'},{f:'DETIE',t:'TF'},{f:'MOWSR',t:'TF'},{f:'TRUDO',spd:250,t:'TF'},{f:'KNARF',t:'TF'},{f:'GOPAC',t:'TF'}],'LEEDN':[{f:'LEEDN',t:'IF'},{f:'MUMPR',t:'TF'},{f:'DETIE',t:'TF'},{f:'MOWSR',t:'TF'},{f:'TRUDO',spd:250,t:'TF'},{f:'KNARF',t:'TF'},{f:'GOPAC',t:'TF'}],'OGECA':[{f:'OGECA',t:'IF'},{f:'OHLIE',t:'TF'},{f:'YEDSU',t:'TF'},{f:'GIWFY',t:'TF'},{f:'KPACK',t:'TF'},{f:'ZOWRO',t:'TF'},{f:'LEEDR',spd:250,t:'TF'},{f:'GOPAC',t:'TF'}]},
+   common:[{f:'GOPAC',t:'IF'},{f:'TAAIL',t:'TF'},{from:'TAAIL',vec:'FM'}],
+  },
+ },
+};
+var SIDS = {
+ KARR:{
+  ADELL8:{rnav:true,
+   rwy:{'RW09':[{above:1220,vec:'VA'},{vec:'VM'}],'RW15':[{above:1220,vec:'VA'},{vec:'VM'}],'RW18':[{above:1220,vec:'VA'},{vec:'VM'}],'RW27':[{above:1220,vec:'VA'},{vec:'VM'}],'RW33':[{above:1220,vec:'VA'},{vec:'VM'}],'RW36':[{above:1220,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'ACITO',above:5000,t:'IF'},{f:'ADELL',t:'TF'}],
+   trans:{'AKMIE':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'}],'ARLYN':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'},{f:'ARLYN',t:'TF'}]},
+  },
+  BLOKR8:{rnav:true,
+   rwy:{'RW09':[{above:1220,vec:'VA'},{vec:'VM'}],'RW15':[{above:1220,vec:'VA'},{vec:'VM'}],'RW18':[{above:1220,vec:'VA'},{vec:'VM'}],'RW27':[{above:1220,vec:'VA'},{vec:'VM'}],'RW33':[{above:1220,vec:'VA'},{vec:'VM'}],'RW36':[{above:1220,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'BACEN',above:5000,t:'IF'},{f:'BLOKR',t:'TF'}],
+   trans:{'BEKKI':[{f:'BLOKR',t:'IF'},{f:'BEKKI',t:'TF'}],'RBS':[{f:'BLOKR',t:'IF'},{f:'RBS',t:'TF'}]},
+  },
+  CARYN8:{rnav:true,
+   rwy:{'RW09':[{above:1220,vec:'VA'},{vec:'VM'}],'RW15':[{above:1220,vec:'VA'},{vec:'VM'}],'RW18':[{above:1220,vec:'VA'},{vec:'VM'}],'RW27':[{above:1220,vec:'VA'},{vec:'VM'}],'RW33':[{above:1220,vec:'VA'},{vec:'VM'}],'RW36':[{above:1220,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'CMSKY',above:5000,t:'IF'},{f:'CARYN',t:'TF'}],
+   trans:{'CYBIL':[{f:'CARYN',t:'IF'},{f:'CYBIL',t:'TF'}]},
+  },
+  DARCY8:{rnav:true,
+   rwy:{'RW09':[{above:1220,vec:'VA'},{vec:'VM'}],'RW15':[{above:1220,vec:'VA'},{vec:'VM'}],'RW18':[{above:1220,vec:'VA'},{vec:'VM'}],'RW27':[{above:1220,vec:'VA'},{vec:'VM'}],'RW33':[{above:1220,vec:'VA'},{vec:'VM'}],'RW36':[{above:1220,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'DENNT',above:5000,t:'IF'},{f:'DARCY',t:'TF'}],
+   trans:{'DONVE':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DONVE',t:'TF'}],'SCOTO':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DUMGE',t:'TF'},{f:'SCOTO',t:'TF'}]},
+  },
+  ELANR9:{rnav:true,
+   rwy:{'RW09':[{above:1220,vec:'VA'},{vec:'VM'}],'RW15':[{above:1220,vec:'VA'},{vec:'VM'}],'RW18':[{above:1220,vec:'VA'},{vec:'VM'}],'RW27':[{above:1220,vec:'VA'},{vec:'VM'}],'RW33':[{above:1220,vec:'VA'},{vec:'VM'}],'RW36':[{above:1220,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'EARND',above:5000,t:'IF'},{f:'ELANR',t:'TF'}],
+   trans:{'EMEGE':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ETAME',t:'TF'},{f:'EMEGE',t:'TF'}],'EMMLY':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'}],'ERECO':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ERECO',t:'TF'}]},
+  },
+  OBENE3:{rnav:true,
+   rwy:{'RW09':[{above:1220,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW15':[{above:1220,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW18':[{above:1220,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW27':[{above:1220,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW33':[{above:1220,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW36':[{above:1220,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}]},
+   common:[{f:'OREOS',t:'IF'},{f:'OBENE',t:'TF'}],
+   trans:{'ELYNA':[{f:'OBENE',t:'IF'},{f:'EERAE',t:'TF'},{f:'ELYNA',t:'TF'}],'IANNA':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'MNOSO',t:'TF'},{f:'IANNA',t:'TF'}],'JORDY':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'JORDY',t:'TF'}],'MNOSO':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'MNOSO',t:'TF'}],'NITWT':[{f:'OBENE',t:'IF'},{f:'NIGHT',t:'TF'},{f:'NITWT',t:'TF'}],'OGALE':[{f:'OBENE',t:'IF'},{f:'OGALE',t:'TF'}],'ROEZZ':[{f:'OBENE',t:'IF'},{f:'CARET',t:'TF'},{f:'ROEZZ',t:'TF'}],'ROTTN':[{f:'OBENE',t:'IF'},{f:'ROTTN',t:'TF'}],'SMIDD':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'SMIDD',t:'TF'}]},
+  },
+ },
+ KDPA:{
+  ADELL8:{rnav:true,
+   rwy:{'RW02B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW10':[{above:1260,vec:'VA'},{vec:'VM'}],'RW15':[{above:1260,vec:'VA'},{vec:'VM'}],'RW20B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW28':[{above:1260,vec:'VA'},{vec:'VM'}],'RW33':[{above:1260,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'ACITO',above:5000,t:'IF'},{f:'ADELL',t:'TF'}],
+   trans:{'AKMIE':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'}],'ARLYN':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'},{f:'ARLYN',t:'TF'}]},
+  },
+  BLOKR8:{rnav:true,
+   rwy:{'RW02B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW10':[{above:1260,vec:'VA'},{vec:'VM'}],'RW15':[{above:1260,vec:'VA'},{vec:'VM'}],'RW20B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW28':[{above:1260,vec:'VA'},{vec:'VM'}],'RW33':[{above:1260,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'BACEN',above:5000,t:'IF'},{f:'BLOKR',t:'TF'}],
+   trans:{'BEKKI':[{f:'BLOKR',t:'IF'},{f:'BEKKI',t:'TF'}],'RBS':[{f:'BLOKR',t:'IF'},{f:'RBS',t:'TF'}]},
+  },
+  CARYN8:{rnav:true,
+   rwy:{'RW02B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW10':[{above:1260,vec:'VA'},{vec:'VM'}],'RW15':[{above:1260,vec:'VA'},{vec:'VM'}],'RW20B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW28':[{above:1260,vec:'VA'},{vec:'VM'}],'RW33':[{above:1260,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'CMSKY',above:5000,t:'IF'},{f:'CARYN',t:'TF'}],
+   trans:{'CYBIL':[{f:'CARYN',t:'IF'},{f:'CYBIL',t:'TF'}]},
+  },
+  DARCY8:{rnav:true,
+   rwy:{'RW02B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW10':[{above:1260,vec:'VA'},{vec:'VM'}],'RW15':[{above:1260,vec:'VA'},{vec:'VM'}],'RW20B':[{above:1260,vec:'VA'},{vec:'VM'}],'RW28':[{above:1260,vec:'VA'},{vec:'VM'}],'RW33':[{above:1260,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'DENNT',above:5000,t:'IF'},{f:'DARCY',t:'TF'}],
+   trans:{'DONVE':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DONVE',t:'TF'}],'SCOTO':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DUMGE',t:'TF'},{f:'SCOTO',t:'TF'}]},
+  },
+  ELANR9:{rnav:true,
+   rwy:{'RW02L':[{above:1260,vec:'VA'},{vec:'VM'}],'RW02R':[{above:1260,vec:'VA'},{vec:'VM'}],'RW10':[{above:1260,vec:'VA'},{vec:'VM'}],'RW15':[{above:1260,vec:'VA'},{vec:'VM'}],'RW20L':[{above:1260,vec:'VA'},{vec:'VM'}],'RW20R':[{above:1260,vec:'VA'},{vec:'VM'}],'RW28':[{above:1260,vec:'VA'},{vec:'VM'}],'RW33':[{above:1260,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'EARND',above:5000,t:'IF'},{f:'ELANR',t:'TF'}],
+   trans:{'EMEGE':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ETAME',t:'TF'},{f:'EMEGE',t:'TF'}],'EMMLY':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'}],'ERECO':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ERECO',t:'TF'}]},
+  },
+  OBENE3:{rnav:true,
+   rwy:{'RW02B':[{above:1260,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW10':[{above:1260,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW15':[{above:1260,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW20B':[{above:1260,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW28':[{above:1260,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW33':[{above:1260,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}]},
+   common:[{f:'OREOS',t:'IF'},{f:'OBENE',t:'TF'}],
+   trans:{'ELYNA':[{f:'OBENE',t:'IF'},{f:'EERAE',t:'TF'},{f:'ELYNA',t:'TF'}],'IANNA':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'MNOSO',t:'TF'},{f:'IANNA',t:'TF'}],'JORDY':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'JORDY',t:'TF'}],'MNOSO':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'MNOSO',t:'TF'}],'NITWT':[{f:'OBENE',t:'IF'},{f:'NIGHT',t:'TF'},{f:'NITWT',t:'TF'}],'OGALE':[{f:'OBENE',t:'IF'},{f:'OGALE',t:'TF'}],'ROEZZ':[{f:'OBENE',t:'IF'},{f:'CARET',t:'TF'},{f:'ROEZZ',t:'TF'}],'ROTTN':[{f:'OBENE',t:'IF'},{f:'ROTTN',t:'TF'}],'SMIDD':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'SMIDD',t:'TF'}]},
+  },
+ },
+ KGYY:{
+  ADELL8:{rnav:true,
+   rwy:{'RW02':[{above:1100,vec:'VA'},{vec:'VM'}],'RW12':[{above:1100,vec:'VA'},{vec:'VM'}],'RW20':[{above:1300,vec:'VA'},{vec:'VM'}],'RW30':[{above:1100,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'ACITO',above:5000,t:'IF'},{f:'ADELL',t:'TF'}],
+   trans:{'AKMIE':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'}],'ARLYN':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'},{f:'ARLYN',t:'TF'}]},
+  },
+  BLOKR8:{rnav:true,
+   rwy:{'RW02':[{above:1100,vec:'VA'},{vec:'VM'}],'RW12':[{above:1100,vec:'VA'},{vec:'VM'}],'RW20':[{above:1300,vec:'VA'},{vec:'VM'}],'RW30':[{above:1100,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'BACEN',above:5000,t:'IF'},{f:'BLOKR',t:'TF'}],
+   trans:{'BEKKI':[{f:'BLOKR',t:'IF'},{f:'BEKKI',t:'TF'}],'RBS':[{f:'BLOKR',t:'IF'},{f:'RBS',t:'TF'}]},
+  },
+  CARYN8:{rnav:true,
+   rwy:{'RW02':[{above:1100,vec:'VA'},{vec:'VM'}],'RW12':[{above:1100,vec:'VA'},{vec:'VM'}],'RW20':[{above:1300,vec:'VA'},{vec:'VM'}],'RW30':[{above:1100,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'CMSKY',above:5000,t:'IF'},{f:'CARYN',t:'TF'}],
+   trans:{'CYBIL':[{f:'CARYN',t:'IF'},{f:'CYBIL',t:'TF'}]},
+  },
+  DARCY8:{rnav:true,
+   rwy:{'RW02':[{above:1100,vec:'VA'},{vec:'VM'}],'RW12':[{above:1100,vec:'VA'},{vec:'VM'}],'RW20':[{above:1300,vec:'VA'},{vec:'VM'}],'RW30':[{above:1100,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'DENNT',above:5000,t:'IF'},{f:'DARCY',t:'TF'}],
+   trans:{'DONVE':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DONVE',t:'TF'}],'SCOTO':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DUMGE',t:'TF'},{f:'SCOTO',t:'TF'}]},
+  },
+  ELANR9:{rnav:true,
+   rwy:{'RW02':[{above:1100,vec:'VA'},{vec:'VM'}],'RW12':[{above:1100,vec:'VA'},{vec:'VM'}],'RW20':[{above:1300,vec:'VA'},{vec:'VM'}],'RW30':[{above:1100,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'EARND',above:5000,t:'IF'},{f:'ELANR',t:'TF'}],
+   trans:{'EMEGE':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ETAME',t:'TF'},{f:'EMEGE',t:'TF'}],'EMMLY':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'}],'ERECO':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ERECO',t:'TF'}]},
+  },
+ },
+ KLOT:{
+  ADELL8:{rnav:true,
+   rwy:{'RW02':[{above:1300,vec:'VA'},{vec:'VM'}],'RW09':[{above:1180,vec:'VA'},{vec:'VM'}],'RW20':[{above:1180,vec:'VA'},{vec:'VM'}],'RW27':[{above:1180,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'ACITO',above:5000,t:'IF'},{f:'ADELL',t:'TF'}],
+   trans:{'AKMIE':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'}],'ARLYN':[{f:'ADELL',t:'IF'},{f:'AKMIE',t:'TF'},{f:'ARLYN',t:'TF'}]},
+  },
+  BLOKR8:{rnav:true,
+   rwy:{'RW02':[{above:1300,vec:'VA'},{vec:'VM'}],'RW09':[{above:1180,vec:'VA'},{vec:'VM'}],'RW20':[{above:1180,vec:'VA'},{vec:'VM'}],'RW27':[{above:1180,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'BACEN',above:5000,t:'IF'},{f:'BLOKR',t:'TF'}],
+   trans:{'BEKKI':[{f:'BLOKR',t:'IF'},{f:'BEKKI',t:'TF'}],'RBS':[{f:'BLOKR',t:'IF'},{f:'RBS',t:'TF'}]},
+  },
+  CARYN8:{rnav:true,
+   rwy:{'RW02':[{above:1300,vec:'VA'},{vec:'VM'}],'RW09':[{above:1180,vec:'VA'},{vec:'VM'}],'RW20':[{above:1180,vec:'VA'},{vec:'VM'}],'RW27':[{above:1180,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'CMSKY',above:5000,t:'IF'},{f:'CARYN',t:'TF'}],
+   trans:{'CYBIL':[{f:'CARYN',t:'IF'},{f:'CYBIL',t:'TF'}]},
+  },
+  DARCY8:{rnav:true,
+   rwy:{'RW02':[{above:1300,vec:'VA'},{vec:'VM'}],'RW09':[{above:1180,vec:'VA'},{vec:'VM'}],'RW20':[{above:1180,vec:'VA'},{vec:'VM'}],'RW27':[{above:1180,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'DENNT',above:5000,t:'IF'},{f:'DARCY',t:'TF'}],
+   trans:{'DONVE':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DONVE',t:'TF'}],'SCOTO':[{f:'DARCY',t:'IF'},{f:'DREGS',t:'TF'},{f:'DUMGE',t:'TF'},{f:'SCOTO',t:'TF'}]},
+  },
+  ELANR9:{rnav:true,
+   rwy:{'RW02':[{above:1300,vec:'VA'},{vec:'VM'}],'RW09':[{above:1180,vec:'VA'},{vec:'VM'}],'RW20':[{above:1180,vec:'VA'},{vec:'VM'}],'RW27':[{above:1180,vec:'VA'},{vec:'VM'}]},
+   common:[{f:'EARND',above:5000,t:'IF'},{f:'ELANR',t:'TF'}],
+   trans:{'EMEGE':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ETAME',t:'TF'},{f:'EMEGE',t:'TF'}],'EMMLY':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'}],'ERECO':[{f:'ELANR',t:'IF'},{f:'EMMLY',t:'TF'},{f:'ERECO',t:'TF'}]},
+  },
+  OBENE3:{rnav:true,
+   rwy:{'RW02':[{above:1180,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW09':[{above:1180,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW20':[{above:1180,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}],'RW27':[{above:1180,vec:'VA'},{vec:'VM'},{f:'OREOS',t:'DF'}]},
+   common:[{f:'OREOS',t:'IF'},{f:'OBENE',t:'TF'}],
+   trans:{'ELYNA':[{f:'OBENE',t:'IF'},{f:'EERAE',t:'TF'},{f:'ELYNA',t:'TF'}],'IANNA':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'MNOSO',t:'TF'},{f:'IANNA',t:'TF'}],'JORDY':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'JORDY',t:'TF'}],'MNOSO':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'MNOSO',t:'TF'}],'NITWT':[{f:'OBENE',t:'IF'},{f:'NIGHT',t:'TF'},{f:'NITWT',t:'TF'}],'OGALE':[{f:'OBENE',t:'IF'},{f:'OGALE',t:'TF'}],'ROEZZ':[{f:'OBENE',t:'IF'},{f:'CARET',t:'TF'},{f:'ROEZZ',t:'TF'}],'ROTTN':[{f:'OBENE',t:'IF'},{f:'ROTTN',t:'TF'}],'SMIDD':[{f:'OBENE',t:'IF'},{f:'MONNY',t:'TF'},{f:'SMIDD',t:'TF'}]},
+  },
+ },
+ KPWK:{
+  JORJO5:{rnav:true,
+   rwy:{'RW12':[{above:1160,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}],'RW16':[{above:1160,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}],'RW30':[{above:1160,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}],'RW34':[{above:1160,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}]},
+   common:[{f:'JILYN',t:'IF'},{f:'JORJO',t:'TF'}],
+   trans:{'AKMIE':[{f:'JORJO',t:'IF'},{f:'AHLOU',t:'TF'},{f:'ACITO',t:'TF'},{f:'ADELL',t:'TF'},{f:'AKMIE',t:'TF'}],'ARLYN':[{f:'JORJO',t:'IF'},{f:'AHLOU',t:'TF'},{f:'ACITO',t:'TF'},{f:'ADELL',t:'TF'},{f:'AKMIE',t:'TF'},{f:'ARLYN',t:'TF'}],'BEKKI':[{f:'JORJO',t:'IF'},{f:'BRBIE',t:'TF'},{f:'BACEN',t:'TF'},{f:'BLOKR',t:'TF'},{f:'BEKKI',t:'TF'}],'RBS':[{f:'JORJO',t:'IF'},{f:'BRBIE',t:'TF'},{f:'BACEN',t:'TF'},{f:'BLOKR',t:'TF'},{f:'RBS',t:'TF'}]},
+  },
+  MONKZ5:{rnav:true,
+   rwy:{'RW12':[{above:1160,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}],'RW16':[{above:1160,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}],'RW30':[{above:1160,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}],'RW34':[{above:1160,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}]},
+   common:[{f:'ZYDEK',t:'IF'},{f:'MONKZ',t:'TF'}],
+   trans:{'CYBIL':[{f:'MONKZ',t:'IF'},{f:'CATER',t:'TF'},{f:'CMSKY',t:'TF'},{f:'CARYN',t:'TF'},{f:'CYBIL',t:'TF'}],'DONVE':[{f:'MONKZ',t:'IF'},{f:'DWANE',t:'TF'},{f:'DENNT',t:'TF'},{f:'DARCY',t:'TF'},{f:'DREGS',t:'TF'},{f:'DONVE',t:'TF'}],'ELANR':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'}],'EMEGE':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'},{f:'EMMLY',t:'TF'},{f:'ETAME',t:'TF'},{f:'EMEGE',t:'TF'}],'EMMLY':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'},{f:'EMMLY',t:'TF'}],'ERECO':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'},{f:'EMMLY',t:'TF'},{f:'ERECO',t:'TF'}],'SCOTO':[{f:'MONKZ',t:'IF'},{f:'DWANE',t:'TF'},{f:'DENNT',t:'TF'},{f:'DARCY',t:'TF'},{f:'DREGS',t:'TF'},{f:'DUMGE',t:'TF'},{f:'SCOTO',t:'TF'}]},
+  },
+ },
+ KUGN:{
+  JORJO5:{rnav:true,
+   rwy:{'RW05':[{above:1240,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}],'RW14':[{above:1230,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}],'RW23':[{above:1230,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}],'RW32':[{above:1240,vec:'VA'},{vec:'VM'},{f:'JILYN',t:'DF'}]},
+   common:[{f:'JILYN',t:'IF'},{f:'JORJO',t:'TF'}],
+   trans:{'AKMIE':[{f:'JORJO',t:'IF'},{f:'AHLOU',t:'TF'},{f:'ACITO',t:'TF'},{f:'ADELL',t:'TF'},{f:'AKMIE',t:'TF'}],'ARLYN':[{f:'JORJO',t:'IF'},{f:'AHLOU',t:'TF'},{f:'ACITO',t:'TF'},{f:'ADELL',t:'TF'},{f:'AKMIE',t:'TF'},{f:'ARLYN',t:'TF'}],'BEKKI':[{f:'JORJO',t:'IF'},{f:'BRBIE',t:'TF'},{f:'BACEN',t:'TF'},{f:'BLOKR',t:'TF'},{f:'BEKKI',t:'TF'}],'RBS':[{f:'JORJO',t:'IF'},{f:'BRBIE',t:'TF'},{f:'BACEN',t:'TF'},{f:'BLOKR',t:'TF'},{f:'RBS',t:'TF'}]},
+  },
+  MONKZ5:{rnav:true,
+   rwy:{'RW05':[{above:1240,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}],'RW14':[{above:1230,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}],'RW23':[{above:1230,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}],'RW32':[{above:1240,vec:'VA'},{vec:'VM'},{f:'ZYDEK',t:'DF'}]},
+   common:[{f:'ZYDEK',t:'IF'},{f:'MONKZ',t:'TF'}],
+   trans:{'CYBIL':[{f:'MONKZ',t:'IF'},{f:'CATER',t:'TF'},{f:'CMSKY',t:'TF'},{f:'CARYN',t:'TF'},{f:'CYBIL',t:'TF'}],'DONVE':[{f:'MONKZ',t:'IF'},{f:'DWANE',t:'TF'},{f:'DENNT',t:'TF'},{f:'DARCY',t:'TF'},{f:'DREGS',t:'TF'},{f:'DONVE',t:'TF'}],'ELANR':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'}],'EMEGE':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'},{f:'EMMLY',t:'TF'},{f:'ETAME',t:'TF'},{f:'EMEGE',t:'TF'}],'EMMLY':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'},{f:'EMMLY',t:'TF'}],'ERECO':[{f:'MONKZ',t:'IF'},{f:'EZRAH',t:'TF'},{f:'EARND',t:'TF'},{f:'ELANR',t:'TF'},{f:'EMMLY',t:'TF'},{f:'ERECO',t:'TF'}],'SCOTO':[{f:'MONKZ',t:'IF'},{f:'DWANE',t:'TF'},{f:'DENNT',t:'TF'},{f:'DARCY',t:'TF'},{f:'DREGS',t:'TF'},{f:'DUMGE',t:'TF'},{f:'SCOTO',t:'TF'}]},
+  },
+ },
+};
+
+/* ---------- resolution ----------
+   Everything below reads through PFIX/STARS/SIDS and keeps no second
+   copy of any number. */
+
+/* A PROCEDURE IS SCOPED TO ITS AIRPORT, and that is not a detail. A
+   procedure identifier is not unique across fields: ADELL EIGHT exists
+   at DuPage, Aurora, Gary and Lewis with a different set of runway
+   transitions at each, and PANGG SEVEN has a different common segment
+   at Gary than at Midway. Keyed on the identifier alone, four fields'
+   legs concatenate into one track no aircraft could fly. So every
+   lookup here takes the field first. */
+function procOf(apt, id){
+  return (STARS[apt] && STARS[apt][id]) || (SIDS[apt] && SIDS[apt][id]) || null;
+}
+function kindOf(apt, id){
+  if(STARS[apt] && STARS[apt][id]) return 'STAR';
+  if(SIDS[apt]  && SIDS[apt][id])  return 'SID';
+  return null;
+}
+function fixLL(name){ var c = PFIX[name]; return c ? [c[0],c[1]] : null; }
+
+function procsAt(icao, kind){
+  var src = (kind === 'SID' ? SIDS : STARS)[icao];
+  return src ? Object.keys(src).sort() : [];
+}
+/* Every field at which a procedure of this name is published. This is
+   what `serves` and `from` on a strip are asking, and it is a scan
+   rather than a stored list precisely so it cannot disagree with the
+   tables above. */
+function fieldsWith(id, kind){
+  var src = kind === 'SID' ? SIDS : STARS, out = [];
+  for(var a in src){ if(src[a][id]) out.push(a); }
+  return out.sort();
+}
+function transitionsOf(apt, id){
+  var p = procOf(apt, id); if(!p) return {trans:[], rwy:[]};
+  return { trans: p.trans ? Object.keys(p.trans).sort() : [],
+           rwy:   p.rwy   ? Object.keys(p.rwy).sort()   : [] };
+}
+
+/* The whole track, in flying order, with the joins de-duplicated: a
+   transition ends on the fix the next part begins on, and printing it
+   twice reads as two crossings of one fix. Returns legs only — it
+   asserts nothing about whether the aircraft is cleared for them. */
+function trackTo(apt, id, entry, rwy){
+  var p = procOf(apt, id); if(!p) return [];
+  var order = kindOf(apt, id) === 'SID'
+    ? [ p.rwy && p.rwy[rwy], p.common, p.trans && p.trans[entry] ]
+    : [ p.trans && p.trans[entry], p.common, p.rwy && p.rwy[rwy] ];
+  var out = [];
+  for(var i = 0; i < order.length; i++){
+    var seg = order[i]; if(!seg) continue;
+    for(var j = 0; j < seg.length; j++){
+      var g = seg[j], last = out[out.length-1];
+      if(last && g.f && last.f === g.f && !g.vec && !last.vec){ continue; }
+      out.push(g);
+    }
+  }
+  return out;
+}
+
+/* Does the track stop on a vector rather than at a fix? A drill that
+   sequences to a point has to know that the published data runs out. */
+function endsOnVector(legs){
+  var l = legs[legs.length-1];
+  return !!(l && l.vec);
+}
+
+/* ---------- the strip contract ----------
+   The flight-strips block reads window.STRIP_FACILITY. Building its
+   arrivals and departures from THIS data rather than a hand-typed
+   list is what keeps the two from drifting, and it is what stops a
+   procedure serving several fields from being written several times
+   under one key — an object literal keeps only the last of those, so
+   a hand-typed list silently loses every field but one. */
+function stripProcs(kind){
+  var src = kind === 'SID' ? SIDS : STARS, out = {};
+  for(var a in src){
+    for(var k in src[a]){
+      if(out[k]) continue;                    /* already scanned for every field */
+      out[k] = kind === 'SID'
+        ? { from:  fieldsWith(k, 'SID'),  flies:false, track:true }
+        : { serves:fieldsWith(k, 'STAR'), flies:false, track:true };
+    }
+  }
+  return out;
+}
+
+/* ---------- rendering ---------- */
+function esc(s){
+  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function ft(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+
+/* The crossing, written the way the chart writes it. A leg with no
+   number has no published crossing, and the cell says so rather than
+   leaving a blank that reads as unrestricted. */
+function crossing(g){
+  var a = g.at    != null ? 'cross at ' + ft(g.at)
+        : g.lo    != null ? ft(g.lo) + ' &ndash; ' + ft(g.hi)
+        : g.above != null ? 'at or above ' + ft(g.above)
+        : g.below != null ? 'at or below ' + ft(g.below)
+        : '';
+  /* A vector leg can still carry an altitude — a VA or CA climbs on a
+     course TO one. Print the altitude AND the fact that it does not end
+     at a waypoint; dropping either would misstate the leg. */
+  if(g.vec) return (a ? a + ' &middot; ' : '')
+    + '<span class="ddp-vec">terminates on a vector</span>';
+  return a || '<span class="ddp-none">no published crossing</span>';
+}
+
+/* The fix cell. Three cases, and the third is why this is not just
+   `g.f`: a leg may end at a fix, may leave one on a vector, or — a VA
+   or CA off the runway — may name no fix at all. */
+function fixCell(g){
+  if(g.f)    return esc(g.f);
+  if(g.from) return '<span class="ddp-none">from</span> ' + esc(g.from);
+  return '<span class="ddp-none">no fix</span>';
+}
+function legRow(g){
+  var ll = g.f ? fixLL(g.f) : null;
+  return '<tr>'
+    + '<td class="ddp-fix">' + fixCell(g) + '</td>'
+    + '<td>' + crossing(g) + '</td>'
+    + '<td>' + (g.spd != null ? (esc(g.spd) + ' kt') : '<span class="ddp-none">&mdash;</span>') + '</td>'
+    + '<td class="ddp-t">' + esc(g.t || g.vec || '') + '</td>'
+    + '<td class="ddp-ll">' + (ll ? (ll[0].toFixed(4) + ', ' + ll[1].toFixed(4))
+                                      : '<span class="ddp-none">&mdash;</span>') + '</td>'
+    + '</tr>';
+}
+
+var state = { apt:'', kind:'STAR', proc:'', entry:'', rwy:'' };
+
+function fields(){
+  var apts = {}, a;
+  for(a in STARS) apts[a] = 1;
+  for(a in SIDS)  apts[a] = 1;
+  return Object.keys(apts).sort();
+}
+
+function sel(id, list, cur, fmt){
+  return '<select class="ddp-sel" id="ddp-' + id + '" onchange="ddpPick(\'' + id + '\',this.value)">'
+    + list.map(function(v){
+        return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>'
+          + esc(fmt ? fmt(v) : v) + '</option>';
+      }).join('')
+    + '</select>';
+}
+
+function body(){
+  var apts = fields();
+  if(!apts.length){
+    return '<div class="ddp-empty">CIFP codes no SID and no STAR for any field this facility works. '
+      + 'That is a coverage fact about the published data, not a gap in this tool &mdash; see the '
+      + 'facility CLAUDE.md and claude_C90_CIFP_Procedures.md.</div>';
+  }
+  if(!state.apt || apts.indexOf(state.apt) < 0) state.apt = apts[0];
+
+  var here = procsAt(state.apt, state.kind);
+  if(!here.length){
+    var other = state.kind === 'STAR' ? 'SID' : 'STAR';
+    if(procsAt(state.apt, other).length){ state.kind = other; here = procsAt(state.apt, other); }
+  }
+  if(!state.proc || here.indexOf(state.proc) < 0) state.proc = here[0] || '';
+
+  var tr = transitionsOf(state.apt, state.proc);
+  if(tr.trans.indexOf(state.entry) < 0) state.entry = tr.trans[0] || '';
+  if(tr.rwy.indexOf(state.rwy)     < 0) state.rwy   = tr.rwy[0]   || '';
+
+  var p = procOf(state.apt, state.proc);
+  var legs = state.proc ? trackTo(state.apt, state.proc, state.entry, state.rwy) : [];
+
+  var h = '<div class="ddp-picks">'
+    + '<div class="ddp-f"><span class="ddp-lab">Field</span>' + sel('apt', apts, state.apt) + '</div>'
+    + '<div class="ddp-f"><span class="ddp-lab">Kind</span>'
+    +   sel('kind', ['STAR','SID'], state.kind, function(v){ return v === 'STAR' ? 'arrival (STAR)' : 'departure (SID)'; })
+    + '</div>';
+
+  if(!here.length){
+    return h + '</div><div class="ddp-empty">CIFP codes no '
+      + (state.kind === 'SID' ? 'SID' : 'STAR') + ' at ' + esc(state.apt) + '. '
+      + 'A radar-vector or conventional procedure is outside what CIFP carries, so a zero here is a '
+      + 'coding gap and not proof the field has none.</div>';
+  }
+
+  h += '<div class="ddp-f"><span class="ddp-lab">Procedure</span>'
+    +   sel('proc', here, state.proc) + '</div>';
+  if(tr.trans.length)
+    h += '<div class="ddp-f"><span class="ddp-lab">'
+      +  (state.kind === 'SID' ? 'Exit transition' : 'Entry transition') + '</span>'
+      +  sel('entry', tr.trans, state.entry) + '</div>';
+  if(tr.rwy.length)
+    h += '<div class="ddp-f"><span class="ddp-lab">Runway transition</span>'
+      +  sel('rwy', tr.rwy, state.rwy) + '</div>';
+  h += '</div>';
+
+  var also = fieldsWith(state.proc, state.kind);
+  h += '<div class="ddp-meta">' + esc(state.proc) + ' at ' + esc(state.apt) + ' &middot; '
+    + (p && p.rnav ? 'RNAV' : 'conventional') + ' &middot; CIFP ' + CYCLE
+    + (also.length > 1
+        ? (' &middot; also published at ' + esc(also.filter(function(a){ return a !== state.apt; }).join(', '))
+           + ', with that field\'s own runway transitions')
+        : '')
+    + '</div>';
+
+  h += '<div class="ddp-scroll"><table class="ddp-tbl">'
+    + '<thead><tr><th>Fix</th><th>Crossing</th><th>Speed</th><th>Leg</th><th>Coordinates</th></tr></thead><tbody>'
+    + legs.map(legRow).join('')
+    + '</tbody></table></div>';
+
+  if(endsOnVector(legs))
+    h += '<div class="ddp-warn">This track ends on a vector, not at a fix. The published data '
+      +  'stops there and so does anything that walks it &mdash; the rest is the controller\'s.</div>';
+
+  h += '<div class="ddp-note">CIFP ' + CYCLE + ' lists every transition that EXISTS. It does not say '
+    +  'which one C90 assigns in a given configuration, and this tool does not guess: that is an SOP '
+    +  'and LOA question. Nothing on this page is a boundary, an MVA or a delegation.</div>';
+  return h;
+}
+
+window['ddpPick'] = function(what, val){
+  state[what] = val;
+  if(what === 'apt' || what === 'kind'){ state.proc = ''; state.entry = ''; state.rwy = ''; }
+  if(what === 'proc'){ state.entry = ''; state.rwy = ''; }
+  render();
+};
+
+function render(){
+  var el = document.getElementById('ddp-body');
+  if(el) el.innerHTML = body();
+}
+
+var css =
+  '.ddp-picks{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 14px;}'
++ '.ddp-f{display:flex;flex-direction:column;gap:3px;}'
++ '.ddp-lab{font:11px/1.2 var(--body);color:var(--dim2);text-transform:uppercase;letter-spacing:.06em;}'
++ '.ddp-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);'
++   'border-radius:4px;padding:5px 7px;font:13px/1.3 var(--body);}'
++ '.ddp-meta{font:12px/1.4 var(--mono);color:var(--dim);margin:0 0 8px;}'
++ '.ddp-scroll{overflow-x:auto;}'
++ '.ddp-tbl{border-collapse:collapse;width:100%;font:12px/1.5 var(--mono);}'
++ '.ddp-tbl th{text-align:left;color:var(--dim2);font:11px/1.3 var(--body);'
++   'text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--line);padding:5px 9px 5px 0;}'
++ '.ddp-tbl td{border-bottom:1px solid var(--line);padding:5px 9px 5px 0;vertical-align:top;}'
++ '.ddp-fix{color:var(--ink);font-weight:600;white-space:nowrap;}'
++ '.ddp-t,.ddp-ll{color:var(--dim);white-space:nowrap;}'
++ '.ddp-none{color:var(--dim2);}'
++ '.ddp-vec{color:var(--amber);}'
++ '.ddp-warn{margin-top:10px;border-left:2px solid var(--amber);padding:7px 10px;'
++   'font:12px/1.5 var(--body);color:var(--dim);}'
++ '.ddp-note,.ddp-empty{margin-top:10px;font:12px/1.5 var(--body);color:var(--dim2);}'
++ '.ddp-empty{border-left:2px solid var(--line);padding:7px 10px;}';
+
+function section(){
+  return '<section class="panel ddp-sec" id="mod-ddp" data-note="procedures">'
+    + '<h2>Published procedures</h2>'
+    + '<p class="ddp-note" style="margin-top:0;">Every SID and STAR the FAA codes for the fields '
+    + 'C90 works, from CIFP ' + CYCLE + ' &mdash; fixes, crossing restrictions, speed limits and '
+    + 'coordinates, as published. This is the procedure, not this facility\'s use of it.</p>'
+    + '<div id="ddp-body"></div>'
+    + '</section>';
+}
+
+function mount(){
+  var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+  var wrap = document.querySelector('.wrap');
+  if(!wrap) return;
+  var holder = document.createElement('div');
+  holder.innerHTML = section();
+  var sec = holder.firstChild;
+  if(!sec) return;
+  /* Land on the page the deck already built, where it built one. This
+     block runs after the page builder and before the strips block, so
+     the wrapper exists by now; without one, fall in above the footer. */
+  var page = null, ids = ['ddb-page-fly'];
+  for(var i = 0; i < ids.length && !page; i++) page = document.getElementById(ids[i]);
+  if(page){ page.appendChild(sec); }
+  else {
+    var foot = wrap.querySelector('footer');
+    if(foot) wrap.insertBefore(sec, foot); else wrap.appendChild(sec);
+  }
+  render();
+}
+
+/* ---------- export ----------
+   One copy, reachable through the deck's namespace (house rule 5). */
+/* Block 1 declares ROUTES and DEPS empty and exports them BY REFERENCE.
+   Filling those objects here, rather than declaring a second pair, is
+   what keeps NS.ROUTES meaningful and keeps one copy of every number
+   (house rule 5). Both are keyed BY AIRPORT, then by procedure. */
+var mk;
+for(mk in STARS){ if(NS.ROUTES) NS.ROUTES[mk] = STARS[mk]; }
+for(mk in SIDS) { if(NS.DEPS)   NS.DEPS[mk]   = SIDS[mk];  }
+NS.PFIX = PFIX; NS.STARS = STARS; NS.SIDS = SIDS; NS.CIFP_CYCLE = CYCLE;
+NS.procOf = procOf; NS.kindOf = kindOf; NS.fixLL = fixLL;
+NS.procsAt = procsAt; NS.fieldsWith = fieldsWith; NS.transitionsOf = transitionsOf;
+NS.trackTo = trackTo; NS.endsOnVector = endsOnVector; NS.stripProcs = stripProcs;
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+})();
+</script>
+<script>
+/* ================================================================
    C90 — FLIGHT STRIPS. Additive extension block.
 
    Three parts, in order: the facility contract, the master strip
@@ -2043,11 +2775,14 @@ else { mount(); }
    NAME. serves and from are LISTS because a procedure belonging to
    several fields is the normal case.
 
-   Procedure inventory from CIFP 260903 — see the facility's
+   Procedure inventory is DERIVED from the PUBLISHED PROCEDURES block
+   above — CIFP 260903, see that block and the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
-   no traffic model, so nothing here is flown.
+   no traffic model, so nothing here is flown. That is not the same
+   claim as "no track data", which is what track:true records.
    ================================================================ */
 (function(){ 'use strict';
+var PROCS = window.DD;
 window.STRIP_FACILITY = {
  id:'C90', prefix:'c90st',
  airports:{
@@ -2060,55 +2795,22 @@ window.STRIP_FACILITY = {
   KLOT:{name:"Lewis", rwys:['02','09','20','27']},
   KUGN:{name:"Waukegan", rwys:['05','14','23','32']},
  },
- arrivals:{
-  BENKY6:{serves:['KORD'], flies:false},
-  ERNNY8:{serves:['KORD'], flies:false},
-  ESSPO5:{serves:['KORD'], flies:false},
-  FYTTE7:{serves:['KORD'], flies:false},
-  JVL1:{serves:['KORD'], flies:false},
-  MADII7:{serves:['KORD'], flies:false},
-  SHAIN2:{serves:['KORD'], flies:false},
-  TRTLL6:{serves:['KORD'], flies:false},
-  VEECK5:{serves:['KORD'], flies:false},
-  WATSN4:{serves:['KORD'], flies:false},
-  WYNDE3:{serves:['KORD'], flies:false},
-  ENDEE8:{serves:['KMDW'], flies:false},
-  FISSK7:{serves:['KMDW'], flies:false},
-  PANGG7:{serves:['KMDW'], flies:false},
-  GOPAC3:{serves:['KPWK'], flies:false},
-  LUCIT3:{serves:['KGYY'], flies:false},
-  PANGG7:{serves:['KGYY'], flies:false},
-  GOPAC3:{serves:['KUGN'], flies:false},
- },
- departures:{
-  ADELL8:{from:['KDPA'], flies:false},
-  BLOKR8:{from:['KDPA'], flies:false},
-  CARYN8:{from:['KDPA'], flies:false},
-  DARCY8:{from:['KDPA'], flies:false},
-  ELANR9:{from:['KDPA'], flies:false},
-  OBENE3:{from:['KDPA'], flies:false},
-  JORJO5:{from:['KPWK'], flies:false},
-  MONKZ5:{from:['KPWK'], flies:false},
-  ADELL8:{from:['KARR'], flies:false},
-  BLOKR8:{from:['KARR'], flies:false},
-  CARYN8:{from:['KARR'], flies:false},
-  DARCY8:{from:['KARR'], flies:false},
-  ELANR9:{from:['KARR'], flies:false},
-  OBENE3:{from:['KARR'], flies:false},
-  ADELL8:{from:['KGYY'], flies:false},
-  BLOKR8:{from:['KGYY'], flies:false},
-  CARYN8:{from:['KGYY'], flies:false},
-  DARCY8:{from:['KGYY'], flies:false},
-  ELANR9:{from:['KGYY'], flies:false},
-  ADELL8:{from:['KLOT'], flies:false},
-  BLOKR8:{from:['KLOT'], flies:false},
-  CARYN8:{from:['KLOT'], flies:false},
-  DARCY8:{from:['KLOT'], flies:false},
-  ELANR9:{from:['KLOT'], flies:false},
-  OBENE3:{from:['KLOT'], flies:false},
-  JORJO5:{from:['KUGN'], flies:false},
-  MONKZ5:{from:['KUGN'], flies:false},
- }
+ /* DERIVED, not typed out again. Two reasons, and the second is a bug
+    this replaces. A hand-typed inventory is a second copy of numbers
+    the procedures block already holds (house rule 5). And a procedure
+    serving several fields has to appear once per field under ONE key —
+    an object literal keeps only the LAST of those, so ADELL EIGHT off
+    DuPage, Aurora and Gary silently collapsed to a Lewis-only
+    departure, and the strip row refused three valid combinations.
+    `serves` and `from` are lists exactly so that cannot happen;
+    building them from the coded source is what makes them lists in
+    fact rather than in intent.
+
+    flies:false throughout, because this deck has no traffic model.
+    track:true is the separate claim that the published ladder IS
+    carried, and the row labels the two differently. */
+ arrivals:   PROCS ? PROCS.stripProcs('STAR') : {},
+ departures: PROCS ? PROCS.stripProcs('SID')  : {}
 };
 })();
 /* ================================================================
@@ -2171,6 +2873,22 @@ window.STRIP_FACILITY = {
    `rwys` may be omitted or null where the field's runways are not in the
    reference set — the runway control then offers nothing rather than
    inventing an inventory. That is the KLVN case at M98.
+
+   `flies` and `track` are DIFFERENT CLAIMS, and the row labels them
+   differently. Conflating them is what let a deck holding a complete
+   published ladder still describe itself as a frame.
+
+     flies  this deck's engine has geometry it can actually FLY.
+            False everywhere but M98, and false for a reason that has
+            nothing to do with the data: a deck with no traffic model
+            flies nothing, however much it knows.
+     track  the published track IS carried — fixes, crossing
+            restrictions, speed limits. Set by the procedures block,
+            which reads the FAA's coded source.
+
+   flies:false with track:true renders "(track only)". flies:false
+   with no track renders "(frame only)". Neither is a defect; saying
+   which of the two is true is the entire point.
 
    ---------- WHAT THIS BLOCK DOES NOT DO ----------
 
@@ -2354,7 +3072,8 @@ function procControl(id, list, sel, meta, empty){
    + list.map(function(p){
       var m = meta[p] || {};
       return '<option value="' + esc(p) + '"' + (p === sel ? ' selected' : '') + '>'
-        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '') + (m.flies === false ? ' (frame only)' : '')
+        + esc(p) + (m.rev ? (' — ' + esc(m.rev)) : '')
+        + (m.flies === false ? (m.track ? ' (track only)' : ' (frame only)') : '')
         + '</option>';
      }).join('')
    + '</select>';
