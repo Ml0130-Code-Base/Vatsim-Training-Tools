@@ -3965,10 +3965,20 @@ function acRowHtml(a,i){
      }).join('')+'</select>')
    /* only the arrivals that actually end at the field it is landing at — the
       six RNAV gates are MSP arrivals and nothing else */
+   /* THE OPTION CARRIES AN EXPLICIT VALUE, and it has to. With none, an
+      option's value is its own label text, so every arrival whose label is
+      decorated — a revision name, or "(frame only)" — read back as
+      "KASPR — KASPR SEVEN (frame only)" instead of "KASPR". ddbSync stored
+      that string as a.gate, nothing then matched it on the next render, no
+      option came back selected, and the control SNAPPED BACK to the first
+      arrival. Six of the sixteen could not be chosen at all: KASPR and GEP
+      at MSP, and GEP, AGUDE, ENCEE and TWOLF at the satellites. Found
+      2026-09-07 while fixing the same family of bug in the master strip
+      block, which had always written the value out. */
    +f('Arrival','<select class="dd-sel" id="ddb-gate'+i+'" onchange="ddbSync()">'
      +DD.arrivalsFor(dest).map(function(g){
        var p=DD.ARRIVALS[g];
-       return '<option'+(g===a.gate?' selected':'')+'>'+g+(p.rev?(' — '+p.rev):'')+(p.flies?'':' (frame only)')+'</option>';
+       return '<option value="'+esc(g)+'"'+(g===a.gate?' selected':'')+'>'+g+(p.rev?(' — '+p.rev):'')+(p.flies?'':' (frame only)')+'</option>';
       }).join('')+'</select>')
    /* Placed by the fix it is running to and the distance still to run — the
       way it reads off a scope — with only the fixes on THIS arrival offered

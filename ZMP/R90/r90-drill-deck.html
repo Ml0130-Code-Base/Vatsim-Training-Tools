@@ -2475,15 +2475,38 @@ function normStrip(s){
 
 /* ---------- 3. The row ----------
    Ids are prefixed so a deck can host this alongside its own controls.
-   `onchange` calls the deck's sync function by name if it has one, which
-   keeps this block from depending on any particular builder. */
+
+   `onchange` calls the deck's re-render function BY NAME, through window,
+   so this block still depends on no particular builder. What it no longer
+   does is wait to be asked: the name defaults to <prefix>Sync, which is
+   what every mount defines.
+
+   THE RE-RENDER USED TO BE OPT-IN, AND THAT WAS A REAL BUG, FOUND
+   2026-09-07. With no `sync` in the contract this emitted no handler at
+   all, so the three controls that matter most — the airport, the
+   procedure and the runway — were inert. Changing the landing field left
+   the arrival list showing the PREVIOUS field's STARs; a KORD STAR could
+   be selected on a strip landing Midway; and the check line went on
+   reporting the stale combination as legal, which is the tool asserting
+   something untrue rather than merely failing to help.
+
+   All five decks carrying this block shipped without `sync`. Five
+   contracts do not forget the same field independently — the default was
+   wrong. The filtering was never broken: `jobFields` has always built the
+   list from `arrivalsFor(dest)`, and `normStrip` has always re-placed a
+   procedure the new field cannot carry. Nothing ever ran them.
+
+   Guarded, so a host that defines no such function gets an inert control
+   rather than a console error on every change. */
 var PFX  = (F.prefix || 'strip');
-var SYNC = (F.sync ? (F.sync + '()') : '');
+var SYNC = F.sync || (PFX + 'Sync');
 function esc(s){
  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function ev(){ return SYNC ? (' onchange="' + SYNC + '"') : ''; }
+function ev(){
+ return ' onchange="window[\'' + SYNC + '\'] && window[\'' + SYNC + '\']()"';
+}
 function fld(lab, ctl){
  return '<div class="' + PFX + '-f"><span class="' + PFX + '-lab">' + lab + '</span>' + ctl + '</div>';
 }
@@ -2605,6 +2628,7 @@ var css = ''
  + '.' + P + '-btn:hover{border-color:var(--dim);}'
  + '.' + P + '-err{color:var(--red);font:11.5px/1.6 var(--body);margin-top:6px;}'
  + '.' + P + '-ok{color:var(--green);font:11.5px/1.6 var(--body);margin-top:6px;}'
+ + '.' + P + '-moved{color:var(--amber);font:11.5px/1.6 var(--body);margin-top:4px;}'
  + '.' + P + '-dim{color:var(--dim);font:11.5px/1.65 var(--body);}';
 
 var rows = [];
@@ -2631,6 +2655,7 @@ function rowHtml(s, i){
   + fld('Altitude', '<input class="' + P + '-in" id="' + P + '-alt' + i + '" value="' + esc(s.alt) + '" onchange="' + P + 'Sync()">')
   + fld('&nbsp;', '<button class="' + P + '-btn" onclick="' + P + 'Drop(' + i + ')">remove</button>')
   + '<div id="' + P + '-msg' + i + '"></div>'
+  + '<div id="' + P + '-moved' + i + '" class="' + P + '-moved"></div>'
   + '</div>';
 }
 
@@ -2654,6 +2679,16 @@ function check(s, i){
  box.innerHTML = errs.length
    ? errs.map(function(e){ return '&#9888; ' + esc(e); }).join('<br>')
    : '&#10003; legal for ' + esc(S.FACILITY.id) + ' — ' + esc(s.role) + ' at ' + esc(at || 'the boundary');
+ /* Say what the field change moved. normStrip has always worked this
+    out and every mount used to throw it away, so a procedure that could
+    not follow the new field was swapped in silence. A list that follows
+    the field is only trustworthy if the tool admits when it moved
+    something the controller had already chosen. */
+ var mv = document.getElementById(P + '-moved' + i);
+ if(mv) mv.innerHTML = (s.moved && s.moved.length)
+   ? ('&#8635; the field changed, so what could not follow it moved: '
+      + esc(s.moved.join('; ')) + '.')
+   : '';
 }
 function g(id){ var e = document.getElementById(id); return e ? e.value : null; }
 
@@ -2663,7 +2698,12 @@ window[P + 'Sync'] = function(){
   s.cs   = (g(P + '-cs' + i) || '').toUpperCase().replace(/\s+/g,'');
   s.type = (g(P + '-type' + i) || s.type).toUpperCase();
   s.alt  = g(P + '-alt' + i) || s.alt;
-  S.readJob(s, i);          /* also re-places a procedure the new field cannot carry */
+  /* Re-places a procedure the new field cannot carry, and SAYS SO. The
+     return was thrown away before, so changing the landing field swapped
+     the STAR under you in silence. A list that follows the field is only
+     trustworthy if the tool admits when it moved something. */
+  var res = S.readJob(s, i);
+  s.moved = (res && res.moved && res.moved.length) ? res.moved : null;
  });
  render();
 };
