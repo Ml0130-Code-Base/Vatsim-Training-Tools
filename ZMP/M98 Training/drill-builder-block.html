@@ -80,7 +80,7 @@ if(document.head && document.head.appendChild) document.head.appendChild(st);
 var KEY = 'm98-drill-deck-v1';
 var state = {v:1, drills:[], entries:[], retired:{}, target:20, seq:11, hot:false,
  layers:'tracked',
- pos:{seats:{H:1}, open:{H:1, R:1, N:1, S:1}, towers:'satellite towers open', rstOpen:true}};
+ pos:{seats:{H:1}, open:{H:1, R:1, N:1, S:1}, towers:'satellite towers open', rstOpen:true, midnight:false}};
 var storeOk = true;
 function store(){
  try{ return (typeof localStorage!=='undefined') ? localStorage : null; }catch(e){ return null; }
@@ -101,7 +101,10 @@ function restore(){
    /* v1 stored a single seat string; carry it forward as a one-seat set */
    var seats = o.pos.seats || (o.pos.seat ? (function(){ var s={}; s[o.pos.seat]=1; return s; })() : null);
    if(seats) state.pos={seats:seats, open:o.pos.open, towers:o.pos.towers||state.pos.towers,
-                        rstOpen:(o.pos.rstOpen!==false)};
+                        rstOpen:(o.pos.rstOpen!==false),
+                        /* absent in anything stored before 2026-09-07, and absence
+                           means the daytime regime — never !== false here */
+                        midnight:(o.pos.midnight===true)};
   }
  }catch(e){ storeOk=false; }
 }
@@ -535,23 +538,113 @@ var COVERAGE={
  G:{k:'info', t:'satellite work is not in the engine'},
  K:{k:'info', t:'satellite work is not in the engine'}
 };
+/* Coverage depends on the regime, because E overnight is not the seat E is by
+   day: it is the whole TRACON. The engine flies the feeder problem and the
+   departures from it, and still does not fly the satellite fields, so the
+   honest answer is a flag rather than either of the fixed entries. */
+var MIDNIGHT_COVERAGE={k:'flag', t:'overnight this seat is all of M98 — the engine flies the arrivals from it exactly as it does from H, and departures and overflights fly properly, but the satellite fields are still not modelled and the LOA para 5 arrival handling is briefing text, not flown traffic'};
+function coverageFor(id){
+ if(midnightOn() && id===MIDNIGHT.base) return MIDNIGHT_COVERAGE;
+ return COVERAGE[id]||{k:'info', t:''};
+}
+/* MIDNIGHT OPERATIONS — the overnight regime, and the only thing in this tool
+   that moves the base of the combining chain.
+
+   ZMP-M98 LOA 5.a(4), eff. 2026-03-31, inside the para 5 window of 2230 to
+   0530 local, when coordinated: "ZMP shall assign all aircraft entering M98
+   airspace frequency 124.7 (MSP_R_APP)". One frequency for everything entering
+   the TRACON is one seat, and vNAS names that seat: MSP_E_APP carries TWO
+   position records on the SAME TCP (E.1) — "Flying Cloud Satellite" on 134.7
+   and "Midnight" on 124.7, the second of them starred as the default. So the
+   whole facility combines onto E overnight, and E answers on 124.7 rather than
+   its daytime 134.7. Owner-confirmed 2026-09-07 (issue #20).
+
+   THE SEAT LETTER IS THE ONE THING THE SOURCES DO NOT AGREE ON, and it is
+   named here rather than resolved (root CLAUDE.md §6). The LOA's parenthetical
+   says MSP_R_APP and NO SUCH CALLSIGN EXISTS: vNAS has MSP_R_DEP — South
+   Departure, 124.700, which M98 7110.26A 2-1 gives as well — and it has
+   MSP_E_APP/"Midnight" on 124.7. All three sources agree on the FREQUENCY;
+   only which letter owns it overnight is unsettled. The tool takes E, because
+   that is the record actually named "Midnight" and the only 124.7 record whose
+   callsign is an _APP, and the page says so rather than hiding the choice.
+
+   SOP 2-1 NOTE 2 IS NOT THIS. Its staffing order — South Feeder, South
+   Departure, North Final, South Final — is the daytime split, and it is what
+   makes H the base. Nothing in the SOP describes the overnight regime at all;
+   it is an LOA paragraph and a vNAS record. */
+var MIDNIGHT={
+ base:'E',
+ frq:'124.7',
+ daytimeFrq:'134.7',
+ window:'2230–0530 local, when coordinated',
+ quiet:'2230–0600 local',
+ cite:'ZMP-M98 LOA 5.a(4) · vNAS MSP_E_APP "Midnight"',
+ /* The chain is unchanged except for its root. Everything already folds
+    towards H, so moving the base is TWO EDGES, not eleven — H folds into E,
+    and E folds into nothing. Written as data rather than as a special case
+    inside ownerOf, so the constraint is enforceable and visible (root
+    CLAUDE.md §10, "structural constraints belong in the data shape"). */
+ into:{H:'E', E:null},
+ /* What the LOA actually changes about the traffic, for the coach to brief.
+    The engine does not fly any of it — see COVERAGE below — so these are
+    briefing lines, not modelled behaviour (root CLAUDE.md invariant 3). */
+ zmp:['clears everything landing inside M98 direct to the destination airport (5.a(1))',
+      'issues pilot discretion descent to 10,000 to anything at or above it (5.a(2))',
+      'leaves arrivals at and below 10,000 at altitude (5.a(3))',
+      'assigns everything entering M98 to 124.7 (5.a(4))'],
+ m98:['clears departures via the first fix in the route (5.b(1))',
+      'points departures out to any affected Center position (5.b(2))',
+      'climbs turboprops and props to 17,000, or lower on request (5.b(3))']
+};
+function midnightOn(){ return !!(state.pos && state.pos.midnight); }
+/* Where the combining chain bottoms out. H by day (SOP 2-1 NOTE 2), E
+   overnight (MIDNIGHT above). */
+function baseId(){ return midnightOn() ? MIDNIGHT.base : 'H'; }
+/* The position this one folds into, under whichever regime is running. */
+function intoOf(id){
+ if(midnightOn() && Object.prototype.hasOwnProperty.call(MIDNIGHT.into,id)) return MIDNIGHT.into[id];
+ var p=posById(id); return p ? p.into : null;
+}
+/* The frequency a position is actually answering on. E is the only position
+   whose frequency depends on the regime, and it is the whole point of the
+   regime, so nothing may read p.frq directly for a RESOLVED owner. */
+/* What to call a position on the page. vNAS names the 124.7 record "Midnight"
+   and the 134.7 one "Flying Cloud Satellite", on one TCP; SOP 2-1 knows only
+   the second. Both names are true of the same seat, so overnight the tool
+   prints both rather than picking one. */
+function nameOf(p){
+ if(!p) return '';
+ return (midnightOn() && p.id===MIDNIGHT.base) ? ('Midnight — '+p.name) : p.name;
+}
+function frqOf(p){
+ if(!p) return '';
+ return (midnightOn() && p.id===MIDNIGHT.base) ? MIDNIGHT.frq : p.frq;
+}
 var PRESETS={
  single:{label:'Single controller — all of M98 on H', open:{H:1}},
  standard:{label:'H · R · N · S — the usual split', open:{H:1,R:1,N:1,S:1}},
  feeders:{label:'Both feeders split — H · I · R · N · S', open:{H:1,I:1,R:1,N:1,S:1}},
- full:{label:'Everything open', open:{D:1,R:1,L:1,I:1,H:1,N:1,S:1,J:1,E:1,G:1,K:1}}
-};
+ full:{label:'Everything open', open:{D:1,R:1,L:1,I:1,H:1,N:1,S:1,J:1,E:1,G:1,K:1}},
+ /* The overnight regime. Not a split at all — it is the whole TRACON on one
+    seat and one frequency, which is why it carries the midnight flag rather
+    than just an open set. */
+ midnight:{label:'Midnight — all of M98 on E (124.7)', open:{E:1}, midnight:true}};
 function posById(id){ for(var i=0;i<POSITIONS.length;i++){ if(POSITIONS[i].id===id) return POSITIONS[i]; } return null; }
 function isOpen(id){ return !!(state.pos.open && state.pos.open[id]); }
-/* walk the combining chain until something is actually open; the base is H */
+/* Walk the combining chain until something is actually open. The base is H by
+   day and E overnight, and the walk reads intoOf rather than p.into so the
+   overnight root is the same one edge everywhere. Running out of chain returns
+   the base whether or not the base is open — that has always been the contract
+   for H, and renderPos says so on the page when the base is shut. */
 function ownerOf(id){
  var p=posById(id), seen={};
  while(p && !seen[p.id]){
   if(isOpen(p.id)) return p;
   seen[p.id]=1;
-  p = p.into ? posById(p.into) : null;
+  var nx=intoOf(p.id);
+  p = nx ? posById(nx) : null;
  }
- return posById('H');
+ return posById(baseId());
 }
 /* The ACDA split rides the localizers, so 12R is South Arrival's side and
    12L is North's (SOP 4-2a). Who actually answers depends on what is open. */
@@ -559,19 +652,19 @@ var RWY_ARRIVAL={'12R':'S', '12L':'N'};
 function applyReceivers(){
  RWYS.forEach(function(r){
   var owner=ownerOf(RWY_ARRIVAL[r]||'S');
-  if(DD.RECEIVER[r]){ DD.RECEIVER[r].pos=owner.id; DD.RECEIVER[r].frq=owner.frq; }
+  if(DD.RECEIVER[r]){ DD.RECEIVER[r].pos=owner.id; DD.RECEIVER[r].frq=frqOf(owner); }
  });
  /* the Feeders fold the same way. A far-gate crossover is handed to a Feeder
     rather than to Arrival (SOP 4-5), so that seat has to follow whoever is
     actually open under the combining chain (SOP 2-1 NOTE 2). */
  ['I','H'].forEach(function(p){
   var owner=ownerOf(p);
-  if(DD.FEEDER_POS && DD.FEEDER_POS[p]){ DD.FEEDER_POS[p].pos=owner.id; DD.FEEDER_POS[p].frq=owner.frq; }
+  if(DD.FEEDER_POS && DD.FEEDER_POS[p]){ DD.FEEDER_POS[p].pos=owner.id; DD.FEEDER_POS[p].frq=frqOf(owner); }
  });
  /* and the satellite seats, which take the arrivals into their own fields */
  ['E','G','K'].forEach(function(p){
   var owner=ownerOf(p);
-  if(DD.SAT_POS && DD.SAT_POS[p]){ DD.SAT_POS[p].pos=owner.id; DD.SAT_POS[p].frq=owner.frq; }
+  if(DD.SAT_POS && DD.SAT_POS[p]){ DD.SAT_POS[p].pos=owner.id; DD.SAT_POS[p].frq=frqOf(owner); }
  });
  syncQuickButtons();
 }
@@ -597,13 +690,13 @@ function seatGates(){
 }
 function seatLabel(){
  var ps=seatPositions();
- if(ps.length===1) return ps[0].name+' ('+ps[0].id+' · '+ps[0].frq+')';
+ if(ps.length===1) return nameOf(ps[0])+' ('+ps[0].id+' · '+frqOf(ps[0])+')';
  return 'Combined '+ps.map(function(p){return p.id;}).join(' + ')+' — '+ps.map(function(p){return p.name;}).join(' and ');
 }
 function openLabel(){
  var others=POSITIONS.filter(function(p){ return isOpen(p.id) && !isSeat(p.id); });
  if(!others.length) return 'nothing else open — the rest of M98 is combined onto you';
- return others.map(function(p){ return p.name+' ('+p.id+')'; }).join(', ');
+ return others.map(function(p){ return nameOf(p)+' ('+p.id+')'; }).join(', ');
 }
 /* the live player's quick buttons have to follow whoever is actually taking the handoff */
 function syncQuickButtons(){
@@ -752,10 +845,26 @@ function onTick(sim,dt){
   var was=category(activeRec.ceil, activeRec.vis), now=category(sp.ceil, sp.vis);
   var cfg=configById(activeRec.cfg);
   var kills = cfg.min && ((sp.ceil!=null && sp.ceil<cfg.min.ceil) || (sp.vis!=null && sp.vis<cfg.min.vis));
+  /* Roadmap item 9. A special observation that changes the configuration now
+     has somewhere real to move the traffic to: setFlow swaps the whole gate
+     set and re-paths everything airborne (issue #14). Announced first, so the
+     log reads in the order the room would hear it — observation, then the
+     re-route it forces. */
   DD.log(kills?'crit':'flag',
    '<span class="dd-chip '+(kills?'crit':'flag')+'">SPECI</span>Special observation — ceiling '+Number(sp.ceil).toLocaleString()+', visibility '+sp.vis+', wind '+sp.wind+'. The field goes '+was+' to <b>'+now+'</b>. '+TOOLBOX[now]
    +(kills?(' <b>'+cfg.id+' is below its floor of '+cfg.min.ceil.toLocaleString()+' and '+cfg.min.vis+' ('+cfg.src+') — the configuration cannot stand.</b> Say what changes: the tools you just lost, what it does to the strips already in, and who you have to coordinate the change with.')
      :(' Re-plan the toolbox out loud before the next strip checks in.')));
+  if(sp.cfg && sp.cfg!==activeRec.cfg){
+   var toCfg=configById(sp.cfg);
+   DD.log('flag','<span class="dd-chip flag">SPECI</span>The configuration goes <b>'+configById(activeRec.cfg).id+'</b> to <b>'+toCfg.id+'</b>. '+toCfg.note+'.');
+   /* setFlow rebuilds ROUTES and FLOORS in place and re-paths everything
+      airborne, so the floors, the receivers and the near/far split follow the
+      new flow without anything else being told. The drill RECORD is left
+      alone on purpose — activeRec is the stored drill, and writing the
+      post-SPECI configuration onto it would quietly rewrite what the trainee
+      built. speciFired is what stops this running twice. */
+   DD.setFlow(sp.cfg);
+  }
  }
  renderTiming();
 }
@@ -785,6 +894,14 @@ function timingSummary(){
 var _load=window.ddLoad, _send=window.ddSend, _end=window.ddEnd, _rate=window.ddRate;
 var loading=false;
 window.ddLoad=function(id){
+ /* THE FLOW HAS TO BE LOADED BEFORE THE STRIPS ARE BUILT, because mkAc reads
+    ROUTES at creation and never looks again. Running a saved 30s drill while
+    the builder held a 12s draft used to build every aircraft on 12s ladders —
+    found while wiring issue #14, since a re-path is only as good as the flow
+    it re-paths onto. A prior-drill card from the deck's own SCENARIOS carries
+    no cfg and is left alone; those are all 12s. */
+ var pre = findDrill(id);
+ if(pre && pre.cfg) DD.setFlow(pre.cfg);
  loading=true; try{ _load(id); } finally { loading=false; }
  resetTiming();
  DD.sim.ac.forEach(function(a){ if(a.onFreq) a._ckAt=0; });
@@ -1027,10 +1144,10 @@ function gen(o){
   name:'Built — '+fc.label+' · seed '+seed,
   cfg:o.cfg||'12', wind:o.wind||'150/9', ceil:(o.ceil==null?5000:o.ceil), vis:(o.vis==null?10:o.vis),
   atis:'J', altim:'2980', seat:o.seat||seatLabel(), towers:state.pos.towers,
-  open:openLabel(), rstOpen:rstOpen(),
+  open:openLabel(), rstOpen:rstOpen(), midnight:midnightOn(),
   brief:fc.line+' Generated '+press.label+' push, '+n+' strip'+(n>1?'s':'')+', seed '+seed+' — same seed rebuilds the same drill.',
   focus:focus, seed:seed, rate:1, hot:!!o.hot,
-  speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12'}, ac:ac
+  speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12', cfg:''}, ac:ac
  };
 }
 
@@ -1232,6 +1349,13 @@ function validate(rec){
   var after=category(rec.speci.ceil, rec.speci.vis);
   if(!(rec.speci.at>=0)) errs.push('The special observation needs a time in seconds from the start of the drill.');
   if(after===cat) warns.push('The special observation does not change the flight category — it stays '+cat+'. Push the ceiling or the visibility across a threshold if you want the drill to force a re-plan.');
+  if(rec.speci.cfg){
+   var sc2=configById(rec.speci.cfg);
+   if(rec.speci.cfg===rec.cfg) warns.push('The special observation re-configures to '+sc2.id+', which is the configuration the drill is already in. Nothing will move.');
+   else if(!DD.flowCarried(rec.speci.cfg)) warns.push('The special observation re-configures to '+sc2.id+', and ZMP-M98 LOA Table 2 has no row for it — so the arrival ladders cannot follow. The traffic will keep the tracks it is on and the log will say why. Legal to drill the coordination; you will not see the re-route.');
+   if(sc2.min && ((rec.speci.ceil!=null && rec.speci.ceil<sc2.min.ceil) || (rec.speci.vis!=null && rec.speci.vis<sc2.min.vis)))
+    errs.push('The special observation re-configures to '+sc2.id+', which needs '+sc2.min.ceil.toLocaleString()+' and '+sc2.min.vis+' ('+sc2.src+') — and the observation it arrives with does not meet that. The configuration it changes to cannot stand either.');
+  }
  }
  return {errors:errs, warnings:warns};
 }
@@ -1242,9 +1366,12 @@ function validate(rec){
 function frameOf(rec){
  var cat=category(rec.ceil, rec.vis);
  var rst=(rec.rstOpen===false)?' · RST closed':'';
+ /* Midnight is part of the frame the coach states, so it rides in the same
+    line rather than being something the trainee has to notice on the page. */
+ var mid=(rec.midnight===true)?' · midnight operations':'';
  var wx=cat+' '+(rec.ceil==null?'':(rec.ceil>=99999?'':(rec.ceil+' broken '))) + (rec.vis==null?'':(rec.vis+' miles'));
  return [configById(rec.cfg).id, 'wind '+(rec.wind||'150/9'), wx.trim(), (rec.seat||'Split H — South Feeder'),
-         (rec.towers||'towers open')+rst, 'ATIS '+(rec.atis||'J'), 'A'+(rec.altim||'2980')].join(' · ');
+         (rec.towers||'towers open')+rst+mid, 'ATIS '+(rec.atis||'J'), 'A'+(rec.altim||'2980')].join(' · ');
 }
 function openLine(rec){ return rec.open ? ('Open around you: '+rec.open) : ''; }
 function toScenario(rec){
@@ -1296,6 +1423,14 @@ function runDrill(rec){
  if(rec.rstOpen!==undefined){ state.pos.rstOpen = (rec.rstOpen!==false); }
  DD.setRstOpen(rstOpen());
  var ro=document.getElementById('ddb-rstopen'); if(ro) ro.checked=rstOpen();
+ /* and whether it was built under the overnight regime. Absent means daytime:
+    every drill banked before 2026-09-07 was flown on the H chain. */
+ if(rec.midnight!==undefined){
+  state.pos.midnight = (rec.midnight===true);
+  if(state.pos.midnight) state.pos.open[MIDNIGHT.base]=1;
+  applyReceivers();
+ }
+ var mn=document.getElementById('ddb-midnight'); if(mn) mn.checked=midnightOn();
  publish(rec);
  activeRec=rec; speciFired=false;
  window.ddLoad(rec.id);
@@ -1402,9 +1537,9 @@ function neighbourOf(a){
 function blankDrill(){
  return {id:'u'+Math.floor(Math.random()*100000), name:'', cfg:'12', wind:'150/9', ceil:5000, vis:10,
          atis:'J', altim:'2980', seat:seatLabel(), towers:state.pos.towers,
-         open:openLabel(), rstOpen:rstOpen(),
+         open:openLabel(), rstOpen:rstOpen(), midnight:midnightOn(),
          brief:'', datis:'', datisArr:'', datisDep:'', focus:'free', seed:null, rate:1, hot:false,
-         speci:{on:false, at:180, ceil:1800, vis:3, wind:'150/12'}, ac:[blankAc()]};
+         speci:{on:false, at:180, ceil:1800, vis:3, wind:'150/12', cfg:''}, ac:[blankAc()]};
 }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function num(v,d){ var n=parseFloat(v); return isNaN(n)?d:n; }
@@ -1432,6 +1567,10 @@ function readEditor(){
  draft.speci.ceil=num(g('ddb-specic'), draft.speci.ceil);
  draft.speci.vis=num(g('ddb-speciv'), draft.speci.vis);
  draft.speci.wind=g('ddb-speciw')||draft.speci.wind;
+ /* empty means the flow does not change — a SPECI is a weather report,
+    and only some of them force a re-configuration */
+ var scfg=document.getElementById('ddb-specicfg');
+ if(scfg) draft.speci.cfg=scfg.value||'';
  draft.atis=g('ddb-atis')||draft.atis;
  draft.altim=g('ddb-altim')||draft.altim;
  draft.brief=g('ddb-brief')||draft.brief;
@@ -1624,10 +1763,20 @@ function acRowHtml(a,i){
      }).join('')+'</select>')
    /* only the arrivals that actually end at the field it is landing at — the
       six RNAV gates are MSP arrivals and nothing else */
+   /* THE OPTION CARRIES AN EXPLICIT VALUE, and it has to. With none, an
+      option's value is its own label text, so every arrival whose label is
+      decorated — a revision name, or "(frame only)" — read back as
+      "KASPR — KASPR SEVEN (frame only)" instead of "KASPR". ddbSync stored
+      that string as a.gate, nothing then matched it on the next render, no
+      option came back selected, and the control SNAPPED BACK to the first
+      arrival. Six of the sixteen could not be chosen at all: KASPR and GEP
+      at MSP, and GEP, AGUDE, ENCEE and TWOLF at the satellites. Found
+      2026-09-07 while fixing the same family of bug in the master strip
+      block, which had always written the value out. */
    +f('Arrival','<select class="dd-sel" id="ddb-gate'+i+'" onchange="ddbSync()">'
      +DD.arrivalsFor(dest).map(function(g){
        var p=DD.ARRIVALS[g];
-       return '<option'+(g===a.gate?' selected':'')+'>'+g+(p.rev?(' — '+p.rev):'')+(p.flies?'':' (frame only)')+'</option>';
+       return '<option value="'+esc(g)+'"'+(g===a.gate?' selected':'')+'>'+g+(p.rev?(' — '+p.rev):'')+(p.flies?'':' (frame only)')+'</option>';
       }).join('')+'</select>')
    /* Placed by the fix it is running to and the distance still to run — the
       way it reads off a scope — with only the fixes on THIS arrival offered
@@ -1769,6 +1918,7 @@ function renderEditor(){
  g('ddb-atis',draft.atis); g('ddb-altim',draft.altim); g('ddb-brief',draft.brief); g('ddb-rate',String(draft.rate));
  var sp=draft.speci||{};
  g('ddb-speciat',sp.at); g('ddb-specic',sp.ceil); g('ddb-speciv',sp.vis); g('ddb-speciw',sp.wind);
+ var sf=document.getElementById('ddb-specicfg'); if(sf) sf.value=sp.cfg||'';
  var sc=document.getElementById('ddb-speci'); if(sc) sc.checked=!!sp.on;
  var hot=document.getElementById('ddb-hot'); if(hot) hot.checked=!!draft.hot;
  var cat=category(draft.ceil, draft.vis), cf=configById(draft.cfg);
@@ -1792,12 +1942,12 @@ function renderPos(){
     an ordinary thing to do */
  setHtml('ddb-seatbox',
   POSITIONS.map(function(p){
-   var c=COVERAGE[p.id]||{k:'info',t:''};
+   var c=coverageFor(p.id);
    var on=isSeat(p.id);
    var only=(on && seatIds().length===1);
    return '<div class="dd-item" style="padding:9px 0;"><div class="dd-item-head">'
-    +'<b>'+(on?'▸ ':'')+esc(p.name)+'</b>'
-    +'<span><span class="dd-chip info">'+p.id+' · '+p.frq+'</span>'
+    +'<b>'+(on?'▸ ':'')+esc(nameOf(p))+'</b>'
+    +'<span><span class="dd-chip info">'+p.id+' · '+frqOf(p)+'</span>'
     +'<button class="dd-btn sm'+(on?' on':'')+'"'+(only?' title="you have to be working something"':'')
     +' onclick="ddbSeat(\''+p.id+'\')">'+(on?(only?'working this seat':'drop this seat'):'add this seat')+'</button></span></div>'
     +'<div class="dd-item-meta">'+esc(DUTIES[p.job])+(p.role?(' '+esc(p.role)):'')+'</div>'
@@ -1810,13 +1960,13 @@ function renderPos(){
    var locked=isSeat(p.id);
    return '<label class="dd-chk" style="padding-top:0;"><input type="checkbox"'
     +(isOpen(p.id)?' checked':'')+(locked?' disabled':'')
-    +' onchange="ddbOpen(\''+p.id+'\', this.checked)">'+p.id+' — '+esc(p.name)+(locked?' (you)':'')+'</label>';
+    +' onchange="ddbOpen(\''+p.id+'\', this.checked)">'+p.id+' — '+esc(nameOf(p))+(locked?' (you)':'')+'</label>';
   }).join(''));
  /* the resolved picture */
  var rows=RWYS.map(function(r){
   var owner=ownerOf(RWY_ARRIVAL[r]||'S');
   var self=isSeat(owner.id);
-  return '<div>'+r+' arrivals → <b>'+owner.id+'</b>, '+esc(owner.name)+', '+owner.frq
+  return '<div>'+r+' arrivals → <b>'+owner.id+'</b>, '+esc(nameOf(owner))+', '+frqOf(owner)
    +(self?' — <span style="color:var(--amber)">that is you</span>':'')
    +(owner.id!==(RWY_ARRIVAL[r]||'S')?(' <span style="color:var(--dim2)">('+(RWY_ARRIVAL[r])+' is not open, so it combines here)</span>'):'')
    +'</div>';
@@ -1829,12 +1979,17 @@ function renderPos(){
  } else if(warn.length){
   msgs+='<div class="w">note — '+warn.join(' and ')+' comes back to you. That leg is an internal transfer, the other one is real.</div>';
  }
+ /* Overnight the base seat is not doing its daytime job — it is doing all of
+    them, because the whole TRACON folds onto it. Without this the page tells a
+    midnight controller that the feeder problem belongs to somebody else. */
  var jobs={}; seatPositions().forEach(function(p){ jobs[p.job]=1; });
+ if(midnightOn() && isSeat(MIDNIGHT.base)) Object.keys(DUTIES).forEach(function(j){ jobs[j]=1; });
+
  if(!jobs.feeder){
   msgs+='<div class="w">note — the live player models the feeder job: assign the runway, work the descend-via, make the floor, hand off. Working '+esc(seatLabel())+' sets the frame and the coordination picture, but the arrivals you fly will still be the feeder problem. Departures and overflights you build will fly properly from any seat.</div>';
  }
  if(seatIds().length>1){
-  msgs+='<div class="k">working '+seatIds().length+' positions at once — '+esc(seatPositions().map(function(p){return p.id+' on '+p.frq;}).join(', '))+'. Everything either of them owns is yours, and nothing between them needs coordinating.</div>';
+  msgs+='<div class="k">working '+seatIds().length+' positions at once — '+esc(seatPositions().map(function(p){return p.id+' on '+frqOf(p);}).join(', '))+'. Everything either of them owns is yours, and nothing between them needs coordinating.</div>';
  }
  if(!isOpen('R') && jobs.feeder){
   msgs+='<div class="w">note — no Departure position is open, so the departures are yours as well. The player does not fly them; brief them anyway, because the 17 corridor sits under your trunk.</div>';
@@ -1852,6 +2007,25 @@ function renderPos(){
    +(theirs.length?('; '+esc(theirs.join(', '))+' belong to the other Feeder'):'')
    +'. Individual gates get reassigned to balance workload, so this is the default, not a fence.</div>';
  }
+ /* The overnight regime, stated in full where the frame is resolved. Every
+    line here is either a citation or a plainly-labelled gap; nothing about
+    midnight is inferred from the runways or from the daytime chain. */
+ if(midnightOn()){
+  var mb=posById(MIDNIGHT.base);
+  msgs+='<div class="k"><b>Midnight operations</b> — '+esc(MIDNIGHT.window)+'. All of M98 combines onto <b>'+MIDNIGHT.base+'</b>, '
+   +esc(mb.name)+' — the seat vNAS calls <b>Midnight</b> — answering on <b>'+MIDNIGHT.frq+'</b> rather than its daytime '+MIDNIGHT.daytimeFrq
+   +'. Anything you leave closed folds here instead of to H.</div>';
+  if(!isOpen(MIDNIGHT.base)){
+   msgs+='<div class="w">note — the midnight base '+MIDNIGHT.base+' is not open, so the chain runs out and everything resolves to a closed position. Open it, or turn the regime off.</div>';
+  }
+  msgs+='<div>Under it <b>ZMP</b> '+esc(MIDNIGHT.zmp.join('; '))+'. <b>M98</b> '+esc(MIDNIGHT.m98.join('; '))+'.'
+   +' <span style="color:var(--dim2)">The player does not fly any of that — an arrival still flies its ladder from the gate. Brief it; do not expect the traffic to show it.</span></div>';
+  msgs+='<div class="w">the seat letter is the one thing the sources disagree on, and the tool does not hide the choice — the LOA parenthetical on 5.a(4) says <b>MSP_R_APP</b>, and no such callsign exists. vNAS has MSP_R_DEP (South Departure, 124.700, which SOP 2-1 gives as well) and MSP_E_APP carrying a second position record named <b>Midnight</b> on 124.7, on the same TCP as Flying Cloud Satellite. All three agree on the frequency; only the letter is unsettled. E is taken because it is the record actually called Midnight and the only 124.7 record whose callsign is an _APP. The handoff ID is <b>E</b> either way.</div>';
+  var mcfg=(draft&&draft.cfg)||'12';
+  if(!DD.flowCarried(mcfg)){
+   msgs+='<div class="w">quiet hours are '+esc(MIDNIGHT.quiet)+' and the RUS preference is land 30s / depart 12s (MSP-M98 LOA 9.g) — which is the <b>'+esc(mcfg)+'</b> on the frame, and ZMP-M98 LOA Table 2 has no row for it. So there is <b>no arrival geometry loaded</b>: the ladders are not being borrowed from another flow. That question is open with the facility.</div>';
+  }
+ }
  msgs+='<div>'+(rstOpen()
    ? 'South of the Rochester line — MSP 185/038, 158/041, 149/040 — <b>RST</b> owns 9,000 and below and <b>ZMP</b> owns above it. Everywhere else around M98 is ZMP.'
    : '<b>Rochester is closed</b>, so ZMP owns that corner top to bottom. Nothing goes to RST while it is shut.')+'</div>';
@@ -1859,6 +2033,7 @@ function renderPos(){
  setHtml('ddb-resolved', rows.join('')+msgs);
  var tw=document.getElementById('ddb-towers'); if(tw && tw.value!==state.pos.towers) tw.value=state.pos.towers;
  var ro=document.getElementById('ddb-rstopen'); if(ro) ro.checked=rstOpen();
+ var mn=document.getElementById('ddb-midnight'); if(mn) mn.checked=midnightOn();
 }
 
 function renderSaved(){
@@ -2151,6 +2326,10 @@ window.ddbOpen=function(id, on){
 };
 window.ddbPreset=function(k){
  var p=PRESETS[k]; if(!p) return;
+ /* Set the regime first: the seat remap below calls ownerOf, and ownerOf walks
+    a different chain under midnight. A preset that does not name it is a
+    daytime preset, so this clears as well as sets. */
+ state.pos.midnight = !!p.midnight;
  var was=seatIds();
  state.pos.open={};
  Object.keys(p.open).forEach(function(id){ state.pos.open[id]=1; });
@@ -2163,6 +2342,17 @@ window.ddbPreset=function(k){
 window.ddbTowers=function(){
  var e=document.getElementById('ddb-towers');
  if(e && typeof e.value==='string'){ state.pos.towers=e.value; save(); renderPos(); syncDraftFrame(); }
+};
+/* The overnight regime is a toggle, not only a preset: you can be handed the
+   midnight seat with something else still open, and the chain has to follow. */
+window.ddbMidnight=function(){
+ var e=document.getElementById('ddb-midnight');
+ state.pos.midnight = e ? !!e.checked : false;
+ /* Turning it on with the base shut leaves ownerOf resolving to a closed
+    position, so open E with it — the same courtesy ddbSeat does. Turning it
+    off leaves whatever is open alone; that is the daytime chain's problem. */
+ if(state.pos.midnight) state.pos.open[MIDNIGHT.base]=1;
+ save(); applyReceivers(); renderPos(); syncDraftFrame();
 };
 window.ddbRst=function(){
  var e=document.getElementById('ddb-rstopen');
@@ -2336,8 +2526,9 @@ function buildHtml(){
  +f('New ceiling','<input class="dd-in" id="ddb-specic" onchange="ddbSync()">')
  +f('New visibility','<input class="dd-in" id="ddb-speciv" onchange="ddbSync()">')
  +f('New wind','<input class="dd-in" id="ddb-speciw" onchange="ddbSync()">')
+ +f('Re-configure to','<select class="dd-sel" id="ddb-specicfg" onchange="ddbSync()"><option value="">no change</option>'+CONFIGS.map(function(c){return '<option value="'+c.id+'">'+c.name+'</option>';}).join('')+'</select>')
  +'</div>'
- +'<div class="dd-hint">A special observation is unscheduled — it lands between the hourly reports when the weather crosses a threshold, and because the configuration follows the weather, a big enough change forces a re-plan. The engine will not re-route the strips already flying; it announces the new observation and the category it produces, and the rep is saying what changes.</div>'
+ +'<div class="dd-hint">A special observation is unscheduled — it lands between the hourly reports when the weather crosses a threshold, and because the configuration follows the weather, a big enough change forces a re-plan. Set <b>re-configure to</b> and the engine does re-route the strips already flying: the ladders swap to the new flow and every aircraft holds its position and picks up the new track&rsquo;s miles to go, which is what a real re-configuration looks like from the scope. Leave it on <b>no change</b> and the SPECI is what it was &mdash; the observation, the category it produces, and the rep is saying what changes. Where Table 2 has no row for the configuration you pick, the traffic keeps its tracks and the log says why rather than borrowing another flow&rsquo;s geometry.</div>'
  +'<div class="dd-field" style="margin-top:14px;"><span class="dd-lab">Brief — what the drill is asking of you</span><textarea class="dd-ta" id="ddb-brief"></textarea></div>'
  +'<div class="dd-sub" style="margin-top:16px;">Strips</div>'
  +'<div id="ddb-rows"></div>'
@@ -2361,7 +2552,7 @@ function posHtml(){
  +'<div class="dd-actions" style="margin-top:0;">'
  + Object.keys(PRESETS).map(function(k){ return '<button class="dd-btn" onclick="ddbPreset(\''+k+'\')">'+esc(PRESETS[k].label)+'</button>'; }).join('')
  +'</div>'
- +'<div class="dd-hint">M98 collapses to <b>H</b>, South Feeder, and the splits open in the order H → R → N → S — R as combined Departure, N as combined MSP Final, S as South Final, with E as the combined Satellite (SOP 2-1 NOTE 2). Anything you leave closed folds into whoever is still open along that chain.</div></div>'
+ +'<div class="dd-hint">M98 collapses to <b>H</b>, South Feeder, and the splits open in the order H → R → N → S — R as combined Departure, N as combined MSP Final, S as South Final, with E as the combined Satellite (SOP 2-1 NOTE 2). Anything you leave closed folds into whoever is still open along that chain. <b>Midnight is the exception</b>: between 2230 and 0530 local, when coordinated, the chain roots on <b>E</b> instead and the whole TRACON answers on 124.7 (ZMP-M98 LOA 5.a(4)). It is a regime, not a split, so it is a toggle as well as a preset — you can be handed the midnight seat with something else still open.</div></div>'
 
  +'<div class="dd-panel"><div class="dd-sub a">Which seat are you working</div>'
  +'<div id="ddb-seatbox"></div></div>'
@@ -2371,14 +2562,15 @@ function posHtml(){
  +'<div class="dd-grid" style="margin-top:12px;">'
  +f("Towers",'<input class="dd-in" id="ddb-towers" onchange="ddbTowers()">')
  +'<label class="dd-chk"><input type="checkbox" id="ddb-rstopen" onchange="ddbRst()">Rochester approach open</label>'
+ +'<label class="dd-chk"><input type="checkbox" id="ddb-midnight" onchange="ddbMidnight()">Midnight operations — all of M98 on E</label>'
  +'</div>'
- +'<div class="dd-hint">Rochester is not a 24-hour facility. With it closed, the segment below stops mattering and Center owns that corner top to bottom — so the same aircraft that would have gone to RST at 6,000 goes to Center instead. Its hours are not in the reference set, so this is yours to state with the rest of the frame, the same way towers open or closed is.</div></div>'
+ +'<div class="dd-hint">Midnight operations is the ZMP-M98 LOA para 5 regime, 2230–0530 local when coordinated. It moves the base of the combining chain from H to E and puts E on 124.7 instead of 134.7, and it changes what ZMP hands you: direct to the destination airport, pilot discretion descent to 10,000, and anything at or below 10,000 left at altitude. <b>The player does not fly that arrival handling</b> — the traffic still flies its ladder from the gate — so it is yours to brief. Rochester is not a 24-hour facility. With it closed, the segment below stops mattering and Center owns that corner top to bottom — so the same aircraft that would have gone to RST at 6,000 goes to Center instead. Its hours are not in the reference set, so this is yours to state with the rest of the frame, the same way towers open or closed is.</div></div>'
 
  +'<div class="dd-panel"><div class="dd-sub">What that resolves to</div>'
  +'<div class="dd-msg" id="ddb-resolved"></div>'
  +'<div class="dd-hint">This drives the live player, not just the paperwork: whoever ends up owning the arrival is who has to take the flash, on their frequency, and the switch button in the player follows it. Close South Arrival and both runways go to N on 119.3 — flash it to S anyway and the player will tell you nobody is there.</div></div>'
 
- +'<div class="dd-note">Positions, identifiers and frequencies are M98 SOP 2-1; the combining order is NOTE 2 on the same paragraph. Position duties are SOP 2-1 / 2-4 / 2-5 — Feeder assigns the runway and starts crossovers, Arrival vectors, sequences and clears. The arrival split rides the localizers, so 12R is South Arrival\u2019s side and 12L is North\u2019s (SOP 4-2a). Which arrival gates belong to North rather than South Feeder is SOP 4-4d, which is not in the reference set here — if you take the North Feeder seat, confirm that split yourself before you trust the traffic.</div>'
+ +'<div class="dd-note">Positions, identifiers and frequencies are M98 SOP 2-1; the combining order is NOTE 2 on the same paragraph. Position duties are SOP 2-1 / 2-4 / 2-5 — Feeder assigns the runway and starts crossovers, Arrival vectors, sequences and clears. The arrival split rides the localizers, so 12R is South Arrival\u2019s side and 12L is North\u2019s (SOP 4-2a). Which arrival gates belong to North rather than South Feeder is SOP 4-4d, which is not in the reference set here — if you take the North Feeder seat, confirm that split yourself before you trust the traffic. The overnight regime is <b>ZMP-M98 LOA para 5</b>, and the seat it collapses to is <b>vNAS</b> — MSP_E_APP carries a second position record named Midnight on 124.7, on the same TCP as Flying Cloud Satellite. The SOP describes no overnight regime at all. The LOA parenthetical naming MSP_R_APP is preserved as written and is not a callsign that exists.</div>'
  +'</section>';
 }
 function notesHtml(){
@@ -2474,6 +2666,7 @@ window.ddb = {
  spoken:spoken, category:category, configById:configById, frameOf:frameOf,
  POSITIONS:POSITIONS, ownerOf:ownerOf, isOpen:isOpen, applyReceivers:applyReceivers,
  seatLabel:seatLabel, openLabel:openLabel, PRESETS:PRESETS,
+ MIDNIGHT:MIDNIGHT, midnightOn:midnightOn, baseId:baseId, intoOf:intoOf, frqOf:frqOf, nameOf:nameOf, coverageFor:coverageFor,
  seatIds:seatIds, isSeat:isSeat, seatPositions:seatPositions,
  mixOptions:mixOptions, mixGates:mixGates, seatGates:seatGates,
  parseDatis:parseDatis, datisText:datisText, datisSplit:datisSplit, datisJoined:datisJoined,

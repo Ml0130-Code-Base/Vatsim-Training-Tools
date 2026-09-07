@@ -407,6 +407,12 @@ function finalize(r){
  return r;
 }
 function cloneFix(p){ var q={}; for(var k in p){ if(Object.prototype.hasOwnProperty.call(p,k)) q[k]=p[k]; } return q; }
+/* Clone a shared LADDER array into a flyable route and remember which ladder
+   it came from. finalize() writes screen position and cumulative distance onto
+   every fix, so the LADDER tables must never be finalized in place — and `src`
+   is what lets a re-path tell "already on this ladder" from "same shape,
+   different object", which a plain identity test on the clone cannot do. */
+function materialize(lad){ var r=finalize(lad.map(cloneFix)); r.src=lad; return r; }
 /* The ladder a gate actually flies. The runway assigned to the strip wins when
    there is one and it is published — that is a crossover, and it is a real
    lateral reroute for most gate/runway pairs. With no runway assigned it falls
@@ -420,7 +426,20 @@ function ladderFor(cfg, gate, rwy){
  var a=t[gate];
  return (a && g[a]) ? g[a] : null;
 }
+/* Every runway Table 2 assigns anybody in this configuration. It is the only
+   list of LANDING runways the reference set actually carries — the
+   configuration names are prose — and it is what decides whether a runway
+   already assigned to an aircraft survives a re-configuration. Null when
+   Table 2 has no row, which is not the same as an empty list: it means the
+   question is unanswerable here, so nothing gets cleared on that basis. */
+function assignableRwys(cfg){
+ var t=TABLE2[cfg]; if(!t) return null;
+ var out={};
+ GATE_ORDER.forEach(function(g){ if(t[g]) out[t[g]]=1; });
+ return Object.keys(out);
+}
 /* What Table 2 assigns this gate in this configuration, or null. */
+
 function transitionFor(cfg, gate){ var t=TABLE2[cfg]; return t ? (t[gate]||null) : null; }
 /* Load the arrival ladders for a configuration into ROUTES, in place. Each
    ladder is cloned before it is finalized, because finalize() writes screen
@@ -432,15 +451,24 @@ function buildRoutes(cfg){
  if(ROUTE_CFG){
   GATE_ORDER.forEach(function(g){
    var lad = ladderFor(ROUTE_CFG, g, null); if(!lad) return;
-   ROUTES[g] = finalize(lad.map(cloneFix));
+   ROUTES[g] = materialize(lad);
   });
  }
  rebuildFloors(ROUTE_CFG);
  return ROUTES;
 }
 /* Switch flows. Ignores a falsy configuration rather than blanking the scope,
-   and does nothing when the requested flow is already loaded. */
-function setFlow(cfg){ if(!cfg || cfg===ROUTE_CFG) return ROUTES; return buildRoutes(cfg); }
+   and does nothing when the requested flow is already loaded. ANYTHING ALREADY
+   AIRBORNE IS RE-PATHED onto the new flow's ladders — repathTo carries the rule
+   and repathAll says out loud what it cost. Before 2026-09-07 a mid-drill flow
+   change moved the receiver and the floor but not the track (issue #14,
+   roadmap items 8 and 9). */
+function setFlow(cfg){
+ if(!cfg || cfg===ROUTE_CFG) return ROUTES;
+ buildRoutes(cfg);
+ repathAll(cfg);
+ return ROUTES;
+}
 /* True when Table 2 gives this configuration arrival geometry at all. */
 function flowCarried(cfg){ return !!TABLE2[cfg]; }
 
@@ -448,7 +476,23 @@ function flowCarried(cfg){ return !!TABLE2[cfg]; }
    MSP VOR out through the fixes that are direct-able inside 60 NM — which is
    the join limit in ZMP-M98 LOA 4.f, and as far as M98 ever takes them.
    The initial track off the runway is dispersal (a tower function), not the
-   SID's ultimate direction, so these are the join points after the turn. */
+   SID's ultimate direction, so these are the join points after the turn.
+
+   NINE, AND CIFP CODES TWELVE. THE DIFFERENCE IS DELIBERATE — DO NOT CLOSE IT.
+   CIFP 260903 also carries HSTIN6, MEDOW5 and SLAYR4, all three Runway 17
+   departures. They are technically valid for the airport and are NEVER
+   ASSIGNED: a flight plan filing one is auto-corrected off it, so none of
+   them ever reaches a controller (Michael, 2026-09-07). Adding them would
+   put a clearance in the picker that the trainee will never give and the
+   system would reject — which is worse than a gap, because it looks right.
+
+   So a diff against the coded source showing three missing SIDs is the
+   expected result, not a finding. The three are identified in
+   claude_MSP_SID_Reference.md so nobody has to rediscover them.
+
+   The other reason not to reach for CIFP here: these entries are join points
+   truncated at the LOA's 60 NM limit and carry no crossing restrictions,
+   where CIFP legs are published ladders. One table, one provenance. */
 var DEPS = {
  COULT: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'TAXEE',lat:44.70250,lon:-92.49267},{f:'COULT',lat:44.55667,lon:-92.20850}],
  KBREW: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'GEP',lat:45.14567,lon:-93.37317},{f:'HRBEK',lat:45.31450,lon:-93.80700},{f:'HOMUR',lat:45.41817,lon:-94.07683}],
@@ -1211,7 +1255,13 @@ function mkAc(o){
  var route = role==='departure' ? DEPS[o.sid]
            : role==='overflight' ? overflightRoute(o.entry||{r:180,d:38}, o.exit||{r:0,d:38})
            : routeFor(o);
- if(!route) route = ROUTES.NITZR;
+ /* `|| null` rather than bare: in a configuration Table 2 does not name,
+    ROUTES is empty and this fallback resolved to undefined, which throws in
+    segOf rather than showing a gap. validate() refuses such a strip so it is
+    not reachable from the builder, but repathTo reads a.route and would have
+    inherited the crash. */
+ if(!route) route = ROUTES.NITZR || null;
+
  var a = {
   cs:o.cs, type:o.type, gate:o.gate, route:route,
   role:role, sid:o.sid||null,
@@ -1258,6 +1308,110 @@ function posOf(a){
  var d0=r[i-1].cum, d1=r[i].cum, f=(d1===d0)?0:(a.dist-d0)/(d1-d0);
  return {x:r[i-1].x+(r[i].x-r[i-1].x)*f, y:r[i-1].y+(r[i].y-r[i-1].y)*f,
          e:r[i-1].e+(r[i].e-r[i-1].e)*f, n:r[i-1].n+(r[i].n-r[i-1].n)*f};
+}
+/* ---- Live re-pathing — issue #14, roadmap items 8 and 9 --------------------
+   A crossover, or a flow change mid-drill, moves the receiver and the floor.
+   Until 2026-09-07 it did not move the TRACK: mkAc read the route once at
+   creation and nothing re-pathed an aircraft already airborne, so the
+   coordination was right and the line on the scope was wrong.
+
+   THE RULE, owner's call 2026-09-07: KEEP THE POSITION, RE-DERIVE THE MILES TO
+   GO. The aircraft is where it is; only the track ahead of it changes. Its
+   current position is projected onto the new ladder and a.dist is set from
+   that, so distance-to-go falls out of the new route.total. What does NOT
+   carry across is dtg: total track length differs between ladders — on the 30s
+   the totals run NITZR 34.7, BLUEM 29.6, TORGY 53.7, KKILR 25.8, MUSCL 27.3,
+   BAINY 55.5 NM — so preserving dtg would teleport the target by the
+   difference, up to thirty miles on the extreme pairs.
+
+   WHAT IT COSTS, AND THE TOOL SAYS IT. The model flies on rails, so a target
+   cannot sit off its ladder: it steps sideways by the perpendicular offset
+   between the two tracks. A real aircraft turns and intercepts over some miles.
+   The offset is measured and reported on every re-path, so a six-mile step is
+   visible rather than silent. Where two ladders share a tail — BAINY and TORGY
+   each have one serving both 12L and 12R — the offset is zero and this is an
+   exact no-op, which is why those are the pairs to check first.
+
+   AND IT NEVER INVENTS A TRACK. Where ladderFor returns null — a configuration
+   Table 2 does not name, or KKILR on a 17-22 where the arrival is prohibited
+   outright — THE AIRCRAFT KEEPS THE TRACK IT HAS and the log says the geometry
+   is not carried. The engine does not draw what it cannot cite (root
+   CLAUDE.md invariant 3). */
+function nearestOn(route, e, n){
+ if(!route || route.length<2) return null;
+ var cands=[], minOff=Infinity, i;
+ for(i=1;i<route.length;i++){
+  var ax=route[i-1].e, ay=route[i-1].n;
+  var dx=route[i].e-ax, dy=route[i].n-ay, len2=dx*dx+dy*dy;
+  var t = len2 ? (((e-ax)*dx+(n-ay)*dy)/len2) : 0;
+  if(t<0) t=0; else if(t>1) t=1;
+  var qx=ax+dx*t, qy=ay+dy*t;
+  var off=Math.sqrt((e-qx)*(e-qx)+(n-qy)*(n-qy));
+  if(off<minOff) minOff=off;
+  cands.push({off:off, dist:route[i-1].cum+(route[i].cum-route[i-1].cum)*t});
+ }
+ /* Nearest point wins. A NEAR-TIE GOES TO THE ONE WITH MORE TRACK LEFT: a
+    ladder that doubled back on itself could otherwise project an aircraft
+    straight onto its closing leg and skip everything in between. None of the
+    six published ladders does that, and this keeps it from being load-bearing. */
+ var best=null;
+ for(i=0;i<cands.length;i++){
+  if(cands[i].off > minOff+0.5) continue;
+  if(!best || cands[i].dist < best.dist) best=cands[i];
+ }
+ return best;
+}
+/* Put one airborne arrival onto the ladder its gate flies for this
+   configuration and runway. Reports what happened rather than doing it
+   silently, so the caller can put it in the log. */
+function repathTo(a, cfg, rwy){
+ if(!a || !a.alive || a.role!=='arrival' || !a.gate || !a.route) return {kind:'skip'};
+ var lad = ladderFor(cfg, a.gate, rwy||null);
+ if(!lad) return {kind:'nogeom', gate:a.gate, rwy:rwy||null, cfg:cfg};
+ if(a.route.src===lad) return {kind:'same', gate:a.gate};
+ var p=posOf(a), next=materialize(lad), hit=nearestOn(next, p.e, p.n);
+ if(!hit) return {kind:'nogeom', gate:a.gate, rwy:rwy||null, cfg:cfg};
+ var wasDtg = a.route.total - a.dist;
+ a.route = next;
+ a.dist  = Math.max(0, Math.min(next.total, hit.dist));
+ /* Every one-shot grading flag is left exactly as it was. A check that has
+    already fired answered a question about what the trainee did, and that
+    answer does not change because the track did — re-arming here would flag
+    the same omission twice. */
+ return {kind:'moved', gate:a.gate, rwy:rwy||null, off:hit.off,
+         wasDtg:wasDtg, nowDtg:next.total-a.dist};
+}
+/* Re-path everything airborne after a flow change, and say what it cost in one
+   line rather than one per aircraft. */
+function repathAll(cfg){
+ if(!sim || !sim.ac || !sim.ac.length) return;
+ var moved=[], held=[], stale=[];
+ /* A RE-CONFIGURATION INVALIDATES EVERY RUNWAY ASSIGNMENT IT DOES NOT STILL
+    LAND ON. Without this an aircraft assigned 12R keeps riding its 12R ladder
+    into a 17-22, where 12R is a DEPARTURE runway — the assigned runway wins
+    over the Table 2 transition in ladderFor, which is right for a crossover
+    and wrong across a flow change. The runway is cleared and the aircraft
+    falls back to what Table 2 gives its gate; re-issuing it is the trainee's
+    job, and the flag says so. A crossover to a runway the new flow does land
+    on survives, because it is still an assignment ZMP makes here. */
+ var keep=assignableRwys(cfg);
+ sim.ac.forEach(function(a){
+  if(a.role==='arrival' && a.rwy && keep && keep.indexOf(a.rwy)<0){
+   stale.push(a.cs+' was on '+a.rwy);
+   a.rwy=null; a.rwyAuto=false; a.flashed=null;
+  }
+  var r=repathTo(a, cfg, a.rwy||null);
+  if(r.kind==='moved') moved.push(a.cs+' '+r.gate+' '+r.nowDtg.toFixed(1)+' NM to run'+(r.off>=0.1?(', stepped '+r.off.toFixed(1)+' NM across'):', no step'));
+  else if(r.kind==='nogeom') held.push(a.cs+' '+r.gate);
+ });
+ if(moved.length)
+  log('info','<span class="dd-chip info">re-path</span>The flow changed to <b>'+cfg+'</b> and the traffic followed it: '+moved.join('; ')
+   +'. Each one holds its position and picks up the new ladder&rsquo;s miles to go. Where it stepped across, that is the gap between the two published tracks &mdash; a real aircraft turns and intercepts it.');
+ if(stale.length)
+  log('flag','<span class="dd-chip flag">flag</span>A <b>'+cfg+'</b> does not land the runway '+(stale.length===1?'one aircraft was':'these were')+' assigned, so '+(stale.length===1?'it has':'they have')+' none now: '+stale.join(', ')+'. Table 2 lands '+keep.join(' and ')+' here. Re-issue them &mdash; the ladders have fallen back to the transition Table 2 gives each gate, which is not a clearance anybody has been given.');
+ if(held.length)
+  log('flag',
+'<span class="dd-chip flag">flag</span>ZMP-M98 LOA Table 2 has no row for <b>'+cfg+'</b> at '+held.join(', ')+', so there is no published transition to re-path onto. '+(held.length===1?'It keeps the track it was':'They keep the track they were')+' on, and the tool will not borrow another flow&rsquo;s geometry.');
 }
 function pubSpeedAt(a){
  var r=a.route, sp=null;
@@ -1592,6 +1746,26 @@ function transmit(){
  if(mR){ acted=true; control=true;
   var prev=a.rwy; a.rwy=mR;
   acks.push('expect runway '+sayRunway(mR));
+  /* A crossover is a real lateral reroute for most gate/runway pairs, not a
+     runway relabel, so THE TRACK MOVES WITH THE ASSIGNMENT (issue #14). This
+     fires on the first assignment as well as on a flip: Table 2's transition
+     and the runway the trainee actually assigns are two different questions,
+     and the ladder follows the second one. */
+  var rp=repathTo(a, ROUTE_CFG, mR);
+  if(rp.kind==='same'){
+   /* One ladder serving both runways is the interesting no-op, not a boring
+      one: "does a crossover change the track?" is the thing being taught, and
+      at TORGY and BAINY on the 12s the answer is no. Say it, rather than
+      leaving silence to mean either. */
+   log('info','<span class="dd-chip info">re-path</span><b>'+a.cs+'</b> flies the same published track to '+mR+' as it did to '+(prev||'its Table 2 transition')+' &mdash; '+rp.gate+' has one ladder serving both, so this crossover moves the receiver and nothing else. The line on the scope is unchanged because the transition is.');
+  } else if(rp.kind==='moved'){
+
+   log('info','<span class="dd-chip info">re-path</span><b>'+a.cs+'</b> takes the '+mR+' transition off '+rp.gate+' — '
+    +(rp.off>=0.1?('the two published tracks are '+rp.off.toFixed(1)+' NM apart here, so the target steps across; a real aircraft turns and intercepts it. '):'it is still on the stretch both ladders have in common, so the target does not move &mdash; only the track ahead of it. ')
+    +'Miles to run go '+rp.wasDtg.toFixed(1)+' &rarr; <b>'+rp.nowDtg.toFixed(1)+'</b>.');
+  } else if(rp.kind==='nogeom'){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is assigned '+mR+' and there is no published '+rp.gate+' ladder for it in the reference set, so the track does not move. The clearance stands and the receiver follows it &mdash; the line on the scope is the old one, and the tool says so rather than drawing a transition it cannot cite.');
+  }
   if(prev&&prev!==mR){
    /* the receiver follows the gate as well as the runway, so a flip can hand
       the aircraft to a different sector than the runway alone would suggest */
@@ -1913,10 +2087,17 @@ function scopeSvg(){
      time-sharing with the aircraft TYPE. The real client alternates the two
      in that field; a schematic scope has no reason to hide one, so both are
      shown side by side — speed then type, in the order the client cycles
-     them. Wake stays on line 1 here, where this tool has always put it;
-     the client shows it after the ground speed. */
-  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="10.5">'+a.cs+(a.wake?' H':'')+'</text>';
-  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.type?" "+a.type:"")+(a.rwy?' '+a.rwy:'')+'</text>';
+     them. WAKE SITS AFTER THE GROUND SPEED and is written hard against it,
+     because in the client it is the same field and a space would read as a
+     separate column. Moved here off line 1 on 2026-09-07 (issue #17, owner's
+     call) — it had been appended to the callsign since the tool was written.
+     Heavy-only, deliberately: the legacy scheme has eight values and the CWT
+     scheme its own set, both of which need RNAV capability and B757 class per
+     strip, and the strip carries neither. The reference also records that the
+     docs never say which scheme a given facility is adapted for, so widening
+     would mean guessing the adaptation as well. */
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y-2).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="10.5">'+a.cs+'</text>';
+  s+='<text x="'+(p.x+10).toFixed(1)+'" y="'+(p.y+10).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+Math.round(a.alt/100)+' '+Math.round(a.ias)+(a.wake||'')+(a.type?" "+a.type:"")+(a.rwy?' '+a.rwy:'')+'</text>';
  });
  s+='</svg>';
  return s;
@@ -2161,7 +2342,7 @@ window.DD = {
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
- setFlow:setFlow, flowCarried:flowCarried, routeCfg:function(){ return ROUTE_CFG; },
+ setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
