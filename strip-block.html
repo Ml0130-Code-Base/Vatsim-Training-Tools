@@ -223,15 +223,38 @@ function normStrip(s){
 
 /* ---------- 3. The row ----------
    Ids are prefixed so a deck can host this alongside its own controls.
-   `onchange` calls the deck's sync function by name if it has one, which
-   keeps this block from depending on any particular builder. */
+
+   `onchange` calls the deck's re-render function BY NAME, through window,
+   so this block still depends on no particular builder. What it no longer
+   does is wait to be asked: the name defaults to <prefix>Sync, which is
+   what every mount defines.
+
+   THE RE-RENDER USED TO BE OPT-IN, AND THAT WAS A REAL BUG, FOUND
+   2026-09-07. With no `sync` in the contract this emitted no handler at
+   all, so the three controls that matter most — the airport, the
+   procedure and the runway — were inert. Changing the landing field left
+   the arrival list showing the PREVIOUS field's STARs; a KORD STAR could
+   be selected on a strip landing Midway; and the check line went on
+   reporting the stale combination as legal, which is the tool asserting
+   something untrue rather than merely failing to help.
+
+   All five decks carrying this block shipped without `sync`. Five
+   contracts do not forget the same field independently — the default was
+   wrong. The filtering was never broken: `jobFields` has always built the
+   list from `arrivalsFor(dest)`, and `normStrip` has always re-placed a
+   procedure the new field cannot carry. Nothing ever ran them.
+
+   Guarded, so a host that defines no such function gets an inert control
+   rather than a console error on every change. */
 var PFX  = (F.prefix || 'strip');
-var SYNC = (F.sync ? (F.sync + '()') : '');
+var SYNC = F.sync || (PFX + 'Sync');
 function esc(s){
  return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;')
    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-function ev(){ return SYNC ? (' onchange="' + SYNC + '"') : ''; }
+function ev(){
+ return ' onchange="window[\'' + SYNC + '\'] && window[\'' + SYNC + '\']()"';
+}
 function fld(lab, ctl){
  return '<div class="' + PFX + '-f"><span class="' + PFX + '-lab">' + lab + '</span>' + ctl + '</div>';
 }

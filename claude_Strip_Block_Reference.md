@@ -26,7 +26,7 @@ then the block.
 window.STRIP_FACILITY = {
   id: 'M98',                          // facility label, used in every message
   prefix: 'strip',                    // id/class prefix, so it can sit beside a deck's own controls
-  sync: 'ddbSync',                    // optional: the deck's re-render function, called on change
+  sync: 'ddbSync',                    // OPTIONAL OVERRIDE. Defaults to '<prefix>Sync' — see §2.1
   airports: {
     KMSP: {name:'Minneapolis-St Paul', rwys:['12L','12R','30L','30R']},
     KLVN: {name:'Airlake',             rwys:null}          // inventory not in the reference set
@@ -72,6 +72,41 @@ slipped in another way — a stored drill, a pasted scenario, a renamed procedur
 `normStrip(strip)` brings a stored strip back inside the contract and **reports what moved**,
 so a drill saved before a procedure changed resolves to something legal instead of sitting in
 a state the row cannot display.
+
+### 2.1 The procedure list follows the field, and the re-render is no longer opt-in
+
+**Every control this block renders carries an `onchange` that calls `<prefix>Sync`**, through
+`window` and guarded, so the block still names the deck's re-render function rather than
+depending on any particular builder. `sync` in the contract overrides the name; it is not
+needed, because `<prefix>Sync` is what every mount defines.
+
+**It used to be opt-in, and that was a real bug — found 2026-09-07 by the owner, on C90.**
+With no `sync` in the contract, `ev()` emitted no handler at all, so the airport, procedure
+and runway controls were inert. Changing the landing field left the arrival list showing the
+**previous** field's STARs; a KORD STAR could be selected on a strip landing Midway; and the
+check line went on reporting the stale combination as legal — the tool asserting something
+untrue, not merely failing to help.
+
+**The filtering was never broken.** `jobFields` has always built the list from
+`arrivalsFor(dest)`, and `normStrip` has always re-placed a procedure the new field cannot
+carry. Nothing ever ran them. **All five decks carrying the block shipped without `sync`**,
+which is what says the default was wrong rather than that five contracts were careless.
+
+Two rules fall out of it, and both are cheap to check:
+
+- **A control whose list depends on another control must re-render when that control changes.**
+  The list following the field is the block's whole promise; a list that does not follow is
+  worse than no list, because it looks authoritative.
+- **Write the option's `value` out explicitly.** With none, an option's value is its own label
+  text, so any decoration — a revision name, a `(frame only)` tag — reads back as part of the
+  key. This block has always done it. **M98's own row had not**, and six of its sixteen
+  arrivals could not be selected at all: the control snapped back to the first one. Same
+  family of bug, found in the same pass, fixed 2026-09-07.
+
+**A mount should surface `normStrip`'s `moved` list.** Every mount used to discard it, so a
+procedure that could not follow the new field was swapped in silence. All five now print it
+under the check line. A list that follows the field is only trustworthy if the tool admits
+when it moved something the controller had already chosen.
 
 ## 3. A procedure can belong to several fields, and that is the normal case
 
@@ -151,6 +186,30 @@ a field with no runway inventory and a field with no departure procedure each re
 statement instead of an empty control; changing the field strands the procedure, re-places it,
 and reports the move; and a legal strip produces no errors.
 
-**Not wired into any deck yet.** That is the next step and it is per-deck work: R90, C90, AZO,
-S56 and Big Sky have no strip UI at all today, and M98 has one that would be replaced rather
-than extended.
+**That harness drove `checkStrip` and `normStrip` directly, which is why it passed while the
+live decks were broken.** It never dispatched a `change` event on a rendered control, so it
+could not see that no control carried a handler. **A check that calls the function under test
+is not a check that the page calls it.** Any harness written for this block from now on
+dispatches a real `change` on the airport control and asserts the procedure list changed.
+
+### Re-verified 2026-09-07, in the live decks rather than a harness
+
+All five decks carrying the block, plus M98's own row, driven over local HTTP with real
+`change` events. Per deck: the landing control carries the guarded `onchange`; changing the
+field rebuilds the arrival list to that field's procedures; the previous field's procedures
+are **absent from the list**, not merely refused after selection; a stranded selection is
+re-placed and the move is printed; the check line updates to the new field; and a field with
+no coded procedure renders a statement instead of an empty control.
+
+Concretely — C90 KORD → KMDW moves the list from eleven O'Hare STARs to `PANGG7 ENDEE8
+FISSK7` and re-places `BENKY6 -> PANGG7`; Big Sky KBOI → KBZN swaps five Boise STARs for five
+Bozeman ones; S56 KSLC → KHIF empties to a statement; AZO KAZO → KBIV drops runway 17 to *not
+issued*; R90 KOMA → KLNK empties to a statement; S56's departure side moves `ARCHZ1 ->
+EMONT3` on KSLC → KOGD. On M98, `KASPR` and `GEP` are selectable and stick where they
+previously snapped back, and the list still follows the field.
+
+### Wiring status
+
+Wired into **R90, C90, AZO, S56 and Big Sky**. C90 and AZO host it as the deck's only strip
+entry, with the facility's placement fields alongside the job half. **M98 still uses its own
+row** — swapping it remains its own decision.
