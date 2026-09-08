@@ -54,7 +54,7 @@ try {
   /* ============ 1. Drill Deck — player and parser ============ */
   globalThis.ddLoad('resume10r');
   globalThis.ddSel('DAL589');
-  say('DAL589 expect runway 12L');           mustContain('runway word parses', 'expect one two left');
+  say('DAL589 expect runway 12L');           mustContain('runway word parses', 'expect runway one two left');
   say('SCX8127 resume published speed');      mustContain('published restore graded good', 'Ladder speeds restored');
   say('DAL589 maintain 8000');                mustContain('bare-maintain draws crew query', 'confirm you want us');
   say('DAL589 descend and maintain 8000');    mustContain('proper altitude phraseology parses', 'descend and maintain 8,000');
@@ -155,8 +155,15 @@ try {
   /* ============ 3b. The flow — ZMP-M98 LOA Table 2 ============
      ROUTES holds one configuration at a time. Every assertion after this
      section assumes the 12s, so this block restores it before it ends. */
+  /* The SET of rows, not their order. '12' and '30' are integer-index keys and
+     JavaScript enumerates those first in ascending numeric order, ahead of
+     every string key — so Object.keys gives 12,30,12-17,30-17,30-35,17-22 and
+     never the source order, whatever the object literal says. This assertion
+     read the source order until 2026-09-07, when the harness was executed for
+     the first time and it failed on line one of the flow section. Do not
+     "fix" it back. */
   assert('Table 2 carries exactly the six rows the document has',
-    Object.keys(globalThis.DD.TABLE2).join(',') === '12,12-17,30,30-17,30-35,17-22',
+    Object.keys(globalThis.DD.TABLE2).slice().sort().join(',') === '12,12-17,17-22,30,30-17,30-35',
     Object.keys(globalThis.DD.TABLE2).join(','));
   assert('Table 2 on the 12s: MUSCL and BAINY 12L, the other four 12R',
     ['MUSCL','BAINY'].every(g => globalThis.DD.TABLE2['12'][g] === '12L')
@@ -466,18 +473,204 @@ try {
 
   /* ============ 3c. Scope layers ============ */
   globalThis.ddLoad('resume10r');
-  const polys = () => (el('dd-scopebox').innerHTML.match(/<polyline/g) || []).length;
-  globalThis.ddLayers('tracked'); const lTracked = polys();
-  globalThis.ddLayers('stars');   const lStars = polys();
-  globalThis.ddLayers('sids');    const lSids = polys();
-  globalThis.ddLayers('both');    const lBoth = polys();
-  globalThis.ddLayers('off');     const lOff = polys();
-  assert('tracked draws only the routes in use', lTracked === 3, lTracked);
+  /* COUNT ROUTES, NOT POLYLINES. The RST boundary segment is a polyline too and
+     it is drawn in every layer mode including "off", because it is airspace
+     rather than a route — so a raw <polyline> count is one higher than the
+     number of tracks and "off" is 1, not 0. These five assertions counted raw
+     polylines and were all off by one; that was invisible until the harness was
+     first executed on 2026-09-07. Ladders are green, SID tracks are the dashed
+     amber ones, so each is counted by the stroke the renderer actually gives it. */
+  const scope   = () => el('dd-scopebox').innerHTML;
+  const polys   = () => (scope().match(/<polyline/g) || []).length;
+  const ladders = () => (scope().match(/<polyline[^>]*stroke="var\(--green\)"/g) || []).length;
+  const sidTrks = () => (scope().match(/<polyline[^>]*stroke-dasharray="3 3"/g) || []).length;
+  globalThis.ddLayers('tracked'); const lTracked = ladders(), sTracked = sidTrks();
+  globalThis.ddLayers('stars');   const lStars = ladders();
+  globalThis.ddLayers('sids');    const lSidsL = ladders(), lSidsS = sidTrks();
+  globalThis.ddLayers('both');    const lBothL = ladders(), lBothS = sidTrks();
+  globalThis.ddLayers('off');     const lOffL = ladders(), lOffAll = polys();
+  assert('tracked draws only the ladders in use, and no SID track', lTracked === 3 && sTracked === 0,
+    lTracked + '/' + sTracked);
   assert('all STARs draws all six ladders', lStars === 6, lStars);
-  assert('all SIDs adds the nine SIDs without hiding the tracked ladders', lSids === 3 + 9, lSids);
-  assert('all SIDs and STARs draws everything', lBoth === 6 + 9, lBoth);
-  assert('off draws no route geometry at all', lOff === 0, lOff);
+  assert('all SIDs adds the nine SID tracks without hiding the tracked ladders',
+    lSidsL === 3 && lSidsS === 9, lSidsL + '/' + lSidsS);
+  assert('all SIDs and STARs draws everything', lBothL === 6 && lBothS === 9, lBothL + '/' + lBothS);
+  assert('off draws no route geometry at all', lOffL === 0 && sidTrks() === 0, lOffL);
+  assert('and what is left under "off" is the RST boundary, which is airspace not a route',
+    lOffAll === 1, lOffAll);
   globalThis.ddLayers('tracked');
+
+  /* ============ 3c-b. What the scope actually DRAWS — issue #16 ============
+     Everything above this asserts the data the scope is drawn FROM. Nothing
+     asserted the drawing itself until 2026-09-07, which is how the fixAt crash
+     of 2026-09-04 reached a real page: no assertion touched that path. These
+     read scopeSvg's own output, matching on fix names, stroke colours and text
+     nodes rather than on coordinates, which would be brittle. */
+  {
+    const texts = () => (scope().match(/<text[^>]*>([^<]*)<\/text>/g) || [])
+                          .map(t => t.replace(/<[^>]*>/g, ''));
+    const ladderPts = () => (scope().match(/<polyline points="[^"]*" fill="none" stroke="var\(--green\)"/g) || [])
+                          .map(m => m.match(/points="([^"]*)"/)[1]);
+
+    globalThis.ddLoad('resume10r');
+    globalThis.ddLayers('tracked');
+
+    /* Data block, STARS FDB layout — claude_CRC_Platform_Reference.md. Line 1
+       is the callsign and NOTHING ELSE; wake moved off it on 2026-09-07
+       (issue #17) and sits on line 2 hard against the ground speed. */
+    assert('line 1 of the data block is the callsign alone',
+      texts().indexOf('DAL158') >= 0 && !texts().some(t => /^DAL158[ ]/.test(t)),
+      texts().filter(t => t.indexOf('DAL158') === 0).join(' / '));
+    assert('a heavy carries H immediately after the ground speed on line 2',
+      texts().some(t => /^\d+ \d+H A339/.test(t)),
+      texts().filter(t => /A339/.test(t)).join(' / '));
+    assert('a non-heavy carries nothing there, which is the legacy scheme blank',
+      texts().some(t => /^\d+ \d+ B738/.test(t)),
+      texts().filter(t => /B738/.test(t)).join(' / '));
+    assert('and line 2 is altitude, ground speed, wake, type — in that order',
+      texts().some(t => /^\d+ \d+H? [A-Z0-9]{3,4}/.test(t)));
+
+    /* Every gate label drawn corresponds to a gate actually in ROUTES. */
+    globalThis.ddLayers('stars');
+    /* THE LABEL IS THE LADDER'S FIRST FIX, WHICH IS NOT ALWAYS THE GATE NAME.
+       MUSCL's 12L ladder as published begins at BAYKS — its transfer-of-
+       communications fix — so the scope reads BAYKS there and never says
+       MUSCL. That is the data, not a rendering bug, and it is what a
+       controller looking at the scope actually sees. */
+    assert('every ladder in the loaded flow is labelled at its first fix',
+      Object.keys(globalThis.DD.ROUTES).every(g => texts().indexOf(globalThis.DD.ROUTES[g][0].f) >= 0),
+      Object.keys(globalThis.DD.ROUTES).filter(g => texts().indexOf(globalThis.DD.ROUTES[g][0].f) < 0).join(','));
+    assert('and MUSCL is labelled BAYKS, because that is where its ladder starts',
+      globalThis.DD.ROUTES.MUSCL[0].f === 'BAYKS' && texts().indexOf('BAYKS') >= 0
+      && texts().indexOf('MUSCL') < 0,
+      globalThis.DD.ROUTES.MUSCL[0].f);
+    assert('and nothing is labelled for a gate the loaded flow does not carry',
+      ['NITZR','BLUEM','TORGY','KKILR','MUSCL','BAINY']
+        .filter(g => !globalThis.DD.ROUTES[g] && texts().indexOf(g) >= 0).length === 0);
+
+    /* The polylines follow setFlow. A 30s frame draws 30s tracks — the whole
+       point of the flow work, and nothing asserted it. */
+    /* setFlow rebuilds ROUTES but does not repaint — the scope is redrawn by
+       render(), so read the DOM only after something has caused one. Without
+       the redraw both samples come back identical and the assertion passes or
+       fails on stale markup rather than on the flow. */
+    const pts12 = ladderPts();
+    globalThis.DD.setFlow('30');
+    globalThis.ddLayers('stars');
+    const pts30 = ladderPts();
+    assert('both flows draw six ladders', pts12.length === 6 && pts30.length === 6,
+      pts12.length + '/' + pts30.length);
+    assert('and the lines on the scope are different lines',
+      pts12.join('|') !== pts30.join('|'));
+    assert('the drawn ladder is the loaded ladder, not a stale one',
+      (() => { const r = globalThis.DD.ROUTES.NITZR, last = r[r.length - 1];
+               return ladderPts().some(p => p.split(' ').pop() === last.x.toFixed(1) + ',' + last.y.toFixed(1)); })());
+
+    /* A gate with no ladder in the current flow RENDERS THE GAP rather than
+       throwing. This is the regression that already happened once. */
+    globalThis.DD.setFlow('30/12');
+    globalThis.ddLayers('stars');
+    assert('an uncarried configuration draws no ladder and does not throw',
+      ladderPts().length === 0 && typeof scope() === 'string', ladderPts().length);
+    assert('and the aircraft still on the scope keep their own tracks',
+      globalThis.DD.sim.ac.every(a => a.role !== 'arrival' || !!a.route));
+    globalThis.DD.setFlow('12');
+    globalThis.ddLayers('tracked');
+
+    /* The builder preview draws the same geometry from the same data. */
+    globalThis.ddbNew();
+    globalThis.ddbSync();
+    const prev = el('ddb-preview').innerHTML;
+    assert('the builder preview renders and says it shares the scope geometry',
+      prev.indexOf('SAME GEOMETRY AS THE LIVE SCOPE') >= 0);
+    assert('and the preview draws no wake, which is a stated difference from the scope',
+      !/\d+ \d+H /.test(prev.replace(/<[^>]*>/g, ' ')));
+  }
+
+  /* ============ 3c-c. Live re-pathing — issue #14 ============
+     The rule, owner's call 2026-09-07: KEEP THE POSITION, RE-DERIVE THE MILES
+     TO GO. Assert both halves separately, plus the two ways it must refuse. */
+  {
+    globalThis.ddLoad('freshpush');
+    const arr = () => globalThis.DD.sim.ac.filter(a => a.role === 'arrival');
+    const posOf = a => { const r = a.route; let i = r.length - 1;
+      for (let k = 1; k < r.length; k++) if (a.dist <= r[k].cum) { i = k; break; }
+      const d0 = r[i-1].cum, d1 = r[i].cum, t = (d1 === d0) ? 0 : (a.dist - d0) / (d1 - d0);
+      return { e: r[i-1].e + (r[i].e - r[i-1].e) * t, n: r[i-1].n + (r[i].n - r[i-1].n) * t }; };
+
+    arr().forEach(a => { a.dist = a.route.total * 0.55; });
+    const before = arr().map(a => ({ cs: a.cs, p: posOf(a), total: a.route.total,
+                                     end: a.route[a.route.length - 1].f }));
+    globalThis.DD.setFlow('30');
+    const after = arr().map(a => ({ cs: a.cs, p: posOf(a), total: a.route.total,
+                                    end: a.route[a.route.length - 1].f }));
+
+    assert('a flow change re-paths every airborne arrival onto the new ladder',
+      before.every((b, i) => b.end !== after[i].end || b.total === after[i].total),
+      before.map((b,i) => b.end + '->' + after[i].end).join(' '));
+    assert('and the 30s totals are the published ones, so the swap is real',
+      Math.round(globalThis.DD.ROUTES.KKILR.total * 10) / 10 === 25.8
+      && Math.round(globalThis.DD.ROUTES.BAINY.total * 10) / 10 === 55.5,
+      globalThis.DD.ROUTES.KKILR.total.toFixed(1) + '/' + globalThis.DD.ROUTES.BAINY.total.toFixed(1));
+    /* THE POSITION IS KEPT. The target may step across by the gap between the
+       two published tracks — that is reported, not hidden — but it must never
+       be flung down the new ladder the way preserving dtg would. */
+    assert('every re-pathed target holds its position to within the gap between the two tracks',
+      before.every((b, i) => Math.hypot(after[i].p.e - b.p.e, after[i].p.n - b.p.n) < 8),
+      before.map((b,i) => b.cs + ' ' + Math.hypot(after[i].p.e - b.p.e, after[i].p.n - b.p.n).toFixed(1)).join(' '));
+    assert('and the miles to go are re-derived rather than carried across',
+      arr().every(a => Math.abs((a.route.total - a.dist)) <= a.route.total + 0.01));
+    mustContain('the re-path says what it cost', 'holds its position and picks up the new ladder');
+
+    /* A crossover where one ladder serves both runways is an exact no-op. */
+    globalThis.DD.setFlow('12');
+    globalThis.ddLoad('resume10r');
+    const torgy = globalThis.DD.sim.ac.filter(a => a.gate === 'TORGY')[0];
+    const wasEnd = torgy.route[torgy.route.length - 1].f, wasDist = torgy.dist;
+    globalThis.ddSel(torgy.cs);
+    say(torgy.cs + ' expect runway 12L');
+    assert('TORGY flies one ladder to both 12L and 12R, so the crossover moves nothing',
+      torgy.route[torgy.route.length - 1].f === wasEnd && torgy.dist === wasDist,
+      wasEnd + '->' + torgy.route[torgy.route.length - 1].f);
+    mustContain('and the log says the track is unchanged because the transition is',
+      'has one ladder serving both');
+
+    /* A crossover that IS a lateral reroute moves the track and keeps the spot. */
+    globalThis.ddLoad('resume10r');
+    const nitzr = globalThis.DD.sim.ac.filter(a => a.gate === 'NITZR')[0];
+    const nWas = nitzr.route[nitzr.route.length - 1].f;
+    globalThis.ddSel(nitzr.cs);
+    say(nitzr.cs + ' expect runway 12L');
+    assert('NITZR to 12L is a real reroute — GREAK/TIETN becomes CMMOE/FSCOT',
+      nWas === 'TIETN' && nitzr.route[nitzr.route.length - 1].f === 'FSCOT',
+      nWas + '->' + nitzr.route[nitzr.route.length - 1].f);
+
+    /* IT NEVER INVENTS A TRACK. */
+    globalThis.ddLoad('freshpush');
+    const held = globalThis.DD.sim.ac.filter(a => a.role === 'arrival')
+                   .map(a => a.route[a.route.length - 1].f);
+    globalThis.DD.setFlow('30/12');
+    assert('a configuration Table 2 does not name re-paths nobody',
+      globalThis.DD.sim.ac.filter(a => a.role === 'arrival')
+        .map(a => a.route[a.route.length - 1].f).join(',') === held.join(','),
+      held.join(','));
+    mustContain('and says why rather than borrowing another flow', 'has no row for');
+
+    /* A RE-CONFIGURATION CLEARS A RUNWAY IT DOES NOT LAND. */
+    globalThis.DD.setFlow('12');
+    globalThis.ddLoad('freshpush');
+    globalThis.DD.sim.ac.filter(a => a.role === 'arrival').forEach(a => { a.rwy = '12R'; });
+    globalThis.DD.setFlow('17-22');
+    assert('a 17-22 clears a 12R assignment, because 12R is a departure runway there',
+      globalThis.DD.sim.ac.filter(a => a.role === 'arrival').every(a => a.rwy === null));
+    assert('and the landing runways come from the Table 2 row itself',
+      globalThis.DD.assignableRwys('17-22').slice().sort().join(',') === '17,22'
+      && globalThis.DD.assignableRwys('12').slice().sort().join(',') === '12L,12R'
+      && globalThis.DD.assignableRwys('30/12') === null,
+      globalThis.DD.assignableRwys('17-22').join(','));
+    mustContain('and it says the assignments have to be re-issued', 'Re-issue them');
+    globalThis.DD.setFlow('12');
+  }
 
   /* TWO fixes on the NITZR/BLUEM shared trunk carry a different restriction
      depending on which arrival reached them, and they are the same exception
@@ -687,10 +880,25 @@ try {
     && globalThis.DD.arrivalServes('TWOLF','KSTP') === false);
   assert('GOPHER ONE off the GEP VOR is the one that serves MSP and the satellites both',
     globalThis.DD.arrivalServes('GEP','KMSP') && globalThis.DD.arrivalServes('GEP','KMIC'));
+  /* THE OFFER IS THE STARS PLUS THE NON-STAR DIRECT ENTRIES, not the STARs
+     alone. This assertion listed only the STARs and predates SAT_DIRECT (the
+     ZMP-M98 LOA 3g and 4.g(14) routings); it failed the first time the harness
+     was executed, on 2026-09-07. Each field's list is the agreement's own:
+     BITLR direct GEP serves STP, ANE and FCM (3g6); the east-field entry serves
+     STP (4.g(14)); RGK, Sectors 08/09 and Sector 10 serve the southern and
+     western fields (3g7-3g9). Getting this wrong in the other direction —
+     offering a routing at a field the agreement does not give it — is the
+     failure that matters, so the lists are exact rather than a subset test. */
   assert('the arrivals offered for a field are exactly the ones that serve it',
-    globalThis.DD.arrivalsFor('KSTP').join(',') === 'GEP,AGUDE,ENCEE'
-    && globalThis.DD.arrivalsFor('KFCM').join(',') === 'GEP,AGUDE,ENCEE,TWOLF',
+    globalThis.DD.arrivalsFor('KSTP').join(',') === 'GEP,AGUDE,ENCEE,BITLR,EASTFLD'
+    && globalThis.DD.arrivalsFor('KFCM').join(',') === 'GEP,AGUDE,ENCEE,TWOLF,BITLR,RGK,SECT0809,SECT10',
     globalThis.DD.arrivalsFor('KSTP').join(','));
+  assert('and MIC is offered no direct routing, because no paragraph gives it one',
+    globalThis.DD.arrivalsFor('KMIC').join(',') === 'GEP,AGUDE,ENCEE',
+    globalThis.DD.arrivalsFor('KMIC').join(','));
+  assert('MSP is offered its six gates plus the two conventional arrivals, and no satellite routing',
+    globalThis.DD.arrivalsFor('KMSP').join(',') === 'NITZR,BLUEM,TORGY,KKILR,MUSCL,BAINY,KASPR,GEP',
+    globalThis.DD.arrivalsFor('KMSP').join(','));
   /* the satellite ladders, and the entries that do not fly one at all */
   assert('the three satellite STARs are carried and fly',
     ['AGUDE','ENCEE','TWOLF'].every(k => globalThis.DD.SAT_ROUTES[k]
@@ -1005,7 +1213,7 @@ try {
 
   /* ============ 4. Position setup ============ */
   assert('all eleven SOP 2-1 positions are present', globalThis.ddb.POSITIONS.length === 11, globalThis.ddb.POSITIONS.length);
-  assert('the base seat is South Feeder', globalThis.ddb.state.pos.seat === 'H', globalThis.ddb.state.pos.seat);
+  assert('the base seat is South Feeder', globalThis.ddb.seatIds().join(',') === 'H', globalThis.ddb.seatIds().join(','));  /* state.pos.seat became state.pos.seatS (a set) when working two positions at once landed; this read the old single-seat string and had never been run */
   assert('the usual split sends 12R to S and 12L to N',
     globalThis.DD.RECEIVER['12R'].pos === 'S' && globalThis.DD.RECEIVER['12R'].frq === '126.95'
     && globalThis.DD.RECEIVER['12L'].pos === 'N' && globalThis.DD.RECEIVER['12L'].frq === '119.3',
@@ -1029,10 +1237,18 @@ try {
   /* the player grades against whoever actually owns the arrival */
   globalThis.ddLoad('resume10r');
   globalThis.ddSel('DAL589');
+  /* THE BOUNCE IS A SIDE TEST, NOT AN IS-IT-OPEN TEST. Under the single
+     controller everything folds to H, and H is SOUTH Feeder — so "flash south"
+     names the side that actually owns DAL589 and is accepted. It is "flash
+     north" that bounces. This pair asserted the opposite and named H by its
+     letter rather than by the name the deck logs; both failed the first time
+     the harness was executed, on 2026-09-07. */
+  say('DAL589 flash north');
+  mustContain('flashing the side that does not own it bounces', 'bounces the flash');
   say('DAL589 flash south');
-  mustContain('flashing to a position that is not open bounces', 'bounces the flash');
+  mustContain('and the side that does own it is accepted', 'South Feeder takes the flash');
   say('DAL589 flash');
-  mustContain('a bare flash goes to whoever owns it', 'H takes the flash');
+  mustContain('a bare flash goes to whoever owns it', 'South Feeder takes the flash');
   say('DAL589 contact approach 126.95');
   mustContain('the frequency of a combined-away position is rejected', 'Wrong frequency for H');
 
@@ -1059,7 +1275,53 @@ try {
   assert('and the receivers come back to the usual split',
     globalThis.DD.RECEIVER['12R'].pos === 'S' && globalThis.DD.RECEIVER['12L'].pos === 'N',
     JSON.stringify(globalThis.DD.RECEIVER));
+  /* ---- Midnight operations — issue #20 ----
+     ZMP-M98 LOA 5.a(4) puts everything entering M98 on one frequency, 124.7,
+     and vNAS names that seat: MSP_E_APP carries a second position record
+     called "Midnight" on 124.7, on the same TCP as Flying Cloud Satellite. So
+     the regime moves the BASE of the combining chain from H to E — the only
+     thing in the tool that does — and E answers on 124.7, not its daytime
+     134.7. STANDING stays empty: this is a frame, not a training item. */
+  assert('the daytime chain bottoms out on South Feeder',
+    globalThis.ddb.baseId() === 'H' && globalThis.ddb.midnightOn() === false);
+  globalThis.ddbPreset('midnight');
+  assert('midnight moves the base of the combining chain to E',
+    globalThis.ddb.midnightOn() && globalThis.ddb.baseId() === 'E');
+  assert('and every position folds there rather than to H',
+    ['D','R','L','I','H','N','S','J','E','G','K']
+      .every(id => globalThis.ddb.ownerOf(id).id === 'E'),
+    ['D','R','L','I','H','N','S','J','E','G','K']
+      .map(id => id + '->' + globalThis.ddb.ownerOf(id).id).join(' '));
+  assert('E answers on 124.7 overnight and 134.7 by day',
+    globalThis.ddb.frqOf(globalThis.ddb.POSITIONS.filter(p => p.id === 'E')[0]) === '124.7',
+    globalThis.ddb.frqOf(globalThis.ddb.POSITIONS.filter(p => p.id === 'E')[0]));
+  assert('both runways come back on that one frequency',
+    globalThis.DD.RECEIVER['12R'].pos === 'E' && globalThis.DD.RECEIVER['12R'].frq === '124.7'
+    && globalThis.DD.RECEIVER['12L'].pos === 'E' && globalThis.DD.RECEIVER['12L'].frq === '124.7',
+    JSON.stringify(globalThis.DD.RECEIVER));
+  assert('and so do the feeders and the satellite seats',
+    ['I','H'].every(p => globalThis.DD.FEEDER_POS[p].frq === '124.7')
+    && ['E','G','K'].every(p => globalThis.DD.SAT_POS[p].frq === '124.7'));
+  assert('the seat carries both names the sources give it',
+    globalThis.ddb.seatLabel() === 'Midnight — Flying Cloud Satellite (E · 124.7)',
+    globalThis.ddb.seatLabel());
+  assert('the regime is two chain edges and a frequency, held as data',
+    globalThis.ddb.MIDNIGHT.base === 'E' && globalThis.ddb.MIDNIGHT.frq === '124.7'
+    && globalThis.ddb.MIDNIGHT.into.H === 'E' && globalThis.ddb.MIDNIGHT.into.E === null);
+  assert('the LOA paragraph it comes from is carried, not paraphrased into a number',
+    globalThis.ddb.MIDNIGHT.zmp.length === 4 && globalThis.ddb.MIDNIGHT.m98.length === 3
+    && globalThis.ddb.MIDNIGHT.window.indexOf('2230') === 0);
+  assert('coverage says plainly what the engine flies from the midnight seat',
+    globalThis.ddb.coverageFor('E').k === 'flag'
+    && globalThis.ddb.coverageFor('E').t.indexOf('satellite fields are still not modelled') >= 0);
+  globalThis.ddbPreset('standard');
+  assert('and coming off the regime puts the base back on H',
+    globalThis.ddb.baseId() === 'H' && globalThis.ddb.midnightOn() === false
+    && globalThis.ddb.frqOf(globalThis.ddb.POSITIONS.filter(p => p.id === 'E')[0]) === '134.7'
+    && globalThis.DD.RECEIVER['12R'].pos === 'S');
+
   assert('a generated drill carries the seat and what is open',
+
     globalThis.ddb.gen({ seed: 5, focus: 'free', pressure: 'routine', count: 2 }).seat.indexOf('South Feeder (H') === 0,
     globalThis.ddb.gen({ seed: 5, focus: 'free', pressure: 'routine', count: 2 }).seat);
 
@@ -1105,7 +1367,7 @@ try {
   const joined = v.errors.join(' | ');
   assert('unnamed drill rejected', joined.includes('needs a name'), joined);
   assert('below-floor start rejected', joined.includes('below the'), joined);
-  assert('unknown gate rejected', joined.includes('not a gate'), joined);
+  assert('unknown gate rejected', joined.includes('not an arrival in the reference set'), joined);  /* the message became "not an arrival in the reference set" when arrivals-by-field landed; the old needle was "not a gate" and had never been run */
   assert('duplicate callsign rejected', joined.includes('duplicate callsign'), joined);
   assert('heavy off the 12R transition rejected (ZMP Table 2c)',
     joined.includes('heavy jets take the 12R/30L'), joined);
@@ -1132,15 +1394,22 @@ try {
   assert('non-round hundreds say the zero straight', voice('DAL505') === 'Delta five zero five', voice('DAL505'));
   assert('registrations spell out character by character', voice('N1418B') === 'november one four one eight bravo', voice('N1418B'));
 
-  /* a start that opens inside the trunk check is a warning, not an error */
+  /* a start that opens inside the trunk check is a warning, not an error.
+     The two strips carry a filed route because an IFR strip without one is a
+     hard error now — this fixture predated that rule and produced two errors
+     of its own, which is what the assertion was tripping on when the harness
+     was first executed on 2026-09-07. Taking the route from routeTextFor
+     rather than typing it keeps the fixture honest as the ladders change. */
+  const routeOn = g => globalThis.DD.routeTextFor({ role: 'arrival', gate: g });
   v = globalThis.ddb.validate({
-    name: 'trunk', ac: [
-      { cs: 'DAL1', type: 'B738', gate: 'NITZR', dtg: 12, alt: 9000, ias: 250, mode: 'published', ckdIn: true },
-      { cs: 'DAL2', type: 'B738', gate: 'BLUEM', dtg: 13, alt: 9000, ias: 250, mode: 'published', ckdIn: true }
+    name: 'trunk', cfg: '12', ac: [
+      { cs: 'DAL1', type: 'B738', gate: 'NITZR', route: routeOn('NITZR'), dtg: 12, alt: 9000, ias: 250, mode: 'published', ckdIn: true },
+      { cs: 'DAL2', type: 'B738', gate: 'BLUEM', route: routeOn('BLUEM'), dtg: 13, alt: 9000, ias: 250, mode: 'published', ckdIn: true }
     ]
   });
   assert('co-altitude opening warns without blocking',
-    v.errors.length === 0 && v.warnings.some(w => w.includes('loss of separation')), v.warnings.join(' | '));
+    v.errors.length === 0 && v.warnings.some(w => w.includes('loss of separation')),
+    'errors: [' + v.errors.join(' | ') + '] warnings: ' + v.warnings.join(' | '));
 
   /* save it, fly it */
   built.name = 'Smoke drill';
@@ -1385,10 +1654,22 @@ try {
     globalThis.ddb.gen({seed:5150, focus:'free', pressure:'routine', count:3, deps:2, overflight:true})
       .ac.every(a => a.rules !== 'IFR' || String(a.route || '').trim().length > 0));
 
+  /* THESE TWO BELONG TO THE `mixed` DRILL, and they had drifted away from it:
+     the radar-states block above empties sim.ac and pushes two aircraft of its
+     own, so sim.ac[2] was undefined by the time they ran and the harness threw
+     rather than failing. Found on 2026-09-07, the first time it was executed.
+     Reload the drill they are about them rather than trusting an index left
+     over from four sections earlier. */
+  globalThis.ddLoad('mixed');
+  globalThis.ddSel('SCX880');
+  say('SCX880 climb and maintain 11000');
+  globalThis.ddRate(4);
+  for (let i = 0; i < 60; i++) tickFn();
   assert('an overflight holds the speed it filed rather than accelerating',
     Math.round(globalThis.DD.sim.ac[2].ias) === 120, globalThis.DD.sim.ac[2].ias);
   assert('a departure only climbs when it is told to',
-    globalThis.DD.sim.ac[1].alt > 5000, globalThis.DD.sim.ac[1].alt);
+    globalThis.DD.sim.ac[1].alt > 5000 && globalThis.DD.sim.ac[0].alt === 5000,
+    globalThis.DD.sim.ac[1].alt + '/' + globalThis.DD.sim.ac[0].alt);
 
   /* ============ 5. Notebook — banking keeps the standing items current ============ */
   const draft = globalThis.ddb.draftFromSim();

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>M98 smoke test — browser runner</title>
+<style>
+ :root{ --bg:#0d1117; --panel:#161b22; --ink:#e6edf3; --dim:#9aa7b4; --dim2:#6b7784;
+        --line:#26303b; --green:#3fb950; --amber:#d29922; --red:#f85149;
+        --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; }
+ body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--mono); font-size:13px; }
+ .wrap{ max-width:1100px; margin:0 auto; padding:22px 18px 60px; }
+ h1{ font-size:17px; margin:0 0 4px; font-weight:600; }
+ .sub{ color:var(--dim); margin:0 0 18px; font-size:12.5px; line-height:1.6; }
+ .bar{ display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap; }
+ button{ background:var(--panel); color:var(--ink); border:1px solid var(--line);
+         border-radius:6px; padding:7px 14px; font-family:inherit; font-size:12.5px; cursor:pointer; }
+ button:hover{ border-color:var(--dim2); }
+ input{ background:var(--panel); color:var(--ink); border:1px solid var(--line);
+        border-radius:6px; padding:7px 10px; font-family:inherit; font-size:12.5px; width:320px; }
+ .verdict{ padding:10px 14px; border:1px solid var(--line); border-radius:6px;
+           background:var(--panel); margin-bottom:14px; line-height:1.6; }
+ .verdict.pass{ border-color:var(--green); }
+ .verdict.fail{ border-color:var(--red); }
+ pre{ background:var(--panel); border:1px solid var(--line); border-radius:6px;
+      padding:12px 14px; overflow-x:auto; white-space:pre-wrap; word-break:break-word;
+      line-height:1.55; margin:0; }
+ .ok{ color:var(--dim); } .ok b{ color:var(--green); font-weight:600; }
+ .bad{ color:var(--red); } .note{ color:var(--amber); }
+ .foot{ color:var(--dim2); font-size:12px; line-height:1.65; margin-top:18px; }
+ code{ color:var(--amber); }
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>M98 smoke test — browser runner</h1>
+<p class="sub">
+There is no Node on this machine, so <code>smoke-test.mjs</code> had never been executed —
+it was verified by being parsed, which is not the same thing. This page runs it in the
+browser's own JavaScript engine instead. <b>It does not reimplement the harness.</b> It reads
+<code>smoke-test.mjs</code> as text, rewrites four lines that only Node can satisfy, and runs
+the rest exactly as written, so a check that passes here is the same check.
+</p>
+<div class="bar">
+ <label>deck <input id="deck" value="m98-drill-deck.html"></label>
+ <label>harness <input id="harness" value="smoke-test.mjs" style="width:180px"></label>
+ <button id="run">run</button>
+</div>
+<div class="verdict" id="verdict">Serve this folder over HTTP and press run —
+<code>fetch</code> cannot read a sibling file from <code>file://</code>.</div>
+<pre id="out">(nothing yet)</pre>
+<p class="foot">
+<b>What is rewritten, and nothing else.</b>
+(1) the <code>#!</code> shebang, which Node strips and a browser cannot parse;
+(2) <code>import fs from 'node:fs'</code> — <code>fs.readFileSync</code> is replaced by a fetch
+of the deck;
+(3) every <code>globalThis.document</code> becomes a bare <code>document</code>, because a
+browser will not let a page replace its own — assignment silently fails and
+<code>defineProperty</code> throws <i>Cannot redefine property</i>, so the stub is passed in as
+a function parameter instead and the harness reads it through the scope chain;
+(4) <code>globalThis.setInterval</code> likewise, so the deck's tick is captured rather than the
+page's real timer being clobbered.
+<code>process.exit</code> throws instead of exiting, and the throw is caught and reported.
+Nothing else is touched — in particular <code>globalThis.DD</code>, <code>globalThis.ddb</code>
+and every <code>globalThis.dd*</code> entry point stay real globals, because that is where the
+deck blocks actually put them.
+<br><br>
+<b>What this is not.</b> It is not a second engine and it is not a second copy of anything —
+if it ever disagrees with <code>node smoke-test.mjs</code>, the Node run is the answer and this
+page is the bug. The deck's globals land in this page's global scope, so <b>reload between
+runs</b> rather than pressing run twice. Storage is cleared before each run and restored after, so a run starts from the tool's defaults and the drills you have banked on this origin survive.
+</p>
+</div>
+<script>
+(function(){
+ 'use strict';
+ var out = document.getElementById('out'), verdict = document.getElementById('verdict');
+
+ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+ function render(lines){
+  out.innerHTML = lines.map(function(l){
+   if(/^ERR/.test(l))  return '<span class="bad">'+esc(l)+'</span>';
+   if(/^ok  /.test(l)) return '<span class="ok">ok  </span>'+esc(l.slice(4));
+   if(/^\s*$/.test(l)) return '';
+   return '<span class="note">'+esc(l)+'</span>';
+  }).join('\n');
+ }
+
+ /* The four rewrites, kept in one place so the page can say exactly what it
+    changed. Everything else in the harness runs as written. */
+ function nodeToBrowser(src){
+  return src
+   .replace(/^#!.*\n/, '')
+   .replace(/^import fs from 'node:fs';[ \t]*$/m, '')
+   .replace(/globalThis\.document\b/g, 'document')
+   .replace(/globalThis\.setInterval\b/g, 'setInterval');
+ }
+
+ async function run(){
+  var deckPath = document.getElementById('deck').value.trim();
+  var hPath    = document.getElementById('harness').value.trim();
+  verdict.className = 'verdict';
+  verdict.textContent = 'running…';
+  out.textContent = '';
+
+  var src, html;
+  try {
+   src  = await (await fetch(hPath   + '?t=' + Date.now())).text();
+   html = await (await fetch(deckPath + '?t=' + Date.now())).text();
+  } catch(e){
+   verdict.className = 'verdict fail';
+   verdict.textContent = 'could not read the files: ' + e.message +
+     ' — this page has to be served over HTTP, not opened from file://';
+   return;
+  }
+
+  /* RUN AGAINST EMPTY STORAGE, AND PUT BACK WHAT WAS THERE. The deck persists
+     the seat, what is open and the drill library under this origin, and the
+     harness itself writes to it — ddbPreset('single') lands in localStorage
+     like any other change. Without this, run two leaves off where run one
+     finished and assertions that depend on the default split fail for no
+     reason visible in the output. Node has no localStorage at all, so the
+     harness never had to think about it and the deck's try/catch hides it.
+     The save-and-restore matters because this page shares an origin with the
+     served tool: clearing without it would delete the owner's real drills. */
+  var saved = null;
+  try {
+   saved = {};
+   for (var si = 0; si < localStorage.length; si++){
+    var sk = localStorage.key(si); saved[sk] = localStorage.getItem(sk);
+   }
+   localStorage.clear();
+  } catch(e){ saved = null; }   /* storage unavailable — nothing to isolate */
+
+  var lines = [], exitCode = 0;
+  var shimConsole = {
+   log:   function(){ lines.push(Array.prototype.join.call(arguments, ' ')); },
+   error: function(){ lines.push('ERR ' + Array.prototype.join.call(arguments, ' ')); }
+  };
+  var shimProcess = {
+   argv: ['node', hPath, deckPath],
+   exit: function(c){ exitCode = c; throw new Error('__EXIT__' + c); }
+  };
+  var shimFs = { readFileSync: function(){ return html; } };
+
+  try {
+   /* document, window and setInterval are PARAMETERS, not globals: a direct
+      eval inside this function body inherits the scope chain, so the deck
+      blocks the harness evaluates see the stub too. That is the whole reason
+      this works at all. */
+   var runner = new Function('fs','process','console','document','window','setInterval',
+                             nodeToBrowser(src));
+   runner(shimFs, shimProcess, shimConsole, undefined, self, undefined);
+  } catch(e){
+   if(!/^__EXIT__/.test(e.message)){
+    lines.push('ERR THREW ' + e.message);
+    lines.push(String(e.stack || '').split('\n').slice(0,6).join('\n'));
+    exitCode = 1;
+   }
+  }
+
+  if(saved){
+   try {
+    localStorage.clear();
+    for (var rk in saved){ if(Object.prototype.hasOwnProperty.call(saved,rk)) localStorage.setItem(rk, saved[rk]); }
+   } catch(e){ lines.push('ERR could not restore localStorage after the run: ' + e.message); }
+  }
+
+  render(lines);
+  /* the harness prints its pass line with a leading blank line, so trim before matching */
+  var passLine = lines.filter(function(l){ return l.trim().indexOf('SMOKE PASS') === 0; })[0];
+  if(exitCode === 0 && passLine){
+   verdict.className = 'verdict pass';
+   verdict.textContent = passLine.trim();
+  } else {
+   verdict.className = 'verdict fail';
+   verdict.textContent = 'FAILED — ' +
+     (lines.filter(function(l){ return /^ERR FAIL/.test(l); })[0] || 'exit ' + exitCode);
+  }
+ }
+
+ document.getElementById('run').addEventListener('click', run);
+})();
+</script>
+</body>
+</html>

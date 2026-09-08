@@ -675,7 +675,15 @@ function seatIds(){
  return ids.length ? ids : ['H'];
 }
 function isSeat(id){ return seatIds().indexOf(id)>=0; }
-function seatPositions(){ return seatIds().map(posById); }
+/* SOP 2-1 ORDER, NOT THE ORDER THE SEATS WERE CLICKED. The drill log
+   writes the Drill 10 seat as "Combined D + I", and an insertion-ordered
+   label reads it back as "Combined I + D" or "D + I" depending on which
+   was taken first — the same two seats with two names. POSITIONS is the
+   order the order itself lists them in, so it is the one to sort by. */
+function seatPositions(){
+ var ids=seatIds();
+ return POSITIONS.filter(function(p){ return ids.indexOf(p.id)>=0; });
+}
 function seatPos(){ return seatPositions()[0]; }
 function rstOpen(){ return state.pos.rstOpen!==false; }
 /* the arrival gates the seats being worked own by default, in the configuration
@@ -1253,7 +1261,15 @@ function validate(rec){
   if(rec.vis!=null && rec.vis<cfg.min.vis) errs.push(cfg.id+' needs visibility of at least '+cfg.min.vis+' miles and you have set '+rec.vis+' ('+cfg.src+').');
  }
  if(cat!=='VFR') warns.push('Flight category is '+cat+'. '+TOOLBOX[cat]+' Whatever you had planned on a visual, plan again.');
- if(!configCarried(rec.cfg)) warns.push('ZMP-M98 LOA Table 2 has no row for the '+configById(rec.cfg).id+' configuration, so the engine carries no arrival ladders for it and the scope draws no gate geometry. Table 2 covers 12, 12-17, 30, 30-17, 30-35 and 17-22. Everything else about the frame is real — brief it and work it — but which transition ZMP assigns here is not in the document, and the tool will not guess it from the landing runways.');
+ /* NAME THE CONFIGURATION THE RECORD ACTUALLY CARRIES, not the one
+    configById falls back to. configById returns CONFIGS[0] — the 12s — for
+    anything it does not recognise, so a record with no configuration at all
+    used to produce "Table 2 has no row for the 12 configuration", which is
+    both false and confusing: Table 2 has a 12 row, and the drill had no
+    configuration to look up. Found 2026-09-07 by the first execution of the
+    smoke test, whose trunk fixture carries no cfg. */
+ if(!rec.cfg) warns.push('This drill names no configuration, so there is nothing to look up in ZMP-M98 LOA Table 2 and no arrival geometry to load. Set one on the frame — everything downstream of it, the ladders, the floors and the near/far split, follows from it.');
+ else if(!configCarried(rec.cfg)) warns.push('ZMP-M98 LOA Table 2 has no row for the '+rec.cfg+' configuration, so the engine carries no arrival ladders for it and the scope draws no gate geometry. Table 2 covers 12, 12-17, 30, 30-17, 30-35 and 17-22. Everything else about the frame is real — brief it and work it — but which transition ZMP assigns here is not in the document, and the tool will not guess it from the landing runways.');
  if(DD.TABLE2_FOOTNOTE[rec.cfg]) warns.push(DD.TABLE2_FOOTNOTE[rec.cfg]);
  (rec.ac||[]).forEach(function(a,i){
   var rules=(a.rules==='VFR')?'VFR':'IFR';

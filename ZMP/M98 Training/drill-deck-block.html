@@ -2184,7 +2184,17 @@ window.ddEnd=function(){
 };
 window.ddLoad=function(id){
  var sc=SCENARIOS.find(function(x){return x.id===id;}); if(!sc) return;
- sim.t=0; sim.rate=0; sim.ac=sc.ac().map(mkAc); sim.feed=[]; sim.sel=null; sim.losFlag=false; sim.ended=false; sim.scen=sc;
+ /* A DRILL IS FLOWN IN THE CONFIGURATION IT WAS BUILT IN, and the flow has to
+    be loaded before ac() runs: every scenario builder reads ROUTES directly to
+    place its strips, so with another flow loaded it either flies the wrong
+    ladders or — in a configuration Table 2 does not name, where ROUTES is
+    legitimately empty — throws on ROUTES.TORGY.total. That crash was recorded
+    as still open in CLAUDE.md on 2026-09-04, repro setFlow('30/12') then
+    ddLoad('resume10r'); this is the fix. Both library drills say 12s-Depart 17
+    on their own frame, so 12-17 is the Table 2 row they load. */
+ if(sc.cfg) setFlow(sc.cfg);
+ sim.t=0; sim.rate=0;
+ sim.ac=sc.ac().map(mkAc); sim.feed=[]; sim.sel=null; sim.losFlag=false; sim.ended=false; sim.scen=sc;
  /* the altimeter the drill is running, so a wrong setting can be caught */
  if(!sc.altim && sc.frame){ var fa=sc.frame.match(/A(\d{4})/); if(fa) sc.altim=fa[1]; }
  document.getElementById('dd-debriefbox').innerHTML='';
@@ -2197,14 +2207,14 @@ window.ddLoad=function(id){
 /* aircraft trunkLen default */
 /* ---------- 6. Scenarios ---------- */
 var SCENARIOS=[
- {id:'resume10r', name:'Drill 10R \u2014 resume', frame:'12s\u2013Depart 17 \u00b7 wind 150/9 \u00b7 VFR \u00b7 ATIS J/W \u00b7 A2980',
+ {id:'resume10r', cfg:'12-17', name:'Drill 10R \u2014 resume', frame:'12s\u2013Depart 17 \u00b7 wind 150/9 \u00b7 VFR \u00b7 ATIS J/W \u00b7 A2980',
   brief:'Frozen mid-drill exactly where the live session paused. Open when you unpause: DAL589\u2019s runway word (12L window closes at SAVVG), SCX8127\u2019s published-speed restore, the floor said before every switch \u2014 and the separation proof, out loud, unprompted.',
   ac:function(){ return [
    {cs:'DAL589', type:'B738', gate:'NITZR', dtgEnd: trunkLenFor('NITZR')-0+13+ (ROUTES.NITZR.total-ROUTES.NITZR.find(function(p){return p.f==='ELLKO';}).cum), alt:10300, ias:230, iasAsg:230, spdMode:'assigned', ckdIn:true, altim:true},
    {cs:'SCX8127', type:'B738', gate:'BLUEM', dtgEnd: 8 + (ROUTES.BLUEM.total-ROUTES.BLUEM.find(function(p){return p.f==='ELLKO';}).cum), alt:9800, ias:250, iasAsg:250, spdMode:'assigned', rwy:'12R', ckdIn:true, altim:true},
    {cs:'DAL158', type:'A339', wake:'H', gate:'TORGY', dtgEnd:24, alt:18000, ias:280, spdMode:'published', rwy:'12R', ckdIn:true, altim:true}
   ];}},
- {id:'freshpush', name:'South gates \u2014 fresh push', frame:'12s\u2013Depart 17 \u00b7 wind 150/9 \u00b7 VFR \u00b7 ATIS J/W \u00b7 A2980',
+ {id:'freshpush', cfg:'12-17', name:'South gates \u2014 fresh push', frame:'12s\u2013Depart 17 \u00b7 wind 150/9 \u00b7 VFR \u00b7 ATIS J/W \u00b7 A2980',
   brief:'Clean start: four strips staggered off your three gates, everything owed from the first transmission. Check-in items, floors, the ELLKO merge, the 12R imbalance \u2014 all yours to build from zero.',
   ac:function(){ return [
    {cs:'DAL589', type:'B738', gate:'NITZR', dtgEnd:ROUTES.NITZR.total, alt:19000, ias:280, spawnAt:4},
