@@ -138,15 +138,23 @@ nothing is flown along a ladder. The strip contract is derived from the procedur
 rather than hand-typed, and a procedure with a carried ladder renders **"track only"** where
 it used to render "frame only" — two different claims that were previously one label.
 
-## Roadmap (owner-prioritized)
+## Where the work is tracked
 
-1. **Sector boundaries — the whole facility is blocked on this.** Omaha sectors, Lincoln sectors, Lincoln Final, RADAR Final, and the PACP airspace are all pictures. A terminal tool without a final-approach boundary cannot drill the thing terminal controllers are actually graded on. Owner-supplied points are the path, exactly as the M98 lateral boundary came in.
-2. **The combining table (R90 3-4) is also a picture** — which position combines into which, and on what frequency, is unknown. Without it the tool cannot model "who else is open", which is half of M98's drill frame.
-3. **Scratchpad-driven approach clearance drilling.** The 3-10 tables are complete text, the encoding is unambiguous, and the runway-alone-means-visual rule is exactly the kind of deterministic check the M98 engine grades well. **This is the best first drill in the facility and it needs no geometry.**
-4. **The STAR-gap departure heading bands** (LOA 4.d.2) are five numeric ranges with two named exceptions — also fully gradeable without geometry, and the most distinctive R90 procedure.
-5. An Offutt tower order, if one exists. Until then OFF is a position with no field behind it.
-6. First OJT session. Until one is flown, `claude_R90_OJT_Session_Review.md` stays a template and `STANDING` stays empty.
+The roadmap that used to sit here is the issue tracker now, per root `CLAUDE.md` section 14: a
+gap is a fact and stays in `claude_R90_Gap_Analysis.md`, where Part 1 ranks the asks; a work item
+is an intention and belongs somewhere it can be closed.
 
+| | |
+|---|---|
+| **#29** | Every sector boundary is a picture — Omaha, Lincoln, Lincoln Final, RADAR Final, PACP. **The facility is blocked behind it.** Owner-supplied points are the path, exactly as the M98 lateral boundary came in |
+| **#30** | The combining table (3-4) is a picture, so the tool cannot model who else is open |
+| **#31** | Scratchpad-driven approach clearance drill — **the best first drill here, and it needs no geometry** |
+| **#32** | STAR-gap departure heading bands (LOA 4.d.2) — also gradeable without geometry |
+| **#33** | Is there an Offutt tower order? Until one is found, OFF is a position with no field behind it |
+| **#34** | Fly a first OJT session. `STANDING` stays `[]` until one is, and the smoke test asserts it |
+
+**#31 and #32 are the two that can start today.** Both sit entirely inside the text half of the
+document set, which is why they were chosen.
 ## Session hygiene
 
 Commit after each completed subtask. Long sessions: `/clear` and let this file re-anchor context. When aviation data is involved, cite which reference file and which paragraph the number came from in the commit message. **One commit touches one ARTCC:** anything under `ZMP/` may share a commit — M98, R90 and ZMP Center together — and nothing under `ZAU/` or `ZLC/` may join it. Root `CLAUDE.md` §14.

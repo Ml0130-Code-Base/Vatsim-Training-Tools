@@ -185,11 +185,11 @@ The markdown layer pulls §6-3-1 (dispersal tracks) and the 2-5-1 runway-crossin
 
 ---
 
-## Suggested next actions (in priority order)
+## Where these get folded in
 
-1. Fold Part 1 items into the existing references: dispersal-area verticals + 8.h initial altitudes → SID reference; Shoreview/obstruction table → a short addition wherever the Shoreview module sources from; midnight operations → Configuration reference; fix the MIC runway list in the Satellite reference.
-2. Create one new markdown ("Satellite Tower Interface") absorbing the Satellite-Towers LOA + the four tower orders' radar-relevant content (releases/run-down lists, headings, initial altitudes, missed approaches, advertising minima, scratchpads).
-3. Create a second new markdown ("RST Tower Enroute") for the RST LOA — it's small, self-contained, and every BLUEM/KASPR drill quietly depends on it.
-4. Add the ZMP Table 1 values, the ±30°/10 NM control-for-turns pair (LOA 4.b + SOP 3-1), and the 17/22 overflight triangle to the SID/STAR references.
-5. Add the missing SOP configs (Land 30s+35 floors, Land 35–Depart 12s) and the 4-4d gate-split enumeration to the STAR reference; add the 17-22 crossover matrix and Converging Runway Display Aid values to the Configuration reference.
-6. Put the nine-point lateral boundary ring into a markdown file so it survives outside memory.
+Six folds, each into a file that already exists, are **issue #28**. This file keeps the gaps and
+their citations; the intention to close them lives where it can be closed (root `CLAUDE.md`
+section 14).
+
+Item 5 above is already done — the MIC inventory is corrected to Runway 14/32 plus parallel
+6L/24R and 6R/24L everywhere it appears.

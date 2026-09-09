@@ -105,4 +105,4 @@ So the picture is not all gaps. These are complete, text, and ready to build aga
 - **The whole ZMP-R90 LOA except its two attachments** — ceilings, arrival altitudes, the STAR window, control-for grants in both directions, the five departure heading bands and their exceptions.
 - **Both tower orders except their airspace appendices** — departure altitudes, headings, missed approaches, flow selection, frequencies.
 
-**Items 3 and 4 on the roadmap in `CLAUDE.md` — scratchpad-driven approach clearances, and the STAR-gap departure heading bands — were chosen precisely because they sit entirely inside this list.** Real drills can be built now, without waiting for a single boundary point.
+**Issues #31 and #32 — scratchpad-driven approach clearances, and the STAR-gap departure heading bands — were chosen precisely because they sit entirely inside this list.** Real drills can be built now, without waiting for a single boundary point.

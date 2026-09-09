@@ -96,15 +96,23 @@ Absent by design until the roadmap says otherwise — routes, a tick loop, aircr
 - **What was actually verified (2026-09-01):** the folder was served over a local PowerShell `HttpListener` and the page was driven in a real browser. Confirmed: three blocks parse, `zd-handoff` mounts into `zdb-page-notes`, the 29-row and 119-row tables render, the resolver returns `09` · `M1H` · `M2Y` · `O1X` · `B1G` · `W` · `N` for the pairs above, LAN renders as **"none / not composable"**, and the console is clean. **That is a browser check. The smoke test has still never been run — there is no Node on this machine.**
 - **There is no Node on the owner's machine** (checked 2026-09-01: no `node`, no `python`, no `jq`; `perl`, `curl` and `pdftotext` are present). The harness has therefore **not been run**. Say so plainly rather than implying it passed.
 
-## Roadmap (owner-prioritized)
+## Where the work is tracked
 
-1. **Sector boundaries.** Everything else is blocked on geometry. The SOP maps, the high-sector chart and the approach-sector chart are all pictures, and vNAS does not expose video-map GeoJSON (probed 2026-09-01; every candidate endpoint 404s). The path forward the M98 project used is the one available here: **owner-supplied points**, the way the M98 lateral boundary came in as nine MSP radial/DME pairs. Start with the sectors that matter — Area 2 and Area 3 around M98, and 26/27/37 around R90.
-2. **A traffic model that is actually en route.** Not the M98 model with the gates removed. En route traffic is route-and-altitude over a large sector with LOA-governed boundary handoffs; the drill is *deliver the aircraft at the altitude and on the route the agreement requires*, and the grading spine is the LOA tables in `claude_ZMP_Enroute_LOA_Reference.md` and `claude_ZMP_TRACON_Interface_Reference.md`.
-3. **AIT and Data Block Coordination as gradeable objects.** These are the two most distinctive ZMP procedures and both are fully written down with hard, checkable conditions (5 minutes, 3 minutes, Mode C, departure exclusion). They are the best first grading target in the whole facility.
-4. **First OJT session.** Until one is flown, `claude_ZMP_OJT_Session_Review.md` stays a template and `STANDING` stays empty.
-5. Descend-via / procedural-altitude drilling into M98, using the 7200.1O 3.8.D rule and the knock-it-off crossing altitudes in the ZMP-M98 LOA.
-6. The three Chapter 10 event splits, once boundaries exist.
+The roadmap that used to sit here is the issue tracker now, per root `CLAUDE.md` section 14: a
+gap is a fact and stays in `claude_ZMP_Gap_Analysis.md`, where Part 1 ranks the asks; a work item
+is an intention and belongs somewhere it can be closed.
 
+| | |
+|---|---|
+| **#35** | Sector boundaries are pictures. **Everything else is blocked behind it.** Owner-supplied points, starting with Area 2 and Area 3 around M98 and 26/27/37 around R90 — not all 27 |
+| **#36** | An en route traffic model, **not M98 with the gates removed** |
+| **#37** | AIT and Data Block Coordination as gradeable objects — **the best first grading target, and it needs no geometry** |
+| **#38** | Fly a first OJT session. `STANDING` stays `[]` until one is, and the smoke test asserts it |
+| **#39** | Descend-via and procedural-altitude drilling into M98 |
+| **#40** | The three Chapter 10 event splits — blocked on #35 |
+
+**#37 is the one that can start today.** Both conditions sets are fully written down with hard,
+checkable values, and neither needs a polygon.
 ## Session hygiene
 
 Commit after each completed subtask. Long sessions: `/clear` and let this file re-anchor context. When aviation data is involved, cite which reference file and which paragraph the number came from in the commit message. **One commit touches one ARTCC:** anything under `ZMP/` may share a commit — M98, R90 and ZMP Center together — and nothing under `ZAU/` or `ZLC/` may join it. Root `CLAUDE.md` §14.
