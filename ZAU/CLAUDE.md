@@ -105,7 +105,8 @@ Slots moved: `routes` → **verified**, `deps` → **partial**.
   PLANO, KUBBS, OKK or FARMM as a fix, so nothing links a Feeder position to a ladder. CIFP
   does carry enroute waypoints named PLANO, KUBBS and FARMM, but **nothing in the document set
   says a position is named for the fix that shares its name** — so those coordinates stay out
-  of `GATES`. Confirming the gate-to-fix identity is a Part 1 owner ask and a cheap one.
+  of `GATES`. Confirming the gate-to-fix identity is a Part 1 owner ask and a cheap one —
+  issue **#44**.
 - **Procedures are keyed by airport, then by procedure.** ADELL EIGHT is published at four
   satellites with a **different set of runway transitions at each**, and PANGG SEVEN has a
   different common segment at Gary than at Midway. Keyed on the identifier alone they
@@ -204,7 +205,7 @@ Adding a section to the C90 tool means giving its panel a `data-note` attribute.
 whole integration; `mountAllRails()` finds it.
 
 The AZO tool has the practice-log half of this (bank a debrief, export as Markdown) and not
-the per-anchor rail. Add the rail there too if the same feedback loop turns out to be wanted.
+the per-anchor rail — issue **#43**.
 
 ## Testing
 

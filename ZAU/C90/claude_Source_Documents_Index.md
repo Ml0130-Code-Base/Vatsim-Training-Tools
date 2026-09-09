@@ -38,6 +38,8 @@ Appendices B through G are chart images with no text layer.
 
 ## Not yet read — C90's own set
 
+Catalogued and located, never transcribed. Reading these and the set below is issue **#50**.
+
 | Document | File |
 |---|---|
 | vZAU ZAU-C90 LOA | `1784656905903-vZAU%20ZAU-C90%20LOA.pdf` |

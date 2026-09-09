@@ -45,7 +45,9 @@ is the one useful exception: its labels carry each sector's callsign and frequen
 what confirmed the position mapping, and it shows the relative arrangement of the six sectors
 without anything measurable.
 
-## Not yet read — worth pulling next
+## Not yet read
+
+Catalogued and located, never transcribed. Reading them is issue **#50**.
 
 | Document | File | Why it matters here |
 |---|---|---|
