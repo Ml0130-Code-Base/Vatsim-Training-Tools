@@ -146,7 +146,7 @@ intends to do to it. **Open work is in the issue tracker** (root `CLAUDE.md` sec
 
 ### The transition decides the track; the landing runway does not
 
-**Two fields, two controllers, and they are independent.** ZMP assigns the **runway transition**
+**Two fields, two controllers, and they are independent — and the charted STAR note says so outright:** *"EXPECT 'descend via' clearance and runway transition assignment by Center. Approach will assign landing runway."* That note, and the paragraph it sits in, are in `claude_MSP_STAR_Reference.md`, which has carried this distinction since it was written — a session in 2026-09-09 re-derived it from LOA 5.b(b) and SOP 2-5 without noticing, so read the STAR reference before re-deriving it a third time. ZMP assigns the **runway transition**
 — Table 2 is titled *"Runway Transitions assigned by ZMP"* and LOA 5.b(b) puts it inside the
 descend-via — while **M98's Feeder assigns the landing runway** (SOP 2-5). Every arrival strip
 carries both: `trans` and `rwy`.

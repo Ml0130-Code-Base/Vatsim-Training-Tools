@@ -42,6 +42,42 @@ ZMP's "descend via" must name a runway transition, normally assigned per this ta
 
 ¹ M98/ZMP CIC/TMU collaborate on which get the Runway 35 transition. **Heavy jets → always the 12R/30L transition (Table 2(c)), regardless of config.** Consequence in a plain-30 config: the natural feed is **30R = BAINY + MUSCL, 30L = KKILR + NITZR + BLUEM + TORGY + all heavies** (2 streams vs 4) — M98 balances by crossing bodies over to 30R. BAINY/TORGY have separate 30L vs 30R tails (real lateral reroute to switch); KKILR/NITZR/BLUEM/MUSCL ride one tail feeding both parallels (clean runway flip).
 
+### Where the two tails actually part company — the split fix
+
+The sentence above says which gates have separate tails and which ride one. **This says where the
+separate ones diverge**, which is the thing that decides whether a transition can still be changed.
+Derived by walking a gate's two published ladders together and stopping at the first fix they do not
+share — so it is a consequence of the coordinates in this file, not a separate assertion, and it
+moves if they do.
+
+| Gate | Flow | Shared to | Then splits |
+|---|---|---|---|
+| NITZR · BLUEM | 12s | **SAVVG** | GREAK/TIETN (12R) · CMMOE/FSCOT (12L) |
+| MUSCL · KKILR | 12s | **ZASKY** | CMMOE/FSCOT (12L) · GREAK/TIETN (12R) |
+| TORGY | 30s | **HDEEE** | MAUER/LEDRZ (30L, **south**) · WILKN/OSMOH (30R, **north**) |
+| BAINY | 30s | **PRRPL** | MAUER/LEDRZ (30L, **south**) · OSMOH (30R, **north**) |
+
+**Before the split fix the two transitions are literally the same track**, so switching costs
+nothing. **After it the aircraft is committed to one side of the field** — and past that point it is
+already flying a downwind on the STAR itself, not being vectored. On TORGY's 30L, everything after
+**HDEEE** runs east-south-east down the south side, which is a 120° downwind against a 300° runway;
+the 30R tail runs east-north-east up the north side. Both are downwinds; they are on opposite sides.
+
+**Two things this makes visible.**
+
+**NITZR's split fix is SAVVG** — which is exactly the fix the drill deck already uses to apply the
+Table 2 default to a strip with no runway, and what the Drill 10R brief has always called *"the 12L
+window closes at SAVVG."* That was a rule carried from a drill note; it falls out of the published
+ladders.
+
+**A near gate has no split fix at all, because it publishes one tail for both parallels — and that
+matches near/far exactly, in both flows.** On the 12s the shared-tail gates are TORGY and BAINY,
+which are the near ones; on the 30s they are NITZR, BLUEM, KKILR and MUSCL, which are the near ones
+there. That is the definition made visible: a **near** gate's arrivals *drop onto the final*, so one
+track serves both parallels, while a **far** gate's have to be *vectored to* it, so there is a side
+to be on. **It is a fourth check that the near/far reading is the right way round** (the three in
+`CLAUDE.md` are documentary; this one is structural).
+
 **ZMP→M98 arrival comms transfer** (no later than, per the RNAV STAR procedures): TORGY→**OFSON** · BAINY→**LUCCY** · MUSCL→**BAYKS** · KKILR→**KKILR** · BLUEM→**BLUEM** · NITZR→**NITZR** (~40–51 NM out). **Departures** release the other way — M98 → ZMP at **25 NM from the MSP DME or leaving 11,000** (ZMP-M98 LOA 4.c).
 
 **Who does what inside M98 (SOP 2-1/2-4/2-5):** **Feeder** (I/H) assigns the landing runway and initiates crossovers; **Arrival** (N/S, plus J on 17/35) vectors, sequences, and issues the approach clearance; **Departure** (D/R/L) and **Satellite** (E/G/K) work the rest. ACDA split on 30s/12s: **North Arrival** north of the 12L/30R localizer, **South Arrival** south of the 12R/30L localizer — so **30R is the north parallel, 30L the south**. That's why heavies (→30L) land the south side, and a KKILR/east arrival crossed to 30L is handed to 'S' on ~220° (SOP 4-5c example). **Combining order (SOP 2-1):** M98 collapses to **H** (South Feeder) as the base — one controller working all of M98 is on H — and positions open in the order **H → R → N → S** (**R** = combined Departure, **N** = combined MSP Final, **S** = South Final; **E** = combined Satellite, E+G+K). The single/base radar position is **H**, not a departure or approach frequency.
