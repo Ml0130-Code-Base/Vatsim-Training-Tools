@@ -33,6 +33,22 @@ These map directly onto the standing coaching items. **Item 0 is the exception a
 
 **Answering (1) alone unblocks the most-used of the four, and it matters more than the count suggests.** MSP-M98 LOA 9.g makes `30/12` the **quiet-hours default, 2230–0600 local** — the same window as the midnight regime the tool gained on 2026-09-07 (ZMP-M98 LOA para 5, 2230–0530 when coordinated). So **the configuration the owner is most likely to be working overnight is the one with no geometry**, and the two land on the page together: selecting midnight while the frame reads `30/12` now prints the gap and names this ask. The trainee who works nights is the trainee this blocks.
 
+### 0b. The three Departure Dispersal Area shapes that are still not carried (added 2026-09-08, issue #27)
+
+**Also a question for a person, and it is narrower than it looks.** The main 12s polygon is already traced and carried — sixteen MSP radial/DME points, outer arc a constant 11.4 NM, tolerance about half a mile, all in `claude_M98_DDA_Geometry.md`. Three shapes are not, and each is missing a *different* small thing rather than a whole trace.
+
+**Why it matters:** the DDA is the number one pattern in the OJT review and the thing departures actually threaten. Without the cutouts the tool cannot answer the question a satellite arrival asks — near FCM, 3,000 is legal and 4,000 is inside Tower's airspace.
+
+**1. The Runway 30 area — only the radial extents are missing.** The trace already has the outer arc at **10.0 NM** wrapping north-west and the two cutouts at about **2.9 NM** radius. What it does not have is where the sector starts and stops, the way the 12s shape runs 074° round to 218°. **Its stated blocker is gone**: the file says *"add it with the 30s route set"*, and the 30s route set landed 2026-09-04. So this needs two numbers — the first and last radial — and not a trace.
+
+**2. The satellite cutouts at FCM and MIC — the centres may already be known.** 3,500 to 7,000, LOA 5.a(3), the only legal under-path near those fields. They are traced on the Runway 30 sheet only, at about 2.9 NM radius. The scale calibration in the geometry file was set *by* those two circles, on the basis that FCM and MIC have published coordinates 14.76 NM apart — which only works if the circles are centred on the fields. **If that is right, the cutouts are a radius and two published airport positions, and nothing needs tracing at all.** The ask is a yes or no: are the cutout circles centred on the fields, and is 2.9 NM the right radius for both?
+
+**3. The extensions — genuinely not identified.** 4,000 to 7,000, LOA 5.a(4). These were not found as a separate shape on the sheet at all, so this one really is a trace: the radial/DME pairs, in the same form as the nine that fixed the lateral boundary.
+
+**What to send, if points are the answer.** The same form the M98 lateral boundary arrived in — **MSP radial/DME pairs**, read off the chart. Half a mile is an honest tolerance and the tool states it; nothing here needs survey accuracy.
+
+**Why this is an ask and not work.** Both mechanical paths are closed, re-checked **2026-09-08**: there is no rasteriser on the machine to carve the remaining chart images — `pdftoppm`, `pdfimages`, ImageMagick and Ghostscript are all absent, `python` resolves to the Microsoft Store stub and `convert` to `C:\Windows\system32\convert.exe`, the FAT-to-NTFS tool. And **community geometry does not close it either**, checked 2026-09-02: VATGlasses has no ZMP dataset at all, and SimAware carries a lateral footprint with no altitudes, which cannot describe a cutout or an extension.
+
 ### 1. Departure Dispersal Area vertical ownership — MSP-M98 LOA 5.a(3)–(5)
 The number-one recurring issue (losses of separation in sessions 3, 5, 6) and the markdown layer never states what the Departure Dispersal Area actually *is* vertically:
 

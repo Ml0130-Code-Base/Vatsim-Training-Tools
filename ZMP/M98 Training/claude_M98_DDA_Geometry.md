@@ -65,8 +65,16 @@ close to radial 217–218, and its inner edge running past the field at 1.7–2.
 The trace was verified by drawing the polygon back over the chart image — it lies on the boundary.
 
 **Runway 30**, traced but not carried: outer arc at **10.0 NM**, wrapping northwest, with the MIC
-and FCM cutouts punched out of it at a radius of about **2.9 NM** each. Add it with the 30s route
-set (roadmap item 2).
+and FCM cutouts punched out of it at a radius of about **2.9 NM** each.
+
+**Its stated blocker is gone and it is still not carried — for a different reason.** This used to
+read *"add it with the 30s route set (roadmap item 2)"*; **that landed 2026-09-04** and all six
+gates now fly their published 30L and 30R ladders. What stops it now is that the trace above is
+not a polygon: it has the outer radius and the cutout radii but **no radial extents**, so there is
+nothing to draw between. The 12s shape has them — 074° round to 218° — and this one does not.
+**Two numbers close it**, the first and last radial, and they are the ask in
+`claude_M98_MD_Gap_Analysis.md` Part 1 item 0b (issue #27). Do not infer them from the 12s sector;
+the two areas wrap opposite ways.
 
 ## What is in the tool
 
@@ -87,6 +95,13 @@ Only the 12 and 12-17 shape is carried, because that is the only configuration t
   on the sheet. Only the main area is carried.
 - The **satellite cutouts** (3,500–7,000) are traced on the Runway 30 sheet only; they are not
   carried, so the tool does not yet model the under-path below 3,500 near FCM and MIC.
+  **They may be closer than they look.** The scale calibration above was set *by* these two
+  circles, on the basis that FCM and MIC have published coordinates 14.76 NM apart — which only
+  holds if the circles are centred on the fields. If that is right, a cutout is a radius and a
+  published airport position and needs no trace at all. **It is recorded as a question rather than
+  acted on**, because the calibration assumed it and using it here would be reasoning in a circle:
+  the same assumption cannot both set the scale and be confirmed by it. Asked in
+  `claude_M98_MD_Gap_Analysis.md` Part 1 item 0b.
 
 ## Also found in the same image set, not yet used
 
