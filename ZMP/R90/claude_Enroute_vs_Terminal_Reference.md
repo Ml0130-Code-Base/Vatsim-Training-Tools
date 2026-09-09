@@ -431,7 +431,10 @@ The two tools should **not** share a grading rubric. Roughly:
 
 ---
 
-## 9. Open items before either tool ships
+## 9. Uncited material, and unresolved source conflicts
+
+Facts about what this repository holds and does not hold — not a list of things to do. The two
+that need a person to settle them, items 6 and 7, are **issue #49**.
 
 1. **`UNCITED` — EDST/URET.** Absent from this repo. Either source it or scope the ZMP automation module to what §3 documents.
 2. **`UNCITED` — radar sort boxes.** Absent from this repo and not tied to a 7110.65 paragraph.
