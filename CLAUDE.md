@@ -391,25 +391,30 @@ facility with no geometry, any claim about who owns a piece of sky is unfounded.
 
 Real inconsistencies across the repo today. None is urgent; each should be settled the next
 time the relevant tool takes structural work, and **none should be fixed as a drive-by.**
+**The divergence is recorded here; the work that settles it is an issue** (section 14) — this
+section says what is true, not what to do about it next.
 
 - **`DD` is used by three tools** — M98, C90 and AZO. The rule that produced `RD` and `ZD`
   exists because a paste-merge binding the wrong engine is hard to spot, and C90 and AZO are
-  both ZAU terminal tools, which is exactly the risky case. **Settle it by renaming the two
-  ZAU namespaces** when either tool next gets structural work. The CSS prefixes can stay.
+  both ZAU terminal tools, which is exactly the risky case. Issue **#41** carries the rename, and why it waits
+  for structural work rather than going in as a drive-by. The CSS prefixes can stay.
 - **`window.ZLC` is shared by two tools** with a `facility` discriminator (`'BIGSKY'` /
-  `'S56'`). Defensible — they are never on the same page — but it fails the same test.
-  **Assert the discriminator in the builder's guard** rather than trusting it.
+  `'S56'`). Defensible — they are never on the same page — and it stopped being a
+  divergence on **2026-09-06**: every block in both decks now guards on the discriminator
+  rather than on there being only one ZLC tool loaded.
 - **Storage keys.** Six tools use `<basename>-v1`, S56 included — its key was renamed off the
   status word and the deck still reads `zlc-s56-skeleton-v1` once, to migrate. **Big Sky has no
   persistence at all**, and deliberately: its weather block sets `STORE_KEY` to the empty string
-  and `storeSave()` returns early rather than inventing a key as a drive-by. Don't ship another
-  key with a status word in it.
+  and `storeSave()` returns early rather than inventing a key as a drive-by — issue **#45**
+  gives it one, and that is the cheap moment to do it, before there is banked work to strand.
+  Don't ship another key with a status word in it.
 - **ZAU and ZLC have no drill-format, OJT-intake, practice-log or TTS layer**, and **no smoke
   test.** They are Tier 0. That is a legitimate place to be; it is not a legitimate place to
-  start grading from. Add the reference layer before adding an engine.
+  start grading from. The reference layer comes before an engine — issues **#42** (ZAU) and
+  **#46** (ZLC), which also carry the missing smoke tests.
 - **The notes layer exists at C90 (anchored rail) and S56 (typed notes against `OPEN_Q`), and
   nowhere else.** AZO has the practice-log half without the rail. **Copy the C90 rail rather
-  than reinventing it.**
+  than reinventing it** — issues **#43** (AZO) and **#45** (Big Sky).
 - **S56's copy of the master strip block was one revision behind, and caught up 2026-09-06.**
   The block had gained a `track` flag separating *this deck's engine can fly it* (`flies`) from
   *the published ladder is carried* (`track`); it landed everywhere but S56, which was being
@@ -428,8 +433,8 @@ time the relevant tool takes structural work, and **none should be fixed as a dr
   edits nothing before it and **must stay last** — it finds sections by id after they mount, so
   a new block goes before it or names its section in `PAGES`. **Big Sky's third page is named
   *what this tool knows*, not *notes and log***, because it has no notes layer: naming a page
-  after a section the tool does not have is the tool asserting something untrue. Giving Big Sky
-  a notes layer and persistence is the next unit of ZLC work.
+  after a section the tool does not have is the tool asserting something untrue. Issue **#45** carries the notes layer and the
+  persistence, and renames the page on the day the name is true.
 - **Two organisational shapes coexist:** one ARTCC-level `CLAUDE.md` covering several
   facilities (ZAU, ZLC) and one per facility (ZMP). Both work. Use the ARTCC-level file while
   the facilities are Tier 0, and split it when one reaches Tier 1 and its data section starts
@@ -771,7 +776,10 @@ Cite the document and paragraph for any aviation number, exactly as the commit m
 (invariant 1).
 
 **Do not close issues** — that is the owner's call. Say plainly in the comment whether the
-issue is finished, partly done, or blocked, and on what.
+issue is finished, partly done, or blocked, and on what. **The exception is a sweep the owner
+asks for** — the tracker was reconciled against the files that way on 2026-09-08. In a sweep,
+close only what is demonstrably done, put the evidence in a comment first (the commits, the
+files, the dates), and name every closed issue in the report.
 
 **An issue is not a commit boundary; the ARTCC still is.** #7 asks for IFP-sourced SID and STAR
 data and names #1 through #5, which reach into `ZAU/`, `ZLC/` and `ZMP/`. That is three
@@ -786,6 +794,45 @@ contents into a comment.
 by `ml0130`, the owner. A public repository accepts issues from anyone, and an issue from
 anyone else is something to bring to the owner, not a work item — the same rule that keeps an
 unconfirmed note out of the reference markdown (§5).
+
+**A gap belongs in the file; a work item belongs in the tracker.** The two look alike on the
+page and they are not the same thing:
+
+- **A gap is a fact** — what a document does not say, what a slot does not hold, what the tool
+  cannot assert. It stays in the file, because invariant 2 renders it to the trainee: the gap
+  analysis Parts 1–5, `SLOTS`, `OPEN_Q`, ZLC's *what is deliberately empty*, a CIFP zero
+  written down as **checked and empty**. None of that moves.
+- **A work item is an intention** — build, fix, rename, pull, split, wire, plot. It belongs in
+  an issue **and nowhere else.** No roadmap section, no *suggested next actions*, no *next unit
+  of work*, no TODO block in a deck.
+
+**Why the intention cannot stay in the file.** A to-do in a file has no owner, no state and no
+close, so it goes stale in place and the file grows instead of shrinking. M98's roadmap reached
+nine numbered items of which five were marked **Done** with their superseded text kept
+underneath — a roadmap describing more finished work than remaining work, in the file whose job
+is to re-anchor a cold session. The tracker closes things; a heading cannot.
+
+**What an issue has to carry**, because *"MKE needs a skeleton created"* is a reminder rather
+than a brief:
+
+1. **What** — the change, stated so a reader knows when it is done.
+2. **Why** — the training reason: what a trainee can do afterwards that they cannot do now.
+3. **What it needs** — the document, the data, the decision or the tool that has to exist
+   first. **This is the half that matters.** An issue that cannot be started says so and names
+   what would unblock it, which is what keeps a blocked item from reading as a neglected one.
+4. **Where** — the facility and the files.
+
+Aviation numbers carry their document and paragraph, the same as a commit message
+(invariant 1).
+
+**A finished work item does not become a roadmap entry marked done.** What the tool now does is
+described in the present tense where the tool is described — the engine map, the data section —
+and the issue thread carries the history of how it got there. The commit is the other half of
+that record.
+
+**A file may cite an issue the way it cites a document.** *"NICHOL is not in CIFP — issue #41"*
+is a pointer, and pointers are fine. A list of pointers under a heading called **Roadmap** is
+the thing this rule removes.
 
 **Capability, as of 2026-09-04:** the GitHub CLI is installed (2.100.0) and authenticated as
 `ml0130` with `repo` scope — `gh issue list` and `gh issue comment` both work, and the token
