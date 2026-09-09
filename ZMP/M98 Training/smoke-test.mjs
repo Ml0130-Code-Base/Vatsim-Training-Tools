@@ -587,6 +587,98 @@ try {
       !/\d+ \d+H /.test(prev.replace(/<[^>]*>/g, ' ')));
   }
 
+  /* ============ 3c-b2. The far-gate transfer of communications — issue #24 ====
+     M98 7110.26A 4-5b(1): a far-gate crossover is handed to the appropriate
+     Feeder and communication transferred "as soon as practicable but not later
+     than 15 NM from MSP". THE DATUM IS THE MSP DME, not the threshold — the
+     order names the same number again as a range ring in 4-5b(2). Graded
+     against `posthandoff`, which already carries the 4.c release deadline of
+     exactly this shape, so no standing item is invented (invariant 4). */
+  {
+    assert('the far-gate deadline is 15 NM from MSP, and it carries its paragraph',
+      globalThis.DD.FARGATE_XFER.dme === 15
+      && globalThis.DD.FARGATE_XFER.src.indexOf('4-5b(1)') >= 0,
+      JSON.stringify(globalThis.DD.FARGATE_XFER));
+
+    /* WHICH CROSSOVER IS FAR IS A PROPERTY OF THE FLOW, NOT OF THE GATE. On a
+       12s the far gates are NITZR, BLUEM, KKILR and MUSCL, so the far-gate
+       crossovers are NITZR and BLUEM to 12L and MUSCL to 12R — KKILR to 12R is
+       carved out by 4-5 and is not counted as one. TORGY to 12L crosses the
+       localizer too, but TORGY is NEAR on a 12s, so it is the 9,000-and-a-
+       heading rule instead. Issue #24's body named TORGY; that is the near
+       case, and asserting both is what keeps the distinction visible. */
+    globalThis.DD.setFlow('12');
+    assert('NITZR to 12L is the far-gate case the rule is about',
+      globalThis.DD.crossoverFor('NITZR','12L','12').type === 'far'
+      && globalThis.DD.crossoverFor('NITZR','12R','12').type === 'none',
+      globalThis.DD.crossoverFor('NITZR','12L','12').type);
+    assert('TORGY to 12L crosses the localizer but is NEAR, so it is a different rule',
+      globalThis.DD.crossoverFor('TORGY','12L','12').type === 'near',
+      globalThis.DD.crossoverFor('TORGY','12L','12').type);
+    assert('and KKILR to 12R is carved out of the far-gate rule by 4-5 itself',
+      globalThis.DD.crossoverFor('KKILR','12R','12').type === 'none'
+      && /not counted as a far-gate crossover/.test(globalThis.DD.crossoverFor('KKILR','12R','12').note||''),
+      globalThis.DD.crossoverFor('KKILR','12R','12').note || '(no note)');
+    assert('and a far-gate crossover goes to a Feeder, not to Arrival',
+      ['H','I'].indexOf(globalThis.DD.receiverFor(
+        globalThis.DD.mkAc({cs:'X1', gate:'NITZR', rwy:'12L', alt:9000, ias:250, dtgEnd:20})).pos) >= 0,
+      globalThis.DD.receiverFor(
+        globalThis.DD.mkAc({cs:'X1', gate:'NITZR', rwy:'12L', alt:9000, ias:250, dtgEnd:20})).pos);
+
+    /* Fly one inside the ring three ways: switched, flashed only, neither. */
+    const ringRun = (setup) => {
+      globalThis.ddLoad('resume10r');
+      globalThis.DD.sim.ac.length = 0;
+      const a = globalThis.DD.mkAc({cs:'FAR1', type:'B738', gate:'NITZR', rwy:'12L',
+        alt:8000, ias:250, spdMode:'published', ckdIn:true, altim:true, dtgEnd:2});
+      a.onFreq = true;
+      setup(a);
+      globalThis.DD.sim.ac.push(a);
+      const before = globalThis.DD.sim.feed.length;
+      globalThis.ddRate(1);
+      for (let i = 0; i < 40 && !a.farChecked; i++) tickFn();
+      return { a, said: globalThis.DD.sim.feed.slice(0, globalThis.DD.sim.feed.length - before)
+                          .map(e => String(e.html).replace(/<[^>]*>/g, ' ')).join(' ') };
+    };
+
+    let r = ringRun(a => { a.flashed = 'H'; a.switched = true; });
+    assert('a far-gate crossover switched before the ring is graded good',
+      r.a.farChecked && /made 4-5b\(1\)/.test(r.said), r.said.slice(0, 160));
+
+    r = ringRun(a => { a.flashed = 'H'; });
+    assert('flashed but not switched at 15 NM is flagged, and says the flash does not stop the clock',
+      /flashed but not switched/.test(r.said) && /does not stop the clock/.test(r.said),
+      r.said.slice(0, 200));
+
+    r = ringRun(() => {});
+    assert('neither flashed nor switched at 15 NM is critical',
+      /no flash and no switch/.test(r.said) && /control for turns/.test(r.said),
+      r.said.slice(0, 200));
+    assert('and it names the Feeder that owns it, not Arrival',
+      /South Feeder|North Feeder/.test(r.said), r.said.slice(0, 200));
+
+    /* every one of the three tags the standing item the tool already has */
+    assert('the far-gate check is tagged to post-handoff discipline',
+      globalThis.DD.sim.feed.some(e => e.item === 'posthandoff'),
+      globalThis.DD.sim.feed.map(e => e.item).join(','));
+
+    /* the ring is drawn only when there is something to measure against */
+    globalThis.ddLayers('tracked');
+    assert('the 15 NM ring is on the scope while a far-gate crossover is airborne',
+      el('dd-scopebox').innerHTML.indexOf('15 NM COMMS') >= 0);
+    globalThis.ddLoad('resume10r');
+    globalThis.DD.sim.ac.forEach(a => { a.rwy = null; });
+    globalThis.ddLayers('tracked');
+    assert('and it is not drawn when there is nothing to measure',
+      el('dd-scopebox').innerHTML.indexOf('15 NM COMMS') < 0);
+
+    /* a near-gate crossover is a different rule and must not borrow this one —
+       BAINY to 12R is the order's own worked example of one */
+    assert('a near-gate crossover is not graded against the 15 NM ring',
+      globalThis.DD.crossoverFor('BAINY','12R','12').type === 'near');
+    globalThis.DD.setFlow('12');
+  }
+
   /* ============ 3c-c. Live re-pathing — issue #14 ============
      The rule, owner's call 2026-09-07: KEEP THE POSITION, RE-DERIVE THE MILES
      TO GO. Assert both halves separately, plus the two ways it must refuse. */

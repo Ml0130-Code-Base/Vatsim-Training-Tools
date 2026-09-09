@@ -885,6 +885,23 @@ function overflightRoute(entry, exit){
 /* M98 releases departures to ZMP at 25 NM from the MSP DME or leaving 11,000
    (ZMP-M98 LOA 4.c) — not a flat 40-mile ring. */
 var DEP_RELEASE = {dme:25, alt:11000};
+/* The far-gate crossover deadline — M98 7110.26A 4-5b(1) and (2), verbatim:
+   "Far Gate crossovers must be handed off to the appropriate Feeder Control
+   position and communication transferred as soon as practicable but not later
+   than 15 NM from MSP", and "the receiving controller has control for speed on
+   contact, and control for turns within the 15-mile range ring and remain in
+   the confines of Feeder airspace."
+
+   THE DATUM IS MSP, NOT THE THRESHOLD AND NOT THE GATE. The order says "15 NM
+   from MSP" and names the same number again as a range ring, so it is the MSP
+   DME — which is exactly what dmeOf() measures. Reading it as distance to the
+   runway would put the deadline in a different place on every gate.
+
+   Graded against `posthandoff`, which is already this tool's id for a transfer
+   that did not happen when it should have: the 4.c release check above is the
+   same shape, and two more calls flag an aircraft that left the airspace still
+   on frequency. No new standing item is invented for it (invariant 4). */
+var FARGATE_XFER = {dme:15, src:'M98 7110.26A 4-5b(1)'};
 
 /* ---------- Feeder north/south gate split — M98 7110.26A 4-4d ----------
    Which gates belong to North Feeder and which to South, by configuration. The
@@ -1437,6 +1454,7 @@ function mkAc(o){
   spdMode:o.spdMode||'published', rwy:o.rwy||null,
   ckdIn:!!o.ckdIn, altim:!!o.altim, itemsClock:o.ckdIn?0:null,
   flashed:null, switched:false, alive:true, spawned:o.spawnAt||0,
+  farChecked:false,
   onFreq:!!o.ckdIn, capNoted:false, savvgWarned:false, hoWarned:false
  };
  return a;
@@ -1683,6 +1701,21 @@ function tick(dt){
     else { var nb=receiverFor(a);
      log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> passed '+why+' with no flash and no switch. M98 releases departures at 25 NM from the MSP DME or leaving 11,000 (ZMP-M98 LOA 4.c) — this one is '+nb.name+'\u2019s airplane and they do not know.'
       +(nb.pos==='RST'?' (The 4.c timing is the ZMP rule; the M98\u2013RST agreement is not in the reference set.)':''), 'posthandoff'); }
+   }
+  }
+  /* Far-gate crossover: communication transferred not later than 15 NM from
+     MSP (4-5b(1)). The near-gate case is a different rule — 9,000 with a
+     heading at the 25-mile ring — and is not graded here. */
+  if(a.role==='arrival' && a.alive && !a.farChecked && a.rwy
+     && crossoverFor(a.gate, a.rwy, ROUTE_CFG).type==='far' && dmeOf(a)<=FARGATE_XFER.dme){
+   a.farChecked=true;
+   var fr=receiverFor(a);
+   if(a.switched){
+    log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> was with '+fr.name+' before the '+FARGATE_XFER.dme+' NM ring — the far-gate crossover made 4-5b(1).', 'posthandoff');
+   } else if(a.flashed){
+    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> crossed '+FARGATE_XFER.dme+' NM from MSP flashed but not switched. A far-gate crossover wants communication transferred <b>not later than '+FARGATE_XFER.dme+' NM from MSP</b> ('+FARGATE_XFER.src+') — the flash alone does not stop the clock, and inside that ring '+fr.name+' has control for turns.', 'posthandoff');
+   } else {
+    log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> passed '+FARGATE_XFER.dme+' NM from MSP with no flash and no switch. This is a far-gate crossover off '+a.gate+' to '+a.rwy+', so it is <b>'+fr.name+'</b>’s airplane on '+fr.frq+' ('+FARGATE_XFER.src+') — and inside the '+FARGATE_XFER.dme+'-mile ring they have control for turns while it is still on your frequency.', 'posthandoff');
    }
   }
   /* the departure dispersal area is MSP Tower's from the surface up to and
@@ -2198,6 +2231,16 @@ function scopeSvg(){
   s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(DEP_RELEASE.dme*SC).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 5"/>';
   s+='<text x="'+(CX+DEP_RELEASE.dme*SC*0.72).toFixed(1)+'" y="'+(CY-DEP_RELEASE.dme*SC*0.72).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity="0.7">25 DME</text>';
  }
+ /* The 15 NM ring — the far-gate transfer deadline, 4-5b(1). Drawn only when
+    there is a far-gate crossover airborne to measure against, the same way the
+    25 DME release ring is drawn only when a SID is shown: a ring with nothing
+    to measure is decoration. */
+ if(LAYERS!=='off' && sim.ac.some(function(a){
+      return a.alive && a.role==='arrival' && a.rwy
+             && crossoverFor(a.gate, a.rwy, ROUTE_CFG).type==='far'; })){
+  s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(FARGATE_XFER.dme*SC).toFixed(1)+'" fill="none" stroke="var(--red)" stroke-width="0.9" opacity="0.4" stroke-dasharray="2 4"/>';
+  s+='<text x="'+(CX-FARGATE_XFER.dme*SC*0.72).toFixed(1)+'" y="'+(CY+FARGATE_XFER.dme*SC*0.72).toFixed(1)+'" fill="var(--red)" font-family="IBM Plex Mono" font-size="9" opacity="0.75" text-anchor="end">'+FARGATE_XFER.dme+' NM COMMS</text>';
+ }
  /* overflight tracks — the aircraft's own crossing, not a published route */
  sim.ac.forEach(function(a){
   if(a.role!=='overflight' || LAYERS==='off') return;
@@ -2272,6 +2315,20 @@ function stripHtml(a){
   if(a.alive && (a.route.total-a.dist)<10 && !a.flashed) warn.push('flash');
  } else {
   job = a.gate+' \u2192 '+(a.rwy||'\u2014');
+  /* A far-gate crossover carries a live countdown to the 15 NM ring, the way a
+     departure carries one to the 25 DME release. It is the deadline the
+     crossover actually tests (4-5b(1)), so it belongs where the trainee is
+     already reading the aircraft rather than only in the debrief. */
+  var xo = a.rwy ? crossoverFor(a.gate, a.rwy, ROUTE_CFG) : {type:'none'};
+  if(xo.type==='far'){
+   var toRing = dmeOf(a)-FARGATE_XFER.dme;
+   job += ' · far-gate crossover';
+   if(a.alive && !a.switched){
+    job += ' · ' + (toRing>0 ? (toRing.toFixed(1)+' NM to the '+FARGATE_XFER.dme+' NM ring')
+                                 : ('<span style="color:var(--red)">inside the '+FARGATE_XFER.dme+' NM ring</span>'));
+    if(toRing<=5) warn.push('comms by '+FARGATE_XFER.dme+' NM');
+   }
+  }
   if(a.onFreq&&!a.altim) warn.push('altimeter');
   if(a.onFreq&&!a.rwy) warn.push('runway');
   if(a.alive&&(a.route.total-a.dist)<10&&!a.flashed) warn.push('flash');
@@ -2493,7 +2550,7 @@ window.DD = {
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
- DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, receiverFor:receiverFor, dmeOf:dmeOf,
+ DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
  FEEDER_POS:FEEDER_POS, NEAR_GATES:NEAR_GATES, HANDOFF_ALT:HANDOFF_ALT,
  AIRPORTS:AIRPORTS, airportOf:airportOf, runwaysAt:runwaysAt, initAltAt:initAltAt,
