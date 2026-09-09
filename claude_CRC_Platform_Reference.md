@@ -449,10 +449,10 @@ every candidate vNAS video-map endpoint 404'd.
 > Admin, or send the `.sct2` the maps were built from?"* Anyone with facility data-admin access
 > can do it in one action, the format is standard, and it arrives surveyed rather than traced.
 >
-> This is the same ask at ZMP, R90, C90, AZO, S56 and Big Sky. **It should be Part 1, item 1 of
-> every gap analysis**, replacing the request for hand-supplied radial/DME pairs. Nothing about
-> invariant 1 changes — a GeoJSON export is a citable source with a name and a date, and it
-> would be recorded in the source-documents index like any other pull.
+> This is the same ask at ZMP, R90, C90, AZO, S56 and Big Sky, and making it Part 1 item 1 of
+> every gap analysis is **issue #52**. Nothing about invariant 1 changes — a GeoJSON export is
+> a citable source with a name and a date, and it would be recorded in the source-documents
+> index like any other pull.
 
 ### 5.2 vNAS already has a training scenario format
 
