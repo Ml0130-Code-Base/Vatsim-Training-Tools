@@ -185,6 +185,113 @@ Turboprops: **AGUDE at AGUDE 6,000**; **ENCEE at RIXIE 7,000**; **GEP at OLLEE 7
   at 6,000**.
 - Frequencies for arrivals and overflights are in Attachments D-1 through D-11 (images, unread).
 
+## 4b. Where the "descend via" is actually issued — and the three-facility chain behind it
+
+**Pulled 2026-09-09 from ZMP 7200.1O and the vNAS facility records for ZMP and ZAU.** This section
+is not in the ZMP-M98 LOA; it is the ZMP-side and ZAU-side structure that delivers an aircraft to
+the M98 boundary already descending via a transition, and it exists because *when* the descend via
+is issued turns out to be the thing that decides what a mid-flight flow change costs.
+
+### FL240 is the point, and it is the same point every time
+
+7200.1O names two different-looking arrangements, and they are one arrangement in two wordings.
+**Every ZMP low sector tops at FL230 and every high sector starts at FL240**, uniformly — Sector 10
+is *"ground up to and including FL230"*, 06 *"8,000 MSL through FL230"*, 07 *"10,000' MSL to
+FL230"*, 09 surface–FL230; 11, 16, 17 and 19 are each *"FL240 and above"*.
+
+| Arrival | High | Low | 7200.1O wording |
+|---|---|---|---|
+| NITZR · BLUEM | **17** | **07** | 17 clears to FL240; **07** issues the descend via, *"prior to the aircraft reaching FL240"* |
+| TORGY | **19** | **09** | identical wording |
+| MUSCL · KKILR | **16** | **06** | **16** issues it *"through Sector 06"*; handoff *"prior to entering the vertical limits of Sector 06"* |
+| BAINY | **11** | **10** | **11** issues it *"through Sector 10"*; same wording |
+
+*"Entering the vertical limits of Sector 06/10"* **is** descending through FL240 — so all four say the
+same thing. **What varies is who says it, not when.** All four carry the same escape hatch: *"Prior
+coordination is required in order for Sector 17 [19] to issue the 'descend via' clearance."*
+
+### vNAS confirms the issuing sector for all six gates, independently
+
+The ZMP facility record carries a **Restrictions** dataset — 125 entries, 43 of them naming M98 —
+and its six MSP STAR entries name the owning ZMP sector and the requesting M98 sector:
+
+| STAR | ZMP owns | agrees with 7200.1O? | M98 requests | agrees with SOP 4-4d? |
+|---|---|---|---|---|
+| NITZR · BLUEM | 07 | ✔ | `1H` — South Feeder | ✔ |
+| TORGY | 09 | ✔ | `1H` — South Feeder | ✔ |
+| MUSCL · KKILR | 06 | ✔ | `1I` — North Feeder | ✔ |
+| BAINY | 10 | ✔ | `1I` — North Feeder | ✔ |
+
+**Six for six on both.** The descend-via sector read out of the order and the 4-4d Feeder split are
+now two-sourced. The `1H`/`1I` form is the STARS subset digit plus the SOP 2-1 letter, the same
+encoding as `claude_ZMP_Handoff_ID_Reference.md`.
+
+Each of the six also carries `"altitudeRestriction":{"type":"DescendingVia"}` and a route
+restriction reading **`ASSIGNED 12R/30L TRANSITION`** or **`ASSIGNED 12L/30R TRANSITION`** — one
+string covering both flows, because the pair is a **localizer side** rather than two runways
+(SOP 4-2a: 12L and 30R are north, 12R and 30L south). Those six reproduce Table 2 exactly.
+
+### KKILR and BLUEM start in ZAU
+
+Six ZAU→ZMP restrictions carry MSP-bound traffic (ZAU record pulled 2026-09-09):
+
+| Route | For | ZAU | → ZMP | Cap | Note on the entry |
+|---|---|---|---|---|---|
+| **KKILR#** | KMSP | 60, 64 | 16 / 05 | at or below **FL340** | — |
+| **BLUEM#** | KMSP | 75 | 17 | at or below **FL320** | — |
+| **KASPR#** | KMSP | 75 | 17 | at or below **FL320** | — |
+| DLL..HENDR.**KKILR#** | KMSP | 64 | 05 | **FL220** | *"KMSN Jet Departures Only"* |
+| BAE.**AGUDE#** | MSP satellites | 64, 60 | 16, 05 | FL340 | *"Must be in-trail with or below KMSP arrivals"* |
+| ALO..**TWOLF#** | MSP satellites | 75, 55 | 17, 36 | FL320 | — |
+
+So the full chain for the two that start in Chicago Center:
+
+```
+KKILR   ZAU 60/64 --at or below FL340--> ZMP 16 (high) or 05 (low)
+        --descend via at FL240, issued by 16 through 06--> M98 boundary at KKILR
+        --> M98 1I, North Feeder
+
+BLUEM   ZAU 75 --at or below FL320--> ZMP 17
+        --17 clears to FL240; 07 issues the descend via before FL240-->
+        M98 boundary at BLUEM --> M98 1H, South Feeder
+```
+
+**None of the six ZAU entries carries a flow.** They are flow-blind `AtOrBelow` caps — ZAU hands
+the aircraft over without a transition assigned, and the flow only starts to matter at FL240.
+
+### What that means for a flow change in progress
+
+Two commitment points, and the window between them is the exposure:
+
+| Point | Where | Is a transition assigned yet? |
+|---|---|---|
+| ZAU → ZMP | FL340 / FL320 | **No** — a swap here costs nothing |
+| ZMP high → low | **FL240** | **Yes** — the descend via and the transition land here |
+| M98 boundary fix | OFSON · LUCCY · BAYKS · KKILR · BLUEM · NITZR, 40–51 NM | comms to M98 |
+| **Split fix** | SAVVG · ZASKY · HDEEE · PRRPL (`claude_MSP_STAR_Reference.md`) | **committed to a side** |
+
+**Above FL240 nothing has been assigned; below the split fix it is a vectoring problem rather than
+a re-clearance one. The window that actually hurts is FL240 down to the split fix.**
+
+**Neither document says what happens when the flow changes inside that window.** Searched both
+7200.1O and the ZMP-M98 LOA for *runway change*, *configuration change*, *amended descend via* and
+*new runway* — **zero hits.** That is a real gap and not a gap in the reading: the re-clearance
+procedure is simply not written down. What *is* written down is that a gate-versus-runway mismatch
+is a crossover, and **SOP 4-5 governs crossovers** — which is the nearest thing the document set
+offers, and it is M98's rule rather than ZMP's.
+
+### The flow field, and why it does not transfer between facilities
+
+Fourteen ZMP restrictions carry `applicableFlows`, written in plain text —
+`MSP LANDING 12L/R`, `MSP LANDING 30L/R AND DEPARTING 30/17`, `MSP LANDING 17 OR 22`,
+`MSP LANDING 4`, `MSP LANDING 35`. On those the flow changes **both the crossing altitude and the
+receiving M98 sector**: a GEP arrival crosses at 7,000 to `1K` landing 12L/R, at 9,000 to `1I`
+landing 30L/R, and at 5,000 to `1J` landing 17.
+
+**The field is a shared national convention; the values are not.** ZAU writes `ORD East`, `ORD
+West`, `MKE 19R`; ZLC writes `SLC NORTH`, `SLC SOUTH`. **Anything reading `applicableFlows` has to
+map per facility rather than parse a common grammar** — issue #54.
+
 ## 5. Runway 17-22 landing configuration (para 5)
 
 **Departures.** All existing routes and procedures stand except:

@@ -192,6 +192,43 @@ Scratchpad #1 carries **"the first letter of the departure gate through which th
 
 > **Correcting an earlier note in this file.** `EAU` was previously listed here as an unexplained "new STAR". It is both — **EAU is a departure gate letter `E`** *and* the Eau Claire navaid over which a conventional MSP arrival runs. Same for `GEP` (Gopher) and the `BRD`/`DLH`/`RST`/`FAR`/`ABR`/`ODI`/`DLL`/`ONL`/`FOD` identifiers: they are navaids doing double duty as gate names. They are not undocumented procedures.
 
+### Which sector issues the "descend via" — and the FL240 line that makes it one rule
+
+**Read from 7200.1O 2026-09-09, and confirmed independently against the vNAS Restrictions dataset.**
+The order describes this two different ways and they are the same arrangement, because **the
+high/low stratum boundary is uniform**: every low sector tops at **FL230** and every high sector
+starts at **FL240**. Sector 10 is *"ground up to and including FL230"*, 06 *"8,000 MSL through
+FL230"*, 07 *"10,000' MSL to FL230"*, 09 surface–FL230; 11, 16, 17 and 19 are each *"FL240 and
+above"*.
+
+| MSP arrival | High | Low | How the order words it |
+|---|---|---|---|
+| NITZR · BLUEM | **17** | **07** | 17 clears to FL240; **07** issues the descend via *"prior to the aircraft reaching FL240"* |
+| TORGY | **19** | **09** | identical wording |
+| MUSCL · KKILR | **16** | **06** | **16** issues it *"through Sector 06"*; handoff *"prior to entering the vertical limits of Sector 06"* |
+| BAINY | **11** | **10** | **11** issues it *"through Sector 10"*; same wording |
+
+*"Entering the vertical limits of Sector 06/10"* **is** descending through FL240, so all four name
+the same moment. **What varies is who says it, not when** — on NITZR/BLUEM/TORGY the *low* sector
+issues it; on MUSCL/KKILR/BAINY the *high* sector issues it through the low one. Each carries the
+same escape hatch: *"Prior coordination is required in order for Sector 17 [19] to issue the
+'descend via' clearance."*
+
+**The vNAS record agrees on all six**, in its Restrictions dataset — the six MSP STAR entries name
+the owning ZMP sector as 07, 07, 09, 06, 06 and 10 respectively, and the requesting M98 sector as
+`1H` (South Feeder) or `1I` (North Feeder), which is the SOP 4-4d gate split. Two independent
+sources, six for six, on both facts.
+
+**KKILR and BLUEM reach ZMP from ZAU, not from a ZMP boundary.** ZAU's own record hands KKILR to
+ZMP **16** or **05** at or below **FL340** (and a low variant, `DLL..HENDR.KKILR#`, to **05** at
+FL220, noted *"KMSN Jet Departures Only"*), and BLUEM and KASPR to ZMP **17** at or below
+**FL320**. Those entries are **flow-blind** — ZAU assigns no transition, so the flow only begins to
+matter at FL240 inside ZMP.
+
+**Nothing in 7200.1O says what happens when MSP changes configuration after the descend via has
+been issued.** Searched for *runway change*, *configuration change*, *amended descend via* and *new
+runway*: zero hits. Recorded as a gap rather than filled.
+
 ### Still genuinely unresolved
 
 - **`SKETR`** — a real MSP arrival, and the order calls it **"MSP SKETR Arrival, Non-RNAV Turbojets & Turboprops"** (7200.1O Sector 09 arrival table). So it belongs to the **conventional/non-RNAV** arrival family alongside KASPR, which the M98 tool carries. It has a published holding fix: **SKETR, SW, 10 NM legs, 310 radial, left turns, 070–FL230.** Sectors 09 and 19 both sequence it. **The M98 tool does not carry SKETR at all** — a genuine gap in its conventional arrival set.
