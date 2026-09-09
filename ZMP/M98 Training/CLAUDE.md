@@ -127,7 +127,7 @@ Notebook → `tallyFeed`, `draftFromSim`, `bank`, `toMd` (practice-log shape), `
 - The handoff section adds: that **every radar seat is subset 1 and every tower or ground position is subset 2 or 3** (the fact the whole section turns on), that every SOP 2-1 position in `POS_NAME` has a TCP, that a bare letter is used within a subset and a subset digit across one (`N` versus `2Y`), that the four MSP ground positions share one TCP, that **M98 reaches RST on `` `1 `` while RST reaches M98 on `` `2 ``**, and that the four adapted-but-empty TCPs stay empty.
 - The harness splits blocks on `<script>` / `</script>`, so a literal `</script>` inside a block would break both it and the page. Don't write one.
 - **Splice a new block before the LAST `</body>`, not the first.** The Drill Deck's header comment contains the string `</body>`, so a naive `s/<\/body>/.../` inserts the new block *inside* block 1's comment: two `<script>` opens with no close between, the browser silently drops the builder, and the page renders as a deck-only shell with no error. This happened on 2026-09-01 and cost a full debugging cycle — the tell was `document.querySelectorAll('script').length` returning 2 when the file contained 3.
-- **THE HARNESS HAS NOW BEEN EXECUTED — first on 2026-09-07, and it passes. `SMOKE PASS — 465 checks` as of 2026-09-09** (394 at that first run; +13 for the far-gate rule, +21 for the landlines, +24 for vectoring, +13 for the runway-on-the-strip fixes). There is still no Node; it was run through `smoke-test-browser.html` (above), served over the local PowerShell `HttpListener`. Every revision of this file before that date said the suite had never been run, and that was true and worth saying. **It is no longer the caveat to reach for** — name the runner that was used instead.
+- **THE HARNESS HAS NOW BEEN EXECUTED — first on 2026-09-07, and it passes. `SMOKE PASS — 477 checks` as of 2026-09-09** (394 at that first run; +13 for the far-gate rule, +21 for the landlines, +24 for vectoring, +13 for the runway-on-the-strip fixes, +12 for splitting the transition from the landing runway). There is still no Node; it was run through `smoke-test-browser.html` (above), served over the local PowerShell `HttpListener`. Every revision of this file before that date said the suite had never been run, and that was true and worth saying. **It is no longer the caveat to reach for** — name the runner that was used instead.
 - **The first execution found eight faults in the harness, none of which any amount of reading had caught, and every one of them in material written and reviewed as correct.** The list is recorded because the lesson is the point: **an assertion nobody has run is not a test, it is a comment.** (1) `Object.keys(TABLE2)` never returns source order — `'12'` and `'30'` are integer-index keys and JavaScript enumerates those first, ascending, ahead of every string key, so the six-row assertion read an order that cannot occur. (2) The five scope-layer counts were all off by one, because the RST boundary is a `<polyline>` too and is drawn in every mode including *off*. (3) `state.pos.seat` had become `state.pos.seats` when working two seats at once landed. (4) The readback wording had moved from *"expect one two left"* to *"expect runway one two left"*. (5) `arrivalsFor` grew the five `SAT_DIRECT` routings and the assertion still listed the STARs alone. (6) The unknown-gate message had become *"not an arrival in the reference set"*. (7) The trunk fixture predated the filed-route rule and produced two errors of its own. (8) Two assertions about the `mixed` drill had been orphaned four sections away from it by a block that empties `sim.ac`, so the harness **threw** rather than failing. **Three tool bugs came out of the same run:** the combined seat label was insertion-ordered — `Combined I + D` one time and `D + I` the next, the same two seats with two names, now SOP 2-1 order; a drill with no configuration was told *"Table 2 has no row for the 12 configuration"*, which is false twice over, because `configById` silently falls back to `CONFIGS[0]`; and the `ddLoad` crash below.
 - **The harness now asserts what the scope draws** (issue #16, 2026-09-07), which it did not before: the data block's two lines including **wake after the ground speed**, that every drawn ladder is labelled at its own first fix (**MUSCL reads BAYKS**, because that is where its published ladder starts — the data, not a rendering bug), that the polylines change when `setFlow` changes and match the loaded `ROUTES`, that an uncarried configuration draws no ladder and does not throw, and that the builder preview shares the geometry and draws no wake. Plus the whole of the live re-path and the midnight regime.
 - **Isolation matters in the browser runner and does not in Node.** The deck persists under `localStorage`, the harness writes there through `ddbPreset`, and a second run therefore starts where the first finished — which surfaced as an assertion failing with no visible cause. The runner clears storage before each run and restores it after; it shares an origin with the served tool, so clearing without restoring would delete real drills.
@@ -144,18 +144,82 @@ Notebook → `tallyFeed`, `draftFromSim`, `bank`, `toMd` (practice-log shape), `
 Written in the present tense, because this is what the tool does rather than what someone
 intends to do to it. **Open work is in the issue tracker** (root `CLAUDE.md` section 14).
 
-### The runway on the strip decides the track
+### The transition decides the track; the landing runway does not
+
+**Two fields, two controllers, and they are independent.** ZMP assigns the **runway transition**
+— Table 2 is titled *"Runway Transitions assigned by ZMP"* and LOA 5.b(b) puts it inside the
+descend-via — while **M98's Feeder assigns the landing runway** (SOP 2-5). Every arrival strip
+carries both: `trans` and `rwy`.
+
+**A runway assignment never moves the track.** An aircraft on the 30L transition told to expect
+30R stays on the 30L track, downwinds the **south** side, and never crosses to the north one;
+the crossing happens in the last few miles, off the end of the ladder. Owner, 2026-09-09.
+*That is a correction to what this file said on 2026-09-09 and to what the tool did:* the
+runway was doing both jobs, and issue #14's re-path was wired to it. The machinery was right and
+has moved to the transition verb — only the trigger changed.
+
+**`via the 30R transition` is the one instruction that moves an arrival's track**, digits or
+spoken, and it is graded against **the split fix**.
+
+### The split fix, and a fourth check on near and far
+
+**Two parallel transitions off one gate share a long stem and part company at exactly one fix.**
+`splitFix(gate, a, b)` derives it rather than carrying a table: walk the two published ladders
+together and stop where they differ.
+
+| gate | flow | splits at | after it |
+|---|---|---|---|
+| NITZR · BLUEM · KKILR · MUSCL | 12s | **SAVVG** · ZASKY | GREAK/TIETN or CMMOE/FSCOT |
+| TORGY | 30s | **HDEEE** | MAUER·LEDRZ *(south)* or WILKN·OSMOH *(north)* |
+| BAINY | 30s | **PRRPL** | MAUER·LEDRZ *(south)* or OSMOH *(north)* |
+
+**A transition change re-paths before the split fix and is refused after it.** Before it the two
+are literally the same track, so nothing moves. After it the aircraft is already downwinding one
+side of the field and stepping it across is something no aircraft could fly, so the track is
+left alone and the log names the fix. Owner's call, 2026-09-09.
+
+**The derivation reproduced a rule the tool already had.** NITZR's split fix comes out as
+**SAVVG** — which is exactly where the deck already applies the Table 2 default to a strip with
+no runway, and what the Drill 10R brief has always called *"the 12L window closes at SAVVG"*.
+That rule was hardcoded from a drill note; it now falls out of the published ladders.
+
+**A NEAR GATE HAS NO SPLIT FIX, because it publishes one ladder for both parallels.** That
+correspondence is exact in both flows:
+
+| flow | near gates | far gates |
+|---|---|---|
+| 12s | TORGY, BAINY — **one shared ladder** | NITZR, BLUEM, KKILR, MUSCL — **two** |
+| 30s | NITZR, BLUEM, KKILR, MUSCL — **one shared** | TORGY, BAINY — **two** |
+
+Which is the definition made visible: a near gate's arrivals *drop onto the final*, so one track
+serves both parallels; a far gate's have to be *vectored to* it, so there is a side to be on.
+**This is a fourth independent check that the near/far reading is the right way round**, on top
+of the three already recorded above — and unlike those it is structural rather than documentary.
+
+**Heavy jets: 5.b(c) binds the transition, and it is a flag rather than a refusal.** *"Heavy Jet
+arrivals must be assigned the Runway 12R/30L **transition**"* — so a heavy on the 12R transition
+told to expect 12L is not in breach of it. The exception is legitimate two ways, neither of which
+the tool can see: **M98 needed the other one and asked the aircraft whether it could accept it**,
+or **ZMP assigned it and coordinated, or advised M98 before the handoff** (owner, 2026-09-09). So
+the tool names both rather than refusing the strip. It used to be a hard error on the landing
+runway, which enforced the wrong field and refused legal traffic.
+
+### What the runway on the strip still decides
 
 **ZMP-M98 LOA 5.b(b):** *"ZMP 'Descend Via' phraseology must include a runway transition. ZMP
 will **normally** assign runway transitions as depicted in Table 2."* **Normally** — so Table 2
 is the default and not a constraint. A TORGY landing the 30s is usually 30L and can be given
 30R, and it has to fly the 30R ladder when it is.
 
-The strip's runway therefore beats the Table 2 default everywhere: `routeFor` in the deck and in
-the builder both resolve through `ladderFor` and materialize a per-aircraft route when the
+The strip's **transition** therefore beats the Table 2 default everywhere: `routeFor` in the deck
+and in the builder both resolve through `ladderFor` and materialize a per-aircraft route when the
 answer differs, because `ROUTES` is shared and finalized in place. The scope draws **the ladder
 each aircraft is actually on**, keyed by gate *and* runway so two aircraft off one gate on
 different transitions each get their line; `ROUTES` stays what *all STARs* draws.
+
+**The landing runway decides who takes it, not where it flies.** 4-2 splits the ACDA on the
+localizer and 4-5's crossover is the gate's side against the runway's, so `receiverFor` reads
+`rwy` — and with none assigned it falls back to the runway the aircraft's transition serves.
 
 **Four things were wrong here until 2026-09-09, and all four were the flow work of 2026-09-04
 not reaching a caller** (issue #55):

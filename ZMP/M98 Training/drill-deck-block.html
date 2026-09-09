@@ -438,6 +438,53 @@ function assignableRwys(cfg){
  GATE_ORDER.forEach(function(g){ if(t[g]) out[t[g]]=1; });
  return Object.keys(out);
 }
+/* ---------- Transition and landing runway are two different things ----------
+   ZMP ASSIGNS THE TRANSITION; M98's FEEDER ASSIGNS THE LANDING RUNWAY.
+   Table 2 is titled "Runway Transitions assigned by ZMP" and LOA 5.b(b) puts
+   the transition inside the descend-via; SOP 2-5 makes assigning the landing
+   runway the Feeder's job. Two controllers, two fields, and they are
+   INDEPENDENT — an aircraft can fly the 30L transition and be told to expect
+   30R without anyone ever issuing it the 30R transition. Owner, 2026-09-09,
+   issue #55.
+
+   A RUNWAY ASSIGNMENT NEVER MOVES THE TRACK. The aircraft stays on the
+   transition ZMP gave it, downwinds the side that transition flies, and never
+   crosses to the other side of the field; the crossing happens in the last few
+   miles, off the end of the ladder. Only an explicit transition change moves
+   the track — see repathTo's callers.
+
+   THE SPLIT FIX is where the two parallel transitions off one gate stop being
+   the same track. It is derived rather than written down: walk the two
+   published ladders together and stop where they part. For TORGY on the 30s
+   that is HDEEE, for BAINY it is PRRPL — and after it the 30L track runs
+   east-southeast down the SOUTH side while the 30R track runs east-northeast
+   up the NORTH one, both of them downwinds on the STAR itself.
+
+   A NEAR GATE HAS NO SPLIT FIX AT ALL, because it publishes ONE ladder for
+   both parallels — TORGY and BAINY on the 12s, the other four on the 30s. A
+   far gate publishes two. That correspondence is exact in both flows and is a
+   fourth independent check on the near/far reading (claude_M98_SOP_Reference,
+   4-4c(7), and the three checks in CLAUDE.md). */
+function splitFix(gate, a, b){
+ var g=LADDER[gate]; if(!g) return null;
+ var la=g[a], lb=g[b];
+ if(!la || !lb || la===lb) return null;   /* one ladder both ways — a near gate */
+ var i=0;
+ while(i<la.length && i<lb.length && la[i].f===lb[i].f) i++;
+ return i>0 ? la[i-1].f : null;
+}
+/* The two parallels a configuration lands, from the Table 2 row itself — the
+   only list of landing runways the reference set carries. */
+function parallelsFor(cfg){
+ var r=assignableRwys(cfg);
+ return (r && r.length===2) ? r.slice().sort() : null;
+}
+/* Where this gate's transitions part company in this flow, or null when they
+   never do. */
+function splitFixFor(cfg, gate){
+ var p=parallelsFor(cfg);
+ return p ? splitFix(gate, p[0], p[1]) : null;
+}
 /* What Table 2 assigns this gate in this configuration, or null. */
 
 function transitionFor(cfg, gate){ var t=TABLE2[cfg]; return t ? (t[gate]||null) : null; }
@@ -726,11 +773,16 @@ var SAT_POS = {
    that was not, which is why it looked like the scope "would not redraw".
 
    ROUTES is shared and finalized in place, so anything other than the Table 2
-   default is materialized per aircraft rather than written back into it. */
+   default is materialized per aircraft rather than written back into it.
+
+   IT IS THE TRANSITION THAT DECIDES THE TRACK, NOT THE LANDING RUNWAY. Those
+   were one field until 2026-09-09 and they are two different clearances from
+   two different controllers — see the splitFix comment above. An aircraft on
+   the 30L transition expecting 30R flies the 30L ladder. */
 function routeFor(o){
  if(o.gate && ROUTES[o.gate]){
-  if(o.rwy){
-   var lad=ladderFor(ROUTE_CFG, o.gate, o.rwy);
+  if(o.trans){
+   var lad=ladderFor(ROUTE_CFG, o.gate, o.trans);
    if(lad && lad!==ROUTES[o.gate].src) return materialize(lad);
   }
   return ROUTES[o.gate];
@@ -1345,6 +1397,10 @@ function mkAc(o){
       : (o.fromStart!=null ? Math.min(route.total, o.fromStart) : 0),
   alt:o.alt, ias:o.ias, iasAsg:o.iasAsg!=null?o.iasAsg:null,
   spdMode:o.spdMode||'published', rwy:o.rwy||null,
+  /* THE TRANSITION IS WHAT ZMP GAVE IT; a.rwy is what M98 told it to expect.
+     Absent a stated transition it is on Table 2's, which is what ZMP normally
+     assigns (LOA 5.b(b)). Two fields, deliberately (issue #55). */
+  trans:(role==='arrival') ? (o.trans || transitionFor(ROUTE_CFG, o.gate) || null) : null,
   ckdIn:!!o.ckdIn, altim:!!o.altim, itemsClock:o.ckdIn?0:null,
   flashed:null, switched:false, alive:true, spawned:o.spawnAt||0,
   farChecked:false,
@@ -1568,7 +1624,11 @@ function receiverFor(a){
 
      The last fallback only bites in a configuration Table 2 does not name,
      where the tool carries no arrival geometry at all. */
-  var rwy = a.rwy || transitionFor(ROUTE_CFG, a.gate) || '12R';
+  /* The LANDING RUNWAY decides who takes it: 4-2 splits the ACDA on the
+     localizer and 4-5's crossover is the gate's side against the runway's.
+     With none assigned it is expected to land the runway its transition
+     serves, which is Table 2's unless ZMP gave it another. */
+  var rwy = a.rwy || a.trans || transitionFor(ROUTE_CFG, a.gate) || '12R';
   var x = crossoverFor(a.gate, rwy, ROUTE_CFG);
   var pick, why;
   if(x.type==='near' && a.hdg==null){
@@ -1918,26 +1978,23 @@ function transmit(){
  if(mR){ acted=true; control=true;
   var prev=a.rwy; a.rwy=mR;
   acks.push('expect runway '+sayRunway(mR));
-  /* A crossover is a real lateral reroute for most gate/runway pairs, not a
-     runway relabel, so THE TRACK MOVES WITH THE ASSIGNMENT (issue #14). This
-     fires on the first assignment as well as on a flip: Table 2's transition
-     and the runway the trainee actually assigns are two different questions,
-     and the ladder follows the second one. */
-  var rp=repathTo(a, ROUTE_CFG, mR);
-  if(rp.kind==='same'){
-   /* One ladder serving both runways is the interesting no-op, not a boring
-      one: "does a crossover change the track?" is the thing being taught, and
-      at TORGY and BAINY on the 12s the answer is no. Say it, rather than
-      leaving silence to mean either. */
-   log('info','<span class="dd-chip info">re-path</span><b>'+a.cs+'</b> flies the same published track to '+mR+' as it did to '+(prev||'its Table 2 transition')+' &mdash; '+rp.gate+' has one ladder serving both, so this crossover moves the receiver and nothing else. The line on the scope is unchanged because the transition is.');
-  } else if(rp.kind==='moved'){
+  /* A RUNWAY ASSIGNMENT DOES NOT MOVE THE TRACK. It says what the aircraft is
+     expecting to land on; the track is whatever transition ZMP gave it, and an
+     aircraft on the 30L transition told to expect 30R stays on the 30L track,
+     downwinds the south side, and never crosses to the north one — the
+     crossing happens in the last few miles, off the end of the ladder. Owner,
+     2026-09-09, issue #55.
 
-   log('info','<span class="dd-chip info">re-path</span><b>'+a.cs+'</b> takes the '+mR+' transition off '+rp.gate+' — '
-    +(rp.off>=0.1?('the two published tracks are '+rp.off.toFixed(1)+' NM apart here, so the target steps across; a real aircraft turns and intercepts it. '):'it is still on the stretch both ladders have in common, so the target does not move &mdash; only the track ahead of it. ')
-    +'Miles to run go '+rp.wasDtg.toFixed(1)+' &rarr; <b>'+rp.nowDtg.toFixed(1)+'</b>.');
-  } else if(rp.kind==='nogeom'){
-   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is assigned '+mR+' and there is no published '+rp.gate+' ladder for it in the reference set, so the track does not move. The clearance stands and the receiver follows it &mdash; the line on the scope is the old one, and the tool says so rather than drawing a transition it cannot cite.');
+     Until then this re-pathed on the assignment, which is issue #14's
+     machinery wired to the wrong instruction. The machinery was right and has
+     moved to the transition verb below; only the trigger changed. */
+  if(a.trans && mR!==a.trans && a.role==='arrival'){
+   var sfx=splitFixFor(ROUTE_CFG, a.gate);
+   log('info','<span class="dd-chip info">crossover</span><b>'+a.cs+'</b> is on the <b>'+a.trans+'</b> transition and now expecting <b>'+mR+'</b>. It stays on the track ZMP gave it — a runway assignment does not re-route it'
+    +(sfx?(', and it is committed to that side once past '+sfx):'')
+    +'. Getting it to '+mR+' is yours to fly.');
   }
+
   if(prev&&prev!==mR){
    /* the receiver follows the gate as well as the runway, so a flip can hand
       the aircraft to a different sector than the runway alone would suggest */
@@ -1947,6 +2004,57 @@ function transmit(){
    a.flashed=null;
   }
 
+ }
+ /* TRANSITIONS — issue #55. "via the 30R transition", "30R transition",
+    digits or spoken. This is the ONLY instruction that moves an arrival's
+    track, and it is a different clearance from a runway assignment: ZMP
+    assigns the transition (Table 2, LOA 5.b(b)) and M98's Feeder assigns the
+    landing runway (SOP 2-5).
+
+    IT RE-PATHS BEFORE THE SPLIT FIX AND REFUSES AFTER IT. Before the two
+    transitions part company they are literally the same track, so the swap is
+    free and nothing moves. After it the aircraft is already downwinding one
+    side of the field, and putting it on the other side is a step no aircraft
+    could fly — so the track is left alone and the log says why. Owner's call,
+    2026-09-09. */
+ var mTrans=null;
+ {
+  var tm=t.match(/\b(?:via\s+the\s+)?(\d{1,2}[lrc]?)\s+transition\b/);
+  if(tm){
+   var cand=tm[1].toUpperCase();
+   if(a.gate && LADDER[a.gate] && LADDER[a.gate][cand]) mTrans=cand;
+   else if(a.gate){
+    acted=true;
+    log('flag','<span class="dd-chip flag">flag</span>'+a.gate+' publishes no '+cand+' transition. It publishes '+(LADDER[a.gate]?Object.keys(LADDER[a.gate]).join(', '):'none')+' (claude_MSP_STAR_Reference.md).');
+   }
+  }
+ }
+ if(mTrans && a.role==='arrival'){
+  acted=true; control=true;
+  var wasTrans=a.trans, sf=splitFixFor(ROUTE_CFG, a.gate);
+  var pastSplit=false;
+  if(sf){
+   var sfp=a.route.filter(function(p){ return p.f===sf; })[0];
+   pastSplit = !!(sfp && a.dist > sfp.cum + 0.05);
+  }
+  acks.push('via the '+sayRunway(mTrans)+' transition');
+  if(mTrans===wasTrans){
+   log('info','<span class="dd-chip info">transition</span><b>'+a.cs+'</b> is already on the '+mTrans+' transition. Nothing changes.');
+  } else if(pastSplit){
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is <b>past '+sf+'</b>, where the '+wasTrans+' and '+mTrans+' transitions part company — it is already committed to that side of the field. The track is left where it is rather than stepped across, because no aircraft could fly that. If you need it on '+mTrans+', turn it across.');
+  } else {
+   a.trans=mTrans;
+   var rp=repathTo(a, ROUTE_CFG, mTrans);
+   if(rp.kind==='moved'){
+    log('info','<span class="dd-chip info">transition</span><b>'+a.cs+'</b> takes the '+mTrans+' transition off '+rp.gate
+     +(sf?(' — still short of '+sf+', so the two are the same track this far and '+(rp.off>=0.1?'the target barely moves':'nothing moves')+'. '):' — ')
+     +'Miles to run go '+rp.wasDtg.toFixed(1)+' &rarr; <b>'+rp.nowDtg.toFixed(1)+'</b>.');
+   } else if(rp.kind==='same'){
+    log('info','<span class="dd-chip info">transition</span><b>'+a.cs+'</b> flies the same published track either way — '+rp.gate+' has one ladder serving both parallels, which is what makes it a near gate. The line on the scope is unchanged because the transition is.');
+   } else if(rp.kind==='nogeom'){
+    log('flag','<span class="dd-chip flag">flag</span>There is no published '+a.gate+' ladder for '+mTrans+' in this configuration, so the track does not move and the tool will not draw one it cannot cite.');
+   }
+  }
  }
  /* VECTORS — issue #26. "turn left heading 310", "turn right heading 090",
     "fly heading 310", "fly present heading". Three digits or three spoken
@@ -2377,6 +2485,15 @@ function stripHtml(a){
   if(a.alive && (a.route.total-a.dist)<10 && !a.flashed) warn.push('flash');
  } else {
   job = a.gate+' \u2192 '+(a.rwy||'\u2014');
+  /* THE STRIP NAMES BOTH FIELDS WHEN THEY DIFFER. "NITZR -> 12L" is ambiguous
+     once the transition and the landing runway are separate things, and the
+     case they exist to express is exactly the one where they disagree: on the
+     12R transition, expecting 12L. Where they agree, one of them is noise. */
+  if(a.trans && a.rwy && a.trans!==a.rwy){
+   job = a.gate+' '+a.trans+' transition → landing '+a.rwy;
+  } else if(a.trans && !a.rwy){
+   job = a.gate+' '+a.trans+' transition → —';
+  }
   /* A far-gate crossover carries a live countdown to the 15 NM ring, the way a
      departure carries one to the 25 DME release. It is the deadline the
      crossover actually tests (4-5b(1)), so it belongs where the trainee is
@@ -2622,7 +2739,7 @@ window.DD = {
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
- setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, routeCfg:function(){ return ROUTE_CFG; },
+ setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,

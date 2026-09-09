@@ -51,6 +51,11 @@ const assert = (label, cond, detail) => { if (!cond) fail(label, detail); ok(lab
 try {
   for (const js of blocks) eval(js);
 
+  /* The filed route for a gate, taken from the tool rather than typed, so a
+     fixture stays honest as the ladders change. Declared here because an
+     IFR strip without a route is a hard error and most fixtures need one. */
+  const routeOn = g => globalThis.DD.routeTextFor({ role: 'arrival', gate: g });
+
   /* ============ 1. Drill Deck — player and parser ============ */
   globalThis.ddLoad('resume10r');
   globalThis.ddSel('DAL589');
@@ -714,28 +719,67 @@ try {
       arr().every(a => Math.abs((a.route.total - a.dist)) <= a.route.total + 0.01));
     mustContain('the re-path says what it cost', 'holds its position and picks up the new ladder');
 
-    /* A crossover where one ladder serves both runways is an exact no-op. */
+    /* A RUNWAY ASSIGNMENT DOES NOT MOVE THE TRACK — issue #55, owner
+       2026-09-09. It says what the aircraft is expecting to land on; the track
+       is the transition ZMP gave it. This is where #14's machinery used to be
+       wired, and it has moved to the transition verb below. */
     globalThis.DD.setFlow('12');
     globalThis.ddLoad('resume10r');
-    const torgy = globalThis.DD.sim.ac.filter(a => a.gate === 'TORGY')[0];
-    const wasEnd = torgy.route[torgy.route.length - 1].f, wasDist = torgy.dist;
-    globalThis.ddSel(torgy.cs);
-    say(torgy.cs + ' expect runway 12L');
-    assert('TORGY flies one ladder to both 12L and 12R, so the crossover moves nothing',
-      torgy.route[torgy.route.length - 1].f === wasEnd && torgy.dist === wasDist,
-      wasEnd + '->' + torgy.route[torgy.route.length - 1].f);
-    mustContain('and the log says the track is unchanged because the transition is',
-      'has one ladder serving both');
-
-    /* A crossover that IS a lateral reroute moves the track and keeps the spot. */
-    globalThis.ddLoad('resume10r');
     const nitzr = globalThis.DD.sim.ac.filter(a => a.gate === 'NITZR')[0];
-    const nWas = nitzr.route[nitzr.route.length - 1].f;
+    const nWas = nitzr.route[nitzr.route.length - 1].f, nWasDist = nitzr.dist;
+    assert('an arrival starts on the transition Table 2 gives its gate',
+      nitzr.trans === globalThis.DD.transitionFor('12', 'NITZR') && nitzr.trans === '12R',
+      nitzr.trans);
     globalThis.ddSel(nitzr.cs);
     say(nitzr.cs + ' expect runway 12L');
-    assert('NITZR to 12L is a real reroute — GREAK/TIETN becomes CMMOE/FSCOT',
-      nWas === 'TIETN' && nitzr.route[nitzr.route.length - 1].f === 'FSCOT',
-      nWas + '->' + nitzr.route[nitzr.route.length - 1].f);
+    assert('expecting the other runway leaves the track exactly where it was',
+      nitzr.route[nitzr.route.length - 1].f === nWas && nitzr.dist === nWasDist
+      && nitzr.trans === '12R' && nitzr.rwy === '12L',
+      nWas + '->' + nitzr.route[nitzr.route.length - 1].f + ' trans=' + nitzr.trans);
+    mustContain('and the log says it stays on the track ZMP gave it',
+      'a runway assignment does not re-route it');
+
+    /* THE TRANSITION VERB IS WHAT MOVES IT, and only before the split fix. */
+    globalThis.ddLoad('resume10r');
+    const n2 = globalThis.DD.sim.ac.filter(a => a.gate === 'NITZR')[0];
+    globalThis.ddSel(n2.cs);
+    say(n2.cs + ' via the 12L transition');
+    assert('a transition change re-paths — GREAK/TIETN becomes CMMOE/FSCOT',
+      n2.trans === '12L' && n2.route[n2.route.length - 1].f === 'FSCOT',
+      n2.trans + ' ' + n2.route[n2.route.length - 1].f);
+    mustContain('and it reads back as a transition, not as a runway',
+      'via the one two left transition');
+
+    /* The split fix is derived from the two published ladders, and a near gate
+       has none because it publishes ONE ladder for both parallels. */
+    assert('TORGY and BAINY split on the 30s at HDEEE and PRRPL',
+      globalThis.DD.splitFix('TORGY','30L','30R') === 'HDEEE'
+      && globalThis.DD.splitFix('BAINY','30L','30R') === 'PRRPL',
+      globalThis.DD.splitFix('TORGY','30L','30R') + '/' + globalThis.DD.splitFix('BAINY','30L','30R'));
+    assert('a near gate has no split fix at all, because it has one ladder',
+      globalThis.DD.splitFix('TORGY','12L','12R') === null
+      && globalThis.DD.splitFix('NITZR','30L','30R') === null);
+    assert('and near/far matches that exactly, in both flows',
+      ['TORGY','BAINY'].every(g => globalThis.DD.splitFix(g,'12L','12R') === null
+                                && globalThis.DD.splitFix(g,'30L','30R') !== null)
+      && ['NITZR','BLUEM','KKILR','MUSCL'].every(g => globalThis.DD.splitFix(g,'30L','30R') === null
+                                && globalThis.DD.splitFix(g,'12L','12R') !== null));
+
+    /* Past the split fix the track is left alone rather than stepped across. */
+    /* ddLoad restores the drill's own flow, so the 30s goes on AFTER it. */
+    globalThis.ddLoad('freshpush');
+    globalThis.DD.setFlow('30');
+    const t30 = globalThis.DD.sim.ac.filter(a => a.gate === 'TORGY')[0];
+    const hd = t30.route.filter(p => p.f === 'HDEEE')[0];
+    t30.dist = hd.cum + 3;
+    const t30Was = t30.route[t30.route.length - 1].f;
+    globalThis.ddSel(t30.cs);
+    say(t30.cs + ' via the 30R transition');
+    assert('past HDEEE the transition change does not move the track',
+      t30.route[t30.route.length - 1].f === t30Was && t30.trans !== '30R',
+      t30Was + '->' + t30.route[t30.route.length - 1].f);
+    mustContain('and it says which fix it is past and why', 'transitions part company');
+    globalThis.DD.setFlow('12');
 
     /* IT NEVER INVENTS A TRACK. */
     globalThis.ddLoad('freshpush');
@@ -1461,8 +1505,31 @@ try {
   assert('below-floor start rejected', joined.includes('below the'), joined);
   assert('unknown gate rejected', joined.includes('not an arrival in the reference set'), joined);  /* the message became "not an arrival in the reference set" when arrivals-by-field landed; the old needle was "not a gate" and had never been run */
   assert('duplicate callsign rejected', joined.includes('duplicate callsign'), joined);
-  assert('heavy off the 12R transition rejected (ZMP Table 2c)',
-    joined.includes('heavy jets take the 12R/30L'), joined);
+  /* THE HEAVY-JET RULE BINDS THE TRANSITION AND IS A FLAG, NOT A REFUSAL.
+     LOA 5.b(c): "Heavy Jet arrivals must be assigned the Runway 12R/30L
+     TRANSITION" — so a heavy on the 12R transition told to expect 12L is not
+     in breach of it, and the exception is legitimate two ways that the tool
+     cannot see: M98 asked the aircraft whether it could accept the other one,
+     or ZMP assigned it and coordinated, or advised M98 before the handoff
+     (owner, 2026-09-09). It used to be a hard error on the LANDING RUNWAY,
+     which refused a legal strip and enforced the wrong field. Issue #55. */
+  {
+    const hv = (trans, rwy) => globalThis.ddb.validate({ name:'h', cfg:'12',
+      ac:[{cs:'HVY1', type:'A339', gate:'NITZR', route:routeOn('NITZR'), trans:trans,
+           rwy:rwy, dtg:20, alt:11000, ias:250, mode:'published', ckdIn:true}] });
+    assert('a heavy on the 12R transition expecting 12L is not refused',
+      hv('12R','12L').errors.length === 0
+      && !hv('12R','12L').warnings.some(w => /heavy jets take/.test(w)),
+      hv('12R','12L').errors.join(' | '));
+    assert('a heavy ON the 12L transition is flagged, not refused, and says why it could be legitimate',
+      hv('12L','12L').errors.length === 0
+      && hv('12L','12L').warnings.some(w => /heavy jets take the 12R\/30L/.test(w)
+                                         && /asked the aircraft/.test(w)
+                                         && /coordinated/.test(w)),
+      hv('12L','12L').warnings.join(' | ').slice(0, 220));
+    assert('and it cites the paragraph rather than only the table',
+      hv('12L','12L').warnings.some(w => /5\.b\(c\)/.test(w)));
+  }
 
   /* the configuration has to follow the weather, not the other way round */
   const cro = globalThis.ddb.validate({ name: 'cro', cfg: '30-35', ceil: 1800, vis: 6,
@@ -1492,7 +1559,6 @@ try {
      of its own, which is what the assertion was tripping on when the harness
      was first executed on 2026-09-07. Taking the route from routeTextFor
      rather than typing it keeps the fixture honest as the ladders change. */
-  const routeOn = g => globalThis.DD.routeTextFor({ role: 'arrival', gate: g });
   v = globalThis.ddb.validate({
     name: 'trunk', cfg: '12', ac: [
       { cs: 'DAL1', type: 'B738', gate: 'NITZR', route: routeOn('NITZR'), dtg: 12, alt: 9000, ias: 250, mode: 'published', ckdIn: true },
@@ -1778,21 +1844,33 @@ try {
       globalThis.DD.transitionFor('30', 'TORGY') === '30L'
       && endOf(globalThis.DD.routeFor({gate: 'TORGY'})) === 'LEDRZ',
       endOf(globalThis.DD.routeFor({gate: 'TORGY'})));
-    assert('and a strip GIVEN 30R flies the 30R ladder instead',
-      endOf(globalThis.DD.routeFor({gate: 'TORGY', rwy: '30R'})) === 'OSMOH',
-      endOf(globalThis.DD.routeFor({gate: 'TORGY', rwy: '30R'})));
-    assert('an aircraft built with that runway is on it from the first tick',
-      endOf(globalThis.DD.mkAc({cs:'R1', type:'B738', gate:'TORGY', rwy:'30R',
+    assert('and a strip GIVEN the 30R transition flies the 30R ladder instead',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY', trans: '30R'})) === 'OSMOH',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY', trans: '30R'})));
+    assert('an aircraft built on that transition is on it from the first tick',
+      endOf(globalThis.DD.mkAc({cs:'R1', type:'B738', gate:'TORGY', trans:'30R',
         alt:11000, ias:250, dtgEnd:20}).route) === 'OSMOH');
+    /* THE LANDING RUNWAY DOES NOT TOUCH THE TRACK — issue #55. */
+    assert('and the LANDING runway does not, on its own, change the ladder at all',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY', rwy: '30R'})) === 'LEDRZ'
+      && endOf(globalThis.DD.mkAc({cs:'R1b', type:'B738', gate:'TORGY', rwy:'30R',
+           alt:11000, ias:250, dtgEnd:20}).route) === 'LEDRZ',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY', rwy: '30R'})));
+    assert('an aircraft on the 30L transition expecting 30R carries both, separately',
+      (a => a.trans === '30L' && a.rwy === '30R')(globalThis.DD.mkAc({cs:'R1c',
+        type:'B738', gate:'TORGY', rwy:'30R', alt:11000, ias:250, dtgEnd:20})));
     assert('the shared ROUTES object is not mutated for one strip',
       endOf(globalThis.DD.ROUTES.TORGY) === 'LEDRZ');
 
     /* 2. THE RECEIVER. Near and far go to DIFFERENT KINDS OF POSITION — 4-5
        sends near to an Arrival and far to that side's Feeder — so resolving
        the class against the wrong flow sends the aircraft to the wrong desk. */
+    /* The receiver follows the LANDING RUNWAY — 4-2 splits the ACDA on the
+       localizer and 4-5's crossover is the gate's side against the runway's —
+       while the track follows the transition. Both at once, on one aircraft. */
     const rTorgy30R = globalThis.DD.receiverFor(globalThis.DD.mkAc({cs:'R2', gate:'TORGY',
       rwy:'30R', alt:11000, ias:250, dtgEnd:20}));
-    assert('TORGY to 30R on a 30s is a FAR-gate crossover and goes to a Feeder',
+    assert('TORGY expecting 30R on a 30s is a FAR-gate crossover and goes to a Feeder',
       rTorgy30R.cross === 'far' && ['H','I'].indexOf(rTorgy30R.pos) >= 0,
       rTorgy30R.cross + '/' + rTorgy30R.pos);
     assert('and with no runway assigned the receiver follows Table 2 for the flow, not 12R',
@@ -1813,6 +1891,9 @@ try {
     const vRwy = (gate, rwy, cfg) => globalThis.ddb.validate({ name:'r', cfg:cfg,
       ac:[{cs:'D1', type:'B738', gate:gate, route:routeOn(gate), rwy:rwy, dtg:20,
            alt:11000, ias:250, mode:'published', ckdIn:true}] });
+    const vTrans = (gate, trans, cfg) => globalThis.ddb.validate({ name:'r', cfg:cfg,
+      ac:[{cs:'D1', type:'B738', gate:gate, route:routeOn(gate), trans:trans, dtg:20,
+           alt:11000, ias:250, mode:'published', ckdIn:true}] });
     assert('a published transition is accepted in its own flow',
       vRwy('TORGY','30R','30').errors.filter(e => /transition to/.test(e)).length === 0
       && vRwy('NITZR','22','17-22').errors.filter(e => /transition to/.test(e)).length === 0);
@@ -1823,8 +1904,8 @@ try {
 
     /* 4. THE DEVIATION IS A WARNING, NOT AN ERROR, because 5.b(b) says
        "normally" — and it says which of the two things the strip is. */
-    const dev = vRwy('TORGY','30R','30');
-    assert('a runway other than Table 2 warns rather than blocking, and cites 5.b(b)',
+    const dev = vTrans('TORGY','30R','30');
+    assert('a TRANSITION other than Table 2 warns rather than blocking, and cites 5.b(b)',
       dev.errors.filter(e => /transition/.test(e)).length === 0
       && dev.warnings.some(w => /5\.b\(b\)/.test(w) && /normally/.test(w)),
       dev.warnings.join(' | ').slice(0, 200));
@@ -1832,13 +1913,22 @@ try {
       dev.warnings.some(w => /far-gate case/.test(w)),
       dev.warnings.join(' | ').slice(0, 200));
     assert('while a strip on the Table 2 transition says nothing at all',
-      vRwy('TORGY','30L','30').warnings.every(w => !/Table 2 assigns/.test(w)));
+      vTrans('TORGY','30L','30').warnings.every(w => !/Table 2 assigns/.test(w)));
+    /* A transition and a landing runway that disagree is ORDINARY, and the note
+       says so rather than warning about it as though it were a mistake. */
+    const mix = globalThis.ddb.validate({ name:'m', cfg:'30',
+      ac:[{cs:'D2', type:'B738', gate:'TORGY', route:routeOn('TORGY'), trans:'30L',
+           rwy:'30R', dtg:20, alt:11000, ias:250, mode:'published', ckdIn:true}] });
+    assert('flying one transition and expecting the other parallel is allowed and explained',
+      mix.errors.length === 0
+      && mix.warnings.some(w => /ordinary crossover, not a mistake/.test(w) && /HDEEE/.test(w)),
+      mix.warnings.join(' | ').slice(0, 220));
 
     /* 5. THE SCOPE DRAWS THE LADDER THE AIRCRAFT IS ON, not the Table 2 one. */
     globalThis.DD.setFlow('30');
     globalThis.ddLoad('resume10r');
     globalThis.DD.sim.ac.length = 0;
-    const drawn = globalThis.DD.mkAc({cs:'R6', type:'B738', gate:'TORGY', rwy:'30R',
+    const drawn = globalThis.DD.mkAc({cs:'R6', type:'B738', gate:'TORGY', trans:'30R',
       alt:11000, ias:250, dtgEnd:20, ckdIn:true});
     drawn.onFreq = true;
     globalThis.DD.sim.ac.push(drawn);
