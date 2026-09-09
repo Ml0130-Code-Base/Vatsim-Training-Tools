@@ -157,6 +157,12 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    **The geometry now carries the branch**, which is the natural way to model it when the selector grows one: every airspace block in `_shared/source-vatglasses/airspace.json` is gated on a runway configuration, and there are exactly four across the dataset — `KSLC 34L/R, 35` (North), `KSLC 16L/R, 17` (South), `KBOI 10L/R` (East), `KBOI 28L/R` (West). Selecting a flow selects which blocks exist. Big Sky shows it most clearly: Alpine and Sage **swap shapes** between east and west flow over the same total airspace.
 4. **Engine and grading.** No aircraft model, no scope, no clock, no standing training items. In M98 the standing items came out of real session notes and were not invented to fill the slot; the same should happen here, which is what the S56 notes section is for.
 
+**One caution about reading these slots.** Both decks still render **Slot 4 as empty** for fixes
+the 2026-09-06 CIFP pull located — issue **#51**. The data and the panel sit in the same file,
+disagreeing. A gap rendered after it has closed is invariant 2 failing in the direction nobody
+watches for, and it costs more than a stale sentence: it teaches the trainee not to trust the
+panel.
+
 ---
 
 ## Testing
@@ -170,7 +176,3 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 ## Session hygiene
 
 Commit after each completed subtask. When aviation data is involved, cite which document and paragraph the number came from in the commit message. Long sessions: `/clear` and let this file re-anchor context. **One commit touches one ARTCC:** S56 and Big Sky may share a commit, and nothing under `ZMP/` or `ZAU/` may join it. Root `CLAUDE.md` §14.
-
-**Both decks still render Slot 4 as empty for fixes CIFP located** — issue **#51**. The data and
-the panel are in the same file, disagreeing, which is invariant 2 failing in the direction nobody
-watches for.
