@@ -115,15 +115,13 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    - **NICHOL (S56) is not in CIFP at all** — no fix of that name exists anywhere in cycle
      260903. SOP 3-5 uses it as the South Flow descent line (*"no descent below 11,000 until
      established downwind and north of NICHOL"*), so it reads as a local point off the video
-     map rather than a published waypoint. It stays an owner ask.
+     map rather than a published waypoint. It stays an owner ask — issue **#47**.
    - **KYANN (BOI) may be a transcription error for KYAAN.** The BOI SOP transcription in
      `Big Sky/BOI/claude_BOI_Reference.md` spells it `KYANN`; CIFP codes the KBOI STAR as
      **`KYAAN4`** and its fix as `KYAAN`, and there is no `KYANN` in the cycle. **Not resolved
-     here** — root `CLAUDE.md` §6, conflicts are named. Settling it means re-reading the BOI
-     SOP paragraph; if the document really says KYANN, that is an as-written anomaly to
-     preserve, and if the extraction dropped a letter, four files need the fix
-     (`claude_BOI_Reference.md` twice, `bigsky-drill-deck.html`, and
-     `_shared/claude_ZLC_Sector_Geometry_Reference.md`).
+     here** — root `CLAUDE.md` §6, conflicts are named. Issue **#48** settles it, and
+     carries both outcomes: an as-written anomaly to preserve, or a dropped letter that four
+     files need fixed.
 
    **CIFP is procedures, not airspace.** It closes fix positions and nothing else — the gates,
    the P2/P3/P4 areas and the Heber Shelf line in item 1 are untouched by it.
@@ -143,7 +141,7 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    named `RW10L` is the procedure's runway, not the flow**: the flow branch lives in the
    geometry (item 3), and nothing in this block touches it.
 
-   **S56 was deliberately left out of this pass** at the owner's direction, so its deck carries
+   **S56 was deliberately left out of this pass** at the owner's direction (issue **#3**), so its deck carries
    no procedures block: its strip contract hand-lists the CIFP 260903 procedure *names* per
    field, not the ladders behind them.
 
@@ -172,3 +170,7 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 ## Session hygiene
 
 Commit after each completed subtask. When aviation data is involved, cite which document and paragraph the number came from in the commit message. Long sessions: `/clear` and let this file re-anchor context. **One commit touches one ARTCC:** S56 and Big Sky may share a commit, and nothing under `ZMP/` or `ZAU/` may join it. Root `CLAUDE.md` §14.
+
+**Both decks still render Slot 4 as empty for fixes CIFP located** — issue **#51**. The data and
+the panel are in the same file, disagreeing, which is invariant 2 failing in the direction nobody
+watches for.
