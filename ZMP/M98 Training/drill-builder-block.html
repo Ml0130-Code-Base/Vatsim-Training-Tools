@@ -844,7 +844,75 @@ function oldestOwed(){
  });
  return worst;
 }
-var activeRec=null, speciFired=false;
+/* ---------- Scripted landline events — issue #25, roadmap item 4 ----------
+   The SPECI showed the shape a scheduled event takes; this is the second of
+   that family and it reuses the mechanism rather than inventing a new one.
+
+   EVERY ENTRY IS A PARAGRAPH OF M98 7110.26A CHAPTER 3, which is where the
+   point-out rules actually live. Nothing here is invented phraseology, and the
+   one case the order gates on a configuration is gated here too rather than
+   fired in a flow the order does not authorise.
+
+   THE DISTINCTION THE CATALOGUE EXISTS TO TEACH is 3-2's own: a P-ACP is
+   "look and go" and is authorized only within M98 airspace, so it is a
+   STATEMENT and nothing is owed back. Where a P-ACP is impracticable the order
+   says use a standard point-out — and that one is a REQUEST that wants an
+   answer. Knowing which you have just been handed is the drill.
+
+   NOTHING HERE IS GRADED AGAINST A STANDING ITEM, and that is deliberate: none
+   of M98's five items covers landline work, and inventing one would fabricate
+   a training history (root CLAUDE.md invariant 4). What the tool does measure
+   is how long an answer took, which is the same clock it already runs on the
+   frequency — recorded under its own kind so it never pollutes the aircraft
+   response-time median. The page says both of those things out loud. */
+var LANDLINE = [
+ {id:'pacp-dep', kind:'pacp', label:'P-ACP — a Departure climbing through your airspace',
+  from:['D','R','L'], src:'SOP 3-2',
+  say:function(o){ return o.fromName+' point-out: "'+o.cs+', climbing through your airspace."'; },
+  why:'A P-ACP is look-and-go and is authorized only within M98 airspace (SOP 3-2). Departure D, R and L may climb tracked aircraft through Feeder airspace on one. It is a statement — nothing is owed back.'},
+ {id:'pacp-sat', kind:'pacp', label:'P-ACP — a Satellite climbing through your airspace',
+  from:['E','G','K'], src:'SOP 3-2',
+  say:function(o){ return o.fromName+' point-out: "'+o.cs+', climbing through your airspace."'; },
+  why:'Same bullet as the Departure case (SOP 3-2): Satellite E, G and K may climb tracked aircraft through Feeder airspace on a P-ACP. Look and go — nothing owed.'},
+ {id:'pacp-feeder', kind:'pacp', label:'P-ACP — the other Feeder crossing a near-gate arrival at 9,000',
+  from:['I','H'], src:'SOP 3-2',
+  say:function(o){ return o.fromName+' point-out: "'+o.cs+', crossing at nine thousand over the ACDA."'; },
+  why:'SOP 3-2 authorizes a P-ACP between Feeder positions when crossing near-gate arrivals at 9,000 over the ACDA — which is the near-gate crossover in 4-5 seen from the other side. Look and go.'},
+ {id:'pacp-arr-areaf', kind:'pacp', label:'P-ACP — Arrival descending to 6,000 in Area F',
+  from:['N','S'], src:'SOP 3-2', cfg:['30-17'],
+  say:function(o){ return o.fromName+' point-out: "'+o.cs+', descending to six thousand in Area F."'; },
+  why:'SOP 3-2 authorizes this one on a 30/17 configuration ONLY, and adds that Departure and Satellite must tell Arrival about any non-STARS-tracked target in Area F. The catalogue gates it on the configuration rather than offering it in a flow the order does not name.'},
+ {id:'pointout', kind:'pointout', label:'Standard point-out — approval owed',
+  from:['D','R','L','I','H','N','S','E','G','K'], src:'SOP 3-2',
+  say:function(o){ return o.fromName+': "point out, '+o.cs+'."'; },
+  why:'SOP 3-2 says a P-ACP is authorized only within M98 airspace and that a standard point-out is used where one is impracticable. A standard point-out is a request: it wants "point out approved", or a refusal.'},
+ {id:'callback-turn', kind:'pointout', label:'Receiving controller taking a turn — SOP 3-1',
+  from:['N','S','I','H','R'], src:'SOP 3-1',
+  say:function(o){ return o.fromName+': "on '+o.cs+', can I turn him?"'; },
+  why:'SOP 3-1: a receiving controller with communications on an accepted handoff may turn the aircraft inside the previous controller’s airspace if the turn is at most 30 degrees from the assigned heading and the aircraft stays inside the handing-off position’s airspace. Asking is the courtesy; the answer is yours.'}
+];
+function landlineById(id){ for(var i=0;i<LANDLINE.length;i++){ if(LANDLINE[i].id===id) return LANDLINE[i]; } return null; }
+/* Which entries are legal in a configuration — the gated one drops out rather
+   than being offered and then explained away. */
+function landlineFor(cfg){
+ return LANDLINE.filter(function(L){ return !L.cfg || L.cfg.indexOf(cfg)>=0; });
+}
+/* The open call, if any. One at a time: two landlines ringing at once is a
+   different drill and the tool does not pretend to run it. */
+/* How long a standard point-out may ring before the tool says something.
+   Not a rule from any document — there is no published answer time — so it
+   is a coaching threshold and the log line says exactly that. */
+var LANDLINE_WAIT = 30;
+/* The events in play, from the drill record when one is loaded and from the
+   scenario otherwise — a library card or a pasted SCENARIOS entry has no
+   record behind it. */
+function activeEvents(){
+ if(activeRec && activeRec.events) return activeRec.events;
+ return (DD.sim.scen && DD.sim.scen.events) || [];
+}
+var landline=null;
+var LANDLINE_ANSWER = /\b(approved|approve|unable|negative|your control|radar contact|no joy)\b/i;
+var activeRec=null, speciFired=false, eventsFired=null;
 function onTick(sim,dt){
  sim.ac.forEach(function(a){ if(a.onFreq && a._ckAt==null) a._ckAt=sim.t; });
  var sp = activeRec && activeRec.speci;
@@ -873,6 +941,34 @@ function onTick(sim,dt){
       built. speciFired is what stops this running twice. */
    DD.setFlow(sp.cfg);
   }
+ }
+ /* Scheduled landline events, same clock as the SPECI. */
+ var evs = activeEvents();
+ if(evs.length && eventsFired){
+  evs.forEach(function(ev, i){
+   if(eventsFired[i] || sim.t < ev.at) return;
+   eventsFired[i]=true;
+   var L=landlineById(ev.id); if(!L) return;
+   var fromId = ev.from || L.from[0];
+   var o={cs:ev.cs||'(no callsign on the event)', fromName:DD.posName(fromId)||fromId};
+   /* one at a time — an unanswered call is closed out before the next rings */
+   if(landline && landline.kind==='pointout'){
+    DD.log('flag','<span class="dd-chip flag">flag</span>'+landline.fromName+' gave up on the point-out for <b>'+landline.cs+'</b> and took it themselves. A second landline is ringing.');
+   }
+   landline = {id:L.id, kind:L.kind, cs:o.cs, fromId:fromId, fromName:o.fromName, at:sim.t, answered:false};
+   DD.log('coach','<span class="coach"><b>LANDLINE</b> · '+esc(L.say(o))+'</span>');
+   if(L.kind==='pacp'){
+    DD.log('info','<span class="dd-chip info">landline</span>'+esc(L.why)+' <b>Nothing is owed back</b> — but the target is in your airspace now, so it is in your scan.');
+    landline.answered=true;   /* nothing owed; the call stays visible, not open */
+   } else {
+    DD.log('info','<span class="dd-chip info">landline</span>'+esc(L.why)+' <b>They are waiting on you.</b> Answer it — "approved", or refuse it.');
+   }
+  });
+ }
+ /* a standard point-out left ringing is the thing worth noticing */
+ if(landline && !landline.answered && (sim.t-landline.at)>LANDLINE_WAIT){
+  landline.answered=true;
+  DD.log('flag','<span class="dd-chip flag">flag</span>'+landline.fromName+' waited '+LANDLINE_WAIT+' seconds on the point-out for <b>'+landline.cs+'</b> with no answer. Landline work is not graded against a standing item here — none of the five covers it — but the clock is real and so is the other controller.');
  }
  renderTiming();
 }
@@ -915,6 +1011,8 @@ window.ddLoad=function(id){
  DD.sim.ac.forEach(function(a){ if(a.onFreq) a._ckAt=0; });
  var rec = findDrill(id);
  activeRec = rec; speciFired = false;
+ landline = null;
+ eventsFired = activeEvents().map(function(){ return false; });
  if(rec && rec.rate){ window.ddRate(rec.rate); }
  if(window.ddbPage) window.ddbPage('fly');    /* loading a drill puts you on the scope */
  var top=ranked().slice(0,2).map(function(k){ var it=itemById(k); return it?it.t:k; });
@@ -935,6 +1033,27 @@ window.ddSend=function(){
  var raw=(box && typeof box.value==='string') ? box.value : '';
  var paused = DD.sim.rate===0;
  var before = DD.sim.feed.length;
+ /* A LANDLINE ANSWER IS NOT ADDRESSED TO AN AIRCRAFT, so it is caught here and
+    never reaches the deck's parser — which matches on a callsign and would
+    read "approved" as an unreadable transmission. Handled in this block rather
+    than in the deck, because that is the extension pattern: wrap ddSend, do
+    not edit the engine. */
+ if(landline && !landline.answered && LANDLINE_ANSWER.test(raw)){
+  var lag=Math.max(0, DD.sim.t-landline.at);
+  landline.answered=true;
+  var refused=/\b(unable|negative|no joy)\b/i.test(raw);
+  if(box) box.value='';
+  DD.log('info','<span class="dd-chip info">you</span>'+esc(raw));
+  DD.log('coach','<span class="coach">'+esc(landline.fromName)+': "'+(refused?'roger, I’ll keep him':'thank you')+'."</span>');
+  /* Recorded under its own kind so it never enters the aircraft response-time
+     median, which is a different measurement of a different thing. */
+  TIMING.events.push({cs:landline.cs, kind:'landline', t:DD.sim.t, lag:Math.round(lag), paused:paused});
+  DD.log(lag>state.target?'flag':'good','<span class="dd-chip '+(lag>state.target?'flag':'good')+'">'+(lag>state.target?'flag':'good')+'</span>Landline answered in '+Math.round(lag)+' seconds'+(lag>state.target?(' — target is '+state.target+'.'):'.')+' <span style="color:var(--dim2)">Content is not graded: none of the five standing items covers landline work, and one is not invented for it.</span>');
+  if(paused) TIMING.txPaused++; else TIMING.txHot++;
+  TIMING.lastTxSim=DD.sim.t; TIMING.lastTxWall=nowMs();
+  renderTiming();
+  return;
+ }
  _send.apply(this, arguments);
  var a = matchAc(raw);
  /* the deck echoes every key-up and coaches the ones it could not read;
@@ -1155,7 +1274,7 @@ function gen(o){
   open:openLabel(), rstOpen:rstOpen(), midnight:midnightOn(),
   brief:fc.line+' Generated '+press.label+' push, '+n+' strip'+(n>1?'s':'')+', seed '+seed+' — same seed rebuilds the same drill.',
   focus:focus, seed:seed, rate:1, hot:!!o.hot,
-  speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12', cfg:''}, ac:ac
+  speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12', cfg:''}, events:[], ac:ac
  };
 }
 
@@ -1373,6 +1492,22 @@ function validate(rec){
     errs.push('The special observation re-configures to '+sc2.id+', which needs '+sc2.min.ceil.toLocaleString()+' and '+sc2.min.vis+' ('+sc2.src+') — and the observation it arrives with does not meet that. The configuration it changes to cannot stand either.');
   }
  }
+ /* Landline events. The callsign has to be a strip in this drill, because the
+    call names an aircraft the trainee is supposed to find on the scope, and a
+    call about an aircraft that is not there teaches nothing. */
+ (rec.events||[]).forEach(function(ev, i){
+  var tag='Landline event '+(i+1);
+  var L=landlineById(ev.id);
+  if(!L){ errs.push(tag+': "'+ev.id+'" is not in the landline catalogue.'); return; }
+  if(!(ev.at>=0)) errs.push(tag+': needs a time in seconds from the start of the drill.');
+  if(L.cfg && L.cfg.indexOf(rec.cfg)<0)
+   errs.push(tag+': '+L.label+' is authorized on '+L.cfg.join(' or ')+' only ('+L.src+') and this drill is a '+configById(rec.cfg).id+'.');
+  if(L.from.indexOf(ev.from)<0)
+   errs.push(tag+': '+ev.from+' is not a position that originates this one — '+L.src+' names '+L.from.join(', ')+'.');
+  if(!ev.cs) errs.push(tag+': needs the aircraft it is about.');
+  else if(!(rec.ac||[]).some(function(a){ return (a.cs||'').toUpperCase()===ev.cs.toUpperCase(); }))
+   warns.push(tag+' is about '+ev.cs+', which is not a strip in this drill. The call will still ring, but there will be nothing on the scope to look at.');
+ });
  return {errors:errs, warnings:warns};
 }
 
@@ -1393,6 +1528,10 @@ function openLine(rec){ return rec.open ? ('Open around you: '+rec.open) : ''; }
 function toScenario(rec){
  return {
   id:rec.id, name:rec.name, frame:frameOf(rec), altim:String(rec.altim||'2980'),
+  /* Landline events ride on the scenario as well as the record, so the
+     pasteable SCENARIOS entry is a whole drill rather than one with its
+     landlines silently missing (issue #25). */
+  events:(rec.events||[]).slice(),
   brief:[rec.brief||'', openLine(rec), configById(rec.cfg).note+'. '+TOOLBOX[category(rec.ceil, rec.vis)]].filter(Boolean).join(' '),
   ac:function(){
    return rec.ac.map(function(a){
@@ -1555,7 +1694,7 @@ function blankDrill(){
          atis:'J', altim:'2980', seat:seatLabel(), towers:state.pos.towers,
          open:openLabel(), rstOpen:rstOpen(), midnight:midnightOn(),
          brief:'', datis:'', datisArr:'', datisDep:'', focus:'free', seed:null, rate:1, hot:false,
-         speci:{on:false, at:180, ceil:1800, vis:3, wind:'150/12', cfg:''}, ac:[blankAc()]};
+         speci:{on:false, at:180, ceil:1800, vis:3, wind:'150/12', cfg:''}, events:[], ac:[blankAc()]};
 }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function num(v,d){ var n=parseFloat(v); return isNaN(n)?d:n; }
@@ -1585,6 +1724,7 @@ function readEditor(){
  draft.speci.wind=g('ddb-speciw')||draft.speci.wind;
  /* empty means the flow does not change — a SPECI is a weather report,
     and only some of them force a re-configuration */
+ readEvents();
  var scfg=document.getElementById('ddb-specicfg');
  if(scfg) draft.speci.cfg=scfg.value||'';
  draft.atis=g('ddb-atis')||draft.atis;
@@ -1932,6 +2072,7 @@ function renderEditor(){
  g('ddb-ceil',draft.ceil); g('ddb-vis',draft.vis); g('ddb-seat',draft.seat);
  g('ddb-towers',draft.towers); g('ddb-open',draft.open);
  g('ddb-atis',draft.atis); g('ddb-altim',draft.altim); g('ddb-brief',draft.brief); g('ddb-rate',String(draft.rate));
+ renderEvents();
  var sp=draft.speci||{};
  g('ddb-speciat',sp.at); g('ddb-specic',sp.ceil); g('ddb-speciv',sp.vis); g('ddb-speciw',sp.wind);
  var sf=document.getElementById('ddb-specicfg'); if(sf) sf.value=sp.cfg||'';
@@ -2276,6 +2417,56 @@ window.ddbDatisFetch=function(){
  };
  tryNext();
 };
+/* One row per scheduled landline. The catalogue is filtered on the drill's own
+   configuration, so the 30/17-only Area F case is simply not offered anywhere
+   else rather than offered and then refused. */
+function eventRowHtml(ev, i){
+ var cfg=(draft&&draft.cfg)||'12';
+ var opts=landlineFor(cfg).map(function(L){
+  return '<option value="'+L.id+'"'+(L.id===ev.id?' selected':'')+'>'+esc(L.label)+'</option>'; }).join('');
+ var L=landlineById(ev.id);
+ var froms=(L?L.from:[]).map(function(p){
+  return '<option value="'+p+'"'+(p===ev.from?' selected':'')+'>'+p+' — '+esc(DD.posName(p)||p)+'</option>'; }).join('');
+ return '<div class="dd-item" style="padding:9px 0;">'
+  +'<div class="dd-grid">'
+  +f('Fires at T-plus (seconds)','<input class="dd-in" id="ddb-ev-at'+i+'" value="'+esc(ev.at)+'" onchange="ddbSync()">')
+  +f('What rings','<select class="dd-sel" id="ddb-ev-id'+i+'" onchange="ddbSync()">'+opts+'</select>')
+  +f('From','<select class="dd-sel" id="ddb-ev-from'+i+'">'+froms+'</select>')
+  +f('About which aircraft','<input class="dd-in" id="ddb-ev-cs'+i+'" value="'+esc(ev.cs||'')+'" onchange="ddbSync()">')
+  +'</div>'
+  +'<div class="dd-item-meta">'+esc(L?L.why:'')+'</div>'
+  +'<div class="dd-actions" style="margin-top:6px;"><button class="dd-btn sm" onclick="ddbDropEvent('+i+')">remove</button></div>'
+  +'</div>';
+}
+function renderEvents(){
+ if(!draft) return;
+ draft.events=draft.events||[];
+ setHtml('ddb-events', draft.events.length
+  ? draft.events.map(eventRowHtml).join('')
+  : '<div class="dd-hint">No landline events. The drill runs in silence, which is not what the room sounds like.</div>');
+}
+function readEvents(){
+ if(!draft || !draft.events) return;
+ draft.events.forEach(function(ev,i){
+  var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:null; };
+  var at=g('ddb-ev-at'+i);  if(at!=null) ev.at=num(at, ev.at);
+  var id=g('ddb-ev-id'+i);  if(id) ev.id=id;
+  var fr=g('ddb-ev-from'+i);if(fr) ev.from=fr;
+  var cs=g('ddb-ev-cs'+i);  if(cs!=null) ev.cs=cs;
+  /* a catalogue change can orphan the position, so re-seat it on the new entry */
+  var L=landlineById(ev.id);
+  if(L && L.from.indexOf(ev.from)<0) ev.from=L.from[0];
+ });
+}
+window.ddbAddEvent=function(){
+ readEditor();
+ draft.events=draft.events||[];
+ var cfg=(draft&&draft.cfg)||'12', L=landlineFor(cfg)[0];
+ var firstAc=(draft.ac&&draft.ac[0]&&draft.ac[0].cs)||'';
+ draft.events.push({at:120, id:L.id, from:L.from[0], cs:firstAc});
+ renderEditor();
+};
+window.ddbDropEvent=function(i){ readEditor(); draft.events.splice(i,1); renderEditor(); };
 window.ddbAddRow=function(){ readEditor(); draft.ac.push(blankAc()); renderEditor(); };
 window.ddbDropRow=function(i){ readEditor(); if(draft.ac.length>1) draft.ac.splice(i,1); renderEditor(); };
 window.ddbNew=function(){ draft=blankDrill(); renderEditor(); };
@@ -2545,6 +2736,10 @@ function buildHtml(){
  +f('Re-configure to','<select class="dd-sel" id="ddb-specicfg" onchange="ddbSync()"><option value="">no change</option>'+CONFIGS.map(function(c){return '<option value="'+c.id+'">'+c.name+'</option>';}).join('')+'</select>')
  +'</div>'
  +'<div class="dd-hint">A special observation is unscheduled — it lands between the hourly reports when the weather crosses a threshold, and because the configuration follows the weather, a big enough change forces a re-plan. Set <b>re-configure to</b> and the engine does re-route the strips already flying: the ladders swap to the new flow and every aircraft holds its position and picks up the new track&rsquo;s miles to go, which is what a real re-configuration looks like from the scope. Leave it on <b>no change</b> and the SPECI is what it was &mdash; the observation, the category it produces, and the rep is saying what changes. Where Table 2 has no row for the configuration you pick, the traffic keeps its tracks and the log says why rather than borrowing another flow&rsquo;s geometry.</div>'
+ +'<div class="dd-sub" style="margin-top:16px;">Landline events — the other side of the operation</div>'
+ +'<div id="ddb-events"></div>'
+ +'<div class="dd-actions"><button class="dd-btn" onclick="ddbAddEvent()">add a landline event</button></div>'
+ +'<div class="dd-hint">Every entry is a paragraph of <b>M98 7110.26A Chapter 3</b>, and the distinction it exists to teach is 3-2&rsquo;s own: a <b>P-ACP</b> is <i>look and go</i>, authorized only within M98 airspace, so it is a statement and nothing is owed back — while a <b>standard point-out</b> is what you use where a P-ACP is impracticable, and it is a request that wants an answer. Knowing which one just rang is the drill. Answer an open one by typing <b>approved</b>, or refuse it with <b>unable</b>. <b>Content is not graded</b>: none of the five standing items covers landline work, and one is not invented for it — what is measured is how long you took, kept separate from the aircraft response-time median because it is a different measurement. One call at a time.</div>'
  +'<div class="dd-field" style="margin-top:14px;"><span class="dd-lab">Brief — what the drill is asking of you</span><textarea class="dd-ta" id="ddb-brief"></textarea></div>'
  +'<div class="dd-sub" style="margin-top:16px;">Strips</div>'
  +'<div id="ddb-rows"></div>'
@@ -2682,6 +2877,9 @@ window.ddb = {
  spoken:spoken, category:category, configById:configById, frameOf:frameOf,
  POSITIONS:POSITIONS, ownerOf:ownerOf, isOpen:isOpen, applyReceivers:applyReceivers,
  seatLabel:seatLabel, openLabel:openLabel, PRESETS:PRESETS,
+ LANDLINE:LANDLINE, landlineById:landlineById, landlineFor:landlineFor,
+ LANDLINE_WAIT:LANDLINE_WAIT, activeEvents:activeEvents,
+ landlineOpen:function(){ return landline; },
  MIDNIGHT:MIDNIGHT, midnightOn:midnightOn, baseId:baseId, intoOf:intoOf, frqOf:frqOf, nameOf:nameOf, coverageFor:coverageFor,
  seatIds:seatIds, isSeat:isSeat, seatPositions:seatPositions,
  mixOptions:mixOptions, mixGates:mixGates, seatGates:seatGates,

@@ -1763,6 +1763,108 @@ try {
     globalThis.DD.sim.ac[1].alt > 5000 && globalThis.DD.sim.ac[0].alt === 5000,
     globalThis.DD.sim.ac[1].alt + '/' + globalThis.DD.sim.ac[0].alt);
 
+  /* ============ 4c. Scripted landline events — issue #25 ============
+     Every catalogue entry is a paragraph of M98 7110.26A Chapter 3, and the
+     distinction the catalogue exists to teach is 3-2's own: a P-ACP is look
+     and go and owes nothing back, a standard point-out is a request. Nothing
+     here is graded against a standing item, and that is asserted rather than
+     assumed — none of M98's five covers landline work (invariant 4). */
+  {
+    const B = globalThis.ddb;
+    assert('every landline entry carries the paragraph it comes from and why it matters',
+      B.LANDLINE.length >= 5
+      && B.LANDLINE.every(L => /SOP 3-/.test(L.src) && L.why && L.why.length > 40 && L.label),
+      B.LANDLINE.filter(L => !/SOP 3-/.test(L.src)).map(L => L.id).join(','));
+    assert('a P-ACP and a standard point-out are different kinds, because 3-2 makes them different',
+      B.landlineById('pacp-feeder').kind === 'pacp'
+      && B.landlineById('pointout').kind === 'pointout');
+    assert('and each names the positions that may originate it',
+      B.landlineById('pacp-dep').from.join(',') === 'D,R,L'
+      && B.landlineById('pacp-sat').from.join(',') === 'E,G,K'
+      && B.landlineById('pacp-feeder').from.join(',') === 'I,H',
+      B.landlineById('pacp-dep').from.join(','));
+
+    /* The one case 3-2 gates on a configuration is gated here too. */
+    assert('the Area F P-ACP is offered on a 30-17 and nowhere else',
+      B.landlineFor('30-17').some(L => L.id === 'pacp-arr-areaf')
+      && !B.landlineFor('12').some(L => L.id === 'pacp-arr-areaf'),
+      B.landlineFor('12').map(L => L.id).join(','));
+
+    /* Validation refuses what the order does not authorise. */
+    const evDrill = (ev, cfg) => B.validate({ name:'ll', cfg:cfg||'12',
+      ac:[{cs:'DAL1', type:'B738', gate:'NITZR', route:routeOn('NITZR'), dtg:12, alt:9000,
+           ias:250, mode:'published', ckdIn:true}], events:[ev] });
+    let ev = evDrill({at:60, id:'pacp-arr-areaf', from:'N', cs:'DAL1'}, '12');
+    assert('the Area F P-ACP is refused in a configuration 3-2 does not name',
+      ev.errors.join(' ').indexOf('authorized on 30-17 only') >= 0, ev.errors.join(' | '));
+    ev = evDrill({at:60, id:'pacp-feeder', from:'D', cs:'DAL1'});
+    assert('a position that does not originate an entry is refused, and the paragraph is named',
+      ev.errors.join(' ').indexOf('not a position that originates') >= 0
+      && ev.errors.join(' ').indexOf('SOP 3-2') >= 0, ev.errors.join(' | '));
+    ev = evDrill({at:60, id:'nonesuch', from:'D', cs:'DAL1'});
+    assert('an entry that is not in the catalogue is refused',
+      ev.errors.join(' ').indexOf('not in the landline catalogue') >= 0, ev.errors.join(' | '));
+    ev = evDrill({at:60, id:'pointout', from:'R', cs:'ZZZ9'});
+    assert('a call about an aircraft that is not in the drill warns rather than blocks',
+      ev.errors.length === 0 && ev.warnings.join(' ').indexOf('nothing on the scope to look at') >= 0,
+      ev.warnings.join(' | '));
+
+    /* Fly one. A standard point-out rings, is answered, and the clock is kept
+       apart from the aircraft response-time median. */
+    const llDrill = { id:'u-ll', name:'landline', cfg:'12', wind:'150/9', ceil:5000, vis:10,
+      atis:'J', altim:'2980', seat:B.seatLabel(), towers:'satellite towers open', open:'',
+      brief:'', focus:'free', seed:null, rate:1, hot:false,
+      speci:{on:false, at:180, ceil:1800, vis:3, wind:'150/12', cfg:''},
+      events:[{at:2, id:'pointout', from:'R', cs:'DAL1'}],
+      ac:[{cs:'DAL1', type:'B738', gate:'NITZR', route:routeOn('NITZR'), dtg:12, alt:9000,
+           ias:250, mode:'published', ckdIn:true, altim:true}] };
+    assert('a drill with a landline event validates', B.validate(llDrill).errors.length === 0,
+      B.validate(llDrill).errors.join(' | '));
+    B.publish(llDrill);
+    assert('the events ride on the scenario too, so a pasted entry is a whole drill',
+      (globalThis.DD.SCENARIOS.filter(x => x.id === 'u-ll')[0].events || []).length === 1);
+
+    B.runDrill(llDrill);
+    globalThis.ddRate(1);
+    for (let i = 0; i < 4; i++) tickFn();
+    assert('the point-out rings and says who is calling and about what',
+      feedText().indexOf('point out, DAL1') >= 0, feedText().slice(-300));
+    assert('and it says an answer is owed', feedText().indexOf('They are waiting on you') >= 0);
+    const openCall = B.landlineOpen();
+    assert('the call is open until it is answered', !!openCall && openCall.answered === false,
+      JSON.stringify(openCall));
+
+    for (let i = 0; i < 3; i++) tickFn();
+    say('approved');
+    assert('answering closes it', B.landlineOpen().answered === true);
+    mustContain('the other controller acknowledges', 'thank you');
+    mustContain('and the answer is timed', 'Landline answered in');
+    mustContain('and the tool says the content is not graded', 'Content is not graded');
+    assert('the lag is recorded under its own kind, not as an aircraft acknowledgement',
+      B.timing.events.some(e => e.kind === 'landline')
+      && B.timing.events.filter(e => e.kind === 'landline').every(e => e.lag >= 0),
+      B.timing.events.map(e => e.kind).join(','));
+
+    /* INVARIANT 4, ASSERTED: no landline line is tagged to a standing item. */
+    assert('no landline log call is tagged to a standing item',
+      globalThis.DD.sim.feed.filter(e => /landline|point out|LANDLINE/i.test(String(e.html)))
+        .every(e => !e.item),
+      globalThis.DD.sim.feed.filter(e => /landline/i.test(String(e.html)) && e.item)
+        .map(e => e.item).join(','));
+
+    /* A P-ACP is look and go: it rings, it is in the scan, nothing is owed. */
+    const pacpDrill = JSON.parse(JSON.stringify(llDrill));
+    pacpDrill.id = 'u-ll2';
+    pacpDrill.events = [{at:2, id:'pacp-feeder', from:'I', cs:'DAL1'}];
+    B.publish(pacpDrill); B.runDrill(pacpDrill);
+    globalThis.ddRate(1);
+    for (let i = 0; i < 4; i++) tickFn();
+    assert('a P-ACP owes nothing back and the tool says so',
+      B.landlineOpen().answered === true
+      && feedText().indexOf('Nothing is owed back') >= 0, feedText().slice(-260));
+    mustContain('and it still lands in the scan', 'in your scan');
+  }
+
   /* ============ 5. Notebook — banking keeps the standing items current ============ */
   const draft = globalThis.ddb.draftFromSim();
   assert('draft carries a tally for every standing item',
