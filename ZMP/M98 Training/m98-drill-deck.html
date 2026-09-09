@@ -849,9 +849,31 @@ var SAT_POS = {
  G:{pos:'G', frq:'121.2'},
  K:{pos:'K', frq:'126.5'}
 };
-/* One place that answers "what track does this arrival fly" for every kind. */
+/* One place that answers "what track does this arrival fly" for every kind.
+
+   A RUNWAY ALREADY ON THE STRIP WINS OVER THE TABLE 2 DEFAULT. ZMP-M98 LOA
+   5.b(b): "ZMP 'Descend Via' phraseology must include a runway transition.
+   ZMP will NORMALLY assign runway transitions as depicted in Table 2."
+   Normally — so Table 2 is the default and not a constraint, and an aircraft
+   can legitimately arrive on any published transition for its gate. A TORGY
+   landing the 30s is usually 30L and can be given 30R, and it has to fly the
+   30R ladder when it is.
+
+   Until 2026-09-08 this returned the Table 2 ladder whatever the strip said,
+   so a runway assigned IN SETUP was drawn on the wrong track — issue #55. The
+   live crossover was already right (issue #14); it was only the starting state
+   that was not, which is why it looked like the scope "would not redraw".
+
+   ROUTES is shared and finalized in place, so anything other than the Table 2
+   default is materialized per aircraft rather than written back into it. */
 function routeFor(o){
- if(o.gate && ROUTES[o.gate]) return ROUTES[o.gate];
+ if(o.gate && ROUTES[o.gate]){
+  if(o.rwy){
+   var lad=ladderFor(ROUTE_CFG, o.gate, o.rwy);
+   if(lad && lad!==ROUTES[o.gate].src) return materialize(lad);
+  }
+  return ROUTES[o.gate];
+ }
  if(o.gate && SAT_ROUTES[o.gate]) return SAT_ROUTES[o.gate];
  if(o.gate && SAT_DIRECT[o.gate])
   return satDirectRoute(o.gate, o.entry||{r:90,d:38}, o.dest||'KFCM');
@@ -1671,8 +1693,22 @@ function receiverFor(a){
    if(sp) return {pos:sp.pos, frq:sp.frq, name:posName(sp.pos), cross:'none',
      why:dst+' is '+posName(seat)+'’s field, so a '+(a.gate||'satellite')+' arrival into it goes to that seat rather than down the MSP split (SOP 6-2)'};
   }
-  var rwy = a.rwy || '12R';
-  var x = crossoverFor(a.gate, rwy);
+  /* BOTH OF THESE FOLLOW THE FLOW, and until 2026-09-09 neither did — issue
+     #55. The default runway was hardcoded 12R, and the crossover class was
+     resolved against the 12s whatever configuration was loaded, because this
+     function was written when the tool only flew the 12s and the flow work of
+     2026-09-04 did not reach it.
+
+     It matters more than a wrong label: NEAR AND FAR GO TO DIFFERENT KINDS OF
+     POSITION. SOP 4-5 sends a near-gate crossover to an Arrival and a far-gate
+     one to that side's FEEDER. On a 30s, TORGY is a far gate — it came back
+     "near" and was handed to South Arrival, when 4-5 makes it a Feeder handoff
+     with communications by 15 NM.
+
+     The last fallback only bites in a configuration Table 2 does not name,
+     where the tool carries no arrival geometry at all. */
+  var rwy = a.rwy || transitionFor(ROUTE_CFG, a.gate) || '12R';
+  var x = crossoverFor(a.gate, rwy, ROUTE_CFG);
   var pick, why;
   if(x.type==='near' && a.hdg==null){
    /* A near-gate crossover on an OPD STAR goes to the Arrival controller
@@ -2362,10 +2398,21 @@ function scopeSvg(){
  var sidsUp={}, gatesUp={};
  sim.ac.forEach(function(a){
   if(a.role==='departure'&&a.sid) sidsUp[a.sid]=1;
-  if((a.role||'arrival')==='arrival'&&a.gate) gatesUp[a.gate]=1;
+  /* DRAW THE LADDER THE AIRCRAFT IS ACTUALLY ON, which is not always the
+     Table 2 one — a strip can arrive on any published transition for its gate
+     (LOA 5.b(b)). ROUTES holds the flow's default and is what "all STARs"
+     draws; this holds what is being flown, keyed by gate AND runway so two
+     aircraft off one gate on different transitions both get their line. */
+  if((a.role||'arrival')==='arrival'&&a.gate&&a.route)
+   gatesUp[a.gate+(a.rwy?('/'+a.rwy):'')]={route:a.route};
  });
  var sidKeys = wantSid==='all' ? Object.keys(DEPS) : (wantSid==='tracked' ? Object.keys(sidsUp) : []);
- var starKeys= wantStar==='all' ? Object.keys(ROUTES) : (wantStar==='tracked' ? Object.keys(gatesUp) : []);
+ /* "all STARs" is the flow's Table 2 set; "tracked" is what is being flown. */
+ var starDraw = wantStar==='all'
+   ? Object.keys(ROUTES).map(function(k){ return ROUTES[k]; })
+   : (wantStar==='tracked'
+      ? Object.keys(gatesUp).map(function(k){ return gatesUp[k].route; })
+      : []);
  /* departure tracks, drawn under the arrivals in the warning colour */
  sidKeys.forEach(function(k){
   var r=DEPS[k]; if(!r) return;
@@ -2394,8 +2441,8 @@ function scopeSvg(){
   s+='<polyline points="'+a.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--dim)" stroke-width="1" opacity="0.5" stroke-dasharray="6 3"/>';
  });
  /* arrival ladders */
- starKeys.forEach(function(k){
-  var r=ROUTES[k]; if(!r) return;
+ starDraw.forEach(function(r){
+  if(!r) return;
   var pts=r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
   s+='<polyline points="'+pts+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.45"/>';
   r.forEach(function(p,i){ s+=fixDot(p, i===0);
@@ -2717,7 +2764,7 @@ window.DD = {
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
- TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
+ materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
  FEEDER_POS:FEEDER_POS, NEAR_GATES:NEAR_GATES, HANDOFF_ALT:HANDOFF_ALT,
@@ -4112,7 +4159,17 @@ function validate(rec){
   var loSpd = (role==='overflight') ? 60 : 150;
   if(!(a.ias>=loSpd && a.ias<=350)) errs.push(tag+': speed must be between '+loSpd+' and 350 knots'+(role==='overflight'?' — a transiting light single sits around 110.':'.'));
   if(a.mode==='assigned' && !(a.asg>=170 && a.asg<=340)) errs.push(tag+': assigned speed must be between 170 and 340 knots.');
-  if(role==='arrival' && a.rwy && RWYS.indexOf(a.rwy)<0) errs.push(tag+': '+a.rwy+' is not a runway in the receiver table ('+RWYS.join(', ')+').');
+  /* A RUNWAY IS VALID IF THE GATE HAS A PUBLISHED TRANSITION TO IT. This used
+     to check RWYS, which is Object.keys(RECEIVER) — the two Arrival positions
+     wearing runway keys — so the builder accepted 12L and 12R and refused
+     every other runway in every other configuration. A 30s strip on 30R was
+     refused, and so was Table 2's own NITZR 22 on a 17-22. Issue #55.
+     The list comes from claude_MSP_STAR_Reference.md via LADDER, which is
+     where the published transitions actually live. */
+  if(role==='arrival' && a.rwy && !DD.SAT_DIRECT[a.gate] && DD.LADDER[a.gate]
+     && !DD.LADDER[a.gate][a.rwy]){
+   errs.push(tag+': '+a.gate+' has no published transition to '+a.rwy+'. The transitions it does publish are '+Object.keys(DD.LADDER[a.gate]).join(', ')+' (claude_MSP_STAR_Reference.md).');
+  }
   if(!a.ckdIn && !(a.spawnAt>=0)) errs.push(tag+': check-in time must be zero or more seconds.');
   if(role==='arrival' && a.alt>=18000 && a.dtg<15) warns.push(tag+': '+DD.fmtAlt(a.alt)+' with '+a.dtg.toFixed(1)+' NM to run — the engine descends about 1,800 feet a minute, so this one cannot make its floor. Deliberate, or a typo?');
  });
@@ -4235,6 +4292,26 @@ function validate(rec){
    warns.push(tag2+' is VFR and the field is '+category(rec.ceil, rec.vis)+'. '+TOOLBOX[category(rec.ceil, rec.vis)]+' Check that this one still works in these conditions.');
   var wk=DD.wakeOf(a.type);
   if(roleOf(a)==='arrival' && wk.heavy && a.rwy && a.rwy!=='12R') errs.push((a.cs||'A heavy')+' is a '+wk.label+' ('+a.type+') assigned '+a.rwy+' — heavy jets take the 12R/30L transition in every configuration (ZMP-M98 LOA Table 2c).');
+  /* A RUNWAY OTHER THAN THE TABLE 2 ONE IS LEGAL, AND IT IS WORTH SAYING WHY.
+     LOA 5.b(b): "ZMP 'Descend Via' phraseology must include a runway
+     transition. ZMP will NORMALLY assign runway transitions as depicted in
+     Table 2." Normally — so Table 2 is the default, not a constraint, and a
+     TORGY landing the 30s is usually 30L and can be given 30R. This is a
+     warning rather than an error for exactly that reason, and it names which
+     of the two things the strip is: an aircraft ZMP handed over already on
+     that transition, or a crossover the trainee is making. Issue #55. */
+  if(roleOf(a)==='arrival' && a.rwy && !DD.SAT_DIRECT[a.gate]){
+   var t2 = DD.transitionFor(rec.cfg, a.gate);
+   if(t2 && t2 !== a.rwy){
+    var xk = DD.crossoverFor(a.gate, a.rwy, rec.cfg);
+    var how = xk.type==='far'
+      ? 'As a crossover that is the far-gate case: handed to the appropriate Feeder, communication transferred not later than 15 NM from MSP, and inside that ring they have control for turns (SOP 4-5b(1)-(2)).'
+      : (xk.type==='near'
+         ? 'As a crossover that is the near-gate case: 9,000 with a heading aimed at the 25-mile ring, or straight to the Arrival whose airspace it enters first on an OPD (SOP 4-5a).'
+         : (xk.note ? ('And '+xk.note+'.') : 'It does not count as a crossover here, so no 4-5 coordination attaches to it.'));
+    warns.push((a.cs||'A strip')+' is on the '+a.rwy+' transition off '+a.gate+', and ZMP-M98 LOA Table 2 assigns '+t2+' in a '+configById(rec.cfg).id+'. That is legal — 5.b(b) says ZMP will *normally* assign Table 2, not always — but the transition rides in the descend-via ZMP issues, so either it was handed over that way or you are making the change. '+how);
+   }
+  }
   if(wk.cls==='nowgt') warns.push((a.cs||'Strip '+(i+1))+': '+a.type+' is not in the weight table, so it tags NOWGT — 10 NM ahead and behind until the weight is verified. Check the type against the facility CWT reference, or use one the table already knows.');
  });
  if(rec.speci && rec.speci.on){
@@ -4809,7 +4886,17 @@ function routeFor(a){
  var role=roleOf(a);
  if(role==='departure') return DD.DEPS[a.sid]||null;
  if(role==='overflight') return DD.overflightRoute({r:a.entryR,d:a.entryD},{r:a.exitR,d:a.exitD});
- return DD.ROUTES[a.gate]||null;
+ var base=DD.ROUTES[a.gate];
+ /* Same rule as the deck's routeFor: a runway on the strip wins over the
+    Table 2 default (LOA 5.b(b)), so the preview draws the track the drill will
+    actually fly rather than the one Table 2 would have assigned. Issue #55 —
+    these two answered differently, which is what made it look like a redraw
+    problem rather than a lookup one. */
+ if(base && a.rwy){
+  var lad=DD.ladderFor(DD.routeCfg(), a.gate, a.rwy);
+  if(lad && lad!==base.src) return DD.materialize(lad);
+ }
+ return base||null;
 }
 function startDistFor(a, r){
  var role=roleOf(a);

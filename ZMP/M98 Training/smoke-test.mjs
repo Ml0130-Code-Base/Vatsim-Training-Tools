@@ -1763,6 +1763,95 @@ try {
     globalThis.DD.sim.ac[1].alt > 5000 && globalThis.DD.sim.ac[0].alt === 5000,
     globalThis.DD.sim.ac[1].alt + '/' + globalThis.DD.sim.ac[0].alt);
 
+  /* ============ 4a-r. The runway on the strip decides the track — issue #55 ===
+     ZMP-M98 LOA 5.b(b): "ZMP 'Descend Via' phraseology must include a runway
+     transition. ZMP will NORMALLY assign runway transitions as depicted in
+     Table 2." NORMALLY — so Table 2 is the default and not a constraint, and an
+     aircraft can arrive on any transition its gate publishes. Four things were
+     wrong, all of them the flow work of 2026-09-04 not reaching a caller. */
+  {
+    const endOf = r => r ? r[r.length - 1].f : null;
+
+    /* 1. THE ROUTE LOOKUP. A runway on the strip beats the Table 2 default. */
+    globalThis.DD.setFlow('30');
+    assert('Table 2 gives TORGY 30L on a 30s, and that is what an unassigned strip flies',
+      globalThis.DD.transitionFor('30', 'TORGY') === '30L'
+      && endOf(globalThis.DD.routeFor({gate: 'TORGY'})) === 'LEDRZ',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY'})));
+    assert('and a strip GIVEN 30R flies the 30R ladder instead',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY', rwy: '30R'})) === 'OSMOH',
+      endOf(globalThis.DD.routeFor({gate: 'TORGY', rwy: '30R'})));
+    assert('an aircraft built with that runway is on it from the first tick',
+      endOf(globalThis.DD.mkAc({cs:'R1', type:'B738', gate:'TORGY', rwy:'30R',
+        alt:11000, ias:250, dtgEnd:20}).route) === 'OSMOH');
+    assert('the shared ROUTES object is not mutated for one strip',
+      endOf(globalThis.DD.ROUTES.TORGY) === 'LEDRZ');
+
+    /* 2. THE RECEIVER. Near and far go to DIFFERENT KINDS OF POSITION — 4-5
+       sends near to an Arrival and far to that side's Feeder — so resolving
+       the class against the wrong flow sends the aircraft to the wrong desk. */
+    const rTorgy30R = globalThis.DD.receiverFor(globalThis.DD.mkAc({cs:'R2', gate:'TORGY',
+      rwy:'30R', alt:11000, ias:250, dtgEnd:20}));
+    assert('TORGY to 30R on a 30s is a FAR-gate crossover and goes to a Feeder',
+      rTorgy30R.cross === 'far' && ['H','I'].indexOf(rTorgy30R.pos) >= 0,
+      rTorgy30R.cross + '/' + rTorgy30R.pos);
+    assert('and with no runway assigned the receiver follows Table 2 for the flow, not 12R',
+      globalThis.DD.receiverFor(globalThis.DD.mkAc({cs:'R3', gate:'TORGY',
+        alt:11000, ias:250, dtgEnd:20})).why.indexOf('30L') >= 0,
+      globalThis.DD.receiverFor(globalThis.DD.mkAc({cs:'R4', gate:'TORGY',
+        alt:11000, ias:250, dtgEnd:20})).why);
+    globalThis.DD.setFlow('12');
+    const rTorgy12L = globalThis.DD.receiverFor(globalThis.DD.mkAc({cs:'R5', gate:'TORGY',
+      rwy:'12L', alt:9000, ias:250, dtgEnd:20}));
+    assert('the same gate to 12L on a 12s is NEAR and goes to an Arrival — the class is the flow',
+      rTorgy12L.cross === 'near' && ['N','S'].indexOf(rTorgy12L.pos) >= 0,
+      rTorgy12L.cross + '/' + rTorgy12L.pos);
+
+    /* 3. VALIDATION. The check is the gate's published transitions, not the two
+       RECEIVER keys — which had been refusing every runway but 12L and 12R in
+       every configuration, Table 2's own NITZR 22 on a 17-22 included. */
+    const vRwy = (gate, rwy, cfg) => globalThis.ddb.validate({ name:'r', cfg:cfg,
+      ac:[{cs:'D1', type:'B738', gate:gate, route:routeOn(gate), rwy:rwy, dtg:20,
+           alt:11000, ias:250, mode:'published', ckdIn:true}] });
+    assert('a published transition is accepted in its own flow',
+      vRwy('TORGY','30R','30').errors.filter(e => /transition to/.test(e)).length === 0
+      && vRwy('NITZR','22','17-22').errors.filter(e => /transition to/.test(e)).length === 0);
+    assert('and one the gate does not publish is refused, with the list and its source',
+      /no published transition to 35/.test(vRwy('TORGY','35','30-35').errors.join(' '))
+      && /claude_MSP_STAR_Reference/.test(vRwy('TORGY','35','30-35').errors.join(' ')),
+      vRwy('TORGY','35','30-35').errors.join(' | '));
+
+    /* 4. THE DEVIATION IS A WARNING, NOT AN ERROR, because 5.b(b) says
+       "normally" — and it says which of the two things the strip is. */
+    const dev = vRwy('TORGY','30R','30');
+    assert('a runway other than Table 2 warns rather than blocking, and cites 5.b(b)',
+      dev.errors.filter(e => /transition/.test(e)).length === 0
+      && dev.warnings.some(w => /5\.b\(b\)/.test(w) && /normally/.test(w)),
+      dev.warnings.join(' | ').slice(0, 200));
+    assert('and it names the crossover class the flow actually gives it',
+      dev.warnings.some(w => /far-gate case/.test(w)),
+      dev.warnings.join(' | ').slice(0, 200));
+    assert('while a strip on the Table 2 transition says nothing at all',
+      vRwy('TORGY','30L','30').warnings.every(w => !/Table 2 assigns/.test(w)));
+
+    /* 5. THE SCOPE DRAWS THE LADDER THE AIRCRAFT IS ON, not the Table 2 one. */
+    globalThis.DD.setFlow('30');
+    globalThis.ddLoad('resume10r');
+    globalThis.DD.sim.ac.length = 0;
+    const drawn = globalThis.DD.mkAc({cs:'R6', type:'B738', gate:'TORGY', rwy:'30R',
+      alt:11000, ias:250, dtgEnd:20, ckdIn:true});
+    drawn.onFreq = true;
+    globalThis.DD.sim.ac.push(drawn);
+    globalThis.ddLayers('tracked');
+    const pts = (el('dd-scopebox').innerHTML.match(/<polyline points="([^"]*)" fill="none" stroke="var\(--green\)"/g) || [])
+      .map(m => m.match(/points="([^"]*)"/)[1]);
+    const last = drawn.route[drawn.route.length - 1];
+    assert('the tracked ladder drawn is the one the aircraft is flying',
+      pts.length === 1 && pts[0].split(' ').pop() === last.x.toFixed(1) + ',' + last.y.toFixed(1),
+      pts.length + ' / ' + (pts[0] || '').split(' ').pop());
+    globalThis.DD.setFlow('12');
+  }
+
   /* ============ 4b-v. Vectoring — issue #26 ============
      The first thing in this engine that takes an aircraft OFF its route.
      Position becomes the primary state and the route becomes one of two ways

@@ -127,7 +127,7 @@ Notebook → `tallyFeed`, `draftFromSim`, `bank`, `toMd` (practice-log shape), `
 - The handoff section adds: that **every radar seat is subset 1 and every tower or ground position is subset 2 or 3** (the fact the whole section turns on), that every SOP 2-1 position in `POS_NAME` has a TCP, that a bare letter is used within a subset and a subset digit across one (`N` versus `2Y`), that the four MSP ground positions share one TCP, that **M98 reaches RST on `` `1 `` while RST reaches M98 on `` `2 ``**, and that the four adapted-but-empty TCPs stay empty.
 - The harness splits blocks on `<script>` / `</script>`, so a literal `</script>` inside a block would break both it and the page. Don't write one.
 - **Splice a new block before the LAST `</body>`, not the first.** The Drill Deck's header comment contains the string `</body>`, so a naive `s/<\/body>/.../` inserts the new block *inside* block 1's comment: two `<script>` opens with no close between, the browser silently drops the builder, and the page renders as a deck-only shell with no error. This happened on 2026-09-01 and cost a full debugging cycle — the tell was `document.querySelectorAll('script').length` returning 2 when the file contained 3.
-- **THE HARNESS HAS NOW BEEN EXECUTED — first on 2026-09-07, and it passes. `SMOKE PASS — 452 checks` as of 2026-09-08** (394 at that first run; +13 for the far-gate rule, +21 for the landlines, +24 for vectoring). There is still no Node; it was run through `smoke-test-browser.html` (above), served over the local PowerShell `HttpListener`. Every revision of this file before that date said the suite had never been run, and that was true and worth saying. **It is no longer the caveat to reach for** — name the runner that was used instead.
+- **THE HARNESS HAS NOW BEEN EXECUTED — first on 2026-09-07, and it passes. `SMOKE PASS — 465 checks` as of 2026-09-09** (394 at that first run; +13 for the far-gate rule, +21 for the landlines, +24 for vectoring, +13 for the runway-on-the-strip fixes). There is still no Node; it was run through `smoke-test-browser.html` (above), served over the local PowerShell `HttpListener`. Every revision of this file before that date said the suite had never been run, and that was true and worth saying. **It is no longer the caveat to reach for** — name the runner that was used instead.
 - **The first execution found eight faults in the harness, none of which any amount of reading had caught, and every one of them in material written and reviewed as correct.** The list is recorded because the lesson is the point: **an assertion nobody has run is not a test, it is a comment.** (1) `Object.keys(TABLE2)` never returns source order — `'12'` and `'30'` are integer-index keys and JavaScript enumerates those first, ascending, ahead of every string key, so the six-row assertion read an order that cannot occur. (2) The five scope-layer counts were all off by one, because the RST boundary is a `<polyline>` too and is drawn in every mode including *off*. (3) `state.pos.seat` had become `state.pos.seats` when working two seats at once landed. (4) The readback wording had moved from *"expect one two left"* to *"expect runway one two left"*. (5) `arrivalsFor` grew the five `SAT_DIRECT` routings and the assertion still listed the STARs alone. (6) The unknown-gate message had become *"not an arrival in the reference set"*. (7) The trunk fixture predated the filed-route rule and produced two errors of its own. (8) Two assertions about the `mixed` drill had been orphaned four sections away from it by a block that empties `sim.ac`, so the harness **threw** rather than failing. **Three tool bugs came out of the same run:** the combined seat label was insertion-ordered — `Combined I + D` one time and `D + I` the next, the same two seats with two names, now SOP 2-1 order; a drill with no configuration was told *"Table 2 has no row for the 12 configuration"*, which is false twice over, because `configById` silently falls back to `CONFIGS[0]`; and the `ddLoad` crash below.
 - **The harness now asserts what the scope draws** (issue #16, 2026-09-07), which it did not before: the data block's two lines including **wake after the ground speed**, that every drawn ladder is labelled at its own first fix (**MUSCL reads BAYKS**, because that is where its published ladder starts — the data, not a rendering bug), that the polylines change when `setFlow` changes and match the loaded `ROUTES`, that an uncarried configuration draws no ladder and does not throw, and that the builder preview shares the geometry and draws no wake. Plus the whole of the live re-path and the midnight regime.
 - **Isolation matters in the browser runner and does not in Node.** The deck persists under `localStorage`, the harness writes there through `ddbPreset`, and a second run therefore starts where the first finished — which surfaced as an assertion failing with no visible cause. The runner clears storage before each run and restores it after; it shares an origin with the served tool, so clearing without restoring would delete real drills.
@@ -143,6 +143,42 @@ Notebook → `tallyFeed`, `draftFromSim`, `bank`, `toMd` (practice-log shape), `
 
 Written in the present tense, because this is what the tool does rather than what someone
 intends to do to it. **Open work is in the issue tracker** (root `CLAUDE.md` section 14).
+
+### The runway on the strip decides the track
+
+**ZMP-M98 LOA 5.b(b):** *"ZMP 'Descend Via' phraseology must include a runway transition. ZMP
+will **normally** assign runway transitions as depicted in Table 2."* **Normally** — so Table 2
+is the default and not a constraint. A TORGY landing the 30s is usually 30L and can be given
+30R, and it has to fly the 30R ladder when it is.
+
+The strip's runway therefore beats the Table 2 default everywhere: `routeFor` in the deck and in
+the builder both resolve through `ladderFor` and materialize a per-aircraft route when the
+answer differs, because `ROUTES` is shared and finalized in place. The scope draws **the ladder
+each aircraft is actually on**, keyed by gate *and* runway so two aircraft off one gate on
+different transitions each get their line; `ROUTES` stays what *all STARs* draws.
+
+**Four things were wrong here until 2026-09-09, and all four were the flow work of 2026-09-04
+not reaching a caller** (issue #55):
+
+- **`routeFor` ignored the strip's runway** in both blocks, so a runway assigned *in setup* was
+  drawn on the Table 2 track. The live crossover was already right (#14) — only the starting
+  state was not, which is why it looked like the scope would not redraw.
+- **`receiverFor` hardcoded `12R`** as the default runway, whatever flow was loaded.
+- **`receiverFor` resolved the crossover class against the 12s**, whatever flow was loaded. That
+  one is worse than a wrong label: **near and far go to different kinds of position** — 4-5
+  sends a near-gate crossover to an Arrival and a far-gate one to that side's **Feeder** — so a
+  TORGY to 30R on a 30s came back *near* and was handed to South Arrival when it is a Feeder
+  handoff with communications by 15 NM.
+- **The builder validated the runway against `RWYS`**, which is `Object.keys(RECEIVER)` — the
+  two Arrival positions wearing runway keys. It accepted 12L and 12R and refused **every other
+  runway in every other configuration**, Table 2's own NITZR 22 on a 17-22 included. The check
+  is now the gate's published transitions, from `LADDER`.
+
+A runway other than the Table 2 one is a **warning, not an error**, because 5.b(b) says
+*normally* — and the warning says which of the two things the strip is: an aircraft ZMP handed
+over already on that transition, or a crossover the trainee is making. It names the class the
+**loaded flow** gives it and the coordination that attaches (4-5a near, 4-5b far), or says
+plainly that none does.
 
 ### Vectoring, and the one thing it deliberately cannot do
 

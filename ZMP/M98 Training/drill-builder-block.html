@@ -1355,7 +1355,17 @@ function validate(rec){
   var loSpd = (role==='overflight') ? 60 : 150;
   if(!(a.ias>=loSpd && a.ias<=350)) errs.push(tag+': speed must be between '+loSpd+' and 350 knots'+(role==='overflight'?' — a transiting light single sits around 110.':'.'));
   if(a.mode==='assigned' && !(a.asg>=170 && a.asg<=340)) errs.push(tag+': assigned speed must be between 170 and 340 knots.');
-  if(role==='arrival' && a.rwy && RWYS.indexOf(a.rwy)<0) errs.push(tag+': '+a.rwy+' is not a runway in the receiver table ('+RWYS.join(', ')+').');
+  /* A RUNWAY IS VALID IF THE GATE HAS A PUBLISHED TRANSITION TO IT. This used
+     to check RWYS, which is Object.keys(RECEIVER) — the two Arrival positions
+     wearing runway keys — so the builder accepted 12L and 12R and refused
+     every other runway in every other configuration. A 30s strip on 30R was
+     refused, and so was Table 2's own NITZR 22 on a 17-22. Issue #55.
+     The list comes from claude_MSP_STAR_Reference.md via LADDER, which is
+     where the published transitions actually live. */
+  if(role==='arrival' && a.rwy && !DD.SAT_DIRECT[a.gate] && DD.LADDER[a.gate]
+     && !DD.LADDER[a.gate][a.rwy]){
+   errs.push(tag+': '+a.gate+' has no published transition to '+a.rwy+'. The transitions it does publish are '+Object.keys(DD.LADDER[a.gate]).join(', ')+' (claude_MSP_STAR_Reference.md).');
+  }
   if(!a.ckdIn && !(a.spawnAt>=0)) errs.push(tag+': check-in time must be zero or more seconds.');
   if(role==='arrival' && a.alt>=18000 && a.dtg<15) warns.push(tag+': '+DD.fmtAlt(a.alt)+' with '+a.dtg.toFixed(1)+' NM to run — the engine descends about 1,800 feet a minute, so this one cannot make its floor. Deliberate, or a typo?');
  });
@@ -1478,6 +1488,26 @@ function validate(rec){
    warns.push(tag2+' is VFR and the field is '+category(rec.ceil, rec.vis)+'. '+TOOLBOX[category(rec.ceil, rec.vis)]+' Check that this one still works in these conditions.');
   var wk=DD.wakeOf(a.type);
   if(roleOf(a)==='arrival' && wk.heavy && a.rwy && a.rwy!=='12R') errs.push((a.cs||'A heavy')+' is a '+wk.label+' ('+a.type+') assigned '+a.rwy+' — heavy jets take the 12R/30L transition in every configuration (ZMP-M98 LOA Table 2c).');
+  /* A RUNWAY OTHER THAN THE TABLE 2 ONE IS LEGAL, AND IT IS WORTH SAYING WHY.
+     LOA 5.b(b): "ZMP 'Descend Via' phraseology must include a runway
+     transition. ZMP will NORMALLY assign runway transitions as depicted in
+     Table 2." Normally — so Table 2 is the default, not a constraint, and a
+     TORGY landing the 30s is usually 30L and can be given 30R. This is a
+     warning rather than an error for exactly that reason, and it names which
+     of the two things the strip is: an aircraft ZMP handed over already on
+     that transition, or a crossover the trainee is making. Issue #55. */
+  if(roleOf(a)==='arrival' && a.rwy && !DD.SAT_DIRECT[a.gate]){
+   var t2 = DD.transitionFor(rec.cfg, a.gate);
+   if(t2 && t2 !== a.rwy){
+    var xk = DD.crossoverFor(a.gate, a.rwy, rec.cfg);
+    var how = xk.type==='far'
+      ? 'As a crossover that is the far-gate case: handed to the appropriate Feeder, communication transferred not later than 15 NM from MSP, and inside that ring they have control for turns (SOP 4-5b(1)-(2)).'
+      : (xk.type==='near'
+         ? 'As a crossover that is the near-gate case: 9,000 with a heading aimed at the 25-mile ring, or straight to the Arrival whose airspace it enters first on an OPD (SOP 4-5a).'
+         : (xk.note ? ('And '+xk.note+'.') : 'It does not count as a crossover here, so no 4-5 coordination attaches to it.'));
+    warns.push((a.cs||'A strip')+' is on the '+a.rwy+' transition off '+a.gate+', and ZMP-M98 LOA Table 2 assigns '+t2+' in a '+configById(rec.cfg).id+'. That is legal — 5.b(b) says ZMP will *normally* assign Table 2, not always — but the transition rides in the descend-via ZMP issues, so either it was handed over that way or you are making the change. '+how);
+   }
+  }
   if(wk.cls==='nowgt') warns.push((a.cs||'Strip '+(i+1))+': '+a.type+' is not in the weight table, so it tags NOWGT — 10 NM ahead and behind until the weight is verified. Check the type against the facility CWT reference, or use one the table already knows.');
  });
  if(rec.speci && rec.speci.on){
@@ -2052,7 +2082,17 @@ function routeFor(a){
  var role=roleOf(a);
  if(role==='departure') return DD.DEPS[a.sid]||null;
  if(role==='overflight') return DD.overflightRoute({r:a.entryR,d:a.entryD},{r:a.exitR,d:a.exitD});
- return DD.ROUTES[a.gate]||null;
+ var base=DD.ROUTES[a.gate];
+ /* Same rule as the deck's routeFor: a runway on the strip wins over the
+    Table 2 default (LOA 5.b(b)), so the preview draws the track the drill will
+    actually fly rather than the one Table 2 would have assigned. Issue #55 —
+    these two answered differently, which is what made it look like a redraw
+    problem rather than a lookup one. */
+ if(base && a.rwy){
+  var lad=DD.ladderFor(DD.routeCfg(), a.gate, a.rwy);
+  if(lad && lad!==base.src) return DD.materialize(lad);
+ }
+ return base||null;
 }
 function startDistFor(a, r){
  var role=roleOf(a);
