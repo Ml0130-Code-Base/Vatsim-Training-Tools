@@ -1763,6 +1763,130 @@ try {
     globalThis.DD.sim.ac[1].alt > 5000 && globalThis.DD.sim.ac[0].alt === 5000,
     globalThis.DD.sim.ac[1].alt + '/' + globalThis.DD.sim.ac[0].alt);
 
+  /* ============ 4b-v. Vectoring — issue #26 ============
+     The first thing in this engine that takes an aircraft OFF its route.
+     Position becomes the primary state and the route becomes one of two ways
+     of advancing it; `nav` says which is in force. What this deliberately does
+     NOT do is intercept anything — the final approach course and the threshold
+     are not in the reference set, so the approach clearance is an ask first. */
+  {
+    globalThis.DD.setFlow('12');
+    globalThis.ddLoad('resume10r');
+    const ac = () => globalThis.DD.sim.ac.filter(x => x.cs === 'DAL589')[0];
+
+    assert('an aircraft starts on its route, not on a heading',
+      ac().nav === 'route' && globalThis.DD.onVector(ac()) === false);
+    const startAlt = ac().alt, startDist = ac().dist;
+
+    globalThis.ddSel('DAL589');
+    say('DAL589 turn left heading 310');
+    const a = ac();
+    assert('a vector takes it off the route and seeds the turn from its own track',
+      a.nav === 'heading' && a.hdgTo === 310 && a.turnDir === 'L'
+      && Math.abs(a.hdg - globalThis.DD.trackAt(a)) < 0.001,
+      JSON.stringify({nav:a.nav, hdgTo:a.hdgTo, dir:a.turnDir, hdg:a.hdg}));
+    assert('and the position does not jump when it comes off',
+      a.e != null && a.n != null && Math.abs(a.dist - startDist) < 0.001);
+    mustContain('the readback says the heading digit by digit', 'left heading three one zero');
+    mustContain('and the tool says the descend-via ends with it', 'The descend-via ends with it');
+
+    /* THE TURN IS A STANDARD RATE TURN AND IT GOES THE WAY IT WAS TOLD. */
+    assert('a standard rate turn is three degrees a second',
+      globalThis.DD.TURN_RATE === 3);
+    assert('turnStep goes the short way when no direction is given',
+      globalThis.DD.turnStep(350, 10, null, 1) === 353
+      && globalThis.DD.turnStep(10, 350, null, 1) === 7,
+      globalThis.DD.turnStep(350, 10, null, 1) + '/' + globalThis.DD.turnStep(10, 350, null, 1));
+    assert('and the long way when the direction says so',
+      globalThis.DD.turnStep(10, 350, 'R', 1) === 13
+      && globalThis.DD.turnStep(350, 10, 'L', 1) === 347,
+      globalThis.DD.turnStep(10, 350, 'R', 1) + '/' + globalThis.DD.turnStep(350, 10, 'L', 1));
+    assert('a turn that has arrived stops exactly on the heading',
+      globalThis.DD.turnStep(309, 310, null, 1) === 310);
+
+    /* Fly it. It turns at rate, it moves, and it does NOT descend. */
+    const hdg0 = a.hdg;
+    globalThis.ddRate(1);
+    for (let i = 0; i < 8; i++) tickFn();
+    assert('it turns at the standard rate, in the direction it was given',
+      Math.abs(((((a.hdg - hdg0) + 540) % 360) - 180) - (-24)) < 0.6,
+      hdg0 + ' -> ' + a.hdg);
+    assert('and it is flying, not sitting still',
+      Math.abs(a.e) + Math.abs(a.n) > 0);
+    assert('A VECTORED ARRIVAL HOLDS ITS ALTITUDE — the published crossings belong to the procedure',
+      a.alt === startAlt, startAlt + ' -> ' + a.alt);
+    assert('and no published speed applies off the procedure',
+      globalThis.DD.pubSpeedAt(a) === null);
+    assert('its distance along the ladder is frozen, because it is not on the ladder',
+      Math.abs(a.dist - startDist) < 0.001);
+
+    for (let i = 0; i < 90; i++) tickFn();
+    assert('the turn completes and the direction is released',
+      Math.round(a.hdg) === 310 && a.turnDir === null, a.hdg + '/' + a.turnDir);
+
+    /* "fly present heading" freezes whatever it is making good. */
+    say('DAL589 fly present heading');
+    assert('fly present heading holds what it has',
+      a.hdgTo === a.hdg, a.hdgTo + '/' + a.hdg);
+    mustContain('and reads back as itself', 'fly present heading');
+
+    /* The strip stops quoting a distance along a route it is not flying. */
+    globalThis.ddSel('DAL589');
+    assert('the strip says it is vectored and gives the heading and the DME',
+      /vectored off/.test(el('dd-strips').innerHTML)
+      && /heading 310/.test(el('dd-strips').innerHTML)
+      && !/NM to go/.test(el('dd-strips').innerHTML.split('SCX8127')[0]),
+      el('dd-strips').innerHTML.replace(/<[^>]*>/g, ' ').slice(0, 200));
+
+    /* A nonsense heading is refused rather than flown. */
+    const wasTo = a.hdgTo;
+    say('DAL589 turn right heading 420');
+    assert('a heading outside 001-360 is refused and the aircraft keeps what it had',
+      a.hdgTo === wasTo, a.hdgTo + '/' + wasTo);
+
+    /* THE BOUNDARY. Vectoring is the first thing that can put an aircraft
+       outside M98, so the ring became a containment test rather than a
+       drawing — and one ray cast now serves both it and the dispersal area. */
+    assert('the M98 ring contains the field and not a point well outside it',
+      globalThis.DD.inM98(0, 0) === true && globalThis.DD.inM98(0, 80) === false);
+    assert('and the shared ray cast still answers for the dispersal area',
+      typeof globalThis.DD.inPoly === 'function');
+    const far = ac();
+    far.e = 0; far.n = 70; far.outNoted = false; far.hdg = 0; far.hdgTo = 0;
+    tickFn();
+    assert('an aircraft vectored out of M98 is called, once, and named as critical',
+      far.outNoted === true && feedText().indexOf('vectored outside the M98 boundary') >= 0,
+      feedText().slice(-200));
+
+    /* THE ROUTE-FIX CHECKS DO NOT FIRE FOR AN AIRCRAFT THAT LEFT THE ROUTE.
+       The SAVVG default assigns 12R to anything that crosses it with no runway
+       — off the ladder there is no crossing to observe, and firing anyway
+       would put a runway on a strip on the strength of a fix it never passed. */
+    globalThis.ddLoad('resume10r');
+    const sv = globalThis.DD.sim.ac.filter(x => x.cs === 'DAL589')[0];
+    sv.rwy = null; sv.savvgWarned = false;
+    const savvgCum = sv.route.filter(p => p.f === 'SAVVG')[0].cum;
+    globalThis.ddSel('DAL589');
+    say('DAL589 fly heading 270');
+    sv.dist = savvgCum + 2;          /* past it on the ladder, but not on the ladder */
+    const feedWas = globalThis.DD.sim.feed.length;
+    globalThis.ddRate(1);
+    for (let i = 0; i < 5; i++) tickFn();
+    assert('a vectored aircraft does not trip the SAVVG runway default',
+      sv.savvgWarned === false && sv.rwy === null
+      && !globalThis.DD.sim.feed.slice(0, globalThis.DD.sim.feed.length - feedWas)
+            .some(e => /crossed SAVVG/.test(String(e.html))),
+      sv.rwy + '/' + sv.savvgWarned);
+    /* and it still does when the aircraft is on the ladder */
+    globalThis.ddLoad('resume10r');
+    const sv2 = globalThis.DD.sim.ac.filter(x => x.cs === 'DAL589')[0];
+    sv2.rwy = null; sv2.savvgWarned = false; sv2.dist = savvgCum + 2;
+    globalThis.ddRate(1); tickFn();
+    assert('and on the ladder it still does, so the guard did not just disable it',
+      sv2.savvgWarned === true && sv2.rwy === '12R', sv2.rwy + '/' + sv2.savvgWarned);
+    globalThis.DD.setFlow('12');
+  }
+
   /* ============ 4c. Scripted landline events — issue #25 ============
      Every catalogue entry is a paragraph of M98 7110.26A Chapter 3, and the
      distinction the catalogue exists to teach is 3-2's own: a P-ACP is look

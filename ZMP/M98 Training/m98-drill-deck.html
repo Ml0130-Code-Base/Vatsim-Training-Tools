@@ -1126,10 +1126,10 @@ function ddaFor(cfg){
 }
 /* Point in the dispersal area, worked in MSP-relative nautical miles so it
    uses the same frame as posOf and the route data. */
-function inDDA(e, n, cfg){
- var a=ddaFor(cfg); if(!a) return false;
- var pts=a.poly.map(function(p){ var r=p[0]*Math.PI/180;
-  return [p[1]*Math.sin(r), p[1]*Math.cos(r)]; });
+/* Ray cast, on MSP-relative NM. Lifted out of inDDA when the boundary needed
+   the same test — one copy rather than two that can drift apart. `pts` are
+   [e, n] pairs; rdPts converts a radial/DME list into them. */
+function inPoly(e, n, pts){
  var inside=false;
  for(var i=0,j=pts.length-1;i<pts.length;j=i++){
   var xi=pts[i][0], yi=pts[i][1], xj=pts[j][0], yj=pts[j][1];
@@ -1137,6 +1137,16 @@ function inDDA(e, n, cfg){
  }
  return inside;
 }
+function rdPts(list){ return list.map(function(p){ var r=p[0]*Math.PI/180;
+ return [p[1]*Math.sin(r), p[1]*Math.cos(r)]; }); }
+function inDDA(e, n, cfg){
+ var a=ddaFor(cfg); if(!a) return false;
+ return inPoly(e, n, rdPts(a.poly));
+}
+/* Inside the M98 lateral ring — the nine owner-verified radial/DME points in
+   claude_M98_Airspace_Boundary.md. Only meaningful once an aircraft can leave
+   its published track, which is what vectoring made possible. */
+function inM98(e, n){ return inPoly(e, n, rdPts(BOUNDARY)); }
 
 /* Where each departure gate ultimately runs, from the SID reference's gate
    table. Used to finish a route string past the join fixes M98 works. */
@@ -1455,12 +1465,72 @@ function mkAc(o){
   ckdIn:!!o.ckdIn, altim:!!o.altim, itemsClock:o.ckdIn?0:null,
   flashed:null, switched:false, alive:true, spawned:o.spawnAt||0,
   farChecked:false,
+  /* Vectoring state. `nav` is 'route' until something takes it off one;
+     e and n are only authoritative once it has. */
+  nav:'route', e:null, n:null, hdg:null, hdgTo:null, turnDir:null,
+  vecNoted:false, outNoted:false,
   onFreq:!!o.ckdIn, capNoted:false, savvgWarned:false, hoWarned:false
  };
  return a;
 }
 function segOf(a){ var r=a.route; for(var i=1;i<r.length;i++){ if(a.dist<=r[i].cum) return i; } return r.length-1; }
+/* ---------- Vectoring — issue #26 ----------
+   EVERY AIRCRAFT IN THIS ENGINE HAS FLOWN ON RAILS since it was written: a
+   route array and a distance along it, with position derived from the two. A
+   vector is the first thing that takes an aircraft OFF its route, so position
+   becomes the primary state and the route becomes one of two ways of
+   advancing it. `nav` says which is in force.
+
+   That inversion is the whole change. Nothing else about the engine moves:
+   the route is still there, still drawn, still the thing the aircraft came in
+   on — it is simply no longer what decides where the aircraft is.
+
+   WHAT THIS DELIBERATELY DOES NOT DO IS INTERCEPT ANYTHING. Turning an
+   aircraft onto a final needs the final approach course and the threshold
+   position, and NEITHER IS IN THE REFERENCE SET: the documents carry rules
+   ABOUT the final — intercept under 30 degrees when able, a 4-mile final on
+   the always-on 30s, joins at or outside a 2-mile final inside the FAF,
+   control at the FAF with comms at 6 to 8 miles — and never the course itself.
+   Deriving one from the last leg of a published transition would be a guess
+   wearing a citation. So the approach clearance is the next unit of work and
+   it is an ask first (root CLAUDE.md invariant 1).
+
+   NO WIND MODEL, so heading and track are the same number here, and the tool
+   says so rather than implying a crab it does not compute. */
+var TURN_RATE = 3;   /* degrees per second — a standard rate turn */
+function pxEN(e, n){ return {x:CX+e*SC, y:CY-n*SC, e:e, n:n}; }
+/* The track the aircraft is making good along its route, which is what a
+   vector has to start from — "fly present heading" means this number. */
+function trackAt(a){
+ var r=a.route; if(!r || r.length<2) return 0;
+ var i=segOf(a);
+ return (Math.atan2(r[i].e-r[i-1].e, r[i].n-r[i-1].n)*180/Math.PI+360)%360;
+}
+/* Turn toward `want`, the short way unless a direction was given. */
+function turnStep(cur, want, dir, dt){
+ var d=((want-cur+540)%360)-180;
+ if(dir==='L' && d>0) d-=360;
+ if(dir==='R' && d<0) d+=360;
+ var max=TURN_RATE*dt;
+ if(Math.abs(d)<=max) return want;
+ return (cur+(d>0?max:-max)+360)%360;
+}
+/* Take an aircraft off its route onto a heading. The first vector seeds the
+   position and the heading from wherever it is on the ladder, so the target
+   does not jump — the same rule the re-path uses (issue #14). */
+function beginVector(a, want, dir){
+ if(a.nav!=='heading'){
+  var p=posOf(a);
+  a.e=p.e; a.n=p.n; a.hdg=trackAt(a); a.nav='heading';
+ }
+ a.hdgTo=(want==null? a.hdg : ((want%360)+360)%360);
+ a.turnDir=dir||null;
+ return a;
+}
+function onVector(a){ return a.nav==='heading'; }
 function posOf(a){
+ /* Off the route, position IS the state — nothing to interpolate. */
+ if(a.nav==='heading') return pxEN(a.e, a.n);
  var r=a.route, i=segOf(a);
  var d0=r[i-1].cum, d1=r[i].cum, f=(d1===d0)?0:(a.dist-d0)/(d1-d0);
  return {x:r[i-1].x+(r[i].x-r[i-1].x)*f, y:r[i-1].y+(r[i].y-r[i-1].y)*f,
@@ -1571,6 +1641,8 @@ function repathAll(cfg){
 '<span class="dd-chip flag">flag</span>ZMP-M98 LOA Table 2 has no row for <b>'+cfg+'</b> at '+held.join(', ')+', so there is no published transition to re-path onto. '+(held.length===1?'It keeps the track it was':'They keep the track they were')+' on, and the tool will not borrow another flow&rsquo;s geometry.');
 }
 function pubSpeedAt(a){
+ /* Same reasoning as the descent: a published speed is part of the procedure. */
+ if(a.nav==='heading') return null;
  var r=a.route, sp=null;
  for(var i=0;i<r.length;i++){ if(r[i].cum<=a.dist && r[i].spd) sp=r[i].spd; }
  /* upcoming restriction also binds descend-via speed planning: use next published if slower */
@@ -1649,6 +1721,12 @@ function nextAltTarget(a){
     they hold what they have until you give them something, which is the point.
     A VFR aircraft is not on the STAR at all, whatever gate it came from. */
  if(a.role!=='arrival' || a.rules==='VFR') return (a.hardAlt!=null) ? a.hardAlt : a.alt;
+ /* VECTORED OFF THE ARRIVAL, THE DESCEND-VIA IS OVER. The published crossings
+    belong to the procedure, and the aircraft is not on it any more — so it
+    holds what it was last assigned until it is given something, exactly like a
+    departure. Continuing to fly the ladder's altitudes off the ladder would be
+    the engine asserting a clearance nobody issued. */
+ if(a.nav==='heading') return (a.hardAlt!=null) ? a.hardAlt : a.alt;
  var r=a.route;
  for(var i=0;i<r.length;i++){
   if(r[i].cum>=a.dist-0.05){
@@ -1689,7 +1767,26 @@ function tick(dt){
   else if(a.alt<at && a.role!=='arrival') a.alt=Math.min(at, a.alt+33*dt);   /* ~2,000 fpm up */
   /* movement */
   var gs=a.ias*(1+0.02*(a.alt/1000));
-  a.dist=Math.min(a.route.total, a.dist+gs/3600*dt);
+  if(a.nav==='heading'){
+   /* turn first, then run — close enough at one-second ticks, and it keeps
+      the track continuous through the turn rather than stepping across it */
+   if(a.hdgTo!=null && a.hdg!==a.hdgTo){
+    a.hdg=turnStep(a.hdg, a.hdgTo, a.turnDir, dt);
+    if(a.hdg===a.hdgTo) a.turnDir=null;
+   }
+   var rad=a.hdg*Math.PI/180, run=gs/3600*dt;
+   a.e+=run*Math.sin(rad); a.n+=run*Math.cos(rad);
+   /* An aircraft vectored out of M98 is a real event and the engine says it
+      once. It does not stop flying — it is not the tool's place to take it
+      back — but somebody else owns that airspace now. */
+   if(!a.outNoted && !inM98(a.e, a.n)){
+    a.outNoted=true;
+    var nbo=neighbourAt((Math.atan2(a.e,a.n)*180/Math.PI+360)%360, a.alt);
+    log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> has been vectored outside the M98 boundary on heading '+Math.round(a.hdg)+' at '+fmtAlt(a.alt)+'. That is '+((nbo&&nbo.name)||'the neighbouring facility')+'’s airspace and nobody has coordinated it.', 'posthandoff');
+   }
+  } else {
+   a.dist=Math.min(a.route.total, a.dist+gs/3600*dt);
+  }
   /* departures: the release to Center, ZMP-M98 LOA 4.c */
   if(a.role==='departure' && !a.relChecked){
    var dme=dmeOf(a);
@@ -1730,7 +1827,7 @@ function tick(dt){
    }
   }
   /* SAVVG runway-window check */
-  var savvg=a.route.find(function(p){return p.f==='SAVVG';});
+  var savvg=(a.nav==='heading')?null:a.route.find(function(p){return p.f==='SAVVG';});
   if(savvg && !a.rwy && !a.savvgWarned && a.dist>=savvg.cum){
    a.savvgWarned=true; a.rwy='12R'; a.rwyAuto=true;
    log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> crossed SAVVG with no runway assigned — Table 2 default 12R applied for you. The 12L option died at the split.');
@@ -1740,14 +1837,17 @@ function tick(dt){
    if(a.itemsClock>90 && (!a.altim||!a.rwy)){ a.itemsClock=null;
     log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> checked on 90 seconds ago — still owed '+(!a.altim?'altimeter':'')+((!a.altim&&!a.rwy)?' + ':'')+(!a.rwy?'runway':'')+'.'); } }
   /* GREAK delivery-spec check */
-  var greak=a.route.find(function(p){return p.f==='GREAK';});
+  var greak=(a.nav==='heading')?null:a.route.find(function(p){return p.f==='GREAK';});
   if(greak && !a.greakChecked && a.dist>=greak.cum){
    a.greakChecked=true;
    if(a.ias>240) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> crossed GREAK at '+Math.round(a.ias)+' kt — the ladder promises Arrival 230 there. Assigned speeds override published until you restore them.', 'speed');
    else log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> crossed GREAK at 230 — delivery spec intact.', 'speed');
   }
-  /* route end — handoff outcome */
-  if(a.dist>=a.route.total-0.05){
+  /* Route end — handoff outcome. A vectored aircraft has no route end to
+     reach: a.dist stops advancing the moment it comes off the ladder, so this
+     is guarded rather than left to depend on that. What ends a vectored
+     aircraft is leaving the boundary, which is flagged where it happens. */
+  if(a.nav!=='heading' && a.dist>=a.route.total-0.05){
    a.alive=false;
    var rec=receiverFor(a);
    var where = a.role==='arrival' ? 'off the end of the tail'
@@ -1852,6 +1952,9 @@ function checkIn(a){
 /* Spoken digits — zero is always "zero" and nine is always "niner"
    (claude_US_Carrier_Callsigns.md). */
 var SAY_DIGIT=['zero','one','two','three','four','five','six','seven','eight','niner'];
+/* A heading is read digit by digit and always as three of them, so 090 is
+   "zero niner zero" — claude_US_Carrier_Callsigns.md, and zero is never "oh". */
+function sayHdg(h){ return ('00'+h).slice(-3).split('').map(function(c){ return SAY_DIGIT[+c]; }).join(' '); }
 /* Runway designators are spoken out, never read as a number —
    claude_SID_TTS_Voicing.md. */
 function sayRunway(r){
@@ -1947,6 +2050,50 @@ function transmit(){
    a.flashed=null;
   }
 
+ }
+ /* VECTORS — issue #26. "turn left heading 310", "turn right heading 090",
+    "fly heading 310", "fly present heading". Three digits or three spoken
+    digits, the same way a runway is read; a bare two-digit number is NOT
+    taken as a heading, because "descend and maintain 80" would become one.
+    The clause is cut out of the text before anything else runs, so a heading
+    can share a transmission with an altitude and a speed like everything
+    else in this parser. */
+ var mHdg=null, mDir=null, mPresent=false;
+ {
+  var hTxt=t;
+  var dirM=hTxt.match(/\bturn\s+(left|right)\b/);
+  if(dirM) mDir=(dirM[1]==='left'?'L':'R');
+  if(/\b(fly|maintain|present)\s+present\s+heading\b/.test(hTxt) || /\bfly\s+present\s+heading\b/.test(hTxt)){
+   mPresent=true;
+  } else {
+   var hd=hTxt.match(/\bhead(?:ing)?\s+(\d{3})\b/);
+   if(hd) mHdg=parseInt(hd[1],10);
+   else {
+    /* spoken: "heading three one zero" */
+    var sp=hTxt.match(/\bhead(?:ing)?\s+((?:zero|one|two|three|four|five|six|seven|eight|niner|nine)(?:[ -]+(?:zero|one|two|three|four|five|six|seven|eight|niner|nine)){2})\b/);
+    if(sp){
+     var digits={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,niner:9};
+     var v=sp[1].split(/[ -]+/).map(function(w){ return digits[w]; });
+     if(v.every(function(d){ return d!=null; })) mHdg=v[0]*100+v[1]*10+v[2];
+    }
+   }
+  }
+ }
+ if(mPresent || mHdg!=null){
+  acted=true; control=true;
+  if(mHdg!=null && (mHdg<1 || mHdg>360)){
+   log('flag','<span class="dd-chip flag">flag</span>'+mHdg+' is not a heading. The crew reads back what you said and asks again.');
+  } else {
+   var wasNav=a.nav;
+   beginVector(a, mPresent?null:mHdg, mDir);
+   acks.push(mPresent
+     ? 'fly present heading'
+     : ((mDir==='L'?'left ':(mDir==='R'?'right ':''))+'heading '+sayHdg(a.hdgTo)));
+   if(wasNav!=='heading' && !a.vecNoted && a.role==='arrival'){
+    a.vecNoted=true;
+    log('info','<span class="dd-chip info">vector</span><b>'+a.cs+'</b> comes off the '+a.gate+' arrival on a vector. <b>The descend-via ends with it</b> — the published crossings belong to the procedure and it is not on it any more, so it holds '+fmtAlt(a.alt)+' until you give it something. Published speeds stop applying for the same reason. The engine models no wind, so heading and track are the same number here.');
+   }
+  }
  }
  /* altimeter — any setting, checked against the one the drill is running */
  var givenAltim=altimIn(t);
@@ -2262,6 +2409,13 @@ function scopeSvg(){
  sim.ac.forEach(function(a){
   if(!a.onFreq && sim.t<a.spawned) return;
   var p=posOf(a);
+  /* A vectored target gets a short line ahead of it on the heading it is
+     flying — off the ladder there is no drawn track to read the direction
+     from, and a bare square tells you nothing about where it is going. */
+  if(a.nav==='heading' && a.alive && LAYERS!=='off'){
+   var vr=a.hdg*Math.PI/180, vl=6*SC;
+   s+='<line x1="'+p.x.toFixed(1)+'" y1="'+p.y.toFixed(1)+'" x2="'+(p.x+vl*Math.sin(vr)).toFixed(1)+'" y2="'+(p.y-vl*Math.cos(vr)).toFixed(1)+'" stroke="var(--amber)" stroke-width="1" opacity="0.6"/>';
+  }
   var col = a.alive? (a===selAc()?'var(--amber)':'var(--ink)') : 'var(--dim2)';
   s+='<rect x="'+(p.x-4.5).toFixed(1)+'" y="'+(p.y-4.5).toFixed(1)+'" width="9" height="9" fill="'+(a.alive?'var(--green)':'var(--dim2)')+'" stroke="'+col+'" stroke-width="1"/>';
   /* Data block. STARS FDB layout, claude_CRC_Platform_Reference.md "Data
@@ -2332,6 +2486,18 @@ function stripHtml(a){
   if(a.onFreq&&!a.altim) warn.push('altimeter');
   if(a.onFreq&&!a.rwy) warn.push('runway');
   if(a.alive&&(a.route.total-a.dist)<10&&!a.flashed) warn.push('flash');
+ }
+ /* ON A VECTOR THE JOB LINE STOPS QUOTING THE LADDER. "18 NM to go" is a
+    distance along a route the aircraft is no longer flying, and leaving it
+    there is the strip asserting something untrue. The heading replaces it,
+    with the turn shown while it is still turning. */
+ if(a.nav==='heading'){
+  var turning=(a.hdgTo!=null && Math.abs(((a.hdgTo-a.hdg+540)%360)-180)>0.5);
+  job = a.gate ? (a.gate+' — vectored off') : (job.split(' · ')[0]+' — vectored');
+  job += ' · heading '+Math.round(a.hdg)
+      + (turning ? (' turning '+(a.turnDir==='L'?'left':(a.turnDir==='R'?'right':''))+' to '+a.hdgTo) : '')
+      + ' · '+Math.round(dmeOf(a))+' DME';
+  if(a.alive && a.role==='arrival' && !a.rwy) warn.push('runway');
  }
  return '<div class="dd-strip '+(a.cs===sim.sel?'sel':'')+' '+(a.alive?'':'gone')+'" onclick="ddSel(\''+a.cs+'\')">'
   +'<b>'+a.cs+'</b> '+a.type+((a.wk && a.wk.cls!=='large')?(' \u2014 '+a.wk.label):'')
@@ -2550,7 +2716,9 @@ window.DD = {
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
- DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER, receiverFor:receiverFor, dmeOf:dmeOf,
+ DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
+ TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
+ turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
  FEEDER_POS:FEEDER_POS, NEAR_GATES:NEAR_GATES, HANDOFF_ALT:HANDOFF_ALT,
  AIRPORTS:AIRPORTS, airportOf:airportOf, runwaysAt:runwaysAt, initAltAt:initAltAt,
