@@ -427,7 +427,7 @@ is assumed unless `/v/` appears in remarks.
 
 ---
 
-## 5. Two findings that change our roadmap
+## 5. Three findings that reframe the standing blocker
 
 ### 5.1 Geometry: the maps are GeoJSON, and every ARTCC holds them
 
@@ -489,7 +489,7 @@ The Data Admin **Training** page configures scenarios and airports for vNAS trai
 > engine. That would make the geometry problem largely someone else's, and it would put the
 > grading where it belongs — on the coach, not on a hand-built traffic model.
 >
-> Recording this as an option, not a plan. It is a roadmap conversation for the owner.
+> Recording this as an option, not a plan. The decision is **issue #53**.
 
 ### 5.3 Restrictions: a ready-made schema for our LOA data
 
@@ -508,7 +508,7 @@ coordination is required and the coordinated items."
 
 > **For our tools:** this is a national schema for the thing our LOA references transcribe by
 > hand, and adopting its field names would make our LOA data directly comparable to what the
-> facility publishes. The R90 STAR-gap heading bands, the arrival delivery altitudes and the
+> facility publishes — **issue #54**. The R90 STAR-gap heading bands, the arrival delivery altitudes and the
 > flow-dependent exceptions all fit it without distortion. The presence of an explicit **AIT**
 > note type is also independent confirmation that ZMP's emphasis on AIT is the platform's, not
 > just the order's.
