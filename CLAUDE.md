@@ -775,11 +775,23 @@ reading it cold a week later: what changed, which files, which commits, what is 
 Cite the document and paragraph for any aviation number, exactly as the commit message does
 (invariant 1).
 
-**Do not close issues** — that is the owner's call. Say plainly in the comment whether the
-issue is finished, partly done, or blocked, and on what. **The exception is a sweep the owner
-asks for** — the tracker was reconciled against the files that way on 2026-09-08. In a sweep,
-close only what is demonstrably done, put the evidence in a comment first (the commits, the
-files, the dates), and name every closed issue in the report.
+**Who closes an issue follows from who opened it.** Owner rule, 2026-09-08.
+
+- **An issue the owner wrote stays the owner's to close**, even once the work that satisfies it
+  has landed. Comment saying plainly whether it is finished, partly done, or blocked and on
+  what, and leave it open. #10 and #12 are why the line sits here: both already behaved the way
+  they asked, and had since the initial push, so whether that is what the owner *meant* is not a
+  call this side gets to make.
+- **An issue written from this side closes from this side**, once the work has landed or the
+  thing has been dealt with. It was filed here because a work item does not belong in a file;
+  leaving it open after the work lands just moves the staleness somewhere else.
+- **Working on a question does not close it.** An issue that asks the owner or a facility
+  something — #44, #47, #49, #52, #53 — is closed by the answer arriving, whoever filed it. The
+  same holds for a decision: #53 closes when it is decided, not when it is discussed.
+- **The evidence goes in a comment before the close, every time**: the commits, the files, the
+  dates, and what is left over. A closed issue with no comment is a work item that vanished.
+- **A sweep the owner asks for** may close anything, on that same evidence rule — which is how
+  the tracker was reconciled against the files on 2026-09-08.
 
 **An issue is not a commit boundary; the ARTCC still is.** #7 asks for IFP-sourced SID and STAR
 data and names #1 through #5, which reach into `ZAU/`, `ZLC/` and `ZMP/`. That is three
