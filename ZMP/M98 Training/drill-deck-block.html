@@ -66,6 +66,61 @@ var COSL = Math.cos(44.5*Math.PI/180);
 var CX=350, CY=255, SC=4.5;                        /* px center + px per NM */
 function nmOf(lat,lon){ return {e:(lon-MSP0.lon)*60*COSL, n:(lat-MSP0.lat)*60}; }
 function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
+
+/* ---------- MSP runway ends — CIFP 260903, ARINC 424 PG and PI records ----------
+   Landing threshold position, runway bearing, and where an ILS exists the
+   LOCALIZER COURSE. Decoded 2026-09-21 from FAACIFP18: the PG (airport runway)
+   record gives lat/lon, bearing, length, threshold elevation, displaced
+   threshold and width; the PI (localizer) record gives ident, frequency,
+   course and ILS category, keyed on its own runway field.
+
+   WHY THIS IS HERE. Issue #26 recorded that an approach clearance needs the
+   final approach course and the threshold position, that "the documents carry
+   rules ABOUT the final and never the final itself", and that deriving a
+   course from the last leg of a published transition "would be a guess wearing
+   a citation". That was true of the facility orders and it is not true of
+   CIFP, which was not checked for runway records at the time. Both numbers are
+   now cited rather than derived.
+
+   MAGNETIC AND TRUE COINCIDE AT MSP, so nothing has to be converted: the KMSP
+   airport record carries magnetic variation E0000 — exactly zero. Bearings and
+   localizer courses below are as published, and the deck's headings can be read
+   against them directly. That is a property of this field in this cycle, not a
+   general licence: it must be re-checked when the cycle rolls.
+
+   The bearing and the localizer course are NOT the same number and both are
+   kept. 17 is a 170 runway on a 169.5 localizer, 35 a 350 on a 349.5, and the
+   30s and 12s are 301.0/301.4 and 121.0/121.3. Use locCrs for an ILS and brg
+   for a visual.
+
+   `cat` is the ILS category off the PI record: 0 = CAT I, 1 = II, 2 = II, 3 =
+   III as coded. `dthr` is the displaced threshold in feet — 4, 22 and 30R have
+   one, and the lat/lon above is the LANDING threshold, which is where the
+   displacement has already been applied. */
+var RWY_SRC = 'CIFP 260903 \u2014 ARINC 424 PG and PI records, decoded 2026-09-21';
+var RUNWAYS = {
+ '04':{lat:44.87527, lon:-93.23409, brg:45.0, len:11006, elev:832, dthr:1550, wid:150, loc:'I-APL', locFrq:109.30, locCrs:45.0, cat:0},
+ '12L':{lat:44.89295, lon:-93.22099, brg:121.0, len:8200, elev:839, dthr:0, wid:150, loc:'I-PJL', locFrq:110.70, locCrs:121.3, cat:3},
+ '12R':{lat:44.88779, lon:-93.23413, brg:121.0, len:10000, elev:842, dthr:0, wid:200, loc:'I-HKZ', locFrq:110.30, locCrs:121.3, cat:3},
+ '17':{lat:44.88775, lon:-93.24225, brg:170.0, len:8000, elev:840, dthr:0, wid:150, loc:'I-TJZ', locFrq:110.95, locCrs:169.5, cat:0},
+ '22':{lat:44.89167, lon:-93.21102, brg:225.0, len:11006, elev:828, dthr:1000, wid:150, loc:'I-SIJ', locFrq:110.50, locCrs:225.0, cat:0},
+ '30L':{lat:44.87352, lon:-93.20119, brg:301.0, len:10000, elev:814, dthr:0, wid:200, loc:'I-MSP', locFrq:110.30, locCrs:301.4, cat:2},
+ '30R':{lat:44.88154, lon:-93.19463, brg:301.0, len:8200, elev:820, dthr:200, wid:150, loc:'I-INN', locFrq:110.70, locCrs:301.4, cat:1},
+ '35':{lat:44.86618, lon:-93.23664, brg:350.0, len:8000, elev:833, dthr:0, wid:150, loc:'I-BMA', locFrq:110.95, locCrs:349.5, cat:3}
+};
+/* The four strips, as reciprocal pairs — drawn threshold to threshold, so the
+   line on the scope comes from two surveyed points and needs no bearing and no
+   magnetic correction at all. */
+var RWY_PAIRS = [['12L','30R'], ['12R','30L'], ['04','22'], ['17','35']];
+/* The final approach course for a runway: the localizer where there is one,
+   the runway bearing otherwise. Returns null rather than guessing for a runway
+   this field does not have. */
+function finalCourse(rwy){
+ var r = RUNWAYS[String(rwy||'').toUpperCase()];
+ if(!r) return null;
+ return {crs:(r.locCrs != null ? r.locCrs : r.brg), kind:(r.locCrs != null ? 'localizer' : 'runway bearing'),
+         loc:r.loc || null, src:RWY_SRC};
+}
 function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
 
 /* ---------- Who is on the other side ----------
@@ -2368,6 +2423,22 @@ function fixDot(p, big){ return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFix
 function scopeSvg(){
  var s='<svg class="dd-scope" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Live drill scope">';
  s+='<text x="14" y="20" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="10">LIVE SCOPE \u2014 SCHEMATIC, PLOTTED FROM FIX COORDINATES</text>';
+ /* The runways themselves, threshold to threshold. Two surveyed points per
+    strip, so no bearing and no magnetic correction enters the drawing. The
+    runway in use is brightened; at 4.5 px per NM a 10,000 ft strip is about
+    seven pixels, which is the honest size rather than a decorative one. */
+ if(LAYERS!=='off'){
+  var inUse = {};
+  (assignableRwys(ROUTE_CFG) || []).forEach(function(r){ inUse[r] = 1; });
+  RWY_PAIRS.forEach(function(pair){
+   var a=RUNWAYS[pair[0]], b=RUNWAYS[pair[1]];
+   if(!a || !b) return;
+   var pa=px(a.lat,a.lon), pb=px(b.lat,b.lon);
+   var hot=(inUse[pair[0]] || inUse[pair[1]]);
+   s+='<line x1="'+pa.x.toFixed(1)+'" y1="'+pa.y.toFixed(1)+'" x2="'+pb.x.toFixed(1)+'" y2="'+pb.y.toFixed(1)
+     +'" stroke="var(--ink)" stroke-width="'+(hot?2.2:1.4)+'" opacity="'+(hot?0.85:0.35)+'" stroke-linecap="square"/>';
+  });
+ }
  /* charted obstructions */
  if(LAYERS!=='off'){
   OBSTRUCTIONS.forEach(function(o){
@@ -2787,6 +2858,7 @@ window.DD = {
  version:1, hooks:[],
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
+ RUNWAYS:RUNWAYS, RWY_PAIRS:RWY_PAIRS, RWY_SRC:RWY_SRC, finalCourse:finalCourse,
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
