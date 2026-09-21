@@ -1949,7 +1949,16 @@ function acRowHtml(a,i){
   +f('Handed off by', handedOffBy(a, role, radar, i))
   +f('Type','<input class="dd-in" id="ddb-type'+i+'" value="'+esc(a.type)+'" onchange="ddbSync()">')
   +f('Wake class','<div class="dd-in" style="color:'+wkCol+';" title="'+esc(wk.note||('Maximum certificated takeoff weight '+(wk.mtow?wk.mtow.toLocaleString():'—')+' lb'))+'">'
-    +esc(wk.label)+(wk.mtow?(' <span style="color:var(--dim2)">'+Math.round(wk.mtow/1000)+'k lb</span>'):'')+'</div>');
+    /* THE CLASS, NOT THE POUNDS. Weight on the face of the box is a number the
+       controller never uses: STARS auto-tags the CWT category and the standing
+       instruction is to trust the tag (claude_M98_7110_Reference.md), so the
+       class is the operative fact. The MTOW stays in the table and in the
+       title attribute above, which is what keeps the derivation auditable
+       rather than asserted — hovering still shows the weight the call was made
+       from. Issue #21, option 1. The NOWGT path is untouched: a type the table
+       does not know still reads "NOWGT — weight unverified", because that
+       label has to keep saying why it is 10 NM. */
+    +esc(wk.label)+'</div>');
  var job;
  if(role==='departure'){
   var dep=a.dep||'KMSP';
