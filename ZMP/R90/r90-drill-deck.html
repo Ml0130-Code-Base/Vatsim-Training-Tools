@@ -307,6 +307,67 @@ var FLOW_RULE = {
   LNK:{ calmBelowKt:6,  calmPrefers:'north configuration', otherwise:'the configuration most closely aligned with the wind' }
 };
 
+/* ---------- What the towers ADVERTISE — ZMP vATIS profile ----------
+   Serial 2026012401, pulled 2026-09-21. Verbatim broadcast strings and the
+   full statement of what this source can and cannot answer are in
+   ZMP/_vatis/claude_ZMP_vATIS_Reference.md.
+
+   THIS IS THE TOWER'S BROADCAST, NOT R90's ASSIGNMENT. The profile names no
+   transition, no gate, no altitude and no sector — it says which runways a
+   field advertises, and nothing about what R90 does with the traffic into
+   them. It does not substitute for R90 7220.10B or the ZMP-R90 LOA, and it
+   closes nothing in the gap analysis.
+
+   Only OMA and LNK appear. The profile has no station for OFF, MLE or CBF,
+   which is a third source agreeing that those three are thinly documented —
+   see AIRPORTS, where two of them are already `null`. */
+var VATIS_FLOWS = {
+  src:'vATIS ZMP 2026012401',
+  OMA:[
+    {id:'14',    land:['14L','14R'],      profile:'south'},
+    {id:'14/18', land:['14L','14R','18'], profile:'south'},
+    {id:'18',    land:['18'],             profile:'south'},
+    {id:'32',    land:['32L','32R'],      profile:'north'},
+    {id:'32/36', land:['32L','32R','36'], profile:'north'},
+    {id:'36',    land:['36'],             profile:'north'}
+  ],
+  /* LNK is advertised by PROFILE NAME rather than by runway, and three of its
+     four presets ship with no field-condition text at all. Only SOUTH VMC
+     names runways. The north half is genuinely absent, not omitted here. */
+  LNK:[
+    {id:'SOUTH', land:['18','17'], profile:'south'},
+    {id:'NORTH', land:null,        profile:'north'}
+  ]
+};
+/* Does the advertised flow agree with the north/south profiles the SOP already
+   groups its departure headings by (DEP_HEADINGS, OMA 5.c.4 / LNK 6.a.6)?
+   Computed rather than asserted, so the page tells the truth if either table is
+   edited later and they stop agreeing. Returns one entry per field with the
+   runways each side claims for each profile. */
+function vatisBandCheck(){
+  return ['OMA','LNK'].map(function(apt){
+    var bands = DEP_HEADINGS[apt] || {}, out = {apt:apt, rows:[]};
+    ['north','south'].forEach(function(dir){
+      var adv = [];
+      (VATIS_FLOWS[apt] || []).forEach(function(f){
+        if(f.profile !== dir || !f.land) return;
+        f.land.forEach(function(r){ if(adv.indexOf(r) < 0) adv.push(r); });
+      });
+      var sop = (bands[dir] && bands[dir].runways) ? bands[dir].runways.slice() : null;
+      /* THREE OUTCOMES, NOT TWO. A preset that names FEWER runways than the
+         profile covers is not a conflict — several presets ship with partial
+         field-condition text, and LNK SOUTH names 18 and 17 where the SOP
+         profile also carries 14. Only a runway the SOP does not put in this
+         profile is a real disagreement, and only that earns a warning. */
+      var extra = sop ? adv.filter(function(r){ return sop.indexOf(r) < 0; }) : adv.slice();
+      var same  = !!(sop && adv.length && sop.slice().sort().join() === adv.slice().sort().join());
+      out.rows.push({dir:dir, advertised:adv, sop:sop, agree:same, known:!!adv.length,
+                     extra:extra, subset:!!(sop && adv.length && !same && !extra.length)});
+    });
+    return out;
+  });
+}
+
 /* R90 3-8, repeated once per arrival category — the sequencing controller's guarantee */
 var FREEZE_RULE = 'Once a handoff is accepted, no changes to assigned heading or assigned altitude without verbal approval from the receiving controller (R90 3-8).';
 
@@ -409,6 +470,38 @@ function sectionPositions(){
   + '<h2 style="margin-top:34px;">The fields</h2>'
   + '<p class="lede">' + AIRPORTS_SRC + '</p>'
   + '<table class="rd-tbl"><thead><tr><th></th><th>Field</th><th>Runways</th><th>Source</th></tr></thead><tbody>' + apt + '</tbody></table>'
+  + '<h2 style="margin-top:34px;">What the towers advertise</h2>'
+  + '<p class="lede">The configurations each field broadcasts, from the ZMP vATIS profile ('
+  + VATIS_FLOWS.src + '). <b>This is the tower\u2019s broadcast, not R90\u2019s assignment</b> \u2014 it names '
+  + 'no transition, no gate and no altitude, so it adds a flow selector and closes nothing in the '
+  + 'gap analysis. The profile has no station for OFF, MLE or CBF.</p>'
+  + '<table class="rd-tbl"><thead><tr><th></th><th>Field</th><th>Configuration</th><th>Lands</th><th>Profile</th></tr></thead><tbody>'
+  + ['OMA','LNK'].map(function(a){
+      return VATIS_FLOWS[a].map(function(f, i){
+        return '<tr><td>' + (i === 0 ? '<b>' + a + '</b>' : '') + '</td>'
+          + '<td class="dim">' + (i === 0 ? AIRPORTS[a].name : '') + '</td>'
+          + '<td><b>' + f.id + '</b></td>'
+          + '<td>' + (f.land ? f.land.join(' ') : '<span class="rd-gap">not stated \u2014 the preset ships with no field-condition text</span>') + '</td>'
+          + '<td class="dim">' + f.profile + '</td></tr>';
+      }).join('');
+    }).join('')
+  + '</tbody></table>'
+  + vatisBandCheck().map(function(c){
+      return c.rows.map(function(r){
+        if(!r.known) return '<div class="rd-panel rd-mono" style="font-size:11.5px;">'
+          + '<b>' + c.apt + ' ' + r.dir + '</b> \u2014 the profile carries no runways for this profile, so there is '
+          + 'nothing to check it against. The heading bands give ' + (r.sop ? r.sop.join(' ') : 'nothing') + '.</div>';
+        return '<div class="rd-panel ' + (r.extra.length ? 'rd-warn ' : '') + 'rd-mono" style="font-size:11.5px;">'
+          + '<b>' + c.apt + ' ' + r.dir + '</b> \u2014 advertised ' + r.advertised.join(' ')
+          + ' &middot; departure headings ' + (r.sop ? r.sop.join(' ') : 'not stated') + ' &middot; '
+          + (r.agree ? 'the two sources agree.'
+             : r.subset ? ('the broadcast names a subset \u2014 ' + r.sop.filter(function(x){ return r.advertised.indexOf(x) < 0; }).join(' ')
+                 + ' sits in the profile and not in this preset\u2019s text. Not a conflict.')
+             : ('<b>THEY DISAGREE</b> \u2014 ' + r.extra.join(' ') + ' is advertised and is not in this profile. '
+                 + 'Neither source is corrected here; read both.'))
+          + '</div>';
+      }).join('');
+    }).join('')
   + '<div class="rd-panel"><b>Airspace ceiling (ZMP-R90 LOA 3)</b><dl class="rd-kv">'
   + '<dt>R90 East</dt><dd>at and below ' + fmtAlt(CEILING.east) + '</dd>'
   + '<dt>R90 West</dt><dd>at and below ' + fmtAlt(CEILING.west) + '</dd>'
@@ -564,6 +657,7 @@ window.RD = {
   MISSED_TOWER:MISSED_TOWER, MISSED_SCRATCH:MISSED_SCRATCH, MISSED_SCRATCH_NOTE:MISSED_SCRATCH_NOTE,
   SCRATCHPAD:SCRATCHPAD, VISUAL_RULE:VISUAL_RULE,
   CONTROL_FOR:CONTROL_FOR, FLOW_RULE:FLOW_RULE, FREEZE_RULE:FREEZE_RULE,
+  VATIS_FLOWS:VATIS_FLOWS, vatisBandCheck:vatisBandCheck,
   POSITION_DUTIES:POSITION_DUTIES, UNREAD_GEOMETRY:UNREAD_GEOMETRY, STANDING:STANDING,
   rdPosition:rdPosition, rdPositionIds:rdPositionIds, rdCeilingOver:rdCeilingOver,
   rdRunwaysAt:rdRunwaysAt, rdRunwaysKnown:rdRunwaysKnown, rdByStarsId:rdByStarsId,
@@ -1266,8 +1360,22 @@ var DEP_MARK   = /\b(?:DEPART|DEPARTING|DEPARTURE|DEPARTURES|DEPTG|DEPG|DEPS|DEP
 var APCH_WORD  = /(?:APCH(?:ES|S)?|APPROACH(?:ES)?)/.source;
 var IN_USE     = new RegExp(APCH_WORD + /\s+IN\s+USE/.source);
 /* KOMA puts the runways BETWEEN the approach word and the phrase —
-   "VISUAL APCH 14R, 14L, 18 IN USE" — with no runway keyword anywhere. */
-var APCH_LIST  = new RegExp(APCH_WORD + /\s+/.source + '(' + RWY_RUN + ')' + /\s+IN\s+USE/.source);
+   "VISUAL APCH 14R, 14L, 18 IN USE" — and whether a runway KEYWORD sits in
+   front of them depends on which KOMA you are reading.
+
+     FAA D-ATIS feed   VISUAL APCH 14R, 14L, 18 IN USE      bare list
+     ZMP vATIS profile VIS APCH RWY 14L, 14R, 18 IN USE     keyed list
+
+   The second is what the field actually broadcasts in the sim, which is what
+   the trainee pastes. So the keyword is OPTIONAL here, and that is the whole
+   fix: with it mandatory-absent, ELEVEN OF KOMA'S TWELVE published
+   configurations parsed to nothing. The failure is quiet and worth
+   understanding — once a keyed list sits between them, APCH and IN USE are no
+   longer adjacent, so IN_USE cannot fire either, nothing marks the sentence as
+   landing or departing, and it is dropped whole rather than half-read.
+   Found 2026-09-21 by running the vATIS profile's verbatim strings through it
+   (vATIS ZMP 2026012401). */
+var APCH_LIST  = new RegExp(APCH_WORD + /\s+/.source + '(?:' + RWY_KEY + ')?' + '(' + RWY_RUN + ')' + /\s+IN\s+USE/.source);
 var LEAD_WORDS = /\b(?:ARR|ARRS|ARRIVAL|ARRIVALS|ARRIVING|DEP|DEPS|DEPG|DEPTG|DEPARTING|DEPARTURE|DEPARTURES|LAND|LANDING|LNDG|EXP|EXPECT|EXPECTED|VECTORS|AND|OR|IN|USE|TO|FOR|ALL|ACFT)\b/g;
 
 /* Read to the notices and never past them, where a heading exists. Both

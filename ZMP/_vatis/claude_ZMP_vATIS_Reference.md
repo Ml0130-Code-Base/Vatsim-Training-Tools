@@ -136,6 +136,36 @@ Two behaviours worth recording because they were already right:
   **arrival** configuration. The parser has implemented the landing-flow rule since before it was
   stated, which is a fourth corroboration of it.
 
+### And one real defect it found — R90 and ZMP, fixed 2026-09-21
+
+R90 and ZMP Center share a different D-ATIS reader from M98's, copied byte for byte between them.
+Run against this profile's verbatim strings, **eleven of KOMA's twelve published configurations
+parsed to nothing.**
+
+The cause is worth keeping, because the failure was silent. The reader knew two shapes — a bare
+list between the approach word and the phrase (`VISUAL APCH 14R, 14L, 18 IN USE`, which is how the
+**FAA feed** writes KOMA) and a keyed list before the approach word (`ILS RWY 36 APCH IN USE`). The
+**vATIS** writes a third: a *keyed* list *between* them — `VIS APCH RWY 14L, 14R IN USE`. With a
+keyword sitting between `APCH` and `IN USE`, the two are no longer adjacent, so the `IN_USE` test
+could not fire either; nothing marked the sentence as landing or departing and it was dropped
+whole rather than half-read.
+
+**The distinction that matters: the trainee works the sim, so the vATIS wording is the one they
+paste.** The FAA feed and the sim broadcast are different text for the same field, and a reader
+built only against the first is built against the wrong one.
+
+The fix makes the runway keyword optional in that position. Verified on the real pages: all twelve
+KOMA configurations now read, all five documented real-world forms still read (KOMA's own bare
+list, KMSP, KMDW, KBOI, and the closed-runway guard that keeps ORD's out-of-service runways out of
+the landing set), and all seven MSP departure strings resolve into the departure list rather than
+the landing one. Twenty-two ZMP-area field strings read correctly end to end.
+
+**Four more copies of this reader exist and were NOT changed** — C90 and AZO under `ZAU/`, S56 and
+Big Sky under `ZLC/`. They are byte-identical to the pre-fix version. Root `CLAUDE.md` §14 keeps a
+commit inside one ARTCC, so those are their own commits; and each wants checking against its own
+vARTCC's vATIS profile, which has not been pulled. **Until then the six copies are not in sync**,
+and that is recorded here rather than left to be discovered.
+
 ---
 
 ## 4. The M98 satellite fields
@@ -211,7 +241,17 @@ own version of issue #15 and is not answered here.
 
 **KLNK — Lincoln.** `NORTH VMC` / `NORTH IMC` / `SOUTH IMC` are all **empty**; only `SOUTH VMC` is
 filled: *"VIS APCH RWY 18 IN USE. ARR/DEP RWY 18 AND 17."* Named NORTH/SOUTH rather than by runway,
-the same shape as KGRB and KFSD.
+the same shape as KGRB and KFSD. **Runway 17 checks out** against `LNK 7110.6A 4.a/4.b/5.b`, which
+gives Lincoln 14, 17, 18, 32, 35 and 36 — the inventory R90's deck already carried.
+
+**The OMA cross-check passed exactly, and the deck now computes it.** R90 groups its departure
+headings into north and south profiles (`DEP_HEADINGS`, OMA 5.c.4): north **32L 32R 36**, south
+**14R 14L 18**. The union of the runways this profile advertises in its north configurations
+(`32`, `32/36`, `36`) is **32L 32R 36**, and in its south configurations (`14`, `14/18`, `18`) is
+**14L 14R 18**. Two independent sources, identical sets. The R90 deck renders that comparison
+rather than asserting it, so it will say so on the page if either table is edited and they stop
+agreeing — and it distinguishes a **subset** (LNK SOUTH names 18 and 17 where the profile also
+carries 14 — not a conflict) from a real disagreement.
 
 **KRST — Rochester.** Eight presets, of which only two carry text: `13 IMC` *"ILS RWY 13 APCH IN
 USE. ARR/DEP RWY 13 AND 20."* and `31 IMC` *"ILS RWY 31 APCH IN USE, ARR AND DEP RWY 31."* The four
@@ -235,8 +275,12 @@ Root `CLAUDE.md` §6: anomalies are recorded, not fixed. These are all in the pu
 - **KSTP `IMC 14`** reads *"INSRTUMENT APPROACHES"*.
 - **KMSP Departure `4`** carries *"VIS RWY 4 APCH IN USE,"* on the **departure** ATIS — an arrival
   clause on the wrong broadcast. It is the only departure preset that does this.
-- **KLNK `SOUTH VMC`** names *"RWY 18 AND 17"*. Lincoln's advertised south flow naming is not
-  something this file explains; taken verbatim and flagged.
+- ~~**KLNK `SOUTH VMC`** names *"RWY 18 AND 17"*~~ — **withdrawn 2026-09-21, this was not an
+  anomaly.** It was listed as one when this file was first written, before the R90 deck was
+  checked. `LNK 7110.6A 4.a/4.b/5.b` gives Lincoln **14, 17, 18, 32, 35 and 36**, and the R90
+  deck has carried that inventory since it was built. Runway 17 is real and the broadcast is
+  correct. Kept here rather than deleted, as the record of a flag raised against a source before
+  the repo's own data had been consulted.
 - **Empty presets are common** — 15 of KFAR's 16, 6 of KRST's 8, 3 of KLNK's 4. An empty
   `airportConditions` means the profile ships the preset with no field-condition text, not that
   the configuration is unavailable.

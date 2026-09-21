@@ -335,6 +335,71 @@ var PRB_CHECKLIST = [
    and claude_ZMP_OJT_Session_Review.md is filled in. Do not seed it from documents. */
 var STANDING = [];
 
+/* ---------- What the underlying fields ADVERTISE — ZMP vATIS profile ----------
+   Serial 2026012401, pulled 2026-09-21. Verbatim broadcast strings, the pull
+   recipe and the full statement of what this source can and cannot answer are
+   in ZMP/_vatis/claude_ZMP_vATIS_Reference.md.
+
+   WHY AN EN ROUTE DECK CARRIES FIELD FLOWS AT ALL: what a field is landing is
+   what decides the descent and the TRACON interface. It is the one piece of
+   terminal state an en route controller has to hold, and until now this deck
+   held none of it.
+
+   WHAT IT IS NOT. The profile names no sector, no boundary, no altitude and no
+   handoff identifier. It closes nothing in the gap analysis, it does not touch
+   the geometry blocker, and it is not evidence about who owns a piece of sky.
+   Fields are listed with the runways each configuration advertises and nothing
+   more.
+
+   `null` means the profile ships that preset with no field-condition text at
+   all — genuinely absent rather than omitted here. KFAR is the extreme case:
+   fifteen of its sixteen presets are empty, so only the 36 flow is carried. */
+var FIELD_FLOWS = {
+  src:'vATIS ZMP 2026012401',
+  KMSP:{ name:'Minneapolis-St Paul', tracon:'M98', flows:[
+    {id:'12', land:['12L','12R']}, {id:'12-17', land:['12L','12R']},
+    {id:'30', land:['30L','30R']}, {id:'30-17', land:['30L','30R']},
+    {id:'30-35', land:['30L','30R','35']}, {id:'17-22', land:['17','22']},
+    {id:'4-35', land:['35']}, {id:'4', land:['4']}, {id:'22', land:['22']}
+  ]},
+  KOMA:{ name:'Eppley Airfield', tracon:'R90', flows:[
+    {id:'14', land:['14L','14R']}, {id:'14/18', land:['14L','14R','18']}, {id:'18', land:['18']},
+    {id:'32', land:['32L','32R']}, {id:'32/36', land:['32L','32R','36']}, {id:'36', land:['36']}
+  ]},
+  KLNK:{ name:'Lincoln', tracon:'R90', flows:[
+    {id:'SOUTH', land:['18','17']}, {id:'NORTH', land:null}
+  ]},
+  KRST:{ name:'Rochester', tracon:'RST', flows:[
+    {id:'13', land:['13','20']}, {id:'31', land:['31']}, {id:'20', land:null}, {id:'2', land:null}
+  ]},
+  KDLH:{ name:'Duluth', tracon:null, flows:[
+    {id:'9', land:['9']}, {id:'27', land:['27']}, {id:'3', land:['3']}, {id:'21', land:['21']}
+  ]},
+  KFAR:{ name:'Fargo Hector', tracon:null, flows:[
+    {id:'36', land:['36']}, {id:'18', land:null}, {id:'9', land:null}, {id:'27', land:null},
+    {id:'18/9', land:null}, {id:'18/27', land:null}, {id:'36/9', land:null}, {id:'36/27', land:null}
+  ]},
+  KBIS:{ name:'Bismarck', tracon:null, flows:[ {id:'13', land:['13']}, {id:'31', land:['31']} ]},
+  KDSM:{ name:'Des Moines', tracon:null, flows:[
+    {id:'13', land:['13']}, {id:'31', land:['31']}, {id:'5', land:['5']}, {id:'23', land:['23']}
+  ]},
+  KGRB:{ name:'Green Bay', tracon:null, flows:[
+    {id:'NORTH', land:['6','18']}, {id:'SOUTH', land:['18','24']}
+  ]},
+  KATW:{ name:'Appleton', tracon:null, flows:[
+    {id:'30', land:['30']}, {id:'12', land:['12']}, {id:'3', land:['3']}, {id:'21', land:['21']}
+  ]},
+  KFSD:{ name:'Sioux Falls', tracon:null, flows:[
+    {id:'3', land:['3']}, {id:'21', land:['21']}, {id:'15', land:['15']}, {id:'33', land:['33']},
+    {id:'VMC S-E', land:null}, {id:'VMC N-W', land:null}
+  ]},
+  KSUX:{ name:'Sioux Gateway', tracon:null, flows:[ {id:'13', land:['13']}, {id:'31', land:['31']} ]},
+  KALO:{ name:'Waterloo', tracon:null, flows:[
+    {id:'12', land:['12']}, {id:'18', land:['18']}, {id:'30', land:['30']}, {id:'36', land:['36']}
+  ]}
+};
+var FIELD_FLOWS_ORDER = ['KMSP','KOMA','KLNK','KRST','KDLH','KFAR','KBIS','KDSM','KGRB','KATW','KFSD','KSUX','KALO'];
+
 /* ---------- 3. Helpers ---------- */
 function pad(n){ return (n < 10 ? '0' : '') + n; }
 function fmtAlt(a){
@@ -480,6 +545,30 @@ function sectionProcedures(){
   + '<div class="zd-panel"><b>Transfer of control across the boundary</b>'
   + '<table class="zd-tbl" style="margin-top:10px;"><thead><tr><th>Boundary</th><th>Release</th><th>Within</th><th>Cite</th></tr></thead><tbody>' + xfer + '</tbody></table>'
   + '<div class="zd-warn zd-mono" style="font-size:11px;margin-top:8px;">Incomplete &mdash; Areas 2 through 6 have not been walked paragraph by paragraph. See claude_ZMP_Gap_Analysis.md.</div></div>'
+
+  + '<h2 style="margin-top:34px;">What the underlying fields advertise</h2>'
+  + '<p class="lede">The runway configurations each field broadcasts, from the ZMP vATIS profile ('
+  + FIELD_FLOWS.src + '). What a field is landing is what decides the descent and the TRACON '
+  + 'interface, so it is the one piece of terminal state an en route controller has to hold. '
+  + '<b>This is the tower\u2019s broadcast and nothing more</b> \u2014 no sector, no boundary, no altitude, '
+  + 'no handoff identifier. It closes nothing in the gap analysis and does not touch the geometry blocker.</p>'
+  + '<table class="zd-tbl"><thead><tr><th>Field</th><th></th><th>Under</th><th>Configurations</th></tr></thead><tbody>'
+  + FIELD_FLOWS_ORDER.map(function(id){
+      var F = FIELD_FLOWS[id];
+      var named = F.flows.filter(function(f){ return f.land; });
+      var blank = F.flows.filter(function(f){ return !f.land; });
+      var cfgs = named.map(function(f){
+        return '<b>' + f.id + '</b> <span class="dim">' + f.land.join(' ') + '</span>';
+      }).join(' &nbsp;&middot;&nbsp; ');
+      if(blank.length) cfgs += (named.length ? ' &nbsp;&middot;&nbsp; ' : '')
+        + '<span class="zd-gap">' + blank.map(function(f){ return f.id; }).join(', ')
+        + ' \u2014 preset ships with no field-condition text</span>';
+      return '<tr><td><b>' + id + '</b></td><td class="dim">' + F.name + '</td>'
+        + '<td class="dim">' + (F.tracon || '\u2014') + '</td><td>' + cfgs + '</td></tr>';
+    }).join('')
+  + '</tbody></table>'
+  + '<div class="zd-panel zd-mono" style="font-size:11px;">The profile carries no station for the '
+  + 'ZMP underlying towers STC, CWA, EAU, GRI, LSE, TVC and SAW, so nothing is claimed about what they land.</div>'
   + '</section>';
 }
 
@@ -1379,8 +1468,22 @@ var DEP_MARK   = /\b(?:DEPART|DEPARTING|DEPARTURE|DEPARTURES|DEPTG|DEPG|DEPS|DEP
 var APCH_WORD  = /(?:APCH(?:ES|S)?|APPROACH(?:ES)?)/.source;
 var IN_USE     = new RegExp(APCH_WORD + /\s+IN\s+USE/.source);
 /* KOMA puts the runways BETWEEN the approach word and the phrase —
-   "VISUAL APCH 14R, 14L, 18 IN USE" — with no runway keyword anywhere. */
-var APCH_LIST  = new RegExp(APCH_WORD + /\s+/.source + '(' + RWY_RUN + ')' + /\s+IN\s+USE/.source);
+   "VISUAL APCH 14R, 14L, 18 IN USE" — and whether a runway KEYWORD sits in
+   front of them depends on which KOMA you are reading.
+
+     FAA D-ATIS feed   VISUAL APCH 14R, 14L, 18 IN USE      bare list
+     ZMP vATIS profile VIS APCH RWY 14L, 14R, 18 IN USE     keyed list
+
+   The second is what the field actually broadcasts in the sim, which is what
+   the trainee pastes. So the keyword is OPTIONAL here, and that is the whole
+   fix: with it mandatory-absent, ELEVEN OF KOMA'S TWELVE published
+   configurations parsed to nothing. The failure is quiet and worth
+   understanding — once a keyed list sits between them, APCH and IN USE are no
+   longer adjacent, so IN_USE cannot fire either, nothing marks the sentence as
+   landing or departing, and it is dropped whole rather than half-read.
+   Found 2026-09-21 by running the vATIS profile's verbatim strings through it
+   (vATIS ZMP 2026012401). */
+var APCH_LIST  = new RegExp(APCH_WORD + /\s+/.source + '(?:' + RWY_KEY + ')?' + '(' + RWY_RUN + ')' + /\s+IN\s+USE/.source);
 var LEAD_WORDS = /\b(?:ARR|ARRS|ARRIVAL|ARRIVALS|ARRIVING|DEP|DEPS|DEPG|DEPTG|DEPARTING|DEPARTURE|DEPARTURES|LAND|LANDING|LNDG|EXP|EXPECT|EXPECTED|VECTORS|AND|OR|IN|USE|TO|FOR|ALL|ACFT)\b/g;
 
 /* Read to the notices and never past them, where a heading exists. Both
