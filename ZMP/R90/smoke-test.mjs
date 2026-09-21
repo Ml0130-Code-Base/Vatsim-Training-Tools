@@ -269,6 +269,76 @@ try {
     Object.values(SP).every(v => v.flies === false && v.track === true));
   assert('serves is a list and names KOMA', SP.AANDY2.serves.join(',') === 'KOMA');
 
+  /* ============ 8. Closures out of the notices — issue #18 ============
+     EVERY STRING BELOW IS VERBATIM FROM A LIVE PULL — datis.clowd.io/api/all,
+     2026-09-21 0852Z, by the recipe in claude_DATIS_Field_Survey.md §1. Fixture
+     text never comes from a document and is never composed by hand: both rounds
+     of issue #13 were failures in text nobody had looked at yet, and neither was
+     reachable by reading the parser. */
+  {
+    const OMA = 'OMA ATIS INFO U 0852Z. 00000KT 10SM BKN010 OVC015 17/16 A3006 (THREE ZERO ZERO SIX) '
+      + 'RMK AO2 CIG 007V012 SLP177 60002 T01670156 56003. ILS APCH 36 IN USE, RNAV Y GPS APCH 32L, 32R IN USE. '
+      + 'NOTICE TO AIRMEN. ILS RWY 32L OTS, ILS RWY 32R GS OTS, RY 32R MIDPOINT RVR OTS, '
+      + 'RWY 32L, 32R PAPI OTS, VOT 109.0 OTS. BIRD ACTIVITY IN THE VICINITY OF OMAHA AIRPORT. '
+      + 'ALL RWY COND CODES 5 5 5, WET AT 0555Z. ...ADVS YOU HAVE INFO U.';
+    const W = globalThis.rdw, c = W.closures(OMA);
+    /* OMAHA HAS NOTHING SHUT TODAY AND FOUR THINGS OUT. Reading any of those
+       four as a closure would brief a runway shut that is landing traffic. */
+    assert('a named item out of service is never read as a closed runway',
+      c.closed.length === 0, JSON.stringify(c.closed));
+    assert('the item and the runways it is out on are both read',
+      c.ots.map(x => x.what + '@' + x.rwys.join('+')).join(';')
+        === 'ILS@32L;ILS GS@32R;MIDPOINT RVR@32R;PAPI@32L+32R', JSON.stringify(c.ots));
+    assert('the notice text is carried verbatim rather than summarised',
+      c.text.indexOf('VOT 109.0 OTS') >= 0);
+    /* THE PARSE WINDOW IS UNCHANGED. This is the guard that matters: the
+       closures pass is read-only and must never feed the flow. */
+    const o = W.read(OMA);
+    assert('nothing in the notices ever becomes a runway in use',
+      o.land.indexOf('32L') < 0 && o.land.indexOf('32R') < 0 && o.dep.length === 0,
+      JSON.stringify([o.land, o.dep]));
+    assert('and nothing advertised in use is also called closed', o.clash.length === 0);
+
+    /* A FIELD WITH NO NOTICE HEADING. KORD and KSLC run their closures straight
+       on from the flow, so the body's out-of-use sentences are the only copy
+       (claude_DATIS_Field_Survey.md §4b). Verbatim, same pull, 0851Z. */
+    const ORD = 'ORD ATIS INFO O 0851Z. 07013G18KT 10SM SCT025 BKN035 OVC055 16/12 A3009 RMK AO2 SLP187. '
+      + 'ARR EXP VECTORS ILS RWY 10C APCH. DEPS EXP RWYS 10L FROM DD. 10,093 FT AVBL. '
+      + 'RWY 4L, 22R CLSD, RWY 4R, 22L CLSD, RWY 9L, 27R CLSD, RWY 9R, 27L CLSD, RWY 10R, 28L CLSD. '
+      + 'RWY 9L IM OTS, RWY 9C IM OTS, RWY 27C ALS OTS. READBACK ALL RWY HOLD SHORT INSTRUCTIONS.';
+    const co = W.closures(ORD);
+    assert('a field with no notice heading still yields its closures',
+      co.closed.join(',') === '4L,22R,4R,22L,9L,27R,9R,27L,10R,28L', JSON.stringify(co.closed));
+    assert('and its items out of service stay separate from them',
+      co.ots.map(x => x.what + '@' + x.rwys.join('+')).join(';') === 'IM@9L;IM@9C;ALS@27C');
+    assert('and none of it reaches the runways in use',
+      W.read(ORD).land.join(',') === '10C', JSON.stringify(W.read(ORD).land));
+
+    /* THE REFUSALS. A label this cannot read is left alone rather than guessed
+       at, and each of these would otherwise have reported a runway shut that is
+       open. All three are verbatim from the same pull. */
+    assert('an unreadable lead never falls through to "runway closed"',
+      W.closures('X. NOTICE TO AIRMEN. DME PORTION OF ILS RWY 9L OTS.').closed.length === 0);
+    assert('a spelled-out runway list is refused, not half-read',
+      W.closures('X. NOTICE TO AIRMEN. RWY 1 6 LEFT 3 4 RIGHT CLOSED.').closed.length === 0);
+    assert('a taxiway that names a runway closes nothing',
+      W.closures('X. NOTICE TO AIRMEN. TWY ECHO CLOSED NORTH OF RWY 10R.').closed.length === 0
+      && W.closures('X. NOTICE TO AIRMEN. TWY J BTWN RWY 4 AND TWY K CLSD.').closed.length === 0);
+    assert('a runway pair written with a slash is read as both',
+      W.closures('X. NOTICE TO AIRMEN. RWY 11/29 CLSD, RWY 4L/22R CLSD.').closed.join(',')
+        === '11,29,4L,22R');
+    assert('a broadcast with no notices asserts nothing at all',
+      W.closures('OMA ATIS INFO U. 00000KT 10SM CLR A3006. ILS APCH 36 IN USE.').closed.length === 0);
+
+    /* KNOWN DEFECT, ISSUE #58 — NOT A CLOSURES BUG. KOMA writes two bare-list
+       approach clauses in one sentence and the bare-list branch reads only the
+       first, so Omaha is landing 36, 32L and 32R and this reads 36. Asserted as
+       it behaves rather than as it should, so the day #58 lands this line fails
+       and gets updated with it. */
+    assert('#58 — the second bare-list approach clause is still lost',
+      o.land.join(',') === '36', JSON.stringify(o.land));
+  }
+
   console.log('\n' + checks + ' checks passed.');
 } catch (e) {
   console.error('FAIL: threw —', e && e.stack ? e.stack : e);

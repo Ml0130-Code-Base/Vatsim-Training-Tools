@@ -1494,6 +1494,14 @@ function wxClean(text){
    .replace(/\s+/g, ' ')
    .split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/)[0];
 }
+/* The other half of the same cut. wxClean keeps the text BEFORE the heading,
+   and that stays the whole rule for the flow; this keeps the text after it,
+   which is the closure list, and wxClosures below reads it as closures. */
+function wxNotices(text){
+ var p = String(text == null ? '' : text).replace(/\s+/g, ' ')
+   .split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/);
+ return p.length > 1 ? p.slice(1).join(' ').trim() : '';
+}
 /* A split broadcast is segmented BEFORE it is cleaned. Each half carries
    its own notice heading, so cleaning the joined text would cut at the
    arrival half's heading and throw the departure broadcast away with it. */
@@ -1565,6 +1573,113 @@ function wxRunways(text){
  });
  return {land:land, dep:dep, apch:apch, sentences:used};
 }
+/* ---- CLOSURES — issue #18 ----
+   The text the flow reader throws away, read back as what it actually is.
+   Two places carry it, and both are read here:
+
+     - everything past the notice heading, which wxClean cuts;
+     - the not-in-use sentences inside the body, which wxRunways drops. KORD
+       and KSLC publish NO HEADING AT ALL and run their closures straight on
+       from the flow, so at those two fields the body is the only copy
+       (claude_DATIS_Field_Survey.md §4b).
+
+   READ-ONLY, and that is the point. Nothing here ever reaches land, dep or
+   apch, so the guard that keeps "RWY 4L, 22R CLSD" out of the runways in use
+   stands exactly where it was. What changes is that the closure is now SHOWN
+   instead of silently discarded — the tool knew it and threw it away.
+
+   A NAMED ITEM OUT OF SERVICE IS NOT A CLOSED RUNWAY. ORD's "RWY 9L IM OTS"
+   and MSP's "RWYS 12R AND 12L INNER MARKER OTS" leave all three runways
+   usable; ORD's "RWY 4L, 22R CLSD" does not. The item name is the only thing
+   that separates them, so it is what this reads most carefully — and where it
+   cannot read one, it claims nothing at all and shows the sentence instead. */
+var CLSD_WORD  = /\b(?:CLSD|CLOSED)\b/;
+var OTS_WORD   = /\b(?:OTS|OUT OF SERVICE|UNUSABLE|UNAVAILABLE|UNAVBL|UNAVL)\b/;
+var STATE_WORD = new RegExp(CLSD_WORD.source + '|' + OTS_WORD.source);
+/* One item ends where the next begins: at a comma, or at the state word of the
+   item before it. Without this cut, ORD's "RWY 9L IM OTS, RWY 9C IM OTS"
+   carries the first item's words into the second one's name. */
+var ITEM_CUT   = new RegExp(',|' + STATE_WORD.source);
+/* A runway pair written with a slash — "RWY 11/29 CLSD", "RY 10/28 CL LIGHTS
+   OTS". The flow reader's RWY_RUN is deliberately NOT changed for this: a
+   slash never appears in a runways-in-use line, and widening the pattern that
+   decides the configuration to fix a pattern that only annotates it is the
+   wrong trade. */
+var CLSD_RUN   = RWY_ONE + '(?:(?:' + RWY_SEP + '|' + /\s*\/\s*/.source + ')' + RWY_ONE + ')*';
+/* The item names a broadcast actually uses for equipment at a runway. Taken
+   from a live nationwide pull — 89 broadcasts across 76 fields, 2026-09-21
+   0853Z, by the recipe in claude_DATIS_Field_Survey.md §1 — so it is a list of
+   what the wire really says rather than a guess at it.
+   A label counts as an item ONLY IF EVERY WORD OF IT IS ONE OF THESE. Anything
+   else is a sentence this cannot read, and an unreadable sentence is left
+   alone rather than guessed at. That refusal is the safety property: against
+   that pull it left 19 sentences alone out of roughly 180, and the ones it
+   left are the ones worth leaving — ATL's "DME PORTION OF ILS RWY 9L OTS",
+   DEN's spelled-out "RWY 1 6 LEFT 3 4 RIGHT CLOSED", HOU's "TWY J BTWN RWY 4
+   AND TWY K CLSD". Reading any of those would have reported a runway shut that
+   is open. LEFT and RIGHT are kept out of this list on purpose, for the DEN
+   case exactly. */
+var EQUIP = ('GS GLIDESLOPE GLIDE SLOPE ILS LOC LOCALIZER LDA DME VOR NDB TACAN RNAV APCH APPROACH '
+ + 'MARKER MARKERS INNER MIDDLE OUTER IM MM OM PAPI PAPIS VASI VASIS REIL REILS RAIL RAILS '
+ + 'MALSR MALS ALSF ALS ODALS SFL RVR HIRL MIRL LIRL CL CNTRLN CENTERLINE TDZ TDZL '
+ + 'LIGHT LIGHTS LIGHTING LGT LGTS EDGE THRESHOLD MIDPOINT ROLLOUT TOUCHDOWN '
+ + 'HOLD HOLDING POSITION BLOCK PAD SIGN SIGNS BARRIER LAHSO SYSTEM AND').split(' ');
+function wxWords(s){
+ return String(s == null ? '' : s).replace(/[^A-Z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+/* '' means no item was named, a string names one, and null means there were
+   words here this cannot account for — three answers, and the third is the one
+   that matters. */
+function wxItemName(label){
+ var ws = wxWords(label).split(' ').filter(function(w){ return w; });
+ for(var i = 0; i < ws.length; i++) if(EQUIP.indexOf(ws[i]) < 0) return null;
+ return ws.join(' ');
+}
+function wxClosures(text){
+ var closed = [], ots = [], lines = [], seen = {};
+ String(text == null ? '' : text).split(/\n\s*\n/).forEach(function(seg){
+  var parts = String(seg).replace(/\s+/g, ' ').toUpperCase()
+    .split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/);
+  var pool = [];
+  if(parts.length > 1){
+   var tail = parts.slice(1).join(' ').trim();
+   if(tail){ lines.push(tail); tail.split('.').forEach(function(x){ pool.push(x); }); }
+  }
+  parts[0].split('.').forEach(function(x){
+   if(!NOT_IN_USE.test(x)) return;
+   pool.push(x);
+   if(String(x).trim()) lines.push(String(x).trim() + '.');
+  });
+  pool.forEach(function(sent){
+   var re = new RegExp('([A-Z0-9 \\/-]*?)' + RWY_KEY + '(' + CLSD_RUN + ')', 'g');
+   var hits = [], m;
+   while((m = re.exec(sent))) hits.push({lead:m[1], rwys:wxItems(m[2]), at:m.index, end:re.lastIndex});
+   hits.forEach(function(h, i){
+    var after = sent.slice(h.end, (i + 1 < hits.length) ? hits[i + 1].at : sent.length);
+    if(!STATE_WORD.test(after)) return;
+    /* The item name sits on either side of the runway — OMA writes "ILS RWY
+       32R GS OTS" with half of it each way — so both sides are read and joined.
+       THE TRAILING HALF DECIDES. When it names something, an unreadable lead is
+       only a lead-in and is dropped; when it names nothing, the lead is the only
+       place an item could be, so an unreadable one there means this cannot tell
+       an item out from a runway shut, and it says nothing rather than guessing.
+       That is not hypothetical: ATL's "DME PORTION OF ILS RWY 9L OTS" reported
+       runway 9L CLOSED until this branch existed. */
+    var tailName = wxItemName(after.split(STATE_WORD)[0]);
+    if(tailName === null) return;
+    var leadName = wxItemName(String(h.lead).split(ITEM_CUT).pop());
+    if(!tailName && leadName === null) return;
+    var what = [leadName || '', tailName].filter(function(x){ return x; }).join(' ');
+    if(what){
+     /* a split broadcast repeats its notices in both halves */
+     var key = what + '|' + h.rwys.join('+');
+     if(!seen[key]){ seen[key] = 1; ots.push({rwys:h.rwys, what:what}); }
+    } else h.rwys.forEach(function(r){ wxPush(closed, r); });
+   });
+  });
+ });
+ return {closed:closed, ots:ots, text:lines.join(' ')};
+}
 /* Coded, spoken, or a mix — the sources return all three. Whatever cannot
    be read is listed rather than guessed at. */
 function wxObservation(text){
@@ -1623,6 +1738,13 @@ function wxRead(text){
  if(!src) return null;
  var o = wxObservation(src), f = wxRunways(src);
  o.raw = src; o.land = f.land; o.dep = f.dep; o.apch = f.apch; o.flowLines = f.sentences;
+ var n = wxClosures(src);
+ o.closed = n.closed; o.ots = n.ots; o.notices = n.text;
+ /* A runway advertised in use AND named as closed in the same broadcast is a
+    contradiction the reader states rather than resolves. It is usually a
+    broadcast that has not caught up with itself, and which half is stale is
+    the trainee's to check, not this parser's to decide. */
+ o.clash = o.closed.filter(function(r){ return o.land.indexOf(r) >= 0 || o.dep.indexOf(r) >= 0; });
  if(!o.land.length && !o.dep.length) o.missed.push('the runways in use');
  o.cat = wxCategory(o.ceil, o.vis);
  return o;
@@ -1767,6 +1889,14 @@ function rows(o){
  add('Landing', o.land.length ? esc(o.land.join(', ')) : '<span class="zdw-note">not advertised</span>');
  add('Departing', o.dep.length ? esc(o.dep.join(', ')) : '<span class="zdw-dim">not stated in this broadcast</span>');
  if(o.apch.length) add('Approaches', o.apch.map(function(a){ return esc(a.apch) + ' to ' + esc(a.rwys.join(' and ')); }).join('; '));
+ /* Issue #18. A REMINDER, NOT A JUDGEMENT: this is read from the same text the
+    flow reader deliberately does not use, and a sentence it cannot read is
+    shown verbatim rather than guessed at — which is why the verbatim row is
+    here and not optional. */
+ if(o.closed.length) add('Closed', '<span class="zdw-note">' + esc(o.closed.join(', ')) + '</span>');
+ if(o.ots.length) add('Out of service', o.ots.map(function(x){
+   return esc(x.what) + ' on ' + esc(x.rwys.join(' and ')); }).join('; '));
+ if(o.notices) add('Not read as the flow', '<span class="zdw-dim">' + esc(o.notices) + '</span>');
  var fl = flowFor(o.land, o.dep);
  add('Flow', fl.text);
  b.innerHTML = r.join('');
@@ -1795,6 +1925,9 @@ function doRead(from){
      + (o.dep.length ? (', departing ' + esc(o.dep.join(', '))) : '') + '.') : '')
   + (o.apch.length ? (' Approaches advertised: ' + o.apch.map(function(a){
       return esc(a.apch) + ' to ' + esc(a.rwys.join(' and ')); }).join('; ') + '.') : '')
+  + (o.closed.length ? (' <span class="zdw-note">Closed: ' + esc(o.closed.join(', ')) + '.</span>') : '')
+  + (o.ots.length ? (' Out of service: ' + o.ots.map(function(x){
+      return esc(x.what) + ' on ' + esc(x.rwys.join(' and ')); }).join('; ') + '.') : '')
   + ' That is ' + esc(o.cat) + ' — ' + esc(TOOLBOX[o.cat]);
  /* An observation has no runways in it and never did, so at a field with no
     D-ATIS that is not something the reader failed at — reporting it as a
@@ -1802,6 +1935,11 @@ function doRead(from){
  var missed = f.datis ? o.missed
   : o.missed.filter(function(x){ return x !== 'the runways in use'; });
  if(missed.length) msg += ' <span class="zdw-note">Could not read: ' + esc(missed.join(', ')) + '. Set those by hand.</span>';
+ if(o.clash.length) msg += ' <span class="zdw-note">' + esc(o.clash.join(', '))
+   + (o.clash.length > 1 ? ' are' : ' is') + ' advertised in use and also named as closed in the same '
+   + 'broadcast. Read it yourself before you build on either half.</span>';
+ if(o.notices) msg += ' <span class="zdw-dim">Closures are read from the text the flow reader does '
+   + 'not use, and that reading is a reminder rather than a judgement — the notices are in the box above.</span>';
  if(!state.stored) msg += ' <span class="zdw-note">This browser will not keep what you paste, so it is held in memory only for this visit.</span>';
  say(msg);
  rows(o);
@@ -1996,6 +2134,7 @@ function mount(){
 window.zdw = {
  FIELDS:FIELDS, read:wxRead, runways:wxRunways, observation:wxObservation,
  category:wxCategory, clean:wxClean, keyed:wxKeyed, labels:wxLabels,
+ notices:wxNotices, closures:wxClosures, itemName:wxItemName,
  flowFor:flowFor, state:state, doRead:doRead
 };
 

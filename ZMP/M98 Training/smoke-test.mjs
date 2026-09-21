@@ -1363,6 +1363,70 @@ try {
           'KMSP INFO A. 03007KT 10SM FEW017 A2990. VISUAL RWY 30L APCH IN USE, VISUAL RWY 30R APCH IN USE. ' +
           'NOTICE TO AIR MISSIONS. GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS.').land.join(',') === '30L,30R');
     }
+    /* THE OTHER HALF OF THE PARSE WINDOW — issue #18. The cut above stays the
+       whole rule for the flow; what the cut discards is now read separately, as
+       closures, and never reaches land, dep or cfg.
+       VERBATIM FROM A LIVE PULL — datis.clowd.io/api/all, 2026-09-21 0853Z, by
+       the recipe in claude_DATIS_Field_Survey.md §1. MSP had four runways shut
+       and two inner markers out on the two runways it was landing, which is
+       exactly the pair of cases that must not be confused with each other. */
+    {
+      const arr = 'MSP ARR INFO K 0853Z. 06008KT 10SM BKN160 11/08 A3024 (THREE ZERO TWO FOUR) ' +
+        'RMK AO2 SLP240 T01110078 52007. VISUAL RWY 12R APCH IN USE, VISUAL RWY 12L APCH IN USE. ' +
+        'FINAL APCH, OVER NOISE SENSITIVE AREA. NOTICE TO AIRMEN. RWYS 4, 22 CLSD, RWYS 17, 35 CLSD. ' +
+        'TWY R4. R5. R6, CLOSED. TWY R BTWN R4 AND R6 CLSD. TWY Y CLSD. TWY Z CLSD. 17 DEICE PAD CLSD. ' +
+        'RWYS 12R AND 12L INNER MARKER OTS. CTN, BIRDS NEAR MSP. READ BACK HS AND ALT. ' +
+        '...ADVS YOU HAVE INFO K.';
+      const dep = 'MSP DEP INFO X 0853Z. 06008KT 10SM BKN160 11/08 A3024 RMK AO2 SLP240 T01110078 52007. ' +
+        'DEPARTING RWY 12L, RWY 12R. NOTICE TO AIRMEN. RWYS 4, 22 CLSD, RWYS 17, 35 CLSD. ' +
+        'TWY R4. R5. R6, CLOSED. TWY Y CLSD. ...ADVS YOU HAVE INFO X.';
+      const live = globalThis.ddb.parseDatis(globalThis.ddb.datisJoined({datisArr:arr, datisDep:dep}));
+      assert('the live 2026-09-21 broadcast still reads a whole 12s',
+        live.land.slice().sort().join(',') === '12L,12R' && live.cfg === '12' && !live.partial,
+        JSON.stringify([live.land, live.cfg, live.partial]));
+      assert('the four runways named as closed are read as closed',
+        live.closed.join(',') === '4,22,17,35', JSON.stringify(live.closed));
+      assert('an inner marker out is NOT a closed runway',
+        live.ots.length === 1 && live.ots[0].what === 'INNER MARKER'
+        && live.ots[0].rwys.join(',') === '12R,12L', JSON.stringify(live.ots));
+      assert('a split broadcast repeating its notices is not counted twice',
+        live.ots.length === 1 && live.closed.length === 4);
+      assert('no closed runway is also advertised in use', live.clash.length === 0);
+      assert('none of the notice text reaches the runways in use',
+        live.land.indexOf('4') < 0 && live.land.indexOf('17') < 0 && live.dep.indexOf('35') < 0,
+        JSON.stringify([live.land, live.dep]));
+      assert('the notice text is carried verbatim rather than summarised',
+        live.notices.indexOf('RWYS 12R AND 12L INNER MARKER OTS') >= 0);
+      /* the 2026-09-04 broadcast, where the item name sat AHEAD of the runway */
+      assert('an item named ahead of the runway is still an item, not a closure',
+        JSON.stringify(globalThis.ddb.datisClosures(
+          'KMSP INFO A. VISUAL RWY 30L APCH IN USE. NOTICE TO AIRMEN. ' +
+          'GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS.').ots)
+          === '[{"rwys":["30L"],"what":"GS"},{"rwys":["12R","12L"],"what":"INNER MARKER"}]',
+        JSON.stringify(globalThis.ddb.datisClosures(
+          'X. NOTICE TO AIRMEN. GS RWY 30L OTS, RWYS 12R AND 12L INNER MARKER OTS.').ots));
+      /* THE REFUSALS. A label this cannot read is left alone rather than guessed
+         at — each of these would otherwise report a runway shut that is open. */
+      assert('an unreadable lead never falls through to "runway closed"',
+        globalThis.ddb.datisClosures('X. NOTICE TO AIRMEN. DME PORTION OF ILS RWY 9L OTS.').closed.length === 0);
+      assert('a spelled-out runway list is refused, not half-read',
+        globalThis.ddb.datisClosures('X. NOTICE TO AIRMEN. RWY 1 6 LEFT 3 4 RIGHT CLOSED.').closed.length === 0);
+      assert('MSP’s taxiway notices close no runway',
+        globalThis.ddb.datisClosures(
+          'X. NOTICE TO AIRMEN. TWY R4. R5. R6, CLOSED. TWY R BTWN R4 AND R6 CLSD.').closed.length === 0);
+      assert('a runway pair written with a slash is read as both',
+        globalThis.ddb.datisClosures('X. NOTICE TO AIRMEN. RWY 11/29 CLSD.').closed.join(',') === '11,29');
+      assert('a broadcast with no notices asserts nothing at all',
+        globalThis.ddb.datisClosures(
+          'KMSP INFO B. SIMUL ILS RWY 12L, 12R APCHS IN USE. DEPTG RWY 12L, 12R.').closed.length === 0);
+      /* and the contradiction is stated, not resolved */
+      const stale = globalThis.ddb.parseDatis(
+        'KMSP INFO A. 03007KT 10SM FEW017 A2990. VISUAL RWY 30L APCH IN USE. ' +
+        'NOTICE TO AIRMEN. RWY 30L CLSD.');
+      assert('a runway both advertised and closed is reported as the clash it is',
+        stale.land.join(',') === '30L' && stale.closed.join(',') === '30L'
+        && stale.clash.join(',') === '30L', JSON.stringify(stale.clash));
+    }
     /* the tool is offline first, so each broadcast gets pasted on its own */
     {
       const sp = globalThis.ddb.datisSplit([

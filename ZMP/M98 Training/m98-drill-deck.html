@@ -3331,6 +3331,13 @@ function datisJoined(d){
    broadcast that used the new wording would have had its whole notice section
    parsed as if it were the flow. */
 function datisClean(seg){ return String(seg).split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/)[0]; }
+/* The other half of the same cut. datisClean keeps the text BEFORE the
+   heading and that stays the whole rule for the flow; this keeps the text
+   after it, which is the closure list, and datisClosures reads it below. */
+function datisNotices(seg){
+ var p=String(seg).split(/NOTICE TO AIR(?:MEN|\s+MISSIONS)|NOTAMS?\b/);
+ return p.length>1 ? p.slice(1).join(' ').trim() : '';
+}
 function rwyList(s){
  var out=[], m=String(s||'').toUpperCase().match(/\d{1,2}[LRC]?/g)||[];
  m.forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
@@ -3357,6 +3364,92 @@ function rwysAfter(text, lead){
  while((m=re.exec(String(text||'').toUpperCase())))
   rwyList(m[1]).forEach(function(r){ if(out.indexOf(r)<0) out.push(r); });
  return out;
+}
+/* ---- CLOSURES — issue #18 ----
+   THE PARSE WINDOW ABOVE IS UNCHANGED. Nothing here reaches `land`, `dep` or
+   `cfg`: this is a second, read-only pass over the text the first one throws
+   away, and the guard issue #13 bought stands exactly where it was. What
+   changes is that the closure is now SHOWN rather than discarded — the tool
+   knew it and threw it away, which is what this issue was raised about.
+
+   It reads the notice section ONLY. MSP carries the heading on every
+   broadcast — checked in the 2026-09-04 survey and again in the live pull of
+   2026-09-21 0853Z — so at this field there is no closure text outside it.
+   The two fields that publish no heading are ORD and SLC, which are C90's and
+   S56's problem and are handled in the shared reader those decks carry
+   (claude_DATIS_Field_Survey.md §4b).
+
+   A NAMED ITEM OUT OF SERVICE IS NOT A CLOSED RUNWAY. The live broadcast of
+   2026-09-21 says "RWYS 4, 22 CLSD, RWYS 17, 35 CLSD" and, in the same notice
+   section, "RWYS 12R AND 12L INNER MARKER OTS" — four runways shut and two
+   inner markers out on two runways that are landing traffic. The item name is
+   the only thing separating them, so it is what this reads most carefully;
+   where it cannot read one it claims nothing and leaves the text to be read. */
+var CLSD_WORD  = /\b(?:CLSD|CLOSED)\b/;
+var OTS_WORD   = /\b(?:OTS|OUT OF SERVICE|UNUSABLE|UNAVAILABLE|UNAVBL|UNAVL)\b/;
+var STATE_WORD = new RegExp(CLSD_WORD.source+'|'+OTS_WORD.source);
+/* one item ends at a comma, or at the state word of the item before it */
+var ITEM_CUT   = new RegExp(',|'+STATE_WORD.source);
+/* a runway pair written with a slash — "RWY 11/29 CLSD". The flow reader's
+   RWY_RUN is deliberately NOT widened for this: a slash never appears in a
+   runways-in-use line, and the pattern that decides the configuration is not
+   the place to absorb a notice-section spelling. */
+var CLSD_RUN   = RWY_ONE+'(?:(?:'+RWY_SEP+'|'+/\s*\/\s*/.source+')'+RWY_ONE+')*';
+/* The item names a broadcast actually uses for equipment at a runway, taken
+   from a live nationwide pull — 89 broadcasts across 76 fields, 2026-09-21
+   0853Z, by the recipe in claude_DATIS_Field_Survey.md §1. A label counts as
+   an item ONLY IF EVERY WORD OF IT IS ONE OF THESE; anything else is a
+   sentence this cannot read, and it is left alone rather than guessed at.
+   LEFT and RIGHT are kept out on purpose — DEN spells its runways out as
+   "RWY 1 6 LEFT 3 4 RIGHT CLOSED", and a list that accepted them would read
+   that as runways 1 and 6 being shut. */
+var EQUIP=('GS GLIDESLOPE GLIDE SLOPE ILS LOC LOCALIZER LDA DME VOR NDB TACAN RNAV APCH APPROACH '
+ +'MARKER MARKERS INNER MIDDLE OUTER IM MM OM PAPI PAPIS VASI VASIS REIL REILS RAIL RAILS '
+ +'MALSR MALS ALSF ALS ODALS SFL RVR HIRL MIRL LIRL CL CNTRLN CENTERLINE TDZ TDZL '
+ +'LIGHT LIGHTS LIGHTING LGT LGTS EDGE THRESHOLD MIDPOINT ROLLOUT TOUCHDOWN '
+ +'HOLD HOLDING POSITION BLOCK PAD SIGN SIGNS BARRIER LAHSO SYSTEM AND').split(' ');
+/* '' means no item was named, a string names one, and null means there were
+   words here this cannot account for — three answers, and the third matters */
+function datisItemName(label){
+ var ws=String(label==null?'':label).replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim()
+   .split(' ').filter(function(w){ return w; });
+ for(var i=0;i<ws.length;i++) if(EQUIP.indexOf(ws[i])<0) return null;
+ return ws.join(' ');
+}
+function datisClosures(raw){
+ var closed=[], ots=[], lines=[], seen={};
+ String(raw||'').split(/\n\s*\n/).forEach(function(seg){
+  var tail=datisNotices(seg.replace(/\s+/g,' ').toUpperCase());
+  if(!tail) return;
+  lines.push(tail);
+  tail.split('.').forEach(function(sent){
+   var re=new RegExp('([A-Z0-9 \\/-]*?)'+RWY_KEY+'('+CLSD_RUN+')','g');
+   var hits=[], m;
+   while((m=re.exec(sent))) hits.push({lead:m[1], rwys:rwyList(m[2]), at:m.index, end:re.lastIndex});
+   hits.forEach(function(h,i){
+    var after=sent.slice(h.end, (i+1<hits.length)?hits[i+1].at:sent.length);
+    if(!STATE_WORD.test(after)) return;
+    /* The item name sits on either side of the runway — "GS RWY 30L OTS" puts
+       it in front, "RWYS 12R AND 12L INNER MARKER OTS" behind — so both sides
+       are read and joined. THE TRAILING HALF DECIDES: when it names something
+       an unreadable lead is only a lead-in and is dropped; when it names
+       nothing, the lead is the only place an item could be, so an unreadable
+       one there means this cannot tell an item out from a runway shut, and it
+       says nothing. Not hypothetical — ATL's "DME PORTION OF ILS RWY 9L OTS"
+       reported runway 9L CLOSED until this branch existed. */
+    var tailName=datisItemName(after.split(STATE_WORD)[0]);
+    if(tailName===null) return;
+    var leadName=datisItemName(String(h.lead).split(ITEM_CUT).pop());
+    if(!tailName && leadName===null) return;
+    var what=[leadName||'', tailName].filter(function(x){ return x; }).join(' ');
+    if(what){
+     var key=what+'|'+h.rwys.join('+');           /* a split broadcast repeats its notices */
+     if(!seen[key]){ seen[key]=1; ots.push({rwys:h.rwys, what:what}); }
+    } else h.rwys.forEach(function(r){ if(closed.indexOf(r)<0) closed.push(r); });
+   });
+  });
+ });
+ return {closed:closed, ots:ots, text:lines.join(' ')};
 }
 /* MSP advertises one approach clause per runway — "RNAV ZULU RWY 30L APCH IN
    USE, ILS RWY 30R APCH IN USE" — and also one clause covering several —
@@ -3491,6 +3584,13 @@ function parseDatis(raw){
   o.partial=true;   /* matched on a subset — something is out of service */
  if(!o.land || !o.land.length) o.missed.push('landing runways');
  else if(!o.cfg) o.missed.push('a configuration matching landing '+(o.land||[]).join(', '));
+ var n=datisClosures(src);
+ o.closed=n.closed; o.ots=n.ots; o.notices=n.text;
+ /* A runway advertised in use AND named as closed in the same broadcast is a
+    contradiction the reader states rather than resolves — usually a broadcast
+    that has not caught up with itself, and which half is stale is the
+    trainee's to check, not this parser's to decide. */
+ o.clash=o.closed.filter(function(r){ return (o.land||[]).indexOf(r)>=0 || (o.dep||[]).indexOf(r)>=0; });
  return o;
 }
 /* the arrival ladders the engine actually carries */
@@ -5514,8 +5614,18 @@ window.ddbDatisApply=function(from){
   +' Read from the '+(have.arr&&have.dep?'arrival and departure broadcasts':(have.dep?'departure broadcast alone':'arrival broadcast alone'))+'.'
   +(!have.dep&&have.arr?' <span style="color:var(--amber)">Without the departure broadcast there is nothing to say which runways are being departed, and that is what separates a 12s from a 12s-Depart-17 or a 30s from a land-30s-depart-12s. Paste it in too if the configuration matters.</span>':'')
   +(!have.arr&&have.dep?' <span style="color:var(--amber)">Without the arrival broadcast there is no approach in use, so the landing runways had to come out of the departure text if they are in it at all.</span>':'')
+  /* Issue #18. Said back BEFORE the subset note, so that note's "something is
+     out of service" arrives already explained. */
+  +(o.closed&&o.closed.length?(' <span style="color:var(--amber)">Closed: '+esc(o.closed.join(', '))+'.</span>'):'')
+  +(o.ots&&o.ots.length?(' Out of service: '+esc(o.ots.map(function(x){
+     return x.what+' on '+x.rwys.join(' and '); }).join('; '))+'.'):'')
   +(o.partial?(' <span style="color:var(--amber)">Only '+esc((o.land||[]).join(', '))+((o.land||[]).length>1?' are':' is')+' advertised, so this matched '+esc(o.cfg)+' on a subset — something is out of service. Check before you build a full push on it.</span>'):'')
   +' That is '+cat+' — '+TOOLBOX[cat];
+ if(o.clash&&o.clash.length) msg+=' <span style="color:var(--amber)">'+esc(o.clash.join(', '))
+   +(o.clash.length>1?' are':' is')+' advertised in use and also named as closed in the same broadcast. '
+   +'Read it yourself before you build on either half.</span>';
+ if(o.notices) msg+=' <span style="color:var(--dim)">Closures are read from the text the flow reader '
+   +'does not use, and that reading is a reminder rather than a judgement — the notices are in the boxes above.</span>';
  if(o.missed.length) msg+=' <span style="color:var(--amber)">Could not read: '+esc(o.missed.join(', '))+'. Set those by hand.</span>';
  if(o.cfg){
   var c=configById(o.cfg);
@@ -6030,7 +6140,7 @@ window.ddb = {
  mixOptions:mixOptions, mixGates:mixGates, seatGates:seatGates,
  parseDatis:parseDatis, datisText:datisText, datisSplit:datisSplit, datisJoined:datisJoined,
  approachesInUse:approachesInUse, approachRunways:approachRunways, rwysAfter:rwysAfter,
- datisClean:datisClean,
+ datisClean:datisClean, datisNotices:datisNotices, datisClosures:datisClosures,
  configFromRunways:configFromRunways, DATIS_SOURCES:DATIS_SOURCES,
  fixesOn:fixesOn, cumOf:cumOf, placeFrom:placeFrom, dtgFrom:dtgFrom, syncPlace:syncPlace,
  timingSummary:timingSummary, setDraft:function(d){ draft=d; renderEditor(); }, getDraft:function(){ return draft; }

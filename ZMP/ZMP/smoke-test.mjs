@@ -272,6 +272,43 @@ try {
   assert('every open question says what would close it',
     H.OPEN_Q.every(o => !!o.q && !!o.why && !!o.close));
 
+  /* ============ Closures out of the notices — issue #18 ============
+     ZMP has no field of its own and reads the METROPLEX broadcast, so the
+     fixture is KMSP — and KMSP is one of thirteen split broadcasts in the
+     country, which is the case that matters here: each half carries its own
+     notice section and both must be read.
+     VERBATIM FROM A LIVE PULL — datis.clowd.io/api/all, 2026-09-21 0853Z, by
+     the recipe in claude_DATIS_Field_Survey.md §1. */
+  {
+    const arr = 'MSP ARR INFO K 0853Z. 06008KT 10SM BKN160 11/08 A3024 RMK AO2 SLP240. '
+      + 'VISUAL RWY 12R APCH IN USE, VISUAL RWY 12L APCH IN USE. NOTICE TO AIRMEN. '
+      + 'RWYS 4, 22 CLSD, RWYS 17, 35 CLSD. TWY R4. R5. R6, CLOSED. TWY R BTWN R4 AND R6 CLSD. '
+      + 'TWY Y CLSD. 17 DEICE PAD CLSD. RWYS 12R AND 12L INNER MARKER OTS. '
+      + 'CTN, BIRDS NEAR MSP. ...ADVS YOU HAVE INFO K.';
+    const dep = 'MSP DEP INFO X 0853Z. 06008KT 10SM BKN160 11/08 A3024 RMK AO2 SLP240. '
+      + 'DEPARTING RWY 12L, RWY 12R. NOTICE TO AIRMEN. RWYS 4, 22 CLSD, RWYS 17, 35 CLSD. '
+      + 'TWY Y CLSD. ...ADVS YOU HAVE INFO X.';
+    const W = globalThis.zdw, c = W.closures(arr + '\n\n' + dep);
+    assert('both halves of a split broadcast have their notices read',
+      c.closed.join(',') === '4,22,17,35', JSON.stringify(c.closed));
+    /* A NAMED ITEM OUT OF SERVICE IS NOT A CLOSED RUNWAY: the inner markers are
+       out on the two runways that are landing traffic. */
+    assert('an inner marker out is not a closed runway',
+      c.ots.length === 1 && c.ots[0].what === 'INNER MARKER'
+      && c.ots[0].rwys.join(',') === '12R,12L', JSON.stringify(c.ots));
+    assert('a repeated notice section is not counted twice', c.ots.length === 1);
+    assert('taxiway closures close no runway',
+      c.closed.indexOf('4') >= 0 && c.closed.length === 4);
+    /* THE PARSE WINDOW IS UNCHANGED — the closures pass is read-only. */
+    const o = W.read(arr + '\n\n' + dep);
+    assert('the flow still reads 12L and 12R either way',
+      o.land.slice().sort().join(',') === '12L,12R' && o.dep.slice().sort().join(',') === '12L,12R',
+      JSON.stringify([o.land, o.dep]));
+    assert('and no closed runway is ever advertised in use', o.clash.length === 0);
+    assert('the notice text is carried verbatim rather than summarised',
+      o.notices.indexOf('INNER MARKER OTS') >= 0);
+  }
+
   console.log('\n' + checks + ' checks passed.');
 } catch (e) {
   console.error('FAIL: threw —', e && e.stack ? e.stack : e);
