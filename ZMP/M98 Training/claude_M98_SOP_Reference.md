@@ -62,9 +62,14 @@ type name everywhere a controller reads it, and keeps "Arrival" only where it qu
 - **4-1**: *"Arrival Control has control for descent in Feeder airspace"*, and **4-4c** gives
   **Feeder-to-Arrival handoff altitudes** — both of which presuppose two positions.
 
-So a handoff from the Feeder to the Final is a real transfer in the order as written, and the
-tool grades it as one. **Where they are combined on one scope the tool says so** and grades the
-flash and the switch anyway, which is the honest reading of an internal handoff.
+So the tool grades that handoff as a real transfer. **This was asked and settled rather than
+assumed:** the correction that established the four types was first read as possibly meaning the
+Feeder and the Final are one position, which would have unwound the 4-4c floor handoff, the
+crossover receivers and the 15 NM far-gate rule. It does not — it means *Final* and *Arrival* are
+one position. Owner, 2026-09-21. Recorded here so the question is not reopened from the wording.
+
+**Where the two are combined on one scope the tool says so** and grades the flash and the switch
+anyway, which is the honest reading of an internal handoff.
 
 South Feeder (H, 135.475) is the primary combined frequency, connected first.
  **NOTE 2 —
