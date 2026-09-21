@@ -361,9 +361,32 @@ function trunkFor(gate){
     Transcribed from claude_ZMP_Reference.md, "Table 2 — Runway transitions
     assigned by ZMP". The document has exactly these six rows and no others, so
     a configuration that is not a key here gets NO arrival geometry rather than
-    a guess — see buildRoutes(). Absent on purpose: 4, 22, 4-35, and the 30/12
-    noise-abatement default, which lands the 30s but is not a Table 2 row. That
-    is a question for the facility, not a gap to fill in from the runways.
+    a guess — see buildRoutes(). Absent on purpose: 4, 22 and 4-35. Nothing in
+    the reference set resolves which transition ZMP assigns in those three, so
+    they stay a question for the facility (issue #15) rather than a gap filled
+    in from the runways.
+
+    30/12 IS CARRIED, AND NOT OUT OF TABLE 2. The noise-abatement default lands
+    the 30s and departs the 12s, and Table 2 gives it no row. Three things
+    settle it, and only together:
+
+      MSP-M98 LOA 9.h.1(b) — "When MSP is in a land 30L/R-depart 12L/R
+        configuration, for opposite direction purposes, THE ADVERTISED LANDING
+        RUNWAY MUST BE CONSIDERED THE CONFIGURATION." That is the document
+        saying a 30/12 is a 30. But it says it for opposite-direction purposes,
+        and it sits in the MSP-M98 LOA while Table 2 is ZMP-M98's.
+
+      OWNER, 2026-09-21 — the runway transition follows the landing flow, so a
+        30/12 takes the 30 row. That is what carries 9.h.1(b) across to Table 2,
+        and it is why the value may be used at all.
+
+      TABLE 2's OWN SHAPE agrees without stating it: every row that lands the
+        same runways carries the same transitions whatever is departing, so 12
+        and 12/17 are identical, and 30, 30/17 and 30/35 differ only by the
+        Runway 35 footnote.
+
+    TABLE2_FOOTNOTE['30/12'] puts that chain on the page beside the assignment,
+    so the tool never shows it as published.
 
     The 30-35 row carries Table 2 footnote 1 on NITZR and BLUEM — M98 and ZMP
     CIC/TMU collaborate on which aircraft get the Runway 35 transition — so 30L
@@ -378,9 +401,31 @@ function trunkFor(gate){
   '30-35': {NITZR:'30L', BLUEM:'30L', TORGY:'30L', KKILR:'30L', MUSCL:'30R', BAINY:'30R'},
   '17-22': {NITZR:'22',  BLUEM:'22',  TORGY:'17',  KKILR:null,  MUSCL:'22',  BAINY:'17'}
  };
+ /* ---------- The landing-flow rule, in one place ----------
+    A configuration Table 2 does not name, but whose LANDING FLOW is one it
+    does, resolves to that flow. Today that is 30/12 alone.
+
+    THIS IS NOT A SECOND COPY OF THE 30 ROW — it is an alias, so every lookup
+    keyed on configuration follows it at once: the runway transitions, the
+    near/far split (NEAR_GATES) and the Feeder-to-Arrival handoff altitudes
+    (HANDOFF_ALT). Writing the row out instead resolved the transitions and
+    silently left near/far null, which made crossoverFor call every 30/12
+    crossover a NEAR one — the same class of fault as issue #55, found on
+    2026-09-21 before it shipped.
+
+    The rule and its limits are in the comment above TABLE2 and in
+    claude_ZMP_Reference.md. 9.h.1(b) is general about the configuration —
+    "the advertised landing runway must be considered the configuration" — so
+    it reaches the near/far split as readily as the transitions, and the
+    published ladders corroborate that independently: in a 30/12, TORGY and
+    BAINY publish two ladders each (far) and the other four publish one (near),
+    exactly as they do in a 30. */
+ var CFG_LANDING_FLOW = { '30/12':'30' };
+ function cfgFlow(cfg){ return CFG_LANDING_FLOW[cfg] || cfg; }
  var TABLE2_FOOTNOTE = {
   '30-35': 'NITZR and BLUEM carry Table 2 footnote 1 — M98 and ZMP CIC/TMU collaborate on which aircraft get the Runway 35 transition. The 30L ladder is the assignment; a 35 transition is a coordinated exception and is not drawn.',
-  '17-22': 'KKILR is N/A on Table 2 in this configuration — KKILR and WILDD arrivals are prohibited entirely (ZMP-M98 LOA 5.b(3)), so the gate carries no ladder here.'
+  '17-22': 'KKILR is N/A on Table 2 in this configuration — KKILR and WILDD arrivals are prohibited entirely (ZMP-M98 LOA 5.b(3)), so the gate carries no ladder here.',
+  '30/12': 'ZMP-M98 LOA Table 2 has no row for 30/12 — the ladders loaded are the 30 row. MSP-M98 LOA 9.h.1(b) says that in a land 30L/R-depart 12L/R configuration the advertised landing runway must be considered the configuration, but it says so for opposite-direction purposes and sits in the MSP-M98 LOA rather than the ZMP-M98 one. The owner confirmed on 2026-09-21 that the runway transition follows the landing flow, which is what carries that paragraph across to Table 2. Table 2 corroborates without stating it: every row landing the same runways carries the same transitions whatever is departing. Brief the arrivals as the 30s.'
  };
  /* Fixed gate order, so the gate list, the scope and the drill generator keep
     one stable order whatever flow is loaded. */
@@ -422,7 +467,7 @@ function materialize(lad){ var r=finalize(lad.map(cloneFix)); r.src=lad; return 
 function ladderFor(cfg, gate, rwy){
  var g=LADDER[gate]; if(!g) return null;
  if(rwy && g[rwy]) return g[rwy];
- var t=TABLE2[cfg]; if(!t) return null;
+ var t=TABLE2[cfgFlow(cfg)]; if(!t) return null;
  var a=t[gate];
  return (a && g[a]) ? g[a] : null;
 }
@@ -433,7 +478,7 @@ function ladderFor(cfg, gate, rwy){
    Table 2 has no row, which is not the same as an empty list: it means the
    question is unanswerable here, so nothing gets cleared on that basis. */
 function assignableRwys(cfg){
- var t=TABLE2[cfg]; if(!t) return null;
+ var t=TABLE2[cfgFlow(cfg)]; if(!t) return null;
  var out={};
  GATE_ORDER.forEach(function(g){ if(t[g]) out[t[g]]=1; });
  return Object.keys(out);
@@ -487,14 +532,17 @@ function splitFixFor(cfg, gate){
 }
 /* What Table 2 assigns this gate in this configuration, or null. */
 
-function transitionFor(cfg, gate){ var t=TABLE2[cfg]; return t ? (t[gate]||null) : null; }
+function transitionFor(cfg, gate){ var t=TABLE2[cfgFlow(cfg)]; return t ? (t[gate]||null) : null; }
 /* Load the arrival ladders for a configuration into ROUTES, in place. Each
    ladder is cloned before it is finalized, because finalize() writes screen
    position and cumulative distance onto every fix object — the LADDER tables
    stay pure data and can be shared between runways. */
 function buildRoutes(cfg){
  GATE_ORDER.forEach(function(g){ delete ROUTES[g]; });
- ROUTE_CFG = TABLE2[cfg] ? cfg : null;
+ /* cfgFlow, not cfg: a configuration whose landing flow Table 2 names loads
+    that flow's ladders. ROUTE_CFG keeps the REAL configuration, so the frame
+    still reads 30/12 and the footnote still fires on it. */
+ ROUTE_CFG = TABLE2[cfgFlow(cfg)] ? cfg : null;
  if(ROUTE_CFG){
   GATE_ORDER.forEach(function(g){
    var lad = ladderFor(ROUTE_CFG, g, null); if(!lad) return;
@@ -517,7 +565,7 @@ function setFlow(cfg){
  return ROUTES;
 }
 /* True when Table 2 gives this configuration arrival geometry at all. */
-function flowCarried(cfg){ return !!TABLE2[cfg]; }
+function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
 
 /* Turbojet SID routes, from claude_MSP_SID_Reference.md. Each runs from the
    MSP VOR out through the fixes that are direct-able inside 60 NM — which is
@@ -938,11 +986,11 @@ var HANDOFF_ALT = {
 /* null rather than a guess — 4/22 and the 35 configurations use the near/far
    altitudes without the order ever naming which gates are which. */
 function nearFarFor(cfg, gate){
- var n=NEAR_GATES[cfg||'12'];
+ var n=NEAR_GATES[cfgFlow(cfg||'12')];
  return n ? (n.indexOf(gate)>=0 ? 'near' : 'far') : null;
 }
 function floorFor(cfg, gate){
- var c=nearFarFor(cfg, gate), a=HANDOFF_ALT[cfg||'12'];
+ var c=nearFarFor(cfg, gate), a=HANDOFF_ALT[cfgFlow(cfg||'12')];
  return (c && a) ? a[c] : null;
 }
 /* SOP 4-5 names two crossovers that are explicitly not counted as crossovers
@@ -2577,7 +2625,8 @@ window.ddLoad=function(id){
     ladders or — in a configuration Table 2 does not name, where ROUTES is
     legitimately empty — throws on ROUTES.TORGY.total. That crash was recorded
     as still open in CLAUDE.md on 2026-09-04, repro setFlow('30/12') then
-    ddLoad('resume10r'); this is the fix. Both library drills say 12s-Depart 17
+    ddLoad('resume10r') — 30/12 carried no geometry then, so the same repro
+    needs 4, 22 or 4-35 today. This is the fix. Both library drills say 12s-Depart 17
     on their own frame, so 12-17 is the Table 2 row they load. */
  if(sc.cfg) setFlow(sc.cfg);
  sim.t=0; sim.rate=0;
@@ -2754,6 +2803,7 @@ window.DD = {
  SAT_FIELDS:SAT_FIELDS, satSeatFor:satSeatFor,
  towerHandoffFor:towerHandoffFor, DEP_VORS:DEP_VORS, RWY_SIDE:RWY_SIDE, sideOfRunway:sideOfRunway,
  nearFarFor:nearFarFor, floorFor:floorFor, CROSSOVER_EXEMPT:CROSSOVER_EXEMPT, crossoverFor:crossoverFor,
+ CFG_LANDING_FLOW:CFG_LANDING_FLOW, cfgFlow:cfgFlow,
  RST_BOUNDARY:RST_BOUNDARY, RST_ARC:RST_ARC, RST_CEILING:RST_CEILING,
  FEEDER_SPLIT:FEEDER_SPLIT, feederFor:feederFor, ZMP_SECTORS:ZMP_SECTORS, zmpSectorFor:zmpSectorFor,
  OBSTRUCTIONS:OBSTRUCTIONS, DDA_VERTICALS:DDA_VERTICALS,

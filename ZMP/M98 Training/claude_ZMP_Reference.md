@@ -94,6 +94,67 @@ The clearance limit for arrivals is **the destination airport**.
 **Heavy jet arrivals must be assigned the Runway 12R/30L transition** (Table 2, note c) — the
 rule the tool enforces as a hard validation error. Confirmed verbatim.
 
+### 30/12 — not a Table 2 row, and how it resolves anyway
+
+**Table 2 has no row for `30/12`** (land 30L/R, depart 12L/R — the noise-abatement default), and
+none for `4`, `22` or `4-35` either. Those three remain open with the facility (issue #15).
+`30/12` does not, as of **2026-09-21**. The chain that closes it has three links, each
+insufficient on its own — which is why the tool labels the result rather than publishing it:
+
+1. **MSP-M98 LOA 9.h.1(b)**, verbatim: *"When MSP is in a land 30L/R-depart 12L/R configuration,
+   for opposite direction purposes, the advertised landing runway must be considered the
+   configuration."* That is the document set saying a `30/12` **is** a `30`. **Its limits
+   matter:** it is scoped *for opposite direction purposes*, and it sits in the **MSP-M98** LOA
+   while Table 2 is **ZMP-M98**'s. By itself it says nothing about which runway transition ZMP
+   assigns.
+2. **Owner, 2026-09-21:** *"First transition is based off of landing flow so in 30/12 we would
+   land 30."* This is what carries 9.h.1(b) across the two agreements and onto the transition,
+   and it is the link that makes the value usable at all. **Owner-supplied, not published.**
+3. **Table 2's own shape corroborates the rule without stating it.** Every row that lands the
+   same runways carries the same transitions whatever is departing: `12` and `12/17` are
+   identical, and `30`, `30/17` and `30/35` differ only by the Runway 35 footnote. The
+   transitions key on the landing flow and are indifferent to the departure flow — the owner's
+   rule, demonstrated by the table.
+
+**So `30/12` takes the `30` row:** BAINY 30R, MUSCL 30R, and KKILR / NITZR / BLUEM / TORGY 30L.
+
+**And it takes more than the row.** *Configuration* is the key three separate tables are indexed
+by, so the rule has to reach all three or it breaks the two it misses:
+
+| keyed on configuration | what `30/12` gets |
+|---|---|
+| `TABLE2` — runway transitions assigned by ZMP | the `30` assignments above |
+| `NEAR_GATES` — which gates are near and which far, SOP 4-4c(7) | NITZR / BLUEM / KKILR / MUSCL **near**, TORGY and BAINY **far** |
+| `HANDOFF_ALT` — Feeder-to-Arrival handoff altitudes, SOP 4-4c(3) | near **7,000**, far **8,000** |
+
+**This is why the deck holds the rule as an alias rather than as a copied row.** `30/12` is not a
+key in `TABLE2`; `cfgFlow('30/12')` returns `'30'` and every configuration-keyed lookup goes
+through it. Writing the row out instead — which is how this was first built on 2026-09-21 —
+resolved the transitions and silently left near/far `null`, and `crossoverFor` reads a null class
+as **near**: every far-gate crossover in a 30/12 would have been handed to an Arrival instead of
+the opposite Feeder, and the 15 NM transfer-of-communications rule (issue #24) would never have
+fired. That is the same class of fault as issue #55. Caught before it shipped, and the smoke test
+now asserts the absence of the key as well as the presence of the behaviour.
+
+**The published ladders corroborate the near/far half independently.** A near gate publishes one
+ladder for both parallels and a far gate publishes two (the structural check recorded under issue
+#55). In a `30/12` the deck resolves a split fix for TORGY (HDEEE) and BAINY (PRRPL) and none for
+the other four — exactly the pattern a `30` gives. Nothing was configured to make that happen; it
+falls out of the ladders.
+
+**The transcribed table above is not amended**, because the document does not contain that row.
+`TABLE2_FOOTNOTE['30/12']` prints the provenance on the page beside the assignment, in the
+builder's check list and again under midnight operations — root `CLAUDE.md` §6, a single-sourced
+value is flagged as such wherever it is used.
+
+**What this does not settle.** `4`, `22` and `4-35` stay empty, and the landing-flow rule does
+not reach them: no Table 2 row lands 4, lands 22 on its own, or lands a straight 35. The `17/22`
+row splits its gates between the two runways — BAINY and TORGY to 17, MUSCL / NITZR / BLUEM to
+22, KKILR prohibited — so a straight `22` has nowhere to put BAINY and TORGY. The `30/35` row's
+35 is a footnoted coordinated exception rather than a general 35 assignment, so `4-35` does not
+inherit it. **A rule that resolves the landing flow is no use when the landing flow itself has
+no row.**
+
 ### Transfer of communications fixes
 
 Transfer of communications for aircraft entering M98 on an RNAV STAR must be accomplished **no

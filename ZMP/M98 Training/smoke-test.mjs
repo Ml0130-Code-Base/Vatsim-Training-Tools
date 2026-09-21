@@ -207,15 +207,63 @@ try {
     && ['TORGY','BAINY'].every(g => globalThis.DD.FLOORS[g] === 8000),
     JSON.stringify(globalThis.DD.FLOORS));
 
-  /* A configuration Table 2 has no row for gets no geometry at all, rather
-     than borrowing another flow's. 4, 22, 4-35 and the 30/12 noise default. */
-  ['4','22','4-35','30/12'].forEach(c => {
+  /* A configuration nothing resolves gets no geometry at all, rather than
+     borrowing another flow's. 4, 22 and 4-35: Table 2 names none of them, and
+     the landing-flow rule does not reach them either, because no Table 2 row
+     lands 4, lands 22 alone, or lands a straight 35. Issue #15 questions 2-3. */
+  ['4','22','4-35'].forEach(c => {
     globalThis.DD.setFlow(c);
     if (globalThis.DD.routeCfg() !== null || Object.keys(globalThis.DD.ROUTES).length !== 0)
       fail('uncarried configuration invents geometry', c + ' gave ' + globalThis.DD.routeCfg());
     if (globalThis.DD.flowCarried(c)) fail('uncarried configuration reports carried', c);
   });
-  ok('the four configurations Table 2 does not name carry no arrival geometry');
+  ok('the three configurations nothing resolves carry no arrival geometry');
+
+  /* 30/12 IS carried, and not out of Table 2. It takes the 30 row because the
+     advertised landing runway is the configuration (MSP-M98 LOA 9.h.1(b)) and
+     the transition follows the landing flow (owner, 2026-09-21). The row must
+     equal the 30 row exactly, and the provenance must be on the page — a
+     carried value with no footnote would read as published. */
+  const GA = ['NITZR','BLUEM','TORGY','KKILR','MUSCL','BAINY'];
+  /* THE RULE IS AN ALIAS, NOT A COPIED ROW. Table 2 must NOT gain a 30/12 key:
+     a copied row resolves the transitions and leaves near/far and the handoff
+     floors null, which made every 30/12 crossover read as near. Caught
+     2026-09-21 before it shipped; this is the guard. */
+  assert('30/12 is an alias onto 30, not a second copy of the row',
+    !Object.prototype.hasOwnProperty.call(globalThis.DD.TABLE2, '30/12')
+    && globalThis.DD.cfgFlow('30/12') === '30'
+    && globalThis.DD.cfgFlow('30') === '30'
+    && globalThis.DD.cfgFlow('4') === '4',
+    Object.keys(globalThis.DD.TABLE2).join(','));
+  globalThis.DD.setFlow('30/12');
+  assert('30/12 resolves the 30 transitions for every gate',
+    globalThis.DD.flowCarried('30/12')
+    && GA.every(g => globalThis.DD.transitionFor('30/12', g) === globalThis.DD.transitionFor('30', g)),
+    GA.map(g => g + '=' + globalThis.DD.transitionFor('30/12', g)).join(' '));
+  assert('and the six gates load their 30s ladders, under the real configuration name',
+    Object.keys(globalThis.DD.ROUTES).length === 6 && globalThis.DD.routeCfg() === '30/12',
+    globalThis.DD.routeCfg() + ' ' + Object.keys(globalThis.DD.ROUTES).join(','));
+  /* The half a copied row would have missed. */
+  assert('and the near/far split follows the landing flow too',
+    GA.every(g => globalThis.DD.nearFarFor('30/12', g) === globalThis.DD.nearFarFor('30', g))
+    && globalThis.DD.nearFarFor('30/12','TORGY') === 'far'
+    && globalThis.DD.nearFarFor('30/12','NITZR') === 'near',
+    GA.map(g => g + '=' + globalThis.DD.nearFarFor('30/12', g)).join(' '));
+  assert('and the handoff floors are the 30s floors, not null',
+    GA.every(g => globalThis.DD.floorFor('30/12', g) === globalThis.DD.floorFor('30', g))
+    && globalThis.DD.floorFor('30/12','TORGY') === 8000
+    && globalThis.DD.floorFor('30/12','NITZR') === 7000,
+    GA.map(g => g + '=' + globalThis.DD.floorFor('30/12', g)).join(' '));
+  assert('so a far-gate 30/12 crossover is graded far, not near',
+    globalThis.DD.crossoverFor('TORGY','30R','30/12').type === 'far'
+    && globalThis.DD.crossoverFor('NITZR','30R','30/12').type === 'near',
+    JSON.stringify(globalThis.DD.crossoverFor('TORGY','30R','30/12')));
+  assert('and it says on the page that Table 2 does not publish it',
+    /no row for 30\/12/.test(globalThis.DD.TABLE2_FOOTNOTE['30/12'] || '')
+    && /9\.h\.1\(b\)/.test(globalThis.DD.TABLE2_FOOTNOTE['30/12'] || '')
+    && /2026-09-21/.test(globalThis.DD.TABLE2_FOOTNOTE['30/12'] || ''),
+    globalThis.DD.TABLE2_FOOTNOTE['30/12']);
+  globalThis.DD.setFlow('12');
 
   /* KKILR and WILDD arrivals are prohibited entirely on a 17-22 (LOA 5.b(3)),
      which Table 2 records as N/A — so the gate must be absent, not empty. */
@@ -573,7 +621,7 @@ try {
 
     /* A gate with no ladder in the current flow RENDERS THE GAP rather than
        throwing. This is the regression that already happened once. */
-    globalThis.DD.setFlow('30/12');
+    globalThis.DD.setFlow('4');
     globalThis.ddLayers('stars');
     assert('an uncarried configuration draws no ladder and does not throw',
       ladderPts().length === 0 && typeof scope() === 'string', ladderPts().length);
@@ -785,8 +833,8 @@ try {
     globalThis.ddLoad('freshpush');
     const held = globalThis.DD.sim.ac.filter(a => a.role === 'arrival')
                    .map(a => a.route[a.route.length - 1].f);
-    globalThis.DD.setFlow('30/12');
-    assert('a configuration Table 2 does not name re-paths nobody',
+    globalThis.DD.setFlow('4');
+    assert('a configuration nothing resolves re-paths nobody',
       globalThis.DD.sim.ac.filter(a => a.role === 'arrival')
         .map(a => a.route[a.route.length - 1].f).join(',') === held.join(','),
       held.join(','));
@@ -802,7 +850,8 @@ try {
     assert('and the landing runways come from the Table 2 row itself',
       globalThis.DD.assignableRwys('17-22').slice().sort().join(',') === '17,22'
       && globalThis.DD.assignableRwys('12').slice().sort().join(',') === '12L,12R'
-      && globalThis.DD.assignableRwys('30/12') === null,
+      && globalThis.DD.assignableRwys('4') === null
+      && globalThis.DD.assignableRwys('30/12').slice().sort().join(',') === '30L,30R',
       globalThis.DD.assignableRwys('17-22').join(','));
     mustContain('and it says the assignments have to be re-issued', 'Re-issue them');
     globalThis.DD.setFlow('12');

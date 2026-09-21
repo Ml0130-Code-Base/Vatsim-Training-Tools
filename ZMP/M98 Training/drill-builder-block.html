@@ -448,9 +448,12 @@ function parseDatis(raw){
 function engineRunways(){ return RWYS; }
 /* Whether the engine has arrival geometry for a configuration. It does when
    ZMP-M98 LOA Table 2 gives that configuration a row of runway transitions —
-   12, 12-17, 30, 30-17, 30-35 and 17-22 — and it does not for 4, 22, 4-35 or
-   the 30/12 noise default, which Table 2 never names. This is not a runway
-   test: the question is whether ZMP assigns transitions, not what M98 lands. */
+   12, 12-17, 30, 30-17, 30-35 and 17-22 — and for the 30/12 noise default,
+   which Table 2 never names but which takes the 30 row under the landing-flow
+   rule (MSP-M98 LOA 9.h.1(b) + owner, 2026-09-21; see TABLE2 and its
+   footnote). It does not for 4, 22 or 4-35, where nothing resolves the
+   question. This is not a runway test: the question is whether ZMP assigns
+   transitions, not what M98 lands. */
 function configCarried(cfg){ return DD.flowCarried(cfg); }
 
 /* Callsign voicing — claude_US_Carrier_Callsigns.md.
@@ -2255,7 +2258,9 @@ function renderPos(){
   msgs+='<div class="w">the seat letter is the one thing the sources disagree on, and the tool does not hide the choice — the LOA parenthetical on 5.a(4) says <b>MSP_R_APP</b>, and no such callsign exists. vNAS has MSP_R_DEP (South Departure, 124.700, which SOP 2-1 gives as well) and MSP_E_APP carrying a second position record named <b>Midnight</b> on 124.7, on the same TCP as Flying Cloud Satellite. All three agree on the frequency; only the letter is unsettled. E is taken because it is the record actually called Midnight and the only 124.7 record whose callsign is an _APP. The handoff ID is <b>E</b> either way.</div>';
   var mcfg=(draft&&draft.cfg)||'12';
   if(!DD.flowCarried(mcfg)){
-   msgs+='<div class="w">quiet hours are '+esc(MIDNIGHT.quiet)+' and the RUS preference is land 30s / depart 12s (MSP-M98 LOA 9.g) — which is the <b>'+esc(mcfg)+'</b> on the frame, and ZMP-M98 LOA Table 2 has no row for it. So there is <b>no arrival geometry loaded</b>: the ladders are not being borrowed from another flow. That question is open with the facility.</div>';
+   msgs+='<div class="w">quiet hours are '+esc(MIDNIGHT.quiet)+' and the first RUS preference is land 30s / depart 12s (MSP-M98 LOA 9.g.1(a)) — but the frame reads <b>'+esc(mcfg)+'</b>, and ZMP-M98 LOA Table 2 has no row for it. So there is <b>no arrival geometry loaded</b>: the ladders are not being borrowed from another flow. That question is open with the facility (issue #15).</div>';
+  } else if(mcfg==='30/12'){
+   msgs+='<div class="w">quiet hours are '+esc(MIDNIGHT.quiet)+' and <b>land 30s / depart 12s is the first RUS preference</b> for them (MSP-M98 LOA 9.g.1(a)), which is the <b>30/12</b> on the frame. ZMP-M98 LOA Table 2 still has <b>no row</b> for it — the ladders loaded are the <b>30</b> row, because the advertised landing runway is the configuration (MSP-M98 LOA 9.h.1(b)) and the transition follows the landing flow (owner, 2026-09-21). Brief the arrivals as the 30s, and say where the transition came from if you are asked.</div>';
   }
  }
  msgs+='<div>'+(rstOpen()

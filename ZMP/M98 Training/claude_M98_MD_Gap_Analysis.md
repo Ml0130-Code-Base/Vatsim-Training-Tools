@@ -10,28 +10,31 @@
 
 These map directly onto the standing coaching items. **Item 0 is the exception and it is first for a reason:** everything numbered 1 to 5 is something the sources answer and the markdown layer had not folded in, so it is work. Item 0 the sources do not answer at all, so it is a question — and it is the only one here that needs somebody at the facility rather than another reading of the documents. If only five things get folded into the markdown layer, make it 1 to 5; if only one question gets asked, make it 0.
 
-### 0. Which runway transitions ZMP assigns in 4, 22, 4-35 and 30/12 — ZMP-M98 LOA Table 2 has no row (added 2026-09-07, issue #15)
+### 0. Which runway transitions ZMP assigns in 4, 22 and 4-35 — ZMP-M98 LOA Table 2 has no row (added 2026-09-07, narrowed 2026-09-21, issue #15)
 
 **This is the one to ask first, and it is a question for a person, not a document.** Every other item in this part is something the sources answer and the markdown layer had not folded in. This one the sources do not answer at all.
 
-`ZMP-M98 LOA Table 2 — Runway transitions assigned by ZMP` has **exactly six rows**: `12`, `12/17`, `30`, `30/17`, `30/35`, `17/22`. The configuration selector in the drill builder offers **ten**. The other four —
+`ZMP-M98 LOA Table 2 — Runway transitions assigned by ZMP` has **exactly six rows**: `12`, `12/17`, `30`, `30/17`, `30/35`, `17/22`. The configuration selector in the drill builder offers **ten**. Four are named nowhere in Table 2, and as of **2026-09-21 three of them are still open** —
 
-- **`30/12`** — land 30s, depart 12s. The noise-abatement default.
 - **`4`** — land 4, depart 4.
 - **`22`** — land 22, depart 22.
 - **`4-35`** — land 35, depart 4.
 
-— are named nowhere in Table 2, so **which runway transition ZMP assigns each gate in them is undocumented**. The tool draws **no arrival geometry at all** in those four rather than borrowing another flow's, and the builder says why. That is deliberate: the alternative is asserting a track ZMP never assigned.
+— so **which runway transition ZMP assigns each gate in them is undocumented**. The tool draws **no arrival geometry at all** in those three rather than borrowing another flow's, and the builder says why. That is deliberate: the alternative is asserting a track ZMP never assigned.
 
-**Only the assignment is missing, not the geometry.** `claude_MSP_STAR_Reference.md` publishes the ladders for those transitions already — grouped as e.g. *"MUSCL 12L/4/22/17"* and *"TORGY 4/17/22/30L"*, and the tool carries all of them in `LADDER`. So an answer to the question below is a one-line change per gate, not a data pull.
+**`30/12` was the fourth, and it closed on 2026-09-21.** The full chain is in `claude_ZMP_Reference.md`, *"30/12 — not a Table 2 row, and how it resolves anyway"*. In short: **MSP-M98 LOA 9.h.1(b)** says that in a land 30L/R–depart 12L/R configuration *"the advertised landing runway must be considered the configuration"*; the **owner confirmed on 2026-09-21** that the runway transition follows the landing flow, which carries that paragraph across to Table 2; and Table 2's own shape corroborates it, since every row landing the same runways carries the same transitions whatever is departing. So `30/12` takes the `30` row, flagged on the page as owner-supplied rather than published.
+
+**Worth recording, because it cost a session.** 9.h.1(b) was already transcribed in `claude_M98_Config_Reference.md`, under *midnight opposite-direction rules* — where nobody thought to read it as an answer to a Table 2 question. The paragraph that half-closed this item had been in the reference set since the audit. **When an item here looks unanswerable, re-read the paragraphs filed under a different heading before concluding the documents are silent.**
+
+**Only the assignment is missing, not the geometry.** `claude_MSP_STAR_Reference.md` publishes the ladders for those transitions already — grouped as e.g. *"MUSCL 12L/4/22/17"* and *"TORGY 4/17/22/30L"*, and the tool carries all of them in `LADDER`. So an answer to the questions below is **one row in `TABLE2` per configuration**, not a data pull.
 
 **The asks, in order:**
 
-1. **In a `30/12` — land 30s, depart 12s — do arrivals get the same transitions as a plain `30`?** That is BAINY 30R, MUSCL 30R, and KKILR / NITZR / BLUEM / TORGY 30L. It very likely does, because `30/12` lands 30L/30R — but that is an inference from the landing runways, not a citation, and the tool will not guess it from them.
-2. **Same question for `4`, `22` and `4-35`.**
-3. **Is Table 2 simply silent on these because they are rare, or is there a second table, or a CIC/TMU practice, that covers them?**
+1. **Which transitions does ZMP assign in `4`, `22` and `4-35`?** The landing-flow rule that settled `30/12` does not reach these, and that is exactly the difficulty: no Table 2 row lands 4, lands 22 on its own, or lands a straight 35. The `17/22` row splits its gates between the two runways — BAINY and TORGY to 17, MUSCL / NITZR / BLUEM to 22, KKILR prohibited — so a straight `22` has nowhere to put BAINY and TORGY. The `30/35` row's 35 is a footnoted coordinated exception rather than a general 35 assignment, so `4-35` does not inherit it.
+2. **Is Table 2 silent on these because they are rare, or is there a second table, or a CIC/TMU practice, that covers them?**
+3. **Is the landing-flow rule general, or a `30/12` convention?** The owner stated it as a rule on 2026-09-21 and the tool now carries it for `30/12` alone. If it is how the facility actually works, it belongs in the reference as a rule rather than as one row — and it might answer (1) the moment a Table 2 row exists for those landing flows.
 
-**Answering (1) alone unblocks the most-used of the four, and it matters more than the count suggests.** MSP-M98 LOA 9.g makes `30/12` the **quiet-hours default, 2230–0600 local** — the same window as the midnight regime the tool gained on 2026-09-07 (ZMP-M98 LOA para 5, 2230–0530 when coordinated). So **the configuration the owner is most likely to be working overnight is the one with no geometry**, and the two land on the page together: selecting midnight while the frame reads `30/12` now prints the gap and names this ask. The trainee who works nights is the trainee this blocks.
+**These three are rarer than `30/12` was, and that is the whole change in this item's priority.** `4`, `22` and `4-35` are wind-driven exceptions. `30/12` was the quiet-hours default — MSP-M98 LOA 9.g.1(a), first of the four RUS preferences, 2230–0600 local — overlapping the midnight regime (ZMP-M98 LOA para 5, 2230–0530 when coordinated). **The trainee who works nights is no longer blocked**, which is what this item existed to fix.
 
 ### 0b. The three Departure Dispersal Area shapes that are still not carried (added 2026-09-08, issue #27)
 
