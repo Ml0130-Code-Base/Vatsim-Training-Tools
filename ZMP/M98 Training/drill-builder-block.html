@@ -514,16 +514,23 @@ var POSITIONS=[
  {id:'L', name:'East Departure',             frq:'132.975', into:'R', job:'departure'},
  {id:'I', name:'North Feeder',               frq:'126.35',  into:'H', job:'feeder'},
  {id:'H', name:'South Feeder',               frq:'135.475', into:null, job:'feeder', role:'The base radar position — with nothing else open, all of M98 is worked here.'},
- {id:'N', name:'North Final / Arrival',      frq:'119.3',   into:'H', job:'arrival', role:'Opens as the combined MSP Final, working both parallels until S splits off.'},
- {id:'S', name:'South Final / Arrival',      frq:'126.95',  into:'N', job:'arrival', role:'The last of the four to open; until it does, its side folds into N.'},
- {id:'J', name:'17/35 West Final / Arrival', frq:'118.725', into:'N', job:'arrival'},
+ {id:'N', name:'North Final',                frq:'119.3',   into:'H', job:'final', role:'Opens as the combined MSP Final, working both parallels until S splits off.'},
+ {id:'S', name:'South Final',                frq:'126.95',  into:'N', job:'final', role:'The last of the four to open; until it does, its side folds into N.'},
+ {id:'J', name:'17/35 West Final',           frq:'118.725', into:'N', job:'final'},
  {id:'E', name:'Flying Cloud Satellite',     frq:'134.7',   into:'H', job:'satellite', role:'Opens as the combined Satellite, taking G and K with it.'},
  {id:'G', name:'St. Paul Satellite',         frq:'121.2',   into:'E', job:'satellite'},
  {id:'K', name:'Crystal Satellite',          frq:'126.5',   into:'E', job:'satellite'}
 ];
+/* THE FOUR POSITION TYPES, and they are four — Feeder, Final, Departure,
+   Satellite (owner, 2026-09-21). The order's own word for a Final is "Arrival":
+   SOP 2-1 lists them as "North/South/17-35 West Final/Arrival" and 2-4 titles
+   the job "Arrival Control (AR)" against 2-5's "Feeder Control (FR)". The
+   citations below are corrected to match — the duties were transposed, with the
+   Feeder's job cited to 2-4 and the Final's to 2-5 when it is the other way
+   round. */
 var DUTIES={
- feeder:'Assigns the landing runway and starts the crossovers (SOP 2-1 / 2-4).',
- arrival:'Vectors, sequences and issues the approach clearance (SOP 2-1 / 2-5).',
+ feeder:'Assigns the landing runway and starts the crossovers (SOP 2-5b, 2-5c).',
+ final:'Vectors, sequences and issues the approach clearance (SOP 2-4b, 2-4e). The order calls this position Arrival Control (AR).',
  departure:'Works the departures off MSP and the satellite fields.',
  satellite:'Works the satellite fields and the airspace under the arrival shelf.'
 };
@@ -2870,7 +2877,7 @@ function posHtml(){
  +'<div class="dd-msg" id="ddb-resolved"></div>'
  +'<div class="dd-hint">This drives the live player, not just the paperwork: whoever ends up owning the arrival is who has to take the flash, on their frequency, and the switch button in the player follows it. Close South Arrival and both runways go to N on 119.3 — flash it to S anyway and the player will tell you nobody is there.</div></div>'
 
- +'<div class="dd-note">Positions, identifiers and frequencies are M98 SOP 2-1; the combining order is NOTE 2 on the same paragraph. Position duties are SOP 2-1 / 2-4 / 2-5 — Feeder assigns the runway and starts crossovers, Arrival vectors, sequences and clears. The arrival split rides the localizers, so 12R is South Arrival\u2019s side and 12L is North\u2019s (SOP 4-2a). Which arrival gates belong to North rather than South Feeder is SOP 4-4d, which is not in the reference set here — if you take the North Feeder seat, confirm that split yourself before you trust the traffic. The overnight regime is <b>ZMP-M98 LOA para 5</b>, and the seat it collapses to is <b>vNAS</b> — MSP_E_APP carries a second position record named Midnight on 124.7, on the same TCP as Flying Cloud Satellite. The SOP describes no overnight regime at all. The LOA parenthetical naming MSP_R_APP is preserved as written and is not a callsign that exists.</div>'
+ +'<div class="dd-note">Positions, identifiers and frequencies are M98 SOP 2-1; the combining order is NOTE 2 on the same paragraph. Position duties are SOP 2-1 / 2-4 / 2-5 — Feeder assigns the runway and starts crossovers (2-5b, 2-5c), the Final vectors, sequences and clears (2-4b, 2-4e). M98 runs <b>four position types &mdash; Feeder, Final, Departure, Satellite</b>; the order&rsquo;s own word for a Final is <b>Arrival</b>, which is why 2-1 lists them as &ldquo;North/South Final/Arrival&rdquo; and 2-4 titles the job &ldquo;Arrival Control (AR)&rdquo;. One position, two names. The final split rides the localizers, so 12R is South Final\u2019s side and 12L is North\u2019s (SOP 4-2a). Which arrival gates belong to North rather than South Feeder is SOP 4-4d, which is not in the reference set here — if you take the North Feeder seat, confirm that split yourself before you trust the traffic. The overnight regime is <b>ZMP-M98 LOA para 5</b>, and the seat it collapses to is <b>vNAS</b> — MSP_E_APP carries a second position record named Midnight on 124.7, on the same TCP as Flying Cloud Satellite. The SOP describes no overnight regime at all. The LOA parenthetical naming MSP_R_APP is preserved as written and is not a callsign that exists.</div>'
  +'</section>';
 }
 function notesHtml(){

@@ -971,7 +971,13 @@ function feederFor(cfg, gate){
 var POS_NAME = {
  D:'North Departure', R:'South Departure', L:'East Departure',
  I:'North Feeder',    H:'South Feeder',
- N:'North Arrival',   S:'South Arrival',  J:'Runway 35 Arrival',
+ /* FINAL, not "Arrival". M98 has FOUR position types — Feeder, Final,
+    Departure, Satellite (owner, 2026-09-21). "Arrival" is not a fifth: it is
+    the order's other word for these same three positions. SOP 2-1 writes them
+    "North Final/Arrival", "South Final/Arrival" and "17/35 West Final/Arrival",
+    and 2-4 titles the job "Arrival Control (AR)". One position, two names, and
+    the tool now uses the type name the facility uses. */
+ N:'North Final',     S:'South Final',    J:'Runway 35 Final',
  E:'Flying Cloud Satellite', G:'St. Paul Satellite', K:'Crystal Satellite'
 };
 function posName(p){ return POS_NAME[p] || p; }

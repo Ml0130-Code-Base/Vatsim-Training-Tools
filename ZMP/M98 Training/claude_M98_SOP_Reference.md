@@ -45,7 +45,29 @@ aircraft less than 1,000 ft below overlying airspace.
 | St. Paul Satellite | 121.200 | G | MSP_G_APP |
 | Crystal Satellite | 126.500 | K | MSP_K_APP |
 
-South Feeder (H, 135.475) is the primary combined frequency, connected first. **NOTE 2 —
+### Four position types, and "Arrival" is the order's word for a Final
+
+**M98 has four position types: Feeder, Final, Departure, Satellite.** Owner, 2026-09-21.
+**"Arrival" is not a fifth type** — it is 7110.26A's own word for the Final positions, which is
+why the table above lists them as *"North/South/17-35 West Final/Arrival"* and why **2-4 titles
+the job "Arrival Control (AR)"**. One position, two names. The tool now uses **Final** as the
+type name everywhere a controller reads it, and keeps "Arrival" only where it quotes the order.
+
+**The order does treat Feeder and Final as two positions**, and says so three ways:
+
+- **2-4 "Arrival Control (AR)"** and **2-5 "Feeder Control (FR)"** are separate paragraphs with
+  separate duty lists and separate abbreviations.
+- **2-5.b**, verbatim: *"Assigns runways to arrival aircraft and establishes sequences for
+  **handoff to the appropriate Arrival Controller**."*
+- **4-1**: *"Arrival Control has control for descent in Feeder airspace"*, and **4-4c** gives
+  **Feeder-to-Arrival handoff altitudes** — both of which presuppose two positions.
+
+So a handoff from the Feeder to the Final is a real transfer in the order as written, and the
+tool grades it as one. **Where they are combined on one scope the tool says so** and grades the
+flash and the switch anyway, which is the honest reading of an internal handoff.
+
+South Feeder (H, 135.475) is the primary combined frequency, connected first.
+ **NOTE 2 —
 split order:** 1. South Feeder, 2. South Departure, 3. North Final/Arrival, 4. South
 Final/Arrival, 5. further connections at CIC discretion. *(This confirms the H to R to N to S
 chain the tool already models.)*
