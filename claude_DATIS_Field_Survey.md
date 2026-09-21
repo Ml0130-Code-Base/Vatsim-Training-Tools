@@ -236,3 +236,119 @@ text from a live pull, never from a document and never composed by hand** — bo
 issue #13 were failures in text nobody had looked at yet, and neither was reachable by reading
 the parser. The M98 lesson generalises: this parser's failure mode is a confident wrong
 answer, so live text is the only trustworthy test material.
+
+---
+
+## 9. The closures pass — reading the half the flow reader throws away
+
+Added 2026-09-21, issue #18. **Verified against a live nationwide pull: 89 broadcasts across 76
+fields, `datis.clowd.io/api/all`, 0851–0854Z, by the recipe in §1.** That pull is the evidence
+for every claim in this section, and re-running it is how to re-check them.
+
+### What it does, and what it deliberately does not
+
+The parse window in §4 is unchanged and stays the whole rule for the flow: **nothing past the
+notice heading may ever become a runway in use.** What changed is that the text the cut discards
+is now read **a second time, on its own, as closures**, and shown.
+
+Two places carry closure text and both are read:
+
+- **everything past the notice heading**, which the cut removes;
+- **the not-in-use sentences inside the body.** KORD and KSLC publish no heading at all (§4b),
+  so at those two fields the body is the only copy. These are the same sentences the flow
+  reader already drops on `NOT_IN_USE`.
+
+**The pass is read-only.** It writes `closed`, `ots`, `notices` and `clash`, and never touches
+`land`, `dep`, `apch` or `cfg`. The guard both rounds of issue #13 bought stands exactly where
+it was — asserted in all three smoke tests.
+
+### A named item out of service is not a closed runway
+
+This is the distinction the whole pass exists to hold, and getting it wrong in either direction
+misbriefs the trainee. On 2026-09-21 MSP carried both in the same notice section:
+
+```
+RWYS 4, 22 CLSD, RWYS 17, 35 CLSD.          four runways shut
+RWYS 12R AND 12L INNER MARKER OTS.          two inner markers out on the two
+                                            runways that were landing traffic
+```
+
+The **item name** is the only thing separating them. It sits on either side of the runway
+depending on the field — OMA writes `ILS RWY 32R GS OTS` with half of it each way — so both
+sides are read and joined, and **the trailing half decides**: when it names something, an
+unreadable lead is only a lead-in and is dropped; when it names nothing, the lead is the only
+place an item could be, so an unreadable one there means nothing is claimed.
+
+### The refusal is the safety property
+
+A label counts as an item **only if every word of it is in the equipment vocabulary**, which was
+built from the pull rather than guessed at. Anything else is a sentence the pass cannot read,
+and it claims nothing and shows the sentence instead.
+
+Against the 2026-09-21 pull that refused **19 sentences out of roughly 180**, and the ones it
+refused are the ones worth refusing:
+
+| Field | Sentence | What reading it would have claimed |
+|---|---|---|
+| KATL | `DME PORTION OF ILS RWY 9L OTS` | **runway 9L closed.** It is open; an ILS DME is out |
+| KDEN | `RWY 1 6 LEFT 3 4 RIGHT CLOSED` | runways 1 and 6 closed, from a spelled-out 16L/34R |
+| KHOU | `TWY J BTWN RWY 4 AND TWY K CLSD` | runway 4 closed, from a taxiway notice |
+| KCLT | `RUNWAY 1R, 1L, AND 19R OUTER MARKER OUT OF SERVICE` | the marker out on 1R and 1L only, losing 19R |
+
+**The ATL case was a live false positive found by this pull**, not a hypothetical: an earlier
+draft reported 9L closed. `LEFT` and `RIGHT` are kept out of the vocabulary on purpose, for the
+DEN case exactly.
+
+The cost of refusing is a closure that is not reported — which is what every field did before
+this pass existed — and never a closure reported wrongly. **The verbatim notice text is shown
+either way**, under *"not read as the flow"*, so nothing is lost twice.
+
+### Two spellings the closures pass reads and the flow reader does not
+
+- **A runway pair written with a slash** — `RWY 11/29 CLSD` at EWR, `RWY 7L/25R CLSD` at PHX,
+  `RY 10/28 CL LIGHTS OTS` at ALB. The flow reader's `RWY_RUN` is deliberately **not** widened
+  for this: a slash never appears in a runways-in-use line, and the pattern that decides the
+  configuration is not the place to absorb a notice-section spelling.
+- **`OUT OF SERVICE` written out in full**, which ABQ and MSY both do alongside `OTS`.
+
+### What it reads at our six fields, on the 2026-09-21 pull
+
+| Field | Closed | Out of service |
+|---|---|---|
+| **KMSP** | 4, 22, 17, 35 | inner marker on 12R and 12L |
+| **KOMA** | none | ILS on 32L; ILS GS on 32R; midpoint RVR on 32R; PAPI on 32L and 32R |
+| **KORD** | 4L, 22R, 4R, 22L, 9L, 27R, 9R, 27L, 10R, 28L | inner marker on twelve runways; ALS on 27C |
+| **KMDW** | 31L, 13R, 4L, 22R | none |
+| **KSLC** | 16L | ILS on 17; LDA DME on 35 |
+| **KBOI** | 10L | VASI on 10R |
+
+Both no-heading fields — ORD and SLC — read correctly, which is the case §4b said was the single
+biggest obstacle to a straight port.
+
+### The contradiction is stated, not resolved
+
+A runway advertised in use **and** named as closed in the same broadcast sets `clash`, and the
+reader says so in amber rather than picking a side. It is usually a broadcast that has not
+caught up with itself, and which half is stale is the trainee's to check. On the 2026-09-21
+pull no field in the repository produced one.
+
+### Where the code lives
+
+**Two implementations, because there have always been two parsers.**
+
+- `ZMP/M98 Training/m98-drill-deck.html` — `datisNotices`, `datisClosures`, `datisItemName`.
+  MSP-shaped, and it reads the **notice section only**: MSP carries the heading on every
+  broadcast, checked in the 2026-09-04 survey and again on 2026-09-21.
+- The shared reader carried by the other six decks — `wxNotices`, `wxClosures`, `wxItemName`.
+  Reads the heading **and** the body, for ORD and SLC.
+
+**All six copies of the shared reader are byte-identical**, checked with `diff`. They had drifted:
+the four ZAU and ZLC copies were one revision behind the 2026-09-21 `APCH_LIST` fix that landed
+in R90 and ZMP, and were brought up in the same pass. Re-check before assuming it.
+
+### Still true, and still not fixed by this
+
+**Issue #58.** KOMA writes two bare-list approach clauses in one sentence and the bare-list
+branch reads only the first, so Omaha landing 36, 32L and 32R reads as 36. That is a flow bug,
+not a closures bug, and the R90 smoke test asserts the wrong behaviour deliberately so the day
+it is fixed the line fails and gets updated with it.
