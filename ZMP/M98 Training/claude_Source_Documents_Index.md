@@ -67,8 +67,31 @@ must not be inferred:
 
 The docs page also carries LOAs and tower orders for facilities outside the eight requested:
 ZLC, ZKC, ZAU, ZDV, ZOB, CZWG enroute LOAs; OMA/LNK/R90; DSM/ALO; GRB/ATW; DLH; BIS; FAR; SUX;
-FSD; and the ZMP underlying towers STC, CWA, EAU, GRI, LSE, TVC, SAW. A `vATIS` facility file
-(`vATIS 4_1 - ZMP.zip`) is also offered. Pull those if the scope widens.
+FSD; and the ZMP underlying towers STC, CWA, EAU, GRI, LSE, TVC, SAW. Pull those if the scope
+widens.
+
+**The vATIS profile has since been pulled** — 2026-09-21, from the ARTCC's GitHub releases rather
+than the `vATIS 4_1 - ZMP.zip` on the docs page. It is ARTCC-wide rather than M98-only, so it is
+filed at `ZMP/_vatis/claude_ZMP_vATIS_Reference.md` with its own pull recipe and serial. See below.
+
+## vATIS profile — a fifth source, ARTCC-wide
+
+Not one of the four sources in root `CLAUDE.md` §10, and it answers a question none of them do:
+**what each tower advertises, in the words it broadcasts.**
+
+| | |
+|---|---|
+| pull | `curl -sL -o "vATIS Profile - ZMP.json" https://github.com/minneapolis-artcc/vatis/releases/latest/download/vATIS.Profile.-.ZMP.json` |
+| citation | **vATIS ZMP 2026012401** — quote the `updateSerial`, the way a CIFP cycle is quoted |
+| contents | 18 stations, 134 presets; KMSP split into Arrival (9 configs) and Departure (8) |
+| size / md5 | 1,223,367 bytes · `2ab4ecaacfd6ee65bd56963eae9e7994` |
+| committed? | **No.** §6 requires a reproducible pull, not the bytes; the release URL is stable |
+
+**The URL is `/latest/`, so it moves.** A pull returning a different serial is a new revision, and
+the differences are a finding to record rather than to overwrite silently.
+
+**It carries no geometry and does not say which runway transition ZMP assigns** — §7 and issue #15
+are both untouched by it. Full statement of what it can and cannot answer in the reference file.
 
 ## Regenerating this pull
 

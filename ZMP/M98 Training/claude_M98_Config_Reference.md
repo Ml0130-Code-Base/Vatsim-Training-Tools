@@ -53,7 +53,15 @@ Trap: state the **wind first**, then the config it produces — don't hand the s
 | **4** | 4 — visual / **LOC 4** | 4 | NE wind; Knock-It-Off arrivals |
 | **22** | 22 — visual / **LOC 22** | 22 | SW wind; Knock-It-Off arrivals |
 
-**Extra / opposite-direction variants (SOP airspace, not standalone vATIS presets):** land 30s / depart 12s (noise default — Arrival "30" + Departure "12"), Land 35 – Depart 12, and the Runway 4 / 22 "depart any" sets. These pair an arrival config with a different departure direction and invoke the ADW + ODO cutoff points (LOA 10).
+**Cross-checked against the ZMP vATIS profile, serial 2026012401, on 2026-09-21** —
+`ZMP/_vatis/claude_ZMP_vATIS_Reference.md`. **All nine configurations agree on every field**:
+landing runways, departure runways, and both the VMC and IMC approach types including the two
+converging-runway pairs. A second independent source confirming this table, with no corrections.
+Two things it adds: **`4-35` departs Runway 4 from the S intersection with 9,400 ft available**,
+and **`30-35` has no departure preset of its own** (it departs 30L/30R, which is the `30` string).
+
+**Extra / opposite-direction variants (SOP airspace, not standalone vATIS presets):**
+ land 30s / depart 12s (noise default — Arrival "30" + Departure "12"), Land 35 – Depart 12, and the Runway 4 / 22 "depart any" sets. These pair an arrival config with a different departure direction and invoke the ADW + ODO cutoff points (LOA 10).
 
 ## What changes when the airport turns
 

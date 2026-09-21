@@ -115,6 +115,14 @@ insufficient on its own — which is why the tool labels the result rather than 
    identical, and `30`, `30/17` and `30/35` differ only by the Runway 35 footnote. The
    transitions key on the landing flow and are indifferent to the departure flow — the owner's
    rule, demonstrated by the table.
+4. **The ZMP vATIS profile makes it mechanical** (serial 2026012401, added 2026-09-21 —
+   `ZMP/_vatis/claude_ZMP_vATIS_Reference.md`). MSP runs **two independent ATIS**, and the profile
+   carries them as two stations: an Arrival ATIS with nine configurations and a Departure ATIS
+   with eight. **Neither has a `30/12` preset**, because a land-30s/depart-12s operation is
+   Arrival **`30`** paired with Departure **`12`**. So in a 30/12 the arrival controller's
+   broadcast literally reads *"VIS RWY 30L APCH, VIS RWY 30R APCH IN USE"* — **the advertised
+   arrival configuration is `30`**. 9.h.1(b) is not merely a rule to apply; it is a description of
+   how the two broadcasts already work.
 
 **So `30/12` takes the `30` row:** BAINY 30R, MUSCL 30R, and KKILR / NITZR / BLUEM / TORGY 30L.
 
