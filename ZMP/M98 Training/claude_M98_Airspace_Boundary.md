@@ -93,6 +93,40 @@ one mile is inside the honest tolerance of both.
 altitudes** and is good only to a couple of miles, so **the owner-verified list above outranks it
 and must never be overwritten by it** (root `CLAUDE.md` §7).
 
+### 3.1 The Rochester segment specifically — a sharper check, 2026-09-23 (issue #59)
+
+SimAware carries **RST as its own polygon** (`Boundaries/RST/RST.json`, 13 vertices), and the
+M98↔RST boundary turns out to be **explicit rather than inferred: three vertices appear
+identically in both files.**
+
+| shared vertex | lat / lon | MSP radial/DME | this file says | difference |
+|---|---|---|---|---|
+| M98 #6 = RST #0 | 44.34556 / −92.75250 | **148.1/038.9** | 149/040 | 0.9° · 1.1 NM |
+| M98 #7 = RST #11 | 44.26611 / −92.87278 | **157.8/040.9** | 158/041 | 0.2° · 0.1 NM |
+| M98 #8 = RST #10 | 44.27167 / −93.31056 | **184.8/037.6** | 185/038 | 0.2° · 0.4 NM |
+
+**This is a tighter agreement than the nine-point ring got** — two of the three land inside half a
+mile — and it is a genuinely independent rendering: the shared edge falls out of two separate
+facility polygons agreeing with each other, not out of anything derived from our list.
+
+It also **leans on the 158/040-versus-158/041 question above**: SimAware reads **040.9**, which is
+0.1 NM from 041 and 0.9 NM from 040. **It leans and does not settle** — SimAware's stated tolerance
+is a couple of miles, which spans both — so both constants stay as they are. Recorded as a lean,
+not a reconciliation.
+
+`RST_ARC = [149,185]` in the deck, the radial span the ownership test uses, brackets SimAware's
+148.1–184.8 correctly.
+
+**SimAware cannot be a source for a boundary *change*, and this is the important half.** Both
+`RST/RST.json` and `M98/M98.json` were last modified **2022-11-19** and have not been touched
+since; the repository as a whole last changed 2025-03-30. **If the Rochester boundary has moved in
+the last four years, this source will not show it** — it can only corroborate what we already
+hold. A real change has to come from the facility or the owner.
+
+**What RST's full polygon shows beyond the shared edge:** it runs south and east to 43.21 N and
+91.78 W — far outside anything M98 touches. The three points above are the *shared* edge and not
+the RST boundary, which is the right thing for this tool to carry.
+
 ---
 
 ## 4. What this boundary is not
