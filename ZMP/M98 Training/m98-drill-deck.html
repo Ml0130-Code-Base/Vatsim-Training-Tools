@@ -1715,6 +1715,45 @@ function beginVector(a, want, dir){
  return a;
 }
 function onVector(a){ return a.nav==='heading'; }
+/* ---------- The final approach course as geometry — issue #26 ----------
+   The extended centreline of a runway, in the same east/north NM frame a
+   vectored aircraft flies in. The threshold comes from CIFP 260903 and the
+   inbound course from finalCourse() — the localizer where there is one, the
+   runway bearing otherwise.
+
+   NOT MODELLED, and the log says so rather than implying otherwise: there is
+   no glidepath (the engine keeps its own descent rate), no missed approach,
+   and no transfer to the tower. What this gives is the lateral turn-on, which
+   is the part SOP 4-7 and 4-8 actually have rules about. */
+function finalGeom(rwy){
+ var r=RUNWAYS[String(rwy||'').toUpperCase()]; if(!r) return null;
+ var fc=finalCourse(rwy); if(!fc) return null;
+ var t=nmOf(r.lat, r.lon);
+ return {thr:t, inbound:fc.crs, kind:fc.kind, loc:fc.loc, rwy:String(rwy).toUpperCase()};
+}
+/* Where an aircraft sits relative to that centreline, by rotating the
+   threshold-to-aircraft vector into the runway's own frame — so there is no
+   special case per runway and no magnetic correction (MSP's variation is
+   E0000, see claude_MSP_Runway_Reference.md).
+     along  NM from the threshold measured back along the approach. POSITIVE
+            is short of the threshold, which is where an arrival belongs.
+     cross  NM off the centreline, signed: POSITIVE is right of the inbound
+            course looking along it. */
+function finalOffset(a, rwy){
+ var g=finalGeom(rwy); if(!g) return null;
+ var p=posOf(a);
+ var de=p.e-g.thr.e, dn=p.n-g.thr.n;
+ var rad=g.inbound*Math.PI/180;
+ var ie=Math.sin(rad), inn=Math.cos(rad);
+ return {along:-(de*ie+dn*inn), cross:(de*inn-dn*ie), geom:g};
+}
+/* The angle between a heading and the inbound course, 0-180. SOP 4-7's best
+   practice is "intercept at less than 30 degrees when able", so this is the
+   number that rule is read against. */
+function interceptAngle(hdg, inbound){
+ var d=Math.abs(((hdg-inbound)%360+540)%360-180);
+ return d;
+}
 function posOf(a){
  /* Off the route, position IS the state — nothing to interpolate. */
  if(a.nav==='heading') return pxEN(a.e, a.n);
@@ -1981,6 +2020,42 @@ function tick(dt){
    }
    var rad=a.hdg*Math.PI/180, run=gs/3600*dt;
    a.e+=run*Math.sin(rad); a.n+=run*Math.cos(rad);
+   /* ---------- Flying an approach clearance — issue #26 ----------
+      A cleared aircraft holds the heading it was on until it reaches the
+      extended centreline, then turns onto the inbound course and tracks it.
+      With no wind model, holding the inbound course from on-centreline keeps
+      it there, so tracking needs nothing further. */
+   if(a.appr && !a.landed){
+    var off=finalOffset(a, a.appr.rwy);
+    if(off){
+     if(!a.apprEst){
+      if(Math.abs(off.cross)<=0.25 && off.along>0.5){
+       /* established. Snap the quarter mile onto the centreline so the track
+          does not sit off it for the rest of the approach. */
+       a.apprEst=true; a.apprAt=sim.t;
+       var u=off.geom.inbound*Math.PI/180;
+       a.e-=off.cross*Math.cos(u); a.n+=off.cross*Math.sin(u);
+       a.hdgTo=off.geom.inbound; a.turnDir=null; a.hdg=off.geom.inbound;
+       log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> is established on the '+a.appr.rwy+' '
+        +(off.geom.kind==='localizer'?('localizer ('+off.geom.loc+')'):'final')
+        +', '+off.along.toFixed(1)+' NM from the threshold at '+fmtAlt(a.alt)+'.', 'turnon');
+      } else if(off.along<=0.5 && !a.apprThru){
+       /* it reached the field without ever joining */
+       a.apprThru=true;
+       log('crit','<span class="dd-chip crit">crit</span><b>'+a.cs+'</b> was cleared for the '+a.appr.rwy
+        +' approach and reached the airport without ever joining the final \u2014 it passed abeam '
+        +Math.abs(off.cross).toFixed(1)+' NM off the centreline. The turn-on never happened.', 'turnon');
+      }
+     } else {
+      a.hdgTo=off.geom.inbound;
+      if(off.along<=0.2 && !a.landed){
+       a.landed=true; a.alive=false;
+       log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> crossed the '+a.appr.rwy
+        +' threshold. Tower has it \u2014 the engine flies no landing roll and no missed approach.', 'turnon');
+      }
+     }
+    }
+   }
    /* An aircraft vectored out of M98 is a real event and the engine says it
       once. It does not stop flying — it is not the tool's place to take it
       back — but somebody else owns that airspace now. */
@@ -2202,12 +2277,22 @@ function transmit(){
  var acks=[];
  var control=false;   /* did this transmission actually try to control the aircraft */
 
+ /* AN APPROACH CLEARANCE IS NOT A RUNWAY ASSIGNMENT, even though it names a
+    runway. "cleared ILS runway 12L approach" contains the word runway, so
+    without this the expect-runway branch below fires too: the crew reads back
+    both clauses and a crossover note prints for a runway change nobody made.
+    The clearance sets the landing runway itself, further down, because being
+    cleared for the 12L approach IS landing 12L — what it must not do is also
+    announce itself as the Feeder's assignment (SOP 2-5b) when it is the
+    Final's clearance (SOP 2-4e). */
+ var isApprClr = /\bcleared\b/.test(t) && /\bapproach\b|\bapch\b/.test(t);
  /* runway — the token can sit anywhere, as long as the transmission is about a runway */
  /* Any runway that exists at the field this one is landing at, digits or spoken
     — the parallels need their side, and a runway with no parallel must not be
     matched by something that does have one. Longest designator first so 12L
     wins over a bare 12. */
  var mR=null;
+ if(!isApprClr)
  if(/(expect|runway)/.test(t)){
   /* look only at the part of the transmission from the word onward, so a
      digit in the callsign can never be read as a runway */
@@ -2301,6 +2386,68 @@ function transmit(){
     log('info','<span class="dd-chip info">transition</span><b>'+a.cs+'</b> flies the same published track either way — '+rp.gate+' has one ladder serving both parallels, which is what makes it a near gate. The line on the scope is unchanged because the transition is.');
    } else if(rp.kind==='nogeom'){
     log('flag','<span class="dd-chip flag">flag</span>There is no published '+a.gate+' ladder for '+mTrans+' in this configuration, so the track does not move and the tool will not draw one it cannot cite.');
+   }
+  }
+ }
+ /* APPROACH CLEARANCE — issue #26, the Final's job (SOP 2-4b, 2-4e).
+    "cleared ILS runway 12L approach", "cleared visual approach runway 30L",
+    "cleared RNAV runway 35 approach", "cleared localizer 17 approach". The
+    runway is matched the same way "expect runway" matches it, digits or
+    spoken, against the runways this field actually has. */
+ if(/\bcleared\b/.test(t) && /\bapproach|\bapch\b/.test(t)){
+  var apKind = /\bils\b/.test(t) ? 'ILS'
+             : /\bvisual\b/.test(t) ? 'visual'
+             : /\brnav\b|\bgps\b/.test(t) ? 'RNAV'
+             : /\bloc(alizer)?\b/.test(t) ? 'localizer' : null;
+  var apR=null;
+  var apCands=runwaysAt(a.dest||'KMSP').slice().sort(function(x,y){ return y.length-x.length; });
+  for(var ai=0; ai<apCands.length && !apR; ai++){
+   var ar=apCands[ai], anum=ar.replace(/[LRC]$/,'');
+   var asfx=((ar.match(/[LRC]$/)||[''])[0]).toLowerCase();
+   var aword=(asfx==='l'?'left':(asfx==='r'?'right':(asfx==='c'?'center':'')));
+   var aspoken=anum.split('').map(function(c){ return SAY_DIGIT[+c]; }).join('[ ]+');
+   var atail=aword ? ('[ ]*(?:'+asfx+'|'+aword+')(?![a-z])') : '(?![a-z0-9])';
+   if(new RegExp('(?:^|[^a-z0-9])(?:'+anum+'|'+aspoken+')'+atail).test(t)) apR=ar;
+  }
+  if(!apKind){
+   log('coach','<span class="coach">Name the approach: <b>cleared ILS runway 12L approach</b>, <b>cleared visual approach runway 30L</b>, <b>cleared RNAV runway 35 approach</b>.</span>');
+  } else if(!apR){
+   log('coach','<span class="coach">Which runway? '+(a.cs||'that aircraft')+' is landing '+(a.dest||'KMSP')+' and the approach clearance has to name a runway it has.</span>');
+  } else { acted=true; control=true;
+   var apG=finalGeom(apR), apOff=finalGeom(apR)?finalOffset(a, apR):null;
+   if(!apG || !apOff){
+    log('flag','<span class="dd-chip flag">flag</span>There is no final approach course carried for '+apR+', so the tool will not fly an approach it cannot cite. Runway geometry is CIFP 260903 and covers the eight MSP runway ends only.');
+   } else {
+    acks.push('cleared '+apKind+' runway '+sayRunway(apR)+' approach');
+    /* Coming off the ladder is what the clearance means here: the Final
+       vectors to the final, so the aircraft stops flying the STAR. */
+    if(!onVector(a)) beginVector(a, null, null);
+    a.appr={rwy:apR, kind:apKind, at:sim.t};
+    a.apprEst=false; a.apprThru=false;
+    /* Being cleared for the 12L approach IS landing 12L, so the clearance sets
+       the landing runway. It does so quietly: the expect-runway branch is
+       guarded off for this transmission, because that is the Feeder's
+       assignment (2-5b) and this is the Final's clearance (2-4e). */
+    if(a.rwy!==apR){
+     var apPrev=a.rwy; a.rwy=apR;
+     if(apPrev) log('info','<span class="dd-chip info">approach</span><b>'+a.cs+'</b> was expecting '+apPrev+' and is cleared the '+apR+' approach, so '+apR+' is the landing runway now.');
+    }
+    var ang=interceptAngle(a.hdg, apG.inbound);
+    var side=(apOff.cross>=0?'right':'left');
+    log('info','<span class="dd-chip info">approach</span><b>'+a.cs+'</b> cleared '+apKind+' '+apR
+     +'. '+apOff.along.toFixed(1)+' NM from the threshold, '+Math.abs(apOff.cross).toFixed(1)+' NM '+side
+     +' of the '+(apG.kind==='localizer'?('localizer, course '+apG.inbound.toFixed(1)):('final, course '+apG.inbound.toFixed(1)))
+     +', intercepting at '+Math.round(ang)+'\u00b0.');
+    /* SOP 4-7 best practice — intercept at less than 30 degrees when able. */
+    if(ang>=30) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is intercepting at <b>'+Math.round(ang)+'\u00b0</b>. M98 7110.26A 4-7 says intercept at <b>less than 30 degrees when able</b> \u2014 this is a best practice in the order, not an absolute, so it is a flag and not an error. Say why if it was deliberate.', 'turnon');
+    /* SOP 4-8 noise — at or above 4,000 until intercepting the glidepath.
+       The engine has no glidepath, so this reads the altitude at the clearance
+       and says plainly that it is the weaker check. */
+    if(a.alt<4000) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is at '+fmtAlt(a.alt)+' on the turn-on. M98 7110.26A 4-8 vectors arrivals <b>at or above 4,000 ft MSL until intercepting the glidepath</b> unless the situation dictates otherwise. <i>Reminder, not a judgement</i> \u2014 the engine models no glidepath, so it cannot tell whether you had intercepted it.', 'turnon');
+    /* 4-8 again: Runway 17 is not for arrivals from the north. */
+    if(apR==='17' && apOff.cross!==null && posOf(a).n>0) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is north of the field and cleared Runway 17. M98 7110.26A 4-8: <b>Runway 17 should not be used for arrivals from the north</b> except when weather or operations require.', 'turnon');
+    /* Already past the field. */
+    if(apOff.along<=0) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is already past the '+apR+' threshold, so there is no final left to join on this heading.', 'turnon');
    }
   }
  }
@@ -2555,7 +2702,7 @@ function transmit(){
  }
  if(/disregard/.test(t)) acted=true;
 
- if(!acted) log('coach','<span class="coach">Nothing parsed. Known verbs: expect runway · speed NNN · descend/climb and maintain · resume published speed · resume normal speed · delete speed restrictions · flash · contact/switch · altimeter 2980 · say speed/altitude. Departures and overflights take the same verbs — climb and maintain, flash, contact center.</span>');
+ if(!acted) log('coach','<span class="coach">Nothing parsed. Known verbs: expect runway · cleared ILS/visual/RNAV runway NN approach · turn left/right heading NNN · speed NNN · descend/climb and maintain · resume published speed · resume normal speed · delete speed restrictions · flash · contact/switch · altimeter 2980 · say speed/altitude. Departures and overflights take the same verbs — climb and maintain, flash, contact center.</span>');
  render();
 }
 
@@ -2612,6 +2759,19 @@ function scopeSvg(){
     airspace still reverts to ZMP top to bottom (M98/RST LOA 4.a). The frame
     line on the Set up page still says which it is — that is where the airspace
     picture belongs, not on the scope. */
+ /* The extended final for each runway in use — 10 NM back from the threshold
+    on the inbound course, so the turn-on has something to be measured against.
+    Drawn from the CIFP threshold and course, not sketched. */
+ if(LAYERS!=='off'){
+  (assignableRwys(ROUTE_CFG) || []).forEach(function(rw){
+   var g=finalGeom(rw); if(!g) return;
+   var u=g.inbound*Math.PI/180;
+   var back={e:g.thr.e-10*Math.sin(u), n:g.thr.n-10*Math.cos(u)};
+   var p0=pxEN(g.thr.e,g.thr.n), p1=pxEN(back.e,back.n);
+   s+='<line x1="'+p0.x.toFixed(1)+'" y1="'+p0.y.toFixed(1)+'" x2="'+p1.x.toFixed(1)+'" y2="'+p1.y.toFixed(1)
+     +'" stroke="var(--dim2)" stroke-width="0.8" stroke-dasharray="2 5" opacity="0.5"/>';
+  });
+ }
  /* The 17 departure corridor. The two hardcoded schematic runway lines that
     used to sit here came out with it: they were drawn at fixed pixels, and the
     real ones are now plotted from the CIFP 260903 thresholds above, so keeping
@@ -3000,6 +3160,7 @@ window.DD = {
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
  RUNWAYS:RUNWAYS, RWY_PAIRS:RWY_PAIRS, RWY_SRC:RWY_SRC, finalCourse:finalCourse,
+ finalGeom:finalGeom, finalOffset:finalOffset, interceptAngle:interceptAngle,
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
