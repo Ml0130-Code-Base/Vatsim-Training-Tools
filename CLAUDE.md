@@ -309,7 +309,14 @@ it are load-bearing:
   upstream `Owners.xlsx` names the manager for each, and locally managed sets *"receive
   periodic bulk updates when local sector files change."* **These polygons come from the
   facility's own sector file**, which is the `.sct2` lineage the third path below is asking
-  for. That is why they may be used, and it does **not** extend to SimAware.
+  for. That is why they may be used.
+- **SimAware is facility-maintained too, and this file had that wrong until 2026-09-23.** Its
+  README gates every merge on a **verified Region / Division / FIR-ARTCC staff account** — *"PRs
+  from non-verified accounts will NOT be merged"* — with GIS screenshots and AIP documentation
+  expected on a boundary change. That is a stricter gate than VATGlasses' spreadsheet, not a
+  missing one. **It still publishes no licence and is still only good to a couple of miles**, so
+  it sits below an owner-supplied boundary; the owner moved the M98/RST boundary onto it on
+  2026-09-23 (issue #59).
 - **Licence: VATGlasses is CC BY-NC-SA 4.0; SimAware publishes none.** The owner has decided to
   use the VATGlasses boundaries (2026-09-02). **Attribution is mandatory in the tool's UI, not
   just in a markdown file**, and share-alike binds any block the polygons land in. The ZLC and

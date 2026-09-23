@@ -901,9 +901,20 @@ try {
     vfrAc.rules === 'VFR' && vfrAc.filed === '', vfrAc.rules + ' ' + JSON.stringify(vfrAc.filed));
 
   /* ============ 3d-b. Who is on the other side of the boundary ============ */
-  assert('the RST boundary is the three owner-supplied radial/DME points',
-    JSON.stringify(globalThis.DD.RST_BOUNDARY) === '[[185,38],[158,41],[149,40]]',
+  /* The boundary is SimAware's three shared vertices as of 2026-09-23 (#59),
+     and the owner's superseded radial/DME pairs are kept beside them. Both are
+     asserted: the live value, and that the prior one has not been quietly
+     dropped. They agree to 0.9 deg and 1.1 NM, which is the check that matters
+     if either is ever re-pulled. */
+  assert('the RST boundary is SimAware\u2019s three shared vertices',
+    JSON.stringify(globalThis.DD.RST_BOUNDARY) === '[[184.8,37.6],[157.8,40.9],[148.1,38.9]]',
     JSON.stringify(globalThis.DD.RST_BOUNDARY));
+  assert('and the superseded owner-supplied points are still recorded',
+    JSON.stringify(globalThis.DD.RST_BOUNDARY_PRIOR) === '[[185,38],[158,41],[149,40]]',
+    JSON.stringify(globalThis.DD.RST_BOUNDARY_PRIOR));
+  assert('the arc spans the same three radials',
+    globalThis.DD.RST_ARC[0] === 148.1 && globalThis.DD.RST_ARC[1] === 184.8,
+    JSON.stringify(globalThis.DD.RST_ARC));
   assert('RST owns 9,000 and below inside the arc',
     globalThis.DD.neighbourAt(158, 6500).pos === 'RST'
     && globalThis.DD.neighbourAt(158, 9000).pos === 'RST');

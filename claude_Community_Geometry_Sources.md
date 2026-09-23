@@ -233,6 +233,41 @@ Converting SimAware's 19 vertices to range and true bearing from that anchor:
   is not a constant magnetic-variation offset — the two are independent renderings of the same
   boundary, not the same list of points.
 
+### 4.2 Who actually maintains SimAware — corrected 2026-09-23
+
+**SimAware TRACON boundaries are facility-maintained, behind a verification gate.** From the
+project README:
+
+> *"Updates on GitHub that will be merged will be those that either come from **verified GitHub
+> accounts belonging to Regions, Divisions, or FIRs/ARTCCs** or that have been explicitly
+> authorized by a staff account."*
+> *"Data contributions to the project need to originate from a member of the Regional, Divisional
+> or Sub-Division/ARTCC staff, or any other delegated persons."*
+> **"PRs from non-verified accounts will NOT be merged."**
+
+Verification is by e-mail from a staff account to the project maintainer, and a boundary PR is
+expected to carry **GIS screenshots and supporting documentation such as an AIP image**.
+
+**This file originally said SimAware "has no equivalent ownership registry" and called it "the
+weaker tier". That was wrong**, and it was wrong in the direction that matters: the gate is
+*stricter* than VATGlasses' `Owners.xlsx`, because it is enforced at merge time rather than
+recorded in a spreadsheet. Owner correction, 2026-09-23, acting on it for the M98/RST boundary
+(issue #59).
+
+**Three things do not change with it:**
+
+1. **No licence.** There is still no `LICENSE` file. Provenance and licence are separate
+   questions and only the first one moved.
+2. **Accuracy is still about two miles** against the one boundary we can check (§4.1) — a
+   verified contributor is not a surveyor.
+3. **A facility order still wins**, and an owner-supplied boundary still outranks it unless the
+   owner says otherwise, which is exactly what happened for RST.
+
+**And it is not a change detector.** `Boundaries/RST/RST.json` and `Boundaries/M98/M98.json` were
+both last modified **2022-11-19**; the repository as a whole last changed 2025-03-30. That the
+facility has not revised a boundary is information, but a revision will only ever be visible
+through a fresh pull.
+
 **Conclusion: SimAware's terminal footprints are good to a couple of miles, not surveyed.**
 That is the tolerance to quote if R90's polygons are ever used, and it is the same order of
 accuracy as the traced M98 DDA polygon (*"good to about half a mile and stated as such"*).
@@ -311,9 +346,13 @@ identifies as the authoritative geometry we otherwise cannot obtain. For ZLC and
 the facility for a GeoJSON export" path in §7 has effectively already been answered — the
 facility published it.
 
-**This is the reason the boundaries may be used** (owner decision, 2026-09-02). It does **not**
-extend to SimAware, which has no equivalent ownership registry, and it does not extend to any
-other VATGlasses dataset without checking `Owners.xlsx` first.
+**This is the reason the boundaries may be used** (owner decision, 2026-09-02). It does not extend
+to any other VATGlasses dataset without checking `Owners.xlsx` first.
+
+> **Corrected 2026-09-23.** This paragraph used to end *"It does not extend to SimAware, which has
+> no equivalent ownership registry"*. **That was wrong.** SimAware has an ownership registry, and a
+> stricter one than VATGlasses' spreadsheet — see §4.2. The correction came from the owner, who
+> said plainly that SimAware is updated by the facilities; the README bears it out.
 
 ### What still holds
 
@@ -330,10 +369,11 @@ weakened by this file:
 3. **Label the provenance on the page, and keep the two tiers apart.** A **ZLC or ZAU
    VATGlasses** boundary comes from the facility's own sector file via its named vARTCC
    manager — it is the best geometry in this repository after an owner-supplied boundary, and
-   it needs attribution rather than a warning. **SimAware is the weaker tier**: no ownership
-   registry, no licence, and measured at about two miles against the one boundary we can check
-   (§4.1). Say which of the two a shape came from wherever it is drawn; never blend them into
-   one polygon.
+   it needs attribution rather than a warning. **SimAware is verified differently rather than
+   more weakly** (§4.2, corrected 2026-09-23): its contributions are gated on verified
+   ARTCC/Division/Region staff accounts, but it carries **no licence** and its accuracy against
+   the one boundary we can check is about two miles (§4.1). Say which of the two a shape came
+   from wherever it is drawn; never blend them into one polygon.
 4. **It is a genuine second source, and it has already earned its keep.** All twenty ZLC
    frequencies in `claude_ZLC_Positions_Reference.md` match it, including the three Big Sky
    values our reference had to recover from a mis-split table.

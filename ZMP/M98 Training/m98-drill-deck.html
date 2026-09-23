@@ -263,13 +263,59 @@ function finalCourse(rwy){
 function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
 
 /* ---------- Who is on the other side ----------
-   The M98 / Rochester Approach boundary, as MSP radial/DME (owner-supplied
-   2026-08-31): 185/038, 158/041, 149/040. That segment of the M98 perimeter is
+   The M98 / Rochester Approach boundary. That segment of the M98 perimeter is
    the only place RST is the neighbour, and only underneath it — south of the
    line RST owns 9,000 and below, ZMP owns everything above. Everywhere else
-   around M98 the neighbour is ZMP at every altitude. */
-var RST_BOUNDARY = [[185,38],[158,41],[149,40]];
-var RST_ARC = [149,185];      /* the radials the segment spans */
+   around M98 the neighbour is ZMP at every altitude.
+
+   SOURCE: the SimAware TRACON Project, pulled 2026-09-23 (issue #59). Owner
+   decision the same day: use SimAware here, because that dataset is maintained
+   by the facilities themselves.
+
+   THE BOUNDARY IS STATED BY THE DATA RATHER THAN INFERRED. Three vertices
+   appear IDENTICALLY in Boundaries/RST/RST.json and Boundaries/M98/M98.json,
+   so the shared edge is where two separate facility polygons agree with each
+   other, not something measured off one of them:
+
+     44.34556 / -92.75250     MSP 148.1/038.9
+     44.26611 / -92.87278     MSP 157.8/040.9
+     44.27167 / -93.31056     MSP 184.8/037.6
+
+   WHY THIS SOURCE RANKS HERE. The project's README gates contributions: a PR
+   is merged only from a verified GitHub account belonging to a Region,
+   Division or FIR/ARTCC, or one explicitly authorised by staff — "PRs from
+   non-verified accounts will NOT be merged" — and a boundary change has to
+   carry GIS screenshots and documentation such as an AIP image. That is a
+   facility-maintained dataset with a verification gate, which is a stronger
+   provenance than claude_Community_Geometry_Sources.md originally credited it
+   with; that file and root CLAUDE.md §7 are corrected to match.
+
+   SUPERSEDED, AND KEPT: the owner-supplied radial/DME pairs of 2026-08-31 —
+   185/038, 158/041, 149/040. They agree with the above to 0.9 degrees and
+   1.1 NM, with two of the three inside half a mile, so nothing about the
+   airspace picture moved. They also carried a 158/041-versus-158/040
+   discrepancy between two owner lists; SimAware reads 040.9, which settles it
+   toward 041 at the point of use without either owner list being edited.
+
+   NOT A CHANGE DETECTOR. Both files were last modified 2022-11-19. The
+   facility has not revised this boundary since then, which is information
+   rather than staleness — but if it ever does, the revision has to come from
+   a fresh pull, not from this constant. */
+/* Native lat/lon, in the same order as the radial/DME list below. The
+   radial/DME pairs are DERIVED from these against the surveyed MSP VOR — the
+   lat/lon is what the source actually publishes and is the value to trust. */
+var RST_BOUNDARY_LL = [[44.27167,-93.31056],[44.26611,-92.87278],[44.34556,-92.75250]];
+var RST_BOUNDARY = [[184.8,37.6],[157.8,40.9],[148.1,38.9]];
+var RST_BOUNDARY_SRC = 'SimAware TRACON Project, pulled 2026-09-23 \u2014 the three vertices RST.json and M98.json share';
+var RST_BOUNDARY_PRIOR = [[185,38],[158,41],[149,40]];   /* owner-supplied 2026-08-31, superseded 2026-09-23 */
+/* The radials the segment spans, from the same three points. It moved from
+   [149,185] with the source change, which shifts the ENDPOINTS by up to 0.9
+   degrees — a bearing of exactly 185 now resolves to ZMP where it used to
+   resolve to RST. Both sources agree to about a mile along this line, so
+   NEITHER OF THEM ADJUDICATES A TARGET SITTING ON THE ENDPOINT, and the tool
+   should not be read as doing so. Anything within a degree of either end is
+   inside the tolerance of both and wants a look at the actual position. */
+var RST_ARC = [148.1,184.8];
 var RST_CEILING = 9000;       /* RST at and below, ZMP above */
 /* Rochester is not a 24-hour facility. With it closed the delegated airspace
    reverts to Center — specifically Sector 07 (M98/RST LOA 4.a and ZMP/RST LOA
@@ -3253,7 +3299,8 @@ window.DD = {
  towerHandoffFor:towerHandoffFor, DEP_VORS:DEP_VORS, RWY_SIDE:RWY_SIDE, sideOfRunway:sideOfRunway,
  nearFarFor:nearFarFor, floorFor:floorFor, CROSSOVER_EXEMPT:CROSSOVER_EXEMPT, crossoverFor:crossoverFor,
  CFG_LANDING_FLOW:CFG_LANDING_FLOW, cfgFlow:cfgFlow,
- RST_BOUNDARY:RST_BOUNDARY, RST_ARC:RST_ARC, RST_CEILING:RST_CEILING,
+ RST_BOUNDARY:RST_BOUNDARY, RST_BOUNDARY_LL:RST_BOUNDARY_LL, RST_BOUNDARY_SRC:RST_BOUNDARY_SRC,
+ RST_BOUNDARY_PRIOR:RST_BOUNDARY_PRIOR, RST_ARC:RST_ARC, RST_CEILING:RST_CEILING,
  FEEDER_SPLIT:FEEDER_SPLIT, feederFor:feederFor, ZMP_SECTORS:ZMP_SECTORS, zmpSectorFor:zmpSectorFor,
  OBSTRUCTIONS:OBSTRUCTIONS, DDA_VERTICALS:DDA_VERTICALS,
  DDA_AREAS:DDA_AREAS, ddaFor:ddaFor, inDDA:inDDA,
