@@ -1615,6 +1615,42 @@ function interceptAngle(hdg, inbound){
  var d=Math.abs(((hdg-inbound)%360+540)%360-180);
  return d;
 }
+/* ---------- In-trail minimum on final ----------
+   All of this is claude_M98_7110_Reference.md, which is the FAA 7110.65BB
+   distillation, and it is the reason the numbers can be graded at all:
+
+     base radar, terminal FUSION           3 NM   (5-5-4)
+     behind a SUPER                        Heavy 6, Large 7, Small 8
+     behind a HEAVY                        Heavy 4, Large/Small 5,
+                                           Small behind Heavy SAME RUNWAY 6
+     behind a B757                         Small 4
+     NOWGT, either aircraft                10 NM
+
+   TWO RULES DECIDE WHETHER WAKE APPLIES AT ALL, and both are in that file:
+     - wake applies to a follower AT OR BELOW the leader's altitude and behind
+       it; a follower above the leader has no wake requirement.
+     - parallels less than 2,500 ft apart count as ONE runway for wake. MSP's
+       are 3,380 ft apart, so they are SEPARATE for wake — which is why this
+       only ever compares two aircraft on the same runway.
+   The larger of the radar and wake numbers governs. */
+function wakeMinFor(lead, trail, sameRwy){
+ var L=wakeOf(lead&&lead.type), T=wakeOf(trail&&trail.type);
+ if(L.cls==='nowgt' || T.cls==='nowgt')
+  return {nm:10, why:'NOWGT \u2014 weight unverified on '+(L.cls==='nowgt'?lead.cs:trail.cs)+', so 10 NM ahead and behind until it is checked', wake:true};
+ var w=0, why='';
+ if(L.cls==='super'){
+  w=(T.cls==='heavy')?6:(T.cls==='small'?8:7);
+  why=T.label+' behind a super';
+ } else if(L.cls==='heavy'){
+  if(T.cls==='heavy'){ w=4; why='heavy behind a heavy'; }
+  else if(T.cls==='small'){ w=sameRwy?6:5; why='small behind a heavy'+(sameRwy?' on the same runway':''); }
+  else { w=5; why='large behind a heavy'; }
+ } else if(/B757/.test(L.label) && T.cls==='small'){
+  w=4; why='small behind a B757';
+ }
+ if(w>3) return {nm:w, why:why, wake:true};
+ return {nm:3, why:'radar minimum, terminal FUSION (7110.65 5-5-4)', wake:false};
+}
 function posOf(a){
  /* Off the route, position IS the state — nothing to interpolate. */
  if(a.nav==='heading') return pxEN(a.e, a.n);
@@ -2016,6 +2052,45 @@ function tick(dt){
    log('crit','<span class="dd-chip crit">crit</span>Loss of separation inbound '+sh.fix+' — <b>'+A.cs+'</b> / <b>'+B.cs+'</b>, '+gap.toFixed(1)+' NM, co-altitude. This goes in the log the way session 6 did.', 'sep');
   }
  }
+ /* ---------- Spacing on final — issue #26, the Final's own problem ----------
+    THE ROUTE-BASED CHECK ABOVE CANNOT SEE THIS PAIR. It compares distance
+    remaining along a shared ladder, and a.dist stops advancing the moment an
+    aircraft is vectored — so the instant the Final starts turning people on,
+    every aircraft it owns drops out of that check. This one measures the gap
+    along the final approach course instead, which is where the Final's traffic
+    actually is.
+    Only aircraft ESTABLISHED on the SAME runway's final are compared: MSP's
+    parallels are 3,380 ft apart and therefore separate runways for wake. */
+ var onFinal={};
+ sim.ac.forEach(function(a){
+  if(!a.alive || !a.appr || !a.apprEst || a.landed) return;
+  var o=finalOffset(a, a.appr.rwy); if(!o || o.along<0) return;
+  (onFinal[a.appr.rwy]=onFinal[a.appr.rwy]||[]).push({a:a, along:o.along});
+ });
+ Object.keys(onFinal).forEach(function(rw){
+  var q=onFinal[rw].sort(function(x,y){ return x.along-y.along; });   /* nearest the threshold first */
+  for(var k=1;k<q.length;k++){
+   var lead=q[k-1], trail=q[k], gap=trail.along-lead.along;
+   var need=wakeMinFor(lead.a, trail.a, true);
+   /* A follower ABOVE the leader carries no wake requirement, so it falls back
+      to the radar minimum — 7110.65 5-5, and the message says which applies. */
+   var above = trail.a.alt > lead.a.alt + 100;
+   var min = (need.wake && above) ? 3 : need.nm;
+   var basis = (need.wake && above) ? 'radar minimum \u2014 '+trail.a.cs+' is above '+lead.a.cs+', and wake applies only to a follower at or below the leader' : need.why;
+   var key=lead.a.cs+'>'+trail.a.cs;
+   if(gap < min){
+    if(!sim.sepSeen) sim.sepSeen={};
+    if(!sim.sepSeen[key]){
+     sim.sepSeen[key]=true;
+     log('crit','<span class="dd-chip crit">crit</span>Loss of separation on the '+rw+' final \u2014 <b>'+trail.a.cs+'</b> is '+gap.toFixed(1)+' NM behind <b>'+lead.a.cs+'</b> and needs <b>'+min+' NM</b> ('+basis+').', 'sep');
+     sim.losFlag=true;
+    }
+   } else if(gap < min+1 && !(sim.sepWarn&&sim.sepWarn[key])){
+    sim.sepWarn=sim.sepWarn||{}; sim.sepWarn[key]=true;
+    log('flag','<span class="dd-chip flag">flag</span><b>'+trail.a.cs+'</b> is '+gap.toFixed(1)+' NM behind <b>'+lead.a.cs+'</b> on the '+rw+' final and needs '+min+' NM ('+basis+'). It is legal and there is nothing left in it \u2014 the gap is closing or it is not.', 'sep');
+   }
+  }
+ });
  if(window.DD && DD.hooks) for(var h=0;h<DD.hooks.length;h++){ try{ DD.hooks[h](sim,dt); }catch(e){} }
  render();
 }
@@ -3021,7 +3096,7 @@ window.DD = {
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
  RUNWAYS:RUNWAYS, RWY_PAIRS:RWY_PAIRS, RWY_SRC:RWY_SRC, finalCourse:finalCourse,
- finalGeom:finalGeom, finalOffset:finalOffset, interceptAngle:interceptAngle,
+ finalGeom:finalGeom, finalOffset:finalOffset, interceptAngle:interceptAngle, wakeMinFor:wakeMinFor,
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
