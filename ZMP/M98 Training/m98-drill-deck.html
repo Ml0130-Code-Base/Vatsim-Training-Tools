@@ -2593,33 +2593,29 @@ function scopeSvg(){
    if(o.watch) s+='<text x="'+(p.x+6).toFixed(1)+'" y="'+(p.y+3).toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="9">'+o.ft.toLocaleString()+'</text>';
   });
  }
- /* the departure dispersal area — MSP Tower's, surface to 7,000 */
- var ddaA=ddaFor('12');
- if(ddaA && LAYERS!=='off'){
-  var dpp=ddaA.poly.map(function(b){var p=pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
-  s+='<polygon points="'+dpp+'" fill="var(--amber)" fill-opacity="0.05" stroke="var(--amber)" stroke-width="1" stroke-dasharray="3 3" opacity="0.65"/>';
-  var dlb=pxRD(152,7.6);
-  s+='<text x="'+dlb.x.toFixed(1)+'" y="'+dlb.y.toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity="0.8" text-anchor="middle">DISPERSAL AREA SFC\u20137,000</text>';
- }
+ /* THE DISPERSAL AREA IS NOT DRAWN, AND THE TOOL STILL KNOWS IT IS THERE.
+    Issue #60, owner 2026-09-21: the Fly it page does not need the dispersal
+    area or the RST boundary line on it, but the tool does need them for
+    airspace — so what comes off is the DRAWING and nothing else.
+    Still live, and none of it moved: ddaFor() and inDDA() still run every
+    tick, a non-departure at or below 7,000 inside the area is still flagged
+    against MSP-M98 LOA 5.a(3), and the builder still refuses a strip placed
+    in it. The geometry, its half-mile tolerance and the three untraced shapes
+    are unchanged in claude_M98_DDA_Geometry.md and issue #27. */
  /* boundary */
  var bp=BOUNDARY.map(function(b){var p=pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
  s+='<polygon points="'+bp+'" fill="none" stroke="var(--dim2)" stroke-width="1" stroke-dasharray="5 4" opacity="0.8"/>';
- /* the RST segment — the one stretch of the perimeter that is not ZMP */
- var rp=RST_BOUNDARY.map(function(b){var p=pxRD(b[0],b[1]);return p.x.toFixed(1)+','+p.y.toFixed(1);});
- s+='<polyline points="'+rp.join(' ')+'" fill="none" stroke="'+(RST_OPEN?'var(--amber)':'var(--dim2)')+'" stroke-width="1.6" opacity="'+(RST_OPEN?'0.75':'0.4')+'"'+(RST_OPEN?'':' stroke-dasharray="3 4"')+'/>';
- var rmid=pxRD(RST_BOUNDARY[1][0], RST_BOUNDARY[1][1]+4);
- if(RST_OPEN){
-  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+rmid.y.toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle" opacity="0.85">RST 9,000 AND BELOW</text>';
-  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+(rmid.y+11).toFixed(1)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">ZMP ABOVE</text>';
- } else {
-  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+rmid.y.toFixed(1)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9.5" text-anchor="middle">RST CLOSED</text>';
-  s+='<text x="'+rmid.x.toFixed(1)+'" y="'+(rmid.y+11).toFixed(1)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9" text-anchor="middle">ZMP ALL ALTITUDES</text>';
- }
- /* runways + 17 corridor */
- s+='<line x1="330" y1="232" x2="372" y2="258" stroke="var(--dim)" stroke-width="4"/>';
- s+='<line x1="318" y1="243" x2="360" y2="269" stroke="var(--dim)" stroke-width="4"/>';
- s+='<text x="312" y="240" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10" text-anchor="end">12L</text>';
- s+='<text x="300" y="252" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10" text-anchor="end">12R</text>';
+ /* THE RST BOUNDARY IS NOT DRAWN EITHER, and is equally still known. Issue
+    #60. RST_BOUNDARY, rstOpen() and neighbourAt() are untouched: an overflight
+    crossing that stretch is still resolved to RST below 9,000 and to ZMP above
+    it, naming the wrong one is still graded, and with Rochester closed the
+    airspace still reverts to ZMP top to bottom (M98/RST LOA 4.a). The frame
+    line on the Set up page still says which it is — that is where the airspace
+    picture belongs, not on the scope. */
+ /* The 17 departure corridor. The two hardcoded schematic runway lines that
+    used to sit here came out with it: they were drawn at fixed pixels, and the
+    real ones are now plotted from the CIFP 260903 thresholds above, so keeping
+    both drew MSP twice in two different places. */
  s+='<line x1="345" y1="268" x2="345" y2="330" stroke="var(--red)" stroke-width="1.4" opacity="0.7"/>';
  s+='<text x="352" y="322" fill="var(--red)" font-family="IBM Plex Mono" font-size="10">17 deps</text>';
  s+='<text x="368" y="228" fill="var(--ink)" font-family="IBM Plex Mono" font-size="11">MSP</text>';
