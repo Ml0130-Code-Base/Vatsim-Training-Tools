@@ -12,6 +12,11 @@ true of CIFP, which had not been checked for runway records.** Both numbers are 
 **The cycle is the citation.** Re-pull and regenerate this whole table when the cycle rolls; never
 hand-patch a value into a table stamped with an older cycle (root `CLAUDE.md` §11).
 
+**Re-checked 2026-10-14 against CIFP 261001 and CIFP 261029:** the KMSP airport, runway and
+localizer records are identical, column for column, in all three cycles. The stamp stays 260903
+because that is the pull the table came from; **the values hold through 2026-11-25.** The satellite
+fields are in `claude_M98_Satellite_Runway_Reference.md`.
+
 ```bash
 curl -sL -o CIFP_260903.zip https://aeronav.faa.gov/Upload_313-d/cifp/CIFP_260903.zip
 unzip -o CIFP_260903.zip FAACIFP18
@@ -27,16 +32,23 @@ Landing threshold position, runway bearing, and the localizer where one exists.
 
 | Rwy | Threshold lat | Threshold lon | Brg | Localizer | Freq | LOC course | CAT | Length | Displaced | Elev | Width |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **04** | 44.87527 | −93.23409 | 45.0 | I-APL | 109.30 | 45.0 | I | 11,006 | **1,550** | 832 | 150 |
+| **04** | 44.87527 | −93.23409 | 45.0 | I-APL | 109.30 | 45.0 | **LOC only** | 11,006 | **1,550** | 832 | 150 |
 | **12L** | 44.89295 | −93.22099 | 121.0 | I-PJL | 110.70 | **121.3** | III | 8,200 | 0 | 839 | 150 |
 | **12R** | 44.88779 | −93.23413 | 121.0 | I-HKZ | 110.30 | **121.3** | III | 10,000 | 0 | 842 | **200** |
-| **17** | 44.88775 | −93.24225 | 170.0 | I-TJZ | 110.95 | **169.5** | I | 8,000 | 0 | 840 | 150 |
-| **22** | 44.89167 | −93.21102 | 225.0 | I-SIJ | 110.50 | 225.0 | I | 11,006 | **1,000** | 828 | 150 |
+| **17** | 44.88775 | −93.24225 | 170.0 | I-TJZ | 110.95 | **169.5** | **LOC only** | 8,000 | 0 | 840 | 150 |
+| **22** | 44.89167 | −93.21102 | 225.0 | I-SIJ | 110.50 | 225.0 | **LOC only** | 11,006 | **1,000** | 828 | 150 |
 | **30L** | 44.87352 | −93.20119 | 301.0 | I-MSP | 110.30 | **301.4** | II | 10,000 | 0 | 814 | **200** |
-| **30R** | 44.88154 | −93.19463 | 301.0 | I-INN | 110.70 | **301.4** | II | 8,200 | **200** | 820 | 150 |
+| **30R** | 44.88154 | −93.19463 | 301.0 | I-INN | 110.70 | **301.4** | **I** | 8,200 | **200** | 820 | 150 |
 | **35** | 44.86618 | −93.23664 | 350.0 | I-BMA | 110.95 | **349.5** | III | 8,000 | 0 | 833 | 150 |
 
 Lengths, displaced thresholds and elevations in feet; widths in feet; courses in degrees.
+
+**CAT is the localizer record's ILS category, ARINC 424 field 5.80: `0` is a localizer with NO
+glide slope, `1` CAT I, `2` CAT II, `3` CAT III.** So **4, 17 and 22 have a localizer and no ILS** —
+which the CIFP manifest says independently, coding L04, L17 and L22 and no I04, I17 or I22 — and
+30R is CAT I. **Corrected 2026-10-14:** until then this column printed 4, 17 and 22 as CAT I and 30R
+as CAT II, reading `0` as CAT I. The deck's `cat` values were always the raw codes and always right;
+its comment carried the same misreading and is corrected too. The harness now pins the values.
 
 **Coordinates are the LANDING threshold** — the displacement is already applied, so 04's point is
 1,550 ft down the pavement from the physical end, and 22's is 1,000 ft down the other. Do not
@@ -92,15 +104,22 @@ values that could be confirmed independently. **Four checks, all of which passed
 
    The 04/22 row is the strongest of the four: it only lands within 14 ft if **both** displaced
    thresholds decoded correctly.
+
+   **Recomputed 2026-10-14 on the WGS84 ellipsoid rather than a sphere: 0, −1, 0 and −1 ft**
+   (12L/30R 8,000 · 12R/30L 9,999 · 04/22 8,456 · 17/35 7,999). The 4–28 ft spread above was the
+   spherical approximation, not the decode — which is now a tighter confirmation of every field the
+   check exercises. Same method in `claude_M98_Satellite_Runway_Reference.md` §3.
 4. **Bearing computed from the two threshold coordinates** against the published bearing — 0.1°
    to 0.4° apart on all four strips, which is rounding.
 
-**One field was NOT used and is recorded as unresolved.** The runway record carries a
-localizer/ILS identifier near column 81, and reading it there gives `IIPJ` where the localizer
-record's own identifier field gives `IPJL` — a one-character disagreement that means one of the
-two offsets is off by one. **The localizer data above comes entirely from the `PI` record**, whose
-layout is confirmed by its frequency and runway fields decoding correctly, so nothing depends on
-the ambiguous field. Left here rather than guessed at.
+**The column-81 field, resolved 2026-10-14.** The runway record carries a localizer identifier,
+and reading it from column 81 gave `IIPJ` where the localizer record's own field gives `IPJL`.
+**Column 81 is a separate one-letter field** — I, R, V or D in this data, the source of the
+threshold crossing height (ARINC 424's TCH value indicator) — and **the ident is columns 82–85.**
+`IIPJ` was that letter followed by the first three characters of the ident. Read from column 82 it
+agrees with the localizer record at all eight ends, and the category in column 86 agrees too;
+the same holds at every satellite ILS end. The localizer data above still comes from the `PI`
+record, which needed no change.
 
 ---
 
@@ -120,8 +139,9 @@ now exist, cited, for all eight runway ends.
 - **Which approach the facility assigns.** CIFP publishes what exists; the SOP and the LOAs say
   what gets used. MSP's 26 coded approach procedures are listed in CIFP under `SUSAP KMSPK3F` and
   are not transcribed here, because nothing in the tool reads them yet.
-- **The satellite fields.** FCM, MIC, STP, ANE and the rest have their own runway records in the
-  same file, not pulled. The Satellite half of #26 stays blocked behind #27 regardless.
+- **The satellite fields** — pulled 2026-10-14 from CIFP 261001 for the four satellite towers, in
+  `claude_M98_Satellite_Runway_Reference.md`, and **not yet read by the deck**. Three of the four
+  have a non-zero declination, so MSP's E0000 is exactly what does not carry over.
 
 ---
 

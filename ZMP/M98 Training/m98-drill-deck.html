@@ -193,6 +193,11 @@ var css = ''
 + '.dd-log-card .lab.g{color:var(--green);}'
 + '.dd-log-card .lab.o{color:var(--amber);}'
 + '.dd-standing li{margin-bottom:7px;font-size:13.5px;}'
++ '.dd-expiry{margin:20px 0 0;padding:10px 14px;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:4px;font-size:13px;line-height:1.5;color:var(--dim);}'
++ '.dd-expiry b{color:var(--amber);font-weight:600;}'
++ '.dd-expiry.out{border-left-color:var(--red);}'
++ '.dd-expiry.out b{color:var(--red);}'
++ '.dd-expiry-sub{display:block;margin-top:6px;font-family:var(--mono);font-size:11px;color:var(--dim2);}'
 + '@media (max-width:600px){.dd-strip{flex-basis:100%;}.dd-feed{max-height:240px;}}';
 var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
@@ -232,10 +237,19 @@ function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
    30s and 12s are 301.0/301.4 and 121.0/121.3. Use locCrs for an ILS and brg
    for a visual.
 
-   `cat` is the ILS category off the PI record: 0 = CAT I, 1 = II, 2 = II, 3 =
-   III as coded. `dthr` is the displaced threshold in feet — 4, 22 and 30R have
-   one, and the lat/lon above is the LANDING threshold, which is where the
-   displacement has already been applied. */
+   `cat` is the ILS/MLS/GLS category off the PI record, ARINC 424 5.80:
+   0 = LOCALIZER ONLY, NO GLIDE SLOPE; 1 = CAT I; 2 = CAT II; 3 = CAT III.
+   So 4, 17 and 22 have a localizer and no ILS — which the CIFP manifest says
+   independently, coding L04, L17 and L22 and no I04, I17 or I22 — 30R is
+   CAT I, 30L CAT II, and 12L, 12R and 35 CAT III. (This comment read "0 = CAT
+   I, 1 = II, 2 = II" until 2026-10-14; the values below were always right.)
+   `dthr` is the displaced threshold in feet — 4, 22 and 30R have one, and the
+   lat/lon above is the LANDING threshold, which is where the displacement has
+   already been applied.
+
+   Re-checked 2026-10-14: the KMSP airport, runway and localizer records are
+   identical, column for column, in CIFP 261001 and CIFP 261029, so this table
+   holds through 2026-11-25 although its stamp is 260903. */
 var RWY_SRC = 'CIFP 260903 \u2014 ARINC 424 PG and PI records, decoded 2026-09-21';
 var RUNWAYS = {
  '04':{lat:44.87527, lon:-93.23409, brg:45.0, len:11006, elev:832, dthr:1550, wid:150, loc:'I-APL', locFrq:109.30, locCrs:45.0, cat:0},
@@ -848,6 +862,62 @@ var DEP_VORS = ['MSP','GEP','FGT'];
 Object.keys(DEPS).forEach(function(k){
  DEPS[k].forEach(function(p){ if(DEP_VORS.indexOf(p.f)>=0) p.vor=true; });
 });
+
+/* ---------- These SIDs expire on 2026-10-29 — issue #61 ----------
+   MSP's whole SID set is replaced with the navigation cycle that starts on
+   2026-10-29. Owner, 2026-10-14: "M98 is slated to get new SIDs next nav
+   cycle." Confirmed the same day against CIFP 261029 (cycle 2611, file dated
+   2026-10-07), which the FAA has already published:
+     KMSP              twelve out (the nine in DEPS, plus HSTIN6, MEDOW5 and
+                       SLAYR4) and nine in, every one of them RNAV.
+     KANE, KFCM, KSTP  seven out, eight in, identical legs at all three.
+     KMIC              no SID in either cycle.
+   KBREW and ZMBRO survive as NAMES only. KBREW1 starts at HRBEK and ZMBRO1 at
+   JEDET, where KBREW2 started at GEP and ZMBRO7 at the MSP VOR, so their DEPS
+   entries are wrong after the change as well. Until then nothing moves: CIFP
+   261001 codes the SIDs identically to the 260903 set DEPS was checked against.
+
+   THIS IS A WARNING, NOT A FIX. DEPS keeps flying the set in force until
+   2026-10-29, and it is regenerated whole from CIFP 261029 or later rather
+   than hand-patched toward the new set (root CLAUDE.md §11). The state is read
+   off the date, so on the day the banner turns from "changes on" to "out of
+   date" by itself instead of waiting for someone to edit it. */
+var SID_SAT_261029 = ['BITEZ1','BUNYN1','DUHCK1','KBREW1','NRTHN1','SNUPE1','TOTTZ1','ZMBRO1'];
+var SID_CHANGE = {
+ effective:'2026-10-29', cycle:'CIFP 261029', issue:61,
+ src:'owner, 2026-10-14; confirmed against the CIFP 261029 manifest and PD records (cycle 2611, file dated 2026-10-07)',
+ incoming:{
+  KMSP:['BITEZ1','BUNYN1','HTDSH1','KBREW1','NRTHN1','SNOWZ1','SNUPE1','TOTTZ1','ZMBRO1'],
+  KANE:SID_SAT_261029, KFCM:SID_SAT_261029, KSTP:SID_SAT_261029
+ }
+};
+function isoToday(){ try{ return new Date().toISOString().slice(0,10); }catch(e){ return ''; } }
+/* 'pending' before the effective date and 'expired' from it. A clock that
+   cannot be read counts as pending: the banner still names the date, which
+   is the part that matters. */
+function sidChangeState(day){
+ var d = day || isoToday();
+ return (d && d >= SID_CHANGE.effective) ? 'expired' : 'pending';
+}
+/* The SIDs this deck carries, read off DEPS so the warning cannot name a set
+   the table does not hold. */
+function sidsCarried(){ return Object.keys(DEPS); }
+function sidChangeHtml(day){
+ var c = SID_CHANGE, ours = sidsCarried();
+ var list = ours.slice(0,-1).join(', ')+' and '+ours[ours.length-1];
+ var inc = c.incoming.KMSP.join(' · ');
+ if(sidChangeState(day)==='expired'){
+  return '<b>The SIDs in this deck are out of date.</b> MSP’s departure procedures were replaced on '
+   +c.effective+' ('+c.cycle+'). '+list+' are the retired set, so the routes, join fixes and gates this deck flies are no longer the published ones. Departure drills still run, but they practise procedures that no longer exist.'
+   +'<span class="dd-expiry-sub">Published at MSP since then: '+inc+'. The update is issue #'+c.issue+'.</span>';
+ }
+ return '<b>SIDs change on '+c.effective+'.</b> MSP’s departure procedures are replaced with the navigation cycle that starts that day ('+c.cycle+'). Every SID in this deck — '+list+' — is the set in force until then, and its routes, join fixes and gates will not be correct after that.'
+  +'<span class="dd-expiry-sub">Coming at MSP: '+inc+'. KBREW and ZMBRO keep their names on new routes. ANE, FCM and STP get the same set without the two Runway 17 SIDs (HTDSH1 and SNOWZ1), plus DUHCK1. The update is issue #'+c.issue+'.</span>';
+}
+/* One short line for the place a SID is picked. */
+function sidChangeShort(day){
+ return sidChangeState(day)==='expired' ? ('out of date since '+SID_CHANGE.effective) : ('changes on '+SID_CHANGE.effective);
+}
 
 /* ---------- The airports M98 works ----------
    Runway inventories, towers, and the numbers that go with them. Nothing here
@@ -3257,6 +3327,19 @@ function logHtml(){
  + cards
  +'</section>';
 }
+/* The SID expiry warning sits above the page tabs, so it is on every page \u2014
+   issue #61. The tabs are inserted before #modnav too, later and by the
+   builder, which leaves this banner above them. Guarded the way buildPages
+   is, because a host page or the harness stub may have nowhere to put it. */
+function mountSidExpiry(nav){
+ if(!nav || !nav.parentNode || !nav.parentNode.insertBefore || !document.createElement) return;
+ var b=document.createElement('div');
+ b.id='dd-sidexp';
+ b.className='dd-expiry'+(sidChangeState()==='expired'?' out':'');
+ if(b.setAttribute) b.setAttribute('role','note');
+ b.innerHTML=sidChangeHtml();
+ nav.parentNode.insertBefore(b, nav);
+}
 /* mount \u2014 resilient to placement and host-page structure */
 function mountAll(){
  var wrap=document.querySelector('.wrap')||document.body;
@@ -3267,6 +3350,7 @@ function mountAll(){
  if(foot){ wrap.insertBefore(mount, foot); } else { wrap.appendChild(mount); }
  var nav=document.getElementById('modnav');
  if(nav){ nav.innerHTML += '<a href="#mod-live">LIVE</a><a href="#mod-log">LOG</a>'; }
+ mountSidExpiry(nav);
  document.title='M98 Drill Deck';
  var tb=document.querySelector('.topbar div:last-child'); if(tb) tb.textContent='DRILL DECK';
  sim.timer=setInterval(function(){ if(sim.rate>0 && !sim.ended) tick(sim.rate); }, 1000);
@@ -3286,6 +3370,8 @@ window.DD = {
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
+ SID_CHANGE:SID_CHANGE, sidChangeState:sidChangeState, sidChangeHtml:sidChangeHtml,
+ sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
@@ -3392,6 +3478,8 @@ var css = ''
 + '.dd-hint{font-size:11.5px;color:var(--dim2);line-height:1.55;margin-top:8px;}'
 + '.dd-sub{font-family:var(--mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;}'
 + '.dd-sub.a{color:var(--amber);}'
++ '.dd-sidexp{font-family:var(--mono);font-size:10px;color:var(--amber);}'
++ '.dd-sidexp.out{color:var(--red);}'
 + '.dd-view{display:none;}'
 + '.dd-view.on{display:block;}'
 + '.dd-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:sticky;top:53px;background:rgba(10,13,12,0.94);backdrop-filter:blur(6px);z-index:15;}'
@@ -5403,7 +5491,9 @@ function acRowHtml(a,i){
      }).join('')+'</select>')
    +f('Runway','<select class="dd-sel" id="ddb-drwy'+i+'" onchange="ddbSync()"><option value=""'+(a.depRwy?'':' selected')+'>not stated</option>'
     +DD.runwaysAt(dep).map(function(r){return '<option'+(r===a.depRwy?' selected':'')+'>'+r+'</option>';}).join('')+'</select>')
-   +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'+SIDS.map(function(s){return '<option'+(s===a.sid?' selected':'')+'>'+s+'</option>';}).join('')+'</select>')
+   +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'+SIDS.map(function(s){return '<option'+(s===a.sid?' selected':'')+'>'+s+'</option>';}).join('')+'</select>'
+     /* issue #61 — the set in the picker expires, and the picker says when */
+     +(DD.sidChangeShort ? '<span class="dd-sidexp'+(DD.sidChangeState()==='expired'?' out':'')+'">'+esc(DD.sidChangeShort())+'</span>' : ''))
    +f('NM from MSP','<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
  } else if(role==='overflight'){
   job = f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')

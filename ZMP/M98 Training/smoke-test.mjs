@@ -341,8 +341,12 @@ try {
     && globalThis.DD.nearFarFor('30','KKILR') === 'near'
     && globalThis.DD.CROSSOVER_EXEMPT.some(e => e.rwy === '12R' && e.kind === 'far')
     && globalThis.DD.CROSSOVER_EXEMPT.some(e => e.rwy === '30L' && e.kind === 'near'));
+  /* "Final", not "Arrival": SOP 2-1 writes "South Final/Arrival", and M98 has four
+     position types — Feeder, Final, Departure, Satellite (owner, 2026-09-21). The
+     deck took the rename in 9677aa8 and this line did not, so the harness failed
+     here from then until 2026-10-14. */
   assert('every position resolves to the name SOP 2-1 gives it',
-    globalThis.DD.posName('I') === 'North Feeder' && globalThis.DD.posName('S') === 'South Arrival'
+    globalThis.DD.posName('I') === 'North Feeder' && globalThis.DD.posName('S') === 'South Final'
     && globalThis.DD.sideOfPos('I') === 'N' && globalThis.DD.sideOfPos('S') === 'S');
 
   assert('feederFor answers per configuration',
@@ -510,6 +514,47 @@ try {
   assert('scratchpad #1 is null for a SID with no gate, never invented',
     globalThis.DD.scratchpadFor('SMERF', 12000) === null);
 
+  /* ============ 3a. The SID set expires on 2026-10-29 — issue #61 ============
+     A warning, not a fix: DEPS is untouched and the deck says when it stops
+     being true. The incoming lists are CIFP 261029's manifest, checked
+     2026-10-14; the outgoing list is read off DEPS, so the banner cannot name
+     a set the table does not hold. */
+  const SC = globalThis.DD.SID_CHANGE;
+  assert('the SID change carries its date, its cycle and its issue',
+    SC.effective === '2026-10-29' && SC.cycle === 'CIFP 261029' && SC.issue === 61 && /owner, 2026-10-14/.test(SC.src));
+  assert('nine SIDs come in at MSP, all from CIFP 261029',
+    SC.incoming.KMSP.join() === 'BITEZ1,BUNYN1,HTDSH1,KBREW1,NRTHN1,SNOWZ1,SNUPE1,TOTTZ1,ZMBRO1');
+  assert('ANE, FCM and STP get one identical set of eight, DUHCK1 included and the two Runway 17 SIDs not',
+    ['KANE', 'KFCM', 'KSTP'].every(k => SC.incoming[k].join() === 'BITEZ1,BUNYN1,DUHCK1,KBREW1,NRTHN1,SNUPE1,TOTTZ1,ZMBRO1'));
+  assert('Crystal gets none, because CIFP codes none there in either cycle', !SC.incoming.KMIC);
+  assert('the outgoing set is exactly what DEPS carries',
+    globalThis.DD.sidsCarried().join() === Object.keys(globalThis.DD.DEPS).join()
+    && globalThis.DD.sidsCarried().length === 9);
+  assert('the warning is pending the day before and expired on the day',
+    globalThis.DD.sidChangeState('2026-10-28') === 'pending'
+    && globalThis.DD.sidChangeState('2026-10-29') === 'expired'
+    && globalThis.DD.sidChangeState('2027-01-01') === 'expired');
+  const scPend = globalThis.DD.sidChangeHtml('2026-10-28').replace(/<[^>]+>/g, ' ');
+  const scGone = globalThis.DD.sidChangeHtml('2026-10-29').replace(/<[^>]+>/g, ' ');
+  assert('before the date the banner says when, names every SID carried and points at the issue',
+    scPend.includes('SIDs change on 2026-10-29') && scPend.includes('issue #61')
+    && Object.keys(globalThis.DD.DEPS).every(s => scPend.includes(s)));
+  assert('from the date the banner says the set is out of date, in different words',
+    scGone.includes('out of date') && !scGone.includes('SIDs change on') && scGone.includes('issue #61'));
+  assert('the picker line follows the same state',
+    globalThis.DD.sidChangeShort('2026-10-28') === 'changes on 2026-10-29'
+    && globalThis.DD.sidChangeShort('2026-10-29') === 'out of date since 2026-10-29');
+
+  /* The ILS category on the MSP runway records, ARINC 424 5.80. 0 is a
+     localizer with NO glide slope — 4, 17 and 22 have no ILS, which the CIFP
+     manifest says independently (L04, L17, L22; no I04, I17, I22). The deck's
+     comment read "0 = CAT I" until 2026-10-14; the values were always right,
+     and this pins them so nobody "fixes" them to match the old comment. */
+  const RW = globalThis.DD.RUNWAYS;
+  assert('4, 17 and 22 are localizer only; 30R CAT I; 30L CAT II; 12L, 12R and 35 CAT III',
+    ['04', '17', '22'].every(r => RW[r].cat === 0) && RW['30R'].cat === 1 && RW['30L'].cat === 2
+    && ['12L', '12R', '35'].every(r => RW[r].cat === 3));
+
   /* ============ 3b. Wake class comes off the type, not off a dropdown ============ */
   const wk = globalThis.DD.wakeOf;
   assert('super is recognised', wk('A388').cls === 'super' && wk('A388').heavy);
@@ -549,8 +594,13 @@ try {
     lSidsL === 3 && lSidsS === 9, lSidsL + '/' + lSidsS);
   assert('all SIDs and STARs draws everything', lBothL === 6 && lBothS === 9, lBothL + '/' + lBothS);
   assert('off draws no route geometry at all', lOffL === 0 && sidTrks() === 0, lOffL);
-  assert('and what is left under "off" is the RST boundary, which is airspace not a route',
-    lOffAll === 1, lOffAll);
+  /* Under "off" this used to leave exactly one polyline, the RST boundary. Issue
+     #60 (5d995f6, owner 2026-09-21) took that line off the scope and kept the
+     boundary itself — RST_BOUNDARY and neighbourAt still resolve, and the RST
+     section below still asserts them — so nothing route-shaped or boundary-
+     shaped is drawn now. The harness failed here from 5d995f6 until 2026-10-14. */
+  assert('and "off" now draws no polyline at all, the RST line included (issue #60)',
+    lOffAll === 0, lOffAll);
   globalThis.ddLayers('tracked');
 
   /* ============ 3c-b. What the scope actually DRAWS — issue #16 ============
@@ -921,11 +971,16 @@ try {
   assert('Center owns above 9,000 on the same bearing',
     globalThis.DD.neighbourAt(158, 9500).pos === 'ZMP'
     && globalThis.DD.neighbourAt(158, 12000).pos === 'ZMP');
+  /* The arc has run 148.1 to 184.8 since dd5a7da — SimAware's shared vertices,
+     owner 2026-09-23. Under the owner's earlier points it ran 149 to 185, so a
+     bearing of exactly 185 used to resolve Rochester and now resolves Center:
+     the one edge effect that move had, reported at the time and missed here, so
+     the harness failed on this line from dd5a7da until 2026-10-14. */
   assert('the arc ends where the boundary points end',
-    globalThis.DD.neighbourAt(149, 7000).pos === 'RST'
-    && globalThis.DD.neighbourAt(185, 7000).pos === 'RST'
+    globalThis.DD.neighbourAt(148.1, 7000).pos === 'RST'
+    && globalThis.DD.neighbourAt(184.8, 7000).pos === 'RST'
     && globalThis.DD.neighbourAt(148, 7000).pos === 'ZMP'
-    && globalThis.DD.neighbourAt(186, 7000).pos === 'ZMP');
+    && globalThis.DD.neighbourAt(185, 7000).pos === 'ZMP');
   assert('everything else around M98 is Center at any altitude',
     [0, 45, 90, 270, 300].every(b => globalThis.DD.neighbourAt(b, 4000).pos === 'ZMP'));
 
