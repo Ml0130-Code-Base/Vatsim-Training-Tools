@@ -365,6 +365,9 @@ map per facility rather than parse a common grammar** — issue #54.
 
 **Departures.** All existing routes and procedures stand except:
 
+> *As written — the LOA names SIDs retired on 2026-10-29 (WLSTN, COULT, KBREW). The CIFP 261029 set
+> is in `claude_MSP_SID_Reference.md`; vZMP has not revised this paragraph (issue #61).*
+
 1. Jets filed **WLSTN** must be **vectored north of the AGUDE gate** and assigned a heading to
    join the WLSTN SID; normal altitudes.
 2. **Turboprops filed WLSTN, or over EAU at 7,000 or higher**, must be cleared via the **COULT

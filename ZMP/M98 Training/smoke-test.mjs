@@ -361,9 +361,10 @@ try {
     && globalThis.DD.zmpSectorFor(210).sector === 'Sector 08');
   assert('a bearing between the bands names no sector rather than rounding into one',
     globalThis.DD.zmpSectorFor(311) === null && globalThis.DD.zmpSectorFor(135) === null);
+  /* NRTHN1's TTOWN transition leaves on 059 at DWIYT, inside the 040-060 band */
   assert('a departure receiver names its sector where Table 1 supports one',
     globalThis.DD.receiverFor(globalThis.DD.mkAc({cs:'D9', type:'B738', role:'departure',
-      sid:'WLSTN', fromStart:5, alt:12000, ias:280})).name.indexOf('Sector 06') >= 0);
+      sid:'NRTHN1.TTOWN', fromStart:5, alt:12000, ias:280})).name.indexOf('Sector 06') >= 0);
 
   /* charted obstructions — SOP 8-1 */
   assert('all seven obstructions are carried', globalThis.DD.OBSTRUCTIONS.length === 7);
@@ -437,18 +438,64 @@ try {
   assert('a configuration the shape was not traced for answers with nothing',
     globalThis.DD.ddaFor('4-35') === null && globalThis.DD.ddaFor('30') === null);
 
-  assert('all nine turbojet SIDs are in the departure data',
-    Object.keys(globalThis.DD.DEPS).length === 9, Object.keys(globalThis.DD.DEPS).join(','));
-  const SID_DME = {COULT:{TAXEE:34,COULT:48}, KBREW:{HRBEK:35,HOMUR:47}, LEINY:{TONCA:17,BOTNE:34,KUUGL:48},
-    ORSKY:{JURNY:20,RUMLE:33,PEDLN:48}, RST:{FOBUG:30,DOKTR:41,CORDY:50}, SCHEP:{HUGIR:20,MCONL:32,ARREX:48},
-    SMERF:{ZOGAP:29,PAGOZ:48}, WLSTN:{SNINE:33,DWIYT:47}, ZMBRO:{JEDET:34,ZMBRO:47}};
-  Object.keys(SID_DME).forEach(k => globalThis.DD.DEPS[k].forEach(p => {
-    if (!SID_DME[k][p.f]) return;
-    const d = Math.sqrt(p.e*p.e + p.n*p.n);
-    if (Math.abs(d - SID_DME[k][p.f]) > 1.5)
-      fail('SID join distance', k + '/' + p.f + ' plots at ' + d.toFixed(1) + ', reference says ' + SID_DME[k][p.f]);
-  }));
-  ok('every SID join fix plots at its published distance');
+  /* ============ The 2026-10-29 SID set — CIFP 261029, issue #61 ============
+     Carried early by the owner's choice (2026-10-14), one entry per transition,
+     each mapped to 80 NM from MSP (owner, 2026-10-14). */
+  {
+    const DP = globalThis.DD.DEPS, SS = globalThis.DD.SID_SET, keys = Object.keys(DP);
+    assert('the nine SIDs of CIFP 261029 are carried, one entry per transition',
+      Object.keys(SS).join() === 'BITEZ1,BUNYN1,HTDSH1,KBREW1,NRTHN1,SNOWZ1,SNUPE1,TOTTZ1,ZMBRO1'
+      && keys.length === 25, keys.length);
+    assert('every entry is keyed SID.TRANSITION, the way a flight plan files it',
+      keys.every(k => /^[A-Z]{3,5}\d\.[A-Z]{3,5}$/.test(k) && SS[k.split('.')[0]].trans[k.split('.')[1]] !== undefined));
+    assert('every track starts at the field, and only the first point is the field',
+      keys.every(k => DP[k][0].field === true && DP[k][0].f === 'MSP' && DP[k].filter(p => p.field).length === 1));
+    assert('no mapped fix is more than 80 NM from MSP — owner, 2026-10-14',
+      keys.every(k => DP[k].every(p => Math.sqrt(p.e*p.e + p.n*p.n) <= 80)));
+    /* every mapped fix where claude_MSP_SID_Reference.md puts it, from MSP */
+    const SID_DME = {MANCY:6.9, RUBRB:7.0, HHOBA:12.8, ITZME:13.1, SIEDL:15.2, SNOWZ:15.3, SLALM:19.3,
+      SLUSH:21.2, JBUGG:22.3, HTDSH:22.8, BITEZ:22.8, NRTHN:24.1, PNUTZ:28.4, BUNYN:31.6, MOGLL:31.9,
+      PRRCH:32.5, PIIKE:32.7, PLOWW:33.0, SKITO:33.1, ZOGAP:33.8, JEDET:34.0, HRBEK:34.8, TOTTZ:36.2,
+      TICKK:39.1, SNUPE:39.6, PAGOZ:41.5, GPERS:45.7, BAYBB:46.6, DWIYT:47.0, ZMBRO:47.3, HOMUR:47.4,
+      WDSTK:47.8, PEDLN:48.1, SLAYR:48.3, WAHLI:49.5, CORDY:49.5, HHCEE:52.1, HSTIN:62.0, KBREW:68.0, FOOLS:72.3};
+    assert('the coordinate table and the reference name the same forty fixes',
+      Object.keys(globalThis.DD.SID_FIX).sort().join() === Object.keys(SID_DME).sort().join(),
+      Object.keys(globalThis.DD.SID_FIX).length);
+    /* The reference distances are true ranges; the deck's plane is flat and fixed
+       at 44.5 N (COSL), so a far fix plots up to half a mile off — 0.53 NM at
+       KBREW, 68 NM out, measured 2026-10-18. One mile catches a wrong coordinate
+       and passes the projection; the retired set's check allowed 1.5. */
+    keys.forEach(k => DP[k].forEach(p => {
+      if (p.field) return;
+      const d = Math.sqrt(p.e*p.e + p.n*p.n);
+      if (Math.abs(d - SID_DME[p.f]) > 1.0)
+        fail('SID fix distance', k + '/' + p.f + ' plots at ' + d.toFixed(1) + ', the reference says ' + SID_DME[p.f]);
+    }));
+    ok('every SID fix plots at the distance the reference gives it');
+    assert('HTDSH1 and SNOWZ1 are the Runway 17 SIDs, and both start through RUBRB at or above 3,500',
+      Object.keys(SS).filter(s => SS[s].rw17).join() === 'HTDSH1,SNOWZ1'
+      && keys.filter(k => globalThis.DD.sidRw17(k)).every(k => DP[k][1].f === 'RUBRB' && DP[k][1].climbAA === 3500));
+    assert('the other seven start at a first fix of their own, with its at-or-above crossing',
+      DP['BITEZ1.DKOTA'][1].f === 'HHOBA' && DP['BITEZ1.DKOTA'][1].climbAA === 4000
+      && DP['KBREW1.KEETN'][1].f === 'HRBEK' && DP['KBREW1.KEETN'][1].climbAA === 5000
+      && DP['NRTHN1.TTOWN'][1].climbAA === 4200 && DP['TOTTZ1.ALO'][1].climbAA === 3900);
+    assert('KBREW and ZMBRO are new routes under old names — no GEP, no start at the field VOR',
+      DP['KBREW1.KEETN'].every(p => p.f !== 'GEP') && DP['ZMBRO1.BRIBE'][1].f === 'JEDET');
+    assert('a departure crossing rides as climbAA, never as an arrival field',
+      keys.every(k => DP[k].every(p => p.aa === undefined && p.at === undefined)));
+    assert('a transition with no fix inside 80 NM is kept by name and ends at the SID fix',
+      DP['KBREW1.KEETN'].slice(-1)[0].f === 'KBREW' && DP['ZMBRO1.BRIBE'].slice(-1)[0].f === 'ZMBRO');
+    assert('ANE, FCM and STP have eight SIDs, MIC none, and DUHCK1 is theirs alone',
+      ['KANE', 'KFCM', 'KSTP'].every(f => globalThis.DD.SID_FIELDS[f].join() === 'BITEZ1,BUNYN1,DUHCK1,KBREW1,NRTHN1,SNUPE1,TOTTZ1,ZMBRO1')
+      && globalThis.DD.SID_FIELDS.KMIC.length === 0 && SS.DUHCK1 === undefined);
+    assert('the SID is said with its number as a word, and nothing else is invented',
+      globalThis.DD.sidSpoken('BITEZ1.DKOTA') === 'BITEZ ONE' && globalThis.DD.sidSpoken('KBREW1.KEETN') === 'KBREW ONE');
+    assert('a shared track is labelled once with every transition on it',
+      globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR')
+      && globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'BITEZ1 DKOTA/LEINY'));
+    assert('and FOOLS being off the bottom of the scope, those two are named at CORDY',
+      globalThis.DD.sidDrawGroups(['TOTTZ1.ALO', 'HTDSH1.ALO']).every(g => g.anchor && g.anchor.f === 'CORDY'));
+  }
   assert('the release rule is 25 DME or leaving 11,000',
     globalThis.DD.DEP_RELEASE.dme === 25 && globalThis.DD.DEP_RELEASE.alt === 11000);
 
@@ -463,87 +510,73 @@ try {
     GATES.B.alt === 'DLH' && GATES.O.alt === 'FOD');
   assert('every gate names a fix', Object.values(GATES).every(g => !!g.fix));
 
+  /* The 2026-10-29 set's gate letters are TABLED — owner, 2026-10-14: not known
+     yet. The retired set's (WLSTN E, COULT D, ZMBRO N, RST R, ORSKY and SCHEP O,
+     KBREW F, LEINY and SMERF none) were derived from bearings and confirmed on the
+     owner's chart; nothing here derives the new ones. */
   const SG = globalThis.DD.SID_GATE;
-  assert('every SID in DEPS has a gate record',
-    Object.keys(SG).sort().join() === Object.keys(globalThis.DD.DEPS).sort().join());
-  assert('every lettered SID points at a real gate',
-    Object.values(SG).filter(g => g.gate).every(g => !!GATES[g.gate]));
-  assert('a SID gate fix matches that gate primary or alternate',
-    Object.values(SG).filter(g => g.gate)
-      .every(g => GATES[g.gate].fix === g.fix || GATES[g.gate].alt === g.fix));
-  assert('every SID carries the bearing the mapping was derived from',
-    Object.values(SG).every(g => typeof g.brg === 'number' && g.brg >= 0 && g.brg < 360));
+  assert('every SID carries a gate record, keyed by SID rather than transition',
+    Object.keys(SG).join() === Object.keys(globalThis.DD.SID_SET).join());
+  assert('and every gate is tabled — null, never derived',
+    Object.values(SG).every(g => g.gate === null && g.fix === null && g.tabled === true));
+  assert('so no departure gets a scratchpad gate, whatever its altitude',
+    Object.keys(globalThis.DD.DEPS).every(k => globalThis.DD.scratchpadFor(k, 11000) === null
+      && globalThis.DD.scratchpadFor(k) === null));
+  assert('a gate lookup reads the SID, not the transition',
+    globalThis.DD.gateForSid('BITEZ1.DKOTA') === null && SG.BITEZ1 !== undefined);
 
-  /* SMERF and LEINY are drawn on the chart without a gate letter and are absent
-     from the 7110.26A list. They must stay null rather than being assigned one. */
-  assert('SMERF has no gate letter', globalThis.DD.gateForSid('SMERF') === null);
-  assert('LEINY has no gate letter', globalThis.DD.gateForSid('LEINY') === null);
-  assert('exactly two SIDs are ungated',
-    Object.values(SG).filter(g => g.gate === null).length === 2);
-  /* gates A and B are real but no turbojet SID in this set uses them */
-  assert('gates A and B are used by no SID in the turbojet set',
-    !Object.values(SG).some(g => g.gate === 'A' || g.gate === 'B'));
-
-  assert('COULT exits the DLL gate', globalThis.DD.gateForSid('COULT') === 'D');
-  assert('KBREW exits the FAR gate', globalThis.DD.gateForSid('KBREW') === 'F');
-  assert('ZMBRO exits the ODI gate', globalThis.DD.gateForSid('ZMBRO') === 'N');
-  assert('ORSKY and SCHEP share the O gate',
-    globalThis.DD.gateForSid('ORSKY') === 'O' && globalThis.DD.gateForSid('SCHEP') === 'O',
-    'a gate consists of several SIDs — this is the case that proves it');
-
-  /* the chart's own datablock example is BMJ59 / E11 — WLSTN out the EAU gate at 11,000 */
-  assert('scratchpad #1 reproduces the chart example E11',
-    globalThis.DD.scratchpadFor('WLSTN', 11000) === 'E11',
-    globalThis.DD.scratchpadFor('WLSTN', 11000));
-  assert('scratchpad #1 zero-pads a single-digit altitude',
-    globalThis.DD.scratchpadFor('COULT', 9000) === 'D09');
-  /* With no altitude the order's form (b) applies — the THREE-LETTER gate. A bare
-     letter would be one character and CRC will not take it (3-4 alphanumeric). */
-  assert('scratchpad #1 falls back to the three-letter gate, not a bare letter',
-    globalThis.DD.scratchpadFor('RST') === 'RST');
-  assert('the three-letter fallback is the SID own exit fix',
-    globalThis.DD.scratchpadFor('ORSKY') === 'FOD',
-    globalThis.DD.scratchpadFor('ORSKY'));
-  /* every generated entry must be enterable in the client */
-  assert('every generated scratchpad is a valid CRC entry',
-    Object.keys(SG).filter(s => SG[s].gate)
-      .every(s => globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor(s, 11000))
-                && globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor(s))));
+  /* The scratchpad FORMS are still M98 7110.26A's and still tested — on a gate
+     record set up for the test and taken away again, so no SID is given one.
+     The order's example is B12; the old chart's was E11. */
+  {
+    const keep = SG.BITEZ1;
+    SG.BITEZ1 = {gate:'E', fix:'EAU'};
+    assert('form (a): gate letter and the two-digit altitude, zero-padded',
+      globalThis.DD.scratchpadFor('BITEZ1.DKOTA', 11000) === 'E11'
+      && globalThis.DD.scratchpadFor('BITEZ1.DKOTA', 9000) === 'E09');
+    /* With no altitude the order's form (b) applies — the THREE-LETTER gate. A
+       bare letter would be one character and CRC will not take it. */
+    assert('form (b): the three-letter gate with no altitude, never a bare letter',
+      globalThis.DD.scratchpadFor('BITEZ1.SMERF') === 'EAU');
+    assert('both forms are entries CRC can take',
+      globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor('BITEZ1.DKOTA', 11000))
+      && globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor('BITEZ1.DKOTA')));
+    SG.BITEZ1 = keep;
+  }
+  assert('and the record is tabled again afterwards', globalThis.DD.gateForSid('BITEZ1.DKOTA') === null);
   assert('scratchpadValid rejects a bare gate letter', !globalThis.DD.scratchpadValid('R'));
   assert('scratchpadValid rejects an over-long entry', !globalThis.DD.scratchpadValid('ABCDE'));
-  assert('scratchpad #1 is null for a SID with no gate, never invented',
-    globalThis.DD.scratchpadFor('SMERF', 12000) === null);
 
-  /* ============ 3a. The SID set expires on 2026-10-29 — issue #61 ============
-     A warning, not a fix: DEPS is untouched and the deck says when it stops
-     being true. The incoming lists are CIFP 261029's manifest, checked
-     2026-10-14; the outgoing list is read off DEPS, so the banner cannot name
-     a set the table does not hold. */
+  /* ============ 3a. The set goes live on 2026-10-29 — issue #61 ============
+     The deck carries the CIFP 261029 set EARLY (owner, 2026-10-14), so until the
+     date the banner says the network is still on the retired set; from the date
+     the set is simply current and the banner is gone. The note at the picker
+     stays either side, because the gates are tabled either side. */
   const SC = globalThis.DD.SID_CHANGE;
-  assert('the SID change carries its date, its cycle and its issue',
+  assert('the change carries its date, its cycle, its issue and its source',
     SC.effective === '2026-10-29' && SC.cycle === 'CIFP 261029' && SC.issue === 61 && /owner, 2026-10-14/.test(SC.src));
-  assert('nine SIDs come in at MSP, all from CIFP 261029',
-    SC.incoming.KMSP.join() === 'BITEZ1,BUNYN1,HTDSH1,KBREW1,NRTHN1,SNOWZ1,SNUPE1,TOTTZ1,ZMBRO1');
-  assert('ANE, FCM and STP get one identical set of eight, DUHCK1 included and the two Runway 17 SIDs not',
-    ['KANE', 'KFCM', 'KSTP'].every(k => SC.incoming[k].join() === 'BITEZ1,BUNYN1,DUHCK1,KBREW1,NRTHN1,SNUPE1,TOTTZ1,ZMBRO1'));
-  assert('Crystal gets none, because CIFP codes none there in either cycle', !SC.incoming.KMIC);
-  assert('the outgoing set is exactly what DEPS carries',
-    globalThis.DD.sidsCarried().join() === Object.keys(globalThis.DD.DEPS).join()
-    && globalThis.DD.sidsCarried().length === 9);
-  assert('the warning is pending the day before and expired on the day',
-    globalThis.DD.sidChangeState('2026-10-28') === 'pending'
-    && globalThis.DD.sidChangeState('2026-10-29') === 'expired'
-    && globalThis.DD.sidChangeState('2027-01-01') === 'expired');
-  const scPend = globalThis.DD.sidChangeHtml('2026-10-28').replace(/<[^>]+>/g, ' ');
-  const scGone = globalThis.DD.sidChangeHtml('2026-10-29').replace(/<[^>]+>/g, ' ');
-  assert('before the date the banner says when, names every SID carried and points at the issue',
-    scPend.includes('SIDs change on 2026-10-29') && scPend.includes('issue #61')
-    && Object.keys(globalThis.DD.DEPS).every(s => scPend.includes(s)));
-  assert('from the date the banner says the set is out of date, in different words',
-    scGone.includes('out of date') && !scGone.includes('SIDs change on') && scGone.includes('issue #61'));
-  assert('the picker line follows the same state',
-    globalThis.DD.sidChangeShort('2026-10-28') === 'changes on 2026-10-29'
-    && globalThis.DD.sidChangeShort('2026-10-29') === 'out of date since 2026-10-29');
+  assert('the retired set is recorded — twelve at MSP, the same seven at each satellite',
+    SC.retired.KMSP.length === 12 && SC.retired.KSTP.join() === 'COULT7,KBREW2,ORSKY3,RST1,SCHEP1,WLSTN7,ZMBRO7'
+    && SC.retired.KANE === SC.retired.KFCM && SC.retired.KANE === SC.retired.KSTP);
+  assert('the deck carries exactly the new MSP set, and none of the retired names',
+    globalThis.DD.sidsCarried().join() === globalThis.DD.SID_FIELDS.KMSP.join()
+    && globalThis.DD.SID_RETIRED_KEYS.every(k => globalThis.DD.DEPS[k] === undefined));
+  assert('a retired name is known as retired, and a current one is not',
+    globalThis.DD.sidRetired('WLSTN') && globalThis.DD.sidRetired('KBREW') && !globalThis.DD.sidRetired('BITEZ1.DKOTA'));
+  assert('early the day before, live on the day',
+    globalThis.DD.sidChangeState('2026-10-28') === 'early'
+    && globalThis.DD.sidChangeState('2026-10-29') === 'live'
+    && globalThis.DD.sidChangeState('2027-01-01') === 'live');
+  const scEarly = globalThis.DD.sidChangeHtml('2026-10-28').replace(/<[^>]+>/g, ' ');
+  assert('before the date the banner names both sets, the date and the issue',
+    scEarly.includes('These are the SIDs from 2026-10-29') && scEarly.includes('Issue #61')
+    && globalThis.DD.sidsCarried().every(s => scEarly.includes(s))
+    && ['COULT7', 'WLSTN7', 'ZMBRO7'].every(s => scEarly.includes(s)) && !scEarly.includes('HSTIN6'));
+  assert('from the date there is no banner — the set is simply current',
+    globalThis.DD.sidChangeHtml('2026-10-29') === '');
+  assert('the picker line says when, then just that the gates are tabled',
+    globalThis.DD.sidChangeShort('2026-10-28') === 'live on 2026-10-29 · gate letters not known yet'
+    && globalThis.DD.sidChangeShort('2026-10-29') === 'gate letters not known yet');
 
   /* The ILS category on the MSP runway records, ARINC 424 5.80. 0 is a
      localizer with NO glide slope — 4, 17 and 22 have no ILS, which the CIFP
@@ -590,9 +623,13 @@ try {
   assert('tracked draws only the ladders in use, and no SID track', lTracked === 3 && sTracked === 0,
     lTracked + '/' + sTracked);
   assert('all STARs draws all six ladders', lStars === 6, lStars);
-  assert('all SIDs adds the nine SID tracks without hiding the tracked ladders',
-    lSidsL === 3 && lSidsS === 9, lSidsL + '/' + lSidsS);
-  assert('all SIDs and STARs draws everything', lBothL === 6 && lBothS === 9, lBothL + '/' + lBothS);
+  /* Fourteen tracks, not twenty-five: transitions that share a mapped track inside
+     80 NM are drawn once (sidDrawGroups) — it was nine, one per SID, before the
+     2026-10-29 set came in. */
+  const nSidTrk = globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS)).length;
+  assert('all SIDs adds every distinct SID track without hiding the tracked ladders',
+    lSidsL === 3 && lSidsS === nSidTrk && nSidTrk === 14, lSidsL + '/' + lSidsS);
+  assert('all SIDs and STARs draws everything', lBothL === 6 && lBothS === nSidTrk, lBothL + '/' + lBothS);
   assert('off draws no route geometry at all', lOffL === 0 && sidTrks() === 0, lOffL);
   /* Under "off" this used to leave exactly one polyline, the RST boundary. Issue
      #60 (5d995f6, owner 2026-09-21) took that line off the scope and kept the
@@ -936,10 +973,13 @@ try {
   }
 
   /* ============ 3d. Flight rules and route ============ */
-  assert('a route is the fix sequence from the reference data, with no invented procedure name',
+  /* An arrival files the fix sequence and no procedure name; a departure files
+     its SID as a flight plan writes it, because CIFP 261029 names the revision. */
+  assert('an arrival files the fix sequence, a departure its SID and transition as filed',
     globalThis.DD.routeTextFor({role:'arrival', gate:'NITZR'}) === 'NITZR WRSAW DAHRL GDNEE ELLKO SAVVG GREAK TIETN'
-    && globalThis.DD.routeTextFor({role:'departure', sid:'WLSTN'}) === 'MSP SNINE DWIYT GRB',
-    globalThis.DD.routeTextFor({role:'departure', sid:'WLSTN'}));
+    && globalThis.DD.routeTextFor({role:'departure', sid:'NRTHN1.TTOWN'}) === 'NRTHN1.TTOWN'
+    && globalThis.DD.routeTextFor({role:'departure', sid:'WLSTN'}) === '',
+    globalThis.DD.routeTextFor({role:'departure', sid:'NRTHN1.TTOWN'}));
   const ifrAc = globalThis.DD.mkAc({cs:'DAL1', type:'B738', gate:'NITZR', dtgEnd:20, alt:12000, ias:280});
   assert('a strip defaults to IFR and fills its own route',
     ifrAc.rules === 'IFR' && ifrAc.filed.indexOf('NITZR') === 0, ifrAc.rules + ' ' + ifrAc.filed);
@@ -1005,17 +1045,21 @@ try {
     JSON.stringify(globalThis.DD.RST_FREQS) === '["119.8","119.2"]');
   assert('the RST receiver carries its frequency',
     globalThis.DD.neighbourAt(158, 7000).frq === '119.8');
-  /* the RST departure is the only one that leaves through that arc */
-  const lowRst = globalThis.DD.mkAc({cs:'D1', type:'B738', role:'departure', sid:'RST', fromStart:5, alt:6000, ias:250});
-  const highRst = globalThis.DD.mkAc({cs:'D2', type:'B738', role:'departure', sid:'RST', fromStart:5, alt:12000, ias:280});
-  assert('a low RST departure goes to Rochester and a high one to Center',
+  /* Which departures leave through that arc. Until 2026-10-29 it was the RST SID
+     alone; in the CIFP 261029 set it is every track that runs down through CORDY
+     to FOOLS — TOTTZ1 and four of HTDSH1's five transitions. HTDSH1's BRIBE
+     transition turns off at HTDSH for JEDET and leaves east of the arc. */
+  const lowRst = globalThis.DD.mkAc({cs:'D1', type:'B738', role:'departure', sid:'TOTTZ1.ALO', fromStart:5, alt:6000, ias:250});
+  const highRst = globalThis.DD.mkAc({cs:'D2', type:'B738', role:'departure', sid:'TOTTZ1.ALO', fromStart:5, alt:12000, ias:280});
+  assert('a low departure through the arc goes to Rochester and a high one to Center',
     globalThis.DD.receiverFor(lowRst).pos === 'RST' && globalThis.DD.receiverFor(highRst).pos === 'ZMP',
     globalThis.DD.receiverFor(lowRst).pos + '/' + globalThis.DD.receiverFor(highRst).pos);
-  assert('no other SID leaves through the RST arc',
-    Object.keys(globalThis.DD.DEPS).filter(k => {
-      const p = globalThis.DD.DEPS[k][globalThis.DD.DEPS[k].length - 1];
-      return globalThis.DD.neighbourAt((Math.atan2(p.e, p.n) * 180 / Math.PI + 360) % 360, 6000).pos === 'RST';
-    }).join(',') === 'RST');
+  const viaArc = Object.keys(globalThis.DD.DEPS).filter(k => {
+    const p = globalThis.DD.DEPS[k][globalThis.DD.DEPS[k].length - 1];
+    return globalThis.DD.neighbourAt((Math.atan2(p.e, p.n) * 180 / Math.PI + 360) % 360, 6000).pos === 'RST';
+  }).join(',');
+  assert('exactly the tracks that run down to FOOLS leave through the RST arc', viaArc ===
+    'HTDSH1.ALO,HTDSH1.OANNA,HTDSH1.OHHMY,HTDSH1.ZZIPR,TOTTZ1.ALO,TOTTZ1.FOOLS,TOTTZ1.OANNA,TOTTZ1.OHHMY,TOTTZ1.ZZIPR', viaArc);
 
   /* ============ 3e. Radar service — handed off, or calling you cold ============ */
   const handed = globalThis.DD.mkAc({cs:'N77CM', type:'SR22', role:'overflight', rules:'VFR',
@@ -1047,7 +1091,7 @@ try {
   assert('a VFR aircraft can be picking up flight following',
     globalThis.DD.radarStatesFor('overflight','VFR').indexOf('following') >= 0);
   const offTwr = globalThis.DD.mkAc({cs:'DAL77', type:'B738', role:'departure', rules:'IFR',
-    radar:'departure', sid:'COULT', dep:'KMSP', depRwy:'12R', alt:3000, ias:210, fromStart:3, squawk:'4231'});
+    radar:'departure', sid:'SNUPE1.DLL', dep:'KMSP', depRwy:'12R', alt:3000, ias:210, fromStart:3, squawk:'4231'});
   assert('one off the tower has a clearance and a code but is not identified yet',
     offTwr.identified === false && offTwr.squawk === '4231' && offTwr.ifrCleared === true
     && offTwr.popup === false,
@@ -1166,9 +1210,12 @@ try {
     && globalThis.DD.SAT_ROUTES.ENCEE.filter(p => p.f === 'RIXIE')[0].at === 8000
     && globalThis.DD.SAT_ROUTES.ENCEE.filter(p => p.f === 'RIXIE')[0].atProp === 7000
     && globalThis.DD.SAT_ROUTES.TWOLF.filter(p => p.f === 'TRGET')[0].at === 7000);
-  assert('the GEP VOR plots where the SID data already puts it',
-    Math.abs(globalThis.DD.SAT_ROUTES.AGUDE.slice(-1)[0].lat - globalThis.DD.DEPS.KBREW[1].lat) < 0.001
-    && Math.abs(globalThis.DD.SAT_ROUTES.AGUDE.slice(-1)[0].lon - globalThis.DD.DEPS.KBREW[1].lon) < 0.001);
+  /* The GEP VOR where CIFP puts it: N45 08 44.47 W093 22 23.45, the CIFP 261029
+     VHF navaid record. Until 2026-10-29 this was checked against the KBREW SID,
+     which ran through GEP; KBREW1 does not, so it is checked at the source. */
+  assert('the GEP VOR plots where CIFP puts it',
+    Math.abs(globalThis.DD.SAT_ROUTES.AGUDE.slice(-1)[0].lat - 45.14569) < 0.001
+    && Math.abs(globalThis.DD.SAT_ROUTES.AGUDE.slice(-1)[0].lon - -93.37318) < 0.001);
 
   /* the non-STAR entries — ZMP-M98 LOA 3g */
   assert('the direct satellite entries are carried with their citations',
@@ -1520,11 +1567,13 @@ try {
     }
   }
 
-  /* the navaids a departure starts on are not direct-to fixes */
-  assert('the navaids at the head of the SIDs are marked',
-    globalThis.DD.DEP_VORS.join(',') === 'MSP,GEP,FGT'
-    && globalThis.DD.DEPS.KBREW.filter(p => p.vor).map(p => p.f).join(',') === 'MSP,GEP'
-    && globalThis.DD.DEPS.COULT.filter(p => !p.vor).length === 2);
+  /* The field a departure's track starts on is not a fix on its SID. The navaid
+     list this replaced (MSP, GEP, FGT) went with the retired set, whose SIDs began
+     on those VORs; none of the 261029 set does. */
+  assert('the only marked point on a departure track is the field it starts at',
+    globalThis.DD.DEP_VORS === undefined
+    && Object.keys(globalThis.DD.DEPS).every(k => globalThis.DD.DEPS[k][0].field === true
+       && globalThis.DD.DEPS[k].slice(1).every(p => !p.field && !p.vor)));
 
   /* ============ 4. Position setup ============ */
   assert('all eleven SOP 2-1 positions are present', globalThis.ddb.POSITIONS.length === 11, globalThis.ddb.POSITIONS.length);
@@ -1718,6 +1767,50 @@ try {
     ac: [{ cs: 'DAL1', type: 'B738', gate: 'NITZR', dtg: 12, alt: 9000, ias: 250, mode: 'published', ckdIn: true }] });
   assert('17-22 below its 1,400 ceiling rejected (SOP 7-1 / LOA 11)', c1722.errors.some(e => e.includes('1,400')), c1722.errors.join(' | '));
 
+  /* ============ The SID a departure strip names — issue #61 ============ */
+  {
+    const dv = o => globalThis.ddb.validate({ name: 'sid', cfg: '12', ceil: 5000, vis: 10,
+      ac: [Object.assign({ cs: 'DAL10', type: 'B738', role: 'departure', rules: 'IFR', radar: 'established',
+        dep: 'KMSP', fromStart: 4, alt: 5000, ias: 250, route: '' }, o)] });
+    const retired = dv({ sid: 'COULT' });
+    assert('a retired SID is refused, and the refusal names the set that replaced it',
+      retired.errors.some(e => e.includes('COULT went with the SID set that ends on 2026-10-29') && e.includes('BITEZ1')),
+      retired.errors.join(' | '));
+    assert('a name that was never a SID is refused differently',
+      dv({ sid: 'NOSUCH1.FIX' }).errors.some(e => e.includes('is not a SID this deck carries')));
+    const rw17off12 = dv({ sid: 'HTDSH1.ALO', depRwy: '12R' });
+    assert('a Runway 17 SID off another runway is refused — CIFP 261029 codes Runway 17 only',
+      rw17off12.errors.some(e => e.includes('has a Runway 17 transition and no other')), rw17off12.errors.join(' | '));
+    const rw17off17 = dv({ sid: 'SNOWZ1.ISTIQ', depRwy: '17' });
+    /* the fixture is a bare strip, so other rules fire on it too; only what the
+       SID rules say is under test here */
+    assert('off Runway 17 it is allowed, with the open assignability question said out loud',
+      !rw17off17.errors.some(e => /SID|Runway 17/.test(e))
+      && rw17off17.warnings.some(w => w.includes('Whether M98 assigns it is an open question')),
+      rw17off17.errors.concat(rw17off17.warnings).join(' | '));
+    const plain = dv({ sid: 'BITEZ1.DKOTA', depRwy: '30L' });
+    assert('an ordinary SID from any runway raises nothing about the SID',
+      !plain.errors.concat(plain.warnings).some(x => /SID|Runway 17/.test(x)), plain.errors.concat(plain.warnings).join(' | '));
+    assert('a start beyond the 60 NM join limit is warned against (ZMP-M98 LOA 4.f)',
+      dv({ sid: 'HTDSH1.ALO', depRwy: '17', fromStart: 65 }).warnings.some(w => w.includes('60 NM join limit')));
+    const sat = dv({ sid: 'BITEZ1.DKOTA', dep: 'KSTP' });
+    assert('a satellite departure is still refused, and names the SIDs that field has',
+      sat.errors.some(e => e.includes('engine flies departures off MSP only') && e.includes('DUHCK1')), sat.errors.join(' | '));
+    assert('the generator never picks a Runway 17 SID',
+      [1, 2, 3, 4, 5, 6, 7, 8].every(seed => globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 2, deps: 4 })
+        .ac.filter(a => a.role === 'departure').every(a => !globalThis.DD.sidRw17(a.sid))));
+    /* a stored drill naming a retired SID is not flown — and is not put on an arrival ladder */
+    globalThis.DD.SCENARIOS.push({id:'oldsid', name:'Old SID', frame:'test', altim:'2980', brief:'',
+      ac:() => [
+        {cs:'DAL11', type:'B738', role:'departure', sid:'WLSTN', fromStart:4, alt:5000, ias:250, ckdIn:true},
+        {cs:'DAL22', type:'B738', role:'departure', sid:'BITEZ1.DKOTA', fromStart:4, alt:5000, ias:250, ckdIn:true}
+      ]});
+    globalThis.ddLoad('oldsid');
+    assert('a departure on a retired SID is left out of the drill rather than flown on something else',
+      globalThis.DD.sim.ac.map(a => a.cs).join() === 'DAL22');
+    mustContain('and the feed says why', 'went with the SID set that ends on 2026-10-29');
+  }
+
   /* flight categories off the drill-format thresholds */
   assert('flight categories derive from ceiling and visibility',
     globalThis.ddb.category(5000, 10) === 'VFR' && globalThis.ddb.category(2500, 10) === 'MVFR'
@@ -1770,8 +1863,8 @@ try {
   /* ============ 4b. Departures, overflights, and one transmission carrying several instructions ============ */
   globalThis.DD.SCENARIOS.push({id:'mixed', name:'Mixed', frame:'test', altim:'2980', brief:'',
     ac:() => [
-      {cs:'DAL512', type:'B738', role:'departure', sid:'WLSTN', fromStart:3, alt:5000, ias:250, ckdIn:true},
-      {cs:'SCX880', type:'B738', role:'departure', sid:'ORSKY', fromStart:3, alt:5000, ias:250, ckdIn:true},
+      {cs:'DAL512', type:'B738', role:'departure', sid:'NRTHN1.TTOWN', fromStart:3, alt:5000, ias:250, ckdIn:true},
+      {cs:'SCX880', type:'B738', role:'departure', sid:'BITEZ1.SMERF', fromStart:3, alt:5000, ias:250, ckdIn:true},
       {cs:'N23V',   type:'C172', role:'overflight', entry:{r:200,d:36}, exit:{r:40,d:36}, alt:4500, ias:120, ckdIn:true},
       {cs:'DAL589', type:'B738', gate:'KKILR', dtgEnd:30, alt:14000, ias:280, ckdIn:true}
     ]});
@@ -1876,8 +1969,8 @@ try {
   /* naming the wrong neighbour */
   globalThis.DD.SCENARIOS.push({id:'rst', name:'RST', frame:'test', altim:'2980', brief:'',
     ac:() => [
-      {cs:'DAL100', type:'B738', role:'departure', sid:'RST', fromStart:5, alt:6000,  ias:250, ckdIn:true},
-      {cs:'DAL200', type:'B738', role:'departure', sid:'RST', fromStart:5, alt:12000, ias:280, ckdIn:true}
+      {cs:'DAL100', type:'B738', role:'departure', sid:'TOTTZ1.ALO', fromStart:5, alt:6000,  ias:250, ckdIn:true},
+      {cs:'DAL200', type:'B738', role:'departure', sid:'TOTTZ1.ALO', fromStart:5, alt:12000, ias:280, ckdIn:true}
     ]});
   globalThis.ddLoad('rst');
   globalThis.ddSel('DAL100');
@@ -1894,8 +1987,8 @@ try {
   /* handing to Rochester at an altitude the LOA does not allow */
   globalThis.DD.SCENARIOS.push({id:'rstalt', name:'RST alt', frame:'test', altim:'2980', brief:'',
     ac:() => [
-      {cs:'DAL400', type:'B738', role:'departure', sid:'RST', fromStart:5, alt:6000, ias:250, ckdIn:true},
-      {cs:'DAL500', type:'B738', role:'departure', sid:'RST', fromStart:5, alt:7000, ias:250, ckdIn:true}
+      {cs:'DAL400', type:'B738', role:'departure', sid:'TOTTZ1.ALO', fromStart:5, alt:6000, ias:250, ckdIn:true},
+      {cs:'DAL500', type:'B738', role:'departure', sid:'TOTTZ1.ALO', fromStart:5, alt:7000, ias:250, ckdIn:true}
     ]});
   globalThis.ddLoad('rstalt');
   globalThis.ddSel('DAL400');
@@ -1960,7 +2053,7 @@ try {
   {
     globalThis.DD.sim.ac.length = 0;
     const dep = globalThis.DD.mkAc({cs:'DAL77', type:'B738', role:'departure', rules:'IFR',
-      radar:'departure', sid:'COULT', dep:'KMSP', depRwy:'12R', alt:3000, ias:210, fromStart:3});
+      radar:'departure', sid:'SNUPE1.DLL', dep:'KMSP', depRwy:'12R', alt:3000, ias:210, fromStart:3});
     dep.onFreq = true; dep.ckdIn = true; dep.squawk = '4231';
     globalThis.DD.sim.ac.push(dep);
     const vfr = globalThis.DD.mkAc({cs:'N11AB', type:'C172', role:'overflight', rules:'VFR',
@@ -1972,10 +2065,14 @@ try {
     mustContain('one off the tower gets radar contact, not a redundancy note', 'this is the identification it was owed');
     assert('and it is identified afterwards', dep.identified === true);
 
+    /* Direct to the field it just left is flagged and not read back; the flag
+       names where the SID really begins. (Until 2026-10-29 this was the navaid
+       at the head of the SID; the 261029 set has none.) */
     say('DAL77 proceed direct MSP');
-    mustContain('direct to the navaid at the head of a departure is refused', 'not because it is a fix you clear anybody direct to');
-    say('DAL77 proceed direct TAXEE');
-    mustContain('direct to a waypoint further along is read back honestly', 'does not re-path an aircraft');
+    mustContain('direct to the field a departure just left is flagged', 'is the field');
+    mustContain('and the flag says where the SID begins', 'which begins at PNUTZ');
+    say('DAL77 proceed direct SNUPE');
+    mustContain('direct to a fix further along the SID is read back honestly', 'does not re-path an aircraft');
 
     say('N11AB radar contact');
     mustContain('flight following without a code is refused', 'nothing to be in radar contact with');

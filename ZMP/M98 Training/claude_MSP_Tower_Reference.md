@@ -180,6 +180,10 @@ The LOA annotates these `DRL` and `EGK`; the SOP gives the same numbers without 
 
 ### SIDs, preferred runways and initial fixes (SOP 3-2-4)
 
+> **The tower order names the SID set retired on 2026-10-29**, and is transcribed as written. From
+> that date MSP flies the CIFP 261029 set — `claude_MSP_SID_Reference.md`, issue #61 — and vZMP has
+> not yet revised this order. Read the names below as the order's, not as the current procedures.
+
 | Departure | Preferred runway(s) | Direction | Initial fix | Transition |
 |---|---|---|---|---|
 | COULT | 17, 12L/30R | SE | TAXEE | DLL |

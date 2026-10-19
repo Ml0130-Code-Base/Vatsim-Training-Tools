@@ -115,7 +115,7 @@ STP (Holman, ~8 ENE of MSP) is close in and **the only satellite whose flow depe
 
 ## Satellite departures (full detail in the SID ref)
 
-STP/ANE/FCM may fly the MSP SIDs **except LEINY**; **MIC has no SIDs → radar vectors** (work the filed route / first fix). Satellite departures previously via the **DWN** SID now route **INUNE GENEO DKOTA** (ZMP-M98 LOA 4.f).
+*For the SIDs retired on 2026-10-29:* STP/ANE/FCM may fly the MSP SIDs **except LEINY**. **From 2026-10-29 (CIFP 261029) they have eight — BITEZ1, BUNYN1, DUHCK1, KBREW1, NRTHN1, SNUPE1, TOTTZ1, ZMBRO1 — and the owner's rule needs restating for them (issue #61; `claude_MSP_SID_Reference.md`).** **MIC has no SIDs → radar vectors** (work the filed route / first fix), in either cycle. Satellite departures previously via the **DWN** SID now route **INUNE GENEO DKOTA** (ZMP-M98 LOA 4.f).
 
 ## Towered-satellite interface — the numbers the seat runs on (M98-SAT LOA, 11/30/2025)
 

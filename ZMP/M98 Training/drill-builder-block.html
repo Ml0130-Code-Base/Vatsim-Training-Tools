@@ -65,7 +65,6 @@ var css = ''
 + '.dd-sub{font-family:var(--mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;}'
 + '.dd-sub.a{color:var(--amber);}'
 + '.dd-sidexp{font-family:var(--mono);font-size:10px;color:var(--amber);}'
-+ '.dd-sidexp.out{color:var(--red);}'
 + '.dd-view{display:none;}'
 + '.dd-view.on{display:block;}'
 + '.dd-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:28px 0 0;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);position:sticky;top:53px;background:rgba(10,13,12,0.94);backdrop-filter:blur(6px);z-index:15;}'
@@ -1354,7 +1353,7 @@ function gen(o){
   var ftd=pick(rnd,FLEET), dcs;
   do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
   used[dcs]=1;
-  var dsid=pick(rnd,SIDS);
+  var dsid=pick(rnd,SIDS_GEN);
   ac.push({cs:dcs, type:ftd.t, role:'departure', rules:'IFR', radar:'established', from:'MSP tower', sid:dsid,
            route:DD.routeTextFor({role:'departure', sid:dsid}),
            fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
@@ -1374,7 +1373,7 @@ function gen(o){
            radar:oRadar, from:(oRadar==='established'?oNb.name:''),
            entryR:er, entryD:38, exitR:xr, exitD:38,
            alt:oAlt, ias:ri(rnd,110,180),
-           gate:'NITZR', dtg:20, sid:'WLSTN', fromStart:4, mode:'free', asg:230, rwy:'',
+           gate:'NITZR', dtg:20, sid:DEF_SID, fromStart:4, mode:'free', asg:230, rwy:'',
            ckdIn:false, altim:false, spawnAt:ri(rnd,20,70)});
  }
  var fc=FOCUS[focus];
@@ -1403,12 +1402,26 @@ function validate(rec){
   var role=roleOf(a);
   if(!(a.alt>=2000 && a.alt<=24000)) errs.push(tag+': altitude must be between 2,000 and 24,000.');
   if(role==='departure'){
-   if(SIDS.indexOf(a.sid)<0) errs.push(tag+': '+a.sid+' is not one of the turbojet SIDs in the reference ('+SIDS.join(', ')+').');
+   if(SIDS.indexOf(a.sid)<0){
+    /* a strip saved before 2026-10-14 names the retired set, and says so */
+    if(DD.sidRetired(a.sid))
+     errs.push(tag+': '+a.sid+' went with the SID set that ends on '+DD.SID_CHANGE.effective+'. This deck flies the '+DD.SID_CHANGE.cycle+' set — '+DD.sidsCarried().join(', ')+' — so pick one of those and its transition (issue #'+DD.SID_CHANGE.issue+').');
+    else
+     errs.push(tag+': '+a.sid+' is not a SID this deck carries. The '+DD.SID_CHANGE.cycle+' set is '+DD.sidsCarried().join(', ')+', each filed with its transition — '+DEF_SID+', for one.');
+   }
    else {
     var dt=DD.DEPS[a.sid].total;
     if(!(a.fromStart>=0)) errs.push(tag+': distance from MSP must be a number.');
-    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' join track ('+dt.toFixed(1)+' NM). M98 only takes a departure to the 60 NM join limit (ZMP-M98 LOA 4.f).');
+    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are mapped to 80 NM from MSP).');
+    else if(a.fromStart>60) warns.push(tag+': starts '+a.fromStart+' NM out, beyond the 60 NM join limit M98 takes a departure to (ZMP-M98 LOA 4.f).');
     else if(a.fromStart>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM, already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
+    /* HTDSH1 and SNOWZ1 are coded off Runway 17 and nothing else */
+    if(DD.sidRw17(a.sid)){
+     if(a.depRwy && a.depRwy!=='17')
+      errs.push(tag+': '+DD.sidOf(a.sid)+' has a Runway 17 transition and no other ('+DD.SID_SRC+'), so a departure off '+a.depRwy+' cannot be on it.');
+     else
+      warns.push(tag+': '+DD.sidOf(a.sid)+' is a Runway 17 SID. Whether M98 assigns it is an open question — the Runway 17 SIDs it replaces, HSTIN6, MEDOW5 and SLAYR4, never were (issue #'+DD.SID_CHANGE.issue+').');
+    }
    }
    if(a.alt>=DD.DEP_RELEASE.alt) warns.push(tag+': starts at '+DD.fmtAlt(a.alt)+', at or above the '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' release trigger — the release is already due on the first tick.');
   }
@@ -1537,7 +1550,10 @@ function validate(rec){
   if(roleOf(a)==='departure'){
    var dapt=DD.airportOf(a.dep||'KMSP');
    if((a.dep||'KMSP')!=='KMSP')
-    errs.push(tag2+' departs '+(a.dep||'KMSP')+', and the route data carries only the nine MSP turbojet SIDs — a satellite departure has no track for the engine to fly yet.');
+    errs.push(tag2+' departs '+(a.dep||'KMSP')+', and the engine flies departures off MSP only — a satellite departure has no track for it to fly yet. '
+      +((DD.SID_FIELDS[a.dep]||[]).length
+        ? (a.dep+' has '+DD.SID_FIELDS[a.dep].join(', ')+' in '+DD.SID_CHANGE.cycle+'.')
+        : (a.dep+' has no SID in '+DD.SID_CHANGE.cycle+'.')));
    if(a.depRwy && dapt.rwys.indexOf(a.depRwy)<0)
     errs.push(tag2+' departs runway '+a.depRwy+', which is not a runway at '+(a.dep||'KMSP')+'. That field has '+dapt.rwys.join(', ')+'.');
    if(rules==='IFR' && a.depRwy && dapt.noIfrDep && dapt.noIfrDep.indexOf(a.depRwy)>=0)
@@ -1824,14 +1840,19 @@ function refreshLog(){
 /* ---------- 11. Editor state ---------- */
 var draft = null;
 var SIDS = Object.keys(DD.DEPS);
+/* The generator leaves out the two Runway 17 SIDs: whether M98 assigns them is
+   open (issue #61), and they need a Runway 17 departure the generator does not
+   set. They stay in the picker, where the validator says both things. */
+var SIDS_GEN = SIDS.filter(function(k){ return !DD.sidRw17(k); });
+var DEF_SID = SIDS_GEN[0];
 var ROLES = [
  {id:'arrival',    label:'arrival',    hint:'Flies a published STAR ladder to a runway transition and gets handed to Arrival at the floor.'},
- {id:'departure',  label:'departure',  hint:'Climbs out on a SID join. Released to Center at 25 NM from the MSP DME or leaving 11,000 — ZMP-M98 LOA 4.c, whichever comes first.'},
+ {id:'departure',  label:'departure',  hint:'Flies its SID out from the field — the 2026-10-29 set, filed with its transition. Released to Center at 25 NM from the MSP DME or leaving 11,000 — ZMP-M98 LOA 4.c, whichever comes first.'},
  {id:'overflight', label:'overflight', hint:'Crosses the airspace on the radial and distance you give it, level, and has to be handed off or pointed out before the far boundary.'}
 ];
 function blankAc(){
  return {cs:'', type:'B738', role:'arrival', rules:'IFR', route:'',
-         radar:'established', from:'', gate:'NITZR', sid:'WLSTN',
+         radar:'established', from:'', gate:'NITZR', sid:DEF_SID,
          entryR:180, entryD:38, exitR:20, exitD:38,
          dtg:20, fromStart:4, alt:12000, ias:280, mode:'published', asg:230,
          rwy:'', ckdIn:true, altim:false, spawnAt:0};
@@ -1962,7 +1983,7 @@ function rowContext(a){
  if(role==='departure'){
   var dr=DD.DEPS[a.sid];
   if(!dr) return '';
-  return a.sid+' join track '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out · released to Center by '
+  return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out · released to Center by '
    +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
  }
  if(role==='overflight'){
@@ -2077,9 +2098,16 @@ function acRowHtml(a,i){
      }).join('')+'</select>')
    +f('Runway','<select class="dd-sel" id="ddb-drwy'+i+'" onchange="ddbSync()"><option value=""'+(a.depRwy?'':' selected')+'>not stated</option>'
     +DD.runwaysAt(dep).map(function(r){return '<option'+(r===a.depRwy?' selected':'')+'>'+r+'</option>';}).join('')+'</select>')
-   +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'+SIDS.map(function(s){return '<option'+(s===a.sid?' selected':'')+'>'+s+'</option>';}).join('')+'</select>'
-     /* issue #61 — the set in the picker expires, and the picker says when */
-     +(DD.sidChangeShort ? '<span class="dd-sidexp'+(DD.sidChangeState()==='expired'?' out':'')+'">'+esc(DD.sidChangeShort())+'</span>' : ''))
+   +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'
+     /* grouped by SID, one option per transition, the value filed as written */
+     +DD.sidsCarried().map(function(sid){
+       return '<optgroup label="'+sid+(DD.SID_SET[sid].rw17?' — Runway 17 only':'')+'">'
+         +SIDS.filter(function(k){ return DD.sidOf(k)===sid; }).map(function(k){
+           return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+sid+' · '+DD.transOf(k)+'</option>';
+         }).join('')+'</optgroup>';
+     }).join('')+'</select>'
+     /* issue #61 — when the set goes live, and that the gates are tabled */
+     +'<span class="dd-sidexp">'+esc(DD.sidChangeShort())+'</span>')
    +f('NM from MSP','<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
  } else if(role==='overflight'){
   job = f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')
@@ -2200,12 +2228,11 @@ function previewSvg(rec){
   s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.35"/>';
   s+='<text x="'+(r[0].x+8).toFixed(1)+'" y="'+(r[0].y+14).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
  });
- Object.keys(sidsUsed).forEach(function(k){
-  var r=DD.DEPS[k]; if(!r) return;
-  s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
-  var last=r[r.length-1];
-  s+='<text x="'+(last.x+7).toFixed(1)+'" y="'+(last.y+4).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
+ var sidGroups=DD.sidDrawGroups(Object.keys(sidsUsed));
+ sidGroups.forEach(function(g){
+  s+='<polyline points="'+g.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
  });
+ s+=DD.sidLabelSvg(sidGroups, 1);
  if(Object.keys(sidsUsed).length){
   s+='<circle cx="350" cy="255" r="'+(DD.DEP_RELEASE.dme*4.5).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.3" stroke-dasharray="2 5"/>';
  }

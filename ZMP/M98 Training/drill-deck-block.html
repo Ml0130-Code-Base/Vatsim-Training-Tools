@@ -682,102 +682,185 @@ function setFlow(cfg){
 /* True when Table 2 gives this configuration arrival geometry at all. */
 function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
 
-/* Turbojet SID routes, from claude_MSP_SID_Reference.md. Each runs from the
-   MSP VOR out through the fixes that are direct-able inside 60 NM — which is
-   the join limit in ZMP-M98 LOA 4.f, and as far as M98 ever takes them.
-   The initial track off the runway is dispersal (a tower function), not the
-   SID's ultimate direction, so these are the join points after the turn.
+/* ---------- MSP's SIDs — CIFP 261029, effective 2026-10-29 — issue #61 ----------
+   THE SET THE NETWORK FLIES FROM 2026-10-29, CARRIED EARLY ON PURPOSE. Owner,
+   2026-10-14: "since CIFP did have the new SIDs let's update everything for
+   M98 so that data is live so I can start learning how the new SIDs flow."
+   Decoded from the CIFP 261029 PD records (cycle 2611, file dated 2026-10-07);
+   the recipe and every fix are in claude_MSP_SID_Reference.md. Until the
+   effective date the network still files the retired set — SID_CHANGE below
+   names it, and a banner says so on every page until the day.
 
-   NINE, AND CIFP CODES TWELVE. THE DIFFERENCE IS DELIBERATE — DO NOT CLOSE IT.
-   CIFP 260903 also carries HSTIN6, MEDOW5 and SLAYR4, all three Runway 17
-   departures. They are technically valid for the airport and are NEVER
-   ASSIGNED: a flight plan filing one is auto-corrected off it, so none of
-   them ever reaches a controller (Michael, 2026-09-07). Adding them would
-   put a clearance in the picker that the trainee will never give and the
-   system would reject — which is worse than a gap, because it looks right.
+   NINE SIDS, ALL RNAV, AND NONE OF THEM STARTS AT THE MSP VOR — which CIFP
+   261029 codes as a DME only. Seven begin at a first fix with an at-or-above
+   crossing and carry no runway transition at all, so the climb-out to that
+   fix is not coded. Two, HTDSH1 and SNOWZ1, have a Runway 17 transition and
+   nothing else: heading 169.5 to RUBRB at or above 3,500, then vectors. So
+   every track below starts at the field, and the leg from there to the first
+   coded fix is a STAND-IN drawn straight, not a procedure — departure
+   dispersal, a tower function, decides the real first turn, as it always has.
 
-   So a diff against the coded source showing three missing SIDs is the
-   expected result, not a finding. The three are identified in
-   claude_MSP_SID_Reference.md so nobody has to rediscover them.
+   MAPPED TO 80 NM — owner, 2026-10-14: map only the fixes within 80 NM of MSP.
+   A transition is kept BY NAME even when none of its own fixes fall inside
+   that (KBREW1's only transition is KEETN, 183 NM out, so its track ends at
+   KBREW), and the reference file names every fix beyond the limit. So several
+   transitions share one mapped track — BITEZ1's DKOTA and LEINY part company
+   beyond HHCEE, TOTTZ1's five beyond FOOLS — and the scope draws a shared
+   track once and names every transition on it.
 
-   The other reason not to reach for CIFP here: these entries are join points
-   truncated at the LOA's 60 NM limit and carry no crossing restrictions,
-   where CIFP legs are published ladders. One table, one provenance. */
-var DEPS = {
- COULT: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'TAXEE',lat:44.70250,lon:-92.49267},{f:'COULT',lat:44.55667,lon:-92.20850}],
- KBREW: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'GEP',lat:45.14567,lon:-93.37317},{f:'HRBEK',lat:45.31450,lon:-93.80700},{f:'HOMUR',lat:45.41817,lon:-94.07683}],
- LEINY: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'TONCA',lat:44.91600,lon:-93.63383},{f:'BOTNE',lat:44.93417,lon:-94.02533},{f:'KUUGL',lat:44.94833,lon:-94.35467}],
- ORSKY: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'JURNY',lat:44.60867,lon:-93.47233},{f:'RUMLE',lat:44.42133,lon:-93.62450},{f:'PEDLN',lat:44.20267,lon:-93.80033}],
- RST:   [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'FGT',lat:44.63100,lon:-93.18200},{f:'FOBUG',lat:44.42217,lon:-93.03633},{f:'DOKTR',lat:44.25800,lon:-92.92250},{f:'CORDY',lat:44.12367,lon:-92.82983}],
- SCHEP: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'HUGIR',lat:44.70117,lon:-93.61583},{f:'MCONL',lat:44.58350,lon:-93.84233},{f:'ARREX',lat:44.42567,lon:-94.14283}],
- SMERF: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'ZOGAP',lat:45.08800,lon:-93.87583},{f:'PAGOZ',lat:45.18817,lon:-94.28767}],
- WLSTN: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'SNINE',lat:45.25183,lon:-92.65083},{f:'DWIYT',lat:45.30333,lon:-92.28750}],
- ZMBRO: [{f:'MSP',lat:44.89650,lon:-93.23650},{f:'JEDET',lat:44.46133,lon:-92.72800},{f:'ZMBRO',lat:44.34167,lon:-92.44850}]
+   ONE ENTRY PER SID AND TRANSITION, keyed the way it is filed: 'BITEZ1.DKOTA'.
+   The crossing at the start of each SID rides on that fix as `climbAA`, NOT
+   `aa`: `aa` is the arrival ladders' field, and nextAltTarget would read it
+   as a descend-via.
+
+   KBREW AND ZMBRO ARE NAMES CARRIED OVER, NOT ROUTES. KBREW1 starts at HRBEK
+   (KBREW2 started at GEP) and ZMBRO1 at JEDET (ZMBRO7 at the MSP VOR).
+
+   ANE, FCM and STP have eight SIDs, MIC none (SID_FIELDS). The engine does not
+   fly a satellite departure, so DUHCK1 — the one SID coded at the satellites
+   and not at MSP — is named there and drawn nowhere. */
+var SID_SRC = 'CIFP 261029 — ARINC 424 PD records, decoded 2026-10-14';
+/* generated from CIFP 261029 — every fix within 80 NM of MSP that the set passes */
+var SID_SET = {
+ BITEZ1:{rw17:false, rwy:[], common:['HHOBA','BITEZ'], aa:{HHOBA:4000},
+   trans:{DKOTA:['SKITO','TICKK','HHCEE'], LEINY:['SKITO','TICKK','HHCEE'], SMERF:['ZOGAP','PAGOZ']}},
+ BUNYN1:{rw17:false, rwy:[], common:['JBUGG','BUNYN'], aa:{JBUGG:4000},
+   trans:{DLH:['BAYBB'], KVUSI:['GPERS']}},
+ HTDSH1:{rw17:true, rwy:['RUBRB'], common:['ITZME','HTDSH'], aa:{ITZME:3500, RUBRB:3500},
+   trans:{ALO:['TOTTZ','CORDY','FOOLS'], BRIBE:['JEDET','ZMBRO'], OANNA:['TOTTZ','CORDY','FOOLS'], OHHMY:['TOTTZ','CORDY','FOOLS'], ZZIPR:['TOTTZ','CORDY','FOOLS']}},
+ KBREW1:{rw17:false, rwy:[], common:['HRBEK','HOMUR','KBREW'], aa:{HRBEK:5000},
+   trans:{KEETN:[]}},
+ NRTHN1:{rw17:false, rwy:[], common:['SIEDL','NRTHN'], aa:{SIEDL:4200},
+   trans:{AROND:['PRRCH','WAHLI'], TTOWN:['PIIKE','DWIYT']}},
+ SNOWZ1:{rw17:true, rwy:['RUBRB'], common:['MANCY','SNOWZ'], aa:{MANCY:4000, RUBRB:3500},
+   trans:{DABOY:['SLUSH','PLOWW','PEDLN','HSTIN'], ISTIQ:['SLALM','MOGLL','SLAYR'], LLUKY:['SLALM','MOGLL','SLAYR'], SMTHA:['SLALM','MOGLL','SLAYR'], ZZEEE:['SLUSH','PLOWW','PEDLN','HSTIN']}},
+ SNUPE1:{rw17:false, rwy:[], common:['PNUTZ','SNUPE'], aa:{PNUTZ:4000},
+   trans:{DLL:['WDSTK']}},
+ TOTTZ1:{rw17:false, rwy:[], common:['HTDSH','TOTTZ'], aa:{HTDSH:3900},
+   trans:{ALO:['CORDY','FOOLS'], FOOLS:['CORDY','FOOLS'], OANNA:['CORDY','FOOLS'], OHHMY:['CORDY','FOOLS'], ZZIPR:['CORDY','FOOLS']}},
+ ZMBRO1:{rw17:false, rwy:[], common:['JEDET','ZMBRO'], aa:{JEDET:4000},
+   trans:{BRIBE:[]}}
 };
-Object.keys(DEPS).forEach(function(k){ finalize(DEPS[k]); });
-/* The fixes at the head of a SID that are navaids rather than waypoints. They
-   are part of the procedure, not clearance-direct fixes — a turbojet off MSP
-   flies the SID, and "direct MSP" or "direct GEP" is not something you say to
-   it. Marked in one place so the parser can say so rather than accept it. */
-var DEP_VORS = ['MSP','GEP','FGT'];
-Object.keys(DEPS).forEach(function(k){
- DEPS[k].forEach(function(p){ if(DEP_VORS.indexOf(p.f)>=0) p.vor=true; });
+var SID_FIX = {
+ BUNYN:{lat:45.40763, lon:-93.05506},
+ BAYBB:{lat:45.64068, lon:-92.91708},
+ JBUGG:{lat:45.23941, lon:-93.03506},
+ SIEDL:{lat:45.10290, lon:-93.02852},
+ PRRCH:{lat:45.32063, lon:-92.75913},
+ NRTHN:{lat:45.19717, lon:-92.85796},
+ WAHLI:{lat:45.49710, lon:-92.43309},
+ PIIKE:{lat:45.25188, lon:-92.65080},
+ DWIYT:{lat:45.30338, lon:-92.28757},
+ PNUTZ:{lat:44.67544, lon:-92.64788},
+ WDSTK:{lat:44.50795, lon:-92.25673},
+ SNUPE:{lat:44.57289, lon:-92.42757},
+ ZMBRO:{lat:44.34166, lon:-92.44850},
+ JEDET:{lat:44.46129, lon:-92.72794},
+ HTDSH:{lat:44.55006, lon:-93.01758},
+ FOOLS:{lat:43.78283, lon:-92.59581},
+ CORDY:{lat:44.12372, lon:-92.82978},
+ TOTTZ:{lat:44.32460, lon:-92.96879},
+ ITZME:{lat:44.68511, lon:-93.15697},
+ RUBRB:{lat:44.78474, lon:-93.28356},
+ SLUSH:{lat:44.58228, lon:-93.46341},
+ PLOWW:{lat:44.41448, lon:-93.60777},
+ HSTIN:{lat:44.00222, lon:-93.96111},
+ PEDLN:{lat:44.20266, lon:-93.80039},
+ MANCY:{lat:44.80087, lon:-93.32491},
+ SNOWZ:{lat:44.68823, lon:-93.44505},
+ SLALM:{lat:44.67744, lon:-93.56841},
+ SLAYR:{lat:44.41833, lon:-94.14806},
+ MOGLL:{lat:44.58343, lon:-93.84229},
+ HHCEE:{lat:45.02643, lon:-94.44979},
+ TICKK:{lat:45.00726, lon:-94.14382},
+ SKITO:{lat:44.99819, lon:-94.00346},
+ HHOBA:{lat:44.94084, lon:-93.53213},
+ BITEZ:{lat:44.98201, lon:-93.75958},
+ PAGOZ:{lat:45.15386, lon:-94.14574},
+ ZOGAP:{lat:45.11155, lon:-93.97213},
+ KBREW:{lat:45.58435, lon:-94.51478},
+ HOMUR:{lat:45.41821, lon:-94.07681},
+ HRBEK:{lat:45.31453, lon:-93.80699},
+ GPERS:{lat:45.65891, lon:-93.24655}
+};
+/* Which SIDs each field has in CIFP 261029. ANE, FCM and STP code identical
+   legs; MIC has no SID in either cycle, and its IFR departures are radar
+   vectored (owner, claude_MSP_SID_Reference.md). */
+var SID_SAT = ['BITEZ1','BUNYN1','DUHCK1','KBREW1','NRTHN1','SNUPE1','TOTTZ1','ZMBRO1'];
+var SID_FIELDS = {
+ KMSP:['BITEZ1','BUNYN1','HTDSH1','KBREW1','NRTHN1','SNOWZ1','SNUPE1','TOTTZ1','ZMBRO1'],
+ KANE:SID_SAT, KFCM:SID_SAT, KSTP:SID_SAT, KMIC:[]
+};
+/* The tracks: the field, then the coded procedure — the Runway 17 leg where
+   there is one, the common route, and the transition — as far as 80 NM. */
+var DEPS = {};
+Object.keys(SID_SET).forEach(function(sid){
+ var S=SID_SET[sid];
+ Object.keys(S.trans).forEach(function(t){
+  var pts=[{f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true}];
+  S.rwy.concat(S.common, S.trans[t]).forEach(function(n){
+   var x=SID_FIX[n], p={f:n, lat:x.lat, lon:x.lon};
+   if(S.aa[n]!=null) p.climbAA=S.aa[n];
+   pts.push(p);
+  });
+  DEPS[sid+'.'+t]=finalize(pts);
+ });
 });
+function sidOf(key){ return String(key||'').split('.')[0]; }
+function transOf(key){ return String(key||'').split('.')[1]||null; }
+function sidRw17(key){ var S=SID_SET[sidOf(key)]; return !!(S && S.rw17); }
+/* "BITEZ1.DKOTA" is said "BITEZ ONE": the revision number as a word, the way
+   the procedure is named on the radio. The name itself is written as-is — no
+   spoken form is known for any of the new ones but KBREW and ZMBRO
+   (claude_SID_TTS_Voicing.md), and a guessed one would be learned. */
+function sidSpoken(key){
+ var s=sidOf(key), m=s.match(/^([A-Z]+)(\d)$/);
+ return m ? (m[1]+' '+SAY_DIGIT[+m[2]].toUpperCase()) : s;
+}
 
-/* ---------- These SIDs expire on 2026-10-29 — issue #61 ----------
-   MSP's whole SID set is replaced with the navigation cycle that starts on
-   2026-10-29. Owner, 2026-10-14: "M98 is slated to get new SIDs next nav
-   cycle." Confirmed the same day against CIFP 261029 (cycle 2611, file dated
-   2026-10-07), which the FAA has already published:
-     KMSP              twelve out (the nine in DEPS, plus HSTIN6, MEDOW5 and
-                       SLAYR4) and nine in, every one of them RNAV.
-     KANE, KFCM, KSTP  seven out, eight in, identical legs at all three.
-     KMIC              no SID in either cycle.
-   KBREW and ZMBRO survive as NAMES only. KBREW1 starts at HRBEK and ZMBRO1 at
-   JEDET, where KBREW2 started at GEP and ZMBRO7 at the MSP VOR, so their DEPS
-   entries are wrong after the change as well. Until then nothing moves: CIFP
-   261001 codes the SIDs identically to the 260903 set DEPS was checked against.
-
-   THIS IS A WARNING, NOT A FIX. DEPS keeps flying the set in force until
-   2026-10-29, and it is regenerated whole from CIFP 261029 or later rather
-   than hand-patched toward the new set (root CLAUDE.md §11). The state is read
-   off the date, so on the day the banner turns from "changes on" to "out of
-   date" by itself instead of waiting for someone to edit it. */
-var SID_SAT_261029 = ['BITEZ1','BUNYN1','DUHCK1','KBREW1','NRTHN1','SNUPE1','TOTTZ1','ZMBRO1'];
+/* ---------- The set this deck carries goes live on 2026-10-29 ----------
+   The deck flies the 261029 set EARLY, by the owner's choice, so it can be
+   learned before it is used. Until the effective date the network still files
+   the retired set below, which this deck no longer carries (it last did in
+   15cedb9). The banner says so on every page and comes down by itself on the
+   day; the note at the SID picker stays, because the gate letters are tabled
+   either side of the date. CIFP 261001, in force until then, codes the retired
+   set identically to 260903. */
 var SID_CHANGE = {
  effective:'2026-10-29', cycle:'CIFP 261029', issue:61,
- src:'owner, 2026-10-14; confirmed against the CIFP 261029 manifest and PD records (cycle 2611, file dated 2026-10-07)',
- incoming:{
-  KMSP:['BITEZ1','BUNYN1','HTDSH1','KBREW1','NRTHN1','SNOWZ1','SNUPE1','TOTTZ1','ZMBRO1'],
-  KANE:SID_SAT_261029, KFCM:SID_SAT_261029, KSTP:SID_SAT_261029
+ src:'owner, 2026-10-14; the CIFP 261029 manifest and PD records (cycle 2611, file dated 2026-10-07)',
+ retired:{
+  KMSP:['COULT7','HSTIN6','KBREW2','LEINY6','MEDOW5','ORSKY3','RST1','SCHEP1','SLAYR4','SMERF7','WLSTN7','ZMBRO7'],
+  KANE:['COULT7','KBREW2','ORSKY3','RST1','SCHEP1','WLSTN7','ZMBRO7']
  }
 };
+SID_CHANGE.retired.KFCM=SID_CHANGE.retired.KANE; SID_CHANGE.retired.KSTP=SID_CHANGE.retired.KANE;
+/* The retired set's names the way strips stored them — COULT, not COULT7.
+   HSTIN, MEDOW and SLAYR are left out because the deck never carried them. */
+var SID_RETIRED_KEYS = ['COULT','KBREW','LEINY','ORSKY','RST','SCHEP','SMERF','WLSTN','ZMBRO'];
+function sidRetired(key){ return SID_RETIRED_KEYS.indexOf(String(key||''))>=0; }
 function isoToday(){ try{ return new Date().toISOString().slice(0,10); }catch(e){ return ''; } }
-/* 'pending' before the effective date and 'expired' from it. A clock that
-   cannot be read counts as pending: the banner still names the date, which
-   is the part that matters. */
+/* 'early' before the effective date and 'live' from it. A clock that cannot be
+   read counts as early: the banner names the date, which is what matters. */
 function sidChangeState(day){
  var d = day || isoToday();
- return (d && d >= SID_CHANGE.effective) ? 'expired' : 'pending';
+ return (d && d >= SID_CHANGE.effective) ? 'live' : 'early';
 }
-/* The SIDs this deck carries, read off DEPS so the warning cannot name a set
+/* The SIDs this deck carries, read off SID_SET so the banner cannot name a set
    the table does not hold. */
-function sidsCarried(){ return Object.keys(DEPS); }
+function sidsCarried(){ return Object.keys(SID_SET); }
+function andList(a){ return a.length<2 ? a.join('') : (a.slice(0,-1).join(', ')+' and '+a[a.length-1]); }
 function sidChangeHtml(day){
- var c = SID_CHANGE, ours = sidsCarried();
- var list = ours.slice(0,-1).join(', ')+' and '+ours[ours.length-1];
- var inc = c.incoming.KMSP.join(' · ');
- if(sidChangeState(day)==='expired'){
-  return '<b>The SIDs in this deck are out of date.</b> MSP’s departure procedures were replaced on '
-   +c.effective+' ('+c.cycle+'). '+list+' are the retired set, so the routes, join fixes and gates this deck flies are no longer the published ones. Departure drills still run, but they practise procedures that no longer exist.'
-   +'<span class="dd-expiry-sub">Published at MSP since then: '+inc+'. The update is issue #'+c.issue+'.</span>';
- }
- return '<b>SIDs change on '+c.effective+'.</b> MSP’s departure procedures are replaced with the navigation cycle that starts that day ('+c.cycle+'). Every SID in this deck — '+list+' — is the set in force until then, and its routes, join fixes and gates will not be correct after that.'
-  +'<span class="dd-expiry-sub">Coming at MSP: '+inc+'. KBREW and ZMBRO keep their names on new routes. ANE, FCM and STP get the same set without the two Runway 17 SIDs (HTDSH1 and SNOWZ1), plus DUHCK1. The update is issue #'+c.issue+'.</span>';
+ if(sidChangeState(day)==='live') return '';
+ var c = SID_CHANGE;
+ var gone = c.retired.KMSP.filter(function(s){ return ['HSTIN6','MEDOW5','SLAYR4'].indexOf(s)<0; });
+ return '<b>These are the SIDs from '+c.effective+'.</b> The deck flies MSP’s new set early, so it can be learned before it goes live — '
+  +andList(sidsCarried())+' ('+c.cycle+'). Until '+c.effective+' the network still files the old set, which the deck no longer carries: '+andList(gone)+'.'
+  +'<span class="dd-expiry-sub">KBREW and ZMBRO are new routes under old names. Gate letters for the new SIDs are not known yet, so a departure carries no scratchpad gate. This comes down by itself on '+c.effective+'. Issue #'+c.issue+'.</span>';
 }
 /* One short line for the place a SID is picked. */
 function sidChangeShort(day){
- return sidChangeState(day)==='expired' ? ('out of date since '+SID_CHANGE.effective) : ('changes on '+SID_CHANGE.effective);
+ return (sidChangeState(day)==='live' ? '' : ('live on '+SID_CHANGE.effective+' · ')) + 'gate letters not known yet';
 }
 
 /* ---------- The airports M98 works ----------
@@ -1333,30 +1416,23 @@ var DEP_GATES = {
  R:{fix:'RST', name:'Rochester'}
 };
 
-/* Which gate each of the nine turbojet SIDs exits through. Derived, not guessed:
-   each SID's terminal-fix bearing from the MSP VOR was computed and matched to
-   the gate's position on the chart, and every SID_DEST value that already named
-   a gate (DLL, FAR, ODI) agreed. Bearings are carried so the working is visible.
+/* Which gate each SID exits through — TABLED, every one of them. The owner does
+   not have the 2026-10-29 set's gate letters yet (2026-10-14), so each entry is
+   null and scratchpadFor() returns nothing for a departure, which is what it has
+   always done for a SID with no gate. The retired set's letters were derived
+   from bearings and then CONFIRMED against the owner's "M98 SIDS & Pointout Fix
+   Indicators" chart; a bearing alone would be a guess, and the new set crosses
+   the boundary in new places. The letters come from that chart's revision or
+   from the owner. The gates themselves (DEP_GATES above) are the facility's and
+   do not change with the SIDs.
 
-   SMERF and LEINY are the two exceptions and they are deliberate: the chart draws
-   their exit fixes as SME and SMERF/LEI and LEINY WITHOUT a highlighted letter, and
-   neither appears in the 7110.26A list. They get no gate letter — gate is null.
-
-   Gates A (ABR) and B (BRD) have no turbojet SID in this set. They are real gates
-   used by non-SID and prop departures; the absence here is not an omission. */
-var SID_GATE = {
- WLSTN:{gate:'E', fix:'EAU', brg:58},
- COULT:{gate:'D', fix:'DLL', brg:115},
- ZMBRO:{gate:'N', fix:'ODI', brg:134},
- RST:  {gate:'R', fix:'RST', brg:159},
- ORSKY:{gate:'O', fix:'FOD', brg:210},
- SCHEP:{gate:'O', fix:'ONL', brg:234},
- LEINY:{gate:null, fix:'LEI', brg:274},
- SMERF:{gate:null, fix:'SME', brg:292},
- KBREW:{gate:'F', fix:'FAR', brg:312}
-};
-function gateForSid(sid){ var g=SID_GATE[sid]; return g?g.gate:null; }
-function gateFixFor(sid){ var g=SID_GATE[sid]; return g?g.fix:null; }
+   The retired mapping, for the record: WLSTN E · COULT D · ZMBRO N · RST R ·
+   ORSKY and SCHEP O · KBREW F · LEINY and SMERF none. Keyed by SID, not by
+   transition — a lookup takes 'BITEZ1.DKOTA' and reads BITEZ1. */
+var SID_GATE = {};
+Object.keys(SID_SET).forEach(function(s){ SID_GATE[s]={gate:null, fix:null, tabled:true}; });
+function gateForSid(sid){ var g=SID_GATE[sidOf(sid)]; return g?g.gate:null; }
+function gateFixFor(sid){ var g=SID_GATE[sidOf(sid)]; return g?g.fix:null; }
 /* Build the scratchpad #1 entry. 7110.26A gives three permitted forms:
      (a) gate letter + two-digit requested altitude in thousands, "if other than
          the aircraft's present altitude"  — B12
@@ -1379,24 +1455,18 @@ function scratchpadValid(s){
  return typeof s==='string' && s.length>=3 && s.length<=4 && /^[A-Z0-9+.*\/`]+$/i.test(s);
 }
 
-/* Where a SID ends up once it is out of M98. NOTE: this table is inconsistent by
-   inheritance — some values are departure gates (DLL, FAR, ODI), some are the SID
-   fix itself (LEINY, SMERF), some are downstream facilities or airports (GRB, ALO),
-   and some are en route fixes (ONTIJ, RXANN). Use SID_GATE for the gate; this stays
-   for the route text it already feeds. */
-var SID_DEST = {COULT:'DLL', KBREW:'FAR', LEINY:'LEINY', ORSKY:'ONTIJ', RST:'ALO',
-                SCHEP:'RXANN', SMERF:'SMERF', WLSTN:'GRB', ZMBRO:'ODI'};
-/* The route as a fix sequence, built from the coordinate data. Deliberately no
-   procedure revision name: the reference set names revisions only for the
-   satellite and conventional arrivals (GOPHER ONE, KASPR SEVEN, AGUDE FIVE,
-   ENCEE THREE, TWOLF FOUR) and gives none for the six mainline RNAV STARs or
-   the nine turbojet SIDs, so inventing "NITZR THREE" is not on. Type the filed
-   route over the top when you want the chart name. */
+/* The route a strip files. A DEPARTURE files its SID the way a flight plan
+   writes it — 'BITEZ1.DKOTA', procedure then transition — because CIFP 261029
+   names the revision, so nothing is invented. (The retired set filed a fix
+   sequence ending at a SID_DEST that was inconsistent by inheritance; both went
+   with it.) An ARRIVAL still files the fix sequence and no procedure name: the
+   reference set names revisions only for the satellite and conventional
+   arrivals and none for the six mainline RNAV STARs, so inventing "NITZR
+   THREE" is not on. Type the filed route over the top when you want it. */
 function routeTextFor(o){
  var role=(o&&o.role)||'arrival';
  if(role==='departure'){
-  var d=DEPS[o.sid]; if(!d) return '';
-  return d.map(function(p){return p.f;}).join(' ')+(SID_DEST[o.sid]?(' '+SID_DEST[o.sid]):'');
+  return DEPS[o.sid] ? String(o.sid) : '';
  }
  if(role==='arrival'){
   var g=ROUTES[o.gate]; if(!g) return '';
@@ -2254,7 +2324,7 @@ function checkIn(a){
  if(a.radar==='departure'){
   var ap=airportOf(a.dep), rwTxt=(a.depRwy?(' off runway '+sayRunway(a.depRwy)):'');
   log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing'+rwTxt
-    +(a.sid?(', '+a.sid+' departure'):'')+'."');
+    +(a.sid?(', '+sidSpoken(a.sid)+' departure'):'')+'."');
   log('info','<span class="dd-chip info">note</span><b>'+a.cs+'</b> was shipped by '+ap.tower+' on a clearance and a discrete code, but it is not radar identified yet. That is yours before you work it.');
   return;
  }
@@ -2265,7 +2335,7 @@ function checkIn(a){
   return;
  }
  if(a.role==='departure'){
-  log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing, '+a.sid+' departure."');
+  log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing, '+sidSpoken(a.sid)+' departure."');
  } else if(a.role==='overflight'){
   log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+lvl+', requesting transit of your airspace."');
  } else {
@@ -2715,17 +2785,21 @@ function transmit(){
   }
  }
  /* beacon code, radar identification, and terminating the service */
- /* The navaids at the head of a departure are part of the procedure, not fixes
-    anybody gets cleared direct to. */
+ /* The field a departure starts its track on is not a fix on its SID. Until
+    2026-10-29 the SIDs started on the MSP, GEP and FGT VORs and this refused a
+    direct to those; the 261029 set starts every SID at a fix of its own, and
+    CIFP 261029 codes MSP as a DME, so what is left is the field itself. The
+    owner's practical call in claude_MSP_SID_Reference.md still holds: direct
+    MSP turns a climbing departure back over the top into the traffic behind. */
  var mDir=t.match(/\bdirect\s+([a-z]{3,5})\b/);
  if(mDir){
   var want=mDir[1].toUpperCase();
   var onRt=a.route.filter(function(p){ return p.f===want; })[0];
-  if(a.role==='departure' && onRt && onRt.vor){
+  if(a.role==='departure' && onRt && onRt.field){
    acted=true;
-   log('flag','<span class="dd-chip flag">flag</span>'+want+' is a navaid at the head of the '
-     +(a.sid?(a.sid+' departure'):'departure')+' — it is there because the procedure starts on it, not because it is a fix you clear anybody direct to. <b>'+a.cs
-     +'</b> flies the departure; if you want it off the procedure, give it a heading or a fix further out.');
+   var firstFix=(a.route[1]&&a.route[1].f)||'its first fix';
+   log('flag','<span class="dd-chip flag">flag</span>'+want+' is the field <b>'+a.cs+'</b> just left — where its track on the scope starts, not a fix on the '
+     +(a.sid?(sidOf(a.sid)+' departure, which begins at '+firstFix):'departure')+'. Direct '+want+' turns a climbing departure back over the top into the traffic behind it. Give it a fix on the SID, or a heading.');
   } else if(onRt){
    acted=true; acks.push('direct '+want);
    if(!a.dirNoted){ a.dirNoted=true;
@@ -2764,6 +2838,46 @@ nextAltTarget = function(a){ if(a.hardAlt!=null) return a.hardAlt; return _origN
 
 /* ---------- 5. Render ---------- */
 function fixDot(p, big){ return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="'+(big?3.5:2.2)+'" fill="var(--green)" opacity="'+(big?'0.9':'0.55')+'"/>'; }
+/* Several SID transitions share one mapped track — they part company beyond
+   80 NM — so each distinct track is drawn once and labelled with every
+   transition on it ("TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR"), at the last point
+   of it that is still on the scope: FOOLS is off the bottom, so TOTTZ1 and
+   HTDSH1 are named at CORDY. Labels that land on one point stack instead of
+   printing over each other, and run away from the field so the two BUNYN1
+   labels, a few miles apart at the top of the scope, do not collide.
+   Shared with the builder's preview through DD. */
+function sidDrawGroups(keys){
+ var by={}, out=[];
+ keys.forEach(function(k){
+  var r=DEPS[k]; if(!r) return;
+  var sig=r.map(function(p){ return p.f; }).join(' ');
+  if(!by[sig]){ by[sig]={route:r, keys:[]}; out.push(by[sig]); }
+  by[sig].keys.push(k);
+ });
+ out.forEach(function(g){
+  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/');
+  g.anchor=null;
+  /* inside the 700 x 560 frame with room left for a second, stacked line */
+  for(var i=g.route.length-1;i>0;i--){
+   var p=g.route[i];
+   if(p.x>=20 && p.x<=680 && p.y>=16 && p.y<=540){ g.anchor=p; break; }
+  }
+ });
+ return out;
+}
+function sidLabelSvg(groups, opacity){
+ var used={}, s='';
+ groups.forEach(function(g){
+  var p=g.anchor; if(!p) return;
+  var at=Math.round(p.x)+','+Math.round(p.y), n=used[at]||0; used[at]=n+1;
+  /* away from the field: west of it the label runs left, east of it right —
+     unless it would run off the frame, at about 6 px a character */
+  var left=(p.x<CX) || (p.x+7+g.label.length*6.1>696);
+  s+='<text x="'+(left?p.x-7:p.x+7).toFixed(1)+'" y="'+(p.y+4+n*11).toFixed(1)+'"'+(left?' text-anchor="end"':'')
+    +' fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">'+g.label+'</text>';
+ });
+ return s;
+}
 function scopeSvg(){
  var s='<svg class="dd-scope" viewBox="0 0 700 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Live drill scope">';
  s+='<text x="14" y="20" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="10">LIVE SCOPE \u2014 SCHEMATIC, PLOTTED FROM FIX COORDINATES</text>';
@@ -2854,13 +2968,13 @@ function scopeSvg(){
    : (wantStar==='tracked'
       ? Object.keys(gatesUp).map(function(k){ return gatesUp[k].route; })
       : []);
- /* departure tracks, drawn under the arrivals in the warning colour */
- sidKeys.forEach(function(k){
-  var r=DEPS[k]; if(!r) return;
-  s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
-  var last=r[r.length-1];
-  s+='<text x="'+(last.x+7).toFixed(1)+'" y="'+(last.y+4).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="0.8">'+k+'</text>';
+ /* departure tracks, drawn under the arrivals in the warning colour — each
+    distinct track once, named for every transition that flies it */
+ var sidGroups=sidDrawGroups(sidKeys);
+ sidGroups.forEach(function(g){
+  s+='<polyline points="'+g.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
  });
+ s+=sidLabelSvg(sidGroups, 0.8);
  /* the 25 DME release ring — ZMP-M98 LOA 4.c */
  if(sidKeys.length){
   s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(DEP_RELEASE.dme*SC).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 5"/>';
@@ -3054,12 +3168,28 @@ window.ddLoad=function(id){
     on their own frame, so 12-17 is the Table 2 row they load. */
  if(sc.cfg) setFlow(sc.cfg);
  sim.t=0; sim.rate=0;
- sim.ac=sc.ac().map(mkAc); sim.feed=[]; sim.sel=null; sim.losFlag=false; sim.ended=false; sim.scen=sc;
+ /* A DEPARTURE ON A SID THE DECK NO LONGER CARRIES IS NOT FLOWN. A drill saved
+    before the 2026-10-29 set came in can name COULT or WLSTN, and runDrill does
+    not validate \u2014 so without this, mkAc's fallback would put it on an ARRIVAL
+    ladder and fly it there without a word. It is left out and the feed says
+    why, below. */
+ var specs=sc.ac(), dropped=[];
+ specs=specs.filter(function(o){
+  if((o.role||'arrival')==='departure' && !DEPS[o.sid]){ dropped.push(o); return false; }
+  return true;
+ });
+ sim.ac=specs.map(mkAc); sim.feed=[]; sim.sel=null; sim.losFlag=false; sim.ended=false; sim.scen=sc;
  /* the altimeter the drill is running, so a wrong setting can be caught */
  if(!sc.altim && sc.frame){ var fa=sc.frame.match(/A(\d{4})/); if(fa) sc.altim=fa[1]; }
  document.getElementById('dd-debriefbox').innerHTML='';
  document.getElementById('dd-scentitle').textContent=sc.name+' \u2014 '+sc.frame;
  log('info','<span class="dd-chip info">frame</span>'+sc.brief);
+ dropped.forEach(function(o){
+  log('flag','<span class="dd-chip flag">not flown</span><b>'+(o.cs||'a departure')+'</b> was built on '
+   +(o.sid?('the '+o.sid+' departure'):'no SID')+(sidRetired(o.sid)
+     ?(', which went with the SID set that ends on '+SID_CHANGE.effective+'. This deck flies the '+SID_CHANGE.cycle+' set (issue #'+SID_CHANGE.issue+'), so rebuild the strip on one of those.')
+     :(', which is not a SID this deck carries.')));
+ });
  ddRate(0); render();
  document.getElementById('mod-live').scrollIntoView({behavior:'smooth'});
 };
@@ -3194,11 +3324,13 @@ function logHtml(){
    is, because a host page or the harness stub may have nowhere to put it. */
 function mountSidExpiry(nav){
  if(!nav || !nav.parentNode || !nav.parentNode.insertBefore || !document.createElement) return;
+ var html=sidChangeHtml();
+ if(!html) return;                       /* from 2026-10-29 the set is simply current */
  var b=document.createElement('div');
  b.id='dd-sidexp';
- b.className='dd-expiry'+(sidChangeState()==='expired'?' out':'');
+ b.className='dd-expiry';
  if(b.setAttribute) b.setAttribute('role','note');
- b.innerHTML=sidChangeHtml();
+ b.innerHTML=html;
  nav.parentNode.insertBefore(b, nav);
 }
 /* mount \u2014 resilient to placement and host-page structure */
@@ -3233,6 +3365,10 @@ window.DD = {
  DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
  SID_CHANGE:SID_CHANGE, sidChangeState:sidChangeState, sidChangeHtml:sidChangeHtml,
  sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
+ SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC,
+ SID_RETIRED_KEYS:SID_RETIRED_KEYS, sidRetired:sidRetired,
+ sidOf:sidOf, transOf:transOf, sidRw17:sidRw17, sidSpoken:sidSpoken,
+ sidDrawGroups:sidDrawGroups, sidLabelSvg:sidLabelSvg,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
@@ -3243,7 +3379,7 @@ window.DD = {
  SAT_ROUTES:SAT_ROUTES, SAT_DIRECT:SAT_DIRECT, SAT_POS:SAT_POS,
  satDirectRoute:satDirectRoute, routeFor:routeFor,
  SAT_FIELDS:SAT_FIELDS, satSeatFor:satSeatFor,
- towerHandoffFor:towerHandoffFor, DEP_VORS:DEP_VORS, RWY_SIDE:RWY_SIDE, sideOfRunway:sideOfRunway,
+ towerHandoffFor:towerHandoffFor, RWY_SIDE:RWY_SIDE, sideOfRunway:sideOfRunway,
  nearFarFor:nearFarFor, floorFor:floorFor, CROSSOVER_EXEMPT:CROSSOVER_EXEMPT, crossoverFor:crossoverFor,
  CFG_LANDING_FLOW:CFG_LANDING_FLOW, cfgFlow:cfgFlow,
  RST_BOUNDARY:RST_BOUNDARY, RST_BOUNDARY_LL:RST_BOUNDARY_LL, RST_BOUNDARY_SRC:RST_BOUNDARY_SRC,
@@ -3260,7 +3396,7 @@ window.DD = {
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,
  FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,
  sayDigits:sayDigits, altimIn:altimIn, simAltim:simAltim,
- routeTextFor:routeTextFor, SID_DEST:SID_DEST,
+ routeTextFor:routeTextFor,
  DEP_GATES:DEP_GATES, SID_GATE:SID_GATE,
  gateForSid:gateForSid, gateFixFor:gateFixFor, scratchpadFor:scratchpadFor,
  scratchpadValid:scratchpadValid,
