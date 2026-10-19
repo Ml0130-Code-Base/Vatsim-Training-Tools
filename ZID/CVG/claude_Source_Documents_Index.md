@@ -1,0 +1,66 @@
+# Source Document Index - CVG
+
+**Write this first, before any reference file** (root `CLAUDE.md` section 6). It is the manifest: what was pulled, when, from where, and which of it is a picture. Pulled **2026-10-18** for the Indy Center (vZID) CVG terminal facility.
+
+## The four sources, in the order they were pulled
+
+| # | Source | What was pulled | Status for CVG |
+|---|---|---|---|
+| 1 | **Facility orders** - the Indy Center wiki | Cincinnati (CVG) ATCT SOP, `https://wiki.flyindycenter.com/docs/cvg` | **Pulled, behind a login.** Last changelog entry 2026-09-03. |
+| 2 | **CIFP** | cycle 261001 (effective 2026-10-01) and 261029 (effective 2026-10-29, posted early) | Pulled. Identical at every CVG field. |
+| 3 | **vNAS** | `https://data-api.vnas.vatsim.net/api/artccs/ZID`, lastUpdatedAt 2026-10-17T02:35:43.475Z | Pulled. Committed at `../_vnas/ZID_vnas.json`. |
+| 4 | **Community geometry** | VATGlasses `data/` listing; SimAware `Boundaries/CVG/CVG.json` | **Checked.** VATGlasses has no ZID dataset (nothing to vendor). SimAware has a lateral footprint with no altitudes and no licence; **not pulled into the repo and not wired in** - owner decision. |
+| 5 | **vATIS profile** | `ZID ARTCC (All)`, updateSerial 2026081300, from `github.com/Indy-Center/vatisfiles` | Pulled (the 188 KB profile). The user's downloaded copy is a 257-byte stub whose `stations` list is empty and whose `updateURL` points at that repository. |
+
+## The wiki page
+
+| Saved file | Document | Last changelog entry | Size | md5 | Saved |
+|---|---|---|---|---|---|
+| `Cincinnati (CVG) ATCT SOP _ Indy Library.html` | Cincinnati (CVG) ATCT SOP | 2026-09-03 | 928422 bytes | `bed69271616454d1473416870b9448cb` | 2026-10-18 22:24 |
+
+**The pull cannot be reproduced with `curl`.** Every page of `wiki.flyindycenter.com` except the home page returns *Unauthorized* to an unauthenticated request, and the GraphQL page list shows the home page only. The page was saved from a browser **signed in with VATSIM**, as a complete web page (HTML plus a `_files` directory of the diagrams). To repeat the pull: sign in at `https://wiki.flyindycenter.com/`, open the page at `https://wiki.flyindycenter.com/docs/cvg`, and save the page as complete HTML. **The saved page and its text extraction are not committed to this repository** - the wiki is members-only, and the repository is public (root `CLAUDE.md` section 13). What the repository carries is the transcription in `claude_CVG_SOP_Reference.md`.
+
+**Text layer:** the page is HTML, so there is no page count and no 'which pages are pictures' in the PDF sense. Every diagram is an image file referenced from the page; they are listed below. Of the diagram files, the `.svg` ones are vector artwork and can be measured; the `.png` ones are raster.
+
+**The wiki links to documents that were not pulled:** the ICT (a list of restrictions and handoffs), and the tower SOPs for the underlying towers. They are in the gap analysis.
+
+## Extraction
+
+The saved page was converted to text with a Perl script that walks the `contents` element (headings, tables with `colspan`, lists, images as `[IMAGE: name]`). **Complex tables were re-read from the HTML structure** rather than the flattened text - where the page text loses a table's spans (the SDF departure-heading tables, the CVG runway-assignment table) the structure is what pairs a cell with its header.
+
+## Pictures - what is therefore unread
+
+| What | Where |
+| --- | --- |
+| CVG delegated airspace (consolidated) | CVG SOP 7 Overview - consolidated_airspace.svg |
+| LC airspace, four operations | CVG SOP 6 - local_north.svg, local_south.svg, local_east.svg, local_west.svg |
+| Departure Radar airspace, four flows, with and without LST combined | CVG SOP 9 - dr_*.svg and dr_*_lst_combined.svg |
+| Arrival Radar airspace, three flows | CVG SOP 9 - ar_north.svg, ar_south.svg, ar_east.svg |
+| Final Radar airspace, four flows, and the capture points | CVG SOP 9 - fr_*.svg, capture_points_north.svg, capture_points_south.svg |
+| Satellite Radar airspace, four flows | CVG SOP 9 - lst_*.svg |
+| Three-way event splits, north and south | CVG SOP 9 - 3_way_event_north.svg, 3_way_event_south.svg |
+| Ground control delegation (the yellow area) | CVG SOP 5 - cvg_ground_delegation.svg |
+| Terminal and cargo ramp diagrams, north and south | CVG SOP 4 - cvg_cargo_ramp_*_op.svg, cvgrmptn.svg, cvgrmpts.svg |
+| Runway 9 controlled activity area | CVG SOP 5 - runway_9_cav.png |
+| LUAW intersections | CVG SOP 6 - luaw_intersections.png |
+| B748 taxi routes | CVG SOP 5 - b748_taxi_routes.svg |
+
+## Re-pull recipes (sources 2 to 5)
+
+```bash
+# CIFP - the cycle is the citation; a 404 means the cycle rolled
+curl -sL https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/
+curl -sL -o CIFP_261001.zip https://aeronav.faa.gov/Upload_313-d/cifp/CIFP_261001.zip
+
+# vNAS
+curl -sS -A "Mozilla/5.0" -o ZID_vnas.json https://data-api.vnas.vatsim.net/api/artccs/ZID
+
+# vATIS
+curl -sL -o zid-artcc-all-vatis.json https://raw.githubusercontent.com/Indy-Center/vatisfiles/refs/heads/main/zid-artcc-all-vatis.json
+
+# community geometry - checked, not carried
+curl -sL https://api.github.com/repos/lennycolton/vatglasses-data/contents/data        # no zid entry
+curl -sL https://raw.githubusercontent.com/VATSIM-Radar/simaware-tracon-project/main/Boundaries/CVG/CVG.json
+```
+
+The vNAS record is committed; the CIFP, vATIS and SimAware pulls are not - the commands above reproduce them.

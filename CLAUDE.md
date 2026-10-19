@@ -1,7 +1,7 @@
 # VATSIM Training Toolset — house rules
 
 Single-file, offline-first HTML training tools for one VATSIM controller working toward
-certification at several facilities. Three ARTCCs, seven tools:
+certification at several facilities. Four ARTCCs, ten tools:
 
 | Tool | Facility | Kind | Namespace | Status |
 |---|---|---|---|---|
@@ -12,6 +12,9 @@ certification at several facilities. Three ARTCCs, seven tools:
 | `ZAU/AZO/azo-drill-deck.html` | Great Lakes, West Wall | terminal | `DD` | skeleton |
 | `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | skeleton |
 | `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | skeleton |
+| `ZID/IND/ind-drill-deck.html` | IND — Indianapolis TRACON | terminal, STARS | `IND` | Tier 1 shell |
+| `ZID/SDF/sdf-drill-deck.html` | SDF — Louisville TRACON | terminal, STARS | `SDF` | Tier 1 shell |
+| `ZID/CVG/cvg-drill-deck.html` | CVG — Cincinnati TRACON | terminal, STARS | `CVG` | Tier 1 shell |
 
 Each facility folder carries its own `CLAUDE.md` with the verified data, the engine map and
 the roadmap for that facility. **This file carries what is true everywhere.** Read it before
@@ -114,7 +117,7 @@ name.
 ```
 
 **Shared reference documents are copied, not linked.** `claude_US_Carrier_Callsigns.md` is
-byte-identical in three folders, `claude_Enroute_vs_Terminal_Reference.md` in two, and
+byte-identical in three folders under `ZMP/` and once at `ZID/_shared/`, `claude_Enroute_vs_Terminal_Reference.md` in two, and
 `claude_ZMP_Handoff_ID_Reference.md` in three (`ZMP/ZMP/`, `ZMP/R90/`, `ZMP/M98 Training/`), on
 purpose: no facility folder may depend on another folder's files, because folders get worked
 on, moved and cleared independently. **The cost is that a change to a shared doc must land in
@@ -331,6 +334,13 @@ it are load-bearing:
   configuration selector: `KSLC 34L/R,35` is North Flow and `16L/R,17` is South, `KBOI 10L/R`
   is East and `28L/R` is West. Decoded per sector in
   `ZLC/_shared/claude_ZLC_Sector_Geometry_Reference.md`.
+
+**ZID is checked, and gives nothing yet (2026-10-18).** VATGlasses has **no ZID dataset** — the upstream
+listing carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob and others, not zid. SimAware
+publishes a lateral footprint for IND, SDF and CVG with no altitudes and no licence; none of it is vendored
+or wired in, and the owner has not been asked. **The Indy Center SOP diagrams are SVG, not raster**, in the
+saved pages — a measurable source that has not been measured, so a lead and not a path (the ZID gap
+analyses say so). Details in `ZID/CLAUDE.md`.
 
 **M98 and R90 are unchanged and remain blocked.** For them, two paths have actually worked, and
 no further one should be invented:
@@ -657,6 +667,13 @@ flagged losses of separation, attached to a real name in the commit history. Own
 2026-09-04, taken with that spelled out. **Anything added here from now on is published by
 default** — that is the thing to hold in mind before writing a new note file, not after.
 
+**Source documents that are not public stay out of the tree, and what is transcribed from them is the
+owner's call to publish.** The Indy Center wiki serves every page but its home page only to a signed-in
+VATSIM account, so the three ZID SOPs are **not committed** and their source index records the sign-in
+steps instead of a `curl` recipe. The reference markdown transcribing them is in the tree and is public
+once pushed; **the ZID decks are deliberately not in `site/index.html`**, so a push does not put them on
+Pages, until the owner decides. See `ZID/CLAUDE.md`.
+
 **The site is still not the repository.** Pages publishes the staged `_site/` directory built
 by `build-site.sh`, which contains the landing page and the seven tools and nothing else —
 about 656 KB. `build-site.sh` fails the build if any other file reaches `_site/`. That guard
@@ -862,16 +879,16 @@ installed inherits a stale environment and will not find it.** Call it by its fu
 
 ### One commit touches one ARTCC
 
-**`ZMP/`, `ZAU/` and `ZLC/` are the three trees, and no commit touches two of them.** A session
+**`ZMP/`, `ZAU/`, `ZLC/` and `ZID/` are the four trees, and no commit touches two of them.** A session
 that works ZMP and then works ZAU produces two commits, in either order. Finishing a session in
 a single commit is not a reason to cross the boundary — splitting is always the cheaper side of
 that trade.
 
 **Underlay facilities are not a second boundary.** Everything under one ARTCC may share a
 commit: M98, R90 and ZMP Center are all `ZMP/`, so a change spanning them is one commit, and
-the same holds for C90 + AZO under `ZAU/` and S56 + Big Sky under `ZLC/`. The ARTCC-level
-folders belong to their own tree and travel with it — `ZLC/_shared/`, `ZAU/_shared/`,
-`ZMP/_vnas/`.
+the same holds for C90 + AZO under `ZAU/`, S56 + Big Sky under `ZLC/` and IND + SDF + CVG under `ZID/`. The
+ARTCC-level folders belong to their own tree and travel with it — `ZLC/_shared/`, `ZAU/_shared/`,
+`ZMP/_vnas/`, `ZID/_shared/`, `ZID/_vnas/`, `ZID/_vatis/`.
 
 **Why:** §2 keeps shared documents as copies rather than links because folders get worked on,
 moved and cleared independently. The same reasoning governs the history. A cross-ARTCC commit
@@ -894,9 +911,9 @@ copied document to land in the same commit, and once a copy exists under two ART
 has to cross. When it does, **it carries the sync and nothing else** — identical bytes in every
 copy, `md5sum` checked, no facility work riding along. All three copied documents
 (`claude_US_Carrier_Callsigns.md`, `claude_Enroute_vs_Terminal_Reference.md`,
-`claude_ZMP_Handoff_ID_Reference.md`) currently live entirely under `ZMP/`, so the exception is
-not yet live; it goes live the first time step 8 of §10 puts a callsign copy in `ZAU/` or
-`ZLC/`.
+`claude_ZMP_Handoff_ID_Reference.md`) lived entirely under `ZMP/`, so the exception was not yet
+live. **It went live on 2026-10-19 for `claude_US_Carrier_Callsigns.md`**, which now also has a copy
+at `ZID/_shared/`: a change to it lands in the three `ZMP/` copies and that one together.
 
 **There is no second exception.** A mechanical edit that happens to touch two trees — a licence
 line in both `ATTRIBUTION.md` files, a link fix, a rename — splits by tree. That is the

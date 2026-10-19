@@ -1,0 +1,288 @@
+#!/usr/bin/env node
+/* Headless smoke test for ind-drill-deck.html.
+   Covers the deck (data spine), the builder + notebook, the published procedures
+   block and the flight-strips block.
+   Usage: node smoke-test.mjs [path-to-html]   (default: ind-drill-deck.html)
+   Exits nonzero on any exception or failed assertion.
+
+   NO NODE ON THE OWNER'S MACHINE (root CLAUDE.md section 12). Run it in the browser
+   with smoke-test-browser.html in this folder: serve the folder over HTTP, open the
+   page, press run. A check that passes there is the same check. */
+import fs from 'node:fs';
+
+const path = process.argv[2] || 'ind-drill-deck.html';
+const html = fs.readFileSync(path, 'utf8');
+const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
+/* every script in the page is an extension block, in dependency order:
+   deck, builder + notebook, published procedures, flight strips.
+   THIS COUNT IS A GUARD, NOT A FORMALITY: update it in the same commit that adds a block. */
+const EXPECTED_BLOCKS = 4;
+const blocks = scripts;
+if (blocks.length !== EXPECTED_BLOCKS) { console.error("FAIL: expected " + EXPECTED_BLOCKS + " extension blocks, found " + blocks.length); process.exit(1); }
+
+/* ---- minimal DOM stubs ---- */
+const els = {};
+const el = id => els[id] ||= {
+  id, innerHTML: '', textContent: '', value: '', className: '',
+  classList: { toggle(){}, add(){}, remove(){} },
+  dataset: {}, style: {}, scrollIntoView(){}, focus(){},
+  firstChild: null,
+  appendChild(){}, insertBefore(){},
+  getAttribute(){ return null; },
+  setAttribute(){},
+  addEventListener(){},
+  querySelector(){ return null; },
+  querySelectorAll(){ return []; }
+};
+const wrapStub = {
+  querySelector: s => (s === 'footer' ? el('footer') : null),
+  insertBefore(){}, appendChild(){}
+};
+globalThis.document = {
+  readyState: 'complete',
+  head: { appendChild(){} },
+  body: wrapStub,
+  title: '',
+  createElement: () => ({
+    textContent: '', innerHTML: '', className: '', id: '', style: {},
+    firstChild: null, appendChild(){}, insertBefore(){},
+    addEventListener(){}, getAttribute(){ return null; }, setAttribute(){},
+    querySelector(){ return null; }, querySelectorAll(){ return []; }
+  }),
+  getElementById: id => el(id),
+  querySelector: s => (s === '.wrap' ? wrapStub : null),
+  querySelectorAll: () => [],
+  addEventListener: (_, fn) => fn()
+};
+globalThis.window = globalThis;
+globalThis.localStorage = {
+  _d: {},
+  getItem(k){ return Object.prototype.hasOwnProperty.call(this._d, k) ? this._d[k] : null; },
+  setItem(k, v){ this._d[k] = String(v); },
+  removeItem(k){ delete this._d[k]; }
+};
+
+let checks = 0;
+const ok = label => { checks++; console.log('ok  ', label); };
+const fail = (label, detail) => { console.error('FAIL:', label, detail === undefined ? '' : '— ' + detail); process.exit(1); };
+const assert = (label, cond, detail) => { if (!cond) fail(label, detail); ok(label); };
+
+try {
+  for (const js of blocks) eval(js);
+
+  const N = globalThis.IND;
+  assert('deck exports window.IND', !!N);
+  assert('builder exports window.indb', !!globalThis.indb);
+  assert('strip block exports window.strip', !!globalThis.strip);
+  const B = globalThis.indb;
+
+  /* ============ 1. Positions ============ */
+  const keys = N.POS_ORDER;
+  const tower = keys.filter(k => N.POS[k].kind !== 'child' && N.POS[k].kind !== 'other');
+  assert('13 SOP positions are present', tower.length === 13, 'got ' + tower.length);
+  assert('every position key is unique', new Set(keys).size === keys.length);
+  assert('every vNAS callsign is unique', new Set(keys.map(k => N.POS[k].cs)).size === keys.length);
+  assert('every SOP frequency is in the 118-137 band',
+    keys.every(k => N.POS[k].f == null || (parseFloat(N.POS[k].f) >= 118 && parseFloat(N.POS[k].f) <= 137)));
+  assert('every vNAS frequency is in the 118-137 band',
+    keys.every(k => N.POS[k].vf == null || (parseFloat(N.POS[k].vf) >= 118 && parseFloat(N.POS[k].vf) <= 137)));
+  assert('every frequency carries a source: SOP, vNAS, or both',
+    keys.every(k => N.POS[k].f != null || N.POS[k].vf != null));
+  /* No two seats of the same facility share a SOP frequency, except where the order itself does. */
+  const sopFreqs = tower.map(k => N.POS[k].f).filter(Boolean);
+  assert('SOP frequencies are unique within the facility', new Set(sopFreqs).size === sopFreqs.length);
+
+  /* The consolidation hierarchy: every edge agrees with the vNAS TCP parent, there is no cycle,
+     and every chain ends. */
+  for (const k of keys) {
+    const p = N.POS[k];
+    if (p.into) {
+      assert('into target exists: ' + k + ' -> ' + p.into, !!N.POS[p.into]);
+      assert('into agrees with the vNAS TCP parent: ' + k, p.parent && N.POS[p.into].tcp.slice(-1) === p.parent);
+    }
+    const chain = N.chainOf(k);
+    assert('chain ends without a cycle: ' + k, chain.length <= keys.length && !chain.slice(0, -1).includes(chain[chain.length - 1]));
+  }
+  /* ownerOf and answerFor never return a position that is closed, and never loop. */
+  const none = {};
+  for (const k of keys) assert('with nobody open ' + k + ' resolves to nobody', N.ownerOf(k, none) === null);
+  const all = {}; keys.forEach(k => { all[k] = true; });
+  for (const k of keys) assert('with everybody open ' + k + ' is its own owner', N.ownerOf(k, all) === k);
+  const a0 = N.answerFor(tower.find(k => N.POS[k].kind === 'radar'), none);
+  assert('a closed radar chain says it leaves the TRACON and names no fall-back', a0.kind === 'center' && !a0.key);
+
+  /* The two sources are told apart: truncation is not a disagreement. */
+  assert('freqStatus: a channel the SOP truncates is not a conflict',
+    N.freqStatus({f:'128.17', vf:'128.175'}) === 'truncated');
+  assert('freqStatus: a real mismatch is a conflict', N.freqStatus({f:'127.17', vf:'120.400'}) === 'conflict');
+  assert('freqStatus: equal channels agree', N.freqStatus({f:'124.95', vf:'124.950'}) === 'agree');
+  assert('idStatus: a matching sector letter agrees', N.idStatus({sid:'E', tcp:'1E'}) === 'agree');
+  assert('idStatus: a different sector letter is a conflict', N.idStatus({sid:'T', tcp:'1X'}) === 'conflict');
+
+  /* ============ 2. Spoken forms ============ */
+  assert('a frequency is spoken digit by digit with "point"', N.spokenFreq('128.175') === 'one two eight point one seven five');
+  assert('a trailing zero is kept: 121.10', N.fmtFreq('121.100') === '121.10' && N.spokenFreq('121.100') === 'one two one point one zero');
+  assert('a runway is spoken without a leading zero', N.spokenRwy('5L') === 'five left' && N.spokenRwy('32') === 'three two');
+  assert('center is spoken', N.spokenRwy('36C') === 'three six center');
+
+  /* ============ 3. Runways from CIFP, never invented ============ */
+  const prim = N.primary();
+  assert('the primary field carries a runway inventory', prim.rwys && prim.rwys.length > 0);
+  assert('every runway has a length, width, bearing', prim.rwys.every(r => r.len > 1000 && r.w >= 75 && r.brg >= 0 && r.brg <= 360));
+  assert('a field with no CIFP runway record is null, not guessed',
+    N.FIELD_ORDER.filter(f => !N.FIELDS[f].rwys).every(f => N.runwaysAt(f) === null));
+  assert('every field records its source', N.FIELD_ORDER.every(f => !!N.FIELDS[f].src));
+  /* Wind arithmetic: a wind straight down a runway is all headwind and no crosswind. */
+  const r0 = prim.rwys[0], w0 = N.windComponents(r0.brg, r0.brg, 20);
+  assert('wind straight down the runway is a pure headwind', w0.head === 20 && w0.cross === 0);
+  const w1 = N.windComponents(r0.brg, (r0.brg + 90) % 360, 10);
+  assert('a wind 90 degrees off is a pure crosswind', w1.head === 0 && w1.cross === 10 && w1.side === 'right');
+  const w2 = N.windComponents(r0.brg, (r0.brg + 180) % 360, 10);
+  assert('a wind from behind is a tailwind', w2.head === -10);
+  assert('configsByWind orders but does not choose',
+    N.configsByWind(r0.brg, 15).length === N.CONFIGS.length);
+  assert('every configuration names runways that exist at the primary field',
+    N.CONFIGS.every(c => (c.land || []).concat(c.dep || []).every(r => !!N.runway(prim.icao, r))), 'a configuration names a runway CIFP does not have');
+
+  /* ============ 4. Honesty guards ============ */
+  assert('STANDING is empty - no IND OJT session has been flown', N.STANDING.length === 0);
+  assert('PRIOR is empty - no IND drill is on record', B.PRIOR.length === 0);
+  assert('the ledger is empty and single-tier', B.hist().length === 0);
+  assert('no geometry is carried: no polygon or boundary property on the namespace',
+    !('BOUNDARY' in N) && !('FOOTPRINT' in N) && !('POLYGON' in N) && !('SECTORS_GEO' in N));
+  assert('boundaries are recorded as empty, not hidden', N.slotState('boundaries') === 'empty');
+  assert('every slot has a state and a source',
+    N.SLOTS.every(s => ['verified','partial','empty'].includes(s.state) && !!s.src));
+  assert('slot ids are unique', new Set(N.SLOTS.map(s => s.id)).size === N.SLOTS.length);
+  assert('every open question carries its reason', N.OPENQ.length > 0 && N.OPENQ.every(q => !!q.q && !!q.why));
+  assert('every conflict carries both sides', N.CONFLICTS.every(c => !!c.a && !!c.b && !!c.title));
+  assert('every unread picture names where it lives', N.UNREAD.length > 0 && N.UNREAD.every(g => g.what && g.where));
+  assert('every table and rule cites its source',
+    N.TABLES.concat(N.RULES).every(x => typeof x.src === 'string' && x.src.length > 0));
+  assert('every table row has as many cells as columns', N.TABLES.every(t => t.rows.every(r => r.length === t.cols.length)));
+  assert('table and rule ids are unique', new Set(N.TABLES.concat(N.RULES).map(x => x.id)).size === N.TABLES.length + N.RULES.length);
+  assert('every reference group has content',
+    N.GROUPS.every(g => N.TABLES.concat(N.RULES).some(x => x.g === g.id)));
+  assert('every table and rule belongs to a declared group',
+    N.TABLES.concat(N.RULES).every(x => N.GROUPS.some(g => g.id === x.g)));
+  assert('the note rail anchors every table and every slot',
+    N.tableHtml(N.TABLES[0]).indexOf('data-note="ref.' + N.TABLES[0].id + '"') >= 0);
+  assert('no literal closing script tag in the data', JSON.stringify([N.TABLES, N.RULES, N.POS]).indexOf('</script') < 0);
+  assert('the storage key carries no status word', !/skeleton|draft|test|beta/i.test(B.KEY) && B.KEY === 'ind-drill-deck-v1');
+  assert('the page switcher is named for the tool', typeof globalThis['indPage'] === 'function');
+  assert('three pages', B.PAGES.length === 3 && B.PAGES.map(p => p.id).join() === 'setup,fly,notes');
+
+  /* ============ 5. The vNAS second source ============ */
+  const V = N.VNAS;
+  assert('the vNAS record is stamped', /^\d{4}-\d\d-\d\dT/.test(V.asOf));
+  assert('the ZID NAS ID is I', V.nasId === 'I');
+  assert('the ZAU NAS ID is G', V.artccNas.ZAU === 'G');
+  assert('the Field E format is OneLetterAndSubset', V.fieldE && V.fieldE.format === 'OneLetterAndSubset' && /^[A-Z]$/.test(V.fieldE.char));
+  assert('handoff numbers are unique', new Set(Object.values(V.handoffNumbers)).size === Object.keys(V.handoffNumbers).length);
+  assert('every restriction names an owner and a requester', V.restrictions.every(r => r.owner && r.requester));
+  assert('every scratchpad rule has a pattern and a template', V.scratchpadRules.every(r => r.pattern && r.template));
+  assert('the C collision is stated and is inert unless ZOB is a neighbour',
+    V.neighbors.includes('ZOB') || /inert/.test(V.cCollision));
+  assert('a bare sector letter inside the TRACON', N.idIntra(tower.find(k => N.POS[k].tcp)) === N.POS[tower.find(k => N.POS[k].tcp)].tcp.slice(1));
+  assert('a ZID sector is C plus two digits', N.idZid('34') === 'C34' && N.idZid('4') === null);
+  assert('a non-host ARTCC is its NAS ID plus two digits', N.idArtcc('G', '35') === 'G35');
+  assert('the delta is the delta', N.DELTA === 'Δ');
+  assert('outbound handoffs are derived from the record and name ZID', N.outboundHandoffs().some(o => o.to === 'ZID'));
+  assert('every ZID sector this deck names exists in the record with a frequency',
+    V.zidSectors.length > 0 && V.zidSectors.every(s => s.name && /^\d{3}\.\d{3}$/.test(s.freq)));
+
+  /* ============ 6. Published procedures (CIFP 261001) ============ */
+  const P = N;
+  assert('the CIFP cycle is stamped', P.CIFP_CYCLE === '261001');
+  assert('PFIX, STARS and SIDS are keyed by airport', typeof P.STARS === 'object' && typeof P.SIDS === 'object');
+  let legs = 0, named = 0;
+  for (const tbl of [P.STARS, P.SIDS]) {
+    for (const apt of Object.keys(tbl)) {
+      for (const id of Object.keys(tbl[apt])) {
+        const p = tbl[apt][id];
+        for (const seg of [p.common, ...Object.values(p.trans || {}), ...Object.values(p.rwy || {})]) {
+          for (const g of (seg || [])) {
+            legs++;
+            if (g.f) { named++; if (!P.fixLL(g.f)) fail('unresolved fix', apt + ' ' + id + ' ' + g.f); }
+            if (g.vec && g.f) fail('vector leg carries a fix', apt + ' ' + id + ' ' + g.f);
+            if (g.at != null && (g.at < 0 || g.at > 60000)) fail('altitude out of range', apt + ' ' + id + ' ' + g.f);
+          }
+        }
+      }
+    }
+  }
+  assert('every named fix resolves to coordinates', legs > 0 && named > 0);
+  assert('every coordinate is in the ZID region', Object.values(P.PFIX).every(c => c[0] > 33 && c[0] < 43 && c[1] < -78 && c[1] > -92), 'a fix is outside Indiana, Kentucky and Ohio');
+  const sp = P.stripProcs('STAR'), sd = P.stripProcs('SID');
+  assert('no arrival claims to be flown, and each declares its track', Object.values(sp).every(v => v.flies === false && v.track === true && v.serves.length > 0));
+  assert('no departure claims to be flown, and each declares its track', Object.values(sd).every(v => v.flies === false && v.track === true && v.from.length > 0));
+  assert('every field a procedure serves is a field this facility works',
+    Object.values(sp).every(v => v.serves.every(a => !!N.FIELDS[a])) && Object.values(sd).every(v => v.from.every(a => !!N.FIELDS[a])));
+
+  /* ============ 7. The strip contract ============ */
+  const F = globalThis.STRIP_FACILITY;
+  assert('the strip contract names this facility', F.id === 'IND' && F.prefix === 'indst');
+  assert('the strip airports are exactly the fields this facility works',
+    Object.keys(F.airports).join() === N.FIELD_ORDER.join());
+  assert('a field with no runway list is null in the contract', N.FIELD_ORDER.every(f => (F.airports[f].rwys === null) === (N.FIELDS[f].rwys === null)));
+  assert('a stored strip is checked: a foreign field is refused by name',
+    globalThis.strip.checkStrip({role:'arrival', cs:'X1', dest:'KORD', gate:''}, 'x').some(e => /does not work/.test(e)));
+
+  /* ============ 8. Facility-specific facts, written by hand ============ */
+  /* IND: all thirteen SOP positions agree with vNAS; the SOP prints three channels to two decimals */
+  const T = id => N.TABLES.find(t => t.id === id);
+  assert('no position value disagrees between the SOP and vNAS', N.positionConflicts().length === 0);
+  assert('Clearance Delivery is 128.75', N.POS.CD.f === '128.75' && N.POS.CD.vf === '128.750' && N.POS.CD.sid === 'T');
+  assert('LCW is printed 127.82 and is 127.825', N.POS.LCW.f === '127.82' && N.POS.LCW.vf === '127.825' && N.freqStatus(N.POS.LCW) === 'truncated');
+  assert('FRD and FNI are truncated the same way', N.POS.FRD.vf === '128.175' && N.POS.FNI.vf === '120.525');
+  assert('the SOP carries no frequency for a vNAS-only tower', N.POS.BAK_TWR.f === null && N.POS.BAK_TWR.vf === '118.600');
+  assert('STN folds into STS, which folds into DRE', N.chainOf('STN').join() === 'STN,STS,DRE');
+  assert('LCW folds into LCE', N.chainOf('LCW').join() === 'LCW,LCE');
+  assert('with DRW open and DRE closed, STN reaches nobody', N.ownerOf('STN', {DRW:true}) === null);
+  assert('with DRE open, STN is owned by DRE', N.ownerOf('STN', {DRE:true}) === 'DRE');
+  assert('with STS open, STN is owned by STS', N.ownerOf('STN', {STS:true, DRE:true}) === 'STS');
+  /* runways, CIFP 261001 */
+  assert('KIND runways', N.runwaysAt('KIND').join(' ') === '5L 5R 14 23L 23R 32', N.runwaysAt('KIND').join(' '));
+  const lens = {}; prim.rwys.forEach(r => { lens[r.id] = r.len; });
+  assert('KIND lengths are 11200, 10000, 7278, 10000, 11200, 7278', JSON.stringify(lens) === JSON.stringify({'5L':11200,'5R':10000,'14':7278,'23L':10000,'23R':11200,'32':7278}), JSON.stringify(lens));
+  assert('every KIND runway has an ILS record with a category', prim.rwys.every(r => /CAT (I|II|III)$/.test(r.ils)));
+  assert('magnetic variation is west 5 degrees', N.FAC.magvar === 'west 5.0 degrees');
+  assert('24 fields are carried and five have no CIFP runway record',
+    N.FIELD_ORDER.length === 24 && N.FIELD_ORDER.filter(f => !N.FIELDS[f].rwys).join() === '8A4,81II,IN35,IN74,IN84');
+  /* procedures: the SOP names six SIDs, CIFP codes three at KIND */
+  assert('KIND SIDs coded', N.procsAt('KIND', 'SID').join() === 'DAWNN1,MAREO1,MEARZ7');
+  assert('KIND STARs coded', N.procsAt('KIND', 'STAR').join() === 'GIIBS4,JAKKS2,KOLTS2,RACYR6,SMUKE3,SNKPT2');
+  assert('OOM5 and ROCKY1 are coded at satellites and not at KIND',
+    N.fieldsWith('OOM5', 'SID').indexOf('KIND') < 0 && N.fieldsWith('OOM5', 'SID').indexOf('KMQJ') >= 0 && N.fieldsWith('ROCKY1', 'SID').indexOf('KIND') < 0);
+  assert('INDY is coded at no field', Object.keys(N.SIDS).every(a => !Object.keys(N.SIDS[a]).some(p => /^INDY/.test(p))));
+  assert('CLANG1 is coded at the six satellites and not at KIND, as the SOP changelog says (Sats only)', N.fieldsWith('CLANG1', 'STAR').join() === 'KEYE,KGEZ,KHFY,KMQJ,KTYQ,KUMP');
+  assert('RACYR6 is conventional, SMUKE3 is RNAV', N.procOf('KIND', 'RACYR6').rnav === false && N.procOf('KIND', 'SMUKE3').rnav === true);
+  assert('a procedure is scoped to its field: DAWNN1 is published at more than one field with separate data',
+    N.fieldsWith('DAWNN1', 'SID').length >= 2 && N.procOf('KIND', 'DAWNN1') !== N.procOf('KMQJ', 'DAWNN1'));
+  /* handoff IDs from the record */
+  assert('ERAM addresses a DRE with I1E', N.idFromZid('DRE') === 'I1E' && N.idFromZid('FNF') === 'I1F');
+  assert('to CVG the delta prefix is 2, to SDF 6, to FWA 5', N.idOtherStars('CVG', '1B') === 'Δ2B' && N.idOtherStars('SDF', '1D') === 'Δ6D' && N.idOtherStars('FWA', '1W') === 'Δ5W');
+  const ob = N.outboundHandoffs();
+  assert('MEARZ departures reach ZAU sectors 35 and 51 as G35 and G51', ob.some(o => o.to === 'ZAU' && o.ids.join() === 'G35,G51'));
+  assert('DAWNN, MAREO, ROCKY and OOM reach ZID 34, 33 and 35', ['C34','C33','C35'].every(c => ob.some(o => o.ids.indexOf(c) >= 0)));
+  /* the SOP tables, spot-checked against the page */
+  assert('the 23L intersection row is C3/D3 at 8350', T('lc.intx').rows.some(r => r[0] === '23L' && r[1] === 'C3/D3' && r[2] === '8350'));
+  assert('the SOP scratchpad table has no MAREO# row and vNAS does',
+    !T('app.scratch.sid').rows.some(r => /MAREO/.test(r[0])) && N.VNAS.scratchpadRules.some(r => r.pattern === 'MAREO#' && r.template === 'MAR'));
+  assert('the six SOP SID scratchpad rows all appear in vNAS',
+    T('app.scratch.sid').rows.every(r => r[0].split(' // ').every(route => N.VNAS.scratchpadRules.some(v => v.pattern === route.replace('MEARZ# CLLRK', 'MEARZ# MEARZ CLLRK') && v.template === r[1]))));
+  assert('the departure heading rows are six', T('lc.heading').rows.length === 6);
+  assert('the maps table carries the parsed SOP list', T('maps.list').rows.length > 100 && T('maps.list').rows.every(r => /^\d+$/.test(r[0])));
+  assert('the combine rule: runway 14 or 32 forces LC combined is stated in the SOP rules',
+    N.RULES.find(r => r.id === 'lc.aor').items.some(i => /14 or 32 configuration, LC must be combined/.test(i)));
+  assert('the departure frequency tables differ for DAWNN between 5/23 and 14/32',
+    /DAWNN/.test(T('cd.freq.523').rows[1][0]) && /124\.95/.test(T('cd.freq.523').rows[1][2]) && /DAWNN/.test(T('cd.freq.1432').rows[0][0]) && /119\.05/.test(T('cd.freq.1432').rows[0][2]));
+  assert('conflicts listed: MAREO#, coded SIDs, ZAU sector, ramp sentence, channel precision, vNAS omissions',
+    N.CONFLICTS.map(c => c.id).join() === 'mareo-scratch,sids-coded,zau-sector,ramp-sentence,freq-precision,vnas-omits');
+
+
+  console.log('\nSMOKE PASS — ' + checks + ' checks');
+} catch (e) {
+  console.error('FAIL: threw —', e && e.stack ? e.stack : e);
+  process.exit(1);
+}
