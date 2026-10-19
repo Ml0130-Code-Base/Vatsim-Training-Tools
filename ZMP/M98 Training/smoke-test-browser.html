@@ -87,10 +87,14 @@ runs</b> rather than pressing run twice. Storage is cleared before each run and 
  }
 
  /* The four rewrites, kept in one place so the page can say exactly what it
-    changed. Everything else in the harness runs as written. */
+    changed. Everything else in the harness runs as written.
+    The shebang strip takes an optional \r: a checkout with core.autocrlf on —
+    this machine's Git default — has CRLF endings, "." does not match \r, so
+    the line survived and new Function threw "Invalid or unexpected token"
+    before a single check ran (found 2026-10-14). */
  function nodeToBrowser(src){
   return src
-   .replace(/^#!.*\n/, '')
+   .replace(/^#!.*\r?\n/, '')
    .replace(/^import fs from 'node:fs';[ \t]*$/m, '')
    .replace(/globalThis\.document\b/g, 'document')
    .replace(/globalThis\.setInterval\b/g, 'setInterval');

@@ -1,7 +1,8 @@
-# MSP Runways — thresholds, bearings and final approach courses
+# MSP Runways — thresholds, bearings, final approach courses and the approaches coded to each
 
 **Source: CIFP 260903**, ARINC 424 `PG` (airport runway) and `PI` (localizer) records, decoded
-2026-09-21 from `FAACIFP18`. **FOR SIMULATION USE.**
+2026-09-21 from `FAACIFP18`; §4 adds the `IN_CIFP.txt` manifest and the approach (`F`) records,
+transcribed 2026-10-14. **FOR SIMULATION USE.**
 
 This file exists because issue #26 recorded that an approach clearance needs **the final approach
 course and the threshold position**, that the facility orders *"carry rules about the final and
@@ -45,8 +46,8 @@ Lengths, displaced thresholds and elevations in feet; widths in feet; courses in
 
 **CAT is the localizer record's ILS category, ARINC 424 field 5.80: `0` is a localizer with NO
 glide slope, `1` CAT I, `2` CAT II, `3` CAT III.** So **4, 17 and 22 have a localizer and no ILS** —
-which the CIFP manifest says independently, coding L04, L17 and L22 and no I04, I17 or I22 — and
-30R is CAT I. **Corrected 2026-10-14:** until then this column printed 4, 17 and 22 as CAT I and 30R
+which the CIFP manifest says independently, coding L04, L17 and L22 and no I04, I17 or I22 (§4 has
+the whole list) — and 30R is CAT I. **Corrected 2026-10-14:** until then this column printed 4, 17 and 22 as CAT I and 30R
 as CAT II, reading `0` as CAT I. The deck's `cat` values were always the raw codes and always right;
 its comment carried the same misreading and is corrected too. The harness now pins the values.
 
@@ -123,10 +124,67 @@ record, which needed no change.
 
 ---
 
-## 4. What this closes, and what it does not
+## 4. The approaches CIFP codes to each runway
+
+**Source: CIFP 260903** — the `IN_CIFP.txt` manifest, which lists every procedure the cycle codes,
+checked against the route-type column (character 20) of the KMSP approach (`F`) records in
+`FAACIFP18`. Transcribed 2026-10-14. **Identical in CIFP 261001 and CIFP 261029** — the same 26
+lines in all three manifests — so like §1 this holds through 2026-11-25. Read the download page
+first: it names the current cycle, and a 404 on the zip means the cycle rolled.
+
+```bash
+curl -sL https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/cifp/download/
+curl -sL -o CIFP_260903.zip https://aeronav.faa.gov/Upload_313-d/cifp/CIFP_260903.zip
+unzip -o CIFP_260903.zip IN_CIFP.txt FAACIFP18
+awk -F'\t' '$1=="KMSP" && $2=="SIAP"' IN_CIFP.txt         # the 26 approaches
+grep "^SUSAP KMSPK3F" FAACIFP18 | cut -c14-20 | sort -u   # identifier and route type
+```
+
+| Rwy | ILS | Localizer | RNAV (GPS) | RNAV (RNP) |
+|---|---|---|---|---|
+| **04** | — | L04 | R04 | — |
+| **12L** | I12L | L12L | R12LZ | H12LY |
+| **12R** | I12R | L12R | R12RZ | H12RY |
+| **17** | — | **L17** | — | — |
+| **22** | — | L22 | R22 | — |
+| **30L** | I30L | L30L | R30LZ | H30LY |
+| **30R** | I30R | L30R | R30RZ | H30RY |
+| **35** | I35-V · I35-Z | L35 | R35-Z | H35-Y |
+
+**Reading an identifier.** The first letter is the ARINC 424 approach route type — `I` ILS, `L`
+localizer only, `R` RNAV (GPS), `H` RNAV (RNP). Then the runway, with `-` holding the side
+position on a runway that has none, then a letter where the procedure carries one (Z, Y, V). The
+letter is part of the procedure's name: the MSP D-ATIS quoted in issue #13 advertises *RNAV ZULU
+RWY 30L*, which is R30LZ.
+
+**So there is no ILS to 4, 17 or 22, and no RNAV approach of either kind to 17.** Runway 17 has the
+localizer and nothing else.
+
+**Three cross-checks, all of which pass:**
+
+1. **The ILS column agrees with §1's CAT column** — an `I` procedure at exactly the five ends whose
+   localizer record carries category 1, 2 or 3, and none at the three whose category is `0`. Two
+   record types, the localizer equipment and the coded procedures, saying the same thing.
+2. **The localizer column agrees with §1's Localizer column** — all eight ends have a localizer
+   record, and all eight have an `L` procedure.
+3. **26 = 6 + 8 + 7 + 5** — ILS, localizer, RNAV (GPS), RNAV (RNP). Every approach record carries
+   its procedure's own route type in character 20, or `A` for an approach transition, which is part
+   of the same procedure rather than a further approach.
+
+**What the deck reads, and what it does not.** The parser hears four kinds — ILS, localizer, RNAV
+and visual — so **RNAV (GPS) and RNAV (RNP) are one kind to it**, and the letter is not read:
+*cleared RNAV runway 35 approach* is accepted without asking which of R35-Z and H35-Y. At that
+granularity the refusal is still exact, because 17 has neither RNAV kind and 4 and 22 have one.
+**A visual approach is not a coded procedure** and is not in this list; the deck refuses it to no
+runway, and it does not check the weather a visual needs.
+
+---
+
+## 5. What this closes, and what it does not
 
 **Closes:** the stated blocker on issue #26 — the final approach course and the threshold position
-now exist, cited, for all eight runway ends.
+now exist, cited, for all eight runway ends — and which approaches exist at each (§4), so a
+clearance for one that does not is refused rather than flown.
 
 **Does not close:**
 
@@ -136,19 +194,27 @@ now exist, cited, for all eight runway ends.
 - **Anything spatial beyond the runways.** No DDA extensions, no satellite cutouts, no sector
   boundaries. Root `CLAUDE.md` §7 is untouched and issue #27 is unaffected — CIFP is procedures
   and runways, not airspace.
-- **Which approach the facility assigns.** CIFP publishes what exists; the SOP and the LOAs say
-  what gets used. MSP's 26 coded approach procedures are listed in CIFP under `SUSAP KMSPK3F` and
-  are not transcribed here, because nothing in the tool reads them yet.
+- **Which approach the facility assigns.** CIFP publishes what exists (§4); the SOP, the LOAs and
+  the D-ATIS say what is in use. So the deck refuses an approach that does not exist, and never one
+  that merely is not the one advertised.
 - **The satellite fields** — pulled 2026-10-14 from CIFP 261001 for the four satellite towers, in
   `claude_M98_Satellite_Runway_Reference.md`, and **not yet read by the deck**. Three of the four
   have a non-zero declination, so MSP's E0000 is exactly what does not carry over.
 
 ---
 
-## 5. Where this is used
+## 6. Where this is used
 
 - `m98-drill-deck.html` — `RUNWAYS`, `RWY_PAIRS`, `RWY_SRC` and `finalCourse()` in the deck block,
   exposed on `window.DD`.
+- **§4 is `APPROACHES`**, the 26 identifiers once and as coded, keyed by airport, with `APCH_SRC`,
+  `approachesTo()` and `approachExists()` beside it on `window.DD`. The approach clearance in
+  `transmit()` reads it: **a clearance for an approach the runway does not publish is queried by
+  the crew — *unable, no ILS to runway one seven* — flagged against the cycle, and not flown.** A
+  field with no list answers *unknown*, never *no*, so nothing is refused at a satellite.
+- **`rwyKey()` maps the deck's `4` to CIFP's `04`.** Every other table in the deck names that runway
+  `4`, and until 2026-10-14 `finalCourse('4')` found nothing — so an approach clearance to runway 4
+  of any kind, visual included, was refused as not carried.
 - **The scope draws the four strips threshold to threshold**, from the two surveyed points, so no
   bearing and no magnetic correction enters the drawing at all. The strip the loaded configuration
   lands is brightened; in a configuration `TABLE2` has no row for, **nothing is brightened**,

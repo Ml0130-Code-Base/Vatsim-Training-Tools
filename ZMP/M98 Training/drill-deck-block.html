@@ -101,7 +101,8 @@ function px(lat,lon){ var p=nmOf(lat,lon); return {x:CX+p.e*SC, y:CY-p.n*SC}; }
    `cat` is the ILS/MLS/GLS category off the PI record, ARINC 424 5.80:
    0 = LOCALIZER ONLY, NO GLIDE SLOPE; 1 = CAT I; 2 = CAT II; 3 = CAT III.
    So 4, 17 and 22 have a localizer and no ILS — which the CIFP manifest says
-   independently, coding L04, L17 and L22 and no I04, I17 or I22 — 30R is
+   independently, coding L04, L17 and L22 and no I04, I17 or I22 (APPROACHES,
+   below, carries the whole list) — 30R is
    CAT I, 30L CAT II, and 12L, 12R and 35 CAT III. (This comment read "0 = CAT
    I, 1 = II, 2 = II" until 2026-10-14; the values below were always right.)
    `dthr` is the displaced threshold in feet — 4, 22 and 30R have one, and the
@@ -126,14 +127,80 @@ var RUNWAYS = {
    line on the scope comes from two surveyed points and needs no bearing and no
    magnetic correction at all. */
 var RWY_PAIRS = [['12L','30R'], ['12R','30L'], ['04','22'], ['17','35']];
+/* The CIFP key for a runway as the rest of the deck names it. RUNWAYS and
+   APPROACHES write runway 4 as '04', the way CIFP does; AIRPORTS, LADDER,
+   TABLE2, the configurations and the parser all say '4'. Until 2026-10-14
+   finalCourse('4') found nothing, so an approach clearance to runway 4 — any
+   kind, a visual included — was refused as not carried when it is. */
+function rwyKey(rwy){
+ var s=String(rwy||'').toUpperCase(), m=s.match(/^(\d{1,2})([LRC]?)$/);
+ return m ? (('0'+m[1]).slice(-2)+m[2]) : s;
+}
 /* The final approach course for a runway: the localizer where there is one,
    the runway bearing otherwise. Returns null rather than guessing for a runway
    this field does not have. */
 function finalCourse(rwy){
- var r = RUNWAYS[String(rwy||'').toUpperCase()];
+ var r = RUNWAYS[rwyKey(rwy)];
  if(!r) return null;
  return {crs:(r.locCrs != null ? r.locCrs : r.brg), kind:(r.locCrs != null ? 'localizer' : 'runway bearing'),
          loc:r.loc || null, src:RWY_SRC};
+}
+/* ---------- MSP approaches — CIFP 260903, the IN_CIFP.txt manifest ----------
+   Every approach CIFP codes at KMSP, written exactly as coded, from
+   claude_MSP_Runway_Reference.md section 4 — which is authoritative over this
+   copy. Transcribed 2026-10-14 and checked against character 20 of the
+   approach (F) records. The first letter is the ARINC 424 route type; then the
+   runway, '-' holding the side on a runway with none; then a letter where the
+   procedure carries one (R30LZ is the "RNAV ZULU RWY 30L" the D-ATIS
+   advertises).
+
+     I  ILS              I12L I12R I30L I30R I35-V I35-Z
+     L  localizer only   L04 L12L L12R L17 L22 L30L L30R L35
+     R  RNAV (GPS)       R04 R12LZ R12RZ R22 R30LZ R30RZ R35-Z
+     H  RNAV (RNP)       H12LY H12RY H30LY H30RY H35-Y
+
+   SO THERE IS NO ILS TO 4, 17 OR 22, AND NO RNAV APPROACH OF EITHER KIND TO
+   17. The ILS half says what RUNWAYS[].cat says — category 0 on exactly those
+   three — from a different record type, and the harness asserts that the two
+   agree. Identical in CIFP 261001 and 261029, so this holds through
+   2026-11-25; re-pull it whole when the cycle rolls, never patch it.
+
+   Keyed by airport, because runway designators repeat across the satellites.
+   Only MSP is carried, and a field with no list answers null rather than
+   false — nothing is refused on the strength of a list the deck does not
+   have. A visual approach is not a coded procedure, so it is never in this
+   list and never refused for want of one. */
+var APCH_CYCLE = 'CIFP 260903';
+var APCH_SRC = APCH_CYCLE+' — IN_CIFP.txt manifest and the KMSP approach (F) records, transcribed 2026-10-14; identical in 261001 and 261029';
+var APPROACHES = {
+ KMSP:['I12L','I12R','I30L','I30R','I35-V','I35-Z',
+       'L04','L12L','L12R','L17','L22','L30L','L30R','L35',
+       'R04','R12LZ','R12RZ','R22','R30LZ','R30RZ','R35-Z',
+       'H12LY','H12RY','H30LY','H30RY','H35-Y']
+};
+/* The route type as the parser hears it, and as it is written out. RNAV (GPS)
+   and RNAV (RNP) are one kind to the parser, which hears "RNAV" and never the
+   letter — so "cleared RNAV runway 35 approach" does not ask which. */
+var APCH_TYPES = {I:{kind:'ILS', name:'ILS'}, L:{kind:'localizer', name:'localizer'},
+                  R:{kind:'RNAV', name:'RNAV (GPS)'}, H:{kind:'RNAV', name:'RNAV (RNP)'}};
+function apchDecode(id){
+ var m=String(id).match(/^([A-Z])(\d{2})([LRC-]?)([A-Z]?)$/); if(!m) return null;
+ var ty=APCH_TYPES[m[1]]||{};
+ return {id:id, type:m[1], kind:ty.kind||null, name:ty.name||null, rwy:m[2]+(m[3]==='-'?'':m[3]), letter:m[4]};
+}
+/* The coded approaches to one runway, decoded. Null when the deck carries no
+   list for the field, which is not the same as an empty list. */
+function approachesTo(icao, rwy){
+ var list=APPROACHES[icao||'KMSP']; if(!list) return null;
+ var k=rwyKey(rwy);
+ return list.map(apchDecode).filter(function(p){ return p && p.rwy===k; });
+}
+/* Does this runway publish an approach of this kind? true or false where the
+   field's list is carried, null where it is not. A visual is always true. */
+function approachExists(icao, rwy, kind){
+ if(kind==='visual') return true;
+ var have=approachesTo(icao, rwy); if(!have) return null;
+ return have.some(function(p){ return p.kind===kind; });
 }
 function pxRD(r,d){ var a=r*Math.PI/180; return {x:CX+d*Math.sin(a)*SC, y:CY-d*Math.cos(a)*SC}; }
 
@@ -1773,7 +1840,7 @@ function onVector(a){ return a.nav==='heading'; }
    and no transfer to the tower. What this gives is the lateral turn-on, which
    is the part SOP 4-7 and 4-8 actually have rules about. */
 function finalGeom(rwy){
- var r=RUNWAYS[String(rwy||'').toUpperCase()]; if(!r) return null;
+ var r=RUNWAYS[rwyKey(rwy)]; if(!r) return null;
  var fc=finalCourse(rwy); if(!fc) return null;
  var t=nmOf(r.lat, r.lon);
  return {thr:t, inbound:fc.crs, kind:fc.kind, loc:fc.loc, rwy:String(rwy).toUpperCase()};
@@ -2515,7 +2582,10 @@ function transmit(){
     "cleared ILS runway 12L approach", "cleared visual approach runway 30L",
     "cleared RNAV runway 35 approach", "cleared localizer 17 approach". The
     runway is matched the same way "expect runway" matches it, digits or
-    spoken, against the runways this field actually has. */
+    spoken, against the runways this field actually has — and then the
+    approach is matched against the ones that runway actually publishes
+    (APPROACHES, CIFP 260903), so "cleared ILS runway 17 approach" is queried
+    rather than read back and flown. */
  if(/\bcleared\b/.test(t) && /\bapproach|\bapch\b/.test(t)){
   var apKind = /\bils\b/.test(t) ? 'ILS'
              : /\bvisual\b/.test(t) ? 'visual'
@@ -2535,6 +2605,25 @@ function transmit(){
    log('coach','<span class="coach">Name the approach: <b>cleared ILS runway 12L approach</b>, <b>cleared visual approach runway 30L</b>, <b>cleared RNAV runway 35 approach</b>.</span>');
   } else if(!apR){
    log('coach','<span class="coach">Which runway? '+(a.cs||'that aircraft')+' is landing '+(a.dest||'KMSP')+' and the approach clearance has to name a runway it has.</span>');
+  } else if(approachExists(a.dest||'KMSP', apR, apKind)===false){
+   /* THE RUNWAY DOES NOT PUBLISH THAT APPROACH. There is no ILS to 4, 17 or
+      22 and nothing RNAV to 17, so a clearance for one is a clearance for
+      something that does not exist: a crew comes back with unable rather than
+      a readback, and the engine flies nothing. Nothing about the aircraft
+      changes — no turn-on, no new landing runway, and an approach it was
+      already cleared for still stands. Only ever false where APPROACHES
+      carries the field; anywhere else the geometry check below answers, as
+      it did before. Tagged 'turnon' like the approach flags below — no new
+      standing item (invariant 4). */
+   acted=true; control=true;
+   var apHave=approachesTo(a.dest||'KMSP', apR).map(function(p){ return p.name+' '+p.id; });
+   var apRw=RUNWAYS[rwyKey(apR)];
+   acks.push('unable, no '+(apKind==='ILS'?'ILS':(apKind+' approach'))+' to runway '+sayRunway(apR));
+   log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> was cleared for '+(apKind==='localizer'?'a ':'an ')+apKind+' approach to runway '+apR+', and there is none. '
+    +'In '+APCH_CYCLE+' runway '+apR+' has '
+    +(apHave.length>1 ? apHave.slice(0,-1).join(', ')+' and '+apHave[apHave.length-1] : (apHave.length ? apHave[0]+' and nothing else' : 'no coded approach'))
+    +((apKind==='ILS' && apRw && apRw.cat===0) ? (' — '+apRw.loc+' has no glide slope (category 0)') : '')
+    +'. The crew comes back with unable instead of a readback, and nothing changes: no turn-on and no new landing runway. Clear an approach the runway has, or a visual.', 'turnon');
   } else { acted=true; control=true;
    var apG=finalGeom(apR), apOff=finalGeom(apR)?finalOffset(a, apR):null;
    if(!apG || !apOff){
@@ -3357,7 +3446,8 @@ window.DD = {
  version:1, hooks:[],
  ROUTES:ROUTES, TRUNK:TRUNK, BOUNDARY:BOUNDARY, FLOORS:FLOORS, RECEIVER:RECEIVER,
  LADDER:LADDER, TABLE2:TABLE2, TABLE2_FOOTNOTE:TABLE2_FOOTNOTE, GATE_ORDER:GATE_ORDER,
- RUNWAYS:RUNWAYS, RWY_PAIRS:RWY_PAIRS, RWY_SRC:RWY_SRC, finalCourse:finalCourse,
+ RUNWAYS:RUNWAYS, RWY_PAIRS:RWY_PAIRS, RWY_SRC:RWY_SRC, finalCourse:finalCourse, rwyKey:rwyKey,
+ APPROACHES:APPROACHES, APCH_SRC:APCH_SRC, APCH_CYCLE:APCH_CYCLE, approachesTo:approachesTo, approachExists:approachExists,
  finalGeom:finalGeom, finalOffset:finalOffset, interceptAngle:interceptAngle, wakeMinFor:wakeMinFor,
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },

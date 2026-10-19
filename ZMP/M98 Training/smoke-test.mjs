@@ -2221,9 +2221,8 @@ try {
   /* ============ 4b-v. Vectoring — issue #26 ============
      The first thing in this engine that takes an aircraft OFF its route.
      Position becomes the primary state and the route becomes one of two ways
-     of advancing it; `nav` says which is in force. What this deliberately does
-     NOT do is intercept anything — the final approach course and the threshold
-     are not in the reference set, so the approach clearance is an ask first. */
+     of advancing it; `nav` says which is in force. Joining a final is the
+     approach clearance, and that is section 4b-vi — this one is the vector. */
   {
     globalThis.DD.setFlow('12');
     globalThis.ddLoad('resume10r');
@@ -2339,6 +2338,130 @@ try {
     globalThis.ddRate(1); tickFn();
     assert('and on the ladder it still does, so the guard did not just disable it',
       sv2.savvgWarned === true && sv2.rwy === '12R', sv2.rwy + '/' + sv2.savvgWarned);
+    globalThis.DD.setFlow('12');
+  }
+
+  /* ============ 4b-vi. An approach clearance names an approach the runway has ============
+     CIFP 260903 codes no ILS to 4, 17 or 22 and nothing RNAV to 17 — the
+     IN_CIFP.txt manifest, identical in 261001 and 261029, transcribed in
+     claude_MSP_Runway_Reference.md section 4. Until 2026-10-14 "cleared ILS
+     runway 17 approach" was read back and flown. The crew now queries it,
+     nothing is flown, and the flag names the cycle. */
+  {
+    const D = globalThis.DD;
+    const kinds = D.APPROACHES.KMSP.reduce((o, id) => { o[id[0]] = (o[id[0]] || 0) + 1; return o; }, {});
+    assert('MSP carries the 26 approaches CIFP codes: 6 ILS, 8 localizer, 7 RNAV (GPS), 5 RNAV (RNP)',
+      D.APPROACHES.KMSP.length === 26 && kinds.I === 6 && kinds.L === 8 && kinds.R === 7 && kinds.H === 5,
+      JSON.stringify(kinds));
+    assert('the list is stamped with its cycle', /^CIFP 260903\b/.test(D.APCH_SRC) && D.APCH_CYCLE === 'CIFP 260903');
+    assert('there is no ILS to 4, 17 or 22, and there is one to the other five ends',
+      ['4', '17', '22'].every(r => D.approachExists('KMSP', r, 'ILS') === false)
+      && ['12L', '12R', '30L', '30R', '35'].every(r => D.approachExists('KMSP', r, 'ILS') === true));
+    /* Two record types, one answer: the coded procedures and the localizer
+       equipment's ILS category, which the harness already pins. */
+    assert('the coded ILS procedures agree with the localizer records\' category at all eight ends',
+      Object.keys(D.RUNWAYS).every(r => D.approachExists('KMSP', r, 'ILS') === (D.RUNWAYS[r].cat > 0)),
+      Object.keys(D.RUNWAYS).map(r => r + ':' + D.approachExists('KMSP', r, 'ILS') + '/' + D.RUNWAYS[r].cat).join(' '));
+    assert('every MSP runway publishes a localizer approach',
+      Object.keys(D.RUNWAYS).every(r => D.approachExists('KMSP', r, 'localizer') === true));
+    assert('17 has no RNAV approach of either kind, and the other seven ends have one',
+      D.approachExists('KMSP', '17', 'RNAV') === false
+      && Object.keys(D.RUNWAYS).filter(r => r !== '17').every(r => D.approachExists('KMSP', r, 'RNAV') === true));
+    assert('a visual needs no coded procedure and is never refused for want of one',
+      Object.keys(D.RUNWAYS).every(r => D.approachExists('KMSP', r, 'visual') === true));
+    assert('a field with no list answers unknown, never no',
+      D.approachExists('KFCM', '10R', 'ILS') === null && D.approachesTo('KSTP', '14') === null);
+    /* The deck names runway 4 '4'; CIFP writes '04'. */
+    assert('the deck\'s runway 4 finds CIFP\'s 04, for the course and for the approaches',
+      D.rwyKey('4') === '04' && D.rwyKey('12L') === '12L'
+      && D.finalCourse('4') && D.finalCourse('4').crs === D.finalCourse('04').crs
+      && D.approachesTo('KMSP', '4').map(p => p.id).join() === 'L04,R04',
+      JSON.stringify(D.finalCourse('4')));
+
+    const fresh = () => {
+      globalThis.ddLoad('resume10r');
+      globalThis.ddSel('DAL589');
+      return D.sim.ac.filter(x => x.cs === 'DAL589')[0];
+    };
+
+    /* REFUSED: the crew queries, nothing is flown, the flag names the cycle. */
+    let a = fresh();
+    const rwy0 = a.rwy;
+    say('DAL589 cleared ILS runway 17 approach');
+    mustContain('cleared an ILS to 17, the crew says unable rather than reading it back',
+      'unable, no ILS to runway one seven, DAL589');
+    assert('and nothing is flown — no approach, still on the arrival, the landing runway unchanged',
+      !a.appr && a.nav === 'route' && a.rwy === rwy0,
+      JSON.stringify({appr: a.appr, nav: a.nav, rwy: a.rwy}));
+    assert('the clearance is never read back',
+      feedText().indexOf('cleared ILS runway one seven approach') < 0);
+    const ref = D.sim.feed.filter(e => /and there is none/.test(String(e.html)))[0];
+    assert('the refusal is a flag tagged turnon, naming the cycle, the localizer it has and why there is no ILS',
+      ref && ref.kind === 'flag' && ref.item === 'turnon'
+      && /CIFP 260903/.test(ref.html) && /localizer L17 and nothing else/.test(ref.html)
+      && /I-TJZ has no glide slope/.test(ref.html),
+      ref && String(ref.html).replace(/<[^>]+>/g, ''));
+    globalThis.ddRate(1);
+    for (let i = 0; i < 5; i++) tickFn();
+    assert('and it keeps flying the arrival rather than turning on',
+      !a.appr && a.nav === 'route', a.nav);
+
+    a = fresh();
+    say('DAL589 cleared ILS runway one seven approach');
+    assert('the spoken runway is refused the same way', !a.appr && a.nav === 'route'
+      && feedText().indexOf('unable, no ILS to runway one seven') >= 0);
+
+    a = fresh();
+    say('DAL589 cleared ILS runway 4 approach');
+    assert('an ILS to 4 is refused and says what 4 does have',
+      !a.appr && feedText().indexOf('unable, no ILS to runway four') >= 0
+      && feedText().indexOf('localizer L04 and RNAV (GPS) R04') >= 0, feedText().slice(0, 400));
+
+    a = fresh();
+    say('DAL589 cleared RNAV runway 17 approach');
+    assert('an RNAV approach to 17 is refused and not flown',
+      !a.appr && a.nav === 'route' && feedText().indexOf('unable, no RNAV approach to runway one seven') >= 0,
+      feedText().slice(0, 300));
+
+    /* An approach already cleared stands when a refused one follows. */
+    a = fresh();
+    say('DAL589 cleared ILS runway 12L approach');
+    say('DAL589 cleared ILS runway 17 approach');
+    assert('a refused clearance leaves the one it already had',
+      a.appr && a.appr.rwy === '12L' && a.appr.kind === 'ILS' && a.rwy === '12L', JSON.stringify(a.appr));
+
+    /* ACCEPTED: what the runway publishes is read back and flown. */
+    a = fresh();
+    say('DAL589 cleared ILS runway 12L approach');
+    mustContain('an ILS to 12L is read back', 'cleared ILS runway one two left approach, DAL589');
+    assert('and flown — cleared, off the arrival, landing 12L',
+      a.appr && a.appr.rwy === '12L' && a.appr.kind === 'ILS' && a.nav === 'heading' && a.rwy === '12L',
+      JSON.stringify(a.appr));
+
+    a = fresh();
+    say('DAL589 cleared RNAV runway 35 approach');
+    assert('an RNAV approach to 35 is accepted and flown',
+      a.appr && a.appr.rwy === '35' && a.appr.kind === 'RNAV' && a.nav === 'heading'
+      && feedText().indexOf('unable') < 0, JSON.stringify(a.appr));
+
+    a = fresh();
+    say('DAL589 cleared localizer runway 17 approach');
+    assert('a localizer approach to 17 is accepted and flown on I-TJZ\'s course',
+      a.appr && a.appr.rwy === '17' && a.appr.kind === 'localizer' && a.nav === 'heading'
+      && feedText().indexOf('course 169.5') >= 0 && feedText().indexOf('unable') < 0,
+      JSON.stringify(a.appr));
+
+    /* A visual to every runway MSP has, runway 4 included — until 2026-10-14
+       that one was refused as "no final approach course carried". */
+    const visualMiss = globalThis.DD.runwaysAt('KMSP').filter(r => {
+      const v = fresh();
+      say('DAL589 cleared visual approach runway ' + r);
+      return !(v.appr && v.appr.rwy === r && v.appr.kind === 'visual' && v.nav === 'heading'
+        && feedText().indexOf('unable') < 0 && feedText().indexOf('no final approach course carried') < 0);
+    });
+    assert('a visual is accepted and flown to all eight MSP runways',
+      globalThis.DD.runwaysAt('KMSP').length === 8 && visualMiss.length === 0, visualMiss.join(','));
+    globalThis.ddRate(0);
     globalThis.DD.setFlow('12');
   }
 
