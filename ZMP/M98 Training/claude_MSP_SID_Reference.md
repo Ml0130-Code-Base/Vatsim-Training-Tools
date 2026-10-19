@@ -44,18 +44,22 @@ grep "^SUSAP KMSPK3D" FAACIFP18                          # the legs
 
 - **Nine SIDs at MSP, every one RNAV, and none starts at the MSP VOR** — which CIFP 261029 codes as
   a **DME only** (`DHW`, no VOR; 261001 still coded `VDLW`). That is why every SID moved off it.
-- **Seven begin at a first fix of their own, with an at-or-above crossing, and carry no runway
-  transition at all** — the climb-out to that first fix is not coded. Dispersal (an LC function,
-  MSP 7110.26G §6-3-1) decides the first turn, as it always has.
-- **Two — HTDSH1 and SNOWZ1 — are Runway 17 only:** heading **169.5** to **RUBRB at or above
-  3,500**, then vectors (`FM`), then the common route. **Whether M98 assigns them is open** — the
-  Runway 17 SIDs they replace (HSTIN6, MEDOW5, SLAYR4) never were (issue #61).
+- **Every one begins at a first fix of its own, with an at-or-above crossing** — the climb-out to
+  that first fix is not coded. Dispersal (an LC function, MSP 7110.26G §6-3-1) decides the first
+  turn, as it always has.
+- **HTDSH1 and SNOWZ1 are valid off every runway** — owner, 2026-10-18: *"the difference is that
+  off of 17 there's the rnav segment to RUBRB then vector to join."* Off Runway 17 they fly heading
+  **169.5** to **RUBRB at or above 3,500**, then vectors (`FM`) to join the common route; off any
+  other runway they are vectored to join at the first fix, **ITZME** or **MANCY**, like the other
+  seven. That Runway 17 segment is the only runway transition CIFP codes for them, and **this file
+  read it as "Runway 17 only" until the owner said otherwise** — which also answers issue #61's
+  questions about whether they are assigned (they are) and how an MSP departure goes southwest
+  (SNOWZ1, off any runway).
 - **KBREW and ZMBRO are names carried over, not routes.** KBREW1 starts at HRBEK (KBREW2 started
   at the GEP VOR) and transitions to KEETN (was FAR); ZMBRO1 starts at JEDET (ZMBRO7 at the MSP
   VOR) and transitions to BRIBE (was ODI).
-- **Nothing in the MSP set heads southwest except SNOWZ1**, which is Runway 17 only. DUHCK1 goes
-  that way and is coded at the satellites alone. How an MSP departure in the old ORSKY/SCHEP
-  direction is cleared is a facility question (issue #61).
+- **Southwest off MSP is SNOWZ1** — the old ORSKY/SCHEP direction — off any runway. DUHCK1 goes
+  that way too and is coded at the satellites alone.
 
 ### The SIDs, with their transitions
 
@@ -66,10 +70,10 @@ at-or-above crossing CIFP codes at that fix.
 |---|---|---|---|---|
 | **BITEZ1** | HHOBA ≥ 4,000 | HHOBA · BITEZ | **DKOTA**: SKITO · TICKK · HHCEE → DKOTA · **LEINY**: SKITO · TICKK · HHCEE → LEINY · **SMERF**: ZOGAP · PAGOZ → SMERF | MSP, ANE, FCM, STP |
 | **BUNYN1** | JBUGG ≥ 4,000 | JBUGG · BUNYN | **DLH**: BAYBB → JAYYJ · DLH · **KVUSI**: GPERS → JERAH · KVUSI | MSP, ANE, FCM, STP |
-| **HTDSH1** | **Runway 17 only** — heading 169.5, RUBRB ≥ 3,500, vectors; ITZME ≥ 3,500 | ITZME · HTDSH | **ALO**: TOTTZ · CORDY · FOOLS → EXTEE · ALO · **BRIBE**: JEDET · ZMBRO → PEKTE · BRIBE · **OANNA**: TOTTZ · CORDY · FOOLS → ELMRE · OANNA · **OHHMY**: TOTTZ · CORDY · FOOLS → OHHMY · **ZZIPR**: TOTTZ · CORDY · FOOLS → ZZIPR | MSP only |
+| **HTDSH1** | ITZME ≥ 3,500 — off **17**: heading 169.5, RUBRB ≥ 3,500, vectors to join | ITZME · HTDSH | **ALO**: TOTTZ · CORDY · FOOLS → EXTEE · ALO · **BRIBE**: JEDET · ZMBRO → PEKTE · BRIBE · **OANNA**: TOTTZ · CORDY · FOOLS → ELMRE · OANNA · **OHHMY**: TOTTZ · CORDY · FOOLS → OHHMY · **ZZIPR**: TOTTZ · CORDY · FOOLS → ZZIPR | MSP only |
 | **KBREW1** | HRBEK ≥ 5,000 | HRBEK · HOMUR · KBREW | **KEETN**: → KEETN | MSP, ANE, FCM, STP |
 | **NRTHN1** | SIEDL ≥ 4,200 | SIEDL · NRTHN | **AROND**: PRRCH · WAHLI → CUSAY · ENNDD · AROND · **TTOWN**: PIIKE · DWIYT → WLSTN · TYTEL · TTOWN | MSP, ANE, FCM, STP |
-| **SNOWZ1** | **Runway 17 only** — heading 169.5, RUBRB ≥ 3,500, vectors; MANCY ≥ 4,000 | MANCY · SNOWZ | **DABOY**: SLUSH · PLOWW · PEDLN · HSTIN → YUPER · DABOY · **ZZEEE**: SLUSH · PLOWW · PEDLN · HSTIN → MDIAN · BBERD · ZZEEE · **ISTIQ**: SLALM · MOGLL · SLAYR → SMTHA · TEYOU · ISTIQ · **LLUKY**: SLALM · MOGLL · SLAYR → SMTHA · TEYOU · LLUKY · **SMTHA**: SLALM · MOGLL · SLAYR → SMTHA | MSP only |
+| **SNOWZ1** | MANCY ≥ 4,000 — off **17**: heading 169.5, RUBRB ≥ 3,500, vectors to join | MANCY · SNOWZ | **DABOY**: SLUSH · PLOWW · PEDLN · HSTIN → YUPER · DABOY · **ZZEEE**: SLUSH · PLOWW · PEDLN · HSTIN → MDIAN · BBERD · ZZEEE · **ISTIQ**: SLALM · MOGLL · SLAYR → SMTHA · TEYOU · ISTIQ · **LLUKY**: SLALM · MOGLL · SLAYR → SMTHA · TEYOU · LLUKY · **SMTHA**: SLALM · MOGLL · SLAYR → SMTHA | MSP only |
 | **SNUPE1** | PNUTZ ≥ 4,000 | PNUTZ · SNUPE | **DLL**: WDSTK → DLL | MSP, ANE, FCM, STP |
 | **TOTTZ1** | HTDSH ≥ 3,900 | HTDSH · TOTTZ | **ALO**: CORDY · FOOLS → EXTEE · ALO · **FOOLS**: CORDY · FOOLS · **OANNA**: CORDY · FOOLS → ELMRE · OANNA · **OHHMY**: CORDY · FOOLS → OHHMY · **ZZIPR**: CORDY · FOOLS → ZZIPR | MSP, ANE, FCM, STP |
 | **ZMBRO1** | JEDET ≥ 4,000 | JEDET · ZMBRO | **BRIBE**: → PEKTE · BRIBE | MSP, ANE, FCM, STP |
@@ -146,7 +150,7 @@ revision number is said as a word: *BITEZ ONE departure*.
 ## Satellite departures — SID eligibility
 
 - **STP, ANE, FCM — eight SIDs each in CIFP 261029, with identical legs:** BITEZ1, BUNYN1, DUHCK1,
-  KBREW1, NRTHN1, SNUPE1, TOTTZ1, ZMBRO1 — the MSP set without the two Runway 17 SIDs, plus DUHCK1.
+  KBREW1, NRTHN1, SNUPE1, TOTTZ1, ZMBRO1 — the MSP set without HTDSH1 and SNOWZ1, plus DUHCK1.
 - **MIC has no SIDs** in either cycle — MIC IFR departures are **radar-vectored** (tower/CD assigns heading + altitude; satellite/departure works the climb-out). (Michael, stated.)
 - **LVN** has no SID in CIFP 261029 either; the outlying fields are not specified — confirm before assuming.
 - **The owner's rule for the retired set** — *STP, ANE and FCM may fly the MSP SIDs except LEINY* —

@@ -898,13 +898,20 @@ function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
    names it, and a banner says so on every page until the day.
 
    NINE SIDS, ALL RNAV, AND NONE OF THEM STARTS AT THE MSP VOR — which CIFP
-   261029 codes as a DME only. Seven begin at a first fix with an at-or-above
-   crossing and carry no runway transition at all, so the climb-out to that
-   fix is not coded. Two, HTDSH1 and SNOWZ1, have a Runway 17 transition and
-   nothing else: heading 169.5 to RUBRB at or above 3,500, then vectors. So
-   every track below starts at the field, and the leg from there to the first
-   coded fix is a STAND-IN drawn straight, not a procedure — departure
-   dispersal, a tower function, decides the real first turn, as it always has.
+   261029 codes as a DME only. Every one begins at a first fix with an
+   at-or-above crossing, and the climb-out to that fix is not coded. So every
+   track below starts at the field, and the leg from there to the first coded
+   fix is a STAND-IN drawn straight, not a procedure — departure dispersal, a
+   tower function, decides the real first turn, as it always has.
+
+   HTDSH1 AND SNOWZ1 ARE VALID OFF EVERY RUNWAY — owner, 2026-10-18: "the
+   difference is that off of 17 there's the rnav segment to RUBRB then vector
+   to join." Their Runway 17 transition (heading 169.5, RUBRB at or above
+   3,500, then vectors) is the only runway transition CIFP codes for them, and
+   it was read as "Runway 17 only" until the owner said otherwise. So DEPS
+   holds the any-runway track — vectors to join at ITZME or MANCY, like the
+   other seven — and DEPS17 the one off 17, through RUBRB; depTrackFor() picks
+   by the strip's departure runway.
 
    MAPPED TO 80 NM — owner, 2026-10-14: map only the fixes within 80 NM of MSP.
    A transition is kept BY NAME even when none of its own fixes fall inside
@@ -928,23 +935,23 @@ function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
 var SID_SRC = 'CIFP 261029 — ARINC 424 PD records, decoded 2026-10-14';
 /* generated from CIFP 261029 — every fix within 80 NM of MSP that the set passes */
 var SID_SET = {
- BITEZ1:{rw17:false, rwy:[], common:['HHOBA','BITEZ'], aa:{HHOBA:4000},
+ BITEZ1:{rwy:[], common:['HHOBA','BITEZ'], aa:{HHOBA:4000},
    trans:{DKOTA:['SKITO','TICKK','HHCEE'], LEINY:['SKITO','TICKK','HHCEE'], SMERF:['ZOGAP','PAGOZ']}},
- BUNYN1:{rw17:false, rwy:[], common:['JBUGG','BUNYN'], aa:{JBUGG:4000},
+ BUNYN1:{rwy:[], common:['JBUGG','BUNYN'], aa:{JBUGG:4000},
    trans:{DLH:['BAYBB'], KVUSI:['GPERS']}},
- HTDSH1:{rw17:true, rwy:['RUBRB'], common:['ITZME','HTDSH'], aa:{ITZME:3500, RUBRB:3500},
+ HTDSH1:{rwy:['RUBRB'], common:['ITZME','HTDSH'], aa:{ITZME:3500, RUBRB:3500},
    trans:{ALO:['TOTTZ','CORDY','FOOLS'], BRIBE:['JEDET','ZMBRO'], OANNA:['TOTTZ','CORDY','FOOLS'], OHHMY:['TOTTZ','CORDY','FOOLS'], ZZIPR:['TOTTZ','CORDY','FOOLS']}},
- KBREW1:{rw17:false, rwy:[], common:['HRBEK','HOMUR','KBREW'], aa:{HRBEK:5000},
+ KBREW1:{rwy:[], common:['HRBEK','HOMUR','KBREW'], aa:{HRBEK:5000},
    trans:{KEETN:[]}},
- NRTHN1:{rw17:false, rwy:[], common:['SIEDL','NRTHN'], aa:{SIEDL:4200},
+ NRTHN1:{rwy:[], common:['SIEDL','NRTHN'], aa:{SIEDL:4200},
    trans:{AROND:['PRRCH','WAHLI'], TTOWN:['PIIKE','DWIYT']}},
- SNOWZ1:{rw17:true, rwy:['RUBRB'], common:['MANCY','SNOWZ'], aa:{MANCY:4000, RUBRB:3500},
+ SNOWZ1:{rwy:['RUBRB'], common:['MANCY','SNOWZ'], aa:{MANCY:4000, RUBRB:3500},
    trans:{DABOY:['SLUSH','PLOWW','PEDLN','HSTIN'], ISTIQ:['SLALM','MOGLL','SLAYR'], LLUKY:['SLALM','MOGLL','SLAYR'], SMTHA:['SLALM','MOGLL','SLAYR'], ZZEEE:['SLUSH','PLOWW','PEDLN','HSTIN']}},
- SNUPE1:{rw17:false, rwy:[], common:['PNUTZ','SNUPE'], aa:{PNUTZ:4000},
+ SNUPE1:{rwy:[], common:['PNUTZ','SNUPE'], aa:{PNUTZ:4000},
    trans:{DLL:['WDSTK']}},
- TOTTZ1:{rw17:false, rwy:[], common:['HTDSH','TOTTZ'], aa:{HTDSH:3900},
+ TOTTZ1:{rwy:[], common:['HTDSH','TOTTZ'], aa:{HTDSH:3900},
    trans:{ALO:['CORDY','FOOLS'], FOOLS:['CORDY','FOOLS'], OANNA:['CORDY','FOOLS'], OHHMY:['CORDY','FOOLS'], ZZIPR:['CORDY','FOOLS']}},
- ZMBRO1:{rw17:false, rwy:[], common:['JEDET','ZMBRO'], aa:{JEDET:4000},
+ ZMBRO1:{rwy:[], common:['JEDET','ZMBRO'], aa:{JEDET:4000},
    trans:{BRIBE:[]}}
 };
 var SID_FIX = {
@@ -997,24 +1004,37 @@ var SID_FIELDS = {
  KMSP:['BITEZ1','BUNYN1','HTDSH1','KBREW1','NRTHN1','SNOWZ1','SNUPE1','TOTTZ1','ZMBRO1'],
  KANE:SID_SAT, KFCM:SID_SAT, KSTP:SID_SAT, KMIC:[]
 };
-/* The tracks: the field, then the coded procedure — the Runway 17 leg where
-   there is one, the common route, and the transition — as far as 80 NM. */
-var DEPS = {};
+/* The tracks: the field, then the coded procedure — the common route and the
+   transition, as far as 80 NM. DEPS17 adds the Runway 17 segment in front for
+   the two SIDs that code one (`rwy`, RUBRB), and is marked so the scope can
+   say which it is. */
+var DEPS = {}, DEPS17 = {};
+function sidTrack(S, t, with17){
+ var pts=[{f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true}];
+ (with17 ? S.rwy : []).concat(S.common, S.trans[t]).forEach(function(n){
+  var x=SID_FIX[n], p={f:n, lat:x.lat, lon:x.lon};
+  if(S.aa[n]!=null) p.climbAA=S.aa[n];
+  pts.push(p);
+ });
+ return finalize(pts);
+}
 Object.keys(SID_SET).forEach(function(sid){
  var S=SID_SET[sid];
  Object.keys(S.trans).forEach(function(t){
-  var pts=[{f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true}];
-  S.rwy.concat(S.common, S.trans[t]).forEach(function(n){
-   var x=SID_FIX[n], p={f:n, lat:x.lat, lon:x.lon};
-   if(S.aa[n]!=null) p.climbAA=S.aa[n];
-   pts.push(p);
-  });
-  DEPS[sid+'.'+t]=finalize(pts);
+  DEPS[sid+'.'+t]=sidTrack(S, t, false);
+  if(S.rwy.length){ DEPS17[sid+'.'+t]=sidTrack(S, t, true); DEPS17[sid+'.'+t].rw17=true; }
  });
 });
 function sidOf(key){ return String(key||'').split('.')[0]; }
 function transOf(key){ return String(key||'').split('.')[1]||null; }
-function sidRw17(key){ var S=SID_SET[sidOf(key)]; return !!(S && S.rw17); }
+/* true for the two SIDs with a coded Runway 17 segment, HTDSH1 and SNOWZ1 */
+function sidRw17Leg(key){ var S=SID_SET[sidOf(key)]; return !!(S && S.rwy.length); }
+/* The track a departure flies: the Runway 17 segment when it is off 17 and its
+   SID codes one, the any-runway track otherwise — including when the strip
+   names no runway, which is most of them. */
+function depTrackFor(key, rwy){
+ return (String(rwy||'').toUpperCase()==='17' && DEPS17[key]) || DEPS[key] || null;
+}
 /* "BITEZ1.DKOTA" is said "BITEZ ONE": the revision number as a word, the way
    the procedure is named on the radio. The name itself is written as-is — no
    spoken form is known for any of the new ones but KBREW and ZMBRO
@@ -1854,7 +1874,7 @@ function mkAc(o){
  var role = o.role || 'arrival';
  var rad = normRadar(o.radar, (o.rules==='VFR'?'VFR':'IFR'), role);
  var rs  = RADAR_STATES[rad] || RADAR_STATES.established;
- var route = role==='departure' ? DEPS[o.sid]
+ var route = role==='departure' ? depTrackFor(o.sid, o.depRwy)
            : role==='overflight' ? overflightRoute(o.entry||{r:180,d:38}, o.exit||{r:0,d:38})
            : routeFor(o);
  /* `|| null` rather than bare: in a configuration Table 2 does not name,
@@ -3074,16 +3094,21 @@ function fixDot(p, big){ return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFix
    printing over each other, and run away from the field so the two BUNYN1
    labels, a few miles apart at the top of the scope, do not collide.
    Shared with the builder's preview through DD. */
-function sidDrawGroups(keys){
+/* Takes keys, which draw the any-runway track, or {key, route} items, which
+   draw the route given — what a tracked departure is actually flying, so one
+   off 17 shows its RUBRB segment. */
+function sidDrawGroups(items){
  var by={}, out=[];
- keys.forEach(function(k){
-  var r=DEPS[k]; if(!r) return;
+ items.forEach(function(it){
+  var k=(typeof it==='string') ? it : it.key;
+  var r=(typeof it==='string') ? DEPS[k] : it.route;
+  if(!r) return;
   var sig=r.map(function(p){ return p.f; }).join(' ');
   if(!by[sig]){ by[sig]={route:r, keys:[]}; out.push(by[sig]); }
-  by[sig].keys.push(k);
+  if(by[sig].keys.indexOf(k)<0) by[sig].keys.push(k);
  });
  out.forEach(function(g){
-  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/');
+  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/')+(g.route.rw17?' via RUBRB':'');
   g.anchor=null;
   /* inside the 700 x 560 frame with room left for a second, stacked line */
   for(var i=g.route.length-1;i>0;i--){
@@ -3092,6 +3117,20 @@ function sidDrawGroups(keys){
   }
  });
  return out;
+}
+/* The Runway 17 segment HTDSH1 and SNOWZ1 code — field, RUBRB, then their
+   first common fix — drawn finer than a track, once per SID, and named once at
+   RUBRB. Off any other runway those two are vectored straight to that fix. */
+function sidRw17Svg(opacity){
+ var s='', seen={}, rubrb=null;
+ Object.keys(DEPS17).forEach(function(k){
+  var sid=sidOf(k); if(seen[sid]) return; seen[sid]=1;
+  var r=DEPS17[k], seg=r.slice(0,3);
+  rubrb=r[1];
+  s+='<polyline points="'+seg.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5" stroke-dasharray="1 3"/>';
+ });
+ if(rubrb) s+='<text x="'+(rubrb.x-7).toFixed(1)+'" y="'+(rubrb.y+4).toFixed(1)+'" text-anchor="end" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">RUBRB · off 17</text>';
+ return s;
 }
 function sidLabelSvg(groups, opacity){
  var used={}, s='';
@@ -3180,7 +3219,7 @@ function scopeSvg(){
  var wantStar= (LAYERS==='stars'||LAYERS==='both') ? 'all' : (LAYERS==='off' ? 'none' : 'tracked');
  var sidsUp={}, gatesUp={};
  sim.ac.forEach(function(a){
-  if(a.role==='departure'&&a.sid) sidsUp[a.sid]=1;
+  if(a.role==='departure'&&a.sid&&a.route) sidsUp[a.sid+'|'+(a.route.rw17?'17':'')]={key:a.sid, route:a.route};
   /* DRAW THE LADDER THE AIRCRAFT IS ACTUALLY ON, which is not always the
      Table 2 one — a strip can arrive on any published transition for its gate
      (LOA 5.b(b)). ROUTES holds the flow's default and is what "all STARs"
@@ -3189,7 +3228,8 @@ function scopeSvg(){
   if((a.role||'arrival')==='arrival'&&a.gate&&a.route)
    gatesUp[a.gate+(a.rwy?('/'+a.rwy):'')]={route:a.route};
  });
- var sidKeys = wantSid==='all' ? Object.keys(DEPS) : (wantSid==='tracked' ? Object.keys(sidsUp) : []);
+ var sidKeys = wantSid==='all' ? Object.keys(DEPS)
+   : (wantSid==='tracked' ? Object.keys(sidsUp).map(function(k){ return sidsUp[k]; }) : []);
  /* "all STARs" is the flow's Table 2 set; "tracked" is what is being flown. */
  var starDraw = wantStar==='all'
    ? Object.keys(ROUTES).map(function(k){ return ROUTES[k]; })
@@ -3203,6 +3243,9 @@ function scopeSvg(){
   s+='<polyline points="'+g.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
  });
  s+=sidLabelSvg(sidGroups, 0.8);
+ /* with every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
+    too, so the off-17 shape can be learned alongside the any-runway one */
+ if(wantSid==='all') s+=sidRw17Svg(0.8);
  /* the 25 DME release ring — ZMP-M98 LOA 4.c */
  if(sidKeys.length){
   s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(DEP_RELEASE.dme*SC).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 5"/>';
@@ -3596,7 +3639,8 @@ window.DD = {
  sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
  SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC,
  SID_RETIRED_KEYS:SID_RETIRED_KEYS, sidRetired:sidRetired,
- sidOf:sidOf, transOf:transOf, sidRw17:sidRw17, sidSpoken:sidSpoken,
+ sidOf:sidOf, transOf:transOf, sidRw17Leg:sidRw17Leg, sidSpoken:sidSpoken,
+ DEPS17:DEPS17, depTrackFor:depTrackFor, sidRw17Svg:sidRw17Svg,
  sidDrawGroups:sidDrawGroups, sidLabelSvg:sidLabelSvg,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
@@ -5050,18 +5094,13 @@ function validate(rec){
      errs.push(tag+': '+a.sid+' is not a SID this deck carries. The '+DD.SID_CHANGE.cycle+' set is '+DD.sidsCarried().join(', ')+', each filed with its transition — '+DEF_SID+', for one.');
    }
    else {
-    var dt=DD.DEPS[a.sid].total;
+    /* the track it will actually fly — through RUBRB off 17 for HTDSH1 and
+       SNOWZ1, which are valid off every runway (owner, 2026-10-18) */
+    var dt=DD.depTrackFor(a.sid, a.depRwy).total;
     if(!(a.fromStart>=0)) errs.push(tag+': distance from MSP must be a number.');
     else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are mapped to 80 NM from MSP).');
     else if(a.fromStart>60) warns.push(tag+': starts '+a.fromStart+' NM out, beyond the 60 NM join limit M98 takes a departure to (ZMP-M98 LOA 4.f).');
     else if(a.fromStart>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM, already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
-    /* HTDSH1 and SNOWZ1 are coded off Runway 17 and nothing else */
-    if(DD.sidRw17(a.sid)){
-     if(a.depRwy && a.depRwy!=='17')
-      errs.push(tag+': '+DD.sidOf(a.sid)+' has a Runway 17 transition and no other ('+DD.SID_SRC+'), so a departure off '+a.depRwy+' cannot be on it.');
-     else
-      warns.push(tag+': '+DD.sidOf(a.sid)+' is a Runway 17 SID. Whether M98 assigns it is an open question — the Runway 17 SIDs it replaces, HSTIN6, MEDOW5 and SLAYR4, never were (issue #'+DD.SID_CHANGE.issue+').');
-    }
    }
    if(a.alt>=DD.DEP_RELEASE.alt) warns.push(tag+': starts at '+DD.fmtAlt(a.alt)+', at or above the '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' release trigger — the release is already due on the first tick.');
   }
@@ -5480,11 +5519,11 @@ function refreshLog(){
 /* ---------- 11. Editor state ---------- */
 var draft = null;
 var SIDS = Object.keys(DD.DEPS);
-/* The generator leaves out the two Runway 17 SIDs: whether M98 assigns them is
-   open (issue #61), and they need a Runway 17 departure the generator does not
-   set. They stay in the picker, where the validator says both things. */
-var SIDS_GEN = SIDS.filter(function(k){ return !DD.sidRw17(k); });
-var DEF_SID = SIDS_GEN[0];
+/* Every SID is valid off every runway (owner, 2026-10-18), so the generator
+   draws from all nine. It sets no departure runway, so HTDSH1 and SNOWZ1 fly
+   their any-runway track; one off 17 is built in the editor. */
+var SIDS_GEN = SIDS;
+var DEF_SID = SIDS[0];
 var ROLES = [
  {id:'arrival',    label:'arrival',    hint:'Flies a published STAR ladder to a runway transition and gets handed to Arrival at the floor.'},
  {id:'departure',  label:'departure',  hint:'Flies its SID out from the field — the 2026-10-29 set, filed with its transition. Released to Center at 25 NM from the MSP DME or leaving 11,000 — ZMP-M98 LOA 4.c, whichever comes first.'},
@@ -5503,7 +5542,7 @@ function roleOf(a){ return a.role||'arrival'; }
 function entryBearing(a){
  var role=roleOf(a);
  if(role==='overflight') return ((a.entryR%360)+360)%360;
- var r = (role==='departure') ? DD.DEPS[a.sid] : DD.ROUTES[a.gate];
+ var r = (role==='departure') ? DD.depTrackFor(a.sid, a.depRwy) : DD.ROUTES[a.gate];
  if(!r) return null;
  var p = (role==='departure') ? r[r.length-1] : r[0];
  return (Math.atan2(p.e, p.n)*180/Math.PI+360)%360;
@@ -5621,7 +5660,7 @@ function readEditor(){
 function rowContext(a){
  var role=roleOf(a);
  if(role==='departure'){
-  var dr=DD.DEPS[a.sid];
+  var dr=DD.depTrackFor(a.sid, a.depRwy);
   if(!dr) return '';
   return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out · released to Center by '
    +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
@@ -5741,7 +5780,7 @@ function acRowHtml(a,i){
    +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'
      /* grouped by SID, one option per transition, the value filed as written */
      +DD.sidsCarried().map(function(sid){
-       return '<optgroup label="'+sid+(DD.SID_SET[sid].rw17?' — Runway 17 only':'')+'">'
+       return '<optgroup label="'+sid+(DD.SID_SET[sid].rwy.length?' — via RUBRB off 17':'')+'">'
          +SIDS.filter(function(k){ return DD.sidOf(k)===sid; }).map(function(k){
            return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+sid+' · '+DD.transOf(k)+'</option>';
          }).join('')+'</optgroup>';
@@ -5860,7 +5899,8 @@ function previewSvg(rec){
  var gatesUsed={}, sidsUsed={};
  (rec.ac||[]).forEach(function(a){
   var role=roleOf(a);
-  if(role==='departure'){ if(a.sid) sidsUsed[a.sid]=1; }
+  /* the track each departure will fly — through RUBRB when it is off 17 */
+  if(role==='departure'){ var dtr=DD.depTrackFor(a.sid, a.depRwy); if(dtr) sidsUsed[a.sid+'|'+(dtr.rw17?'17':'')]={key:a.sid, route:dtr}; }
   else if(role==='arrival'){ if(a.gate) gatesUsed[a.gate]=1; }
  });
  Object.keys(gatesUsed).forEach(function(k){
@@ -5868,7 +5908,7 @@ function previewSvg(rec){
   s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.35"/>';
   s+='<text x="'+(r[0].x+8).toFixed(1)+'" y="'+(r[0].y+14).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
  });
- var sidGroups=DD.sidDrawGroups(Object.keys(sidsUsed));
+ var sidGroups=DD.sidDrawGroups(Object.keys(sidsUsed).map(function(k){ return sidsUsed[k]; }));
  sidGroups.forEach(function(g){
   s+='<polyline points="'+g.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
  });
@@ -5904,7 +5944,7 @@ function posAt(gate, dist){ return ptOn(routeOf(gate), dist); }
 /* the route a built strip will actually fly, and where on it it starts */
 function routeFor(a){
  var role=roleOf(a);
- if(role==='departure') return DD.DEPS[a.sid]||null;
+ if(role==='departure') return DD.depTrackFor(a.sid, a.depRwy);
  if(role==='overflight') return DD.overflightRoute({r:a.entryR,d:a.entryD},{r:a.exitR,d:a.exitD});
  var base=DD.ROUTES[a.gate];
  /* Same rule as the deck's routeFor: a runway on the strip wins over the

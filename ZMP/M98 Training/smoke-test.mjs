@@ -472,9 +472,28 @@ try {
         fail('SID fix distance', k + '/' + p.f + ' plots at ' + d.toFixed(1) + ', the reference says ' + SID_DME[p.f]);
     }));
     ok('every SID fix plots at the distance the reference gives it');
-    assert('HTDSH1 and SNOWZ1 are the Runway 17 SIDs, and both start through RUBRB at or above 3,500',
-      Object.keys(SS).filter(s => SS[s].rw17).join() === 'HTDSH1,SNOWZ1'
-      && keys.filter(k => globalThis.DD.sidRw17(k)).every(k => DP[k][1].f === 'RUBRB' && DP[k][1].climbAA === 3500));
+    /* HTDSH1 and SNOWZ1 are valid off every runway (owner, 2026-10-18); off 17
+       they fly the coded RNAV segment to RUBRB, then vectors to join. Until that
+       ruling the deck read their Runway 17 transition as "Runway 17 only". */
+    const D17 = globalThis.DD.DEPS17;
+    assert('HTDSH1 and SNOWZ1 are the two SIDs with a Runway 17 segment',
+      Object.keys(SS).filter(s => globalThis.DD.sidRw17Leg(s)).join() === 'HTDSH1,SNOWZ1'
+      && Object.keys(D17).every(k => /^(HTDSH1|SNOWZ1)\./.test(k)) && Object.keys(D17).length === 10);
+    assert('off any runway they are vectored to join at ITZME or MANCY, like the other seven',
+      keys.filter(k => /^HTDSH1\./.test(k)).every(k => DP[k][1].f === 'ITZME' && DP[k][1].climbAA === 3500)
+      && keys.filter(k => /^SNOWZ1\./.test(k)).every(k => DP[k][1].f === 'MANCY' && DP[k][1].climbAA === 4000)
+      && keys.every(k => DP[k].every(p => p.f !== 'RUBRB')));
+    assert('off 17 they fly RUBRB at or above 3,500 first, then the same common route',
+      Object.keys(D17).every(k => D17[k].rw17 === true && D17[k][1].f === 'RUBRB' && D17[k][1].climbAA === 3500
+        && D17[k].slice(2).map(p => p.f).join() === DP[k].slice(1).map(p => p.f).join()));
+    assert('depTrackFor picks the runway: 17 through RUBRB, anything else or nothing straight to the SID',
+      globalThis.DD.depTrackFor('HTDSH1.ALO', '17') === D17['HTDSH1.ALO']
+      && globalThis.DD.depTrackFor('HTDSH1.ALO', '30L') === DP['HTDSH1.ALO']
+      && globalThis.DD.depTrackFor('HTDSH1.ALO', null) === DP['HTDSH1.ALO']
+      && globalThis.DD.depTrackFor('BITEZ1.DKOTA', '17') === DP['BITEZ1.DKOTA']);
+    assert('and an aircraft built off 17 is on the RUBRB track from the first tick',
+      globalThis.DD.mkAc({cs:'D17', type:'B738', role:'departure', sid:'SNOWZ1.ISTIQ', depRwy:'17', fromStart:2, alt:3000, ias:210}).route[1].f === 'RUBRB'
+      && globalThis.DD.mkAc({cs:'D30', type:'B738', role:'departure', sid:'SNOWZ1.ISTIQ', depRwy:'30L', fromStart:2, alt:3000, ias:210}).route[1].f === 'MANCY');
     assert('the other seven start at a first fix of their own, with its at-or-above crossing',
       DP['BITEZ1.DKOTA'][1].f === 'HHOBA' && DP['BITEZ1.DKOTA'][1].climbAA === 4000
       && DP['KBREW1.KEETN'][1].f === 'HRBEK' && DP['KBREW1.KEETN'][1].climbAA === 5000
@@ -638,6 +657,16 @@ try {
      shaped is drawn now. The harness failed here from 5d995f6 until 2026-10-14. */
   assert('and "off" now draws no polyline at all, the RST line included (issue #60)',
     lOffAll === 0, lOffAll);
+  /* With every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
+     too — field, RUBRB, first fix — finer than a track and named once. */
+  {
+    const seg17 = () => (scope().match(/<polyline[^>]*stroke-dasharray="1 3"/g) || []).length;
+    globalThis.ddLayers('sids');
+    const s17 = seg17(), named = scope().includes('RUBRB · off 17');
+    globalThis.ddLayers('tracked');
+    assert('all SIDs also draws the two Runway 17 segments, once each, named at RUBRB',
+      s17 === 2 && named && seg17() === 0, s17 + '/' + named);
+  }
   globalThis.ddLayers('tracked');
 
   /* ============ 3c-b. What the scope actually DRAWS — issue #16 ============
@@ -1778,16 +1807,14 @@ try {
       retired.errors.join(' | '));
     assert('a name that was never a SID is refused differently',
       dv({ sid: 'NOSUCH1.FIX' }).errors.some(e => e.includes('is not a SID this deck carries')));
-    const rw17off12 = dv({ sid: 'HTDSH1.ALO', depRwy: '12R' });
-    assert('a Runway 17 SID off another runway is refused — CIFP 261029 codes Runway 17 only',
-      rw17off12.errors.some(e => e.includes('has a Runway 17 transition and no other')), rw17off12.errors.join(' | '));
-    const rw17off17 = dv({ sid: 'SNOWZ1.ISTIQ', depRwy: '17' });
-    /* the fixture is a bare strip, so other rules fire on it too; only what the
-       SID rules say is under test here */
-    assert('off Runway 17 it is allowed, with the open assignability question said out loud',
-      !rw17off17.errors.some(e => /SID|Runway 17/.test(e))
-      && rw17off17.warnings.some(w => w.includes('Whether M98 assigns it is an open question')),
-      rw17off17.errors.concat(rw17off17.warnings).join(' | '));
+    /* HTDSH1 and SNOWZ1 are valid off every runway (owner, 2026-10-18). The
+       fixture is a bare strip, so other rules fire on it too; only what the SID
+       rules say is under test here. */
+    const sidSays = v => v.errors.concat(v.warnings).filter(x => /SID|Runway 17|RUBRB/.test(x));
+    const off12 = dv({ sid: 'HTDSH1.ALO', depRwy: '12R' }), off17 = dv({ sid: 'SNOWZ1.ISTIQ', depRwy: '17' });
+    assert('HTDSH1 off 12R and SNOWZ1 off 17 are both ordinary — nothing said about the SID',
+      sidSays(off12).length === 0 && sidSays(off17).length === 0,
+      sidSays(off12).concat(sidSays(off17)).join(' | '));
     const plain = dv({ sid: 'BITEZ1.DKOTA', depRwy: '30L' });
     assert('an ordinary SID from any runway raises nothing about the SID',
       !plain.errors.concat(plain.warnings).some(x => /SID|Runway 17/.test(x)), plain.errors.concat(plain.warnings).join(' | '));
@@ -1796,9 +1823,15 @@ try {
     const sat = dv({ sid: 'BITEZ1.DKOTA', dep: 'KSTP' });
     assert('a satellite departure is still refused, and names the SIDs that field has',
       sat.errors.some(e => e.includes('engine flies departures off MSP only') && e.includes('DUHCK1')), sat.errors.join(' | '));
-    assert('the generator never picks a Runway 17 SID',
-      [1, 2, 3, 4, 5, 6, 7, 8].every(seed => globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 2, deps: 4 })
-        .ac.filter(a => a.role === 'departure').every(a => !globalThis.DD.sidRw17(a.sid))));
+    /* the generator draws from all nine now, HTDSH1 and SNOWZ1 included */
+    {
+      const picked = {};
+      for (let seed = 1; seed <= 40; seed++)
+        globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 2, deps: 4 })
+          .ac.filter(a => a.role === 'departure').forEach(a => { picked[globalThis.DD.sidOf(a.sid)] = 1; });
+      assert('the generator draws on all nine SIDs, the two with a Runway 17 segment among them',
+        Object.keys(picked).sort().join() === Object.keys(globalThis.DD.SID_SET).sort().join(), Object.keys(picked).sort().join());
+    }
     /* a stored drill naming a retired SID is not flown — and is not put on an arrival ladder */
     globalThis.DD.SCENARIOS.push({id:'oldsid', name:'Old SID', frame:'test', altim:'2980', brief:'',
       ac:() => [
