@@ -2,6 +2,8 @@
 
 Checked **2026-10-18**; the SimAware outline was put into the three decks on the owner's decision of **2026-10-19**. Read root `claude_Community_Geometry_Sources.md` first for what each source is and how far it may be trusted. **This file is the ZID result: one lateral outline per facility, no altitudes, no sector split.**
 
+**Added 2026-10-19:** the Indy Center tools site (`tools.flyindycenter.com/api/areas`) carries terminal outlines that are the same polygons as these at IND and SDF (worst vertex-to-edge distance 0.00 NM) and within 0.07 NM at CVG. That is one polygon seen twice, not a second source, and it does not check the outline against the real boundary. See `claude_ZID_ControllerTools_Reference.md` section 2.
+
 ## 1. Result, in one table
 
 | Source | IND | SDF | CVG | Used |

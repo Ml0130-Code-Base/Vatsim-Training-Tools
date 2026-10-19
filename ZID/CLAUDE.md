@@ -61,6 +61,12 @@ Root `CLAUDE.md` section 10. Every one was checked; the empty ones are recorded.
    commits, per-field distances and the vertices are in `_shared/claude_ZID_Sector_Geometry_Reference.md`.
 5. **The vATIS profile** (`_vatis/`) - serial 2026081300, from `github.com/Indy-Center/vatisfiles`. **The owner's
    downloaded copy was a 257-byte stub with `stations: []`;** the real profile is fetched from its own `updateUrl`.
+6. **The Indy Center tools site** (`tools.flyindycenter.com`, source `Indy-Center/controller-tools`, no licence) - checked
+   2026-10-19, **recorded and not wired in.** Its terminal outlines for IND and SDF are vertex-for-vertex the SimAware
+   polygons (CVG within 0.07 NM), so they are one polygon rather than two sources, and say nothing about accuracy. Its 27
+   Center sector frequencies all agree with vNAS. Its 594 restrictions are 94% one bulk import of 2025-01-08 and
+   disagree with the SDF SOP on one row (the MAUDD split, SDF to LEX), carried as a conflict. Detail, md5s and the pull
+   recipe in `_shared/claude_ZID_ControllerTools_Reference.md`.
 
 ## What the three tools carry
 
