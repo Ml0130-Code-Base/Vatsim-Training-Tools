@@ -130,11 +130,12 @@
 
 /* ---------- 1. Data ---------- */
 var FAC = {
- attribution:["Indianapolis (IND) ATCT SOP, Indy Center wiki (wiki.flyindycenter.com), saved 2026-10-18; last changelog entry 2026-05-28. The wiki is behind a VATSIM login. The SOP text is not committed to the repository; the reference markdown is a transcription.","CIFP 261001, FAA Coded Instrument Flight Procedures, public domain; cycle 261029 is identical at every field this deck works.","vNAS facility record for ZID, data-api.vnas.vatsim.net/api/artccs/ZID, lastUpdatedAt 2026-10-17T02:35:43Z.","vATIS profile ZID ARTCC (All), github.com/Indy-Center/vatisfiles, updateSerial 2026081300.","No sector geometry from VATGlasses (no ZID dataset). SimAware IND footprint exists and is NOT used; it publishes no licence."],
+ attribution:["Indianapolis (IND) ATCT SOP, Indy Center wiki (wiki.flyindycenter.com), saved 2026-10-18; last changelog entry 2026-05-28. The wiki is behind a VATSIM login. The SOP text is not committed to the repository; the reference markdown is a transcription.","CIFP 261001, FAA Coded Instrument Flight Procedures, public domain; cycle 261029 is identical at every field this deck works.","vNAS facility record for ZID, data-api.vnas.vatsim.net/api/artccs/ZID, lastUpdatedAt 2026-10-17T02:35:43Z.","vATIS profile ZID ARTCC (All), github.com/Indy-Center/vatisfiles, updateSerial 2026081300.","Lateral outline: SimAware TRACON Project (github.com/VATSIM-Radar/simaware-tracon-project), Boundaries/IND/IND.json. It publishes no licence; every merge is gated on a verified Region, Division or ARTCC staff account. Used on the owner decision of 2026-10-19. No sector geometry: VATGlasses has no ZID dataset."],
  cifp:{"cycle":"261001","next":"261029"},
  configs:[{"dep":["5L","5R"],"id":"5","land":["5L","5R"],"name":"Runway 5 (northeast) operation","note":"vATIS: PARL ILS RWY 5L AND ILS RWY 5R APCH IN USE. DEPG RWYS 5L, 5R. The SOP lists no runways for a configuration by name.","src":"IND SOP 4 and 5 (\"Northeast (Runway 5) Operation\"); vATIS preset 5L/R; vNAS plan R05"},{"dep":["23L","23R"],"id":"23","land":["23L","23R"],"name":"Runway 23 (southwest) operation","note":"vATIS: PARL ILS RWY 23L AND ILS RWY 23R APCH IN USE. DEPG RWYS 23L, 23R.","src":"IND SOP 4 and 5 (\"Southwest (Runway 23) Operation\"); vATIS preset 23L/R; vNAS plan R23"},{"dep":["14"],"id":"14","land":["14"],"name":"Runway 14 operation","note":"The runways landed and departed are INFERRED from the configuration name: the SOP never lists them and the vATIS preset \"32/14\" names only runway 32. LC must be combined.","src":"IND SOP 6 (\"Runway 14 or 32 configuration\"); vNAS plan R14; no vATIS text names 14"},{"dep":["32"],"id":"32","land":["32"],"name":"Runway 32 operation","note":"vATIS: ILS RWY 32 APCH IN USE. CROSS RUNWAY OPERATIONS MAY BE IN EFFECT. LC must be combined.","src":"IND SOP 6 (\"Runway 14 or 32 configuration\"); vATIS preset 32/14; vNAS plan R32"}],
  configsNote:"The SOP gives no wind rule and no rule for choosing between configurations. The tool therefore ranks them by arithmetic only and picks nothing.",
  configsSrc:"IND SOP 4, 5, 6 and 9 name four configurations by runway; the vATIS profile has three presets; vNAS has four runway plans and three tower plans.",
+ footprint:{"areaSqNm":5689,"bbox":{"e":-85.09167,"n":40.55833,"s":38.8965,"w":-86.975},"id":"IND","licence":"SimAware publishes no licence. Provenance and licence are separate questions: every merge into the project is gated on a verified Region, Division or ARTCC staff account, which is a stricter gate than a spreadsheet of owners, and that is why the outline may be used here on the owner's decision (2026-10-19). Attribution: SimAware TRACON Project, github.com/VATSIM-Radar/simaware-tracon-project.","name":"Indianapolis Approach","rank":"Below the SOP's diagrams, below anything the owner supplies, and below a boundary the facility exports (the CRC video-map GeoJSON or the .sct2). It is a source of record and not a change detector: the file has not changed since 2025-03-27, and a facility revision would only show in a fresh pull. It must never overwrite an owner-supplied boundary.","rings":[[[39.98611,-85.19167],[39.775,-85.225],[39.57889,-85.23389],[39.57806,-85.3175],[39.45556,-85.50028],[39.08333,-85.5],[38.95627,-85.49875],[38.95218,-85.72662],[38.8965,-86.3719],[39,-86.5],[39.29167,-86.87083],[39.38333,-86.9],[39.95417,-86.975],[40,-86.95],[40.07083,-86.91667],[40.16389,-86.86667],[40.225,-86.35],[40.20833,-86.08333],[40.11944,-85.95556],[40.27083,-85.7975],[40.50278,-85.56139],[40.55833,-85.50417],[40.51667,-85.475],[40.43333,-85.31667],[40.3,-85.09167],[40.08306,-85.1575],[40,-85.18583]]],"src":"SimAware TRACON Project, Boundaries/IND/IND.json (repository commit cf9feb3, file last changed 0ff2b54 on 2025-03-27), pulled 2026-10-18. Properties: id IND, name \"Indianapolis Approach\", one polygon, no altitude.","tolerance":"About two miles, a figure established only at M98, where SimAware's footprint agreed with nine owner-verified radial/DME points to within about two miles. It has not been checked against anything at ZID: no owner-verified or facility-exported boundary exists here to check it against. A field within two miles of the edge is inside the footprint's own error.","vertices":27},
  frameNote:"IND frame: seat - configuration - wind - flight category - who else is open - towers open. Frame elements the parent drill format (R90/M98) does not have: the ramp flag (FedEx ramp control open or closed, which changes who a departure calls first) and the LC combine rule (runway 14 or 32 forces LC combined).",
  groups:[{"id":"gen","lede":"IND SOP 1. Equipment, STARS configuration and the LIFT Academy procedures.","title":"General"},{"id":"cd","lede":"IND SOP 3. SIDs, departure frequencies, gates, VFR departures and TDLS.","title":"Clearance delivery"},{"id":"gc","lede":"IND SOP 4 and 5.","title":"Ground and ramp control"},{"id":"lc","lede":"IND SOP 6. Headings, intersections, LUAW and the satellite blocks.","title":"Local control"},{"id":"app","lede":"IND SOP 7. Handoffs to and from other facilities, scratchpads, PAC-P.","title":"Approach control"},{"id":"sat","lede":"IND SOP 7 Satellite IFR Departures.","title":"Satellite airports"},{"id":"ifc","lede":"IND SOP 8. The LOA content is in the SOP; no separate LOA documents were found.","title":"Inter-facility coordination"},{"id":"sec","lede":"IND SOP 9. Text only - the airspace diagrams for each flow are pictures.","title":"Radar sectors"},{"id":"maps","lede":"IND SOP 10.","title":"STARS maps"}],
  id:"IND",
@@ -169,25 +170,25 @@ var FAC = {
   {"cs":"HBE_TWR","f":null,"into":null,"k":"HBE_TWR","kind":"child","name":"Himsel Army Airfield Local Control","seat":false,"sid":null,"tag":null,"tcp":null,"vf":"126.200"}
  ],
  fields:[
-  {"detail":true,"icao":"KIND","name":"Indianapolis Intl","role":"primary","rwys":[{"brg":50,"disp":0,"id":"5L","ils":"IIND 111.75 CAT III","len":11200,"w":150},{"brg":50,"disp":0,"id":"5R","ils":"IOQV 111.15 CAT III","len":10000,"w":150},{"brg":140,"disp":0,"id":"14","ils":"IBJP 110.50 CAT I","len":7278,"w":150},{"brg":230,"disp":0,"id":"23L","ils":"IFVJ 111.15 CAT II","len":10000,"w":150},{"brg":230,"disp":0,"id":"23R","ils":"IUZK 111.75 CAT I","len":11200,"w":150},{"brg":320,"disp":0,"id":"32","ils":"ICOA 110.50 CAT I","len":7278,"w":150}],"src":"vNAS area underlyingAirports; IND SOP 7"},
-  {"detail":false,"icao":"KBAK","name":"Columbus Muni","role":"towered satellite","rwys":[{"brg":48,"disp":0,"id":"5","ils":"","len":6401,"w":150},{"brg":138,"disp":0,"id":"14","ils":"","len":5000,"w":100},{"brg":228,"disp":0,"id":"23","ils":"IBAK 110.70 CAT I","len":6401,"w":150},{"brg":318,"disp":0,"id":"32","ils":"","len":5000,"w":100}],"src":"IND SOP 7 Satellite list; vNAS child tower BAK"},
-  {"detail":false,"icao":"KMIE","name":"Delaware Co Rgnl (Muncie)","role":"towered satellite","rwys":[{"brg":25,"disp":0,"id":"3","ils":"","len":5198,"w":100},{"brg":139,"disp":0,"id":"14","ils":"","len":6500,"w":150},{"brg":205,"disp":0,"id":"21","ils":"","len":5198,"w":100},{"brg":319,"disp":0,"id":"32","ils":"IJNK 109.10 CAT I","len":6500,"w":150}],"src":"IND SOP 7 Satellite list; vNAS child tower MIE"},
-  {"detail":false,"icao":"KAID","name":"Anderson Muni-Darlington Field","role":"towered satellite","rwys":[{"brg":118,"disp":0,"id":"12","ils":"","len":5400,"w":100},{"brg":183,"disp":291,"id":"18","ils":"","len":3399,"w":75},{"brg":298,"disp":80,"id":"30","ils":"IAID 110.10 CAT I","len":5400,"w":100},{"brg":3,"disp":288,"id":"36","ils":"","len":3399,"w":75}],"src":"IND SOP 7 Satellite list; vNAS child tower AID"},
-  {"detail":false,"icao":"KHBE","name":"Himsel AAF (Nineveh)","role":"towered satellite","rwys":[{"brg":180.2,"disp":917,"id":"18","ils":"","len":4039,"w":72},{"brg":0.2,"disp":0,"id":"36","ils":"","len":4039,"w":72}],"src":"IND SOP 7 Satellite list; vNAS child tower HBE"},
-  {"detail":false,"icao":"KMQJ","name":"Indianapolis Rgnl","role":"satellite","rwys":[{"brg":72,"disp":0,"id":"7","ils":"","len":6005,"w":100},{"brg":162,"disp":0,"id":"16","ils":"","len":3902,"w":75},{"brg":252,"disp":0,"id":"25","ils":"IMQJ 108.70 CAT I","len":6005,"w":100},{"brg":342,"disp":0,"id":"34","ils":"","len":3902,"w":75}],"src":"IND SOP 7 Satellite list; SOP 7 Satellite IFR Departures"},
-  {"detail":false,"icao":"KTYQ","name":"Indianapolis Exec","role":"satellite","rwys":[{"brg":182,"disp":0,"id":"18","ils":"","len":7001,"w":100},{"brg":2,"disp":0,"id":"36","ils":"ITYQ 111.30 CAT I","len":7001,"w":100}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KUMP","name":"Indianapolis Metro","role":"satellite","rwys":[{"brg":149,"disp":156,"id":"15","ils":"","len":4004,"w":100},{"brg":329,"disp":0,"id":"33","ils":"","len":4004,"w":100}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KEYE","name":"Eagle Creek Airpark","role":"satellite","rwys":[{"brg":31,"disp":0,"id":"3","ils":"","len":4200,"w":75},{"brg":211,"disp":0,"id":"21","ils":"IEYE 111.50 localizer only, no glide slope","len":4200,"w":75}],"src":"IND SOP 7 Satellite list; SOP 7 Satellite IFR Departures"},
-  {"detail":false,"icao":"KHFY","name":"Indy South Greenwood","role":"satellite","rwys":[{"brg":10,"disp":102,"id":"1","ils":"","len":5102,"w":75},{"brg":190,"disp":100,"id":"19","ils":"","len":5102,"w":75}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KGEZ","name":"Shelbyville Muni","role":"satellite","rwys":[{"brg":9,"disp":0,"id":"1","ils":"","len":5000,"w":100},{"brg":96,"disp":446,"id":"9","ils":"","len":2671,"w":190},{"brg":189,"disp":0,"id":"19","ils":"","len":5000,"w":100},{"brg":276,"disp":289,"id":"27","ils":"","len":2671,"w":190}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KCFJ","name":"Crawfordsville Rgnl","role":"satellite","rwys":[{"brg":47,"disp":0,"id":"5","ils":"","len":5506,"w":75},{"brg":227,"disp":503,"id":"23","ils":"","len":5506,"w":75}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KGPC","name":"Putnam Co Rgnl (Greencastle)","role":"satellite","rwys":[{"brg":184,"disp":0,"id":"18","ils":"","len":5002,"w":100},{"brg":4,"disp":0,"id":"36","ils":"","len":5002,"w":100}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KOVO","name":"North Vernon","role":"satellite","rwys":[{"brg":50,"disp":0,"id":"5","ils":"","len":5002,"w":75},{"brg":155,"disp":0,"id":"15","ils":"","len":2730,"w":50},{"brg":230,"disp":0,"id":"23","ils":"","len":5002,"w":75},{"brg":335,"disp":0,"id":"33","ils":"","len":2730,"w":50}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"KUWL","name":"New Castle Henry Co Marlatt Field","role":"satellite","rwys":[{"brg":96,"disp":0,"id":"10","ils":"","len":4201,"w":75},{"brg":276,"disp":0,"id":"28","ils":"","len":4201,"w":75}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"2R2","name":"Hendricks Co-Gordon Graham Field","role":"satellite","rwys":[{"brg":183,"disp":0,"id":"18","ils":"","len":4400,"w":100},{"brg":3,"disp":0,"id":"36","ils":"","len":4400,"w":100}],"src":"IND SOP 7 Satellite list; SOP 6 Block 2R2"},
-  {"detail":false,"icao":"5I4","name":"Sheridan","role":"satellite","rwys":[{"brg":52,"disp":650,"id":"5","ils":"","len":3760,"w":50},{"brg":88,"disp":0,"id":"9","ils":"","len":3387,"w":88},{"brg":232,"disp":0,"id":"23","ils":"","len":3760,"w":50},{"brg":268,"disp":250,"id":"27","ils":"","len":3387,"w":88}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"I34","name":"Greensburg Muni","role":"satellite","rwys":[{"brg":10,"disp":0,"id":"1","ils":"","len":5406,"w":100},{"brg":190,"disp":0,"id":"19","ils":"","len":5406,"w":100}],"src":"IND SOP 7 Satellite list"},
-  {"detail":false,"icao":"I99","name":"Alexandria","role":"satellite","rwys":[{"brg":91,"disp":195,"id":"9","ils":"","len":2591,"w":60},{"brg":271,"disp":276,"id":"27","ils":"","len":2591,"w":60}],"src":"IND SOP 7 Satellite list"},
+  {"detail":true,"icao":"KIND","ll":[39.71731,-86.29464],"name":"Indianapolis Intl","role":"primary","rwys":[{"brg":50,"disp":0,"id":"5L","ils":"IIND 111.75 CAT III","len":11200,"w":150},{"brg":50,"disp":0,"id":"5R","ils":"IOQV 111.15 CAT III","len":10000,"w":150},{"brg":140,"disp":0,"id":"14","ils":"IBJP 110.50 CAT I","len":7278,"w":150},{"brg":230,"disp":0,"id":"23L","ils":"IFVJ 111.15 CAT II","len":10000,"w":150},{"brg":230,"disp":0,"id":"23R","ils":"IUZK 111.75 CAT I","len":11200,"w":150},{"brg":320,"disp":0,"id":"32","ils":"ICOA 110.50 CAT I","len":7278,"w":150}],"src":"vNAS area underlyingAirports; IND SOP 7"},
+  {"detail":false,"icao":"KBAK","ll":[39.26191,-85.89634],"name":"Columbus Muni","role":"towered satellite","rwys":[{"brg":48,"disp":0,"id":"5","ils":"","len":6401,"w":150},{"brg":138,"disp":0,"id":"14","ils":"","len":5000,"w":100},{"brg":228,"disp":0,"id":"23","ils":"IBAK 110.70 CAT I","len":6401,"w":150},{"brg":318,"disp":0,"id":"32","ils":"","len":5000,"w":100}],"src":"IND SOP 7 Satellite list; vNAS child tower BAK"},
+  {"detail":false,"icao":"KMIE","ll":[40.24247,-85.39575],"name":"Delaware Co Rgnl (Muncie)","role":"towered satellite","rwys":[{"brg":25,"disp":0,"id":"3","ils":"","len":5198,"w":100},{"brg":139,"disp":0,"id":"14","ils":"","len":6500,"w":150},{"brg":205,"disp":0,"id":"21","ils":"","len":5198,"w":100},{"brg":319,"disp":0,"id":"32","ils":"IJNK 109.10 CAT I","len":6500,"w":150}],"src":"IND SOP 7 Satellite list; vNAS child tower MIE"},
+  {"detail":false,"icao":"KAID","ll":[40.10861,-85.613],"name":"Anderson Muni-Darlington Field","role":"towered satellite","rwys":[{"brg":118,"disp":0,"id":"12","ils":"","len":5400,"w":100},{"brg":183,"disp":291,"id":"18","ils":"","len":3399,"w":75},{"brg":298,"disp":80,"id":"30","ils":"IAID 110.10 CAT I","len":5400,"w":100},{"brg":3,"disp":288,"id":"36","ils":"","len":3399,"w":75}],"src":"IND SOP 7 Satellite list; vNAS child tower AID"},
+  {"detail":false,"icao":"KHBE","ll":[39.33926,-86.02978],"name":"Himsel AAF (Nineveh)","role":"towered satellite","rwys":[{"brg":180.2,"disp":917,"id":"18","ils":"","len":4039,"w":72},{"brg":0.2,"disp":0,"id":"36","ils":"","len":4039,"w":72}],"src":"IND SOP 7 Satellite list; vNAS child tower HBE"},
+  {"detail":false,"icao":"KMQJ","ll":[39.84314,-85.89774],"name":"Indianapolis Rgnl","role":"satellite","rwys":[{"brg":72,"disp":0,"id":"7","ils":"","len":6005,"w":100},{"brg":162,"disp":0,"id":"16","ils":"","len":3902,"w":75},{"brg":252,"disp":0,"id":"25","ils":"IMQJ 108.70 CAT I","len":6005,"w":100},{"brg":342,"disp":0,"id":"34","ils":"","len":3902,"w":75}],"src":"IND SOP 7 Satellite list; SOP 7 Satellite IFR Departures"},
+  {"detail":false,"icao":"KTYQ","ll":[40.02861,-86.25141],"name":"Indianapolis Exec","role":"satellite","rwys":[{"brg":182,"disp":0,"id":"18","ils":"","len":7001,"w":100},{"brg":2,"disp":0,"id":"36","ils":"ITYQ 111.30 CAT I","len":7001,"w":100}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KUMP","ll":[39.9354,-86.04507],"name":"Indianapolis Metro","role":"satellite","rwys":[{"brg":149,"disp":156,"id":"15","ils":"","len":4004,"w":100},{"brg":329,"disp":0,"id":"33","ils":"","len":4004,"w":100}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KEYE","ll":[39.83072,-86.29439],"name":"Eagle Creek Airpark","role":"satellite","rwys":[{"brg":31,"disp":0,"id":"3","ils":"","len":4200,"w":75},{"brg":211,"disp":0,"id":"21","ils":"IEYE 111.50 localizer only, no glide slope","len":4200,"w":75}],"src":"IND SOP 7 Satellite list; SOP 7 Satellite IFR Departures"},
+  {"detail":false,"icao":"KHFY","ll":[39.62761,-86.08803],"name":"Indy South Greenwood","role":"satellite","rwys":[{"brg":10,"disp":102,"id":"1","ils":"","len":5102,"w":75},{"brg":190,"disp":100,"id":"19","ils":"","len":5102,"w":75}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KGEZ","ll":[39.58314,-85.80481],"name":"Shelbyville Muni","role":"satellite","rwys":[{"brg":9,"disp":0,"id":"1","ils":"","len":5000,"w":100},{"brg":96,"disp":446,"id":"9","ils":"","len":2671,"w":190},{"brg":189,"disp":0,"id":"19","ils":"","len":5000,"w":100},{"brg":276,"disp":289,"id":"27","ils":"","len":2671,"w":190}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KCFJ","ll":[39.97463,-86.92108],"name":"Crawfordsville Rgnl","role":"satellite","rwys":[{"brg":47,"disp":0,"id":"5","ils":"","len":5506,"w":75},{"brg":227,"disp":503,"id":"23","ils":"","len":5506,"w":75}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KGPC","ll":[39.63353,-86.81381],"name":"Putnam Co Rgnl (Greencastle)","role":"satellite","rwys":[{"brg":184,"disp":0,"id":"18","ils":"","len":5002,"w":100},{"brg":4,"disp":0,"id":"36","ils":"","len":5002,"w":100}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KOVO","ll":[39.04533,-85.60561],"name":"North Vernon","role":"satellite","rwys":[{"brg":50,"disp":0,"id":"5","ils":"","len":5002,"w":75},{"brg":155,"disp":0,"id":"15","ils":"","len":2730,"w":50},{"brg":230,"disp":0,"id":"23","ils":"","len":5002,"w":75},{"brg":335,"disp":0,"id":"33","ils":"","len":2730,"w":50}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"KUWL","ll":[39.87673,-85.32529],"name":"New Castle Henry Co Marlatt Field","role":"satellite","rwys":[{"brg":96,"disp":0,"id":"10","ils":"","len":4201,"w":75},{"brg":276,"disp":0,"id":"28","ils":"","len":4201,"w":75}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"2R2","ll":[39.74678,-86.47517],"name":"Hendricks Co-Gordon Graham Field","role":"satellite","rwys":[{"brg":183,"disp":0,"id":"18","ils":"","len":4400,"w":100},{"brg":3,"disp":0,"id":"36","ils":"","len":4400,"w":100}],"src":"IND SOP 7 Satellite list; SOP 6 Block 2R2"},
+  {"detail":false,"icao":"5I4","ll":[40.17816,-86.21707],"name":"Sheridan","role":"satellite","rwys":[{"brg":52,"disp":650,"id":"5","ils":"","len":3760,"w":50},{"brg":88,"disp":0,"id":"9","ils":"","len":3387,"w":88},{"brg":232,"disp":0,"id":"23","ils":"","len":3760,"w":50},{"brg":268,"disp":250,"id":"27","ils":"","len":3387,"w":88}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"I34","ll":[39.32001,-85.52512],"name":"Greensburg Muni","role":"satellite","rwys":[{"brg":10,"disp":0,"id":"1","ils":"","len":5406,"w":100},{"brg":190,"disp":0,"id":"19","ils":"","len":5406,"w":100}],"src":"IND SOP 7 Satellite list"},
+  {"detail":false,"icao":"I99","ll":[40.23251,-85.63753],"name":"Alexandria","role":"satellite","rwys":[{"brg":91,"disp":195,"id":"9","ils":"","len":2591,"w":60},{"brg":271,"disp":276,"id":"27","ils":"","len":2591,"w":60}],"src":"IND SOP 7 Satellite list"},
   {"icao":"8A4","name":"Indianapolis Downtown","role":"satellite","rwys":null,"src":"IND SOP 7 Satellite list - no CIFP runway record"},
   {"icao":"81II","name":"Methodist Hospital of IN","role":"satellite","rwys":null,"src":"IND SOP 7 Satellite list - no CIFP runway record"},
   {"icao":"IN35","name":"Decatur Co Meml Hospital (Greensburg)","role":"satellite","rwys":null,"src":"IND SOP 7 Satellite list - no CIFP runway record"},
@@ -267,7 +268,8 @@ var FAC = {
   {"id":"handoff","label":"Handoff IDs","note":"Every ID is composed from the record. ZAU NAS ID G from the ZAU record, 2026-10-17.","src":"vNAS ZID record; composition rules from docs.virtualnas.net as quoted in ZMP/R90/claude_ZMP_Handoff_ID_Reference.md","state":"verified"},
   {"id":"procedures","label":"Published SIDs and STARs","note":"3 of the 6 SOP-named SIDs coded at KIND; 2 more at satellites; INDY not coded. All six SOP-named STARs coded.","src":"CIFP 261001","state":"partial"},
   {"id":"beacon","label":"Beacon code banks","note":"IFR subset 1 and VFR subset 2, both 3401-3477. The SOP states no allocation. Single-sourced.","src":"vNAS starsConfiguration.beaconCodeBanks only","state":"partial"},
-  {"id":"boundaries","label":"Sector and facility boundaries","note":"Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset. SimAware publishes a lateral IND footprint (no altitudes, no licence); it is not wired in - owner decision.","src":"No source in hand","state":"empty"},
+  {"id":"footprint","label":"Facility lateral outline","note":"Lateral only: no altitude, no sector split, no flow. About two miles at best, and that figure was established at M98, not here. Every field with a CIFP coordinate falls inside it; KCFJ (1.8 NM) and I34 (1.2 NM) sit within the two-mile error. Below the SOP diagrams and below anything the owner supplies.","src":"SimAware TRACON Project Boundaries/IND/IND.json, 27 vertices","state":"partial"},
+  {"id":"boundaries","label":"Sector and flow boundaries","note":"Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset, and the SimAware outline is lateral only: it supplies no sector split, no flow and no altitude.","src":"No source in hand","state":"empty"},
   {"id":"flowairspace","label":"Per-flow sector airspace (DR, FR, FN, ST by runway)","note":"Pictures. The saved pages hold them as SVG, which is measurable; see the gap analysis.","src":"IND SOP 9 diagrams dr_*, fr_*, fn_*, st*","state":"empty"},
   {"id":"mva","label":"MVA","note":"STARS maps 7 and 17 are MVA maps (3 NM and 5 NM); their geometry is video-map data, not published.","src":"Not in the SOP","state":"empty"},
   {"id":"towersops","label":"Tower SOPs - BAK, MIE, AID, HBE","note":"Separate wiki documents, not pulled.","src":"Referenced by IND SOP 7 Departures","state":"empty"},
@@ -341,6 +343,7 @@ var css = ''
 + '.'+P+'-slot .n{font-size:12.5px;color:var(--dim);margin-top:4px;}'
 + '.'+P+'-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;font:12px var(--mono);}'
 + '.'+P+'-idx{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px;}'
++ '.'+P+'-svg{width:100%;max-width:560px;height:auto;display:block;margin:8px 0;}'
 ;
 
 /* ---------- 3. Helpers ---------- */
@@ -474,6 +477,63 @@ function configsByWind(windDir, windKt){
     return {id:c.id, name:c.name, minHead: heads.length ? Math.min.apply(null, heads) : null,
             maxCross: crs.length ? Math.max.apply(null, crs) : null, calm: windKt === 0};
   }).sort(function(a, b){ return (b.minHead == null ? -999 : b.minHead) - (a.minHead == null ? -999 : a.minHead); });
+}
+
+/* ---------- 5b. The lateral footprint ----------
+   SimAware TRACON Project, Boundaries/<FAC>/<FAC>.json. LATERAL ONLY: it carries no altitude, no
+   sector split and no flow, so it answers "is this point inside the facility's outline" and nothing
+   else. Facility-maintained (every merge is gated on a verified Region, Division or ARTCC account),
+   publishes no licence, and is good to about two miles where it could be checked at all (M98), which
+   has not been checked at ZID. It sits BELOW the SOP diagrams and below anything the owner supplies
+   or the facility exports, and must never overwrite either. Points are [lat, lon]. */
+var FP = FAC.footprint;
+var FP_TOL_NM = 2;
+function fpRing(){ return FP.rings[0]; }
+function inFootprint(lat, lon){
+  var r = fpRing(), inside = false;
+  for(var i = 0, j = r.length - 1; i < r.length; j = i++){
+    var yi = r[i][0], xi = r[i][1], yj = r[j][0], xj = r[j][1];
+    if(((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+/* Shortest distance to the outline in nautical miles, on a local flat plane. */
+function edgeNm(lat, lon){
+  var r = fpRing(), k = Math.cos(lat * Math.PI / 180), best = Infinity;
+  for(var i = 0; i < r.length; i++){
+    var a = r[i], b = r[(i + 1) % r.length];
+    var px = lon * k * 60, py = lat * 60, ax = a[1] * k * 60, ay = a[0] * 60, bx = b[1] * k * 60, by = b[0] * 60;
+    var dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy, t = l ? ((px - ax) * dx + (py - ay) * dy) / l : 0;
+    t = Math.max(0, Math.min(1, t));
+    var d = Math.sqrt(Math.pow(px - ax - t * dx, 2) + Math.pow(py - ay - t * dy, 2));
+    if(d < best) best = d;
+  }
+  return best;
+}
+/* Every field with a CIFP coordinate, inside or out, and whether it is close enough to the edge that
+   "inside" is inside the footprint's own error. A field with no coordinate is not tested, never guessed. */
+function containment(){
+  return FIELD_ORDER.filter(function(f){ return !!FIELDS[f].ll; }).map(function(f){
+    var ll = FIELDS[f].ll, d = edgeNm(ll[0], ll[1]);
+    return {icao:f, inside:inFootprint(ll[0], ll[1]), edgeNm:Math.round(d * 10) / 10, marginal:d < FP_TOL_NM};
+  });
+}
+function footprintSvg(){
+  var r = fpRing(), lat0 = (FP.bbox.n + FP.bbox.s) / 2, k = Math.cos(lat0 * Math.PI / 180);
+  var W = 560, spanX = (FP.bbox.e - FP.bbox.w) * k, spanY = FP.bbox.n - FP.bbox.s, pad = 26;
+  var sc = (W - 2 * pad) / spanX, H = Math.round(spanY * sc + 2 * pad);
+  function X(lon){ return (pad + (lon - FP.bbox.w) * k * sc).toFixed(1); }
+  function Y(lat){ return (pad + (FP.bbox.n - lat) * sc).toFixed(1); }
+  var pts = r.map(function(p){ return X(p[1]) + ',' + Y(p[0]); }).join(' ');
+  var dots = containment().map(function(c){
+    var ll = FIELDS[c.icao].ll, prim = c.icao === FAC.primary;
+    var col = !c.inside ? 'var(--red)' : (c.marginal ? 'var(--amber)' : 'var(--ink)');
+    return '<circle cx="' + X(ll[1]) + '" cy="' + Y(ll[0]) + '" r="' + (prim ? 5 : 3) + '" fill="' + col + '"/>'
+      + ((prim || c.marginal || !c.inside) ? '<text x="' + (parseFloat(X(ll[1])) + 7) + '" y="' + (parseFloat(Y(ll[0])) + 4) + '" font-size="11" fill="' + col + '" font-family="var(--mono)">' + esc(c.icao) + '</text>' : '');
+  }).join('');
+  return '<svg class="'+P+'-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Lateral footprint of ' + esc(FAC.id) + ' with its fields">'
+    + '<polygon points="' + pts + '" fill="rgba(79,224,160,0.07)" stroke="var(--green)" stroke-width="1.5"/>' + dots
+    + '<text x="' + pad + '" y="' + (H - 8) + '" font-size="10" fill="var(--dim2)" font-family="var(--mono)">north up - lateral outline only - no altitude</text></svg>';
 }
 
 /* ---------- 6. Slots, conflicts, questions ---------- */
@@ -713,6 +773,27 @@ function sectionVatis(){
     + '</section>';
 }
 
+function sectionFootprint(){
+  var rows = containment().map(function(c){
+    return '<tr><td><b>' + esc(c.icao) + '</b></td><td>' + (c.inside ? 'inside' : '<span class="'+P+'-gap">OUTSIDE</span>') + '</td><td>' + c.edgeNm + ' NM</td><td>'
+      + (c.marginal ? '<span class="'+P+'-tag warn">within the footprint’s own error</span>' : '<span class="dim">clear</span>') + '</td></tr>';
+  }).join('');
+  var none = FIELD_ORDER.filter(function(f){ return !FIELDS[f].ll; });
+  return ''
+  + '<section class="'+P+'-section" id="'+P+'-footprint">'
+  + '<h2>Lateral footprint</h2>'
+  + '<p class="lede">The facility’s outline from the SimAware TRACON Project: <b>' + FP.vertices + ' vertices, about ' + FP.areaSqNm.toLocaleString('en-US') + ' square miles</b>. '
+  + '<b>Lateral only</b> &mdash; no ceiling, no sector split, no flow. It answers whether a point is inside the outline and nothing else.</p>'
+  + panel('footprint', '<h3>' + esc(FP.name) + '</h3>' + srcLine(FP.src) + footprintSvg()
+    + '<div class="'+P+'-note"><b>Tolerance.</b> ' + esc(FP.tolerance) + '</div>'
+    + '<div class="'+P+'-note"><b>Rank.</b> ' + esc(FP.rank) + '</div>'
+    + '<div class="'+P+'-note"><b>Licence and maintenance.</b> ' + esc(FP.licence) + '</div>')
+  + panel('footprint.fields', '<h3>Which fields fall inside it</h3>' + srcLine('Field coordinates from the CIFP ' + esc(FAC.cifp.cycle) + ' airport records. A field is inside the outline by construction when the facility works it; the distance to the edge is what tells you how far to trust that.')
+    + '<div class="'+P+'-scroll"><table class="'+P+'-tbl"><thead><tr><th>Field</th><th>Position</th><th>Distance to the edge</th><th>Against the tolerance</th></tr></thead><tbody>' + rows + '</tbody></table></div>'
+    + (none.length ? '<div class="'+P+'-note">No coordinate, so not tested: ' + esc(none.join(', ')) + '.</div>' : ''))
+  + '</section>';
+}
+
 function sectionLive(){
   var gaps = FAC.unread.map(function(g){
     return '<tr><td>' + esc(g.what) + '</td><td class="dim">' + esc(g.where) + '</td></tr>';
@@ -722,8 +803,8 @@ function sectionLive(){
   + '<h2>Fly it</h2>'
   + '<p class="lede">The live player.</p>'
   + '<div class="'+P+'-empty">No traffic model yet.<br><br>'
-  + 'A terminal traffic model needs boundaries, and no ' + esc(FAC.id) + ' boundary is described in words in the SOP &mdash; every airspace diagram is a picture.<br>'
-  + 'VATGlasses has no ZID dataset; SimAware carries a lateral footprint only. Neither is wired in. See the gap analysis.</div>'
+  + 'A terminal traffic model needs sector boundaries, and no ' + esc(FAC.id) + ' sector boundary is described in words in the SOP &mdash; every airspace diagram is a picture.<br>'
+  + 'VATGlasses has no ZID dataset. The SimAware outline above is lateral only, so it can say a point is inside the facility and cannot say which sector owns it or under what ceiling.</div>'
   + panel('live.pictures', '<h3 class="'+P+'-gap">Unread pictures &mdash; ' + FAC.unread.length + ' items</h3><div class="'+P+'-scroll"><table class="'+P+'-tbl"><thead><tr><th>What</th><th>Where</th></tr></thead><tbody>' + gaps + '</tbody></table></div>')
   + '</section>';
 }
@@ -771,8 +852,8 @@ function sectionLog(){
 function refIndex(){
   return '<div class="'+P+'-idx">' + FAC.groups.map(function(g){
     return '<a class="'+P+'-navlink" href="#'+P+'-ref-'+g.id+'">' + esc(g.title) + '</a>';
-  }).join('') + ['vnas','handoff','vatis','knows'].map(function(id){
-    var lab = {vnas:'vNAS record', handoff:'Handoff IDs', vatis:'vATIS', knows:'What this tool knows'}[id];
+  }).join('') + ['vnas','handoff','vatis','footprint','knows'].map(function(id){
+    var lab = {vnas:'vNAS record', handoff:'Handoff IDs', vatis:'vATIS', footprint:'Lateral footprint', knows:'What this tool knows'}[id];
     return '<a class="'+P+'-navlink" href="#'+P+'-'+id+'">' + lab + '</a>';
   }).join('') + '</div>';
 }
@@ -789,7 +870,7 @@ function mountAll(){
   host.innerHTML = sectionPositions() + sectionFields()
     + '<section class="'+P+'-section" id="'+P+'-refindex"><h2>Reference</h2><p class="lede">The ' + esc(FAC.sop.cite) + ' by section, with the vNAS and vATIS sources beside it.</p>' + refIndex() + '</section>'
     + FAC.groups.map(sectionRef).join('')
-    + sectionVnas() + sectionHandoff() + sectionVatis() + sectionLive() + sectionKnows() + sectionLog();
+    + sectionVnas() + sectionHandoff() + sectionVatis() + sectionFootprint() + sectionLive() + sectionKnows() + sectionLog();
   while(host.firstChild){
     if(footer) wrap.insertBefore(host.firstChild, footer);
     else wrap.appendChild(host.firstChild);
@@ -812,6 +893,7 @@ var NS = window['IND'] = {
   POS:POS, POS_ORDER:POS_ORDER, FIELDS:FIELDS, FIELD_ORDER:FIELD_ORDER,
   SLOTS:SLOTS, slotOf:slotOf, slotState:slotState, STANDING:STANDING,
   CONFIGS:FAC.configs, TABLES:FAC.tables, RULES:FAC.rules, GROUPS:FAC.groups,
+  FOOTPRINT:FP, inFootprint:inFootprint, edgeNm:edgeNm, containment:containment, FP_TOL_NM:FP_TOL_NM,
   CONFLICTS:FAC.conflicts, OPENQ:FAC.openq, UNREAD:FAC.unread, VNAS:FAC.vnas, VATIS:FAC.vatis,
   esc:esc, cell:cell, fmtFreq:fmtFreq, spokenFreq:spokenFreq, spokenRwy:spokenRwy,
   freqStatus:freqStatus, idStatus:idStatus, positionConflicts:positionConflicts, posByTcpSector:posByTcpSector,
@@ -1177,7 +1259,7 @@ function wireNotes(){
 /* ---------- 5. Pages ---------- */
 var PAGES = [
   { id:'setup', label:'Set up a drill', sections:[B+'-frame', P+'-positions', P+'-fields'] },
-  { id:'fly',   label:'Fly it',         sections:[P+'-live'] },
+  { id:'fly',   label:'Fly it',         sections:[P+'-footprint', P+'-live'] },
   { id:'notes', label:'Notes and log',  sections:[B+'-notes', P+'-refindex'].concat(NS.GROUPS.map(function(g){ return P+'-ref-'+g.id; }), [P+'-vnas', P+'-handoff', P+'-vatis', P+'-knows', P+'-log']) }
 ];
 function buildPages(){

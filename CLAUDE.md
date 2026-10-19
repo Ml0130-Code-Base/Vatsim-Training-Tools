@@ -335,12 +335,15 @@ it are load-bearing:
   is East and `28L/R` is West. Decoded per sector in
   `ZLC/_shared/claude_ZLC_Sector_Geometry_Reference.md`.
 
-**ZID is checked, and gives nothing yet (2026-10-18).** VATGlasses has **no ZID dataset** — the upstream
-listing carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob and others, not zid. SimAware
-publishes a lateral footprint for IND, SDF and CVG with no altitudes and no licence; none of it is vendored
-or wired in, and the owner has not been asked. **The Indy Center SOP diagrams are SVG, not raster**, in the
-saved pages — a measurable source that has not been measured, so a lead and not a path (the ZID gap
-analyses say so). Details in `ZID/CLAUDE.md`.
+**ZID has a lateral outline and nothing else (2026-10-18, wired in 2026-10-19).** VATGlasses has **no ZID
+dataset** — the upstream listing carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob and
+others, not zid. SimAware publishes a lateral outline for IND, SDF and CVG with no altitudes and no
+licence, and **the owner moved the three decks onto it on 2026-10-19**, as M98/RST was moved in #59: it is
+carried as `FOOTPRINT`, partial, below the SOP diagrams and below anything the owner supplies, with the
+two-mile figure stated and flagged as unchecked at ZID. **It gives no sector split, flow or ceiling, so the
+sector-boundary slots stay empty.** **The Indy Center SOP diagrams are SVG, not raster**, in the saved
+pages — a measurable source that has not been measured, so a lead and not a path. Details in
+`ZID/CLAUDE.md` and `ZID/_shared/claude_ZID_Sector_Geometry_Reference.md`.
 
 **M98 and R90 are unchanged and remain blocked.** For them, two paths have actually worked, and
 no further one should be invented:

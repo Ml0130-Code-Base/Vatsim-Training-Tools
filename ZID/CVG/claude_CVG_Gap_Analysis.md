@@ -2,7 +2,7 @@
 
 Assembled 2026-10-19 from a full read of the saved Cincinnati (CVG) ATCT SOP page, the vNAS record for ZID, CIFP 261001 and the ZID vATIS profile (serial 2026081300).
 
-**The headline: every airspace boundary in the SOP is a picture, and there is no community geometry for ZID.** VATGlasses has no ZID dataset (checked 2026-10-18; the upstream list carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob, zse and others, not zid). SimAware publishes a lateral `CVG` footprint with no altitudes and no licence; it is not wired in.
+**The headline: every SECTOR boundary in the SOP is a picture, and the only community geometry for ZID is a lateral outline.** VATGlasses has no ZID dataset (checked 2026-10-18; the upstream list carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob, zse and others, not zid). **SimAware publishes the lateral `CVG` outline, and it is carried in the deck** (owner decision, 2026-10-19;  vertices, about  sq NM, no altitudes, no licence, about two miles at best and unchecked at ZID). It says whether a point is inside the facility and nothing about which sector owns it or under what ceiling, so every sector, flow and altitude gap below stands. See `../_shared/claude_ZID_Sector_Geometry_Reference.md`.
 
 **A lead worth testing, not a result:** the saved SOP pages hold the sector diagrams as **SVG files**, not raster images. SVG is machine-readable, so the artwork can be measured directly - the problem becomes georeferencing it (fitting the drawn fixes to CIFP fix coordinates), not extracting it. Nothing here has been measured. See root `CLAUDE.md` section 7: a community or traced boundary is second-tier and must carry its stated tolerance.
 
@@ -106,7 +106,8 @@ The saved page carries these as files named above; the SVGs are the measurable o
 - **Departure handoffs** (partial) - CVG SOP 7 Departures; vNAS Restrictions (CVG to ZID). The South gate disagrees (see the list). Other sectors agree.
 - **Published SIDs and STARs** (partial) - CIFP 261001 (261029 identical). All nine RNAV SIDs and five STARs coded. The conventional CVG# departure is not coded at KCVG or anywhere.
 - **Beacon code banks** (partial) - vNAS starsConfiguration.beaconCodeBanks only. IFR subset 1 and VFR subset 2, both 3701-3777. The SOP states no allocation. Single-sourced.
-- **Sector and facility boundaries** (empty) - No source in hand. Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset. SimAware publishes a lateral CVG footprint (no altitudes, no licence); it is not wired in - owner decision.
+- **Facility lateral outline** (partial) - SimAware TRACON Project Boundaries/CVG/CVG.json, 25 vertices. Lateral only: no altitude, no sector split, no flow. About two miles at best, and that figure was established at M98, not here. Every field with a CIFP coordinate falls inside it; no field sits within the two-mile error (nearest is KOXD at 4.8 NM). Below the SOP diagrams and below anything the owner supplies.
+- **Sector and flow boundaries** (empty) - No source in hand. Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset, and the SimAware outline is lateral only: it supplies no sector split, no flow and no altitude.
 - **Per-flow sector airspace (DR, AR, FR, LST by flow; 3-way splits)** (empty) - CVG SOP 9 diagrams dr_*, ar_*, fr_*, lst_*, 3_way_event_*. Pictures; the saved pages hold them as SVG.
 - **MVA** (empty) - Not in the SOP.
 - **Special use airspace** (empty) - CVG SOP 7: "To be added at a later date". The SOP says so in terms.

@@ -148,9 +148,30 @@ try {
   assert('STANDING is empty - no IND OJT session has been flown', N.STANDING.length === 0);
   assert('PRIOR is empty - no IND drill is on record', B.PRIOR.length === 0);
   assert('the ledger is empty and single-tier', B.hist().length === 0);
-  assert('no geometry is carried: no polygon or boundary property on the namespace',
-    !('BOUNDARY' in N) && !('FOOTPRINT' in N) && !('POLYGON' in N) && !('SECTORS_GEO' in N));
-  assert('boundaries are recorded as empty, not hidden', N.slotState('boundaries') === 'empty');
+  assert('no SECTOR geometry is carried: no per-sector shape, split or flow boundary on the namespace',
+    !('BOUNDARY' in N) && !('POLYGON' in N) && !('SECTORS_GEO' in N) && !('SPLITS' in N) && !('FLOWS_GEO' in N));
+  assert('sector and flow boundaries are recorded as empty, not hidden', N.slotState('boundaries') === 'empty' && N.slotState('flowairspace') === 'empty');
+  assert('the lateral outline is recorded as partial, never verified', N.slotState('footprint') === 'partial');
+  /* ---- the SimAware lateral footprint ---- */
+  const FP = N.FOOTPRINT;
+  assert('the footprint is one ring of at least three [lat, lon] vertices, closing vertex dropped',
+    FP.rings.length === 1 && FP.rings[0].length === FP.vertices && FP.vertices >= 3
+    && JSON.stringify(FP.rings[0][0]) !== JSON.stringify(FP.rings[0][FP.vertices - 1]));
+  assert('the footprint is LATERAL ONLY: no altitude, ceiling, floor or stratum property',
+    ['alt','altitude','altitudes','ceiling','floor','strata','stratum','lid'].every(k => !(k in FP)));
+  assert('every vertex is inside the ZID region and inside its own bounding box',
+    FP.rings[0].every(p => p[0] > 36 && p[0] < 42 && p[1] > -90 && p[1] < -82
+      && p[0] <= FP.bbox.n && p[0] >= FP.bbox.s && p[1] <= FP.bbox.e && p[1] >= FP.bbox.w));
+  assert('the area is the size of a TRACON, not a sliver', FP.areaSqNm > 2000 && FP.areaSqNm < 12000, String(FP.areaSqNm));
+  assert('the provenance is pinned and the licence position is stated',
+    /cf9feb3/.test(FP.src) && /0ff2b54/.test(FP.src) && /no licence/i.test(FP.licence) && /two miles/.test(FP.tolerance) && /Below the SOP/.test(FP.rank));
+  assert('the primary field is inside the outline and well clear of the edge',
+    N.inFootprint(prim.ll[0], prim.ll[1]) === true && N.edgeNm(prim.ll[0], prim.ll[1]) > 10);
+  assert('a point in Chicago is outside', N.inFootprint(41.98, -87.9) === false);
+  assert('a point in Memphis is outside', N.inFootprint(35.04, -89.98) === false);
+  assert('every field with a CIFP coordinate is tested, and every one is inside', N.containment().length === N.FIELD_ORDER.filter(f => N.FIELDS[f].ll).length && N.containment().every(c => c.inside === true));
+  assert('a field with no coordinate is not tested and is not guessed', N.FIELD_ORDER.filter(f => !N.FIELDS[f].ll).every(f => !N.containment().some(c => c.icao === f)));
+  assert('marginal means inside the two-mile tolerance of the edge', N.containment().every(c => c.marginal === (c.edgeNm < N.FP_TOL_NM)));
   assert('every slot has a state and a source',
     N.SLOTS.every(s => ['verified','partial','empty'].includes(s.state) && !!s.src));
   assert('slot ids are unique', new Set(N.SLOTS.map(s => s.id)).size === N.SLOTS.length);
@@ -279,6 +300,9 @@ try {
     /DAWNN/.test(T('cd.freq.523').rows[1][0]) && /124\.95/.test(T('cd.freq.523').rows[1][2]) && /DAWNN/.test(T('cd.freq.1432').rows[0][0]) && /119\.05/.test(T('cd.freq.1432').rows[0][2]));
   assert('conflicts listed: MAREO#, coded SIDs, ZAU sector, ramp sentence, channel precision, vNAS omissions',
     N.CONFLICTS.map(c => c.id).join() === 'mareo-scratch,sids-coded,zau-sector,ramp-sentence,freq-precision,vnas-omits');
+  /* the SimAware footprint, IND */
+  assert('the IND footprint has 27 vertices and is named by SimAware', N.FOOTPRINT.vertices === 27 && N.FOOTPRINT.id === 'IND');
+  assert('the fields within the two-mile tolerance of the edge are exactly: KCFJ,I34', N.containment().filter(c => c.marginal).map(c => c.icao).join() === 'KCFJ,I34', N.containment().filter(c => c.marginal).map(c => c.icao + ' ' + c.edgeNm).join());
 
 
   console.log('\nSMOKE PASS — ' + checks + ' checks');

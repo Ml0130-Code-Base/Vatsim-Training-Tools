@@ -2,7 +2,7 @@
 
 Assembled 2026-10-19 from a full read of the saved Louisville (SDF) ATCT SOP page, the vNAS record for ZID, CIFP 261001 and the ZID vATIS profile (serial 2026081300).
 
-**The headline: every airspace boundary in the SOP is a picture, and there is no community geometry for ZID.** VATGlasses has no ZID dataset (checked 2026-10-18; the upstream list carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob, zse and others, not zid). SimAware publishes a lateral `SDF` footprint with no altitudes and no licence; it is not wired in.
+**The headline: every SECTOR boundary in the SOP is a picture, and the only community geometry for ZID is a lateral outline.** VATGlasses has no ZID dataset (checked 2026-10-18; the upstream list carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob, zse and others, not zid). **SimAware publishes the lateral `SDF` outline, and it is carried in the deck** (owner decision, 2026-10-19;  vertices, about  sq NM, no altitudes, no licence, about two miles at best and unchecked at ZID). It says whether a point is inside the facility and nothing about which sector owns it or under what ceiling, so every sector, flow and altitude gap below stands. See `../_shared/claude_ZID_Sector_Geometry_Reference.md`.
 
 **A lead worth testing, not a result:** the saved SOP pages hold the sector diagrams as **SVG files**, not raster images. SVG is machine-readable, so the artwork can be measured directly - the problem becomes georeferencing it (fitting the drawn fixes to CIFP fix coordinates), not extracting it. Nothing here has been measured. See root `CLAUDE.md` section 7: a community or traced boundary is second-tier and must carry its stated tolerance.
 
@@ -92,7 +92,8 @@ The saved page carries these as files named above; the SVGs are the measurable o
 
 - **Flows** (partial) - SDF SOP 1, 5, 6, 9; vATIS 2026081300; vNAS configurationPlans. Three flows. No wind rule and no choice rule in the SOP.
 - **Beacon code banks** (partial) - vNAS starsConfiguration.beaconCodeBanks only. IFR subset 1 and VFR subset 2, both 1401-1477. The SOP states no allocation. Single-sourced.
-- **Sector and facility boundaries** (empty) - No source in hand. Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset. SimAware publishes a lateral SDF footprint (no altitudes, no licence); it is not wired in - owner decision.
+- **Facility lateral outline** (partial) - SimAware TRACON Project Boundaries/SDF/SDF.json, 24 vertices. Lateral only: no altitude, no sector split, no flow. About two miles at best, and that figure was established at M98, not here. Every field with a CIFP coordinate falls inside it; KIMS (0.1 NM), KSER (0.7 NM) and KBFR (1.3 NM) sit within the two-mile error. Below the SOP diagrams and below anything the owner supplies.
+- **Sector and flow boundaries** (empty) - No source in hand. Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset, and the SimAware outline is lateral only: it supplies no sector split, no flow and no altitude.
 - **Per-flow sector airspace (DR, AR, FR by flow)** (empty) - SDF SOP 9 diagrams 35_dr, 17_dr, dr_29, ar_*, fr_*. Pictures; the saved pages hold them as SVG.
 - **MVA** (empty) - Not in the SOP.
 - **Tower SOPs - LOU and FTK** (empty) - Referenced by SDF SOP 7 Departures. Separate wiki documents, not pulled.

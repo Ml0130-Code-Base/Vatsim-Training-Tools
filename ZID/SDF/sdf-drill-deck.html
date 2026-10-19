@@ -130,11 +130,12 @@
 
 /* ---------- 1. Data ---------- */
 var FAC = {
- attribution:["Louisville (SDF) ATCT SOP, Indy Center wiki (wiki.flyindycenter.com), saved 2026-10-18; last changelog entry 2026-09-04. The wiki is behind a VATSIM login. The SOP text is not committed to the repository; the reference markdown is a transcription.","CIFP 261001, FAA Coded Instrument Flight Procedures, public domain; cycle 261029 is identical at every field this deck works.","vNAS facility record for ZID, data-api.vnas.vatsim.net/api/artccs/ZID, lastUpdatedAt 2026-10-17T02:35:43Z.","vATIS profile ZID ARTCC (All), github.com/Indy-Center/vatisfiles, updateSerial 2026081300.","No sector geometry from VATGlasses (no ZID dataset). SimAware SDF footprint exists and is NOT used; it publishes no licence."],
+ attribution:["Louisville (SDF) ATCT SOP, Indy Center wiki (wiki.flyindycenter.com), saved 2026-10-18; last changelog entry 2026-09-04. The wiki is behind a VATSIM login. The SOP text is not committed to the repository; the reference markdown is a transcription.","CIFP 261001, FAA Coded Instrument Flight Procedures, public domain; cycle 261029 is identical at every field this deck works.","vNAS facility record for ZID, data-api.vnas.vatsim.net/api/artccs/ZID, lastUpdatedAt 2026-10-17T02:35:43Z.","vATIS profile ZID ARTCC (All), github.com/Indy-Center/vatisfiles, updateSerial 2026081300.","Lateral outline: SimAware TRACON Project (github.com/VATSIM-Radar/simaware-tracon-project), Boundaries/SDF/SDF.json. It publishes no licence; every merge is gated on a verified Region, Division or ARTCC staff account. Used on the owner decision of 2026-10-19. No sector geometry: VATGlasses has no ZID dataset."],
  cifp:{"cycle":"261001","next":"261029"},
  configs:[{"dep":["35L","35R"],"id":"35","land":["35L","35R"],"name":"North flow (runways 35L and 35R)","note":"vATIS: ILS APCH RWY 35L AND 35R. SIMUL APCHS IN USE. SMUL DEPARTURES IN USE. Runway 35R is the preferred departure runway barring an advantage for 35L (SOP 1).","src":"SDF SOP 1, 5, 6, 9 (\"North Operation\", \"North Flow\"); vATIS preset 35L/R"},{"dep":["17L","17R"],"id":"17","land":["17L","17R"],"name":"South flow (runways 17L and 17R)","note":"vATIS: ILS APCH RWY 17L AND 17R. SIMUL APCHS IN USE. SMUL DEPARTURES IN USE. Both LCE and LCW must be staffed during simultaneous independent parallel approaches.","src":"SDF SOP 5, 6, 9 (\"South Flow\"); vATIS preset 17L/R"},{"dep":["29"],"id":"29","land":["29"],"name":"West flow (runway 29)","note":"vATIS: RNAV APCH 29 IN USE. AR1/AR2 do not exist in west flow; FR cannot be split when landing 29. Runway 11 has no procedures and is used only as 29.","src":"SDF SOP 1, 6, 9 (\"Runway 29\", \"West Flow\"); vATIS preset 29"}],
  configsNote:"The SOP gives no wind rule and no rule for choosing a flow. The tool ranks the flows by arithmetic only and picks nothing. vNAS consolidation plans: CO1 ALL TO 1D; CO2 17/35 1D/1B; CO3 17/35 1A/1D; CO4 17/35 1A/1D/1B; CO5 RWY 17/3[5] 1A/1I 1D/1B; CO6 RWY 29 SPLIT 1D/1B; CO7 ALL TO 1T (names as the record spells them).",
  configsSrc:"SDF SOP names three flows (north, south, west); the vATIS profile has three presets; vNAS has seven consolidation plans (CO1 to CO7).",
+ footprint:{"areaSqNm":5750,"bbox":{"e":-84.96667,"n":38.95627,"s":37.48438,"w":-86.75},"id":"SDF","licence":"SimAware publishes no licence. Provenance and licence are separate questions: every merge into the project is gated on a verified Region, Division or ARTCC staff account, which is a stricter gate than a spreadsheet of owners, and that is why the outline may be used here on the owner's decision (2026-10-19). Attribution: SimAware TRACON Project, github.com/VATSIM-Radar/simaware-tracon-project.","name":"Louisville Approach","rank":"Below the SOP's diagrams, below anything the owner supplies, and below a boundary the facility exports (the CRC video-map GeoJSON or the .sct2). It is a source of record and not a change detector: the file has not changed since 2025-03-27, and a facility revision would only show in a fresh pull. It must never overwrite an owner-supplied boundary.","rings":[[[38.52573,-85.10193],[38.47333,-84.96667],[38.21116,-85.15275],[37.83953,-85.06946],[37.72574,-85.04413],[37.58158,-85.00414],[37.55295,-85.43959],[37.51667,-85.98333],[37.48438,-86.54779],[37.65833,-86.56667],[37.93056,-86.59444],[38.35417,-86.65],[38.60833,-86.7125],[38.7,-86.75],[38.73621,-86.74523],[38.8965,-86.3719],[38.95218,-85.72662],[38.95627,-85.49875],[38.91721,-85.46053],[38.83351,-85.46093],[38.66833,-85.46222],[38.61028,-85.31361],[38.60104,-85.29152],[38.59349,-85.27144]]],"src":"SimAware TRACON Project, Boundaries/SDF/SDF.json (repository commit cf9feb3, file last changed 0ff2b54 on 2025-03-27), pulled 2026-10-18. Properties: id SDF, name \"Louisville Approach\", one polygon, no altitude.","tolerance":"About two miles, a figure established only at M98, where SimAware's footprint agreed with nine owner-verified radial/DME points to within about two miles. It has not been checked against anything at ZID: no owner-verified or facility-exported boundary exists here to check it against. A field within two miles of the edge is inside the footprint's own error.","vertices":24},
  frameNote:"SDF frame: seat - flow - wind - flight category - who else is open - the ramp flag (UPS ramp control open or closed) - whether the DR sectors are split (DR2 frequencies must be assigned by hand when they are). Frame elements the parent drill format does not have: parallel-runway high and low side, and the shared departure corridor.",
  groups:[{"id":"gen","lede":"SDF SOP 1. Equipment, STARS configuration, north operation, runway 11, the ATIS.","title":"General"},{"id":"cd","lede":"SDF SOP 3.","title":"Clearance delivery"},{"id":"gc","lede":"SDF SOP 4 and 5.","title":"Ground and ramp control"},{"id":"lc","lede":"SDF SOP 6. Headings by flow, initial waypoints, intersections.","title":"Local control"},{"id":"app","lede":"SDF SOP 7.","title":"Approach control"},{"id":"sat","lede":"SDF SOP 7.","title":"Satellite airports"},{"id":"ifc","lede":"SDF SOP 8. The LOA content is in the SOP; no separate LOA documents were found.","title":"Inter-facility coordination"},{"id":"sec","lede":"SDF SOP 9. Text only - the airspace diagrams for each flow are pictures.","title":"Radar sectors"},{"id":"maps","lede":"SDF SOP 10.","title":"STARS maps"}],
  id:"SDF",
@@ -166,18 +167,18 @@ var FAC = {
   {"cs":"FTK_GND","f":null,"into":null,"k":"FTK_GND","kind":"child","name":"Godman Ground Control","seat":false,"sid":null,"tag":null,"tcp":null,"vf":"121.900"}
  ],
  fields:[
-  {"detail":true,"icao":"KSDF","name":"Louisville Muhammad Ali Intl","role":"primary","rwys":[{"brg":116,"disp":0,"id":"11","ils":"","len":7251,"w":150},{"brg":170,"disp":328,"id":"17L","ils":"IPKI 111.95 CAT I","len":8578,"w":150},{"brg":170,"disp":846,"id":"17R","ils":"ISNU 110.30 CAT I","len":11887,"w":150},{"brg":296,"disp":0,"id":"29","ils":"ILKS 109.10 localizer only, no glide slope","len":7251,"w":150},{"brg":350,"disp":1040,"id":"35L","ils":"IRLI 109.35 CAT III","len":11887,"w":150},{"brg":350,"disp":449,"id":"35R","ils":"IJJM 110.55 CAT III","len":8578,"w":150}],"src":"vNAS area underlyingAirports; SDF SOP 7"},
-  {"detail":false,"icao":"KLOU","name":"Bowman Field","role":"towered satellite","rwys":[{"brg":64,"disp":848,"id":"6","ils":"","len":4358,"w":75},{"brg":148,"disp":206,"id":"15","ils":"","len":3580,"w":75},{"brg":244,"disp":310,"id":"24","ils":"","len":4358,"w":75},{"brg":328,"disp":342,"id":"33","ils":"","len":3580,"w":75}],"src":"SDF SOP 7 Satellite list; vNAS child tower LOU"},
-  {"detail":false,"icao":"KFTK","name":"Godman AAF (Fort Knox)","role":"towered satellite","rwys":[{"brg":151.2,"disp":0,"id":"15","ils":"","len":4853,"w":75},{"brg":179.6,"disp":0,"id":"18","ils":"","len":5184,"w":150},{"brg":331.3,"disp":0,"id":"33","ils":"","len":4853,"w":75},{"brg":359.6,"disp":0,"id":"36","ils":"","len":5184,"w":150}],"src":"SDF SOP 7 Satellite list; vNAS child tower FTK"},
-  {"detail":false,"icao":"KJVY","name":"Clark Rgnl (Jeffersonville)","role":"satellite","rwys":[{"brg":140,"disp":0,"id":"14","ils":"","len":3899,"w":75},{"brg":182,"disp":0,"id":"18","ils":"IJVY 111.70 CAT I","len":7000,"w":100},{"brg":320,"disp":0,"id":"32","ils":"","len":3899,"w":75},{"brg":2,"disp":0,"id":"36","ils":"","len":7000,"w":100}],"src":"SDF SOP 7 Satellite list"},
-  {"detail":false,"icao":"KBFR","name":"Virgil I Grissom Muni (Bedford)","role":"satellite","rwys":[{"brg":62,"disp":0,"id":"6","ils":"","len":3089,"w":70},{"brg":133,"disp":0,"id":"13","ils":"","len":4501,"w":100},{"brg":242,"disp":0,"id":"24","ils":"","len":3089,"w":70},{"brg":313,"disp":0,"id":"31","ils":"","len":4501,"w":100}],"src":"SDF SOP 7 Satellite list; SOP 8 BFR RNAV 13/31"},
-  {"detail":false,"icao":"KSER","name":"Freeman Muni (Seymour)","role":"satellite","rwys":[{"brg":46,"disp":0,"id":"5","ils":"","len":6001,"w":100},{"brg":92,"disp":0,"id":"9U","ils":"","len":1104,"w":100},{"brg":136,"disp":0,"id":"14","ils":"","len":5502,"w":100},{"brg":182,"disp":0,"id":"18U","ils":"","len":1215,"w":100},{"brg":226,"disp":0,"id":"23","ils":"","len":6001,"w":100},{"brg":272,"disp":0,"id":"27U","ils":"","len":1104,"w":100},{"brg":316,"disp":0,"id":"32","ils":"","len":5502,"w":100},{"brg":2,"disp":0,"id":"36U","ils":"","len":1215,"w":100}],"src":"SDF SOP 7 Satellite list; SOP 8 SER RNAV 14/23"},
-  {"detail":false,"icao":"KIMS","name":"Madison Muni","role":"satellite","rwys":[{"brg":35,"disp":0,"id":"3","ils":"","len":5000,"w":75},{"brg":215,"disp":0,"id":"21","ils":"","len":5000,"w":75}],"src":"SDF SOP 7 Satellite list; SOP 8 IMS RNAV 21"},
-  {"detail":false,"icao":"KBRY","name":"Samuels Field (Bardstown)","role":"satellite","rwys":[{"brg":27,"disp":0,"id":"3","ils":"","len":5003,"w":75},{"brg":207,"disp":0,"id":"21","ils":"","len":5003,"w":75}],"src":"SDF SOP 7 Satellite list"},
-  {"detail":false,"icao":"KEKX","name":"Addington Field (Elizabethtown)","role":"satellite","rwys":[{"brg":50,"disp":0,"id":"5","ils":"IADR 109.75 CAT I","len":6001,"w":100},{"brg":230,"disp":0,"id":"23","ils":"","len":6001,"w":100}],"src":"SDF SOP 7 Satellite list"},
-  {"detail":false,"icao":"KFRH","name":"French Lick Muni","role":"satellite","rwys":[{"brg":80,"disp":0,"id":"8","ils":"","len":5500,"w":100},{"brg":260,"disp":0,"id":"26","ils":"","len":5500,"w":100}],"src":"SDF SOP 7 Satellite list"},
-  {"detail":false,"icao":"6I2","name":"Lebanon Springfield George Hoerter Field","role":"satellite","rwys":[{"brg":110,"disp":125,"id":"11","ils":"","len":5001,"w":75},{"brg":290,"disp":200,"id":"29","ils":"","len":5001,"w":75}],"src":"SDF SOP 7 Satellite list"},
-  {"detail":false,"icao":"I93","name":"Breckinridge Co (Hardinsburg)","role":"satellite","rwys":[{"brg":100.8,"disp":0,"id":"10","ils":"","len":4000,"w":75},{"brg":280.8,"disp":0,"id":"28","ils":"","len":4000,"w":75}],"src":"SDF SOP 7 Satellite list"}
+  {"detail":true,"icao":"KSDF","ll":[38.17409,-85.73649],"name":"Louisville Muhammad Ali Intl","role":"primary","rwys":[{"brg":116,"disp":0,"id":"11","ils":"","len":7251,"w":150},{"brg":170,"disp":328,"id":"17L","ils":"IPKI 111.95 CAT I","len":8578,"w":150},{"brg":170,"disp":846,"id":"17R","ils":"ISNU 110.30 CAT I","len":11887,"w":150},{"brg":296,"disp":0,"id":"29","ils":"ILKS 109.10 localizer only, no glide slope","len":7251,"w":150},{"brg":350,"disp":1040,"id":"35L","ils":"IRLI 109.35 CAT III","len":11887,"w":150},{"brg":350,"disp":449,"id":"35R","ils":"IJJM 110.55 CAT III","len":8578,"w":150}],"src":"vNAS area underlyingAirports; SDF SOP 7"},
+  {"detail":false,"icao":"KLOU","ll":[38.22799,-85.66375],"name":"Bowman Field","role":"towered satellite","rwys":[{"brg":64,"disp":848,"id":"6","ils":"","len":4358,"w":75},{"brg":148,"disp":206,"id":"15","ils":"","len":3580,"w":75},{"brg":244,"disp":310,"id":"24","ils":"","len":4358,"w":75},{"brg":328,"disp":342,"id":"33","ils":"","len":3580,"w":75}],"src":"SDF SOP 7 Satellite list; vNAS child tower LOU"},
+  {"detail":false,"icao":"KFTK","ll":[37.90707,-85.97204],"name":"Godman AAF (Fort Knox)","role":"towered satellite","rwys":[{"brg":151.2,"disp":0,"id":"15","ils":"","len":4853,"w":75},{"brg":179.6,"disp":0,"id":"18","ils":"","len":5184,"w":150},{"brg":331.3,"disp":0,"id":"33","ils":"","len":4853,"w":75},{"brg":359.6,"disp":0,"id":"36","ils":"","len":5184,"w":150}],"src":"SDF SOP 7 Satellite list; vNAS child tower FTK"},
+  {"detail":false,"icao":"KJVY","ll":[38.36662,-85.73814],"name":"Clark Rgnl (Jeffersonville)","role":"satellite","rwys":[{"brg":140,"disp":0,"id":"14","ils":"","len":3899,"w":75},{"brg":182,"disp":0,"id":"18","ils":"IJVY 111.70 CAT I","len":7000,"w":100},{"brg":320,"disp":0,"id":"32","ils":"","len":3899,"w":75},{"brg":2,"disp":0,"id":"36","ils":"","len":7000,"w":100}],"src":"SDF SOP 7 Satellite list"},
+  {"detail":false,"icao":"KBFR","ll":[38.84003,-86.44536],"name":"Virgil I Grissom Muni (Bedford)","role":"satellite","rwys":[{"brg":62,"disp":0,"id":"6","ils":"","len":3089,"w":70},{"brg":133,"disp":0,"id":"13","ils":"","len":4501,"w":100},{"brg":242,"disp":0,"id":"24","ils":"","len":3089,"w":70},{"brg":313,"disp":0,"id":"31","ils":"","len":4501,"w":100}],"src":"SDF SOP 7 Satellite list; SOP 8 BFR RNAV 13/31"},
+  {"detail":false,"icao":"KSER","ll":[38.92426,-85.90972],"name":"Freeman Muni (Seymour)","role":"satellite","rwys":[{"brg":46,"disp":0,"id":"5","ils":"","len":6001,"w":100},{"brg":92,"disp":0,"id":"9U","ils":"","len":1104,"w":100},{"brg":136,"disp":0,"id":"14","ils":"","len":5502,"w":100},{"brg":182,"disp":0,"id":"18U","ils":"","len":1215,"w":100},{"brg":226,"disp":0,"id":"23","ils":"","len":6001,"w":100},{"brg":272,"disp":0,"id":"27U","ils":"","len":1104,"w":100},{"brg":316,"disp":0,"id":"32","ils":"","len":5502,"w":100},{"brg":2,"disp":0,"id":"36U","ils":"","len":1215,"w":100}],"src":"SDF SOP 7 Satellite list; SOP 8 SER RNAV 14/23"},
+  {"detail":false,"icao":"KIMS","ll":[38.75992,-85.46469],"name":"Madison Muni","role":"satellite","rwys":[{"brg":35,"disp":0,"id":"3","ils":"","len":5000,"w":75},{"brg":215,"disp":0,"id":"21","ils":"","len":5000,"w":75}],"src":"SDF SOP 7 Satellite list; SOP 8 IMS RNAV 21"},
+  {"detail":false,"icao":"KBRY","ll":[37.81432,-85.49964],"name":"Samuels Field (Bardstown)","role":"satellite","rwys":[{"brg":27,"disp":0,"id":"3","ils":"","len":5003,"w":75},{"brg":207,"disp":0,"id":"21","ils":"","len":5003,"w":75}],"src":"SDF SOP 7 Satellite list"},
+  {"detail":false,"icao":"KEKX","ll":[37.686,-85.92503],"name":"Addington Field (Elizabethtown)","role":"satellite","rwys":[{"brg":50,"disp":0,"id":"5","ils":"IADR 109.75 CAT I","len":6001,"w":100},{"brg":230,"disp":0,"id":"23","ils":"","len":6001,"w":100}],"src":"SDF SOP 7 Satellite list"},
+  {"detail":false,"icao":"KFRH","ll":[38.50622,-86.63694],"name":"French Lick Muni","role":"satellite","rwys":[{"brg":80,"disp":0,"id":"8","ils":"","len":5500,"w":100},{"brg":260,"disp":0,"id":"26","ils":"","len":5500,"w":100}],"src":"SDF SOP 7 Satellite list"},
+  {"detail":false,"icao":"6I2","ll":[37.63348,-85.24184],"name":"Lebanon Springfield George Hoerter Field","role":"satellite","rwys":[{"brg":110,"disp":125,"id":"11","ils":"","len":5001,"w":75},{"brg":290,"disp":200,"id":"29","ils":"","len":5001,"w":75}],"src":"SDF SOP 7 Satellite list"},
+  {"detail":false,"icao":"I93","ll":[37.78481,-86.44128],"name":"Breckinridge Co (Hardinsburg)","role":"satellite","rwys":[{"brg":100.8,"disp":0,"id":"10","ils":"","len":4000,"w":75},{"brg":280.8,"disp":0,"id":"28","ils":"","len":4000,"w":75}],"src":"SDF SOP 7 Satellite list"}
  ],
  tables:[
   {"cols":["Aircraft","Via","Altitude","Expect","Notes"],"g":"cd","id":"cd.ifr","note":"It is preferred that jet aircraft be assigned an RNAV SID, if capable (changelog 2025-02-14).","rows":[["Jet","RNAV SID","Climb via SID","n/a","Clear all PBN capable jets AOA 14000 via a SID"],["Jet","No SID","5000'","10 minutes after","Clear all non-PBN capable jets AOA 14000 via an initial route per the gate table"],["Prop","No SID","3000","10 minutes after","Clear all props AOA 14000 via an initial route per the gate table"]],"src":"SDF SOP 3 Clearance Delivery > IFR Departures","title":"IFR departures"},
@@ -248,7 +249,8 @@ var FAC = {
   {"id":"handoff","label":"Handoff IDs","note":"Every ID is composed from the record. The LOU ID is an open conflict.","src":"vNAS ZID record; composition rules from docs.virtualnas.net as quoted in ZMP/R90/claude_ZMP_Handoff_ID_Reference.md","state":"verified"},
   {"id":"procedures","label":"Published SIDs and STARs","note":"Every procedure the SOP names is coded.","src":"CIFP 261001 (261029 identical)","state":"verified"},
   {"id":"beacon","label":"Beacon code banks","note":"IFR subset 1 and VFR subset 2, both 1401-1477. The SOP states no allocation. Single-sourced.","src":"vNAS starsConfiguration.beaconCodeBanks only","state":"partial"},
-  {"id":"boundaries","label":"Sector and facility boundaries","note":"Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset. SimAware publishes a lateral SDF footprint (no altitudes, no licence); it is not wired in - owner decision.","src":"No source in hand","state":"empty"},
+  {"id":"footprint","label":"Facility lateral outline","note":"Lateral only: no altitude, no sector split, no flow. About two miles at best, and that figure was established at M98, not here. Every field with a CIFP coordinate falls inside it; KIMS (0.1 NM), KSER (0.7 NM) and KBFR (1.3 NM) sit within the two-mile error. Below the SOP diagrams and below anything the owner supplies.","src":"SimAware TRACON Project Boundaries/SDF/SDF.json, 24 vertices","state":"partial"},
+  {"id":"boundaries","label":"Sector and flow boundaries","note":"Every airspace diagram in the SOP is a picture. VATGlasses has no ZID dataset, and the SimAware outline is lateral only: it supplies no sector split, no flow and no altitude.","src":"No source in hand","state":"empty"},
   {"id":"flowairspace","label":"Per-flow sector airspace (DR, AR, FR by flow)","note":"Pictures; the saved pages hold them as SVG.","src":"SDF SOP 9 diagrams 35_dr, 17_dr, dr_29, ar_*, fr_*","state":"empty"},
   {"id":"mva","label":"MVA","note":"","src":"Not in the SOP","state":"empty"},
   {"id":"towersops","label":"Tower SOPs - LOU and FTK","note":"Separate wiki documents, not pulled.","src":"Referenced by SDF SOP 7 Departures","state":"empty"},
@@ -319,6 +321,7 @@ var css = ''
 + '.'+P+'-slot .n{font-size:12.5px;color:var(--dim);margin-top:4px;}'
 + '.'+P+'-sel{background:var(--panel2);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:6px 8px;font:12px var(--mono);}'
 + '.'+P+'-idx{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 18px;}'
++ '.'+P+'-svg{width:100%;max-width:560px;height:auto;display:block;margin:8px 0;}'
 ;
 
 /* ---------- 3. Helpers ---------- */
@@ -452,6 +455,63 @@ function configsByWind(windDir, windKt){
     return {id:c.id, name:c.name, minHead: heads.length ? Math.min.apply(null, heads) : null,
             maxCross: crs.length ? Math.max.apply(null, crs) : null, calm: windKt === 0};
   }).sort(function(a, b){ return (b.minHead == null ? -999 : b.minHead) - (a.minHead == null ? -999 : a.minHead); });
+}
+
+/* ---------- 5b. The lateral footprint ----------
+   SimAware TRACON Project, Boundaries/<FAC>/<FAC>.json. LATERAL ONLY: it carries no altitude, no
+   sector split and no flow, so it answers "is this point inside the facility's outline" and nothing
+   else. Facility-maintained (every merge is gated on a verified Region, Division or ARTCC account),
+   publishes no licence, and is good to about two miles where it could be checked at all (M98), which
+   has not been checked at ZID. It sits BELOW the SOP diagrams and below anything the owner supplies
+   or the facility exports, and must never overwrite either. Points are [lat, lon]. */
+var FP = FAC.footprint;
+var FP_TOL_NM = 2;
+function fpRing(){ return FP.rings[0]; }
+function inFootprint(lat, lon){
+  var r = fpRing(), inside = false;
+  for(var i = 0, j = r.length - 1; i < r.length; j = i++){
+    var yi = r[i][0], xi = r[i][1], yj = r[j][0], xj = r[j][1];
+    if(((yi > lat) !== (yj > lat)) && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+/* Shortest distance to the outline in nautical miles, on a local flat plane. */
+function edgeNm(lat, lon){
+  var r = fpRing(), k = Math.cos(lat * Math.PI / 180), best = Infinity;
+  for(var i = 0; i < r.length; i++){
+    var a = r[i], b = r[(i + 1) % r.length];
+    var px = lon * k * 60, py = lat * 60, ax = a[1] * k * 60, ay = a[0] * 60, bx = b[1] * k * 60, by = b[0] * 60;
+    var dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy, t = l ? ((px - ax) * dx + (py - ay) * dy) / l : 0;
+    t = Math.max(0, Math.min(1, t));
+    var d = Math.sqrt(Math.pow(px - ax - t * dx, 2) + Math.pow(py - ay - t * dy, 2));
+    if(d < best) best = d;
+  }
+  return best;
+}
+/* Every field with a CIFP coordinate, inside or out, and whether it is close enough to the edge that
+   "inside" is inside the footprint's own error. A field with no coordinate is not tested, never guessed. */
+function containment(){
+  return FIELD_ORDER.filter(function(f){ return !!FIELDS[f].ll; }).map(function(f){
+    var ll = FIELDS[f].ll, d = edgeNm(ll[0], ll[1]);
+    return {icao:f, inside:inFootprint(ll[0], ll[1]), edgeNm:Math.round(d * 10) / 10, marginal:d < FP_TOL_NM};
+  });
+}
+function footprintSvg(){
+  var r = fpRing(), lat0 = (FP.bbox.n + FP.bbox.s) / 2, k = Math.cos(lat0 * Math.PI / 180);
+  var W = 560, spanX = (FP.bbox.e - FP.bbox.w) * k, spanY = FP.bbox.n - FP.bbox.s, pad = 26;
+  var sc = (W - 2 * pad) / spanX, H = Math.round(spanY * sc + 2 * pad);
+  function X(lon){ return (pad + (lon - FP.bbox.w) * k * sc).toFixed(1); }
+  function Y(lat){ return (pad + (FP.bbox.n - lat) * sc).toFixed(1); }
+  var pts = r.map(function(p){ return X(p[1]) + ',' + Y(p[0]); }).join(' ');
+  var dots = containment().map(function(c){
+    var ll = FIELDS[c.icao].ll, prim = c.icao === FAC.primary;
+    var col = !c.inside ? 'var(--red)' : (c.marginal ? 'var(--amber)' : 'var(--ink)');
+    return '<circle cx="' + X(ll[1]) + '" cy="' + Y(ll[0]) + '" r="' + (prim ? 5 : 3) + '" fill="' + col + '"/>'
+      + ((prim || c.marginal || !c.inside) ? '<text x="' + (parseFloat(X(ll[1])) + 7) + '" y="' + (parseFloat(Y(ll[0])) + 4) + '" font-size="11" fill="' + col + '" font-family="var(--mono)">' + esc(c.icao) + '</text>' : '');
+  }).join('');
+  return '<svg class="'+P+'-svg" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Lateral footprint of ' + esc(FAC.id) + ' with its fields">'
+    + '<polygon points="' + pts + '" fill="rgba(79,224,160,0.07)" stroke="var(--green)" stroke-width="1.5"/>' + dots
+    + '<text x="' + pad + '" y="' + (H - 8) + '" font-size="10" fill="var(--dim2)" font-family="var(--mono)">north up - lateral outline only - no altitude</text></svg>';
 }
 
 /* ---------- 6. Slots, conflicts, questions ---------- */
@@ -691,6 +751,27 @@ function sectionVatis(){
     + '</section>';
 }
 
+function sectionFootprint(){
+  var rows = containment().map(function(c){
+    return '<tr><td><b>' + esc(c.icao) + '</b></td><td>' + (c.inside ? 'inside' : '<span class="'+P+'-gap">OUTSIDE</span>') + '</td><td>' + c.edgeNm + ' NM</td><td>'
+      + (c.marginal ? '<span class="'+P+'-tag warn">within the footprint’s own error</span>' : '<span class="dim">clear</span>') + '</td></tr>';
+  }).join('');
+  var none = FIELD_ORDER.filter(function(f){ return !FIELDS[f].ll; });
+  return ''
+  + '<section class="'+P+'-section" id="'+P+'-footprint">'
+  + '<h2>Lateral footprint</h2>'
+  + '<p class="lede">The facility’s outline from the SimAware TRACON Project: <b>' + FP.vertices + ' vertices, about ' + FP.areaSqNm.toLocaleString('en-US') + ' square miles</b>. '
+  + '<b>Lateral only</b> &mdash; no ceiling, no sector split, no flow. It answers whether a point is inside the outline and nothing else.</p>'
+  + panel('footprint', '<h3>' + esc(FP.name) + '</h3>' + srcLine(FP.src) + footprintSvg()
+    + '<div class="'+P+'-note"><b>Tolerance.</b> ' + esc(FP.tolerance) + '</div>'
+    + '<div class="'+P+'-note"><b>Rank.</b> ' + esc(FP.rank) + '</div>'
+    + '<div class="'+P+'-note"><b>Licence and maintenance.</b> ' + esc(FP.licence) + '</div>')
+  + panel('footprint.fields', '<h3>Which fields fall inside it</h3>' + srcLine('Field coordinates from the CIFP ' + esc(FAC.cifp.cycle) + ' airport records. A field is inside the outline by construction when the facility works it; the distance to the edge is what tells you how far to trust that.')
+    + '<div class="'+P+'-scroll"><table class="'+P+'-tbl"><thead><tr><th>Field</th><th>Position</th><th>Distance to the edge</th><th>Against the tolerance</th></tr></thead><tbody>' + rows + '</tbody></table></div>'
+    + (none.length ? '<div class="'+P+'-note">No coordinate, so not tested: ' + esc(none.join(', ')) + '.</div>' : ''))
+  + '</section>';
+}
+
 function sectionLive(){
   var gaps = FAC.unread.map(function(g){
     return '<tr><td>' + esc(g.what) + '</td><td class="dim">' + esc(g.where) + '</td></tr>';
@@ -700,8 +781,8 @@ function sectionLive(){
   + '<h2>Fly it</h2>'
   + '<p class="lede">The live player.</p>'
   + '<div class="'+P+'-empty">No traffic model yet.<br><br>'
-  + 'A terminal traffic model needs boundaries, and no ' + esc(FAC.id) + ' boundary is described in words in the SOP &mdash; every airspace diagram is a picture.<br>'
-  + 'VATGlasses has no ZID dataset; SimAware carries a lateral footprint only. Neither is wired in. See the gap analysis.</div>'
+  + 'A terminal traffic model needs sector boundaries, and no ' + esc(FAC.id) + ' sector boundary is described in words in the SOP &mdash; every airspace diagram is a picture.<br>'
+  + 'VATGlasses has no ZID dataset. The SimAware outline above is lateral only, so it can say a point is inside the facility and cannot say which sector owns it or under what ceiling.</div>'
   + panel('live.pictures', '<h3 class="'+P+'-gap">Unread pictures &mdash; ' + FAC.unread.length + ' items</h3><div class="'+P+'-scroll"><table class="'+P+'-tbl"><thead><tr><th>What</th><th>Where</th></tr></thead><tbody>' + gaps + '</tbody></table></div>')
   + '</section>';
 }
@@ -749,8 +830,8 @@ function sectionLog(){
 function refIndex(){
   return '<div class="'+P+'-idx">' + FAC.groups.map(function(g){
     return '<a class="'+P+'-navlink" href="#'+P+'-ref-'+g.id+'">' + esc(g.title) + '</a>';
-  }).join('') + ['vnas','handoff','vatis','knows'].map(function(id){
-    var lab = {vnas:'vNAS record', handoff:'Handoff IDs', vatis:'vATIS', knows:'What this tool knows'}[id];
+  }).join('') + ['vnas','handoff','vatis','footprint','knows'].map(function(id){
+    var lab = {vnas:'vNAS record', handoff:'Handoff IDs', vatis:'vATIS', footprint:'Lateral footprint', knows:'What this tool knows'}[id];
     return '<a class="'+P+'-navlink" href="#'+P+'-'+id+'">' + lab + '</a>';
   }).join('') + '</div>';
 }
@@ -767,7 +848,7 @@ function mountAll(){
   host.innerHTML = sectionPositions() + sectionFields()
     + '<section class="'+P+'-section" id="'+P+'-refindex"><h2>Reference</h2><p class="lede">The ' + esc(FAC.sop.cite) + ' by section, with the vNAS and vATIS sources beside it.</p>' + refIndex() + '</section>'
     + FAC.groups.map(sectionRef).join('')
-    + sectionVnas() + sectionHandoff() + sectionVatis() + sectionLive() + sectionKnows() + sectionLog();
+    + sectionVnas() + sectionHandoff() + sectionVatis() + sectionFootprint() + sectionLive() + sectionKnows() + sectionLog();
   while(host.firstChild){
     if(footer) wrap.insertBefore(host.firstChild, footer);
     else wrap.appendChild(host.firstChild);
@@ -790,6 +871,7 @@ var NS = window['SDF'] = {
   POS:POS, POS_ORDER:POS_ORDER, FIELDS:FIELDS, FIELD_ORDER:FIELD_ORDER,
   SLOTS:SLOTS, slotOf:slotOf, slotState:slotState, STANDING:STANDING,
   CONFIGS:FAC.configs, TABLES:FAC.tables, RULES:FAC.rules, GROUPS:FAC.groups,
+  FOOTPRINT:FP, inFootprint:inFootprint, edgeNm:edgeNm, containment:containment, FP_TOL_NM:FP_TOL_NM,
   CONFLICTS:FAC.conflicts, OPENQ:FAC.openq, UNREAD:FAC.unread, VNAS:FAC.vnas, VATIS:FAC.vatis,
   esc:esc, cell:cell, fmtFreq:fmtFreq, spokenFreq:spokenFreq, spokenRwy:spokenRwy,
   freqStatus:freqStatus, idStatus:idStatus, positionConflicts:positionConflicts, posByTcpSector:posByTcpSector,
@@ -1155,7 +1237,7 @@ function wireNotes(){
 /* ---------- 5. Pages ---------- */
 var PAGES = [
   { id:'setup', label:'Set up a drill', sections:[B+'-frame', P+'-positions', P+'-fields'] },
-  { id:'fly',   label:'Fly it',         sections:[P+'-live'] },
+  { id:'fly',   label:'Fly it',         sections:[P+'-footprint', P+'-live'] },
   { id:'notes', label:'Notes and log',  sections:[B+'-notes', P+'-refindex'].concat(NS.GROUPS.map(function(g){ return P+'-ref-'+g.id; }), [P+'-vnas', P+'-handoff', P+'-vatis', P+'-knows', P+'-log']) }
 ];
 function buildPages(){

@@ -9,7 +9,7 @@
 | 1 | **Facility orders** - the Indy Center wiki | Louisville (SDF) ATCT SOP, `https://wiki.flyindycenter.com/docs/sdf` | **Pulled, behind a login.** Last changelog entry 2026-09-04. |
 | 2 | **CIFP** | cycle 261001 (effective 2026-10-01) and 261029 (effective 2026-10-29, posted early) | Pulled. Identical at every SDF field. |
 | 3 | **vNAS** | `https://data-api.vnas.vatsim.net/api/artccs/ZID`, lastUpdatedAt 2026-10-17T02:35:43.475Z | Pulled. Committed at `../_vnas/ZID_vnas.json`. |
-| 4 | **Community geometry** | VATGlasses `data/` listing; SimAware `Boundaries/SDF/SDF.json` | **Checked.** VATGlasses has no ZID dataset (nothing to vendor). SimAware has a lateral footprint with no altitudes and no licence; **not pulled into the repo and not wired in** - owner decision. |
+| 4 | **Community geometry** | VATGlasses `data/` listing; SimAware `Boundaries/SDF/SDF.json` | **Checked.** VATGlasses has no ZID dataset (nothing to vendor). SimAware has the lateral outline (no altitudes, no licence), **carried in the deck as `FOOTPRINT`** on the owner decision of 2026-10-19; the JSON itself is not vendored. Pinned in `../_shared/claude_ZID_Sector_Geometry_Reference.md`. |
 | 5 | **vATIS profile** | `ZID ARTCC (All)`, updateSerial 2026081300, from `github.com/Indy-Center/vatisfiles` | Pulled (the 188 KB profile). The user's downloaded copy is a 257-byte stub whose `stations` list is empty and whose `updateURL` points at that repository. |
 
 ## The wiki page

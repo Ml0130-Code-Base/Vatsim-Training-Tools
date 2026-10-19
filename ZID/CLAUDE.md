@@ -49,10 +49,16 @@ Root `CLAUDE.md` section 10. Every one was checked; the empty ones are recorded.
    Minnesota records use.
 3. **vNAS** - `_vnas/ZID_vnas.json`, `lastUpdatedAt 2026-10-17T02:35:43Z`. The only source for handoff identifiers, and a
    second source for positions, consolidation hierarchy, scratchpad rules, TDLS defaults and the coordination restrictions (26 involve IND, 36 SDF, 47 CVG, as owner or requester; a restriction between two of them counts on both sides).
-4. **Community geometry - checked, nothing carried.** **VATGlasses has no ZID dataset** (the upstream listing carries
-   zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob and others, not zid). SimAware publishes a lateral
-   footprint for IND, SDF and CVG, with no altitudes and no licence; **it is not vendored and not wired in** - an owner
-   decision, exactly as at R90.
+4. **Community geometry - a lateral outline and nothing else.** **VATGlasses has no ZID dataset** (the upstream listing
+   carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob and others, not zid). **SimAware publishes a
+   lateral outline for IND, SDF and CVG, and it is carried in each deck** as `FOOTPRINT` (27, 24 and 25 vertices) on the
+   owner's decision of 2026-10-19, the way the M98/RST boundary was moved onto it. **It has no altitude, no sector split
+   and no flow**, so it says whether a point is inside the facility and nothing more. About two miles at best - a figure
+   earned at M98 and **not checked at ZID**, where no owner-verified or facility-exported boundary exists. No licence is
+   published; the merge gate is a verified Region, Division or ARTCC staff account. It sits below the SOP diagrams and
+   below anything the owner supplies, and must never overwrite either. Every field with a CIFP coordinate falls inside;
+   KCFJ and I34 (IND) and KBFR, KSER and KIMS (SDF, KIMS 0.1 NM from the edge) are inside the outline's own error. Pinned
+   commits, per-field distances and the vertices are in `_shared/claude_ZID_Sector_Geometry_Reference.md`.
 5. **The vATIS profile** (`_vatis/`) - serial 2026081300, from `github.com/Indy-Center/vatisfiles`. **The owner's
    downloaded copy was a 257-byte stub with `stations: []`;** the real profile is fetched from its own `updateUrl`.
 
@@ -64,8 +70,8 @@ the configurations; every SOP table (clearance delivery, ground and ramp, local 
 inter-facility, sector rules, the STARS video-map list parsed from the page); handoff IDs composed from the vNAS record
 in all directions, including **ERAM to the TRACON** (`neighboringStarsConfigurations`: Field E format
 `OneLetterAndSubset`, single characters I, S and V); the vNAS Restrictions, scratchpad rules and TDLS defaults as a
-second source **beside the SOP, never merged into it**; the vATIS presets; the published procedures; the flight-strip
-row; the `SLOTS`, conflicts and open-question registers; the note rail; and a wind-component helper.
+second source **beside the SOP, never merged into it**; the vATIS presets; the published procedures; the SimAware lateral
+footprint with a plot, a containment test and a per-field distance to the edge; the flight-strip row; the `SLOTS`, conflicts and open-question registers; the note rail; and a wind-component helper.
 
 **The wind helper is arithmetic, not a rule.** Headwind and crosswind per runway against the CIFP magnetic bearing, and
 the configurations ordered by headwind. **None of the three SOPs states a wind limit or a rule for choosing a
@@ -120,13 +126,15 @@ in step by `diff`, not by a generator. Root `CLAUDE.md` section 11: regenerate n
 
 `smoke-test.mjs` in each folder, with `smoke-test-browser.html` (copied from the M98 runner; the title and default deck
 changed). **There is no Node on the owner's machine**, so the harnesses were run through the browser runner, served over
-a local `HttpListener`, on **2026-10-19**: **IND 184 checks, SDF 200, CVG 255, all passing.** Each asserts the block count
+a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing.** Each asserts the block count
 (4), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
 terminates, that a frequency the SOP truncates is told apart from a real disagreement, that every fix resolves to
-coordinates inside the ZID region, that the strip contract is the derived one, that `STANDING` is `[]`, that boundaries
-are an `empty` slot, and the facility facts written out by hand. **Three mutants of the IND deck were run to prove the
-assertions bite** (a changed intersection row, a changed vNAS frequency, a broken TCP parent); each failed at the
-intended assertion.
+coordinates inside the ZID region, that the strip contract is the derived one, that `STANDING` is `[]`, that sector and
+flow boundaries are an `empty` slot and the lateral outline a `partial` one, that the footprint is one ring with no
+altitude property whose every vertex sits in the region and whose every tested field is inside, the marginal fields by
+name, and the facility facts written out by hand. **Five mutants of the IND deck were run to prove the assertions
+bite** (a changed intersection row, a changed vNAS frequency, a broken TCP parent, a vertex moved out of the region, a
+wrong vertex count); each failed at the intended assertion.
 
 That is the harness, run in a browser. It is not `node smoke-test.mjs`, and a clean run there is still unproven. The
 decks were also driven in a real browser page: sections mount, the three pages switch, the frame builder, wind table,
