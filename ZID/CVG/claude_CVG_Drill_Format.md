@@ -8,13 +8,14 @@ The scope table, the position-anchoring rule, the running narrative, the voicing
 
 ## Frame the drill (before traffic)
 
-- **The student picks the POSITION** - seventeen seats across clearance, four ramp towers, two ground, three local, two arrival, two final, two departure and a satellite sector.
+- **The student picks the POSITION** - one of the seven TRACON radar seats: two arrival, two final, two departure and the satellite sector (the Controller In Charge is vNAS-only and is not a seat).
+- **Not offered, assumed open.** Clearance, ramp, ground and tower positions (and the underlying towers) are not a seat and not a "who else is open" choice in the deck. They are assumed open - owner direction, 2026-10-20: these are TRACON decks, and the facility is understood to be a 24-hour operation. **None of the three SOPs states operating hours**, so the 24-hour premise is the owner's, not a cited fact.
 - **The coach sets the weather; the flow follows from it.** CVG has eight named configurations. The SOP says North is preferred over South, Northwest is preferred overall, North/South are used "when wind precludes departing 27", and East/West only in "extreme wind". It states no wind figure.
 - **The coach sets who else is open**, and the traffic.
 
 State the frame in a header line and keep it visible:
 
-> *Position - frequency - STARS ID - field - configuration - wind - flight category - who else is open - towers open*
+> *Position - frequency - STARS ID - field - configuration - wind - flight category - who else is open*
 
 ### The frame elements the parent does not have
 
@@ -22,7 +23,7 @@ State the frame in a header line and keep it visible:
 
 **2. The prohibited pairs.** Landing 9 while departing 36R or 18L, and landing 18R while departing 9 or 27, are never legal. A frame that implies one is wrong.
 
-**3. Four ramp towers.** Terminal, Taxilane N, DHL and Amazon, each with its own frequency; "ramp open combined" and "ramp open all" are different ATIS NOTAMs.
+**3. Four ramp towers (assumed open in the deck; combined or split is not a choice there).** Terminal, Taxilane N, DHL and Amazon, each with its own frequency; "ramp open combined" and "ramp open all" are different ATIS NOTAMs.
 
 **4. The controlled activity area.** Runways 9 and 27 have one that must be protected for departures on 9 or landings on 27, and taxiways S, T, M and J are treated as an active runway when it is in effect.
 

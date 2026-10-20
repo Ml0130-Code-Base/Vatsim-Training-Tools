@@ -8,17 +8,18 @@ The scope table, the position-anchoring rule, the running narrative, the voicing
 
 ## Frame the drill (before traffic)
 
-- **The student picks the POSITION** - thirteen seats across clearance, ground, two local controllers, two departure, two feeder, two final and two satellite sectors, plus the FedEx ramp when it is open.
+- **The student picks the POSITION** - one of the eight TRACON radar seats: two departure, two feeder, two final and two satellite sectors.
+- **Not offered, assumed open.** Clearance, ramp, ground and tower positions (and the underlying towers) are not a seat and not a "who else is open" choice in the deck. They are assumed open - owner direction, 2026-10-20: these are TRACON decks, and the facility is understood to be a 24-hour operation. **None of the three SOPs states operating hours**, so the 24-hour premise is the owner's, not a cited fact.
 - **The coach sets the weather; the flow follows from it.** IND has four configurations (runways 5, 23, 14, 32). The SOP states no wind rule and no choice rule, so the coach picks the configuration the wind favours and says so; the deck ranks configurations by headwind and picks nothing. Runway 14 or 32 forces LC combined.
 - **The coach sets who else is open**, and the traffic.
 
 State the frame in a header line and keep it visible:
 
-> *Position - frequency - STARS ID - field - configuration - wind - flight category - who else is open - towers open*
+> *Position - frequency - STARS ID - field - configuration - wind - flight category - who else is open*
 
 ### The frame elements the parent does not have
 
-**1. The ramp flag.** FedEx ramp control is open or closed, and that changes who a departure calls first and what the ATIS says (RAMP OPEN / RAMP CLOSED NOTAM). M98 has no ramp tower.
+**1. The ramp flag (fixed at open in the deck).** FedEx ramp control is open or closed, and that changes who a departure calls first and what the ATIS says (RAMP OPEN / RAMP CLOSED NOTAM). M98 has no ramp tower.
 
 **2. The LC combine rule.** In a 14 or 32 configuration local control must be combined; in 5 or 23 it splits east and west by runway pair (LCE 5R/23L, LCW 5L/23R).
 

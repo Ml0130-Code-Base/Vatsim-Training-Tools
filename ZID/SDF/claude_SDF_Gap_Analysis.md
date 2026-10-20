@@ -45,6 +45,7 @@ All unspecified (`claude_SDF_TTS_Voicing.md`). EEVAA, LLIZY, GTGON, LOKRD and RD
 - **What wind changes the flow?** - SOP 1 sets a preferred runway for departures in north operation but states no wind rule for choosing a flow.
 - **What do the LOU and FTK tower SOPs say?** - SOP 7 defers to them for departures from the underlying towers.
 - **What are vNAS RPCs 17R+27R and 17L+27L at KSDF?** - The vNAS record lists runway-pair configurations with runways 27R, 27L, 25R and 25L, which Louisville does not have; they may be adaptation placeholders.
+- **What are the tower, ground and ramp hours of operation?** - None of the three SOPs states operating hours. The decks assume clearance, ramp, ground and tower are open on the owner’s direction (2026-10-20: 24-hour facility), and offer only the TRACON seats.
 
 ## Part 3 - unread because it is a picture
 

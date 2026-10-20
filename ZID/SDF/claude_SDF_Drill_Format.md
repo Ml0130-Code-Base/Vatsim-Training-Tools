@@ -8,13 +8,14 @@ The scope table, the position-anchoring rule, the running narrative, the voicing
 
 ## Frame the drill (before traffic)
 
-- **The student picks the POSITION** - twelve seats across clearance, UPS ramp, two ground, two local, two arrival, two departure and two final sectors; Bowman Local sits inside the airspace as a vNAS-only tower.
+- **The student picks the POSITION** - one of the six TRACON radar seats: two arrival, two departure and two final sectors. Bowman Local sits inside the airspace as a vNAS-only tower.
+- **Not offered, assumed open.** Clearance, ramp, ground and tower positions (and the underlying towers) are not a seat and not a "who else is open" choice in the deck. They are assumed open - owner direction, 2026-10-20: these are TRACON decks, and the facility is understood to be a 24-hour operation. **None of the three SOPs states operating hours**, so the 24-hour premise is the owner's, not a cited fact.
 - **The coach sets the weather; the flow follows from it.** SDF has three flows (north 35, south 17, west 29). The SOP states no wind rule. In a west flow AR1/AR2 do not exist and only DR1, DR2, FR1 and FR2 may be opened; FR cannot be split when landing 29.
 - **The coach sets who else is open**, and the traffic.
 
 State the frame in a header line and keep it visible:
 
-> *Position - frequency - STARS ID - field - configuration - wind - flight category - who else is open - towers open*
+> *Position - frequency - STARS ID - field - configuration - wind - flight category - who else is open*
 
 ### The frame elements the parent does not have
 
@@ -22,7 +23,7 @@ State the frame in a header line and keep it visible:
 
 **2. Whether DR is split.** All SIDs publish 132.07 (DR1); GTGON, HIDEY, LLIZY and RDHSE must be given 123.67 (DR2) by hand when DR is split.
 
-**3. The ramp flag.** UPS ramp control open or closed.
+**3. The ramp flag (fixed at open in the deck).** UPS ramp control open or closed.
 
 **4. Bowman.** DR1 is the primary sequence for traffic landing LOU and controls the LOU ATCT when it is not independently opened; aircraft crossing Bowman's Class D/E airspace maintain 3500 or higher.
 

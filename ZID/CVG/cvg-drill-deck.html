@@ -136,7 +136,7 @@ var FAC = {
  configsNote:"The SOP gives no wind rule beyond \"when wind precludes departing 27\" and \"extreme wind\". The tool ranks the configurations by arithmetic only and picks nothing. vNAS consolidation plans: CO1 SOUTH OP 18C/18L; CO2 SOUTH OP 18R/18L; CO3 NORTH OP 36C/36R; CO4 NORTH OP 36L/36R; CO5 WEST OP, ALL OPEN; CO6 EAST OP, ALL OPEN; CO7 WEST OP, ALL @ WEST; CO8 EAST OP, ALL @ WEST.",
  configsSrc:"CVG SOP 1 names eight configurations (table added 2026-09-03); the vATIS profile has six departure and four arrival presets; vNAS has eight consolidation plans.",
  footprint:{"areaSqNm":4585,"bbox":{"e":-83.88333,"n":39.58333,"s":38.43694,"w":-85.50028},"id":"CVG","licence":"SimAware publishes no licence. Provenance and licence are separate questions: every merge into the project is gated on a verified Region, Division or ARTCC staff account, which is a stricter gate than a spreadsheet of owners, and that is why the outline may be used here on the owner's decision (2026-10-19). Attribution: SimAware TRACON Project, github.com/VATSIM-Radar/simaware-tracon-project.","name":"Cincinnati Approach","rank":"Below the SOP's diagrams, below anything the owner supplies, and below a boundary the facility exports (the CRC video-map GeoJSON or the .sct2). It is a source of record and not a change detector: the file has not changed since 2025-03-27, and a facility revision would only show in a fresh pull. It must never overwrite an owner-supplied boundary.","rings":[[[39.57889,-85.23389],[39.5825,-84.84694],[39.58333,-84.725],[39.53889,-84.29556],[39.52278,-84.205],[39.47889,-83.96694],[39.29333,-83.91389],[39.17917,-83.88333],[39.14833,-83.88667],[38.91111,-83.9125],[38.76889,-83.94389],[38.43694,-84.01833],[38.45167,-84.38778],[38.47333,-84.96667],[38.52573,-85.10193],[38.59349,-85.27144],[38.60104,-85.29152],[38.61028,-85.31361],[38.66833,-85.46222],[38.83351,-85.46093],[38.91721,-85.46053],[38.95627,-85.49875],[39.08333,-85.5],[39.45556,-85.50028],[39.57806,-85.3175]]],"src":"SimAware TRACON Project, Boundaries/CVG/CVG.json (repository commit cf9feb3, file last changed 0ff2b54 on 2025-03-27), pulled 2026-10-18. Properties: id CVG, name \"Cincinnati Approach\", one polygon, no altitude.","tolerance":"About two miles, a figure established only at M98, where SimAware's footprint agreed with nine owner-verified radial/DME points to within about two miles. It has not been checked against anything at ZID: no owner-verified or facility-exported boundary exists here to check it against. A field within two miles of the edge is inside the footprint's own error.","vertices":25},
- frameNote:"CVG frame: seat - configuration - wind - flight category - who else is open - the ramp flag (ramp control closed, combined or split) - whether LST is combined with a DR. Frame elements the parent drill format does not have: the controlled activity area for runways 9 and 27, and the prohibited simultaneous-operation pairs (landing 9 with departing 36R or 18L; landing 18R with departing 9 or 27).",
+ frameNote:"CVG frame: seat - configuration - wind - flight category - who else is open - whether LST is combined with a DR. Clearance, ramp, ground and tower positions are not offered and are assumed open (24-hour facility, owner direction 2026-10-20); ramp control closed, combined or split is not a choice here. Frame elements the parent drill format does not have: the controlled activity area for runways 9 and 27, and the prohibited simultaneous-operation pairs (landing 9 with departing 36R or 18L; landing 18R with departing 9 or 27).",
  groups:[{"id":"gen","lede":"CVG SOP 1.","title":"General and configurations"},{"id":"cd","lede":"CVG SOP 3.","title":"Clearance delivery"},{"id":"gc","lede":"CVG SOP 4 and 5.","title":"Ground and ramp control"},{"id":"lc","lede":"CVG SOP 6. Headings, simultaneous approaches, LUAW, intersections.","title":"Local control"},{"id":"app","lede":"CVG SOP 7.","title":"Approach control"},{"id":"sat","lede":"CVG SOP 7.","title":"Satellite airports"},{"id":"ifc","lede":"CVG SOP 8. The LOA content is in the SOP; no separate LOA documents were found.","title":"Inter-facility coordination"},{"id":"sec","lede":"CVG SOP 9. Text only - the airspace diagrams for each flow are pictures.","title":"Radar sectors"},{"id":"maps","lede":"CVG SOP 10.","title":"STARS maps"}],
  id:"CVG",
  magvar:"west 6.0 degrees",
@@ -270,7 +270,8 @@ var FAC = {
   {"id":"cvg-hash","q":"What exactly is the CVG# departure?","why":"The SOP assigns it to props and to jets without an RNAV SID and adds it to the route string; CIFP codes no such procedure."},
   {"id":"sua","q":"What special use airspace does CVG TRACON work?","why":"SOP 7 says \"To be added at a later date\"."},
   {"id":"ict","q":"What does the ICT hold that SOP 7 does not?","why":"SOP 7 says controllers may reference it for the full list of restrictions and handoffs; it is not in the pull."},
-  {"id":"tower-sops","q":"What does the LUK tower SOP say?","why":"SOP 7 defers to it for Lunken departures."}
+  {"id":"tower-sops","q":"What does the LUK tower SOP say?","why":"SOP 7 defers to it for Lunken departures."},
+  {"id":"tower-hours","q":"What are the tower, ground and ramp hours of operation?","why":"None of the three SOPs states operating hours. The decks assume clearance, ramp, ground and tower are open on the owner’s direction (2026-10-20: 24-hour facility), and offer only the TRACON seats."}
  ],
  unread:[
   {"what":"CVG delegated airspace (consolidated)","where":"CVG SOP 7 Overview - consolidated_airspace.svg"},
@@ -974,7 +975,11 @@ function save(){
   catch(e){ storageOk = false; }
 }
 load();
-if(!state.seat || !NS.POS[state.seat]) state.seat = NS.POS_ORDER[0];
+/* TRACON positions only. Clearance, ramp, ground and tower seats, and the underlying towers, are not offered as a seat
+   or as a "who else is open" choice: they are assumed open (owner direction, 2026-10-20). */
+function tracon(k){ return !!NS.POS[k] && NS.POS[k].kind === 'radar'; }
+var TRACON_ORDER = NS.POS_ORDER.filter(tracon);
+if(!state.seat || !tracon(state.seat)) state.seat = TRACON_ORDER[0];
 if(!state.config) state.config = NS.CONFIGS.length ? NS.CONFIGS[0].id : '';
 if(!state.open) state.open = {};
 
@@ -1063,20 +1068,20 @@ function mountRailsIn(root){
 /* ---------- 4. Sections ---------- */
 function opt(v, label, cur){ return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>' + esc(label) + '</option>'; }
 function seatOptions(){
-  return NS.POS_ORDER.filter(function(k){ return NS.POS[k].seat !== false; }).map(function(k){
+  return TRACON_ORDER.filter(function(k){ return NS.POS[k].seat !== false; }).map(function(k){
     var p = NS.POS[k];
     return opt(k, k + '  ' + p.name + (p.f ? '  ' + NS.fmtFreq(p.vf || p.f) : ''), state.seat);
   }).join('');
 }
 function configOptions(){ return NS.CONFIGS.map(function(c){ return opt(c.id, c.name, state.config); }).join(''); }
 function openBoxes(){
-  return NS.POS_ORDER.filter(function(k){ return k !== state.seat; }).map(function(k){
+  return TRACON_ORDER.filter(function(k){ return k !== state.seat; }).map(function(k){
     return '<label><input type="checkbox" data-open="' + esc(k) + '"' + (state.open[k] ? ' checked' : '') + '> ' + esc(k) + '</label>';
   }).join('');
 }
 function openSet(){
   var o = {}; o[state.seat] = true;
-  for(var k in state.open){ if(state.open.hasOwnProperty(k) && state.open[k] && NS.POS[k]) o[k] = true; }
+  for(var k in state.open){ if(state.open.hasOwnProperty(k) && state.open[k] && tracon(k)) o[k] = true; }
   return o;
 }
 function configOf(id){ for(var i = 0; i < NS.CONFIGS.length; i++){ if(NS.CONFIGS[i].id === id) return NS.CONFIGS[i]; } return null; }
@@ -1105,11 +1110,11 @@ function frameHtml(){
   var c = configOf(state.config);
   var open = openSet();
   var fieldIcao = NS.FAC.primary;
-  var others = NS.POS_ORDER.filter(function(k){ return k !== state.seat; });
+  var others = TRACON_ORDER.filter(function(k){ return k !== state.seat; });
   var openList = others.filter(function(k){ return open[k]; });
   var closedList = others.filter(function(k){ return !open[k]; });
-  /* Only radar and tower seats have a consolidation hierarchy; clearance, ground, ramp and the
-     child towers are not in it, so listing them would assert a fold the data does not carry. */
+  /* Only radar seats are offered, so only radar seats can be closed here. Clearance, ground, ramp and the
+     towers are assumed open, so no fold is listed for them. */
   var folds = closedList.filter(function(k){ var q = NS.POS[k]; return q.kind === 'radar' || q.kind === 'twr'; }).map(function(k){
     var a = NS.answerFor(k, open);
     return esc(k) + ' → ' + (a.kind === 'position' ? esc(a.key) : '<span class="'+P+'-gap">' + (a.kind === 'center' ? 'leaves the TRACON' : 'not stated') + '</span>');
@@ -1124,6 +1129,7 @@ function frameHtml(){
     + (c ? ' &middot; landing ' + esc((c.land || []).join(' ') || '—') + ' &middot; departing ' + esc((c.dep || []).join(' ') || '—') : '') + '<br>'
     + 'Wind <b>' + wind + '</b> &middot; flight category <b>' + esc(state.cat) + '</b><br>'
     + 'Open around you: ' + (openList.length ? '<b>' + esc(openList.join(', ')) + '</b>' : '<span class="'+P+'-gap">nobody</span>') + '<br>'
+    + 'Clearance, ramp, ground and tower: <b>assumed open</b> (24-hour facility, owner direction)<br>'
     + (folds.length ? 'Closed, and where they fold: ' + folds.join(' &middot; ') + '<br>' : '')
     + 'If this seat closes: <b>' + esc(chain) + '</b>'
     + '</div>'

@@ -136,7 +136,7 @@ var FAC = {
  configsNote:"The SOP gives no wind rule and no rule for choosing a flow. The tool ranks the flows by arithmetic only and picks nothing. vNAS consolidation plans: CO1 ALL TO 1D; CO2 17/35 1D/1B; CO3 17/35 1A/1D; CO4 17/35 1A/1D/1B; CO5 RWY 17/3[5] 1A/1I 1D/1B; CO6 RWY 29 SPLIT 1D/1B; CO7 ALL TO 1T (names as the record spells them).",
  configsSrc:"SDF SOP names three flows (north, south, west); the vATIS profile has three presets; vNAS has seven consolidation plans (CO1 to CO7).",
  footprint:{"areaSqNm":5750,"bbox":{"e":-84.96667,"n":38.95627,"s":37.48438,"w":-86.75},"id":"SDF","licence":"SimAware publishes no licence. Provenance and licence are separate questions: every merge into the project is gated on a verified Region, Division or ARTCC staff account, which is a stricter gate than a spreadsheet of owners, and that is why the outline may be used here on the owner's decision (2026-10-19). Attribution: SimAware TRACON Project, github.com/VATSIM-Radar/simaware-tracon-project.","name":"Louisville Approach","rank":"Below the SOP's diagrams, below anything the owner supplies, and below a boundary the facility exports (the CRC video-map GeoJSON or the .sct2). It is a source of record and not a change detector: the file has not changed since 2025-03-27, and a facility revision would only show in a fresh pull. It must never overwrite an owner-supplied boundary.","rings":[[[38.52573,-85.10193],[38.47333,-84.96667],[38.21116,-85.15275],[37.83953,-85.06946],[37.72574,-85.04413],[37.58158,-85.00414],[37.55295,-85.43959],[37.51667,-85.98333],[37.48438,-86.54779],[37.65833,-86.56667],[37.93056,-86.59444],[38.35417,-86.65],[38.60833,-86.7125],[38.7,-86.75],[38.73621,-86.74523],[38.8965,-86.3719],[38.95218,-85.72662],[38.95627,-85.49875],[38.91721,-85.46053],[38.83351,-85.46093],[38.66833,-85.46222],[38.61028,-85.31361],[38.60104,-85.29152],[38.59349,-85.27144]]],"src":"SimAware TRACON Project, Boundaries/SDF/SDF.json (repository commit cf9feb3, file last changed 0ff2b54 on 2025-03-27), pulled 2026-10-18. Properties: id SDF, name \"Louisville Approach\", one polygon, no altitude.","tolerance":"About two miles, a figure established only at M98, where SimAware's footprint agreed with nine owner-verified radial/DME points to within about two miles. It has not been checked against anything at ZID: no owner-verified or facility-exported boundary exists here to check it against. A field within two miles of the edge is inside the footprint's own error.","vertices":24},
- frameNote:"SDF frame: seat - flow - wind - flight category - who else is open - the ramp flag (UPS ramp control open or closed) - whether the DR sectors are split (DR2 frequencies must be assigned by hand when they are). Frame elements the parent drill format does not have: parallel-runway high and low side, and the shared departure corridor.",
+ frameNote:"SDF frame: seat - flow - wind - flight category - who else is open - whether the DR sectors are split (DR2 frequencies must be assigned by hand when they are). Clearance, ramp, ground and tower positions (UPS ramp control included) are not offered and are assumed open (24-hour facility, owner direction 2026-10-20). Frame elements the parent drill format does not have: parallel-runway high and low side, and the shared departure corridor.",
  groups:[{"id":"gen","lede":"SDF SOP 1. Equipment, STARS configuration, north operation, runway 11, the ATIS.","title":"General"},{"id":"cd","lede":"SDF SOP 3.","title":"Clearance delivery"},{"id":"gc","lede":"SDF SOP 4 and 5.","title":"Ground and ramp control"},{"id":"lc","lede":"SDF SOP 6. Headings by flow, initial waypoints, intersections.","title":"Local control"},{"id":"app","lede":"SDF SOP 7.","title":"Approach control"},{"id":"sat","lede":"SDF SOP 7.","title":"Satellite airports"},{"id":"ifc","lede":"SDF SOP 8. The LOA content is in the SOP; no separate LOA documents were found.","title":"Inter-facility coordination"},{"id":"sec","lede":"SDF SOP 9. Text only - the airspace diagrams for each flow are pictures.","title":"Radar sectors"},{"id":"maps","lede":"SDF SOP 10.","title":"STARS maps"}],
  id:"SDF",
  magvar:"west 5.0 degrees",
@@ -262,7 +262,8 @@ var FAC = {
   {"id":"ict","q":"What does the ICT hold that SOP 7 does not?","why":"SOP 7 says controllers may reference it for the full list of restrictions and handoffs; it is not in the pull."},
   {"id":"wind","q":"What wind changes the flow?","why":"SOP 1 sets a preferred runway for departures in north operation but states no wind rule for choosing a flow."},
   {"id":"tower-sops","q":"What do the LOU and FTK tower SOPs say?","why":"SOP 7 defers to them for departures from the underlying towers."},
-  {"id":"rpc","q":"What are vNAS RPCs 17R+27R and 17L+27L at KSDF?","why":"The vNAS record lists runway-pair configurations with runways 27R, 27L, 25R and 25L, which Louisville does not have; they may be adaptation placeholders."}
+  {"id":"rpc","q":"What are vNAS RPCs 17R+27R and 17L+27L at KSDF?","why":"The vNAS record lists runway-pair configurations with runways 27R, 27L, 25R and 25L, which Louisville does not have; they may be adaptation placeholders."},
+  {"id":"tower-hours","q":"What are the tower, ground and ramp hours of operation?","why":"None of the three SOPs states operating hours. The decks assume clearance, ramp, ground and tower are open on the owner’s direction (2026-10-20: 24-hour facility), and offer only the TRACON seats."}
  ],
  unread:[
   {"what":"SDF delegated airspace (combined)","where":"SDF SOP 7 Overview - combined_airspace.svg"},
@@ -963,7 +964,11 @@ function save(){
   catch(e){ storageOk = false; }
 }
 load();
-if(!state.seat || !NS.POS[state.seat]) state.seat = NS.POS_ORDER[0];
+/* TRACON positions only. Clearance, ramp, ground and tower seats, and the underlying towers, are not offered as a seat
+   or as a "who else is open" choice: they are assumed open (owner direction, 2026-10-20). */
+function tracon(k){ return !!NS.POS[k] && NS.POS[k].kind === 'radar'; }
+var TRACON_ORDER = NS.POS_ORDER.filter(tracon);
+if(!state.seat || !tracon(state.seat)) state.seat = TRACON_ORDER[0];
 if(!state.config) state.config = NS.CONFIGS.length ? NS.CONFIGS[0].id : '';
 if(!state.open) state.open = {};
 
@@ -1052,20 +1057,20 @@ function mountRailsIn(root){
 /* ---------- 4. Sections ---------- */
 function opt(v, label, cur){ return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>' + esc(label) + '</option>'; }
 function seatOptions(){
-  return NS.POS_ORDER.filter(function(k){ return NS.POS[k].seat !== false; }).map(function(k){
+  return TRACON_ORDER.filter(function(k){ return NS.POS[k].seat !== false; }).map(function(k){
     var p = NS.POS[k];
     return opt(k, k + '  ' + p.name + (p.f ? '  ' + NS.fmtFreq(p.vf || p.f) : ''), state.seat);
   }).join('');
 }
 function configOptions(){ return NS.CONFIGS.map(function(c){ return opt(c.id, c.name, state.config); }).join(''); }
 function openBoxes(){
-  return NS.POS_ORDER.filter(function(k){ return k !== state.seat; }).map(function(k){
+  return TRACON_ORDER.filter(function(k){ return k !== state.seat; }).map(function(k){
     return '<label><input type="checkbox" data-open="' + esc(k) + '"' + (state.open[k] ? ' checked' : '') + '> ' + esc(k) + '</label>';
   }).join('');
 }
 function openSet(){
   var o = {}; o[state.seat] = true;
-  for(var k in state.open){ if(state.open.hasOwnProperty(k) && state.open[k] && NS.POS[k]) o[k] = true; }
+  for(var k in state.open){ if(state.open.hasOwnProperty(k) && state.open[k] && tracon(k)) o[k] = true; }
   return o;
 }
 function configOf(id){ for(var i = 0; i < NS.CONFIGS.length; i++){ if(NS.CONFIGS[i].id === id) return NS.CONFIGS[i]; } return null; }
@@ -1094,11 +1099,11 @@ function frameHtml(){
   var c = configOf(state.config);
   var open = openSet();
   var fieldIcao = NS.FAC.primary;
-  var others = NS.POS_ORDER.filter(function(k){ return k !== state.seat; });
+  var others = TRACON_ORDER.filter(function(k){ return k !== state.seat; });
   var openList = others.filter(function(k){ return open[k]; });
   var closedList = others.filter(function(k){ return !open[k]; });
-  /* Only radar and tower seats have a consolidation hierarchy; clearance, ground, ramp and the
-     child towers are not in it, so listing them would assert a fold the data does not carry. */
+  /* Only radar seats are offered, so only radar seats can be closed here. Clearance, ground, ramp and the
+     towers are assumed open, so no fold is listed for them. */
   var folds = closedList.filter(function(k){ var q = NS.POS[k]; return q.kind === 'radar' || q.kind === 'twr'; }).map(function(k){
     var a = NS.answerFor(k, open);
     return esc(k) + ' → ' + (a.kind === 'position' ? esc(a.key) : '<span class="'+P+'-gap">' + (a.kind === 'center' ? 'leaves the TRACON' : 'not stated') + '</span>');
@@ -1113,6 +1118,7 @@ function frameHtml(){
     + (c ? ' &middot; landing ' + esc((c.land || []).join(' ') || '—') + ' &middot; departing ' + esc((c.dep || []).join(' ') || '—') : '') + '<br>'
     + 'Wind <b>' + wind + '</b> &middot; flight category <b>' + esc(state.cat) + '</b><br>'
     + 'Open around you: ' + (openList.length ? '<b>' + esc(openList.join(', ')) + '</b>' : '<span class="'+P+'-gap">nobody</span>') + '<br>'
+    + 'Clearance, ramp, ground and tower: <b>assumed open</b> (24-hour facility, owner direction)<br>'
     + (folds.length ? 'Closed, and where they fold: ' + folds.join(' &middot; ') + '<br>' : '')
     + 'If this seat closes: <b>' + esc(chain) + '</b>'
     + '</div>'

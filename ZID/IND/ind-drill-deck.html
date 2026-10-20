@@ -136,7 +136,7 @@ var FAC = {
  configsNote:"The SOP gives no wind rule and no rule for choosing between configurations. The tool therefore ranks them by arithmetic only and picks nothing.",
  configsSrc:"IND SOP 4, 5, 6 and 9 name four configurations by runway; the vATIS profile has three presets; vNAS has four runway plans and three tower plans.",
  footprint:{"areaSqNm":5689,"bbox":{"e":-85.09167,"n":40.55833,"s":38.8965,"w":-86.975},"id":"IND","licence":"SimAware publishes no licence. Provenance and licence are separate questions: every merge into the project is gated on a verified Region, Division or ARTCC staff account, which is a stricter gate than a spreadsheet of owners, and that is why the outline may be used here on the owner's decision (2026-10-19). Attribution: SimAware TRACON Project, github.com/VATSIM-Radar/simaware-tracon-project.","name":"Indianapolis Approach","rank":"Below the SOP's diagrams, below anything the owner supplies, and below a boundary the facility exports (the CRC video-map GeoJSON or the .sct2). It is a source of record and not a change detector: the file has not changed since 2025-03-27, and a facility revision would only show in a fresh pull. It must never overwrite an owner-supplied boundary.","rings":[[[39.98611,-85.19167],[39.775,-85.225],[39.57889,-85.23389],[39.57806,-85.3175],[39.45556,-85.50028],[39.08333,-85.5],[38.95627,-85.49875],[38.95218,-85.72662],[38.8965,-86.3719],[39,-86.5],[39.29167,-86.87083],[39.38333,-86.9],[39.95417,-86.975],[40,-86.95],[40.07083,-86.91667],[40.16389,-86.86667],[40.225,-86.35],[40.20833,-86.08333],[40.11944,-85.95556],[40.27083,-85.7975],[40.50278,-85.56139],[40.55833,-85.50417],[40.51667,-85.475],[40.43333,-85.31667],[40.3,-85.09167],[40.08306,-85.1575],[40,-85.18583]]],"src":"SimAware TRACON Project, Boundaries/IND/IND.json (repository commit cf9feb3, file last changed 0ff2b54 on 2025-03-27), pulled 2026-10-18. Properties: id IND, name \"Indianapolis Approach\", one polygon, no altitude.","tolerance":"About two miles, a figure established only at M98, where SimAware's footprint agreed with nine owner-verified radial/DME points to within about two miles. It has not been checked against anything at ZID: no owner-verified or facility-exported boundary exists here to check it against. A field within two miles of the edge is inside the footprint's own error.","vertices":27},
- frameNote:"IND frame: seat - configuration - wind - flight category - who else is open - towers open. Frame elements the parent drill format (R90/M98) does not have: the ramp flag (FedEx ramp control open or closed, which changes who a departure calls first) and the LC combine rule (runway 14 or 32 forces LC combined).",
+ frameNote:"IND frame: seat - configuration - wind - flight category - who else is open. Clearance, ramp, ground and tower positions are not offered and are assumed open (24-hour facility, owner direction 2026-10-20), so the parent's towers-open element is fixed at open. The FedEx ramp flag is fixed at open with them. Frame element the parent drill format (R90/M98) does not have: the LC combine rule (runway 14 or 32 forces LC combined).",
  groups:[{"id":"gen","lede":"IND SOP 1. Equipment, STARS configuration and the LIFT Academy procedures.","title":"General"},{"id":"cd","lede":"IND SOP 3. SIDs, departure frequencies, gates, VFR departures and TDLS.","title":"Clearance delivery"},{"id":"gc","lede":"IND SOP 4 and 5.","title":"Ground and ramp control"},{"id":"lc","lede":"IND SOP 6. Headings, intersections, LUAW and the satellite blocks.","title":"Local control"},{"id":"app","lede":"IND SOP 7. Handoffs to and from other facilities, scratchpads, PAC-P.","title":"Approach control"},{"id":"sat","lede":"IND SOP 7 Satellite IFR Departures.","title":"Satellite airports"},{"id":"ifc","lede":"IND SOP 8. The LOA content is in the SOP; no separate LOA documents were found.","title":"Inter-facility coordination"},{"id":"sec","lede":"IND SOP 9. Text only - the airspace diagrams for each flow are pictures.","title":"Radar sectors"},{"id":"maps","lede":"IND SOP 10.","title":"STARS maps"}],
  id:"IND",
  magvar:"west 5.0 degrees",
@@ -282,7 +282,8 @@ var FAC = {
   {"id":"oom-rocky","q":"Why are OOM5 and ROCKY1 coded only at satellites?","why":"CIFP lists them at EYE, GEZ, HFY, MQJ, TYQ and UMP but not KIND, while the SOP gives them to KIND jets and props."},
   {"id":"rwy1432","q":"Which runways are landed and departed in a 14 or 32 configuration?","why":"SOP 6 says only that LC must be combined; the vATIS preset names runway 32 alone."},
   {"id":"zau-sector","q":"Which ZAU sector takes MEARZ departures?","why":"The SOP names the ARTCC only; vNAS gives 35 and 51."},
-  {"id":"tower-sops","q":"What do the BAK, MIE, AID and HBE tower SOPs say about releases and headings?","why":"IND SOP 7 defers to them for departures from the underlying towers."}
+  {"id":"tower-sops","q":"What do the BAK, MIE, AID and HBE tower SOPs say about releases and headings?","why":"IND SOP 7 defers to them for departures from the underlying towers."},
+  {"id":"tower-hours","q":"What are the tower, ground and ramp hours of operation?","why":"None of the three SOPs states operating hours. The decks assume clearance, ramp, ground and tower are open on the owner’s direction (2026-10-20: 24-hour facility), and offer only the TRACON seats."}
  ],
  unread:[
   {"what":"IND delegated airspace (consolidated)","where":"IND SOP 7 Overview - consolidated_airspace.svg"},
@@ -985,7 +986,11 @@ function save(){
   catch(e){ storageOk = false; }
 }
 load();
-if(!state.seat || !NS.POS[state.seat]) state.seat = NS.POS_ORDER[0];
+/* TRACON positions only. Clearance, ramp, ground and tower seats, and the underlying towers, are not offered as a seat
+   or as a "who else is open" choice: they are assumed open (owner direction, 2026-10-20). */
+function tracon(k){ return !!NS.POS[k] && NS.POS[k].kind === 'radar'; }
+var TRACON_ORDER = NS.POS_ORDER.filter(tracon);
+if(!state.seat || !tracon(state.seat)) state.seat = TRACON_ORDER[0];
 if(!state.config) state.config = NS.CONFIGS.length ? NS.CONFIGS[0].id : '';
 if(!state.open) state.open = {};
 
@@ -1074,20 +1079,20 @@ function mountRailsIn(root){
 /* ---------- 4. Sections ---------- */
 function opt(v, label, cur){ return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>' + esc(label) + '</option>'; }
 function seatOptions(){
-  return NS.POS_ORDER.filter(function(k){ return NS.POS[k].seat !== false; }).map(function(k){
+  return TRACON_ORDER.filter(function(k){ return NS.POS[k].seat !== false; }).map(function(k){
     var p = NS.POS[k];
     return opt(k, k + '  ' + p.name + (p.f ? '  ' + NS.fmtFreq(p.vf || p.f) : ''), state.seat);
   }).join('');
 }
 function configOptions(){ return NS.CONFIGS.map(function(c){ return opt(c.id, c.name, state.config); }).join(''); }
 function openBoxes(){
-  return NS.POS_ORDER.filter(function(k){ return k !== state.seat; }).map(function(k){
+  return TRACON_ORDER.filter(function(k){ return k !== state.seat; }).map(function(k){
     return '<label><input type="checkbox" data-open="' + esc(k) + '"' + (state.open[k] ? ' checked' : '') + '> ' + esc(k) + '</label>';
   }).join('');
 }
 function openSet(){
   var o = {}; o[state.seat] = true;
-  for(var k in state.open){ if(state.open.hasOwnProperty(k) && state.open[k] && NS.POS[k]) o[k] = true; }
+  for(var k in state.open){ if(state.open.hasOwnProperty(k) && state.open[k] && tracon(k)) o[k] = true; }
   return o;
 }
 function configOf(id){ for(var i = 0; i < NS.CONFIGS.length; i++){ if(NS.CONFIGS[i].id === id) return NS.CONFIGS[i]; } return null; }
@@ -1116,11 +1121,11 @@ function frameHtml(){
   var c = configOf(state.config);
   var open = openSet();
   var fieldIcao = NS.FAC.primary;
-  var others = NS.POS_ORDER.filter(function(k){ return k !== state.seat; });
+  var others = TRACON_ORDER.filter(function(k){ return k !== state.seat; });
   var openList = others.filter(function(k){ return open[k]; });
   var closedList = others.filter(function(k){ return !open[k]; });
-  /* Only radar and tower seats have a consolidation hierarchy; clearance, ground, ramp and the
-     child towers are not in it, so listing them would assert a fold the data does not carry. */
+  /* Only radar seats are offered, so only radar seats can be closed here. Clearance, ground, ramp and the
+     towers are assumed open, so no fold is listed for them. */
   var folds = closedList.filter(function(k){ var q = NS.POS[k]; return q.kind === 'radar' || q.kind === 'twr'; }).map(function(k){
     var a = NS.answerFor(k, open);
     return esc(k) + ' → ' + (a.kind === 'position' ? esc(a.key) : '<span class="'+P+'-gap">' + (a.kind === 'center' ? 'leaves the TRACON' : 'not stated') + '</span>');
@@ -1135,6 +1140,7 @@ function frameHtml(){
     + (c ? ' &middot; landing ' + esc((c.land || []).join(' ') || '—') + ' &middot; departing ' + esc((c.dep || []).join(' ') || '—') : '') + '<br>'
     + 'Wind <b>' + wind + '</b> &middot; flight category <b>' + esc(state.cat) + '</b><br>'
     + 'Open around you: ' + (openList.length ? '<b>' + esc(openList.join(', ')) + '</b>' : '<span class="'+P+'-gap">nobody</span>') + '<br>'
+    + 'Clearance, ramp, ground and tower: <b>assumed open</b> (24-hour facility, owner direction)<br>'
     + (folds.length ? 'Closed, and where they fold: ' + folds.join(' &middot; ') + '<br>' : '')
     + 'If this seat closes: <b>' + esc(chain) + '</b>'
     + '</div>'

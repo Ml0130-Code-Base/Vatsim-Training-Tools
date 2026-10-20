@@ -52,6 +52,7 @@ All unspecified (`claude_CVG_TTS_Voicing.md`). CEGRM, GAVNN, JAKIE, SARGO, TIGRR
 - **What special use airspace does CVG TRACON work?** - SOP 7 says "To be added at a later date".
 - **What does the ICT hold that SOP 7 does not?** - SOP 7 says controllers may reference it for the full list of restrictions and handoffs; it is not in the pull.
 - **What does the LUK tower SOP say?** - SOP 7 defers to it for Lunken departures.
+- **What are the tower, ground and ramp hours of operation?** - None of the three SOPs states operating hours. The decks assume clearance, ramp, ground and tower are open on the owner’s direction (2026-10-20: 24-hour facility), and offer only the TRACON seats.
 
 ## Part 3 - unread because it is a picture
 
