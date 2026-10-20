@@ -1715,7 +1715,7 @@ else { mount(); }
    left out teaches nothing.
 
    SOUTH VALLEY REGIONAL IS KSVR. Checked in the CIFP airport record,
-   not assumed from the old U42 identifier, which cycle 260903 does not
+   not assumed from the old U42 identifier, which cycle 261001 does not
    carry. The VATGlasses ZLC dataset agrees.
 
    `approaches` IS A LOCAL EXTENSION TO THE CONTRACT. The master strip
@@ -1726,7 +1726,9 @@ else { mount(); }
    across fields: R35 is both a KSLC and a KBMC approach, and I17/L17
    belong to KSLC and KTVY alike. A flat map would silently lose one.
 
-   Procedure inventory from CIFP 260903 — see the facility's
+   Procedure inventory from CIFP 261001 (identical to 260903 at all eight fields;
+   cycle 261029 renames CARTR1, PITTT2, SKEES6 and YUTES2 to CARTR2, PITTT3,
+   SKEES7 and YUTES3 from 2026-10-29, issue #65) — see the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
    no traffic model, so nothing here is flown.
    ================================================================ */
@@ -1837,7 +1839,7 @@ window.STRIP_FACILITY = {
       fixesOn      THIS DECK CARRIES PROCEDURE NAMES, NOT LADDERS. There
                    is no procedures block at S56 — the arrivals and
                    departures above are hand-listed identifiers from CIFP
-                   260903, and nothing here knows which fixes are on any
+                   261001, and nothing here knows which fixes are on any
                    of them. So the row asks for a bare distance to go
                    rather than miles from a named fix, which is what M98
                    does for a routing with no published ladder. This is
@@ -2763,7 +2765,7 @@ function section(){
  return '<section class="panel ' + P + '-sec" id="mod-' + P + '" data-note="strips">'
   + '<h2>Fields and procedures</h2>'
   + '<p class="' + P + '-dim">The eight fields of <b>SOP Table 2-3-7</b>, and everything '
-  + 'CIFP 260903 publishes at each. <b>PA</b> is that table\'s practice-approach scratchpad '
+  + 'CIFP 261001 publishes at each. <b>PA</b> is that table\'s practice-approach scratchpad '
   + 'letter &mdash; a character, not a sector. <b>Hill Air Force Base carries no coded '
   + 'procedure at all</b>: CIFP has no SID, STAR or approach for it and no TACAN approach '
   + 'anywhere in the cycle, so the HI-ILS and HI-TACAN that 3-3-3a makes Hart approve have to '
@@ -2776,7 +2778,7 @@ function section(){
   + 'The field list is this facility\'s and nothing else, so a strip for another facility cannot '
   + 'be built; anything that arrives another way — a stored drill, a pasted scenario — is named '
   + 'and refused below rather than silently dropped. '
-  + 'Procedure inventory from CIFP 260903.</p>'
+  + 'Procedure inventory from CIFP 261001.</p>'
   + '<div style="margin:10px 0;"><button class="' + P + '-btn" onclick="' + P + 'Add()">add a strip</button></div>'
   + '<div id="' + P + '-rows"></div>'
   + '</section>';

@@ -113,12 +113,16 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    **Two things did not close, and they are different kinds of gap.**
 
    - **NICHOL (S56) is not in CIFP at all** — no fix of that name exists anywhere in cycle
-     260903. SOP 3-5 uses it as the South Flow descent line (*"no descent below 11,000 until
+     260903, and none in 261001 or 261029 (the string appears only inside nine airport and
+     heliport names). SOP 3-5 uses it as the South Flow descent line (*"no descent below 11,000 until
      established downwind and north of NICHOL"*), so it reads as a local point off the video
      map rather than a published waypoint. It stays an owner ask — issue **#47**.
    - **KYANN (BOI) may be a transcription error for KYAAN.** The BOI SOP transcription in
      `Big Sky/BOI/claude_BOI_Reference.md` spells it `KYANN`; CIFP codes the KBOI STAR as
-     **`KYAAN4`** and its fix as `KYAAN`, and there is no `KYANN` in the cycle. **Not resolved
+     **`KYAAN4`** and its fix as `KYAAN`, and there is no `KYANN` at Boise: **`KYANN` does exist in CIFP, but only as an en route waypoint
+     at N30 15 / W095 13 in Texas (region K4)**, about 1,300 NM from the field, so it is not a Boise fix and
+     does not change the question. The earlier wording of this paragraph, *"no `KYANN` in the
+     cycle"*, and issue **#48**'s were too strong, corrected 2026-10-20. **Not resolved
      here** — root `CLAUDE.md` §6, conflicts are named. Issue **#48** settles it, and
      carries both outcomes: an as-written anomaly to preserve, or a dropped letter that four
      files need fixed.
@@ -142,8 +146,30 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    geometry (item 3), and nothing in this block touches it.
 
    **S56 was deliberately left out of this pass** at the owner's direction (issue **#3**), so its deck carries
-   no procedures block: its strip contract hand-lists the CIFP 260903 procedure *names* per
+   no procedures block: its strip contract hand-lists the CIFP 261001 procedure *names* per
    field, not the ladders behind them.
+
+   **Audited against a fresh decode 2026-10-20 (issue #64), cycle 261001.** Cycle 261001 carries the
+   same procedures as 260903 at all ten fields, so what changed is the decode, not the data.
+
+   - **S56 was already right.** A fresh decode of 260903 reproduces its reference procedure section
+     for procedure section, and its deck's runway lists, 15 SID names, 13 STAR names and 36
+     approach names match the 261001 manifest exactly. Restamped, and given a Runways table.
+   - **Big Sky's reference was not.** `claude_BigSky_CIFP_Procedures.md` carried the four decode
+     faults S56's reference recorded on 2026-09-06 and was regenerated: all 6 runway fixes were
+     resolved against the wrong airport (Boise's four in Ohio, Bozeman's two in Alaska), 14 of 25
+     approach finals carried a duplicate fix from a continuation record, and 21 of 25 approach names
+     printed the suffix after the runway. The deck's `STARS`, `SIDS` and `PFIX` are byte-identical
+     to a fresh decode, apart from `vector:true` on **BOI3**, which is a Vector SID (route type
+     `T`) and was being labelled "conventional".
+   - **A statement corrected in 2026-09 never reached the Big Sky deck.** It said a radar-vector
+     departure is outside what CIFP carries; BOI3 and SLC4 are exactly that, coded.
+   - **Runway data** was already right in both decks (S56's eight fields, Big Sky's `10L 10R 28L 28R`
+     and `03 11 11G 12 21 29 29G 30`, all matching the CIFP runway records) and is now also in the
+     references as a Runways table. CIFP also codes two further Bozeman strips, `11G` and `29G`
+     (2,802 ft by 80 ft each).
+   - **Cycle 261029 (effective 2026-10-29) was decoded and is not carried.** It matters to S56's strip
+     contract: CARTR1, PITTT2, SKEES6 and YUTES2 become CARTR2, PITTT3, SKEES7 and YUTES3. Issue #65.
 
    **Its copy of the master strip block caught up 2026-09-06.** All five decks that carry the
    block — R90, C90, AZO, S56, Big Sky — are now byte-identical to root `strip-block.html`,

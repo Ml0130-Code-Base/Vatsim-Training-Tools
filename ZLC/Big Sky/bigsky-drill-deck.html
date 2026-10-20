@@ -1506,7 +1506,10 @@ else { mount(); }
    The SIDs and STARs this facility's fields actually have, taken from
    the FAA's coded source rather than traced off a chart image.
 
-   SOURCE. CIFP cycle 260903, effective 2026-09-03, pulled 2026-09-06.
+   SOURCE. CIFP cycle 261001, effective 2026-10-01, pulled 2026-10-20.
+   Cycle 261029 (effective 2026-10-29) was decoded too and is NOT carried:
+   it changes one Bozeman altitude (FALIA 8,200, was 8,000, on the HIA
+   transition and final of ILS Y and LOC Y RWY 12). Rolling to it is #65.
    Pull recipe, record layout and licence in the root
    claude_CIFP_Source_Reference.md; the same data written out for
    reading in claude_BigSky_CIFP_Procedures.md beside this file.
@@ -1517,6 +1520,11 @@ else { mount(); }
    Boise, five STARs and five SIDs at Bozeman — so this is the one
    facility in scope where CIFP answers the whole question for every
    field the tool works.
+
+   BOI3 IS A VECTOR SID (ARINC 424 route type T): a climb on a heading and
+   then radar vectors, no fix. It is the one radar-vectored departure CIFP
+   codes at these fields, it carries vector:true, and the panel labels it
+   so rather than calling it conventional.
 
    Nothing here is a sector boundary. The ZLC polygons and the flow
    branch they carry stay where they are, in
@@ -1581,7 +1589,7 @@ else { mount(); }
 var NS = (window.ZLC && window.ZLC.facility === 'BIGSKY') ? window.ZLC : null;
 if(!NS) return;                    /* deck absent — do nothing, per the block contract */
 
-var CYCLE = '260903';
+var CYCLE = '261001';
 
 var PFIX = {
   AALNG:[45.76129,-110.87350], AIDDN:[45.69310,-111.38696], ALNYT:[45.64091,-111.78814], APISE:[43.50211,-116.44150],
@@ -1659,7 +1667,7 @@ var STARS = {
 };
 var SIDS = {
  KBOI:{
-  BOI3:{rnav:false,
+  BOI3:{rnav:false,vector:true,
    rwy:{'RW10B':[{from:'BOI',at:16000,vec:'FM'}],'RW28B':[{from:'BOI',at:16000,vec:'FM'}]},
   },
   GOWEN4:{rnav:false,
@@ -1871,8 +1879,8 @@ function body(){
   if(!here.length){
     return h + '</div><div class="bskp-empty">CIFP codes no '
       + (state.kind === 'SID' ? 'SID' : 'STAR') + ' at ' + esc(state.apt) + '. '
-      + 'A radar-vector or conventional procedure is outside what CIFP carries, so a zero here is a '
-      + 'coding gap and not proof the field has none.</div>';
+      + 'CIFP can carry a radar-vector departure (route type T, as at Boise) but codes none here, so a zero is a '
+      + 'coding gap at this field and not proof the field has none.</div>';
   }
 
   h += '<div class="bskp-f"><span class="bskp-lab">Procedure</span>'
@@ -1888,7 +1896,7 @@ function body(){
 
   var also = fieldsWith(state.proc, state.kind);
   h += '<div class="bskp-meta">' + esc(state.proc) + ' at ' + esc(state.apt) + ' &middot; '
-    + (p && p.rnav ? 'RNAV' : 'conventional') + ' &middot; CIFP ' + CYCLE
+    + (p && p.rnav ? 'RNAV' : (p && p.vector ? 'vector SID (route type T)' : 'conventional')) + ' &middot; CIFP ' + CYCLE
     + (also.length > 1
         ? (' &middot; also published at ' + esc(also.filter(function(a){ return a !== state.apt; }).join(', '))
            + ', with that field\'s own runway transitions')
@@ -2004,7 +2012,7 @@ else { mount(); }
    several fields is the normal case.
 
    Procedure inventory is DERIVED from the PUBLISHED PROCEDURES block
-   above — CIFP 260903, see that block and the facility's
+   above — CIFP 261001, see that block and the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
    no traffic model, so nothing here is flown. That is not the same
    claim as "no track data", which is what track:true records.
@@ -2957,7 +2965,7 @@ function section(){
   + 'The field list is this facility\'s and nothing else, so a strip for another facility cannot '
   + 'be built; anything that arrives another way — a stored drill, a pasted scenario — is named '
   + 'and refused below rather than silently dropped. '
-  + 'Procedure inventory from CIFP 260903.</p>'
+  + 'Procedure inventory from CIFP 261001.</p>'
   + '<div style="margin:10px 0;"><button class="' + P + '-btn" onclick="' + P + 'Add()">add a strip</button></div>'
   + '<div id="' + P + '-rows"></div>'
   + '</section>';

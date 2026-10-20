@@ -1,11 +1,24 @@
 # SID, STAR and approach data from CIFP — S56, Salt Lake approach
 
-Generated **2026-09-06** from **CIFP 260903** (FAA Coded Instrument Flight Procedures,
-cycle effective 2026-09-03). Pull recipe, record layout and licence in
-`claude_CIFP_Source_Reference.md` at the repository root.
+Generated **2026-10-20** from **CIFP 261001** (FAA Coded Instrument Flight Procedures,
+cycle effective 2026-10-01). Pull recipe, record layout and licence in
+`claude_CIFP_Source_Reference.md` at the repository root. This regenerates the file first
+written 2026-09-06 from CIFP 260903: **every procedure section is identical to that
+file** apart from the cycle number in the "None coded" lines (the cycle did not change a single
+procedure at these eight fields), and each field now
+has a **Runways** table.
 
 **The cycle is the citation.** A value here is true for 28 days by construction — quote it
-as `CIFP 260903` and re-pull before trusting it in a later cycle.
+as `CIFP 261001` and re-pull before trusting it in a later cycle.
+
+**Cycle 261029 (effective 2026-10-29, posted early) was decoded as well and is NOT what this
+file carries.** At these eight fields it differs at Salt Lake City only, and it matters to the
+deck: **CARTR1 becomes CARTR2, PITTT2 PITTT3, SKEES6 SKEES7 and YUTES2 YUTES3**, and those four
+STARs gain speed limits (ANNTY 11/280 and SURYP 11/210 on the runway 34 and 35 transitions,
+PITTT 12/280 and LAWVA 11/210 on 16 and 17, JAXXX 12/250 and BUSHH 12/250 on YUTES), and the
+H16RZ and H34LZ RNP transitions cross LAWVA and SURYP at 11,000/210. The runway 35 record and
+its localizer record, which disagree on category in this cycle (`1` against `L`), agree on
+`L` in 261029. Rolling to it on 2026-10-29 is issue #65.
 
 **This is the published procedure, not the facility's use of it.** CIFP lists every
 transition that exists and is silent on which one the facility assigns in a given
@@ -14,7 +27,7 @@ boundary and nothing here says who owns what airspace.
 
 ## The eight fields, and what CIFP has for each
 
-Counted from `IN_CIFP.txt`, cycle 260903, and confirmed against the procedure records
+Counted from `IN_CIFP.txt`, cycle 261001, and confirmed against the procedure records
 themselves. Every one of these fields is worked by S56 and every one is now carried below.
 
 | Field | CIFP name | STARs | SIDs | Approaches | Runways in CIFP |
@@ -31,7 +44,7 @@ themselves. Every one of these fields is worked by S56 and every one is now carr
 **South Valley Regional is `KSVR`, not `U42`.** The identifier was checked in the CIFP
 airport record (`SOUTH VALLEY RGNL`, N40 37 10.37 / W111 59 34.40, elevation 4,606) rather
 than assumed, and the VATGlasses ZLC dataset agrees — it keys the field `KSVR` with
-`"pre": ["SVR"]`. There is no `U42` record anywhere in cycle 260903, so a drill that calls
+`"pre": ["SVR"]`. There is no `U42` record anywhere in cycle 261001 (or 261029), so a drill that calls
 the field U42 is quoting an identifier this cycle does not have.
 
 **Hill Air Force Base has no coded procedure in CIFP, and that is a property of the source,
@@ -81,11 +94,14 @@ STAR transitions with no procedure name above them, so a reader could not tell w
 transition belonged to. **The ident is the coded one and never the spoken one** — `BEARR5`,
 not "BEARR FIVE", per `claude_CIFP_Source_Reference.md` §4.
 
-## Four decoding faults fixed in this regeneration
+## Four decoding faults fixed in the 2026-09-06 regeneration
 
 All four were in the KSLC section of the earlier file and all four are corrected below.
 They are recorded rather than quietly dropped, because the same decoder shape produced
-`ZAU/`, `ZMP/R90/` and `ZLC/Big Sky/` and **those files still carry all four.**
+`ZAU/`, `ZMP/R90/` and `ZLC/Big Sky/` and those files carried all four. **The ZAU files and Big
+Sky were regenerated 2026-10-20 (issues #63 and #64); R90 still carries them (#66).** On
+2026-10-20 a fresh decode of cycle 260903 was compared with this file, and it reproduced every
+procedure section byte for byte.
 
 1. **Runway thresholds resolved to the wrong airport.** A `RWnn` leg is a runway record,
    which is keyed by airport — but the lookup ignored the airport and took the first record
@@ -116,6 +132,21 @@ They are recorded rather than quietly dropped, because the same decoder shape pr
 ## KSLC — SALT LAKE CITY INTL
 
 Runways in CIFP: 14, 16L, 16R, 17, 32, 34L, 34R, 35
+
+### Runways
+
+Field elevation 4,231 ft; magnetic variation 11.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW14 | 4,893 | 150 | 142.0° | N40 47.14 / W111 58.27 -- `40.78572, -111.97124` | 0 | 40 | — |
+| RW16L | 12,002 | 150 | 164.0° | N40 48.45 / W111 58.62 -- `40.80745, -111.97693` | 0 | 55 | **IMOY** 109.50 MHz, course 164.0°, category code `3` |
+| RW16R | 12,000 | 150 | 164.0° | N40 48.47 / W111 59.96 -- `40.80778, -111.99929` | 0 | 54 | **IUAT** 111.90 MHz, course 163.9°, category code `3` |
+| RW17 | 9,596 | 150 | 169.0° | N40 47.93 / W111 57.72 -- `40.79892, -111.96207` | 0 | 55 | **IBNT** 111.50 MHz, course 169.0°, category code `2` |
+| RW32 | 4,893 | 150 | 322.0° | N40 46.43 / W111 57.79 -- `40.77376, -111.96322` | 0 | 41 | — |
+| RW34L | 12,000 | 150 | 344.0° | N40 46.50 / W111 59.73 -- `40.77498, -111.99547` | 0 | 55 | **IUUH** 111.90 MHz, course 343.9°, category code `3` |
+| RW34R | 12,002 | 150 | 344.0° | N40 46.48 / W111 58.39 -- `40.77464, -111.97313` | 0 | 55 | **ISLC** 109.50 MHz, course 344.0°, category code `3` |
+| RW35 | 9,596 | 150 | 349.0° | N40 46.41 / W111 57.72 -- `40.77347, -111.96207` | 324 | 55 | **IUTJ** 111.50 MHz, course 344.0°, category code `L` (the runway record says `1`) |
 
 ### STARs
 
@@ -669,9 +700,18 @@ The approach transitions, which is where traffic is fed from:
 
 Runways in CIFP: 17, 35
 
+### Runways
+
+Field elevation 4,230 ft; magnetic variation 13.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW17 | 8,900 | 100 | 166.0° | N41 33.99 / W112 03.74 -- `41.56652, -112.06238` | 0 | 41 | — |
+| RW35 | 8,900 | 100 | 346.0° | N41 32.53 / W112 03.73 -- `41.54211, -112.06210` | 0 | 45 | — |
+
 ### STARs
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ### SIDs
 
@@ -714,21 +754,41 @@ The approach transitions, which is where traffic is fed from:
 
 Runways in CIFP: 14, 32
 
+### Runways
+
+Field elevation 4,789 ft; magnetic variation 14.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW14 | 13,500 | 200 | 139.0° | N41 08.43 / W111 59.05 -- `41.14042, -111.98423` | 0 | 59 | — |
+| RW32 | 13,500 | 200 | 319.0° | N41 06.45 / W111 57.71 -- `41.10746, -111.96189` | 0 | 52 | — |
+
 ### STARs
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ### SIDs
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ### Approaches
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ## KOGD — OGDEN-HINCKLEY
 
 Runways in CIFP: 03, 17, 21, 35
+
+### Runways
+
+Field elevation 4,473 ft; magnetic variation 11.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW03 | 8,107 | 150 | 033.0° | N41 11.28 / W112 01.25 -- `41.18802, -112.02082` | 0 | 49 | **IOGD** 111.70 MHz, course 033.8°, category code `1` |
+| RW17 | 5,195 | 100 | 168.0° | N41 12.05 / W112 00.90 -- `41.20088, -112.01497` | 0 | 50 | — |
+| RW21 | 8,107 | 150 | 213.0° | N41 12.13 / W112 00.13 -- `41.20214, -112.00224` | 854 | 50 | — |
+| RW35 | 5,195 | 100 | 348.0° | N41 11.20 / W112 00.89 -- `41.18663, -112.01490` | 0 | 50 | — |
 
 ### STARs
 
@@ -824,6 +884,17 @@ The approach transitions, which is where traffic is fed from:
 ## KPVU — PROVO MUNI
 
 Runways in CIFP: 13, 18, 31, 36
+
+### Runways
+
+Field elevation 4,497 ft; magnetic variation 12.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW13 | 8,603 | 150 | 134.0° | N40 13.81 / W111 43.95 -- `40.23021, -111.73244` | 0 | 50 | **IPVU** 110.30 MHz, course 133.8°, category code `1` |
+| RW18 | 6,628 | 150 | 180.0° | N40 13.59 / W111 43.22 -- `40.22643, -111.72039` | 0 | 45 | — |
+| RW31 | 8,603 | 150 | 314.0° | N40 12.64 / W111 42.91 -- `40.21069, -111.71513` | 0 | 46 | — |
+| RW36 | 6,628 | 150 | 360.0° | N40 12.52 / W111 43.51 -- `40.20863, -111.72523` | 0 | 46 | — |
 
 ### STARs
 
@@ -949,9 +1020,18 @@ The approach transitions, which is where traffic is fed from:
 
 Runways in CIFP: 12, 30
 
+### Runways
+
+Field elevation 4,530 ft; magnetic variation 11.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW12 | 6,500 | 100 | 121.0° | N40 09.06 / W111 40.58 -- `40.15104, -111.67628` | 0 | 32 | — |
+| RW30 | 6,500 | 100 | 301.0° | N40 08.34 / W111 39.55 -- `40.13902, -111.65910` | 0 | 35 | — |
+
 ### STARs
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ### SIDs
 
@@ -1009,9 +1089,18 @@ The approach transitions, which is where traffic is fed from:
 
 Runways in CIFP: 17, 35
 
+### Runways
+
+Field elevation 4,321 ft; magnetic variation 13.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW17 | 6,102 | 100 | 166.0° | N40 37.26 / W112 21.06 -- `40.62092, -112.35095` | 0 | 55 | **ITVY** 111.15 MHz, course 166.1°, category code `1` |
+| RW35 | 6,102 | 100 | 346.0° | N40 36.27 / W112 21.04 -- `40.60452, -112.35061` | 122 | 45 | — |
+
 ### STARs
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ### SIDs
 
@@ -1070,9 +1159,18 @@ The approach transitions, which is where traffic is fed from:
 
 Runways in CIFP: 16, 34
 
+### Runways
+
+Field elevation 4,606 ft; magnetic variation 14.0° E. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW16 | 5,862 | 100 | 158.0° | N40 37.65 / W111 59.66 -- `40.62752, -111.99428` | 0 | 43 | — |
+| RW34 | 5,862 | 100 | 338.0° | N40 36.69 / W111 59.49 -- `40.61157, -111.99150` | 0 | 58 | — |
+
 ### STARs
 
-None coded in CIFP 260903.
+None coded in CIFP 261001.
 
 ### SIDs
 
@@ -1112,4 +1210,3 @@ The approach transitions, which is where traffic is fed from:
 - **DUYDE** N40 40.66 / W112 00.18 -- `40.67769, -112.00300`
 - **KITBE** N40 46.25 / W112 05.72 -- `40.77089, -112.09541`
 - **STACO** N40 49.33 / W112 25.18 -- `40.82220, -112.41960`
-
