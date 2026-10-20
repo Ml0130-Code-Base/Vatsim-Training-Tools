@@ -46,6 +46,7 @@ Not surveyed. `claude_DATIS_Field_Survey.md` covers the fields the other decks w
 - **Which runways are landed and departed in a 14 or 32 configuration?** - SOP 6 says only that LC must be combined; the vATIS preset names runway 32 alone.
 - **Which ZAU sector takes MEARZ departures?** - The SOP names the ARTCC only; vNAS gives 35 and 51.
 - **What do the BAK, MIE, AID and HBE tower SOPs say about releases and headings?** - IND SOP 7 defers to them for departures from the underlying towers.
+- **Which departure runways does each KIND SID serve?** - CIFP 261001 codes DAWNN1, MAREO1 and MEARZ7 with no runway transition, and the SOP does not say which configuration each is assigned in, so the route plot cannot trim them to a flow and draws them in every flow.
 - **What are the tower, ground and ramp hours of operation?** - None of the three SOPs states operating hours. The decks assume clearance, ramp, ground and tower are open on the owner’s direction (2026-10-20: 24-hour facility), and offer only the TRACON seats.
 
 ## Part 3 - unread because it is a picture

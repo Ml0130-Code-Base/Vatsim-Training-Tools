@@ -73,10 +73,11 @@ technique; this section is the contract.
 6. **Single file, no build step, no dependencies, offline-first.** Vanilla, ES5-flavoured JS.
    The Google Fonts link is the only external reference in the markup and every page is fully
    functional without it. **Every tool must work end to end from `file://` with the machine
-   offline.** M98 has exactly one network call — the D-ATIS fetch — and it is optional by
-   construction: never on a path the tool needs, every failure hands straight to the paste
+   offline.** A tool may carry exactly one network call — the D-ATIS fetch, as at M98, the
+   other decks that read a broadcast, and the three ZID decks (2026-10-20) — and it is optional
+   by construction: never on a path the tool needs, every failure hands straight to the paste
    box, and the parser it feeds is the same one paste uses. That is the test any future
-   network idea has to pass. Don't add a second one.
+   network idea has to pass. Don't add a second one: a METAR fallback or a second host is one.
 
 7. **The reference markdown is authoritative.** `claude_*.md` wins over anything hardcoded in
    HTML when the two conflict. Fix the HTML.
@@ -163,13 +164,17 @@ as a new block after them. The markup outside the blocks — topbar, hero, empty
 footer — is chrome, and the blocks mount everything else. Leave the chrome alone without an
 explicit ask.
 
-**Two master blocks live at the repository root and are copied into decks byte for byte:**
-`strip-block.html` (the flight-strip row, `claude_Strip_Block_Reference.md`) and
+**Three master blocks live at the repository root and are copied into decks byte for byte:**
+`strip-block.html` (the flight-strip row, `claude_Strip_Block_Reference.md`),
 `routedraw-block.html` (M98's *Routes drawn* bar — open procedure, all STARs, all SIDs, all SIDs + STARs,
-off — on a deck's plot, `claude_RouteDraw_Block_Reference.md`, 2026-10-20). Each is preceded in the deck by a
+off — on a deck's plot, trimmed to the flow in force, `claude_RouteDraw_Block_Reference.md`, 2026-10-20) and
+`datis-block.html` (the D-ATIS reader that finds the flow and sets the frame,
+`claude_DATIS_Block_Reference.md`, 2026-10-20). Each is preceded in the deck by a
 small facility contract and is checked with `diff`, never by file date. The route-draw block needs the
-procedures block under it, so it belongs in every deck that carries one: **only the three ZID decks have it
-today; no other deck does yet, and M98 keeps its own layer code.**
+procedures block under it, so it belongs in every deck that carries one. **Only the three ZID decks have the route-draw and
+D-ATIS masters today; no other deck does yet, and M98 keeps its own layer and D-ATIS code.** The D-ATIS master
+carries two landing grammars the older shared reader lacks, so "the other decks' reader" and "the master"
+are not the same code — see the reference.
 
 **Namespace: one per tool, derived from the tool, never reused.** The whole point is that a
 paste-merge cannot silently bind the wrong engine to the wrong data. `DD` belongs to M98;

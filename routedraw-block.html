@@ -31,6 +31,20 @@
    WORKING: "all SIDs" still draws the STAR that is open, and "all STARs" still
    draws the SID that is open. Only "off" is bare.
 
+   TRIMMED TO THE FLOW, WHEN THE DECK CAN SAY WHAT THE FLOW IS. A runway
+   transition belongs to one runway, so a procedure drawn for a runway that is
+   not in use is the wrong picture. When the contract supplies a flow - the
+   runways the current configuration lands and departs - a STAR is drawn only
+   with the runway transitions that land a runway in use, a SID only with the
+   ones that depart a runway in use, and a procedure whose every runway
+   transition is for a runway out of use is not drawn at all. A procedure with
+   no runway transitions is drawn: nothing says which flow it belongs to. The
+   configuration names ONE field's runways, so only that field is trimmed;
+   every other field is drawn untrimmed and the page says so. The open
+   procedure is drawn as chosen, flagged if it is for a runway out of use. A
+   button turns the trim off, to study every flow at once. With no flow set
+   nothing is trimmed and the page says that.
+
    WHAT IT DOES NOT DRAW, AND SAYS SO ON THE PAGE. Arcs, holds and procedure
    turns are not flown, so a line is straight between fixes. A vector leg ends a
    line - the published data stops there and so does the plot. A fix with no
@@ -59,6 +73,12 @@
                                 //   'tracked' mode. Defaults to NS.openProc.
      reachNm: 40,               // OPTIONAL. How far past the outline the plot is
                                 //   widened, in NM. Default 40.
+     flow:    function(){...},  // OPTIONAL. {airport, land:[...], dep:[...], name}
+                                //   for the configuration in force, or null.
+                                //   Runway designators as the configuration
+                                //   writes them: '5L', '23R', '14'.
+     subscribe: function(fn){}, // OPTIONAL. Called once with a redraw function
+                                //   the deck calls whenever the flow changes.
      pickFn:  'indpPick',       // OPTIONAL. The name of the global the
                                 //   procedure viewer calls on every pick; it is
                                 //   wrapped so the plot follows the selection.
@@ -78,10 +98,11 @@
    window[<prefix>Layers](mode)     set the mode; the M98 ddLayers
    NS.routeDraw = {
      LAYER_MODES, layers(), set(mode), plan(mode), redraw(),
-     FACILITY, prefix
+     trim(), setTrim(on), FACILITY, prefix
    }
    plan(mode) is PURE - no DOM - so a harness can assert what would be drawn
-   without a browser: {mode, stars:[track], sids:[track], open:track|null}. A
+   without a browser: {mode, stars:[track], sids:[track], open:track|null, flow,
+   trimmed:{procs, segs, noRwy}, untrimmed:[airport]}. A
    track is {kind, id, apt, part, label, fixes:[name], runs:[[[lat,lon,name]]]}.
 
    THE PLOT IS WIDENED, BY A STATED REACH, AND THE REST IS CLIPPED OUT LOUD.
@@ -148,22 +169,59 @@ function makeTrack(kind, id, apt, part, legs){
  if(!r.runs.length) return {skipped:r.skipped, track:null};
  return {skipped:r.skipped, track:{kind:kind, id:id, apt:apt, part:part, label:id, fixes:fixNames(r.runs), runs:r.runs}};
 }
-function partsOf(p){
- var out = [];
+/* ---- the flow ---- */
+var TRIM = true;
+function flowNow(){
+ if(!TRIM || typeof F.flow !== 'function') return null;
+ var fl = null;
+ try{ fl = F.flow(); }catch(e){ fl = null; }
+ return (fl && fl.airport && ((fl.land && fl.land.length) || (fl.dep && fl.dep.length))) ? fl : null;
+}
+function rwyParse(s){
+ var m = /^(?:RW)?(\d{1,2})([LRCB]?)$/.exec(String(s || '').toUpperCase());
+ return m ? {n:parseInt(m[1], 10), s:m[2]} : null;
+}
+/* A runway transition fits when it serves a runway in use. 'B' (both) fits either
+   parallel, and a bare number fits whatever letter the configuration writes. A key
+   this cannot parse is kept: it cannot be shown to be out of use. */
+function fits(key, list){
+ var t = rwyParse(key);
+ if(!t) return true;
+ for(var i = 0; i < list.length; i++){
+  var r = rwyParse(list[i]);
+  if(r && r.n === t.n && (t.s === 'B' || !t.s || !r.s || t.s === r.s)) return true;
+ }
+ return false;
+}
+function partsOf(p, kind, apt, fl, tally){
+ var out = [], rk = p.rwy ? Object.keys(p.rwy).sort() : [];
+ if(fl && apt === fl.airport && !rk.length && tally) tally.noRwy++;   /* no runway transition coded: which flow it belongs to is not carried */
+ if(fl && apt === fl.airport && rk.length){
+  var want = (kind === 'SID') ? fl.dep : fl.land;
+  if(want && want.length){
+   var keep = rk.filter(function(k){ return fits(k, want); });
+   if(!keep.length){ if(tally) tally.procs++; return null; }       /* not used in this flow at all */
+   if(tally) tally.segs += rk.length - keep.length;
+   rk = keep;
+  }
+ }
  if(p.common && p.common.length) out.push({part:'common', legs:p.common});
  if(p.trans) Object.keys(p.trans).sort().forEach(function(k){ out.push({part:'trans:' + k, legs:p.trans[k]}); });
- if(p.rwy)   Object.keys(p.rwy).sort().forEach(function(k){ out.push({part:'rwy:' + k, legs:p.rwy[k]}); });
+ rk.forEach(function(k){ out.push({part:'rwy:' + k, legs:p.rwy[k]}); });
  return out;
 }
 
 /* Every procedure of one kind the deck carries. One polyline per published
    segment, and a segment that is the same run of fixes at another field is
    drawn once - a procedure serving several fields is the normal case. */
-function allTracks(kind){
+function allTracks(kind, fl, tally, other){
  var src = (kind === 'SID') ? NS.SIDS : NS.STARS, seen = {}, tracks = [], skipped = 0;
  Object.keys(src).sort().forEach(function(apt){
+  if(fl && apt !== fl.airport && other && other.indexOf(apt) < 0) other.push(apt);
   Object.keys(src[apt]).sort().forEach(function(id){
-   partsOf(src[apt][id]).forEach(function(s){
+   var parts = partsOf(src[apt][id], kind, apt, fl, tally);
+   if(!parts) return;
+   parts.forEach(function(s){
     var m = makeTrack(kind, id, apt, s.part, s.legs);
     skipped += m.skipped;
     if(!m.track) return;
@@ -189,7 +247,11 @@ function openTrack(){
  var kind = o.kind || (NS.kindOf ? NS.kindOf(o.apt, o.proc) : null);
  if(!kind) return null;
  var m = makeTrack(kind, o.proc, o.apt, 'open', NS.trackTo(o.apt, o.proc, o.entry, o.rwy));
- if(m.track){ m.track.also = [o.apt]; m.track.entry = o.entry || ''; m.track.rwy = o.rwy || ''; m.track.skipped = m.skipped; }
+ if(m.track){
+  m.track.also = [o.apt]; m.track.entry = o.entry || ''; m.track.rwy = o.rwy || ''; m.track.skipped = m.skipped;
+  var fl = flowNow(), want = fl && o.apt === fl.airport ? (kind === 'SID' ? fl.dep : fl.land) : null;
+  m.track.outOfFlow = !!(want && want.length && o.rwy && !fits(o.rwy, want));
+ }
  return m.track;
 }
 
@@ -198,10 +260,11 @@ function openTrack(){
    and nothing else, and `open` is drawn on top, heavier, in every mode but off. */
 function plan(mode){
  var m = mode || LAYERS, o = (m === 'off') ? null : openTrack();
- var stars = (m === 'stars' || m === 'both') ? allTracks('STAR') : [];
- var sids  = (m === 'sids'  || m === 'both') ? allTracks('SID')  : [];
+ var fl = flowNow(), tally = {procs:0, segs:0, noRwy:0}, other = [];
+ var stars = (m === 'stars' || m === 'both') ? allTracks('STAR', fl, tally, other) : [];
+ var sids  = (m === 'sids'  || m === 'both') ? allTracks('SID',  fl, tally, other) : [];
  var skipped = (stars.skipped || 0) + (sids.skipped || 0) + ((o && o.skipped) || 0);
- return {mode:m, stars:stars, sids:sids, open:o, skipped:skipped};
+ return {mode:m, stars:stars, sids:sids, open:o, skipped:skipped, flow:fl, trimmed:tally, untrimmed:other};
 }
 
 /* ---------- 3. Drawing ---------- */
@@ -287,6 +350,20 @@ function noteFor(pl){
  if(pl.open) head += (head ? ' ' : '') + 'Open procedure drawn heavier: <b>' + esc(pl.open.id) + '</b> at ' + esc(pl.open.apt) + cyc + '.';
  else if(o) head += (head ? ' ' : '') + 'The open procedure (' + esc(o.proc) + ' at ' + esc(o.apt) + ') has no fix with a coordinate to draw.';
  else if(!head) head = 'No procedure is open and no layer is on.';
+ var fl = pl.flow;
+ if(pl.mode !== 'off' && typeof F.flow === 'function'){
+  if(!TRIM) head += ' <b>Not trimmed to the flow</b> - every runway transition is drawn.';
+  else if(!fl) head += ' <b>No flow is set, so nothing is trimmed.</b> Choose a configuration in the frame, or read the D-ATIS.';
+  else if(pl.stars.length || pl.sids.length){
+   head += ' <b>Trimmed to ' + esc(fl.name || 'the flow') + '</b> at ' + esc(fl.airport)
+     + ' (landing ' + esc((fl.land || []).join(' ') || 'not stated') + ', departing ' + esc((fl.dep || []).join(' ') || 'not stated') + '): '
+     + pl.trimmed.procs + (pl.trimmed.procs === 1 ? ' procedure' : ' procedures') + ' not used in this flow and '
+     + pl.trimmed.segs + ' more runway ' + (pl.trimmed.segs === 1 ? 'transition' : 'transitions') + ' left out.'
+     + (pl.trimmed.noRwy ? (' ' + pl.trimmed.noRwy + ' ' + (pl.trimmed.noRwy === 1 ? 'procedure carries' : 'procedures carry') + ' no runway transition in CIFP, so which flow ' + (pl.trimmed.noRwy === 1 ? 'it belongs' : 'they belong') + ' to is not carried and ' + (pl.trimmed.noRwy === 1 ? 'it is' : 'they are') + ' drawn in every flow.') : '')
+     + (pl.untrimmed.length ? (' ' + esc(pl.untrimmed.join(', ')) + ' ' + (pl.untrimmed.length === 1 ? 'is' : 'are') + ' not trimmed: the configuration names ' + esc(fl.airport) + '&rsquo;s runways only.') : '');
+  }
+ }
+ if(pl.open && pl.open.outOfFlow) head += ' <span class="' + PFX + '-warn">The open procedure&rsquo;s runway transition ' + esc(pl.open.rwy) + ' is for a runway that is not in use in this flow.</span>';
  return head + ' Straight between fixes: arcs, holds and procedure turns are not flown, a vector leg ends a line, and a fix with no coordinate is skipped'
    + (pl.skipped ? (' (' + pl.skipped + ' skipped here)') : '') + '. '
    + (CLIP ? (CLIP + (CLIP === 1 ? ' track runs past the edge of the plot and is cut there. ' : ' tracks run past the edge of the plot and are cut there. ')) : '')
@@ -326,7 +403,7 @@ window[PFX + 'Layers'] = function(m){
  var bar = document.getElementById(PFX + '-layerbar');
  if(bar && bar.querySelectorAll){
   Array.prototype.slice.call(bar.querySelectorAll('button')).forEach(function(b){
-   if(b.classList) b.classList.toggle('on', (b.getAttribute('data-l')) === m);
+   if(b.classList && b.getAttribute('data-l')) b.classList.toggle('on', (b.getAttribute('data-l')) === m);
   });
  }
  redraw();
@@ -338,15 +415,25 @@ var CSS =
 + '.' + PFX + '-bar button:hover{color:var(--ink);border-color:var(--dim2);}'
 + '.' + PFX + '-bar button.on{color:var(--green);border-color:var(--green);}'
 + '.' + PFX + '-lab{font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);}'
-+ '.' + PFX + '-note{margin-top:8px;font:12px/1.5 var(--body);color:var(--dim2);}';
++ '.' + PFX + '-note{margin-top:8px;font:12px/1.5 var(--body);color:var(--dim2);}'
++ '.' + PFX + '-warn{color:var(--amber);}';
 
 function barHtml(){
  return '<span class="' + PFX + '-lab">Routes drawn</span>'
   + LAYER_MODES.map(function(m){
      return '<button data-l="' + m.id + '"' + (m.id === LAYERS ? ' class="on"' : '')
        + ' onclick="window[\'' + PFX + 'Layers\'](\'' + m.id + '\')">' + esc(m.label) + '</button>';
-    }).join('');
+    }).join('')
+  + (typeof F.flow === 'function'
+      ? ('<button data-flow="1"' + (TRIM ? ' class="on"' : '') + ' onclick="window[\'' + PFX + 'Flow\']()" title="Draw only the runway transitions the current flow uses">trimmed to flow</button>')
+      : '');
 }
+window[PFX + 'Flow'] = function(on){
+ TRIM = (on === undefined) ? !TRIM : !!on;
+ var b = document.getElementById(PFX + '-layerbar');
+ if(b && b.querySelector){ var x = b.querySelector('[data-flow]'); if(x && x.classList) x.classList.toggle('on', TRIM); }
+ redraw();
+};
 
 function mount(){
  var svg = null;
@@ -376,8 +463,11 @@ if(F.pickFn && typeof window[F.pickFn] === 'function'){
 NS.routeDraw = {
  LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; },
  set:function(m){ window[PFX + 'Layers'](m); },
+ trim:function(){ return TRIM; }, setTrim:function(on){ window[PFX + 'Flow'](on); },
  plan:plan, redraw:redraw, FACILITY:F, prefix:PFX
 };
+/* The plot follows the flow: the deck hands over a redraw to call when it changes. */
+if(typeof F.subscribe === 'function'){ try{ F.subscribe(function(){ try{ redraw(); }catch(e){} }); }catch(e){} }
 
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
 else { mount(); }

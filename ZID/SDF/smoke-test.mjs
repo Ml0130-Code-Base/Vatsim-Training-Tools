@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Headless smoke test for sdf-drill-deck.html.
    Covers the deck (data spine), the builder + notebook, the published procedures
-   block, the flight-strips block and the route-draw block.
+   block, the flight-strips block, the route-draw block and the D-ATIS block.
    Usage: node smoke-test.mjs [path-to-html]   (default: sdf-drill-deck.html)
    Exits nonzero on any exception or failed assertion.
 
@@ -14,9 +14,9 @@ const path = process.argv[2] || 'sdf-drill-deck.html';
 const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is an extension block, in dependency order:
-   deck, builder + notebook, published procedures, flight strips, route draw.
+   deck, builder + notebook, published procedures, flight strips, route draw, D-ATIS.
    THIS COUNT IS A GUARD, NOT A FORMALITY: update it in the same commit that adds a block. */
-const EXPECTED_BLOCKS = 5;
+const EXPECTED_BLOCKS = 6;
 const blocks = scripts;
 if (blocks.length !== EXPECTED_BLOCKS) { console.error("FAIL: expected " + EXPECTED_BLOCKS + " extension blocks, found " + blocks.length); process.exit(1); }
 
@@ -342,6 +342,65 @@ try {
   assert('setting a mode takes effect, and a mode that does not exist is ignored', RD.layers() === 'off' && (RD.set('nonsense'), RD.layers() === 'off'));
   RD.set('tracked');
   assert('the default is restored', RD.layers() === 'tracked');
+
+  /* ============ 10. D-ATIS, the frame API and routes trimmed to the flow (block 6) ============
+     Fixtures are the live FAA D-ATIS broadcasts pulled from atis.info on 2026-10-20, verbatim. The
+     parser's failure mode is a confident wrong answer, so the only reliable test material is a live
+     pull. Every vATIS preset the deck carries is read too, and must read back as the runways it names. */
+  const DA = N.datis;
+  assert('the D-ATIS block exports datis on the deck namespace', !!DA && typeof DA.read === 'function' && typeof DA.match === 'function');
+  assert('the D-ATIS contract names this facility and its one field', DA.FACILITY.id === 'SDF' && DA.FIELDS.length === 1 && DA.FIELDS[0].id === N.FAC.primary && DA.FIELDS[0].datis === true);
+  const live10 = 'SDF ATIS INFO G 0956Z. 00000KT 10SM SCT200 09/06 A3034 (THREE ZERO THREE FOUR) RMK AO2 SLP273 T00890061. VISUAL APCH RWY 17L AND 17R. SIMUL APCHS IN USE. NSE SENSI RWY 17R ARRS AVBL ONLY FOR OPR NCT. SIMUL DEPARTURES IN USE. NOTICE TO AIRMEN. TWY K CLSD, TWY N CLSD BTN TWY, L AND TWY K, TWY F CLSD BTN TWY, C AND TWY F3, TWY B CLSD BTN RWY, 29 AND TWY B5, TWY B6 CLSD BTN RWY, 35L AND TWY C, TWY D BTWN APCH END RWY 17L AND TWY D7 CLSD. TWY A6 NONMOVEMENT AREA. TWY D CLOSED NORTH OF TWY D7, RWY 17L DEPARTURES EXPECT INTERSECTION D7, DISTANCE AVAILABLE 7700 FEET. BACK TAXI AVAILABLE UPON REQUEST. ...ADVS YOU HAVE INFO G.';
+  const rd = DA.read(live10), mt = DA.match(rd, N.CONFIGS);
+  assert('the live broadcast reads the runways in use', JSON.stringify(rd.land) === JSON.stringify(['17L','17R']) && JSON.stringify(rd.dep) === JSON.stringify([]), JSON.stringify([rd.land, rd.dep]));
+  assert('the live broadcast reads the information letter', rd.info === 'G');
+  assert('exactly one configuration fits, and it is the right one', mt.kind === 'one' && mt.configs[0].id === '17', mt.kind + ' ' + mt.configs.map(c => c.id));
+  assert('closed runways are shown and never reach the flow', rd.closed.every(r => rd.land.indexOf(r) < 0 && rd.dep.indexOf(r) < 0));
+  const eq10 = (a, b) => a.slice().sort().join() === b.slice().sort().join();
+  const vf = (N.VATIS && N.VATIS.flows) || [];
+  assert('the deck carries vATIS presets to test against', vf.length > 0);
+  for (const fl of vf) {
+    const o = DA.read(fl.text), L = (fl.land || '').split(/\s+/).filter(Boolean), D = (fl.dep || '').split(/\s+/).filter(Boolean);
+    assert('vATIS ' + fl.station + ' ' + fl.preset + ' reads back as the runways it names',
+      (fl.land ? eq10(L, o.land) : o.land.length === 0) && (fl.dep ? eq10(D, o.dep) : o.dep.length === 0), JSON.stringify([fl.land, fl.dep, o.land, o.dep]));
+  }
+  assert('an empty box reads as nothing and a broadcast with no runway matches nothing', DA.read('') === null && DA.match(DA.read('WIND CALM'), N.CONFIGS).kind === 'nothing');
+  assert('a runway no configuration lands matches none, and none is applied', DA.match({land:['1'], dep:[]}, N.CONFIGS).kind === 'none');
+  assert('what the broadcast settled: a calm wind sets zero, a configuration only when exactly one fits',
+    DA.settled({wind:'calm', cat:'VFR', ceil:12000, vis:10}, {kind:'one', configs:[N.CONFIGS[0]]}).config === N.CONFIGS[0].id
+    && DA.settled({wind:'calm', cat:'VFR', ceil:12000, vis:10}, {kind:'many', configs:N.CONFIGS}).config === undefined
+    && DA.settled({wind:'VRB/3', cat:'VFR', ceil:12000, vis:10}, {kind:'none', configs:[]}).wdir === undefined);
+
+  /* the builder's frame API */
+  const BL = globalThis['sdfb'];
+  let seen10 = 0; BL.onFrame(() => { seen10++; });
+  const cfgIds = N.CONFIGS.map(c => c.id);
+  BL.setFrame({config:cfgIds[1], wdir:270, wkt:12, cat:'IFR'});
+  assert('setFrame sets the configuration, wind and category, and tells whoever follows the frame',
+    BL.config().id === cfgIds[1] && BL.state().wdir === '270' && BL.state().wkt === '12' && BL.state().cat === 'IFR' && seen10 === 1);
+  BL.setFrame({config:'no-such-configuration', cat:'NOPE'});
+  assert('setFrame refuses an unknown configuration and an unknown category', BL.config().id === cfgIds[1] && BL.state().cat === 'IFR');
+
+  /* routes trimmed to the flow */
+  const prim10 = N.FAC.primary, num10 = k => parseInt(String(k).replace(/\D/g, ''), 10), let10 = k => (/[LRCB]$/.exec(String(k)) || [''])[0];
+  const fits10 = (key, list) => list.some(r => num10(r) === num10(key) && (let10(key) === 'B' || !let10(key) || !let10(r) || let10(key) === let10(r)));
+  for (const c of N.CONFIGS) {
+    BL.setFrame({config:c.id});
+    const pl = N.routeDraw.plan('both');
+    assert(c.id + ': the plan follows the builder\'s configuration', !!pl.flow && pl.flow.name === c.name && pl.flow.airport === prim10);
+    const own = (list, kind) => list.filter(t => t.apt === prim10 && /^rwy:/.test(t.part));
+    const okS = own(pl.stars, 'STAR').every(t => fits10(t.part.slice(4), c.land)), okD = own(pl.sids, 'SID').every(t => fits10(t.part.slice(4), c.dep));
+    assert(c.id + ': every runway transition drawn at ' + prim10 + ' serves a runway the configuration lands (STAR) or departs (SID)', okS && okD);
+    assert(c.id + ': trimming removed something', pl.trimmed.segs + pl.trimmed.procs > 0, JSON.stringify(pl.trimmed));
+  }
+  BL.setFrame({config:cfgIds[0]});
+  const tOn = N.routeDraw.plan('both'); N.routeDraw.setTrim(false); const tOff = N.routeDraw.plan('both');
+  assert('turning the trim off draws every runway transition, and more than the trimmed plan',
+    tOff.flow === null && tOff.stars.length + tOff.sids.length > tOn.stars.length + tOn.sids.length);
+  N.routeDraw.setTrim(true);
+  assert('the trim is back on', N.routeDraw.trim() === true && N.routeDraw.plan('both').flow !== null);
+  assert('fields other than the primary are not trimmed, and the plan says which', tOn.untrimmed.every(a => a !== prim10) && (tOn.untrimmed.length > 0 || Object.keys(N.STARS).concat(Object.keys(N.SIDS)).every(a => a === prim10)));
+  BL.setFrame({config:cfgIds[0]});
 
   console.log('\nSMOKE PASS — ' + checks + ' checks');
 } catch (e) {

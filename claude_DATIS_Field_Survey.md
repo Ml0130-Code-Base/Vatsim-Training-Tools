@@ -352,3 +352,33 @@ in R90 and ZMP, and were brought up in the same pass. Re-check before assuming i
 branch reads only the first, so Omaha landing 36, 32L and 32R reads as 36. That is a flow bug,
 not a closures bug, and the R90 smoke test asserts the wrong behaviour deliberately so the day
 it is fixed the line fails and gets updated with it.
+
+## 10. The ZID fields — pulled 2026-10-20
+
+Pulled with the recipe in section 1 (`curl -sL https://datis.clowd.io/api/all`, 89 broadcasts), 0952Z–0959Z. **Which ZID-area fields publish a D-ATIS:** **KIND** (one combined record), **KSDF** (one combined record), **KCVG** (**split**: an arrival record, code C, and a departure record, code P) — and KCMH and KCLE, which no ZID deck works. **No other field the three ZID decks work has one** (none of the underlying towers, none of the satellites). Each ZID deck therefore reads one field. The broadcasts were:
+
+```
+KIND  IND ATIS INFO U 0954Z. 00000KT 10SM BKN230 07/04 A3036 (THREE ZERO THREE SIX). PARL ILS RWY 23R AND 23L APPROACHES IN USE. CROSS RUNWAY OPERATIONS MAY BE IN EFFECT. NOTICE TO AIRMEN. ILS RWY 5L IM 5R IM OTS. ...ADVS YOU HAVE INFO U.
+
+KSDF  SDF ATIS INFO G 0956Z. 00000KT 10SM SCT200 09/06 A3034 (THREE ZERO THREE FOUR) RMK AO2 SLP273 T00890061. VISUAL APCH RWY 17L AND 17R. SIMUL APCHS IN USE. NSE SENSI RWY 17R ARRS AVBL ONLY FOR OPR NCT. SIMUL DEPARTURES IN USE. NOTICE TO AIRMEN. TWY K CLSD, ... TWY D BTWN APCH END RWY 17L AND TWY D7 CLSD. ... ...ADVS YOU HAVE INFO G.   (taxiway notices elided here; verbatim in each deck's smoke test)
+
+KCVG  CVG ARR INFO C 0952Z. VRB03KT 10SM FEW250 08/04 A3034 ... SIMUL APPROACHES IN USE. EXPECT ILS APPROACH TO RWY 36R. ALL AIRCRAFT SHALL READBACK RUNWAY HOLD SHORT INSTRUCTION. NOTICE TO AIRMEN. RWY 36R IM OTS. RWY 18C/36C CLSD, RWY 18C ILS OTS, ALS OTS, PAPI OTS, RWY 36C ILS OTS, ALS OTS, PAPI OTS. ... ...ADVS YOU HAVE INFO C.
+      CVG DEP INFO P 0952Z. ... DEPG RWY 27. ALL AIRCRAFT SHALL READBACK RUNWAY HOLD SHORT INSTRUCTION. NOTICE TO AIRMEN. RWY 18C/36C CLSD. ... ...ADVS YOU HAVE INFO P.
+```
+
+**What each field's flow line says, and what the shared reader did with it:**
+
+| Field | Flow line | Shared reader | Settled by |
+|---|---|---|---|
+| KIND | `PARL ILS RWY 23R AND 23L APPROACHES IN USE.` landing only; **no departure runways stated** | reads 23R, 23L | the landing runways alone; none is assumed for departures |
+| KSDF | `VISUAL APCH RWY 17L AND 17R.` then `SIMUL APCHS IN USE.` in the next sentence; `SIMUL DEPARTURES IN USE` names no runway | **reads nothing** | the `APCH RWY` grammar in the master (`claude_DATIS_Block_Reference.md` section 2) |
+| KCVG arrival | `EXPECT ILS APPROACH TO RWY 36R.` | **reads nothing** | the `EXPECT ... APPROACH TO RWY` grammar in the master |
+| KCVG departure | `DEPG RWY 27.` | reads 27 | the shared reader |
+
+**Both failures were safe** (no runway read, and the reader says so) and both would have meant a CVG or SDF broadcast could never set the flow. The vATIS presets the decks carry write the same lines (`EXPECT ILS APPROACH TO RWY 36R, RWY 36C.`; `ILS APCH RWY 17L AND ^17R. SIMUL APCHS IN USE.`), and **the vATIS profile marks a spoken runway with a leading caret**, which the master removes.
+
+**KCVG's arrival half alone fits three of the deck's eight configurations** (Northwest, North and 36R Only all land 36R) and the departure half is what settles it: landing 36R with departing 27 is Northwest. The master names the three and applies nothing when only the arrival half is pasted.
+
+**The closures read as expected:** KCVG's `RWY 18C/36C CLSD` reads as closed, its ILS, ALS and PAPI items as out of service, and none reaches the flow; KIND's `ILS RWY 5L IM 5R IM OTS` is shown verbatim and read as no item, because two inner-marker items share one sentence and the reader refuses what it cannot account for.
+
+Both additions are in `datis-block.html` and **have not been made in the shared reader the other decks carry**; see root `claude_DATIS_Block_Reference.md` section 2.

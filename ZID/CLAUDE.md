@@ -111,17 +111,29 @@ in the smoke tests. SDF's scratchpad table matches vNAS row for row; so does CVG
 
 ## Architecture
 
-Five extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
+Six extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
 every reference table and rule, the vNAS and vATIS sections, handoff IDs, `SLOTS`, conflicts, open questions), **the
 builder and notebook** (the frame, the three-page wrapper `Set up a drill` / `Fly it` / `Notes and log`, persistence, the
 note rail copied from C90 with a `data-note` anchor on every table and slot, the practice log), **the published
 procedures** (the R90 block with the namespace changed, keyed by airport then by procedure) and **the flight strips**
 (the master block, byte for byte from `../../strip-block.html`, with a contract derived from the procedures block and
-`flies:false, track:true`) and **the route draw** (the master block, byte for byte from `../../routedraw-block.html`: M98's *Routes drawn* bar - open procedure, all STARs, all SIDs, all SIDs + STARs, off - on the lateral-footprint plot, reading the procedures block's own tracks and the deck's own projection, `fpProject`; the *tracked traffic* mode becomes *open procedure* because there is no traffic; see `../../claude_RouteDraw_Block_Reference.md`). Splice any new block before the **last** `</body>`.
+`flies:false, track:true`) and **the route draw** (the master block, byte for byte from `../../routedraw-block.html`: M98's *Routes drawn* bar - open procedure, all STARs, all SIDs, all SIDs + STARs, off - on the lateral-footprint plot, reading the procedures block's own tracks and the deck's own projection, `fpProject`; the *tracked traffic* mode becomes *open procedure* because there is no traffic; see `../../claude_RouteDraw_Block_Reference.md`). and **the D-ATIS block** (the master `../../datis-block.html` behind a contract; sets the frame). Splice any new block before the **last** `</body>`.
 
-**There is no D-ATIS and weather reader, and so no network call at all.** `claude_DATIS_Field_Survey.md` surveyed the
-fields the other decks work; KIND and KSDF are not in it. Adding a reader is a separate decision about a network call
-(root `CLAUDE.md` invariant 6).
+**The D-ATIS block is the one network call, and it is optional.** Block 6 (the master `../../datis-block.html`,
+`../../claude_DATIS_Block_Reference.md`) reads a pasted or fetched D-ATIS - the fetch asks `atis.info` and nothing else, every
+failure hands to the paste box, and there is no METAR fallback - matches the runways in use against the deck's own
+configuration table and, when **exactly one** configuration fits, sets the frame's configuration, wind and flight category
+through the builder's `setFrame`. Several fits, or none, set nothing and are stated. **KIND, KSDF and KCVG each publish a
+D-ATIS** (KCVG split arrival and departure; checked 2026-10-20, `claude_DATIS_Field_Survey.md` section 10), so each deck reads one
+field. KIND's and SDF's combined ATIS state no departure runways and none is assumed. The master carries two landing grammars
+the shared reader reads as nothing (CVG's `EXPECT ILS APPROACH TO RWY 36R`, SDF's `VISUAL APCH RWY 17L AND 17R`) and strips
+the vATIS caret; the other decks' copy of the reader has not had them added.
+
+**The route draw follows the flow.** With a configuration in force, a STAR is drawn only with the runway transitions that land
+a runway in use, a SID only with the ones that depart one, and a procedure whose every runway transition is for a runway out of
+use is not drawn. Only the primary field is trimmed (a configuration names that field's runways), and **IND's three SIDs and
+RACYR6 carry no runway transition in CIFP, so they cannot be trimmed and are drawn in every flow** - the page says so. A button
+turns the trim off.
 
 **`flies` is false everywhere and the strip row says "track only".** The coordinates of every fix are carried; nothing
 is flown along them because there is no traffic model.
@@ -134,8 +146,8 @@ in step by `diff`, not by a generator. Root `CLAUDE.md` section 11: regenerate n
 
 `smoke-test.mjs` in each folder, with `smoke-test-browser.html` (copied from the M98 runner; the title and default deck
 changed). **There is no Node on the owner's machine**, so the harnesses were run through the browser runner, served over
-a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289.** Each asserts the block count
-(5), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
+a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289; with the D-ATIS block and the flow trim, IND 248, SDF 262, CVG 340.** Each asserts the block count
+(6), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
 terminates, that a frequency the SOP truncates is told apart from a real disagreement, that every fix resolves to
 coordinates inside the ZID region, that the strip contract is the derived one, that `STANDING` is `[]`, that sector and
 flow boundaries are an `empty` slot and the lateral outline a `partial` one, that the footprint is one ring with no

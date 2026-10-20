@@ -12,6 +12,7 @@ The scope table, the position-anchoring rule, the running narrative, the voicing
 - **Not offered, assumed open.** Clearance, ramp, ground and tower positions (and the underlying towers) are not a seat and not a "who else is open" choice in the deck. They are assumed open - owner direction, 2026-10-20: these are TRACON decks, and the facility is understood to be a 24-hour operation. **None of the three SOPs states operating hours**, so the 24-hour premise is the owner's, not a cited fact.
 - **The coach sets the weather; the flow follows from it.** CVG has eight named configurations. The SOP says North is preferred over South, Northwest is preferred overall, North/South are used "when wind precludes departing 27", and East/West only in "extreme wind". It states no wind figure.
 - **The coach sets who else is open**, and the traffic.
+- **The flow can be read off the D-ATIS.** The *D-ATIS and the flow* section on the set-up page reads a pasted or fetched broadcast and, when exactly one configuration fits, sets the configuration, wind and category; the plotted routes under *Fly it* follow the configuration. The coach still decides which flow the drill runs - when the broadcast is ambiguous nothing is set and the coach or the trainee chooses.
 
 State the frame in a header line and keep it visible:
 

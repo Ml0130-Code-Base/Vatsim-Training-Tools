@@ -72,6 +72,16 @@ perl -0e 'local $/; open(D,"<:raw",$ARGV[0]); $t=<D>; open(M,"<:raw","routedraw-
 
 A change to the master lands in every copy in the same commit, the way the strip block does. A deck's route-draw block is its contract followed by that body; replace the body, never the contract.
 
+## 5a. Trimmed to the flow
+
+Added 2026-10-20 (the same day), on the owner's instruction: *trim flow dependent for both SIDs and STARs, only draw what's correct for flow.*
+
+- The contract gains `flow()` (the runways the configuration in force lands and departs, at which field) and `subscribe(fn)` (the deck calls the redraw when the flow changes; in the ZID decks it is the builder's `onFrame`).
+- **A runway transition belongs to one runway.** A STAR is drawn only with the runway transitions that land a runway in use; a SID only with the ones that depart one; a procedure whose every runway transition is for a runway out of use is not drawn. `B` (both) fits either parallel and a bare number fits whatever letter the configuration writes.
+- **A procedure with no runway transition is drawn in every flow**, and the page counts them. At IND that is **all three KIND SIDs and RACYR6**: CIFP 261001 codes no runway transition for them, so which flow they belong to is not carried and the plot does not guess. SDF's and CVG's SIDs do carry them and are trimmed.
+- **Only the primary field is trimmed.** The configuration names that field's runways; the satellites are drawn untrimmed and named as such.
+- The open procedure is drawn as chosen and flagged if its runway transition is for a runway out of use. A *trimmed to flow* button turns the trim off; with no flow set nothing is trimmed and the page says so.
+
 ## 6. What was verified, 2026-10-20
 
 - **The harness, run through the browser runner** over a local `HttpListener`: **IND 218, SDF 234, CVG 289 checks, all passing**, each 20 more than before. The new assertions are the list in section 4.
