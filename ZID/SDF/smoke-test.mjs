@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /* Headless smoke test for sdf-drill-deck.html.
    Covers the deck (data spine), the builder + notebook, the published procedures
-   block and the flight-strips block.
+   block, the flight-strips block and the route-draw block.
    Usage: node smoke-test.mjs [path-to-html]   (default: sdf-drill-deck.html)
    Exits nonzero on any exception or failed assertion.
 
@@ -14,9 +14,9 @@ const path = process.argv[2] || 'sdf-drill-deck.html';
 const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is an extension block, in dependency order:
-   deck, builder + notebook, published procedures, flight strips.
+   deck, builder + notebook, published procedures, flight strips, route draw.
    THIS COUNT IS A GUARD, NOT A FORMALITY: update it in the same commit that adds a block. */
-const EXPECTED_BLOCKS = 4;
+const EXPECTED_BLOCKS = 5;
 const blocks = scripts;
 if (blocks.length !== EXPECTED_BLOCKS) { console.error("FAIL: expected " + EXPECTED_BLOCKS + " extension blocks, found " + blocks.length); process.exit(1); }
 
@@ -303,6 +303,45 @@ try {
   assert('the SDF footprint has 24 vertices and is named by SimAware', N.FOOTPRINT.vertices === 24 && N.FOOTPRINT.id === 'SDF');
   assert('the fields within the two-mile tolerance of the edge are exactly: KBFR,KSER,KIMS', N.containment().filter(c => c.marginal).map(c => c.icao).join() === 'KBFR,KSER,KIMS', N.containment().filter(c => c.marginal).map(c => c.icao + ' ' + c.edgeNm).join());
 
+
+  /* ============ 9. Route draw (block 5) ============
+     The M98 "Routes drawn" layers on the lateral-footprint plot. plan() is pure, so what would be drawn is
+     asserted here without a browser; the SVG itself is checked by driving the page. */
+  const RD = N.routeDraw;
+  assert('the route-draw block exports routeDraw on the deck namespace', !!RD && typeof RD.plan === 'function' && typeof RD.set === 'function');
+  assert('the layer modes are the M98 ones, by id and in order', RD.LAYER_MODES.map(m => m.id).join() === 'tracked,stars,sids,both,off');
+  assert('the default mode is tracked, and its label does not claim traffic this deck does not have', RD.layers() === 'tracked' && !/traffic/i.test(RD.LAYER_MODES[0].label));
+  assert('the contract names this facility, and the layer function exists', RD.FACILITY.id === 'SDF' && RD.prefix === 'sdfrd' && typeof globalThis['sdfrdLayers'] === 'function');
+  assert('the deck exposes its plot projection and the viewer exposes its selection', typeof N.fpProject === 'function' && typeof N.fpFrame === 'function' && typeof N.openProc === 'function');
+  const fr = N.fpFrame();
+  assert('the projection puts every footprint vertex inside its own plot',
+    N.FOOTPRINT.rings[0].every(v => { const q = N.fpProject(v[0], v[1]); return q[0] >= 0 && q[0] <= fr.W && q[1] >= 0 && q[1] <= fr.H; }));
+  /* the harness never renders the procedures viewer (no DOM to mount into), so open it the way a click does: through the pick function the route-draw block wraps */
+  globalThis['sdfpPick']('kind', 'STAR');
+  assert('the viewer has a procedure open once it is asked for a STAR', !!N.openProc().proc && N.openProc().kind === 'STAR');
+  const pOff = RD.plan('off'), pStars = RD.plan('stars'), pSids = RD.plan('sids'), pBoth = RD.plan('both'), pTr = RD.plan('tracked');
+  assert('off draws nothing at all, the open procedure included', pOff.stars.length === 0 && pOff.sids.length === 0 && pOff.open === null);
+  assert('all STARs draws STARs and no SID', pStars.stars.length > 0 && pStars.sids.length === 0);
+  assert('all SIDs draws SIDs and no STAR', pSids.sids.length > 0 && pSids.stars.length === 0);
+  assert('both draws exactly the two sets', pBoth.stars.length === pStars.stars.length && pBoth.sids.length === pSids.sids.length);
+  assert('tracked draws no list, only the open procedure', pTr.stars.length === 0 && pTr.sids.length === 0 && !!pTr.open);
+  assert('the open procedure is drawn in every mode but off, as M98 never hides the track under what you are working', [pStars, pSids, pBoth].every(x => !!x.open));
+  const runsOf = pl => [].concat(pl.stars, pl.sids).reduce((a, t) => a.concat(t.runs), []);
+  const allRuns = runsOf(pBoth);
+  assert('every drawn run has two or more points, each in the ZID region',
+    allRuns.length > 0 && allRuns.every(r => r.length >= 2 && r.every(c => c[0] > 33 && c[0] < 43 && c[1] < -78 && c[1] > -92)));
+  assert('every drawn point is a fix in the procedure table, at that table\'s own coordinates',
+    allRuns.every(r => r.every(c => N.PFIX[c[2]] && N.PFIX[c[2]][0] === c[0] && N.PFIX[c[2]][1] === c[1])));
+  const keyOf = t => t.kind + '|' + t.id + '|' + t.runs.map(r => r.map(c => c[2]).join('>')).join('/');
+  const keys9 = pBoth.stars.concat(pBoth.sids).map(keyOf);
+  assert('no two tracks are the same run of fixes (a procedure at several fields is drawn once)', new Set(keys9).size === keys9.length);
+  const op = N.openProc(), legs9 = N.trackTo(op.apt, op.proc, op.entry, op.rwy).filter(g => g.f && !g.vec && N.PFIX[g.f]).map(g => g.f).filter((f, i, a) => i === 0 || f !== a[i - 1]);
+  assert('the open track is the viewer\'s own track, in order, and no fix is added to it', pTr.open.runs.reduce((a, r) => a.concat(r.map(c => c[2])), []).join() === legs9.join());
+  assert('the open track is of the kind the viewer has open', pTr.open.kind === op.kind && pTr.open.id === op.proc && pTr.open.apt === op.apt);
+  RD.set('off');
+  assert('setting a mode takes effect, and a mode that does not exist is ignored', RD.layers() === 'off' && (RD.set('nonsense'), RD.layers() === 'off'));
+  RD.set('tracked');
+  assert('the default is restored', RD.layers() === 'tracked');
 
   console.log('\nSMOKE PASS — ' + checks + ' checks');
 } catch (e) {

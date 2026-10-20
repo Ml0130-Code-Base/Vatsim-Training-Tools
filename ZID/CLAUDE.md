@@ -111,13 +111,13 @@ in the smoke tests. SDF's scratchpad table matches vNAS row for row; so does CVG
 
 ## Architecture
 
-Four extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
+Five extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
 every reference table and rule, the vNAS and vATIS sections, handoff IDs, `SLOTS`, conflicts, open questions), **the
 builder and notebook** (the frame, the three-page wrapper `Set up a drill` / `Fly it` / `Notes and log`, persistence, the
 note rail copied from C90 with a `data-note` anchor on every table and slot, the practice log), **the published
 procedures** (the R90 block with the namespace changed, keyed by airport then by procedure) and **the flight strips**
 (the master block, byte for byte from `../../strip-block.html`, with a contract derived from the procedures block and
-`flies:false, track:true`). Splice any new block before the **last** `</body>`.
+`flies:false, track:true`) and **the route draw** (the master block, byte for byte from `../../routedraw-block.html`: M98's *Routes drawn* bar - open procedure, all STARs, all SIDs, all SIDs + STARs, off - on the lateral-footprint plot, reading the procedures block's own tracks and the deck's own projection, `fpProject`; the *tracked traffic* mode becomes *open procedure* because there is no traffic; see `../../claude_RouteDraw_Block_Reference.md`). Splice any new block before the **last** `</body>`.
 
 **There is no D-ATIS and weather reader, and so no network call at all.** `claude_DATIS_Field_Survey.md` surveyed the
 fields the other decks work; KIND and KSDF are not in it. Adding a reader is a separate decision about a network call
@@ -134,8 +134,8 @@ in step by `diff`, not by a generator. Root `CLAUDE.md` section 11: regenerate n
 
 `smoke-test.mjs` in each folder, with `smoke-test-browser.html` (copied from the M98 runner; the title and default deck
 changed). **There is no Node on the owner's machine**, so the harnesses were run through the browser runner, served over
-a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing.** Each asserts the block count
-(4), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
+a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289.** Each asserts the block count
+(5), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
 terminates, that a frequency the SOP truncates is told apart from a real disagreement, that every fix resolves to
 coordinates inside the ZID region, that the strip contract is the derived one, that `STANDING` is `[]`, that sector and
 flow boundaries are an `empty` slot and the lateral outline a `partial` one, that the footprint is one ring with no

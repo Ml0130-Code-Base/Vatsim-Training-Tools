@@ -163,6 +163,14 @@ as a new block after them. The markup outside the blocks — topbar, hero, empty
 footer — is chrome, and the blocks mount everything else. Leave the chrome alone without an
 explicit ask.
 
+**Two master blocks live at the repository root and are copied into decks byte for byte:**
+`strip-block.html` (the flight-strip row, `claude_Strip_Block_Reference.md`) and
+`routedraw-block.html` (M98's *Routes drawn* bar — open procedure, all STARs, all SIDs, all SIDs + STARs,
+off — on a deck's plot, `claude_RouteDraw_Block_Reference.md`, 2026-10-20). Each is preceded in the deck by a
+small facility contract and is checked with `diff`, never by file date. The route-draw block needs the
+procedures block under it, so it belongs in every deck that carries one: **only the three ZID decks have it
+today; no other deck does yet, and M98 keeps its own layer code.**
+
 **Namespace: one per tool, derived from the tool, never reused.** The whole point is that a
 paste-merge cannot silently bind the wrong engine to the wrong data. `DD` belongs to M98;
 `RD` and `ZD` were chosen precisely to avoid it. See §9 for the collision that already exists.
@@ -556,7 +564,9 @@ things nobody can cite.
    single-sourced values. This is the **only** handoff-identifier source.
 6. **Write the gap analysis**, Part 1 ranked by training value and phrased as answerable asks.
 7. **Build the tool.** Copy the nearest existing shell — terminal from R90, en route from ZMP,
-   Tier 0 selector from S56. Set the namespace and the storage key. Build the data spine, the
+   Tier 0 selector from S56. Set the namespace and the storage key. **Once the procedures block is in, add the
+   route-draw block** (`routedraw-block.html`, contract in `claude_RouteDraw_Block_Reference.md`) so the
+   *Routes drawn* buttons are there from the first release. Build the data spine, the
    `SLOTS` registry, the combining functions and the three pages. **Ship with `STANDING = []`.**
 8. **Write the smoke test.** Assert the block count, the spine (every position present, unique
    frequencies, decoded strata, areas partitioning cleanly), that nothing spatial is
