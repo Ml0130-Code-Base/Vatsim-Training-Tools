@@ -67,7 +67,7 @@ configurations and the four MDW configurations, Final runway responsibility by c
 (4-4, 4-5, 4-6), beacon blocks (2-4), the airport list with tower position symbols (2-6.d),
 NSAT entry altitudes (6-2.c) and the Appendix A glossary. Plus, from the community pull below,
 the facility footprint (one polygon, surface–FL150) and the eight field positions. **Plus,
-from CIFP 260903 (2026-09-06), every published SID and STAR at all eight fields** — see below.
+from CIFP 261001 (2026-10-20), every published SID and STAR at all eight fields** — see below.
 Empty: the internal sectorisation, the Arrival Descent Area shapes, the MVA map, the ZAU LOA
 interface, the tower LOAs and every handoff identifier. Partial: the four SSAT altitude
 matrices in 7-4, the footprint, the field coordinates, the departure procedures.
@@ -82,7 +82,7 @@ sector boundaries, the TRSA depiction, all procedure geometry, the MVA map, ever
 identifier, and KHLM's coordinates. Partial: the footprint, the field coordinates, the East
 Wall list, the beacon blocks.
 
-### CIFP, and the SID/STAR slots — pulled 2026-09-06, cycle 260903
+### CIFP, and the SID/STAR slots — pulled 2026-09-06 (cycle 260903), re-checked 2026-10-20 (cycle 261001)
 
 Root `CLAUDE.md` §10.1. Both decks carry a **PUBLISHED PROCEDURES** block, and the two
 facilities got opposite answers from the same pull — which is the point of writing the zero
@@ -93,6 +93,33 @@ common segment and runway transition, each fix with its published crossing restr
 limit and coordinates (293 fixes). `ROUTES` and `DEPS` are declared empty in block 1 and
 filled by the procedures block, so there is one copy and `DD.ROUTES` means what it says.
 Slots moved: `routes` → **verified**, `deps` → **partial**.
+
+**Audited against a fresh decode 2026-10-20 (issue #63), cycle 261001.** Cycle 261001 carries the
+same procedures as 260903 at every field, so what changed is the decode, not the data.
+
+- **The deck data was right and the reference files were not.** `STARS`, `SIDS` and `PFIX` in the
+  C90 deck are byte-identical to a fresh decode. `claude_C90_CIFP_Procedures.md` and
+  `claude_AZO_CIFP_Procedures.md` carried the four decode faults that the S56 reference recorded on
+  2026-09-06 and were regenerated: runway thresholds resolved to the wrong airport (37 of C90's 41
+  runway fixes and all 19 of AZO's, so a Kalamazoo threshold sat in Alaska); continuation records
+  read as legs (51 of 99 C90 approach finals and 19 of 36 AZO ones carried a duplicate fix);
+  approach suffix after the runway (23 C90 names). The check that the corrected decoder is the
+  right one: a fresh decode of 260903 reproduces S56's reference, procedure section for section.
+- **Runway data.** Both references now carry a **Runways** table per field from the CIFP runway
+  and localizer records (length, width, magnetic bearing, threshold, displaced threshold, crossing
+  height, localizer ident, frequency, course, category code). Both decks carry the same lists as
+  `runwaysCifp` on `AIRPORTS` next to `runways`, which stays what the *order* says (C90: nothing;
+  AZO: the departure-area pairs, which leave out Kalamazoo's runways 5 and 23), and the strip
+  contract now reads them instead of typing them a second time. **Park Township (KHLM) is not in
+  CIFP at all** - no airport, runway or procedure record - so it keeps no runway list. Grand
+  Rapids runway 35 is category 2 in its runway record and 1 in its localizer record in 261001; the
+  anomaly is printed, not corrected.
+- **A statement corrected in 2026-09 never reached the decks.** Both said a radar-vector departure
+  is outside what CIFP carries. ARINC 424 route type `T` is Vector SID and CIFP uses it; a zero at
+  O'Hare, Midway or the AZO fields is a coding gap at that field. Fixed in five places (four in C90, one in AZO).
+- **Cycle 261029 (effective 2026-10-29) was decoded and is not carried.** BLOKR8 becomes BLOKR9 at
+  Aurora, DuPage, Gary and Lewis; Lewis loses ALASE from one missed approach; Kalamazoo's runways
+  17 and 35 are listed at 6,952 ft with a moved runway 35 threshold. Issue #65 rolls it.
 
 - **`deps` is partial, not verified, and the reason matters.** O'Hare and Midway have **zero**
   coded SIDs. The eight SIDs are the six shared by DuPage, Aurora, Gary and Lewis and the two

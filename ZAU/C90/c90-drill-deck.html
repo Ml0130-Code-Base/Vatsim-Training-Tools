@@ -307,23 +307,26 @@ var CAPTURE = {
 };
 
 /* ---------- 6. Airports ----------
-   The field list and the tower position symbols are 2-6.d verbatim. Runway
-   inventories are deliberately absent: they are not in this order, and a
-   runway list is exactly the kind of thing that must not be guessed.
+   The field list and the tower position symbols are 2-6.d verbatim. The order
+   has no runway inventory, so `runways` stays null: that column is what the
+   ORDER says, and it says nothing. `runwaysCifp` is the separate, cited
+   answer - every runway the FAA coded source carries for the field, CIFP
+   261001 runway records, the same lists the strip contract uses - so a
+   runway list is never guessed and never typed twice (house rule 5).
 
    Coordinates come from the vendored VATGlasses ZAU dataset's own airports
    table, not from the SOP — the same ZAU vARTCC-managed source as the
    footprint, and second-tier for the same reason. They are here so the scope
    has something real on it; nothing operational is derived from them. */
 var AIRPORTS = [
-  {icao:'KORD', name:"O'Hare",           tower:'T', lat:41.979594, lon:-87.904186, note:'ORD North or South tracks display Q (2-6.d)', runways:null},
-  {icao:'KMDW', name:'Midway',           tower:'R', lat:41.785983, lon:-87.752425, runways:null},
-  {icao:'KPWK', name:'Chicago Executive',tower:'6', lat:42.114181, lon:-87.901481, runways:null, note:'NSAT procedures 6-4'},
-  {icao:'KDPA', name:'DuPage',           tower:'7', lat:41.906883, lon:-88.248417, runways:null},
-  {icao:'KARR', name:'Aurora',           tower:'8', lat:41.771931, lon:-88.475658, runways:null},
-  {icao:'KGYY', name:'Gary',             tower:'9', lat:41.616272, lon:-87.412789, runways:null},
-  {icao:'KLOT', name:'Lewis',            tower:'5', lat:41.608097, lon:-88.096390, runways:null},
-  {icao:'KUGN', name:'Waukegan',         tower:'4', lat:42.422161, lon:-87.867908, runways:null}
+  {icao:'KORD', name:"O'Hare",           tower:'T', lat:41.979594, lon:-87.904186, note:'ORD North or South tracks display Q (2-6.d)', runways:null, runwaysCifp:['04L','04R','09C','09L','09R','10C','10L','10R','22L','22R','27C','27L','27R','28C','28L','28R']},
+  {icao:'KMDW', name:'Midway',           tower:'R', lat:41.785983, lon:-87.752425, runways:null, runwaysCifp:['04L','04R','13L','13R','22L','22R','31L','31R']},
+  {icao:'KPWK', name:'Chicago Executive',tower:'6', lat:42.114181, lon:-87.901481, runways:null, runwaysCifp:['12','16','30','34'], note:'NSAT procedures 6-4'},
+  {icao:'KDPA', name:'DuPage',           tower:'7', lat:41.906883, lon:-88.248417, runways:null, runwaysCifp:['02L','02R','10','15','20L','20R','28','33']},
+  {icao:'KARR', name:'Aurora',           tower:'8', lat:41.771931, lon:-88.475658, runways:null, runwaysCifp:['09','15','18','27','33','36']},
+  {icao:'KGYY', name:'Gary',             tower:'9', lat:41.616272, lon:-87.412789, runways:null, runwaysCifp:['02','12','20','30']},
+  {icao:'KLOT', name:'Lewis',            tower:'5', lat:41.608097, lon:-88.096390, runways:null, runwaysCifp:['02','09','20','27']},
+  {icao:'KUGN', name:'Waukegan',         tower:'4', lat:42.422161, lon:-87.867908, runways:null, runwaysCifp:['05','14','23','32']}
 ];
 
 /* ---------- 7. The four ORD feeder gates ----------
@@ -391,7 +394,7 @@ function containment(lat,lon,alt){
 
 /* ---------- 8b. Declared here, FILLED BY THE PROCEDURES BLOCK ----------
    ROUTES and DEPS are declared empty here and exported by reference;
-   the PUBLISHED PROCEDURES block fills them from CIFP 260903 rather
+   the PUBLISHED PROCEDURES block fills them from CIFP 261001 rather
    than declaring a second pair, so there is one copy of every number
    and DD.ROUTES means what it says (house rule 5).
 
@@ -459,7 +462,7 @@ var SLOTS = [
   {id:'beacon', title:'Beacon code blocks', state:'verified',
    src:'vZAU C90 TRACON SOP 7110.65C 2-4'},
   {id:'airports', title:'Airports and tower position symbols', state:'verified',
-   src:'vZAU C90 TRACON SOP 7110.65C 2-6.d', note:'Runway inventories are not in this order and are not carried.'},
+   src:'vZAU C90 TRACON SOP 7110.65C 2-6.d', note:'The order has no runway inventory (that column reads "not in the order"). Every runway the FAA coded source has for the eight fields is carried separately from CIFP 261001 (the Runways in CIFP column), with length, width, bearing and thresholds in claude_C90_CIFP_Procedures.md.'},
   {id:'nsat', title:'NSAT entry altitudes', state:'verified',
    src:'vZAU C90 TRACON SOP 7110.65C 6-2.c'},
   {id:'glossary', title:'Facility glossary', state:'verified',
@@ -469,13 +472,13 @@ var SLOTS = [
    note:'Four side-by-side tables. Read them off the page; the text layer interleaves the columns and a number in the wrong column is a wrong altitude.'},
   {id:'gates', title:'Feeder gate fixes and their STARs', state:'empty',
    src:'ORD MDW STARs.pdf; ORD and MDW Cheatsheet v3.1; charts.zauartcc.org',
-   note:'The four gate names are known from the position titles in 2-1. CIFP 260903 narrowed this without closing it: no KORD or KMDW STAR names PLANO, KUBBS, OKK or FARMM as a fix, so the arrival ladders do not link the gates to a track. CIFP does carry enroute waypoints named PLANO, KUBBS and FARMM, but nothing in the document set says a Feeder position is named for the fix that shares its name — so the coordinates stay out of GATES and this slot stays empty. Asking the owner to confirm the gate-to-fix identity is the cheapest way to close it.'},
+   note:'The four gate names are known from the position titles in 2-1. CIFP 261001 narrowed this without closing it: no KORD or KMDW STAR names PLANO, KUBBS, OKK or FARMM as a fix, so the arrival ladders do not link the gates to a track. CIFP does carry enroute waypoints named PLANO, KUBBS and FARMM, but nothing in the document set says a Feeder position is named for the fix that shares its name — so the coordinates stay out of GATES and this slot stays empty. Asking the owner to confirm the gate-to-fix identity is the cheapest way to close it.'},
   {id:'routes', title:'Arrival ladders (ROUTES)', state:'verified',
-   src:'CIFP 260903, effective 2026-09-03; see ../../claude_CIFP_Source_Reference.md and claude_C90_CIFP_Procedures.md',
+   src:'CIFP 261001, effective 2026-10-01; see ../../claude_CIFP_Source_Reference.md and claude_C90_CIFP_Procedures.md',
    note:'Sixteen STARs across the eight fields C90 works, with every entry transition, the common segment, every runway transition, and each fix carrying its published crossing restriction, speed limit and coordinates. What it does NOT carry is which transition C90 assigns in a given configuration — that is an SOP and LOA question and CIFP has no answer to it, so the tool offers every published transition and calls none of them the right one.'},
   {id:'deps', title:'Departure procedures (DEPS)', state:'partial',
-   src:'CIFP 260903; vZAU C90 TRACON SOP 7110.65C 5-6 and Appendix D for ACCRA and UECKR',
-   note:'The eight satellite SIDs are carried in full — six shared by DuPage, Aurora, Gary and Lewis, two shared by Chicago Executive and Waukegan. O\'Hare and Midway have ZERO coded SIDs, because a conventional or radar-vector departure is outside what CIFP carries; that is a coding gap, not a field without departures. ACCRA and UECKR are named in 5-6 and Appendix D as SIDs whose centrelines Departure separates from, and their geometry is still not carried.'},
+   src:'CIFP 261001; vZAU C90 TRACON SOP 7110.65C 5-6 and Appendix D for ACCRA and UECKR',
+   note:'The eight satellite SIDs are carried in full — six shared by DuPage, Aurora, Gary and Lewis, two shared by Chicago Executive and Waukegan. O\'Hare and Midway have ZERO coded SIDs of any type, and that is a coding gap at those two fields, not a limit of CIFP (ARINC 424 route type T is a Vector SID, and CIFP uses it at Salt Lake City and Boise) and not a field without departures. ACCRA and UECKR are named in 5-6 and Appendix D as SIDs whose centrelines Departure separates from, and their geometry is still not carried.'},
   {id:'boundary', title:'C90 facility footprint and ceiling', state:'partial',
    src:'VATGlasses ZAU, vendored ../_shared/source-vatglasses/, decoded in ../_shared/claude_ZAU_Sector_Geometry_Reference.md',
    note:'One polygon, surface to FL150, 35 vertices, drawn on the scope. Community data from the ZAU vARTCC-managed dataset — second-tier, below the SOP, and superseded the moment an owner-supplied or facility-exported boundary arrives. It answers inside-and-under-the-lid and nothing finer.'},
@@ -821,7 +824,7 @@ function frameBody(){
   var prows=[];
   for(var p=0;p<AIRPORTS.length;p++){
     var ap=AIRPORTS[p];
-    prows.push([ap.icao, ap.name, ap.tower, ap.runways? ap.runways.join(', ') : '<span class="dd-cite">not carried</span>']);
+    prows.push([ap.icao, ap.name, ap.tower, ap.runways? ap.runways.join(', ') : '<span class="dd-cite">not in the order</span>', ap.runwaysCifp? ap.runwaysCifp.join(', ') : '<span class="dd-cite">not carried</span>']);
   }
   return '<div class="dd-panel" data-note="configs"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">ORD arrival configurations</h3>'
     + tbl(['Configuration','Lands','Appendix C variants','Cite'], crows)
@@ -840,7 +843,7 @@ function frameBody(){
     + '<div class="dd-panel" data-note="nsat"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">North Satellite entry altitudes &mdash; 6-2.c</h3>'
     + tbl(['From &rarr; entering','Altitude','Condition'], arows) + '</div>'
     + '<div class="dd-panel" data-note="airports"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 4px;">Airports and tower symbols &mdash; 2-6.d</h3>'
-    + tbl(['ICAO','Field','Tower symbol','Runways'], prows)
+    + tbl(['ICAO','Field','Tower symbol','Runways in the order','Runways in CIFP 261001'], prows)
     + '<div class="dd-note">Beacon codes: IFR '+BEACON.ifr+', VFR '+BEACON.vfr+' ('+BEACON.cite+').</div></div>';
 }
 function liveBody(){
@@ -2156,7 +2159,10 @@ else { mount(); }
    The SIDs and STARs this facility's fields actually have, taken from
    the FAA's coded source rather than traced off a chart image.
 
-   SOURCE. CIFP cycle 260903, effective 2026-09-03, pulled 2026-09-06.
+   SOURCE. CIFP cycle 261001, effective 2026-10-01, pulled 2026-10-20.
+   Cycle 261029 (effective 2026-10-29) was decoded too and is NOT carried:
+   it renames BLOKR8 to BLOKR9 at Aurora, DuPage, Gary and Lewis, with the
+   ladder unchanged. Rolling to it is issue #65.
    Pull recipe, record layout and licence in the root
    claude_CIFP_Source_Reference.md; the same data written out for
    reading in claude_C90_CIFP_Procedures.md beside this file.
@@ -2165,10 +2171,11 @@ else { mount(); }
 
    COVERAGE, AND THE SHAPE OF THE GAP IT LEAVES. Sixteen STARs across
    the eight fields C90 works, and eight SIDs — none of them at
-   O'Hare or Midway. KORD and KMDW have ZERO coded SIDs, because a
-   conventional or radar-vector departure is not something CIFP
-   carries. Read a zero as a coding gap, never as "this field has no
-   departures". The eight SIDs are the six shared by DuPage, Aurora,
+   O'Hare or Midway. KORD and KMDW have ZERO coded SIDs of any type.
+   CIFP CAN carry a radar-vector departure (ARINC 424 route type T,
+   Vector SID, as at Salt Lake City and Boise); it simply codes none
+   here. Read a zero as a coding gap at that field, never as "this
+   field has no departures" and never as "CIFP cannot carry one". The eight SIDs are the six shared by DuPage, Aurora,
    Gary and Lewis, plus the two shared by Chicago Executive and
    Waukegan.
 
@@ -2237,7 +2244,7 @@ else { mount(); }
 var NS = window.DD;
 if(!NS) return;                    /* deck absent — do nothing, per the block contract */
 
-var CYCLE = '260903';
+var CYCLE = '261001';
 
 var PFIX = {
   ACITO:[41.39861,-88.18333], ADELL:[41.24972,-88.25000], AGONY:[41.85685,-90.54249], AHLOU:[41.65083,-88.12445],
@@ -2743,8 +2750,8 @@ function body(){
   if(!here.length){
     return h + '</div><div class="ddp-empty">CIFP codes no '
       + (state.kind === 'SID' ? 'SID' : 'STAR') + ' at ' + esc(state.apt) + '. '
-      + 'A radar-vector or conventional procedure is outside what CIFP carries, so a zero here is a '
-      + 'coding gap and not proof the field has none.</div>';
+      + 'CIFP can carry a radar-vector departure (route type T, as at Salt Lake City and Boise) but codes none here, so a zero is a '
+      + 'coding gap at this field and not proof the field has none.</div>';
   }
 
   h += '<div class="ddp-f"><span class="ddp-lab">Procedure</span>'
@@ -2881,24 +2888,30 @@ else { mount(); }
    several fields is the normal case.
 
    Procedure inventory is DERIVED from the PUBLISHED PROCEDURES block
-   above — CIFP 260903, see that block and the facility's
+   above — CIFP 261001, see that block and the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
    no traffic model, so nothing here is flown. That is not the same
    claim as "no track data", which is what track:true records.
    ================================================================ */
 (function(){ 'use strict';
 var PROCS = window.DD;
+/* The runway lists are DD.AIRPORTS[].runwaysCifp, read here rather than typed a second time. */
+function rwysOf(icao){
+  var l = (PROCS && PROCS.AIRPORTS) ? PROCS.AIRPORTS : [];
+  for(var i=0;i<l.length;i++) if(l[i].icao===icao) return l[i].runwaysCifp ? l[i].runwaysCifp.slice() : null;
+  return null;
+}
 window.STRIP_FACILITY = {
  id:'C90', prefix:'c90st',
  airports:{
-  KORD:{name:"O'Hare", rwys:['04L','04R','09C','09L','09R','10C','10L','10R','22L','22R','27C','27L','27R','28C','28L','28R']},
-  KMDW:{name:"Midway", rwys:['04L','04R','13L','13R','22L','22R','31L','31R']},
-  KDPA:{name:"DuPage", rwys:['02L','02R','10','15','20L','20R','28','33']},
-  KPWK:{name:"Chicago Executive", rwys:['12','16','30','34']},
-  KARR:{name:"Aurora", rwys:['09','15','18','27','33','36']},
-  KGYY:{name:"Gary", rwys:['02','12','20','30']},
-  KLOT:{name:"Lewis", rwys:['02','09','20','27']},
-  KUGN:{name:"Waukegan", rwys:['05','14','23','32']},
+  KORD:{name:"O'Hare", rwys:rwysOf('KORD')},
+  KMDW:{name:"Midway", rwys:rwysOf('KMDW')},
+  KDPA:{name:"DuPage", rwys:rwysOf('KDPA')},
+  KPWK:{name:"Chicago Executive", rwys:rwysOf('KPWK')},
+  KARR:{name:"Aurora", rwys:rwysOf('KARR')},
+  KGYY:{name:"Gary", rwys:rwysOf('KGYY')},
+  KLOT:{name:"Lewis", rwys:rwysOf('KLOT')},
+  KUGN:{name:"Waukegan", rwys:rwysOf('KUGN')},
  },
  /* DERIVED, not typed out again. Two reasons, and the second is a bug
     this replaces. A hand-typed inventory is a second copy of numbers
@@ -2999,7 +3012,7 @@ window.STRIP_FACILITY = {
 
  roleHints: {
   arrival:    'Inbound to one of the eight fields C90 works.',
-  departure:  'Off one of those fields. O’Hare and Midway have no coded SID — a radar-vector departure is outside what CIFP carries.',
+  departure:  'Off one of those fields. O’Hare and Midway have no coded SID of any type — a coding gap at those two fields, not a limit of CIFP.',
   overflight: 'Crosses the airspace and has to be handed off or pointed out before the far side.'
  },
 
@@ -3810,7 +3823,7 @@ window.strip = {
    THE CONTRACT'S HOOKS, and what C90 can actually answer:
 
      fixesOn        yes — the procedures block carries every published
-                    ORD and MDW ladder from CIFP 260903, so the row asks
+                    ORD and MDW ladder from CIFP 261001, so the row asks
                     for miles from a NAMED FIX and offers only the fixes
                     on the arrival selected.
      routeTextFor   yes, from the same ladder.
@@ -3991,7 +4004,7 @@ function section(){
   + 'facility\'s and nothing else, so a strip for another facility cannot be built, and '
   + 'anything that arrives another way — a stored drill, a pasted scenario — is named and '
   + 'refused rather than silently dropped. A strip is refused before it reaches the scope '
-  + 'rather than after. Procedure inventory from CIFP 260903.</p>'
+  + 'rather than after. Procedure inventory from CIFP 261001.</p>'
   + '<div style="margin:10px 0;">'
   + '<button class="' + P + '-btn" onclick="window[\'' + P + 'Add\']()">add a strip</button> '
   + '<button class="' + P + '-btn" onclick="window[\'' + P + 'Clear\']()">clear the drill</button>'

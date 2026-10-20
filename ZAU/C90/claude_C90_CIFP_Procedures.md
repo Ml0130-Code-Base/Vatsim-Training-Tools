@@ -1,11 +1,18 @@
 # SID, STAR and approach data from CIFP — C90, Chicago TRACON
 
-Generated **2026-09-06** from **CIFP 260903** (FAA Coded Instrument Flight Procedures,
-cycle effective 2026-09-03). Pull recipe, record layout and licence in
-`claude_CIFP_Source_Reference.md` at the repository root.
+Generated **2026-10-20** from **CIFP 261001** (FAA Coded Instrument Flight Procedures,
+cycle effective 2026-10-01). Pull recipe, record layout and licence in
+`claude_CIFP_Source_Reference.md` at the repository root. This regenerates the file first
+written 2026-09-06 from CIFP 260903; what changed is in "Regenerated 2026-10-20" below.
 
 **The cycle is the citation.** A value here is true for 28 days by construction — quote it
-as `CIFP 260903` and re-pull before trusting it in a later cycle.
+as `CIFP 261001` and re-pull before trusting it in a later cycle.
+
+**Cycle 261029 (effective 2026-10-29, posted early) was decoded as well and is NOT what this
+file carries.** At these eight fields it differs in three places: SID **BLOKR8 becomes
+BLOKR9** at Aurora, DuPage, Gary and Lewis (the ladder is unchanged), ALASE drops out of the
+RNAV (GPS) RWY 02 missed approach at Lewis, and JIMMO there moves 0.06 NM. Rolling to it on
+2026-10-29 is issue #65.
 
 **This is the published procedure, not the facility's use of it.** CIFP lists every
 transition that exists and is silent on which one the facility assigns in a given
@@ -34,6 +41,45 @@ fix-sequence track has to end there.
 **An approach's `(final)` segment includes the missed approach**, which is why a fix can
 appear twice with a hold-like repetition at the end. That is the published coding, not a
 duplication error.
+
+## Regenerated 2026-10-20
+
+**Cycle 261001 carries the same procedures as 260903 at all eight fields.** Every SID, STAR
+and approach ladder, speed and altitude is identical; the only record that differs is a Gary
+minimum-sector-altitude record, which this file does not carry. The corrections below are
+therefore corrections to the decode, not to the data. They are the four faults recorded in
+`ZLC/S56/claude_S56_CIFP_Procedures.md`, which was regenerated on 2026-09-06 with the decoder
+fixed while this file kept the old output. A fresh decode of 260903 reproduces every
+procedure section of that S56 file byte for byte, which is the check that the corrected
+decoder is the same one.
+
+1. **Runway thresholds resolved to the wrong airport.** A `RWnn` leg is a runway record keyed
+   by airport; the earlier lookup ignored the airport and took the first record with that
+   designator. **37 of the 41 runway fixes** in this file were wrong (the other four happened to
+   hit the right airport): O'Hare's `RW10L` was at N40 57 / W081 in Ohio and `RW09L` at
+   N26 51 / W080 in Florida, Midway's `RW04R` and DuPage's `RW02L` were in Alaska. All of them
+   now come from the airport's own runway record and match the new **Runways** table under
+   each field.
+2. **ARINC continuation records were read as legs.** A record with a continuation number of 2
+   or more carries text such as `ALNAV/VNAV` and no altitude, and it surfaced as a second,
+   crossing-less copy of the previous fix (`FORTZ >=2200 | FORTZ`, `YACHT >=1500 | YACHT 0/1`).
+   **51 of the 99 approach finals** carried one. Every one of the 51 differs from the new
+   line by that duplicate and nothing else.
+3. **The multiple-approach suffix was printed after the runway.** 23 approach names read
+   *"RNAV (RNP) RWY 27LY"*, *"ILS RWY 10RY"*. The ident is type, runway, then the suffix, so
+   they now read *"RNAV (RNP) Y RWY 27L"*, *"ILS Y RWY 10R"*, as the S56 order writes them.
+4. **A VHF navaid gave its DME position, not its VOR position.** No fix in this file moved
+   by more than rounding, so this fault did not reach it.
+
+**Not affected:** the 16 STARs and 8 SIDs the deck carries (`STARS`, `SIDS`, `PFIX` in
+`c90-drill-deck.html`) are byte-identical to a fresh decode of this cycle. They hold SIDs and
+STARs only, and faults 1 to 3 were in approach data.
+
+**New in this file:** a **Runways** table under each field (length, width, magnetic bearing,
+threshold, displaced threshold, threshold crossing height, localizer ident, frequency, course
+and category code), from the CIFP runway and localizer records. Minute roundings of the
+coordinates may differ from the earlier file in the second decimal, because the minutes are
+now taken back out of the decimal degrees; the decimal degrees are the citation.
 
 ## Procedure identifiers
 
@@ -162,6 +208,29 @@ name, so none is written here.
 ---
 
 ## KORD
+
+### Runways
+
+Field elevation 680 ft; magnetic variation 3.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW04L | 7,500 | 150 | 042.0° | N41 58.90 / W87 54.83 -- `41.98166, -87.91392` | 0 | 50 | — |
+| RW04R | 8,075 | 150 | 045.0° | N41 57.20 / W87 53.97 -- `41.95333, -87.89942` | 0 | 52 | **IFJU** 110.10 MHz, course 044.5°, category code `1` |
+| RW09C | 11,245 | 200 | 093.0° | N41 59.30 / W87 55.89 -- `41.98830, -87.93157` | 0 | 55 | **IOYG** 111.90 MHz, course 093.0°, category code `3` |
+| RW09L | 7,500 | 150 | 093.0° | N42 00.17 / W87 55.60 -- `42.00283, -87.92668` | 0 | 55 | **ISAJ** 111.75 MHz, course 093.0°, category code `3` |
+| RW09R | 11,260 | 150 | 093.0° | N41 59.03 / W87 55.89 -- `41.98389, -87.93157` | 0 | 58 | **IJAV** 110.50 MHz, course 093.0°, category code `3` |
+| RW10C | 10,800 | 200 | 093.0° | N41 57.94 / W87 55.89 -- `41.96570, -87.93152` | 0 | 55 | **ISXH** 108.95 MHz, course 092.9°, category code `3` |
+| RW10L | 13,000 | 150 | 093.0° | N41 58.14 / W87 55.89 -- `41.96899, -87.93153` | 0 | 56 | **IMED** 111.10 MHz, course 092.9°, category code `3` |
+| RW10R | 7,500 | 150 | 093.0° | N41 57.43 / W87 55.67 -- `41.95720, -87.92786` | 0 | 55 | **IBYW** 110.90 MHz, course 091.4°, category code `1` |
+| RW22L | 8,075 | 150 | 225.0° | N41 58.20 / W87 52.78 -- `41.96992, -87.87974` | 0 | 55 | **ILQQ** 110.10 MHz, course 224.5°, category code `1` |
+| RW22R | 7,500 | 150 | 222.0° | N41 59.85 / W87 53.78 -- `41.99754, -87.89637` | 0 | 49 | **IRXZ** 111.30 MHz, course 222.5°, category code `1` |
+| RW27C | 11,245 | 200 | 273.0° | N41 59.30 / W87 53.41 -- `41.98831, -87.89021` | 0 | 56 | **IUYJ** 111.90 MHz, course 273.0°, category code `3` |
+| RW27L | 11,260 | 150 | 273.0° | N41 59.03 / W87 53.41 -- `41.98390, -87.89016` | 0 | 57 | **IIAC** 110.50 MHz, course 273.0°, category code `3` |
+| RW27R | 7,500 | 150 | 273.0° | N42 00.17 / W87 53.95 -- `42.00283, -87.89908` | 0 | 55 | **IABU** 111.75 MHz, course 273.0°, category code `3` |
+| RW28C | 10,800 | 200 | 273.0° | N41 57.95 / W87 53.51 -- `41.96577, -87.89181` | 0 | 55 | **IVZE** 108.95 MHz, course 272.9°, category code `3` |
+| RW28L | 7,500 | 150 | 273.0° | N41 57.43 / W87 54.02 -- `41.95725, -87.90029` | 0 | 55 | **IVQX** 110.75 MHz, course 273.9°, category code `3` |
+| RW28R | 13,000 | 150 | 273.0° | N41 58.14 / W87 53.02 -- `41.96907, -87.88373` | 0 | 53 | **ITSL** 111.10 MHz, course 272.9°, category code `3` |
 
 ### STARs
 
@@ -366,7 +435,7 @@ name, so none is written here.
 - **FRIDG** N40 45.73 / W85 47.02 -- `40.76217, -85.78367`
 - **WATSN** N41 17.01 / W86 02.12 -- `41.28345, -86.03534`
 - **MKITA** N41 24.00 / W86 41.57 -- `41.40000, -86.69278`
-- **ESSPO** N41 34.90 / W87 14.64 -- `41.58174, -87.24408`
+- **ESSPO** N41 34.90 / W87 14.65 -- `41.58174, -87.24408`
 - **FWA** N40 58.74 / W85 11.28 -- `40.97906, -85.18806`
 - **PRONK** N41 10.70 / W85 28.64 -- `41.17827, -85.47734`
 - **DAIFE** N41 16.13 / W85 51.32 -- `41.26889, -85.85528`
@@ -383,7 +452,7 @@ name, so none is written here.
 - **CLSBY** N42 24.55 / W88 53.62 -- `42.40911, -88.89374`
 - **FYTTE** N42 22.80 / W88 40.07 -- `42.38006, -88.66779`
 - **BOWNN** N43 35.14 / W88 40.68 -- `43.58569, -88.67805`
-- **HYYDE** N43 11.18 / W88 51.18 -- `43.18636, -88.85292`
+- **HYYDE** N43 11.18 / W88 51.17 -- `43.18636, -88.85292`
 - **JAKSA** N42 50.63 / W89 02.71 -- `42.84390, -89.04519`
 - **MOOPS** N42 39.45 / W88 53.55 -- `42.65748, -88.89252`
 - **MYRRS** N42 31.43 / W92 03.60 -- `42.52389, -92.05992`
@@ -463,8 +532,8 @@ name, so none is written here.
 - **SMUUV** N42 27.98 / W86 07.64 -- `42.46633, -86.12732`
 - **SSM** N46 24.73 / W84 18.89 -- `46.41211, -84.31487`
 - **JODEE** N45 16.72 / W84 42.06 -- `45.27869, -84.70105`
-- **TVC** N44 40.08 / W85 33.00 -- `44.66792, -85.55001`
-- **PECOK** N44 00.46 / W85 43.24 -- `44.00769, -85.72075`
+- **TVC** N44 40.07 / W85 33.00 -- `44.66792, -85.55001`
+- **PECOK** N44 00.46 / W85 43.25 -- `44.00769, -85.72075`
 - **UFDUH** N43 42.60 / W85 47.78 -- `43.70998, -85.79638`
 - **BITTR** N43 07.29 / W85 56.64 -- `43.12158, -85.94394`
 - **FIYER** N42 23.87 / W87 19.27 -- `42.39777, -87.32117`
@@ -480,10 +549,10 @@ source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 ### Approaches
 
 
-**H27LY** — RNAV (RNP) RWY 27LY
+**H27LY** — RNAV (RNP) Y RWY 27L
 
 - **VOGLR:** VOGLR | NRMAH >=9000 | JOEBO >=8000 | GRABL >=7000 | RIPPR >=6000 | BASHH >=5000/230
-- **(final):** BASHH >=5000 | EBENS >=4000 | TAFFS >=2200 | TAFFS 0 | RW27L 708 | WASCO >=4000 | WASCO >=4000
+- **(final):** BASHH >=5000 | EBENS >=4000 | TAFFS >=2200 | RW27L 708 | WASCO >=4000 | WASCO >=4000
 
 **I04R** — ILS RWY 04R
 
@@ -515,12 +584,12 @@ source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 - **GIBNS:** GIBNS | ARIST >=9000 | KALZO >=8000 | BURKE >=7000 | SYSCO >=6000 | PRATT >=5000
 - **(final):** PRATT 5000 | CARLE >=4000 | BUGSE 2300 | RW10L 728 | [VI leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
-**I10RY** — ILS RWY 10RY
+**I10RY** — ILS Y RWY 10R
 
 - **GIBNS:** GIBNS | FERLL >=9000 | MLSEN >=8000 | OLLGA >=7000 | LEATH >=6000 | GOOZY >=5000
 - **(final):** GOOZY 5000 | KVENN >=4000 | FLLYN 2300 | CFLCC 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
-**I10RZ** — ILS RWY 10RZ
+**I10RZ** — ILS Z RWY 10R
 
 - **GIBNS:** GIBNS | SAFLY >=9000 | POPOF >=8000 | DAYZE >=7000 | BNITO >=6000 | BOOTR >=5000
 - **(final):** BOOTR 5000 | NIRRA >=4000 | KUULA 2300 | RW10R 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
@@ -594,12 +663,12 @@ source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 - **GIBNS:** GIBNS | ARIST >=9000 | KALZO >=8000 | BURKE >=7000 | SYSCO >=6000 | PRATT >=5000
 - **(final):** PRATT >=5000 | CARLE >=4000 | BUGSE >=2300 | POPME >=1200 | RW10L 728 | [VI leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
-**L10RY** — LOC RWY 10RY
+**L10RY** — LOC Y RWY 10R
 
 - **GIBNS:** GIBNS | FERLL >=9000 | MLSEN >=8000 | OLLGA >=7000 | LEATH >=6000 | GOOZY >=5000
 - **(final):** GOOZY >=5000 | KVENN >=4000 | FLLYN >=2300 | TRUFL >=1220 | WUGIX 864 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
-**L10RZ** — LOC RWY 10RZ
+**L10RZ** — LOC Z RWY 10R
 
 - **GIBNS:** GIBNS | SAFLY >=9000 | POPOF >=8000 | DAYZE >=7000 | BNITO >=6000 | BOOTR >=5000
 - **(final):** BOOTR >=5000 | NIRRA >=4000 | KUULA >=2300 | ALYEA >=1220 | RW10R 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
@@ -646,86 +715,86 @@ source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 **R04R** — RNAV (GPS) RWY 04R
 
 - **SIRCO:** SIRCO >=8000 | LIARR >=7000 | HEALY >=5000
-- **(final):** HEALY >=5000 | BTKUS >=4000 | FORTZ >=2200 | FORTZ | RW04R 713 | [CA leg - not a fix] | LAIRD >=4000 | LAIRD >=4000  *(1 non-fix leg)*
+- **(final):** HEALY >=5000 | BTKUS >=4000 | FORTZ >=2200 | RW04R 713 | [CA leg - not a fix] | LAIRD >=4000 | LAIRD >=4000  *(1 non-fix leg)*
 
 **R09C** — RNAV (GPS) RWY 09C
 
 - **GIBNS:** GIBNS | NORDL >=9000 | KOOSS >=8000 | SIKLR >=7000 | MUELL >=6000 | FFRAN >=5000/230
-- **(final):** FFRAN >=5000 | MIETH >=4000 | EZELL >=2300 | EZELL | RANDI 1400 | RW09C 728 | [CA leg - not a fix] | DEERE >=4000 | DEERE >=4000  *(1 non-fix leg)*
+- **(final):** FFRAN >=5000 | MIETH >=4000 | EZELL >=2300 | RANDI 1400 | RW09C 728 | [CA leg - not a fix] | DEERE >=4000 | DEERE >=4000  *(1 non-fix leg)*
 
 **R09L** — RNAV (GPS) RWY 09L
 
 - **GIBNS:** GIBNS | JHONN >=9000 | ESSSS >=8000 | VNDER >=7000 | ILIUM >=6000 | TRYXI >=5000
-- **(final):** TRYXI >=5000 | DOOGY >=4000 | ZENAH >=2300 | ZENAH | OGSIE 1760 | RW09L 723 | [CA leg - not a fix] | OBK >=4000 | OBK >=4000  *(1 non-fix leg)*
+- **(final):** TRYXI >=5000 | DOOGY >=4000 | ZENAH >=2300 | OGSIE 1760 | RW09L 723 | [CA leg - not a fix] | OBK >=4000 | OBK >=4000  *(1 non-fix leg)*
 
 **R09R** — RNAV (GPS) RWY 09R
 
 - **GIBNS:** GIBNS | ADLMN >=9000 | FOTTR >=8000 | WASCO >=7000 | GEMMS >=6000/230 | CHILR >=5000
-- **(final):** CHILR >=5000/230 | DEVON >=4000 | MEOWW >=2300 | MEOWW | YONUT 1380 | RW09R 726 | [CA leg - not a fix] | GRABL >=4000 | GRABL >=4000  *(1 non-fix leg)*
+- **(final):** CHILR >=5000/230 | DEVON >=4000 | MEOWW >=2300 | YONUT 1380 | RW09R 726 | [CA leg - not a fix] | GRABL >=4000 | GRABL >=4000  *(1 non-fix leg)*
 
 **R10C** — RNAV (GPS) RWY 10C
 
 - **GIBNS:** GIBNS | BAIRY >=9000 | COUPR >=8000 | KYLAA >=7000 | PEPAW >=6000 | SHARN >=5000
-- **(final):** SHARN >=5000 | RRUDA >=4000 | RAYYY >=2300 | RAYYY | ZURSO 1220 | RW10C 725 | [CA leg - not a fix] | AGZED | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
+- **(final):** SHARN >=5000 | RRUDA >=4000 | RAYYY >=2300 | ZURSO 1220 | RW10C 725 | [CA leg - not a fix] | AGZED | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
 **R10L** — RNAV (GPS) RWY 10L
 
 - **GIBNS:** GIBNS | ARIST >=9000 | KALZO >=8000 | BURKE >=7000 | SYSCO >=6000 | PRATT >=5000
-- **(final):** PRATT >=5000 | CARLE >=4000 | BUGSE >=2300 | BUGSE | ANACO 1580 | RW10L 728 | [CA leg - not a fix] | XURXU | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
+- **(final):** PRATT >=5000 | CARLE >=4000 | BUGSE >=2300 | ANACO 1580 | RW10L 728 | [CA leg - not a fix] | XURXU | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
-**R10RY** — RNAV (GPS) RWY 10RY
+**R10RY** — RNAV (GPS) Y RWY 10R
 
 - **GIBNS:** GIBNS | FERLL >=9000 | MLSEN >=8000 | OLLGA >=7000 | LEATH >=6000 | GOOZY >=5000
-- **(final):** GOOZY >=5000 | KVENN >=4000 | FLLYN >=2300 | FLLYN | TRUFL 1300 | CFLCC 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
+- **(final):** GOOZY >=5000 | KVENN >=4000 | FLLYN >=2300 | TRUFL 1300 | CFLCC 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
-**R10RZ** — RNAV (GPS) RWY 10RZ
+**R10RZ** — RNAV (GPS) Z RWY 10R
 
 - **GIBNS:** GIBNS | SAFLY >=9000 | POPOF >=8000 | DAYZE >=7000 | BNITO >=6000 | BOOTR >=5000
-- **(final):** BOOTR >=5000 | NIRRA >=4000 | KUULA >=2300 | KUULA | ALYEA 1300 | RW10R 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
+- **(final):** BOOTR >=5000 | NIRRA >=4000 | KUULA >=2300 | ALYEA 1300 | RW10R 735 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
 **R22L** — RNAV (GPS) RWY 22L
 
-- **(final):** KENIL >=4000 | LAIKE >=2500 | LAIKE | RW22L 710 | [CA leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
+- **(final):** KENIL >=4000 | LAIKE >=2500 | RW22L 710 | [CA leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
 **R22R** — RNAV (GPS) RWY 22R
 
 - **FNUCH:** FNUCH >=7000 | NOLEN >=5000
-- **(final):** NOLEN >=5000 | RIDGE >=2200 | RIDGE | PALIE 1200 | RW22R 697 | [CA leg - not a fix] | EVRSN | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
+- **(final):** NOLEN >=5000 | RIDGE >=2200 | PALIE 1200 | RW22R 697 | [CA leg - not a fix] | EVRSN | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
 **R27C** — RNAV (GPS) RWY 27C
 
 - **VOGLR:** VOGLR | NCHLS >=9000 | CRICO >=8000 | CERMI >=7000 | BOOWW >=6000 | MRRFF >=5000/230
-- **(final):** MRRFF >=5000 | JMBBO >=4000 | DRSCL >=2200 | DRSCL | YVONE 1160 | RW27C 708 | [CA leg - not a fix] | UKUNE >=4000 | UKUNE >=4000  *(1 non-fix leg)*
+- **(final):** MRRFF >=5000 | JMBBO >=4000 | DRSCL >=2200 | YVONE 1160 | RW27C 708 | [CA leg - not a fix] | UKUNE >=4000 | UKUNE >=4000  *(1 non-fix leg)*
 
-**R27LZ** — RNAV (GPS) RWY 27LZ
+**R27LZ** — RNAV (GPS) Z RWY 27L
 
 - **VOGLR:** VOGLR | NRMAH >=9000 | JOEBO >=8000 | GRABL >=7000 | RIPPR >=6000 | BASHH >=5000/230
-- **(final):** BASHH >=5000/230 | EBENS >=4000 | JLOWW >=2200 | JLOWW | RW27L 707 | [CA leg - not a fix] | WASCO >=4000 | WASCO >=4000  *(1 non-fix leg)*
+- **(final):** BASHH >=5000/230 | EBENS >=4000 | JLOWW >=2200 | RW27L 707 | [CA leg - not a fix] | WASCO >=4000 | WASCO >=4000  *(1 non-fix leg)*
 
 **R27R** — RNAV (GPS) RWY 27R
 
 - **VOGLR:** VOGLR | VINYY >=9000 | JOKKR >=8000 | IYLEK >=7000 | WELEV >=6000 | HAREE >=5000
-- **(final):** HAREE >=5000 | BONZO >=4000 | SIBLY >=2200 | SIBLY | RW27R 718 | [CA leg - not a fix] | OBK >=4000 | OBK >=4000  *(1 non-fix leg)*
+- **(final):** HAREE >=5000 | BONZO >=4000 | SIBLY >=2200 | RW27R 718 | [CA leg - not a fix] | OBK >=4000 | OBK >=4000  *(1 non-fix leg)*
 
 **R28C** — RNAV (GPS) RWY 28C
 
 - **VOGLR:** VOGLR | LNDUH >=9000 | SNTOE >=8000 | KOENN >=7000 | MEMAW >=6000 | RZUKO >=5000
-- **(final):** RZUKO >=5000 | HAZIL >=4000 | SEIKA >=2300 | SEIKA | ZUPTI 1260 | RW28C 705 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
+- **(final):** RZUKO >=5000 | HAZIL >=4000 | SEIKA >=2300 | ZUPTI 1260 | RW28C 705 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
-**R28LY** — RNAV (GPS) RWY 28LY
+**R28LY** — RNAV (GPS) Y RWY 28L
 
 - **VOGLR:** VOGLR | SYNTH >=9000 | TAGPE >=8000 | UCXOR >=7000 | VIOLS >=6000 | WODRO >=5000
-- **(final):** WODRO >=5000 | XOGDY >=4000 | YOYUK >=2200 | YOYUK | CFDZQ 713 | [CA leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
+- **(final):** WODRO >=5000 | XOGDY >=4000 | YOYUK >=2200 | CFDZQ 713 | [CA leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
-**R28LZ** — RNAV (GPS) RWY 28LZ
+**R28LZ** — RNAV (GPS) Z RWY 28L
 
 - **VOGLR:** VOGLR | LYSIN >=9000 | KEGNE >=8000 | JAVON >=7000 | HANSO >=6000 | FITAR >=5000
-- **(final):** FITAR >=5000 | CAKOS >=4000 | PONCC >=2200 | PONCC | ALKYL 1280 | RW28L 713 | [CA leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
+- **(final):** FITAR >=5000 | CAKOS >=4000 | PONCC >=2200 | ALKYL 1280 | RW28L 713 | [CA leg - not a fix] | CGT >=4000 | CGT >=4000  *(1 non-fix leg)*
 
 **R28R** — RNAV (GPS) RWY 28R
 
 - **VOGLR:** VOGLR | MOTTT >=9000 | RICKV >=8000 | BLUTO >=7000 | ROCSE >=6000 | WAVIE >=5000
-- **(final):** WAVIE >=5000 | ADAME >=4000 | WILLT >=2200 | WILLT | FIDAK 1140 | RW28R 705 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
+- **(final):** WAVIE >=5000 | ADAME >=4000 | WILLT >=2200 | FIDAK 1140 | RW28R 705 | [CA leg - not a fix] | DPA >=4000 | DPA >=4000  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -743,14 +812,14 @@ The approach transitions, which is where traffic is fed from:
 - **BASHH** N41 59.01 / W87 34.94 -- `41.98348, -87.58233`
 - **EBENS** N41 59.02 / W87 39.15 -- `41.98365, -87.65251`
 - **TAFFS** N41 59.03 / W87 47.13 -- `41.98385, -87.78547`
-- **RW27L** N26 50.61 / W80 12.82 -- `26.84348, -80.21372`
+- **RW27L** N41 59.03 / W87 53.41 -- `41.98390, -87.89016`
 - **WASCO** N41 58.97 / W88 22.30 -- `41.98289, -88.37172`
 - **RAHNN** N41 34.81 / W88 20.29 -- `41.58018, -88.33812`
 - **DEGAN** N41 41.01 / W88 13.04 -- `41.68347, -88.21739`
 - **HARRL** N41 47.09 / W88 05.90 -- `41.78486, -88.09834`
 - **NAPER** N41 49.45 / W88 03.12 -- `41.82422, -88.05203`
 - **REKKS** N41 53.91 / W87 57.86 -- `41.89851, -87.96432`
-- **RW04R** N64 32.75 / W149 04.97 -- `64.54576, -149.08275`
+- **RW04R** N41 57.20 / W87 53.97 -- `41.95333, -87.89942`
 - **LAIRD** N41 59.01 / W87 35.62 -- `41.98352, -87.59370`
 - **GIBNS** N41 55.13 / W88 57.63 -- `41.91888, -88.96058`
 - **NORDL** N41 59.20 / W88 30.72 -- `41.98661, -88.51208`
@@ -762,22 +831,22 @@ The approach transitions, which is where traffic is fed from:
 - **EZELL** N41 59.29 / W88 02.51 -- `41.98821, -88.04188`
 - **RW09C** N41 59.30 / W87 55.89 -- `41.98830, -87.93157`
 - **DEERE** N42 11.95 / W87 36.23 -- `42.19913, -87.60390`
-- **JHONN** N42 00.07 / W88 30.73 -- `42.00125, -88.51209`
+- **JHONN** N42 00.08 / W88 30.73 -- `42.00125, -88.51209`
 - **ESSSS** N42 00.10 / W88 26.52 -- `42.00160, -88.44193`
 - **VNDER** N42 00.11 / W88 22.31 -- `42.00190, -88.37176`
 - **ILIUM** N42 00.13 / W88 18.09 -- `42.00216, -88.30158`
 - **TRYXI** N42 00.15 / W88 13.89 -- `42.00243, -88.23157`
 - **DOOGY** N42 00.16 / W88 09.68 -- `42.00259, -88.16127`
 - **ZENAH** N42 00.17 / W88 02.24 -- `42.00278, -88.03737`
-- **RW09L** N26 50.95 / W80 13.82 -- `26.84918, -80.23033`
+- **RW09L** N42 00.17 / W87 55.60 -- `42.00283, -87.92668`
 - **OBK** N42 13.28 / W87 57.10 -- `42.22138, -87.95167`
 - **ADLMN** N41 58.93 / W88 30.72 -- `41.98222, -88.51207`
 - **FOTTR** N41 58.95 / W88 26.51 -- `41.98258, -88.44189`
 - **GEMMS** N41 58.99 / W88 18.09 -- `41.98317, -88.30155`
 - **CHILR** N41 59.00 / W88 13.88 -- `41.98340, -88.23137`
-- **DEVON** N41 59.01 / W88 09.67 -- `41.98358, -88.16121`
+- **DEVON** N41 59.02 / W88 09.67 -- `41.98358, -88.16121`
 - **MEOWW** N41 59.03 / W88 02.52 -- `41.98380, -88.04204`
-- **RW09R** N26 50.55 / W80 13.61 -- `26.84252, -80.22686`
+- **RW09R** N41 59.03 / W87 55.89 -- `41.98389, -87.93157`
 - **BAIRY** N41 57.79 / W88 30.71 -- `41.96318, -88.51176`
 - **COUPR** N41 57.82 / W88 26.50 -- `41.96364, -88.44163`
 - **KYLAA** N41 57.84 / W88 22.29 -- `41.96406, -88.37149`
@@ -794,7 +863,7 @@ The approach transitions, which is where traffic is fed from:
 - **PRATT** N41 58.08 / W88 13.89 -- `41.96806, -88.23146`
 - **CARLE** N41 58.10 / W88 09.68 -- `41.96835, -88.16132`
 - **BUGSE** N41 58.12 / W88 02.51 -- `41.96874, -88.04183`
-- **RW10L** N40 56.89 / W80 52.13 -- `40.94824, -80.86887`
+- **RW10L** N41 58.14 / W87 55.89 -- `41.96899, -87.93153`
 - **FERLL** N41 56.15 / W88 30.71 -- `41.93591, -88.51176`
 - **MLSEN** N41 56.32 / W88 26.50 -- `41.93866, -88.44163`
 - **OLLGA** N41 56.48 / W88 22.29 -- `41.94137, -88.37149`
@@ -811,14 +880,14 @@ The approach transitions, which is where traffic is fed from:
 - **BOOTR** N41 57.38 / W88 13.87 -- `41.95627, -88.23119`
 - **NIRRA** N41 57.39 / W88 09.66 -- `41.95656, -88.16094`
 - **KUULA** N41 57.42 / W88 02.26 -- `41.95696, -88.03764`
-- **RW10R** N40 56.87 / W80 51.95 -- `40.94787, -80.86587`
+- **RW10R** N41 57.43 / W87 55.67 -- `41.95720, -87.92786`
 - **KENIL** N42 06.87 / W87 42.47 -- `42.11448, -87.70776`
 - **LAIKE** N42 02.41 / W87 47.78 -- `42.04009, -87.79640`
-- **RW22L** N64 32.91 / W149 04.32 -- `64.54855, -149.07198`
+- **RW22L** N41 58.20 / W87 52.78 -- `41.96992, -87.87974`
 - **FNUCH** N42 16.80 / W87 34.94 -- `42.27995, -87.58230`
 - **NOLEN** N42 11.48 / W87 40.88 -- `42.19133, -87.68125`
 - **RIDGE** N42 03.49 / W87 49.75 -- `42.05824, -87.82921`
-- **RW22R** N64 33.13 / W149 03.72 -- `64.55209, -149.06202`
+- **RW22R** N41 59.85 / W87 53.78 -- `41.99754, -87.89637`
 - **NCHLS** N41 59.21 / W87 18.10 -- `41.98679, -87.30160`
 - **CRICO** N41 59.23 / W87 22.31 -- `41.98713, -87.37178`
 - **CERMI** N41 59.25 / W87 26.52 -- `41.98743, -87.44195`
@@ -836,7 +905,7 @@ The approach transitions, which is where traffic is fed from:
 - **HAREE** N42 00.14 / W87 34.92 -- `42.00238, -87.58205`
 - **BONZO** N42 00.15 / W87 39.14 -- `42.00250, -87.65234`
 - **SIBLY** N42 00.17 / W87 47.70 -- `42.00276, -87.79508`
-- **RW27R** N26 51.00 / W80 13.14 -- `26.84999, -80.21908`
+- **RW27R** N42 00.17 / W87 53.95 -- `42.00283, -87.89908`
 - **LNDUH** N41 57.91 / W87 18.10 -- `41.96510, -87.30165`
 - **SNTOE** N41 57.92 / W87 22.31 -- `41.96534, -87.37178`
 - **KOENN** N41 57.93 / W87 26.52 -- `41.96553, -87.44192`
@@ -852,7 +921,7 @@ The approach transitions, which is where traffic is fed from:
 - **FITAR** N41 57.44 / W87 34.93 -- `41.95731, -87.58222`
 - **CAKOS** N41 57.44 / W87 39.14 -- `41.95737, -87.65236`
 - **PONCC** N41 57.44 / W87 47.76 -- `41.95736, -87.79598`
-- **RW28L** N40 56.87 / W80 51.40 -- `40.94787, -80.85664`
+- **RW28L** N41 57.43 / W87 54.02 -- `41.95725, -87.90029`
 - **MOTTT** N41 58.10 / W87 18.10 -- `41.96835, -87.30166`
 - **RICKV** N41 58.12 / W87 22.31 -- `41.96859, -87.37179`
 - **BLUTO** N41 58.13 / W87 26.52 -- `41.96879, -87.44192`
@@ -860,7 +929,7 @@ The approach transitions, which is where traffic is fed from:
 - **WAVIE** N41 58.14 / W87 34.93 -- `41.96907, -87.58221`
 - **ADAME** N41 58.15 / W87 39.14 -- `41.96914, -87.65236`
 - **WILLT** N41 58.15 / W87 46.73 -- `41.96916, -87.77883`
-- **RW28R** N40 56.89 / W80 51.45 -- `40.94822, -80.85750`
+- **RW28R** N41 58.14 / W87 53.02 -- `41.96907, -87.88373`
 - **RANDI** N41 59.30 / W87 58.72 -- `41.98828, -87.97872`
 - **OGSIE** N42 00.17 / W88 00.03 -- `42.00280, -88.00044`
 - **YONUT** N41 59.03 / W87 58.73 -- `41.98387, -87.97878`
@@ -887,13 +956,28 @@ The approach transitions, which is where traffic is fed from:
 - **TAGPE** N41 56.41 / W87 22.34 -- `41.94010, -87.37241`
 - **UCXOR** N41 56.55 / W87 26.55 -- `41.94256, -87.44244`
 - **VIOLS** N41 56.70 / W87 30.75 -- `41.94497, -87.51248`
-- **WODRO** N41 56.83 / W87 34.95 -- `41.94725, -87.58251`
+- **WODRO** N41 56.84 / W87 34.95 -- `41.94725, -87.58251`
 - **XOGDY** N41 56.98 / W87 39.15 -- `41.94960, -87.65257`
 - **YOYUK** N41 57.26 / W87 47.76 -- `41.95427, -87.79606`
 - **CFDZQ** N41 57.45 / W87 54.02 -- `41.95755, -87.90027`
 - **FIDAK** N41 58.15 / W87 51.15 -- `41.96911, -87.85245`
 
 ## KMDW
+
+### Runways
+
+Field elevation 620 ft; magnetic variation 4.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW04L | 5,507 | 150 | 047.0° | N41 46.97 / W87 45.56 -- `41.78288, -87.75928` | 758 | 55 | — |
+| RW04R | 6,445 | 150 | 047.0° | N41 46.81 / W87 45.48 -- `41.78019, -87.75801` | 518 | 50 | **IHKH** 111.50 MHz, course 047.5°, category code `1` |
+| RW13L | 6,522 | 150 | 138.0° | N41 47.44 / W87 45.59 -- `41.79070, -87.75984` | 463 | 46 | **IMDW** 109.90 MHz, course 137.6°, category code `1` |
+| RW13R | 3,859 | 60 | 138.0° | N41 47.28 / W87 45.53 -- `41.78807, -87.75881` | 0 | 50 | — |
+| RW22L | 6,445 | 150 | 227.0° | N41 47.44 / W87 44.68 -- `41.79073, -87.74466` | 635 | 50 | — |
+| RW22R | 5,507 | 150 | 227.0° | N41 47.44 / W87 44.97 -- `41.79059, -87.74952` | 878 | 55 | — |
+| RW31L | 3,859 | 60 | 318.0° | N41 46.85 / W87 44.91 -- `41.78077, -87.74855` | 0 | 50 | — |
+| RW31R | 6,522 | 150 | 318.0° | N41 46.83 / W87 44.74 -- `41.78056, -87.74559` | 696 | 48 | **IMXT** 109.90 MHz, course 317.6°, category code `1` |
 
 ### STARs
 
@@ -940,7 +1024,7 @@ The approach transitions, which is where traffic is fed from:
 - **OCCHO** N41 09.49 / W89 24.99 -- `41.15811, -89.41645`
 - **KOOKS** N41 10.63 / W89 07.52 -- `41.17712, -89.12536`
 - **JILLZ** N41 12.77 / W88 58.08 -- `41.21288, -88.96807`
-- **TMRAA** N41 16.46 / W88 47.64 -- `41.27432, -88.79392`
+- **TMRAA** N41 16.46 / W88 47.63 -- `41.27432, -88.79392`
 - **ENDEE** N41 22.44 / W88 30.54 -- `41.37406, -88.50897`
 - **DARKK** N40 15.21 / W90 30.00 -- `40.25349, -90.49999`
 - **BURUU** N40 32.44 / W90 10.07 -- `40.54067, -90.16789`
@@ -991,7 +1075,7 @@ The approach transitions, which is where traffic is fed from:
 - **TACTT** N41 51.01 / W87 26.28 -- `41.85023, -87.43799`
 - **ELLJO** N41 34.88 / W87 22.87 -- `41.58140, -87.38124`
 - **HILLS** N41 37.42 / W87 31.57 -- `41.62372, -87.52616`
-- **ASHEN** N41 28.83 / W84 38.80 -- `41.48049, -84.64675`
+- **ASHEN** N41 28.83 / W84 38.81 -- `41.48049, -84.64675`
 - **FNLYY** N41 30.74 / W85 30.17 -- `41.51232, -85.50287`
 - **BAGEL** N41 30.96 / W85 36.82 -- `41.51597, -85.61369`
 - **PANGG** N41 31.50 / W86 04.34 -- `41.52501, -86.07233`
@@ -1014,35 +1098,35 @@ source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 ### Approaches
 
 
-**H04RY** — RNAV (RNP) RWY 04RY
+**H04RY** — RNAV (RNP) Y RWY 04R
 
 - **ALQUE:** ALQUE 6000 | BANER >=5000 | CADON >=4000 | CITGO >=2400 | YIPEE >=1700
 - **OLCYK:** OLCYK >=4000 | SAVRD 4000 | HILND >=2700/210 | YIPEE >=1700
-- **(final):** YIPEE >=1700 | YIPEE 0/1 | RW04R 669 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** YIPEE >=1700 | RW04R 669 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**H13LY** — RNAV (RNP) RWY 13LY
+**H13LY** — RNAV (RNP) Y RWY 13L
 
 - **PLOPP:** PLOPP 4000/210 | YUCAN 3000 | JUPIR 2000
 - **TINLY:** TINLY | OOPLA 4000 | GIKLE 2500 | JUPIR 2000/210
 - **ZABNU:** ZABNU 4000 | TOYUL 3000 | GIKLE 2500 | JUPIR 2000/210
-- **(final):** JUPIR 2000/210 | NIDEE >=2000 | NIDEE 0/1 | DULTE | RW13L 654 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** JUPIR 2000/210 | NIDEE >=2000 | DULTE | RW13L 654 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**H22LX** — RNAV (RNP) RWY 22LX
+**H22LX** — RNAV (RNP) X RWY 22L
 
 - **PKACH:** PKACH 6000 | MIING 4000/230
-- **(final):** MIING 4000/230 | FENCK 4000/210 | ZASIV >=2900/180 | EGLUQ >=1900 | YACHT >=1500 | YACHT 0/1 | RW22L 656 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** MIING 4000/230 | FENCK 4000/210 | ZASIV >=2900/180 | EGLUQ >=1900 | YACHT >=1500 | RW22L 656 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**H22LY** — RNAV (RNP) RWY 22LY
+**H22LY** — RNAV (RNP) Y RWY 22L
 
 - **STERE:** STERE >=3000 | TACTT 3000 | SAILZ 3000/210
 - **TACTT:** TACTT 3000 | SAILZ 3000/210
-- **(final):** SAILZ 3000/210 | DXXON 3000 | MNDOE >=2400 | JIBBB >=1900 | YACHT >=1500 | YACHT 0/1 | RW22L 656 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** SAILZ 3000/210 | DXXON 3000 | MNDOE >=2400 | JIBBB >=1900 | YACHT >=1500 | RW22L 656 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**H31RY** — RNAV (RNP) RWY 31RY
+**H31RY** — RNAV (RNP) Y RWY 31R
 
 - **HILLS:** HILLS 5000/240 | GLEAM >=4000 | RUNTS >=2500 | HOBEL >=1700
 - **TWEEN:** TWEEN 4000/210 | PRIUS >=2900 | HOBEL >=1700
-- **(final):** HOBEL >=1700 | HOBEL 0/1 | RW31R 660 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** HOBEL >=1700 | RW31R 660 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
 **I04R** — ILS RWY 04R
 
@@ -1074,33 +1158,33 @@ source. Corrected 2026-09-07, see root `claude_CIFP_Source_Reference.md` §3.1.
 - **HILLS:** HILLS 5000/240 | GLEAM >=4000
 - **(final):** GLEAM >=4000 | RUNTS >=2500 | HOBEL >=1700 | RW31R 660 | [CA leg - not a fix] | [VI leg - not a fix] | IGECY 2100 | EON >=2600 | EON >=2600  *(2 non-fix legs)*
 
-**R04RZ** — RNAV (GPS) RWY 04RZ
+**R04RZ** — RNAV (GPS) Z RWY 04R
 
 - **JOT:** JOT | ALQUE 6000
 - **WUPOR:** WUPOR | ALQUE 6000
-- **(final):** ALQUE 6000 | BANER >=5000 | CADON >=4000 | CITGO >=2400 | CITGO | OLOXE 1460 | RW04R 669 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** ALQUE 6000 | BANER >=5000 | CADON >=4000 | CITGO >=2400 | OLOXE 1460 | RW04R 669 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**R13LZ** — RNAV (GPS) RWY 13LZ
+**R13LZ** — RNAV (GPS) Z RWY 13L
 
 - **TOYUL:** TOYUL 3000 | GIKLE 2500 | AAMEE 2300/180
-- **(final):** AAMEE 2300/180 | RUDDY 2000 | NAANN >=1600 | NAANN | HHALL 1280 | RW13L 654 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** AAMEE 2300/180 | RUDDY 2000 | NAANN >=1600 | HHALL 1280 | RW13L 654 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**R22LZ** — RNAV (GPS) RWY 22LZ
+**R22LZ** — RNAV (GPS) Z RWY 22L
 
 - **STERE:** STERE | TACTT 3000 | SAILZ 3000/210
 - **TACTT:** TACTT 3000 | SAILZ 3000/210
-- **(final):** SAILZ 3000/210 | DXXON 3000 | MNDOE >=2500/170 | MNDOE | ZUDVI 1260 | HINSN 740 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** SAILZ 3000/210 | DXXON 3000 | MNDOE >=2500/170 | ZUDVI 1260 | HINSN 740 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
 **R22R** — RNAV (GPS) RWY 22R
 
 - **CGT:** CGT | SAVEE >=3000 | HAXOM >=3000
 - **EON:** EON | SAVEE >=3000 | HAXOM >=3000
-- **(final):** HAXOM >=3000 | RUGGO >=3000 | RUGGO | CIDIG 1420 | RW22R 661 | [CA leg - not a fix] | IGECY | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** HAXOM >=3000 | RUGGO >=3000 | CIDIG 1420 | RW22R 661 | [CA leg - not a fix] | IGECY | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
-**R31RZ** — RNAV (GPS) RWY 31RZ
+**R31RZ** — RNAV (GPS) Z RWY 31R
 
 - **HILLS:** HILLS 5000/240 | GLEAM >=4000
-- **(final):** GLEAM >=4000 | RUNTS >=2500 | HOBEL >=1700 | HOBEL | RW31R 660 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
+- **(final):** GLEAM >=4000 | RUNTS >=2500 | HOBEL >=1700 | RW31R 660 | [CA leg - not a fix] | EON >=2600 | EON >=2600  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -1118,7 +1202,7 @@ The approach transitions, which is where traffic is fed from:
 - **OLCYK** N41 32.41 / W87 36.27 -- `41.54019, -87.60446`
 - **SAVRD** N41 38.39 / W87 44.65 -- `41.63990, -87.74419`
 - **HILND** N41 41.01 / W87 48.33 -- `41.68350, -87.80553`
-- **RW04R** N64 32.75 / W149 04.97 -- `64.54576, -149.08275`
+- **RW04R** N41 46.81 / W87 45.48 -- `41.78019, -87.75801`
 - **EON** N41 16.18 / W87 47.46 -- `41.26963, -87.79105`
 - **PLOPP** N41 43.58 / W87 49.62 -- `41.72629, -87.82707`
 - **YUCAN** N41 45.97 / W87 52.99 -- `41.76612, -87.88315`
@@ -1130,14 +1214,14 @@ The approach transitions, which is where traffic is fed from:
 - **TOYUL** N41 42.74 / W88 04.23 -- `41.71227, -88.07043`
 - **NIDEE** N41 50.10 / W87 49.92 -- `41.83500, -87.83195`
 - **DULTE** N41 49.51 / W87 48.50 -- `41.82515, -87.80831`
-- **RW13L** N33 39.32 / W88 27.11 -- `33.65537, -88.45175`
+- **RW13L** N41 47.44 / W87 45.59 -- `41.79070, -87.75984`
 - **PKACH** N41 34.82 / W88 07.90 -- `41.58032, -88.13171`
 - **MIING** N41 45.27 / W87 45.14 -- `41.75447, -87.75241`
 - **FENCK** N41 45.45 / W87 41.14 -- `41.75756, -87.68573`
 - **ZASIV** N41 48.11 / W87 37.88 -- `41.80177, -87.63135`
 - **EGLUQ** N41 49.96 / W87 40.47 -- `41.83260, -87.67454`
 - **YACHT** N41 49.37 / W87 42.24 -- `41.82279, -87.70401`
-- **RW22L** N64 32.91 / W149 04.32 -- `64.54855, -149.07198`
+- **RW22L** N41 47.44 / W87 44.68 -- `41.79073, -87.74466`
 - **STERE** N41 51.01 / W87 19.59 -- `41.85021, -87.32649`
 - **TACTT** N41 51.01 / W87 26.28 -- `41.85023, -87.43799`
 - **SAILZ** N41 51.01 / W87 32.97 -- `41.85014, -87.54950`
@@ -1150,7 +1234,7 @@ The approach transitions, which is where traffic is fed from:
 - **HOBEL** N41 44.58 / W87 41.57 -- `41.74300, -87.69290`
 - **TWEEN** N41 38.43 / W87 44.73 -- `41.64057, -87.74553`
 - **PRIUS** N41 41.17 / W87 41.41 -- `41.68616, -87.69020`
-- **RW31R** N33 38.39 / W88 25.99 -- `33.63983, -88.43316`
+- **RW31R** N41 46.83 / W87 44.74 -- `41.78056, -87.74559`
 - **IGECY** N41 36.11 / W87 46.07 -- `41.60191, -87.76784`
 - **DPA** N41 53.42 / W88 21.01 -- `41.89037, -88.35018`
 - **HEBKU** N41 54.45 / W87 55.47 -- `41.90749, -87.92446`
@@ -1170,9 +1254,24 @@ The approach transitions, which is where traffic is fed from:
 - **HAXOM** N41 56.28 / W87 33.72 -- `41.93807, -87.56208`
 - **RUGGO** N41 52.75 / W87 38.23 -- `41.87913, -87.63714`
 - **CIDIG** N41 49.18 / W87 42.76 -- `41.81962, -87.71271`
-- **RW22R** N64 33.13 / W149 03.72 -- `64.55209, -149.06202`
+- **RW22R** N41 47.44 / W87 44.97 -- `41.79059, -87.74952`
 
 ## KDPA
+
+### Runways
+
+Field elevation 759 ft; magnetic variation 1.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW02L | 7,571 | 150 | 015.0° | N41 53.64 / W88 15.21 -- `41.89403, -88.25355` | 0 | 50 | **IGVK** 111.70 MHz, course 015.0°, category code `1` |
+| RW02R | 6,451 | 100 | 015.0° | N41 53.60 / W88 15.00 -- `41.89336, -88.24992` | 0 | 50 | — |
+| RW10 | 4,750 | 75 | 097.0° | N41 54.81 / W88 15.51 -- `41.91348, -88.25849` | 0 | 50 | — |
+| RW15 | 3,399 | 100 | 149.0° | N41 55.15 / W88 14.74 -- `41.91922, -88.24573` | 0 | 42 | — |
+| RW20L | 6,451 | 100 | 195.0° | N41 54.63 / W88 14.65 -- `41.91053, -88.24418` | 0 | 40 | — |
+| RW20R | 7,571 | 150 | 195.0° | N41 54.85 / W88 14.81 -- `41.91419, -88.24681` | 0 | 40 | — |
+| RW28 | 4,750 | 75 | 277.0° | N41 54.73 / W88 14.47 -- `41.91211, -88.24113` | 0 | 40 | — |
+| RW33 | 3,399 | 100 | 329.0° | N41 54.71 / W88 14.36 -- `41.91179, -88.23941` | 190 | 50 | — |
 
 ### STARs
 
@@ -1302,34 +1401,34 @@ The approach transitions, which is where traffic is fed from:
 
 - **JOJED:** JOJED >=3000 | BOMER >=3000
 - **SHWAG:** SHWAG | BOMER >=3000
-- **(final):** BOMER >=3000 | ZETKO >=2500 | ZETKO | RW02L 801 | [CA leg - not a fix] | HINCK >=3000 | HINCK >=3000  *(1 non-fix leg)*
+- **(final):** BOMER >=3000 | ZETKO >=2500 | RW02L 801 | [CA leg - not a fix] | HINCK >=3000 | HINCK >=3000  *(1 non-fix leg)*
 
 **R02R** — RNAV (GPS) RWY 02R
 
 - **GIDVE:** GIDVE >=3000
 - **JOT:** JOT | GIDVE >=3000
 - **PLANO:** PLANO | CEXAB >=3000 | GIDVE >=3000
-- **(final):** GIDVE >=3000 | HEGBI >=2500 | HEGBI | RW02R 801 | [CA leg - not a fix] | NUELG >=3000 | NUELG >=3000  *(1 non-fix leg)*
+- **(final):** GIDVE >=3000 | HEGBI >=2500 | RW02R 801 | [CA leg - not a fix] | NUELG >=3000 | NUELG >=3000  *(1 non-fix leg)*
 
 **R10** — RNAV (GPS) RWY 10
 
 - **DPA:** DPA | NUMIZ >=2600 | NUMIZ >=2600
 - **HINCK:** HINCK | NUMIZ >=2600
 - **NUELG:** NUELG | NUMIZ >=2600
-- **(final):** NUMIZ >=2600 | HOSAV >=2600 | HOSAV | KOHYO 1400 | RW10 804 | [CA leg - not a fix] | PEPRE | JOT >=2600 | JOT >=2600  *(1 non-fix leg)*
+- **(final):** NUMIZ >=2600 | HOSAV >=2600 | KOHYO 1400 | RW10 804 | [CA leg - not a fix] | PEPRE | JOT >=2600 | JOT >=2600  *(1 non-fix leg)*
 
 **R20L** — RNAV (GPS) RWY 20L
 
 - **DPA:** DPA | JOLON >=3000 | JOLON >=3000
 - **FARMM:** FARMM | JOLON >=3000
 - **NUELG:** NUELG | JOLON >=3000 | JOLON >=3000
-- **(final):** JOLON >=3000 | ZOGUB >=2500 | ZOGUB | PECBI 1400 | RW20L 799 | [CA leg - not a fix] | GIDVE | JOT >=2500 | JOT >=2500  *(1 non-fix leg)*
+- **(final):** JOLON >=3000 | ZOGUB >=2500 | PECBI 1400 | RW20L 799 | [CA leg - not a fix] | GIDVE | JOT >=2500 | JOT >=2500  *(1 non-fix leg)*
 
 **R20R** — RNAV (GPS) RWY 20R
 
 - **DPA:** DPA | DUKBE >=3000 | DUKBE >=3000
 - **SMLLY:** SMLLY | DUKBE >=3000
-- **(final):** DUKBE >=3000 | FRTZZ >=2500 | FRTZZ | SUCOP 1360 | RW20R 796 | [CA leg - not a fix] | FABUG | JOT >=2500 | JOT >=2500  *(1 non-fix leg)*
+- **(final):** DUKBE >=3000 | FRTZZ >=2500 | SUCOP 1360 | RW20R 796 | [CA leg - not a fix] | FABUG | JOT >=2500 | JOT >=2500  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -1342,7 +1441,7 @@ The approach transitions, which is where traffic is fed from:
 - **JOT** N41 32.79 / W88 19.10 -- `41.54642, -88.31841`
 - **BOMER** N41 42.70 / W88 18.86 -- `41.71169, -88.31426`
 - **SPNCE** N41 48.62 / W88 16.89 -- `41.81038, -88.28144`
-- **RW02L** N61 24.71 / W149 30.97 -- `61.41176, -149.51619`
+- **RW02L** N41 53.64 / W88 15.21 -- `41.89403, -88.25355`
 - **DPA** N41 53.42 / W88 21.01 -- `41.89037, -88.35018`
 - **JOJED** N41 41.00 / W88 09.79 -- `41.68341, -88.16316`
 - **SHWAG** N41 44.39 / W88 27.93 -- `41.73976, -88.46549`
@@ -1352,26 +1451,37 @@ The approach transitions, which is where traffic is fed from:
 - **PLANO** N41 36.75 / W88 36.89 -- `41.61252, -88.61476`
 - **CEXAB** N41 37.18 / W88 26.11 -- `41.61966, -88.43519`
 - **HEGBI** N41 48.42 / W88 16.72 -- `41.80701, -88.27871`
-- **RW02R** N61 24.86 / W149 30.61 -- `61.41439, -149.51020`
+- **RW02R** N41 53.60 / W88 15.00 -- `41.89336, -88.24992`
 - **NUELG** N41 59.10 / W88 39.36 -- `41.98497, -88.65598`
 - **NUMIZ** N41 56.00 / W88 30.94 -- `41.93341, -88.51565`
 - **HOSAV** N41 55.39 / W88 22.91 -- `41.92311, -88.38183`
 - **KOHYO** N41 55.01 / W88 18.04 -- `41.91679, -88.30067`
-- **RW10** N62 49.45 / W149 54.86 -- `62.82409, -149.91436`
+- **RW10** N41 54.81 / W88 15.51 -- `41.91348, -88.25849`
 - **PEPRE** N41 54.14 / W88 07.03 -- `41.90228, -88.11715`
 - **JOLON** N42 05.83 / W88 10.90 -- `42.09718, -88.18164`
 - **FARMM** N42 20.16 / W88 21.57 -- `42.33599, -88.35942`
 - **ZOGUB** N41 59.82 / W88 12.92 -- `41.99692, -88.21528`
 - **PECBI** N41 56.47 / W88 14.04 -- `41.94125, -88.23392`
-- **RW20L** N61 25.09 / W149 30.22 -- `61.41820, -149.50367`
+- **RW20L** N41 54.63 / W88 14.65 -- `41.91053, -88.24418`
 - **DUKBE** N42 06.06 / W88 11.05 -- `42.10102, -88.18416`
 - **SMLLY** N42 07.76 / W88 20.18 -- `42.12927, -88.33626`
 - **FRTZZ** N42 00.05 / W88 13.07 -- `42.00077, -88.21783`
 - **SUCOP** N41 56.57 / W88 14.23 -- `41.94286, -88.23722`
-- **RW20R** N61 25.21 / W149 30.10 -- `61.42023, -149.50166`
+- **RW20R** N41 54.85 / W88 14.81 -- `41.91419, -88.24681`
 - **FABUG** N41 49.03 / W88 16.75 -- `41.81712, -88.27921`
 
 ## KPWK
+
+### Runways
+
+Field elevation 645 ft; magnetic variation 2.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW12 | 4,415 | 75 | 120.0° | N42 06.90 / W87 54.37 -- `42.11501, -87.90621` | 295 | 42 | — |
+| RW16 | 5,001 | 150 | 161.0° | N42 07.40 / W87 54.43 -- `42.12333, -87.90713` | 0 | 52 | — |
+| RW30 | 4,415 | 75 | 300.0° | N42 06.62 / W87 53.65 -- `42.11027, -87.89421` | 432 | 42 | — |
+| RW34 | 5,001 | 150 | 341.0° | N42 06.63 / W87 54.02 -- `42.11055, -87.90041` | 0 | 40 | — |
 
 ### STARs
 
@@ -1384,7 +1494,7 @@ The approach transitions, which is where traffic is fed from:
 
 - **CHZHD** N41 01.10 / W88 37.30 -- `41.01839, -88.62174`
 - **LEEDN** N41 42.79 / W88 18.98 -- `41.71316, -88.31635`
-- **MUMPR** N42 14.61 / W88 20.99 -- `42.24358, -88.34980`
+- **MUMPR** N42 14.62 / W88 20.99 -- `42.24358, -88.34980`
 - **DETIE** N42 21.56 / W88 21.81 -- `42.35934, -88.36344`
 - **MOWSR** N42 32.89 / W88 23.76 -- `42.54816, -88.39603`
 - **TRUDO** N42 41.04 / W88 25.19 -- `42.68402, -88.41980`
@@ -1465,13 +1575,13 @@ The approach transitions, which is where traffic is fed from:
 
 - **FILLZ:** FILLZ | HIGUH >=2500
 - **OYFAM:** OYFAM | HIGUH >=2500
-- **(final):** HIGUH >=2500 | PAMME >=2300 | PAMME | FUGIO 1320 | RW16 695 | [CA leg - not a fix] | DEERE >=2100 | DEERE >=2100  *(1 non-fix leg)*
+- **(final):** HIGUH >=2500 | PAMME >=2300 | FUGIO 1320 | RW16 695 | [CA leg - not a fix] | DEERE >=2100 | DEERE >=2100  *(1 non-fix leg)*
 
 **R30** — RNAV (GPS) RWY 30
 
 - **CUBSI:** CUBSI | THORR >=3000 | GENAZ >=3000
 - **THORR:** THORR >=3000 | GENAZ >=3000
-- **(final):** GENAZ >=3000 | DUSTY >=2000 | DUSTY | RW30 683 | [CA leg - not a fix] | FILLZ >=2500 | FILLZ >=2500  *(1 non-fix leg)*
+- **(final):** GENAZ >=3000 | DUSTY >=2000 | RW30 683 | [CA leg - not a fix] | FILLZ >=2500 | FILLZ >=2500  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -1486,15 +1596,28 @@ The approach transitions, which is where traffic is fed from:
 - **OYFAM** N42 21.00 / W87 50.03 -- `42.35005, -87.83379`
 - **PAMME** N42 12.10 / W87 56.90 -- `42.20159, -87.94836`
 - **FUGIO** N42 09.26 / W87 55.41 -- `42.15440, -87.92348`
-- **RW16** N65 21.42 / W149 45.63 -- `65.35694, -149.76048`
+- **RW16** N42 07.40 / W87 54.43 -- `42.12333, -87.90713`
 - **DEERE** N42 11.95 / W87 36.23 -- `42.19913, -87.60390`
 - **CUBSI** N42 13.22 / W87 41.50 -- `42.22031, -87.69172`
 - **THORR** N42 07.40 / W87 36.02 -- `42.12326, -87.60031`
 - **GENAZ** N42 03.93 / W87 42.34 -- `42.06549, -87.70575`
 - **DUSTY** N42 04.67 / W87 48.75 -- `42.07789, -87.81244`
-- **RW30** N64 00.02 / W145 35.37 -- `64.00035, -145.58958`
+- **RW30** N42 06.62 / W87 53.65 -- `42.11027, -87.89421`
 
 ## KARR
+
+### Runways
+
+Field elevation 712 ft; magnetic variation 1.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW09 | 6,501 | 100 | 090.0° | N41 46.21 / W88 29.12 -- `41.77015, -88.48536` | 0 | 45 | **IARR** 108.90 MHz, course 090.1°, category code `1` |
+| RW15 | 5,503 | 100 | 148.0° | N41 46.80 / W88 29.17 -- `41.78003, -88.48616` | 0 | 45 | — |
+| RW18 | 3,198 | 75 | 181.0° | N41 46.59 / W88 28.30 -- `41.77658, -88.47162` | 0 | 30 | — |
+| RW27 | 6,501 | 100 | 270.0° | N41 46.23 / W88 27.69 -- `41.77042, -88.46153` | 0 | 45 | — |
+| RW33 | 5,503 | 100 | 328.0° | N41 46.04 / W88 28.50 -- `41.76741, -88.47508` | 0 | 48 | **IROF** 111.15 MHz, course 327.7°, category code `0` |
+| RW36 | 3,198 | 75 | 001.0° | N41 46.07 / W88 28.30 -- `41.76781, -88.47161` | 0 | 34 | — |
 
 ### STARs
 
@@ -1627,24 +1750,24 @@ The approach transitions, which is where traffic is fed from:
 - **HERVY:** HERVY | TOBBY >=2700/230
 - **NUELG:** NUELG | DECAK >=2700 | TOBBY >=2700/230
 - **TOBBY:** TOBBY >=2700
-- **(final):** TOBBY >=2700/230 | WOLFF >=2700 | WOLFF | RW09 752 | [CA leg - not a fix] | HOGIE >=2500 | HOGIE >=2500  *(1 non-fix leg)*
+- **(final):** TOBBY >=2700/230 | WOLFF >=2700 | RW09 752 | [CA leg - not a fix] | HOGIE >=2500 | HOGIE >=2500  *(1 non-fix leg)*
 
 **R15** — RNAV (GPS) RWY 15
 
 - **NUELG:** NUELG | UBEXE >=2600
-- **(final):** UBEXE >=2600 | WUYFI >=2300 | WUYFI | RW15 757 | [CA leg - not a fix] | UQITY >=3000 | UQITY >=3000  *(1 non-fix leg)*
+- **(final):** UBEXE >=2600 | WUYFI >=2300 | RW15 757 | [CA leg - not a fix] | UQITY >=3000 | UQITY >=3000  *(1 non-fix leg)*
 
 **R27** — RNAV (GPS) RWY 27
 
 - **DPA:** DPA | HOGIE >=2500 | HOGIE >=2500
 - **JOT:** JOT | CIMKO >=2500 | HOGIE >=2500
-- **(final):** HOGIE >=2500 | KAREY >=2300 | KAREY | NECLY 1260 | RW27 752 | [CA leg - not a fix] | TOBBY >=2700 | TOBBY >=2700  *(1 non-fix leg)*
+- **(final):** HOGIE >=2500 | KAREY >=2300 | NECLY 1260 | RW27 752 | [CA leg - not a fix] | TOBBY >=2700 | TOBBY >=2700  *(1 non-fix leg)*
 
 **R33** — RNAV (GPS) RWY 33
 
 - **FIEND:** FIEND | BOBBB >=2600
 - **JOT:** JOT | BOBBB >=2600
-- **(final):** BOBBB >=2600 | RIESR >=2300 | RIESR | RW33 747 | [CA leg - not a fix] | UCORO >=3000 | UCORO >=3000  *(1 non-fix leg)*
+- **(final):** BOBBB >=2600 | RIESR >=2300 | RW33 747 | [CA leg - not a fix] | UCORO >=3000 | UCORO >=3000  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -1656,13 +1779,13 @@ The approach transitions, which is where traffic is fed from:
 
 - **TOBBY** N41 46.01 / W88 45.31 -- `41.76680, -88.75520`
 - **WOLFF** N41 46.11 / W88 37.30 -- `41.76854, -88.62159`
-- **RW09** N61 38.93 / W149 20.67 -- `61.64889, -149.34444`
+- **RW09** N41 46.21 / W88 29.12 -- `41.77015, -88.48536`
 - **VAINS** N41 45.58 / W88 22.31 -- `41.75967, -88.37182`
 - **JOT** N41 32.79 / W88 19.10 -- `41.54642, -88.31841`
 - **BOBBB** N41 36.99 / W88 20.59 -- `41.61652, -88.34312`
 - **RIESR** N41 42.02 / W88 24.98 -- `41.70035, -88.41635`
 - **EPABE** N41 44.54 / W88 27.19 -- `41.74231, -88.45309`
-- **RW33** N65 27.79 / W148 39.15 -- `65.46320, -148.65249`
+- **RW33** N41 46.04 / W88 28.50 -- `41.76741, -88.47508`
 - **AHMED** N41 29.86 / W88 51.87 -- `41.49770, -88.86447`
 - **JUGER** N41 40.99 / W88 46.38 -- `41.68320, -88.77305`
 - **HERVY** N41 46.64 / W88 54.44 -- `41.77725, -88.90736`
@@ -1671,17 +1794,28 @@ The approach transitions, which is where traffic is fed from:
 - **HOGIE** N41 46.38 / W88 11.84 -- `41.77306, -88.19735`
 - **UBEXE** N41 55.16 / W88 36.52 -- `41.91934, -88.60869`
 - **WUYFI** N41 50.85 / W88 32.73 -- `41.84754, -88.54547`
-- **RW15** N65 28.28 / W148 39.30 -- `65.47134, -148.65500`
+- **RW15** N41 46.80 / W88 29.17 -- `41.78003, -88.48616`
 - **UQITY** N41 42.01 / W88 24.97 -- `41.70017, -88.41618`
 - **DPA** N41 53.42 / W88 21.01 -- `41.89037, -88.35018`
 - **CIMKO** N41 39.38 / W88 11.73 -- `41.65634, -88.19550`
 - **KAREY** N41 46.29 / W88 21.20 -- `41.77157, -88.35326`
 - **NECLY** N41 46.25 / W88 25.55 -- `41.77081, -88.42590`
-- **RW27** N61 38.95 / W149 20.02 -- `61.64917, -149.33361`
+- **RW27** N41 46.23 / W88 27.69 -- `41.77042, -88.46153`
 - **FIEND** N41 37.22 / W88 13.34 -- `41.62029, -88.22233`
 - **UCORO** N41 50.98 / W88 32.84 -- `41.84970, -88.54736`
 
 ## KGYY
+
+### Runways
+
+Field elevation 597 ft; magnetic variation 2.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW02 | 3,604 | 100 | 023.0° | N41 36.74 / W87 25.11 -- `41.61228, -87.41842` | 0 | 60 | — |
+| RW12 | 8,859 | 150 | 126.0° | N41 37.45 / W87 25.64 -- `41.62421, -87.42732` | 0 | 60 | — |
+| RW20 | 3,604 | 100 | 203.0° | N41 37.29 / W87 24.82 -- `41.62150, -87.41365` | 0 | 50 | — |
+| RW30 | 8,859 | 150 | 306.0° | N41 36.72 / W87 24.19 -- `41.61194, -87.40324` | 900 | 57 | **IGYY** 108.75 MHz, course 306.2°, category code `1` |
 
 ### STARs
 
@@ -1718,7 +1852,7 @@ The approach transitions, which is where traffic is fed from:
 - **HAAYQ** N40 17.20 / W89 12.85 -- `40.28659, -89.21412`
 - **WUNTZ** N40 25.55 / W89 04.32 -- `40.42585, -89.07196`
 - **HTDOG** N41 23.61 / W87 17.49 -- `41.39356, -87.29144`
-- **ASHEN** N41 28.83 / W84 38.80 -- `41.48049, -84.64675`
+- **ASHEN** N41 28.83 / W84 38.81 -- `41.48049, -84.64675`
 - **FNLYY** N41 30.74 / W85 30.17 -- `41.51232, -85.50287`
 - **BAGEL** N41 30.96 / W85 36.82 -- `41.51597, -85.61369`
 - **PANGG** N41 31.50 / W86 04.34 -- `41.52501, -86.07233`
@@ -1799,19 +1933,19 @@ The approach transitions, which is where traffic is fed from:
 ### Approaches
 
 
-**H12-Z** — RNAV (RNP) RWY 12 Z
+**H12-Z** — RNAV (RNP) Z RWY 12
 
 - **FEBAG:** FEBAG 2300 - 7300 | NOOOO >=2300 | KCHUP >=2300 | BBRAD >=2000 | TRAYC >=2000/180 | PADKE >=1800
 - **HTDOG:** HTDOG 4000 | MSTRD >=4000 | RELSH >=3000 | ONYIN >=2000 | TMATO >=2000/180 | PADKE >=1800
 - **KEGLE:** KEGLE | TRAYC >=2000/180 | PADKE >=1800
 - **PCKLE:** PCKLE | TMATO >=2000/180 | PADKE >=1800
-- **(final):** PADKE >=1800 | PADKE 0 | RW12 657 | [CA leg - not a fix] | KIKVE >=2400 | KIKVE >=2400  *(1 non-fix leg)*
+- **(final):** PADKE >=1800 | RW12 657 | [CA leg - not a fix] | KIKVE >=2400 | KIKVE >=2400  *(1 non-fix leg)*
 
-**H30-Z** — RNAV (RNP) RWY 30 Z
+**H30-Z** — RNAV (RNP) Z RWY 30
 
 - **FEBAG:** FEBAG | EBGIN >=2300
 - **HTDOG:** HTDOG 4000 | EBGIN >=2300
-- **(final):** EBGIN >=2300 | WASTU >=2000 | WASTU 0 | RW30 646 | HOSEN | DANGE | KEGLE >=2100 | KEGLE >=2100
+- **(final):** EBGIN >=2300 | WASTU >=2000 | RW30 646 | HOSEN | DANGE | KEGLE >=2100 | KEGLE >=2100
 
 **I30** — ILS RWY 30
 
@@ -1830,29 +1964,29 @@ The approach transitions, which is where traffic is fed from:
 - **ERACK:** ERACK | KILPY >=2800
 - **KILPY:** KILPY >=2800
 - **TREYY:** TREYY | KILPY >=2800
-- **(final):** KILPY >=2800 | CORPI >=2300 | CORPI | DEASH 1280 | RW02 649 | [CA leg - not a fix] | KILPY >=2800 | KILPY >=2800  *(1 non-fix leg)*
+- **(final):** KILPY >=2800 | CORPI >=2300 | DEASH 1280 | RW02 649 | [CA leg - not a fix] | KILPY >=2800 | KILPY >=2800  *(1 non-fix leg)*
 
-**R12-Y** — RNAV (GPS) RWY 12 Y
+**R12-Y** — RNAV (GPS) Y RWY 12
 
 - **EVEPY:** EVEPY >=2200
 - **HTDOG:** HTDOG 4000 | JEDIM >=4000 | EVEPY >=2200
 - **ZANIN:** ZANIN | EVEPY >=2200
-- **(final):** EVEPY >=2200 | GAGME >=2200 | GAGME | CUSUB 1400 | RW12 647 | [CA leg - not a fix] | KIKVE >=2400 | KIKVE >=2400  *(1 non-fix leg)*
+- **(final):** EVEPY >=2200 | GAGME >=2200 | CUSUB 1400 | RW12 647 | [CA leg - not a fix] | KIKVE >=2400 | KIKVE >=2400  *(1 non-fix leg)*
 
 **R20** — RNAV (GPS) RWY 20
 
 - **HALIE:** HALIE | ZOGEB >=2400 | UCJUC >=2200
 - **NILES:** NILES | QEBLO >=3000 | UCJUC >=2200
 - **UCJUC:** UCJUC >=2200
-- **(final):** UCJUC >=2200 | YUPHU >=2200 | YUPHU | RW20 639 | [CA leg - not a fix] | HALIE >=2400 | HALIE >=2400  *(1 non-fix leg)*
+- **(final):** UCJUC >=2200 | YUPHU >=2200 | RW20 639 | [CA leg - not a fix] | HALIE >=2400 | HALIE >=2400  *(1 non-fix leg)*
 
-**R30-Y** — RNAV (GPS) RWY 30 Y
+**R30-Y** — RNAV (GPS) Y RWY 30
 
 - **BOONE:** BOONE | KIKVE >=2400
 - **CGT:** CGT | KIKVE >=2400 | KIKVE >=2400
 - **HTDOG:** HTDOG 4000 | KIKVE >=2400
 - **STYLE:** STYLE | KIKVE >=2400
-- **(final):** KIKVE >=2400 | WASTU >=2000 | WASTU | HROLD 1120 | RW30 646 | [CA leg - not a fix] | KIKVE >=2400 | KIKVE >=2400  *(1 non-fix leg)*
+- **(final):** KIKVE >=2400 | WASTU >=2000 | HROLD 1120 | RW30 646 | [CA leg - not a fix] | KIKVE >=2400 | KIKVE >=2400  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -1875,11 +2009,11 @@ The approach transitions, which is where traffic is fed from:
 - **TMATO** N41 38.88 / W87 34.30 -- `41.64800, -87.57162`
 - **KEGLE** N41 46.66 / W87 25.29 -- `41.77773, -87.42145`
 - **PCKLE** N41 35.36 / W87 37.82 -- `41.58939, -87.63032`
-- **RW12** N64 00.25 / W145 35.80 -- `64.00417, -145.59667`
+- **RW12** N41 37.45 / W87 25.64 -- `41.62421, -87.42732`
 - **KIKVE** N41 30.23 / W87 11.51 -- `41.50391, -87.19182`
 - **EBGIN** N41 30.88 / W87 12.77 -- `41.51471, -87.21289`
 - **WASTU** N41 34.33 / W87 19.51 -- `41.57210, -87.32512`
-- **RW30** N64 00.02 / W145 35.37 -- `64.00035, -145.58958`
+- **RW30** N41 36.72 / W87 24.19 -- `41.61194, -87.40324`
 - **HOSEN** N41 37.28 / W87 25.30 -- `41.62134, -87.42171`
 - **DANGE** N41 43.28 / W87 27.46 -- `41.72129, -87.45766`
 - **CGT** N41 30.60 / W87 34.29 -- `41.51001, -87.57155`
@@ -1889,7 +2023,7 @@ The approach transitions, which is where traffic is fed from:
 - **TREYY** N41 27.30 / W87 41.36 -- `41.45497, -87.68935`
 - **CORPI** N41 31.90 / W87 27.60 -- `41.53167, -87.45998`
 - **DEASH** N41 34.87 / W87 26.07 -- `41.58118, -87.43446`
-- **RW02** N59 42.13 / W151 17.93 -- `59.70224, -151.29875`
+- **RW02** N41 36.74 / W87 25.11 -- `41.61228, -87.41842`
 - **EVEPY** N41 43.94 / W87 38.44 -- `41.73236, -87.64061`
 - **JEDIM** N41 37.30 / W87 44.40 -- `41.62163, -87.74006`
 - **ZANIN** N41 50.57 / W87 32.45 -- `41.84290, -87.54086`
@@ -1901,11 +2035,22 @@ The approach transitions, which is where traffic is fed from:
 - **NILES** N41 46.69 / W87 35.04 -- `41.77818, -87.58406`
 - **QEBLO** N41 48.33 / W87 26.27 -- `41.80556, -87.43777`
 - **YUPHU** N41 41.86 / W87 22.45 -- `41.69767, -87.37424`
-- **RW20** N59 42.37 / W151 17.58 -- `59.70621, -151.29299`
+- **RW20** N41 37.29 / W87 24.82 -- `41.62150, -87.41365`
 - **BOONE** N41 21.83 / W87 11.53 -- `41.36376, -87.19215`
 - **STYLE** N41 46.44 / W86 48.50 -- `41.77397, -86.80838`
 
 ## KLOT
+
+### Runways
+
+Field elevation 679 ft; magnetic variation 2.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW02 | 6,500 | 100 | 015.0° | N41 35.95 / W88 06.05 -- `41.59923, -88.10090` | 0 | 37 | — |
+| RW09 | 5,500 | 75 | 090.0° | N41 36.48 / W88 06.27 -- `41.60804, -88.10444` | 0 | 41 | **ILOT** 111.95 MHz, course 089.7°, category code `0` |
+| RW20 | 6,500 | 100 | 195.0° | N41 36.99 / W88 05.72 -- `41.61656, -88.09526` | 0 | 40 | — |
+| RW27 | 5,500 | 75 | 270.0° | N41 36.52 / W88 05.06 -- `41.60863, -88.08435` | 0 | 35 | — |
 
 ### STARs
 
@@ -2019,26 +2164,26 @@ The approach transitions, which is where traffic is fed from:
 - **EON:** EON | CAMLI >=2300
 - **JOT:** JOT | CAMLI >=2300 | CAMLI >=2300
 - **MEDAN:** MEDAN | CAMLI >=2300
-- **(final):** CAMLI >=2300 | JIMMO >=2300 | JIMMO | RW02 716 | [CA leg - not a fix] | ALASE | BOJAK >=2500 | BOJAK >=2500  *(1 non-fix leg)*
+- **(final):** CAMLI >=2300 | JIMMO >=2300 | RW02 716 | [CA leg - not a fix] | ALASE | BOJAK >=2500 | BOJAK >=2500  *(1 non-fix leg)*
 
 **R09** — RNAV (GPS) RWY 09
 
 - **DPA:** DPA | RAYLI >=2500 | GATLY >=2500
 - **GATLY:** GATLY >=2500
 - **MEDAN:** MEDAN | GATLY >=2500
-- **(final):** GATLY >=2500 | HOBLT >=1800 | HOBLT | RW09 714 | [CA leg - not a fix] | QAJER >=2400 | QAJER >=2400  *(1 non-fix leg)*
+- **(final):** GATLY >=2500 | HOBLT >=1800 | RW09 714 | [CA leg - not a fix] | QAJER >=2400 | QAJER >=2400  *(1 non-fix leg)*
 
 **R20** — RNAV (GPS) RWY 20
 
 - **DPA:** DPA | BEPKE >=2300
-- **(final):** BEPKE >=2300 | JESUB >=2300 | JESUB | RW20 706 | [CA leg - not a fix] | CAMLI >=2300 | CAMLI >=2300  *(1 non-fix leg)*
+- **(final):** BEPKE >=2300 | JESUB >=2300 | RW20 706 | [CA leg - not a fix] | CAMLI >=2300 | CAMLI >=2300  *(1 non-fix leg)*
 
 **R27** — RNAV (GPS) RWY 27
 
 - **CGT:** CGT | QAJER >=2400
 - **DUFFL:** DUFFL | QAJER >=2400
 - **QAJER:** QAJER >=2400
-- **(final):** QAJER >=2400 | NOKIZ >=2300 | NOKIZ | BAYAK 1400 | RW27 701 | [CA leg - not a fix] | GATLY >=2500 | GATLY >=2500  *(1 non-fix leg)*
+- **(final):** QAJER >=2400 | NOKIZ >=2300 | BAYAK 1400 | RW27 701 | [CA leg - not a fix] | GATLY >=2500 | GATLY >=2500  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -2052,26 +2197,37 @@ The approach transitions, which is where traffic is fed from:
 - **GATLY** N41 36.09 / W88 19.03 -- `41.60151, -88.31710`
 - **JOT** N41 32.79 / W88 19.10 -- `41.54642, -88.31841`
 - **HOBLT** N41 36.35 / W88 10.77 -- `41.60578, -88.17942`
-- **RW09** N61 38.93 / W149 20.67 -- `61.64889, -149.34444`
+- **RW09** N41 36.48 / W88 06.27 -- `41.60804, -88.10444`
 - **EON** N41 16.18 / W87 47.46 -- `41.26963, -87.79105`
 - **CAMLI** N41 25.25 / W88 09.53 -- `41.42087, -88.15879`
 - **MEDAN** N41 20.46 / W88 17.11 -- `41.34098, -88.28523`
 - **JIMMO** N41 31.18 / W88 07.60 -- `41.51974, -88.12674`
-- **RW02** N59 42.13 / W151 17.93 -- `59.70224, -151.29875`
+- **RW02** N41 35.95 / W88 06.05 -- `41.59923, -88.10090`
 - **ALASE** N41 41.58 / W88 04.22 -- `41.69308, -88.07031`
 - **BOJAK** N41 39.51 / W87 57.89 -- `41.65842, -87.96478`
 - **RAYLI** N41 41.09 / W88 19.31 -- `41.68481, -88.32178`
 - **QAJER** N41 36.94 / W87 50.35 -- `41.61563, -87.83923`
 - **BEPKE** N41 47.73 / W88 02.21 -- `41.79553, -88.03682`
 - **JESUB** N41 41.79 / W88 04.15 -- `41.69655, -88.06918`
-- **RW20** N59 42.37 / W151 17.58 -- `59.70621, -151.29299`
+- **RW20** N41 36.99 / W88 05.72 -- `41.61656, -88.09526`
 - **CGT** N41 30.60 / W87 34.29 -- `41.51001, -87.57155`
 - **DUFFL** N41 28.71 / W87 47.90 -- `41.47846, -87.79839`
 - **NOKIZ** N41 36.71 / W87 58.37 -- `41.61189, -87.97286`
 - **BAYAK** N41 36.60 / W88 02.14 -- `41.61007, -88.03560`
-- **RW27** N61 38.95 / W149 20.02 -- `61.64917, -149.33361`
+- **RW27** N41 36.52 / W88 05.06 -- `41.60863, -88.08435`
 
 ## KUGN
+
+### Runways
+
+Field elevation 728 ft; magnetic variation 3.0° W. Bearings are magnetic. From the CIFP 261001 runway (`G`) and localizer (`I`) records.
+
+| runway | length (ft) | width (ft) | magnetic bearing | threshold | displaced threshold (ft) | threshold crossing height (ft) | localizer |
+|---|---|---|---|---|---|---|---|
+| RW05 | 6,001 | 150 | 051.0° | N42 24.95 / W87 52.54 -- `42.41585, -87.87561` | 0 | 40 | — |
+| RW14 | 3,750 | 75 | 147.0° | N42 25.59 / W87 52.32 -- `42.42657, -87.87192` | 489 | 30 | — |
+| RW23 | 6,001 | 150 | 231.0° | N42 25.61 / W87 51.54 -- `42.42677, -87.85898` | 0 | 53 | **IUGN** 110.70 MHz, course 231.5°, category code `1` |
+| RW32 | 3,750 | 75 | 327.0° | N42 25.16 / W87 51.89 -- `42.41932, -87.86486` | 0 | 50 | — |
 
 ### STARs
 
@@ -2084,7 +2240,7 @@ The approach transitions, which is where traffic is fed from:
 
 - **CHZHD** N41 01.10 / W88 37.30 -- `41.01839, -88.62174`
 - **LEEDN** N41 42.79 / W88 18.98 -- `41.71316, -88.31635`
-- **MUMPR** N42 14.61 / W88 20.99 -- `42.24358, -88.34980`
+- **MUMPR** N42 14.62 / W88 20.99 -- `42.24358, -88.34980`
 - **DETIE** N42 21.56 / W88 21.81 -- `42.35934, -88.36344`
 - **MOWSR** N42 32.89 / W88 23.76 -- `42.54816, -88.39603`
 - **TRUDO** N42 41.04 / W88 25.19 -- `42.68402, -88.41980`
@@ -2178,14 +2334,14 @@ The approach transitions, which is where traffic is fed from:
 - **FOVOJ:** FOVOJ >=2400
 - **JETRU:** JETRU | FOVOJ >=2400
 - **PLSNT:** PLSNT | FOVOJ >=2400
-- **(final):** FOVOJ >=2400 | BILCO >=2400 | BILCO | HIGEK 1400 | RW05 766 | [CA leg - not a fix] | LIRIC >=2300 | LIRIC >=2300  *(1 non-fix leg)*
+- **(final):** FOVOJ >=2400 | BILCO >=2400 | HIGEK 1400 | RW05 766 | [CA leg - not a fix] | LIRIC >=2300 | LIRIC >=2300  *(1 non-fix leg)*
 
 **R23** — RNAV (GPS) RWY 23
 
 - **LIRIC:** LIRIC >=2300
 - **PAPPI:** PAPPI | FOLBU >=2300 | LIRIC >=2300
 - **TALOR:** TALOR | LIRIC >=2300
-- **(final):** LIRIC >=2300 | OLBOE >=1900 | OLBOE | RW23 776 | [CA leg - not a fix] | FOVOJ >=2400 | FOVOJ >=2400  *(1 non-fix leg)*
+- **(final):** LIRIC >=2300 | OLBOE >=1900 | RW23 776 | [CA leg - not a fix] | FOVOJ >=2400 | FOVOJ >=2400  *(1 non-fix leg)*
 
 ### Entry fixes — every published way in
 
@@ -2199,15 +2355,14 @@ The approach transitions, which is where traffic is fed from:
 - **WAUKE** N42 27.86 / W87 48.10 -- `42.46431, -87.80172`
 - **TALOR** N42 35.44 / W87 37.36 -- `42.59060, -87.62260`
 - **WISIL** N42 30.32 / W87 44.34 -- `42.50534, -87.73897`
-- **RW23** N62 56.48 / W152 15.98 -- `62.94130, -152.26629`
+- **RW23** N42 25.61 / W87 51.54 -- `42.42677, -87.85898`
 - **FOVOJ** N42 17.60 / W88 03.70 -- `42.29329, -88.06164`
 - **JETRU** N42 11.61 / W87 56.55 -- `42.19354, -87.94248`
 - **PLSNT** N42 23.57 / W88 10.88 -- `42.39285, -88.18129`
 - **BILCO** N42 21.54 / W87 57.72 -- `42.35906, -87.96193`
 - **HIGEK** N42 23.63 / W87 54.55 -- `42.39382, -87.90913`
-- **RW05** N62 56.41 / W152 16.38 -- `62.94021, -152.27293`
+- **RW05** N42 24.95 / W87 52.54 -- `42.41585, -87.87561`
 - **LIRIC** N42 31.90 / W87 41.93 -- `42.53161, -87.69881`
 - **PAPPI** N42 16.20 / W87 36.43 -- `42.26997, -87.60720`
 - **FOLBU** N42 28.15 / W87 37.46 -- `42.46909, -87.62431`
 - **OLBOE** N42 27.92 / W87 48.01 -- `42.46537, -87.80011`
-

@@ -254,9 +254,13 @@ var COORD_PAIRS = [
 ];
 
 /* ---------- 4. Airports ----------
-   Runway inventories are taken from the departure-area tables, which name the
-   runway pairs actually used at each field, and nowhere else. A field with no
-   table gets no runway list rather than a guessed one.
+   `runways` is taken from the departure-area tables, which name the runway
+   pairs actually used at each field, and nowhere else. A field with no table
+   gets no list there rather than a guessed one. That is what the ORDER says and
+   it is not a runway inventory: KAZO's table leaves out runways 5 and 23.
+   `runwaysCifp` is the separate, cited inventory - every runway the FAA coded
+   source carries for the field, CIFP 261001 runway records, the same lists the
+   strip contract uses - so neither is guessed and neither is typed twice.
 
    The coordinates come from the vendored VATGlasses ZAU dataset's own airports
    table — the same ZAU vARTCC-managed source as the footprint, and second-tier
@@ -265,17 +269,17 @@ var COORD_PAIRS = [
    gets no coordinates rather than a recalled pair. */
 var AIRPORTS = [
   {icao:'KAZO', name:'Kalamazoo/Battle Creek', lat:42.234875, lon:-85.552058, sector:'BELLS/BRONCO',
-   runways:['17','35','9','27'], cite:'runway pairs from 4-4'},
+   runways:['17','35','9','27'], runwaysCifp:['05','09','17','23','27','35'], cite:'runway pairs from 4-4'},
   {icao:'KBTL', name:'Battle Creek Kellogg', lat:42.307278, lon:-85.251481, sector:'BELLS',
-   runways:null, cite:'Class D procedures 4-6; no runway table in this order'},
+   runways:null, runwaysCifp:['05L','05R','13','23L','23R','31'], cite:'Class D procedures 4-6; no runway table in this order'},
   {icao:'KGRR', name:'Gerald R. Ford', lat:42.880833, lon:-85.522806, sector:'GRIFFIN/WHITECAP',
-   runways:['8L','8R','26L','26R','17','35'], cite:'runway pairs from 5-3'},
+   runways:['8L','8R','26L','26R','17','35'], runwaysCifp:['08L','08R','17','26L','26R','35'], cite:'runway pairs from 5-3'},
   {icao:'KMKG', name:'Muskegon County', lat:43.169489, lon:-86.238222, sector:'SHORELINE/LUMBERTOWN',
-   runways:['6','24','14','32'], cite:'runway pairs from 6-3'},
+   runways:['6','24','14','32'], runwaysCifp:['06','14','24','32'], cite:'runway pairs from 6-3'},
   {icao:'KBIV', name:'West Michigan Regional', lat:42.743164, lon:-86.105039, sector:'GRIFFIN/SHORELINE',
-   runways:null, cite:'named in 5-6 and 6-6'},
+   runways:null, runwaysCifp:['08','26'], cite:'named in 5-6 and 6-6'},
   {icao:'KHLM', name:'Park Township', lat:null, lon:null, sector:'GRIFFIN/SHORELINE',
-   runways:null, cite:'named in 5-6 and 6-6; not in the vendored dataset, so it does not plot'}
+   runways:null, runwaysCifp:null, cite:'named in 5-6 and 6-6; not in the vendored dataset, so it does not plot'}
 ];
 function airportOf(icao){
   icao=(icao||'').toUpperCase();
@@ -452,7 +456,7 @@ var SLOTS = [
    note:'No ZAU vNAS record is held in this repository, and the community dataset carries none — its position keys are display handles, not STARS IDs. One curl closes this; see the geometry reference.'},
   {id:'airports', title:'Fields and their runway pairs', state:'partial',
    src:'vGreat Lakes 7110.65A 4-4, 5-3, 6-3',
-   note:'AZO, GRR and MKG runway pairs come out of the departure-area tables. BTL, BIV and HLM have no runway table in this order and carry none.'},
+   note:'AZO, GRR and MKG runway pairs come out of the departure-area tables (the Runways in the order column); Kalamazoo\'s table leaves out runways 5 and 23. BTL, BIV and HLM have no runway table in this order. The Runways in CIFP column is the FAA coded inventory, CIFP 261001, for every field it carries: Park Township is not in CIFP at all.'},
   {id:'deps', title:'Departure areas for silent coordination', state:'verified',
    src:'vGreat Lakes 7110.65A 4-4, 5-3, 6-3'},
   {id:'alts', title:'Inter-sector handoff altitudes', state:'verified',
@@ -476,8 +480,8 @@ var SLOTS = [
    src:'charts.zauartcc.org; the AZO TRSA depiction',
    note:'4-3 requires TRSA service inside it; the order never draws it.'},
   {id:'routes', title:'Arrival and departure procedures', state:'empty',
-   src:'charts.zauartcc.org; CIFP 260903 checked and found empty — see ../../claude_CIFP_Source_Reference.md and claude_AZO_CIFP_Procedures.md',
-   note:'Still empty, and now on two independent sources rather than one. The vZAU document set carries no STAR or SID for these fields, and CIFP 260903 codes none either — not at Kalamazoo, Grand Rapids, Muskegon, Battle Creek, Holland or Park Township. A zero in CIFP is a coding gap and not proof a field has no departures, so this stays a gap to close from charts rather than a settled absence. The fields DO have coded approaches, which are in claude_AZO_CIFP_Procedures.md and are not SID or STAR data. LYSTR, JAVPO, FENAB, BIV and HLM are named in the SOP as fixes to assign, still with no coordinates.'},
+   src:'charts.zauartcc.org; CIFP 261001 checked and found empty — see ../../claude_CIFP_Source_Reference.md and claude_AZO_CIFP_Procedures.md',
+   note:'Still empty, and now on two independent sources rather than one. The vZAU document set carries no STAR or SID for these fields, and CIFP 261001 codes none either — not at Kalamazoo, Grand Rapids, Muskegon, Battle Creek, Holland or Park Township. A zero in CIFP is a coding gap and not proof a field has no departures, so this stays a gap to close from charts rather than a settled absence. The fields DO have coded approaches, which are in claude_AZO_CIFP_Procedures.md and are not SID or STAR data. LYSTR, JAVPO, FENAB, BIV and HLM are named in the SOP as fixes to assign, still with no coordinates.'},
   {id:'mva', title:'Minimum vectoring altitudes', state:'empty',
    src:'not in the vZAU document set for the West Wall'},
   {id:'standing', title:'Standing training items', state:'empty',
@@ -731,9 +735,9 @@ function fieldBody(){
   var arows=[];
   for(var i=0;i<AIRPORTS.length;i++){
     var ap=AIRPORTS[i];
-    arows.push([ap.icao, ap.name, ap.sector, ap.runways? ap.runways.join(', ') : '<span class="dd-cite">not carried</span>', '<span class="dd-cite">'+ap.cite+'</span>']);
+    arows.push([ap.icao, ap.name, ap.sector, ap.runways? ap.runways.join(', ') : '<span class="dd-cite">not in the order</span>', ap.runwaysCifp? ap.runwaysCifp.join(', ') : '<span class="dd-cite">not in CIFP</span>', '<span class="dd-cite">'+ap.cite+'</span>']);
   }
-  var out='<div class="dd-panel" data-note="airports">'+tbl(['ICAO','Field','Sector','Runways','Source'], arows)+'</div>';
+  var out='<div class="dd-panel" data-note="airports">'+tbl(['ICAO','Field','Sector','Runways in the order','Runways in CIFP 261001','Source'], arows)+'</div>';
   for(var k in DEP_AREAS){
     if(!DEP_AREAS.hasOwnProperty(k)) continue;
     var da=DEP_AREAS[k], rows=[];
@@ -1817,7 +1821,10 @@ else { mount(); }
    The SIDs and STARs this facility's fields actually have, taken from
    the FAA's coded source rather than traced off a chart image.
 
-   SOURCE. CIFP cycle 260903, effective 2026-09-03, pulled 2026-09-06.
+   SOURCE. CIFP cycle 261001, effective 2026-10-01, pulled 2026-10-20.
+   Cycle 261029 (effective 2026-10-29) was decoded too and is NOT carried:
+   it changes Kalamazoo only (runways 17 and 35 listed at 6,952 ft, a moved
+   runway 35 threshold, small fix moves). Rolling to it is issue #65.
    Pull recipe, record layout and licence in the root
    claude_CIFP_Source_Reference.md; the same data written out for
    reading in claude_AZO_CIFP_Procedures.md beside this file.
@@ -1826,13 +1833,15 @@ else { mount(); }
 
    COVERAGE, WHICH IS NONE, AND THAT IS THE FINDING. CIFP codes no
    SID and no STAR at any of the six West Wall fields — Kalamazoo,
-   Grand Rapids, Muskegon, Battle Creek, Holland and Park Township.
+   Grand Rapids, Muskegon, Battle Creek, Holland and Park Township, which
+   is not in CIFP at all (no airport, runway or procedure record).
    That is a second and independent source agreeing with the vZAU
    document set, which carries none either, so the routes slot stays
    empty and now says so with two citations instead of one.
 
    The fields do have coded APPROACHES — six at Kalamazoo, thirteen
-   at Grand Rapids, eight at Muskegon, five at Battle Creek. Those
+   at Grand Rapids, eight at Muskegon, five at Battle Creek, four at
+   Holland. Those
    are in claude_AZO_CIFP_Procedures.md and they are not SID or STAR
    data; this block does not carry them.
 
@@ -1893,7 +1902,7 @@ else { mount(); }
 var NS = window.DD;
 if(!NS) return;                    /* deck absent — do nothing, per the block contract */
 
-var CYCLE = '260903';
+var CYCLE = '261001';
 
 var PFIX = {
 };
@@ -2085,8 +2094,8 @@ function body(){
   if(!here.length){
     return h + '</div><div class="ddp-empty">CIFP codes no '
       + (state.kind === 'SID' ? 'SID' : 'STAR') + ' at ' + esc(state.apt) + '. '
-      + 'A radar-vector or conventional procedure is outside what CIFP carries, so a zero here is a '
-      + 'coding gap and not proof the field has none.</div>';
+      + 'CIFP can carry a radar-vector departure (route type T, as at Salt Lake City and Boise) but codes none here, so a zero is a '
+      + 'coding gap at this field and not proof the field has none.</div>';
   }
 
   h += '<div class="ddp-f"><span class="ddp-lab">Procedure</span>'
@@ -2223,22 +2232,27 @@ else { mount(); }
    several fields is the normal case.
 
    Procedure inventory is DERIVED from the PUBLISHED PROCEDURES block
-   above — CIFP 260903, see that block and the facility's
+   above — CIFP 261001, see that block and the facility's
    claude_*_CIFP_Procedures.md. flies:false throughout: this deck has
    no traffic model, so nothing here is flown. That is not the same
    claim as "no track data", which is what track:true records.
    ================================================================ */
 (function(){ 'use strict';
 var PROCS = window.DD;
+/* The runway lists are DD.AIRPORTS[].runwaysCifp, read here rather than typed a second time. */
+function rwysOf(icao){
+  var l = (PROCS && PROCS.airportOf) ? [PROCS.airportOf(icao)] : [];
+  return (l[0] && l[0].runwaysCifp) ? l[0].runwaysCifp.slice() : null;
+}
 window.STRIP_FACILITY = {
  id:'AZO', prefix:'azost',
  airports:{
-  KAZO:{name:"Kalamazoo", rwys:['05','09','17','23','27','35']},
-  KGRR:{name:"Grand Rapids", rwys:['08L','08R','17','26L','26R','35']},
-  KMKG:{name:"Muskegon", rwys:['06','14','24','32']},
-  KBTL:{name:"Battle Creek", rwys:['05L','05R','13','23L','23R','31']},
-  KBIV:{name:"Holland", rwys:['08','26']},
-  KHLM:{name:"Park Township", rwys:null},   /* no runway record in CIFP 260903 */
+  KAZO:{name:"Kalamazoo", rwys:rwysOf('KAZO')},
+  KGRR:{name:"Grand Rapids", rwys:rwysOf('KGRR')},
+  KMKG:{name:"Muskegon", rwys:rwysOf('KMKG')},
+  KBTL:{name:"Battle Creek", rwys:rwysOf('KBTL')},
+  KBIV:{name:"Holland", rwys:rwysOf('KBIV')},
+  KHLM:{name:"Park Township", rwys:rwysOf('KHLM')},   /* null: no runway record in CIFP 261001, the field is not in the cycle */
  },
  /* DERIVED, not typed out again. Two reasons, and the second is a bug
     this replaces. A hand-typed inventory is a second copy of numbers
@@ -2268,7 +2282,7 @@ window.STRIP_FACILITY = {
                   for any of them — the `handoff` slot is empty and no
                   ZAU vNAS record is held anywhere in this repository. So
                   who hands an aircraft to you is typed, not derived.
-      fixesOn     THERE IS NOTHING TO ANSWER WITH. CIFP 260903 codes no
+      fixesOn     THERE IS NOTHING TO ANSWER WITH. CIFP 261001 codes no
                   SID and no STAR at any of the six West Wall fields, and
                   the AZO document set describes none either — two
                   independent sources agreeing. With no ladder the row
@@ -2285,7 +2299,7 @@ window.STRIP_FACILITY = {
 
  roleHints: {
   arrival:    'Inbound to one of the six fields the West Wall works.',
-  departure:  'Off one of those fields. None of them has a coded SID — CIFP 260903 carries no procedure here at all.',
+  departure:  'Off one of those fields. None of them has a coded SID — CIFP 261001 carries no procedure here at all.',
   overflight: 'Crosses the airspace and has to be handed off or pointed out before the far side.'
  },
 
@@ -3082,7 +3096,7 @@ window.strip = {
    that puts a strip on the scope.
 
    NO FIELD HERE OFFERS A SID OR A STAR, and that is the answer rather
-   than a hole: CIFP 260903 codes none at any of the six, and the AZO
+   than a hole: CIFP 261001 codes none at any of the six, and the AZO
    document set describes none either. So the contract defines no
    fixesOn, the row falls back to a bare distance-to-go box exactly as
    M98 does for a routing with no published ladder, and nothing pretends
@@ -3221,7 +3235,7 @@ function section(){
   + 'scenario — is named and refused rather than silently dropped, and a strip is refused '
   + 'before it reaches the scope rather than after. '
   + '<b>No field here offers a SID or a STAR</b>, and that is the answer rather than a hole: '
-  + 'CIFP 260903 codes none at any of the six, and the AZO document set describes none either. '
+  + 'CIFP 261001 codes none at any of the six, and the AZO document set describes none either. '
   + 'With no ladder the row asks for a bare distance to go rather than miles from a fix.</p>'
   + '<div style="margin:10px 0;">'
   + '<button class="' + P + '-btn" onclick="window[\'' + P + 'Add\']()">add a strip</button> '
