@@ -36,7 +36,7 @@ Both fail **safe** in the shared reader (no runway read, and it says so), but a 
 
 **The vATIS profile marks a spoken runway with a leading caret** (`RWY 17L AND ^17R`), which breaks the runway list; `readAll` removes carets before reading. SDF's two parallel-runway vATIS presets carry it.
 
-**The same changes belong in the shared reader and have not been made there.** Touching the other decks crosses the ARTCC boundary, so it is an issue, not a drive-by.
+**The same changes belong in the shared reader and have not been made there.** Touching the other decks crosses the ARTCC boundary, so it is issue #62, not a drive-by.
 
 ## 3. The contract
 

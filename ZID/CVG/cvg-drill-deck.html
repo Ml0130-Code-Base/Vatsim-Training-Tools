@@ -3871,7 +3871,7 @@ function wxRead(text){
    nothing), and merges only into the landing set. A runway list may repeat the keyword
    ("RWY 36R, RWY 36C"). THE VATIS PROFILE MARKS A SPOKEN RUNWAY WITH A LEADING CARET
    ("RWY 17L AND ^17R"), which breaks the list, so carets are removed before reading.
-   The same changes belong in the shared reader; they are recorded as an issue and have
+   The same changes belong in the shared reader; they are issue #62 and have
    NOT been made in the other decks. */
 var EXPECT_APCH = new RegExp('\\bEXPECT\\b[A-Z0-9 ,\\/-]*?' + APCH_WORD + '\\s+(?:TO|FOR)\\s+(?:' + RWY_KEY + ')?(' + RWY_RUN + ')');
 var APCH_RWY    = new RegExp(APCH_WORD + '\\s+(?:(?:TO|FOR)\\s+)?' + RWY_KEY + '(' + RWY_RUN + ')');
