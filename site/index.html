@@ -189,12 +189,13 @@
 
   <div class="idx-panel">
     <h2>What this site carries, and where the rest of it lives</h2>
-    <p>This site is <b>the tools only</b> &mdash; seven self-contained pages and this index. It carries no source documents, because it does not need them: every number a tool uses is already inside the file that uses it, with its citation.</p>
+    <p>This site is <b>the tools only</b> &mdash; ten self-contained pages and this index. It carries no source documents, because it does not need them: every number a tool uses is already inside the file that uses it, with its citation.</p>
     <p>Everything the tools were built from is in the repository behind them: the facility orders and letters of agreement, the reference markdown transcribed by paragraph, the gap analyses that record what the documents never answer, and the session logs. <b>If a number here looks wrong, that is where to check it.</b></p>
   </div>
 
   <footer>
     <p>Sector geometry in the Salt Lake, Big Sky, Chicago and Kalamazoo tools comes from the <b>VATGlasses</b> datasets for ZLC and ZAU, each managed by its own virtual air route traffic control center &mdash; <a href="https://vatglasses.uk">vatglasses.uk</a>, licensed <b>CC BY-NC-SA 4.0</b>. Second-tier data: the facility orders win over it, and an owner-supplied boundary supersedes it.</p>
+    <p>The Indianapolis, Louisville and Cincinnati tools carry a lateral outline from the <b>SimAware TRACON Project</b> &mdash; no altitudes, no sector split, and no published licence. VATGlasses has no Indianapolis Center dataset. The same rule applies: the facility orders win over it.</p>
     <p>Aeronautical data here is for flight simulation on the VATSIM network. <b>Not for real-world navigation.</b></p>
     <p class="idx-mono">Built by one controller in training. Every number carries its citation inside the tool that uses it. Source: <a href="https://github.com/Ml0130-Code-Base/Vatsim-Training-Tools">github.com/Ml0130-Code-Base/Vatsim-Training-Tools</a></p>
   </footer>
@@ -224,13 +225,17 @@
     {slug:'c90',    src:'ZAU/C90/c90-drill-deck.html',          artcc:'ZAU', name:'C90',     kind:'Chicago TRACON — terminal',              ns:'DD',  tier:0, blurb:'Positions, combining, configurations, finals and capture points out of the vZAU documents, plus the facility footprint from the ZAU sector data. The internal sectorisation is not carried, and every empty slot names the document that would fill it.'},
     {slug:'azo',    src:'ZAU/AZO/azo-drill-deck.html',          artcc:'ZAU', name:'AZO',     kind:'Great Lakes, West Wall — terminal',      ns:'DD',  tier:0, blurb:'Kalamazoo works the West Wall. The facility footprint and a ceiling are carried; the six West Wall sector boundaries are not, and the tool says which is which.'},
     {slug:'s56',    src:'ZLC/S56/s56-drill-deck.html',          artcc:'ZLC', name:'S56',     kind:'Salt Lake approach — terminal',          ns:'ZLC', tier:0, blurb:'Nine sectors and a flow that reshapes them. The selector, the vertical structure and the flow branch are built; the engine is not. Every sector and every open question carries a note slot.'},
-    {slug:'bigsky', src:'ZLC/Big Sky/bigsky-drill-deck.html',   artcc:'ZLC', name:'Big Sky', kind:'Boise and Bozeman — terminal',           ns:'ZLC', tier:0, blurb:'Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector and the vertical structure are built; the engine that flies traffic through them is not.'}
+    {slug:'bigsky', src:'ZLC/Big Sky/bigsky-drill-deck.html',   artcc:'ZLC', name:'Big Sky', kind:'Boise and Bozeman — terminal',           ns:'ZLC', tier:0, blurb:'Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector and the vertical structure are built; the engine that flies traffic through them is not.'},
+    {slug:'ind',    src:'ZID/IND/ind-drill-deck.html',          artcc:'ZID', name:'IND',     kind:'Indianapolis TRACON — terminal, STARS',  ns:'IND', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. A lateral outline is carried; sector boundaries are not.'},
+    {slug:'sdf',    src:'ZID/SDF/sdf-drill-deck.html',          artcc:'ZID', name:'SDF',     kind:'Louisville TRACON — terminal, STARS',    ns:'SDF', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. A lateral outline is carried; sector boundaries are not.'},
+    {slug:'cvg',    src:'ZID/CVG/cvg-drill-deck.html',          artcc:'ZID', name:'CVG',     kind:'Cincinnati TRACON — terminal, STARS',    ns:'CVG', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. Where the SOP and vNAS disagree, both are shown.'}
   ];
 
   var ARTCC = {
     ZMP:'Minneapolis Center and its terminal facilities',
     ZAU:'Chicago Center terminal facilities',
-    ZLC:'Salt Lake City Center terminal facilities'
+    ZLC:'Salt Lake City Center terminal facilities',
+    ZID:'Indianapolis Center terminal facilities'
   };
 
   function esc(s){
@@ -247,7 +252,7 @@
     return '../' + t.src.split('/').map(encodeURIComponent).join('/');
   }
 
-  var order = ['ZMP','ZAU','ZLC'], out = '', i, j;
+  var order = ['ZMP','ZAU','ZLC','ZID'], out = '', i, j;
 
   for(i=0;i<order.length;i++){
     var id = order[i];

@@ -14,7 +14,7 @@
 # rule 5. This script greps the entries out of it, so adding a tool is a single
 # line there and no edit here.
 #
-# WHAT IS PUBLISHED: the landing page and the seven tools. Nothing else.
+# WHAT IS PUBLISHED: the landing page and the ten tools. Nothing else.
 # The facility PDFs, the transcribed reference markdown, the gap analyses and
 # the session logs stay in the repository. The guard at the bottom fails the
 # build if any of them reach _site/ — the whole point of a staged directory is
