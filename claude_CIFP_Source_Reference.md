@@ -270,3 +270,103 @@ repo carries its document and paragraph.
 
 **The cycle is the citation.** A CIFP-derived number is true for 28 days by construction, so
 "CIFP 260903" is the reference, not "CIFP".
+
+---
+
+## 8. The decoder, and the four faults it exists to avoid
+
+**`tools/cifp/` holds the decoder the Tier 0 references and deck data were regenerated with on
+2026-10-20.** Until then no decoder was kept: a fault found while regenerating S56 on
+2026-09-06 stayed in the other files because there was nothing to re-run. It is Perl because
+Node and Python are absent from the owner's machine and Perl is present; it is a maintenance
+script for the reference files and not a deliverable, so root `CLAUDE.md` invariant 6 does not
+apply to it.
+
+```
+Cifp.pm      the fixed-column reader (load_cifp) and the fix resolver
+gen.pl       <FAACIFP18> <cycle> <C90|AZO|S56|BIGSKY> [airports|idtable|deck]
+assemble.sh  <FAC> <cycle> [workdir]   keep the preamble, regenerate the rest, in a candidate file
+verify.pl    <FAACIFP18> <IN_CIFP.txt rows> <airports...>   decoded set against the manifest
+rwy.pl       <FAACIFP18> <airports...>   the runway and localizer records, readable
+```
+
+`gen.pl ... deck` prints the `PFIX`, `STARS` and `SIDS` literals in the shape the C90 and Big Sky
+procedures blocks carry; splice them over the existing literals, diff, and the diff is the
+change. `assemble.sh` never writes into the tree: it leaves a candidate in `<workdir>/out/`.
+
+### Record offsets (1-based columns, ARINC 424-18 as the FAA writes it)
+
+| record | columns |
+|---|---|
+| any airport-section (`SUSAP`) record | airport 7-10, region 11-12, subsection 13: `A` airport, `G` runway, `I` localizer, `C` terminal waypoint, `N` terminal NDB, `D` SID, `E` STAR, `F` approach |
+| `D` / `E` / `F` procedure leg | ident 14-19, route type 20, transition 21-25, sequence 27-29, fix 30-34, fix region 35-36, fix section+subsection 37-38, **continuation 39**, path terminator 48-49, magnetic course 71-74, **altitude descriptor 83**, altitude 85-89, second altitude 90-94, speed 100-102 |
+| `G` runway | ident 14-18, length 23-27, bearing 28-31 (tenths of a degree, magnetic), latitude 33-41, longitude 42-51, threshold elevation 67-71, displaced threshold 72-75, crossing height 76-77, width 78-80, localizer ident 82-85, category 86 |
+| `I` localizer | ident 14-17, **category 18**, frequency 23-27 (hundredths of MHz), runway 28-32, course 52-55 |
+| `A` airport | name 94-123, magnetic variation 52-56, elevation 57-61 |
+| enroute waypoint (`SUSAEA`) | ident 14-18, region 20-21, then the first latitude/longitude pair |
+| VHF navaid (`SUSAD`) | ident 14-17, region 20-21, **first** latitude/longitude pair is the VOR, the second is the DME |
+
+Route type: SID `1`/`4` runway transition, `2`/`5` common, `3`/`6` enroute transition, **`T` Vector
+SID**; STAR `1`/`4`/`7` enroute, `2`/`5`/`8` common, `3`/`6`/`9` runway. Approach `A` is an
+approach transition, any other letter is the final segment.
+
+### The four faults, as they look in a file
+
+1. **A `RWnn` leg resolved against the wrong airport.** A runway is keyed by airport; taking the
+   first record with that designator puts a Kalamazoo threshold in Alaska and an O'Hare one in
+   Florida, and it looks like a valid coordinate. **Resolve a leg's fix by the section the leg
+   names (cols 37-38), and a runway only inside its own airport.**
+2. **A continuation record read as a leg.** Continuation number (col 39) `0` or `1` is a leg;
+   `2` or more is text (`ALNAV/VNAV`) with no altitude. Read as a leg it is a second copy of the
+   previous fix, `FORTZ >=2200 | FORTZ` or `YACHT >=1500 | YACHT 0/1`.
+3. **A navaid at its DME position.** The VOR pair is first. About 0.1 NM, invisible by eye.
+4. **The suffix after the runway.** Ident is type, two digits, `L`/`R`/`C` or `-`, then the
+   optional suffix: `H27LY` is *RNAV (RNP) Y RWY 27L*, `R17-Y` is *RNAV (GPS) Y RWY 17*.
+
+### How to know a regeneration is right
+
+- **Decode the previous cycle first and diff it against the previous file.** On 2026-10-20 a
+  fresh decode of 260903 reproduced every procedure section of S56's reference, written by the
+  corrected decoder on 2026-09-06, byte for byte, and the C90 and Big Sky deck data byte for byte. A decoder that
+  cannot reproduce a file you trust is not ready to replace one you do not.
+- **`verify.pl` against `IN_CIFP.txt`:** 286 procedures at the 24 Tier 0 fields, decoded set
+  equal to manifest set at every field, and every fix resolves. Its other check compares a
+  runway's category with its localizer's.
+- **Prove a class of change before shipping it.** The phantom-leg correction was shown by
+  collapsing the repeated fix in each old line and comparing with the new one: 84 of 84.
+
+### Conventions the files carry, so a diff does not mislead
+
+An altitude descriptor `H`, `J` or `V` (glide-slope and step-down annotations on approaches)
+is written as the first altitude, "at". `/nnn` is written for any speed limit and does not
+say at-or-below (275 records carry that flag). A path terminator `FM`, `VM`, `VA`, `VI`, `CA`
+is *"[XX leg - not a fix]"*; `FC` is written as its fix, because an approach transition can
+start on one. Minutes are taken back out of the decimal degrees, which is how the earlier files
+rounded them; a tie can land on the other side of 0.01'. **`S` approaches are labelled
+"VOR/DME required"**, a label inherited from the first generator and not verified against a
+plate. A `T` route type is `coding: vector` in the identifier tables and `vector:true` in a deck.
+
+---
+
+## 9. The 2026-10-20 audit of the Tier 0 fields
+
+Cycle **261001** against **260903**, 24 fields (C90's eight, AZO's six, S56's eight, Big Sky's
+two): **the same 286 procedures and the same content.** The only record to differ is a Gary
+minimum-sector-altitude record, which no tool carries. Every row of the §3 table for these
+fields is unchanged (KORD 0/11/50, KMDW 0/3/16, KAZO/KGRR/KMKG/KBTL 0/0 with 6/13/8/5
+approaches, KSLC 8/11/22, KBOI 2/5/16, KBZN 5/5/9). So what the audit found was in the decode:
+
+- the four faults of §8 in the C90, AZO and Big Sky references (S56's was already corrected);
+- the same radar-vector claim this file corrected on 2026-09-07 still standing in five places in
+  the C90 and AZO decks and one in Big Sky (and in R90's, which was not touched, #66);
+- **`KYANN` does exist in CIFP**, as an en route waypoint at N30 15 / W095 13 in Texas, so the
+  statement that no such fix is in the cycle was wrong; it is not a Boise fix, and #48 stands;
+- **Grand Rapids runway 35 is category 2 in its runway record and 1 in its localizer record**,
+  and Salt Lake City runway 35 is category 1 in its runway record and `L` in its localizer
+  record (that runway has an LDA approach and no ILS). In 261029 both records agree at both.
+  The references print both numbers.
+
+**Cycle 261029** (posted early, effective 2026-10-29) is not carried by any deck. It renames
+BLOKR8 to BLOKR9 at four satellites, CARTR1/PITTT2/SKEES6/YUTES2 to CARTR2/PITTT3/SKEES7/YUTES3
+at Salt Lake City, lengthens Kalamazoo 17/35 to 6,952 ft and moves FALIA at Bozeman to 8,200.
+Rolling to it is issue #65; the decoder reproduces the whole job.

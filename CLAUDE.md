@@ -549,6 +549,12 @@ curl -sL -o CIFP_<YYMMDD>.zip https://aeronav.faa.gov/Upload_313-d/cifp/CIFP_<YY
 - **CIFP is the published procedure and nothing more.** It does not say which transition the
   facility assigns in a given configuration — that is an SOP and LOA question with no CIFP
   answer — and it carries no boundary, no MVA and no delegation. It closes §7 for nobody.
+- **Use the decoder in `tools/cifp/`; do not write another.** Four decode faults sat in the C90,
+  AZO and Big Sky references for six weeks because no decoder was kept (a runway resolved
+  against the wrong airport, continuation records read as legs, a navaid at its DME, the suffix
+  after the runway). `claude_CIFP_Source_Reference.md` §8 has the offsets, the faults and the
+  check — decode the *previous* cycle and diff it against the file you trust before you decode
+  the new one — and §9 has what the 2026-10-20 audit of the Tier 0 fields found.
 
 ### The ladder
 
