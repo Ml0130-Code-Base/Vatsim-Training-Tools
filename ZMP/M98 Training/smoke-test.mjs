@@ -569,6 +569,31 @@ try {
     assert('a shared track is labelled once with every transition on it',
       globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR')
       && globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'BITEZ1 DKOTA/LEINY'));
+    /* SID families — owner request 2026-10-22: tracks that leave the same way share a
+       colour. A family is the exit direction off MSP, the bearing of the last mapped
+       fix in 45-degree sectors, so it falls out of the fix data. */
+    {
+      const D = globalThis.DD, fam = r => D.sidFamilyOf(r).id;
+      const want = k => {
+        const sid = k.split('.')[0];
+        if (sid === 'HTDSH1') return k.endsWith('.BRIBE') ? 'se' : 's';
+        return { BITEZ1: 'w', BUNYN1: 'n', KBREW1: 'nw', NRTHN1: 'ne', SNUPE1: 'se', ZMBRO1: 'se', TOTTZ1: 's', SNOWZ1: 'sw', DUHCK1: 'sw' }[sid];
+      };
+      assert('every MSP track falls in the family its exit direction names',
+        keys.every(k => fam(DP[k]) === want(k)), keys.filter(k => fam(DP[k]) !== want(k)).map(k => k + ':' + fam(DP[k])).join());
+      assert('DUHCK1 is one family, south-west, off all three satellites — the bearing is taken from MSP',
+        Object.keys(SATS).every(f => Object.keys(DA[f]).filter(k => k.startsWith('DUHCK1.')).every(k => fam(DA[f][k]) === 'sw')));
+      assert('the eight families have eight different hues, none of them the STAR green, the amber or the red',
+        D.SID_FAMILIES.length === 8 && new Set(D.SID_FAMILIES.map(f => f.hue)).size === 8
+        && D.SID_FAMILIES.every(f => !['#4FE0A0', '#E8A23D', '#E8604D'].includes(f.hue.toUpperCase())));
+      const fg = D.sidDrawGroups(keys.concat(D.satOnlySidItems()));
+      assert('each drawn track is stroked and labelled in its own family colour',
+        fg.every(g => D.sidTrackSvg(g).includes('stroke="' + g.fam.hue + '"') && D.sidLabelSvg([g], 1).includes('fill="' + g.fam.hue + '"')));
+      const leg = D.sidLegendSvg(fg, 14, 548);
+      assert('the key names each family on the scope once, and says it is the exit direction off MSP',
+        leg.includes('SID EXIT DIRECTION OFF MSP') && ['north', 'north-east', 'south-east', 'south', 'south-west', 'west', 'north-west'].every(n => leg.includes('>' + n + '<'))
+        && !leg.includes('>east<') && D.sidLegendSvg([], 14, 548) === '');
+    }
     assert('and FOOLS being off the bottom of the scope, those two are named at CORDY',
       globalThis.DD.sidDrawGroups(['TOTTZ1.ALO', 'HTDSH1.ALO']).every(g => g.anchor && g.anchor.f === 'CORDY'));
   }

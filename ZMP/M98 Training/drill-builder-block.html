@@ -2259,9 +2259,7 @@ function previewSvg(rec){
   s+='<text x="'+(r[0].x+8).toFixed(1)+'" y="'+(r[0].y+14).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
  });
  var sidGroups=DD.sidDrawGroups(Object.keys(sidsUsed).map(function(k){ return sidsUsed[k]; }));
- sidGroups.forEach(function(g){
-  s+='<polyline points="'+g.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.4" stroke-dasharray="3 3"/>';
- });
+ sidGroups.forEach(function(g){ s+=DD.sidTrackSvg(g); });
  s+=DD.sidLabelSvg(sidGroups, 1);
  if(Object.keys(sidsUsed).length){
   s+='<circle cx="350" cy="255" r="'+(DD.DEP_RELEASE.dme*4.5).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.3" stroke-dasharray="2 5"/>';
