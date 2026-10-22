@@ -277,19 +277,10 @@ Not from the SOP. From the **VATGlasses ZAU dataset**, vendored at
 **Cross-check on the position list.** The dataset models four C90 positions and their
 frequencies match this order exactly: 119.000 (Z), 128.200 (Sector 1), 135.075 (PLANO),
 128.575 (East Departure). That it carries four where 2-1 defines seventeen is an owner
-question, not a correction — the order is the authority.
+question, not a correction — the order is the authority. *Resolved 2026-10-22: the vNAS record carries all seventeen, so it is the community dataset that is short.*
 
 **No handoff identifiers anywhere.** The dataset's position keys (`O1Z`, `O1B`, `O1S`, `O1X`)
-are display handles, not STARS IDs. Every handoff ID comes from vNAS, and **no ZAU vNAS record
-is held in this repository**. One pull closes it:
-
-```bash
-curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZAU" -o ZAU_vnas.json
-```
-
-Endpoint verified 2026-09-02 — HTTP 200, 581 KB, carrying `starsId` and
-`singleCharacterStarsId`. It would also settle the position-count discrepancy above, since
-vNAS enumerates every adapted position.
+are display handles, not STARS IDs. Every handoff ID comes from vNAS, and **the ZAU vNAS record has been held since 2026-10-22** (`../_vnas/ZAU_vnas.json`). C90 is `ORT`/`OR`/`O` from ZAU's side, Field E `OneLetterAndSubset`, every radar position subset 1; the TCPs are in `../_vnas/claude_ZAU_vNAS_Reference.md`. The deck does not carry them yet. **The record settled the position-count discrepancy above** (all seventeen positions are in it) **and disagrees with the chain in section 2 twice**: it folds KUBBS (J) into FARMM (Y) where the chain above has FARMM into KUBBS, and South Satellite Sector 1 (S) into East Departure (B) where the chain has it into Z. Named, not resolved; the section 2 warning that the chain was never checked against the rendered page still stands.
 
 ## 13. Other general procedures worth knowing
 
@@ -306,7 +297,7 @@ vNAS enumerates every adapted position.
 | ORD and MDW STAR/SID geometry — the four gates' fixes, ladders and crossing restrictions | `ORD MDW STARs.pdf`, `ORD and MDW Cheatsheet v3.1.pdf`, charts.zauartcc.org |
 | ~~C90 lateral boundary~~ — **closed 2026-09-02** as a footprint and ceiling only, see §12 | VATGlasses ZAU, vendored |
 | Internal sectorisation — which position owns which piece | Appendices C and F (chart images); **not** in any community source |
-| Handoff identifiers — STARS IDs, Field E formats | one `curl` against the vNAS ZAU record, §12 |
+| Handoff identifiers — STARS IDs, Field E formats | in the vNAS ZAU record (held since 2026-10-22), `../_vnas/claude_ZAU_vNAS_Reference.md`; not yet in the deck |
 | Feeder and Final delegated airspace, and the ADA shapes | Appendices C-1 through C-11 (chart images) |
 | SSAT delegated airspace by configuration | Appendices F-1 through F-9 (chart images) |
 | ACCRA/UECKR protection areas and the SSAT climb corridor boundary | Appendix D (chart image) |

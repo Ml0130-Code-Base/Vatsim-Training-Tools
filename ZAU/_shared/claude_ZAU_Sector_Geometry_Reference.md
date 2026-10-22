@@ -137,20 +137,17 @@ No such file or directory at C:/Users/LOVERB~1/AppData/Local/Temp/claude/C--Dev-
 - **Any handoff ID**, and this one is a live blocker rather than a footnote. The dataset carries
   none — its positions have only `callsign`, `colours`, `frequency`, `pre`, `type`, and the keys
   `C90`/`AZO`/`35` are display handles (`../../claude_Community_Geometry_Sources.md` §6).
-  **STARS-side IDs come from vNAS, always** — and **there is no ZAU vNAS record in this
-  repository.** `ZMP/_vnas/ZMP_vnas.json` is the only one held. So C90 and AZO have **no handoff
-  ID source at all today.**
+  **STARS-side IDs come from vNAS, always** — and **the ZAU vNAS record has been held since 2026-10-22** (`ZAU/_vnas/ZAU_vnas.json`; IDs, TCPs and Field E formats in `../_vnas/claude_ZAU_vNAS_Reference.md`).
 
-  The pull that would close it, matching how ZMP's was obtained:
+  The pull (done 2026-10-22; `perl tools/vnas/vnas.pl artcc ZAU ZAU/_vnas/ZAU_vnas.json` does the same):
 
   ```bash
   curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZAU" -o ZAU_vnas.json
   ```
 
   **Endpoint verified 2026-09-02** — HTTP 200, 581 KB, carrying `starsId` and
-  `singleCharacterStarsId`. One `curl` closes this gap.
+  `singleCharacterStarsId`. **Closed at the source, open in the decks**: they do not carry the IDs yet.
 
   What to read out of it: each position's `starsConfiguration` (TCP), and the ARTCC's
   `neighboringStarsConfigurations` entries — `starsId`, `twoCharacterStarsId`,
-  `singleCharacterStarsId` and `fieldEFormat`. It would also settle the position-count
-  discrepancy above, since vNAS enumerates every adapted position.
+  `singleCharacterStarsId` and `fieldEFormat`. It settled the position-count discrepancy above: vNAS carries all seventeen C90 positions and all six AZO sectors.

@@ -453,7 +453,7 @@ var SLOTS = [
    note:'Five of the six fields plot; KHLM is not in the dataset and therefore carries no coordinates rather than a recalled pair. Not from the vZAU orders, which carry no coordinates — same second-tier community source as the footprint, and nothing operational is derived from it.'},
   {id:'handoff', title:'Handoff identifiers — STARS IDs and Field E formats', state:'empty',
    src:'vNAS: https://data-api.vnas.vatsim.net/api/artccs/ZAU',
-   note:'No ZAU vNAS record is held in this repository, and the community dataset carries none — its position keys are display handles, not STARS IDs. One curl closes this; see the geometry reference.'},
+   note:'The ZAU vNAS record is now held (ZAU/_vnas/ZAU_vnas.json, pulled 2026-10-22) and carries these identifiers; the community dataset carries none — its position keys are display handles, not STARS IDs. This tool does not carry them yet, so the slot stays empty; see claude_ZAU_vNAS_Reference.md.'},
   {id:'airports', title:'Fields and their runway pairs', state:'partial',
    src:'vGreat Lakes 7110.65A 4-4, 5-3, 6-3',
    note:'AZO, GRR and MKG runway pairs come out of the departure-area tables (the Runways in the order column); Kalamazoo\'s table leaves out runways 5 and 23. BTL, BIV and HLM have no runway table in this order. The Runways in CIFP column is the FAA coded inventory, CIFP 261001, for every field it carries: Park Township is not in CIFP at all.'},
@@ -2279,8 +2279,8 @@ window.STRIP_FACILITY = {
                   in this tree, so the header prints the bare callsign.
       handoffFor  the AZO SOP and the two ZAU LOAs name the sectors on
                   the other side of every line, but no handoff identifier
-                  for any of them — the `handoff` slot is empty and no
-                  ZAU vNAS record is held anywhere in this repository. So
+                  for any of them — the `handoff` slot is empty (the ZAU vNAS record has been
+                  held in ZAU/_vnas since 2026-10-22; this deck does not carry its IDs yet). So
                   who hands an aircraft to you is typed, not derived.
       fixesOn     THERE IS NOTHING TO ANSWER WITH. CIFP 261001 codes no
                   SID and no STAR at any of the six West Wall fields, and
@@ -3244,7 +3244,7 @@ function section(){
   + '<div id="' + P + '-rows"></div>'
   + '<div class="dd-panel"><h3 class="dd-mono" style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 0 6px;">What the builder cannot do yet</h3>'
   + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;">There are no published tracks and no West Wall sector boundaries in any source we hold, so a strip is placed by bearing and distance and flies a heading. What the tool can check is the altitude a destination owes the next sector, whether a beacon code is inside the allocated block, and whether the strip is inside the TRACON footprint and under the 10,000 delegation.</p>'
-  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;"><b>Handed off by is typed, not derived.</b> The orders name the sectors on the other side of every line but no handoff identifier for any of them, and no ZAU vNAS record is held anywhere in this repository &mdash; so the row cannot say who hands an aircraft to you and does not pretend to.</p>'
+  + '<p style="font-size:13px;color:var(--dim);margin:0 0 6px;"><b>Handed off by is typed, not derived.</b> The orders name the sectors on the other side of every line but no handoff identifier for any of them, and this deck does not yet carry the handoff identifiers the ZAU vNAS record now holds (ZAU/_vnas, 2026-10-22) &mdash; so the row cannot say who hands an aircraft to you and does not pretend to.</p>'
   + '<div class="ddb-room">Room reserved: when the sector boundaries and the TRSA are traced, this panel becomes the validation report.</div></div>'
   + '</section>';
 }

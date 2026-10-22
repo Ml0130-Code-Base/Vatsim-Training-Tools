@@ -188,12 +188,7 @@ polygons come from the facility's own sector file. It still sits **below the fac
 where the C90 or AZO SOP disagrees, the SOP wins. Licence is **CC BY-NC-SA 4.0** — any tool
 drawing these shapes **must credit VATGlasses on the page**.
 
-**One discrepancy to resolve against the orders before relying on the position list:**
-VATGlasses models **four** C90 positions and **three** AZO positions, where AZO 2-2/2-3 define
-**six** West Wall sectors. Fewer positions than the order defines is an owner question, not a
-correction to make here. Both tools now record it against their `positions` slot, together
-with the cross-check that came out clean: **all seven modelled frequencies match the orders
-exactly**, so the disagreement is coverage, not accuracy.
+**One discrepancy, resolved 2026-10-22 by the vNAS record.** VATGlasses models **four** C90 positions and **three** AZO positions, where C90 2-1 defines seventeen and AZO 2-2/2-3 define **six** West Wall sectors. The vNAS record carries all seventeen and all six, with the orders' callsigns and frequencies, so the dataset is the source that is short, and the orders and the record agree. The tools still record the VATGlasses shortfall against their `positions` slot, together with the cross-check that came out clean: **all seven modelled frequencies match the orders exactly**, so the disagreement was coverage, not accuracy.
 
 **Wired into both tools 2026-09-02.** Each deck carries the polygon as `FOOTPRINT` with
 `inFootprint()`, `underLid()` and `containment()`; the scope draws it; every strip says
@@ -211,9 +206,7 @@ while still treating the lateral shape as second-tier. And **AZO's footprint cov
 walls** — its eastern half is ZOB's East Wall — so inside the polygon is not the same as
 inside West Wall airspace, and the tool says so rather than implying otherwise.
 
-**Still missing at both, and it is one `curl`:** no ZAU vNAS record is held anywhere in this
-repository, so C90 and AZO have **no handoff identifier source at all**. Both tools carry a
-`handoff` slot marked empty and naming the endpoint.
+**The handoff identifiers were missing at both until 2026-10-22, when the ZAU vNAS record was pulled** (`_vnas/ZAU_vnas.json`, tables and the comparison in **`_vnas/claude_ZAU_vNAS_Reference.md`**). C90 is `ORT`/`OR`/`O` and AZO `AZT`/`AZ`/`Z` from ZAU's side, Field E `OneLetterAndSubset`, every radar position subset 1. **Neither tool carries them yet**: the `handoff` slot is still `empty`, its note says where the data is. The same record settles the position-count question below and raises two new ones: the C90 SOP 2-2 chain and the record disagree on the KUBBS/FARMM order and on where South Satellite Sector 1 folds, and three AZO positions (tower, ground, delivery) appear in no reference. Named, not resolved.
 
 ZAU's 19 **en route** sectors *are* fully described with stratums, which matters only if a ZAU
 Center tool is ever built.

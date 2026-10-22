@@ -264,18 +264,10 @@ corroborates it. The orders never state it outright, so it is carried as communi
 **Cross-check on the position list.** The dataset models three West Wall positions and their
 frequencies match 2-2 exactly: 128.400 (GRIFFIN), 119.800 (LUMBERTOWN), 121.200 (BRONCO).
 That it carries three where 2-2 defines six is an owner question, not a correction — the
-order is the authority.
+order is the authority. *Resolved 2026-10-22: the vNAS record carries all six, so it is the community dataset that is short.*
 
 **No handoff identifiers anywhere.** The dataset's position keys (`Z1G`, `Z1R`, `Z1N`) are
-display handles, not STARS IDs. Every handoff ID comes from vNAS, and **no ZAU vNAS record is
-held in this repository**. One pull closes it:
-
-```bash
-curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZAU" -o ZAU_vnas.json
-```
-
-Endpoint verified 2026-09-02 — HTTP 200, 581 KB, carrying `starsId` and
-`singleCharacterStarsId`.
+display handles, not STARS IDs. Every handoff ID comes from vNAS, and **the ZAU vNAS record has been held since 2026-10-22** (`../_vnas/ZAU_vnas.json`). AZO is `AZT`/`AZ`/`Z` from ZAU's side, Field E `OneLetterAndSubset`, every radar position subset 1; the six sector TCPs, the consolidation chain (which agrees with ZAU LOA 7.h) and the three positions this section did not know about (`AZO_TWR` 118.300, `AZO_GND` 121.900, `AZO_DEL` 121.750) are in `../_vnas/claude_ZAU_vNAS_Reference.md`. The deck does not carry them yet.
 
 ## Named gaps
 
@@ -283,7 +275,7 @@ Endpoint verified 2026-09-02 — HTTP 200, 581 KB, carrying `starsId` and
 |---|---|
 | West Wall sector boundaries | Appendices A and B (chart images), ZAU LOA Appendix A, `vZAU TRACON Boundaries.pdf`. **The community dataset does not close this** — it has one shape for the whole TRACON, see §11 |
 | ~~The facility footprint and its ceiling~~ — **closed 2026-09-02**, community-sourced, §11 | VATGlasses ZAU, vendored |
-| Handoff identifiers — STARS IDs, Field E formats | one `curl` against the vNAS ZAU record, §11 |
+| Handoff identifiers — STARS IDs, Field E formats | in the vNAS ZAU record (held since 2026-10-22), `../_vnas/claude_ZAU_vNAS_Reference.md`; not yet in the deck |
 | KHLM coordinates | not in the vendored dataset; public airport data or a chart |
 | AZO TRSA lateral and vertical limits | charts.zauartcc.org; the TRSA depiction |
 | Any STAR, SID or approach geometry, and the fixes LYSTR, JAVPO, FENAB, BIV, HLM as coordinates | charts.zauartcc.org — there is no procedure data in the vZAU document set for these fields |
