@@ -80,7 +80,7 @@ if(document.head && document.head.appendChild) document.head.appendChild(st);
 /* ---------- 2. Persistence (offline-safe, degrades to memory) ---------- */
 var KEY = 'm98-drill-deck-v1';
 var state = {v:1, drills:[], entries:[], retired:{}, target:20, seq:11, hot:false,
- layers:'tracked',
+ layers:'tracked', sidNames:true,
  pos:{seats:{H:1}, open:{H:1, R:1, N:1, S:1}, towers:'satellite towers open', rstOpen:true, midnight:false}};
 var storeOk = true;
 function store(){
@@ -98,6 +98,8 @@ function restore(){
   state.drills=o.drills||[]; state.entries=o.entries||[]; state.retired=o.retired||{};
   state.target=o.target||20; state.seq=o.seq||11; state.hot=!!o.hot;
   if(o.layers) state.layers=o.layers;
+  /* absent in anything stored before 2026-10-22, which means on */
+  if(o.sidNames===false) state.sidNames=false;
   if(o.pos && o.pos.open){
    /* v1 stored a single seat string; carry it forward as a one-seat set */
    var seats = o.pos.seats || (o.pos.seat ? (function(){ var s={}; s[o.pos.seat]=1; return s; })() : null);
@@ -3143,6 +3145,13 @@ function mount(){
  applyReceivers();
  DD.setRstOpen(rstOpen());
  if(window.ddLayers) window.ddLayers(state.layers||'tracked');
+ /* the SID-names toggle remembers its setting: applied first, then wrapped so a
+    change is saved */
+ if(window.ddSidNames){
+  window.ddSidNames(state.sidNames!==false);
+  var sidNamesBase=window.ddSidNames;
+  window.ddSidNames=function(on){ sidNamesBase(on); state.sidNames=DD.sidNames(); save(); };
+ }
  draft=blankDrill();
  refreshLog();
  renderPos(); renderEditor(); renderSaved(); renderCustomBar(); renderPrior(); renderItems(); renderEntries(); renderTiming();

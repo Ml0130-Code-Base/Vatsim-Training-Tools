@@ -3131,15 +3131,22 @@ function sidDrawGroups(items){
   var k=(typeof it==='string') ? it : it.key;
   var r=(typeof it==='string') ? DEPS[k] : it.route;
   if(!r) return;
-  var sig=r.map(function(p){ return p.f; }).join(' ');
-  if(!by[sig]){ by[sig]={route:r, keys:[]}; out.push(by[sig]); }
+  /* What is DRAWN decides what is one track: from the first SID fix on, since
+     the leg from the airport is not drawn (sidTrackSvg). DUHCK1 off ANE, FCM
+     and STP is therefore one track and one label naming the three fields
+     (owner, 2026-10-22). The Runway 17 segment is drawn from the field, so it
+     stays its own. */
+  var drawn=r.rw17 ? r : ((r[0] && r[0].field) ? r.slice(1) : r);
+  var sig=(r.rw17?'17:':'')+drawn.map(function(p){ return p.f; }).join(' ');
+  if(!by[sig]){ by[sig]={route:r, keys:[], fields:[]}; out.push(by[sig]); }
   if(by[sig].keys.indexOf(k)<0) by[sig].keys.push(k);
+  var fld=(r[0] && r[0].field) ? r[0].f : 'MSP';
+  if(by[sig].fields.indexOf(fld)<0) by[sig].fields.push(fld);
  });
  out.forEach(function(g){
-  /* a track that starts anywhere but MSP says which field it left, so three
-     fields' DUHCK1 do not stack as three identical labels */
-  var from=g.route[0].f;
-  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/')+(g.route.rw17?' via RUBRB':'')+(from!=='MSP'?(' · '+from):'');
+  /* a track that is not MSP's alone says which field or fields it leaves */
+  var named=(g.fields.length===1 && g.fields[0]==='MSP') ? '' : (' · '+g.fields.join('/'));
+  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/')+(g.route.rw17?' via RUBRB':'')+named;
   g.fam=sidFamilyOf(g.route);
   g.anchor=null;
   /* inside the 700 x 560 frame with room left for a second, stacked line */
@@ -3154,7 +3161,7 @@ function sidDrawGroups(items){
    on the heading held after it (RW17_HDG) — drawn finer than a track, once per
    SID, and named once at RUBRB. Off any other runway those two are vectored
    straight to their first fix. */
-function sidRw17Svg(opacity){
+function sidRw17Svg(opacity, named){
  var s='', seen={}, rubrb=null;
  Object.keys(DEPS17).forEach(function(k){
   var sid=sidOf(k); if(seen[sid]) return; seen[sid]=1;
@@ -3162,7 +3169,7 @@ function sidRw17Svg(opacity){
   rubrb=r[1];
   s+='<polyline points="'+ptsStr(seg)+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5" stroke-dasharray="1 3"/>';
  });
- if(rubrb) s+='<text x="'+(rubrb.x-7).toFixed(1)+'" y="'+(rubrb.y+4).toFixed(1)+'" text-anchor="end" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">RUBRB · off 17</text>';
+ if(rubrb && named!==false) s+='<text x="'+(rubrb.x-7).toFixed(1)+'" y="'+(rubrb.y+4).toFixed(1)+'" text-anchor="end" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">RUBRB · off 17</text>';
  return s;
 }
 function sidLabelSvg(groups, opacity){
@@ -3173,7 +3180,10 @@ function sidLabelSvg(groups, opacity){
   /* away from the field: west of it the label runs left, east of it right —
      unless it would run off the frame, at about 6 px a character */
   var left=(p.x<CX) || (p.x+7+g.label.length*6.1>696);
-  s+='<text x="'+(left?p.x-7:p.x+7).toFixed(1)+'" y="'+(p.y+4+n*11).toFixed(1)+'"'+(left?' text-anchor="end"':'')
+  /* a long label running left must not leave the frame — the three-field DUHCK1
+     line is the longest — so its end is pushed in until its start is inside */
+  var lx=left ? Math.max(p.x-7, 8+g.label.length*6.1) : p.x+7;
+  s+='<text x="'+lx.toFixed(1)+'" y="'+(p.y+4+n*11).toFixed(1)+'"'+(left?' text-anchor="end"':'')
     +' fill="'+sidColor(g.fam)+'" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">'+g.label+'</text>';
  });
  return s;
@@ -3273,11 +3283,11 @@ function scopeSvg(){
     distinct track once, named for every transition that flies it */
  var sidGroups=sidDrawGroups(sidKeys);
  sidGroups.forEach(function(g){ s+=sidTrackSvg(g); });
- s+=sidLabelSvg(sidGroups, 0.9);
+ if(SID_NAMES) s+=sidLabelSvg(sidGroups, 0.9);
  s+=sidLegendSvg(sidGroups, 14, 548);
  /* with every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
     too, so the off-17 shape can be learned alongside the any-runway one */
- if(wantSid==='all') s+=sidRw17Svg(0.8);
+ if(wantSid==='all') s+=sidRw17Svg(0.8, SID_NAMES);
  /* the 25 DME release ring — ZMP-M98 LOA 4.c */
  if(sidKeys.length){
   s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(DEP_RELEASE.dme*SC).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 5"/>';
@@ -3359,6 +3369,20 @@ var LAYER_MODES=[
  {id:'both',    label:'all SIDs + STARs'},
  {id:'off',     label:'off'}
 ];
+/* SID names and transitions on the scope — owner request, 2026-10-22. The
+   labels name a SID and every transition on a track ("BITEZ1 DKOTA/LEINY"), and
+   once the tracks are learned they are clutter. Off hides the labels and the
+   RUBRB · off 17 caption; the tracks, the key and the stub stay. On by default. */
+var SID_NAMES=true;
+window.ddSidNames=function(on){
+ SID_NAMES = (on===undefined) ? !SID_NAMES : !!on;
+ var b=document.getElementById('dd-sidnames');
+ if(b){
+  if(b.classList) b.classList.toggle('on', SID_NAMES);
+  if(b.setAttribute) b.setAttribute('aria-pressed', SID_NAMES ? 'true' : 'false');
+ }
+ render();
+};
 window.ddLayers=function(m){
  if(!LAYER_MODES.some(function(x){return x.id===m;})) return;
  LAYERS=m;
@@ -3588,6 +3612,7 @@ function liveHtml(){
  +'<div class="dd-bar" id="dd-layerbar" style="margin:6px 0 8px;">'
  +'<span class="dd-mono" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);">Routes drawn</span>'
  + LAYER_MODES.map(function(m){return '<button data-l="'+m.id+'"'+(m.id===LAYERS?' class="on"':'')+' onclick="ddLayers(\''+m.id+'\')">'+m.label+'</button>';}).join('')
+ +'<button id="dd-sidnames" aria-pressed="'+(SID_NAMES?'true':'false')+'"'+(SID_NAMES?' class="on"':'')+' style="margin-left:10px;" title="Show or hide the SID names and transitions on the scope" onclick="ddSidNames()">SID names</button>'
  +'</div>'
  +'<div class="dd-scopewrap"><div id="dd-scopebox"></div></div>'
  +'<div class="dd-strips" id="dd-strips"></div>'
@@ -3705,7 +3730,7 @@ window.DD = {
  RST_CLOSED_OWNER:RST_CLOSED_OWNER,
  neighbourAt:neighbourAt, exitBearing:exitBearing,
  setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
- LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; },
+ LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, sidNames:function(){ return SID_NAMES; },
  overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,
  FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,

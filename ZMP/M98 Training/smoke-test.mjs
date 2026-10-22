@@ -552,10 +552,15 @@ try {
       && globalThis.DD.depTrackFor('BITEZ1.DKOTA', null, 'KMIC') === null);
     {
       const sd = globalThis.DD.sidDrawGroups(globalThis.DD.satOnlySidItems());
-      assert('the SID only a satellite codes is drawn once per field, each named for its field and all three transitions',
-        globalThis.DD.satOnlySidItems().length === 9 && sd.length === 3
-        && sd.map(g => g.label).sort().join('|') === 'DUHCK1 LLUKY/SBRNA/STIER · ANE|DUHCK1 LLUKY/SBRNA/STIER · FCM|DUHCK1 LLUKY/SBRNA/STIER · STP',
+      assert('DUHCK1 off the three satellites is one drawn track and one label — all three transitions, all three fields (owner, 2026-10-22)',
+        globalThis.DD.satOnlySidItems().length === 9 && sd.length === 1
+        && sd[0].label === 'DUHCK1 LLUKY/SBRNA/STIER · ANE/FCM/STP' && sd[0].fields.join() === 'ANE,FCM,STP',
         sd.map(g => g.label).join('|'));
+      /* a tracked satellite departure beside an MSP one on the same SID shares the drawn
+         track, and the label says it is both */
+      const mixed = globalThis.DD.sidDrawGroups(['BITEZ1.DKOTA', { key: 'BITEZ1.DKOTA', route: globalThis.DD.DEPS_AT.KSTP['BITEZ1.DKOTA'] }]);
+      assert('and an MSP and a satellite departure on one SID are one track named for both',
+        mixed.length === 1 && mixed[0].label === 'BITEZ1 DKOTA · MSP/STP', mixed.map(g => g.label).join('|'));
     }
     {
       const sa = globalThis.DD.mkAc({ cs: 'SAT1', type: 'C172', role: 'departure', sid: 'DUHCK1.STIER', dep: 'KANE', fromStart: 3, alt: 3000, ias: 180 });
@@ -765,7 +770,7 @@ try {
      are not drawn a second time from three more starting points. */
   const nSidTrk = globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS).concat(globalThis.DD.satOnlySidItems())).length;
   assert('all SIDs adds every distinct SID track without hiding the tracked ladders',
-    lSidsL === 3 && lSidsS === nSidTrk && nSidTrk === 17
+    lSidsL === 3 && lSidsS === nSidTrk && nSidTrk === 15
     && globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS)).length === 14, lSidsL + '/' + lSidsS);
   assert('all SIDs and STARs draws everything', lBothL === 10 && lBothS === nSidTrk, lBothL + '/' + lBothS);
   assert('off draws no route geometry at all', lOffL === 0 && sidTrks() === 0, lOffL);
@@ -776,6 +781,24 @@ try {
      shaped is drawn now. The harness failed here from 5d995f6 until 2026-10-14. */
   assert('and "off" now draws no polyline at all, the RST line included (issue #60)',
     lOffAll === 0, lOffAll);
+  /* The SID names toggle — owner request 2026-10-22. Off hides the labels and the
+     RUBRB caption and nothing else: every track, the stub and the key stay. */
+  {
+    globalThis.ddLayers('sids');
+    const names = ['BITEZ1 DKOTA/LEINY', 'TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR', 'DUHCK1 LLUKY/SBRNA/STIER · ANE/FCM/STP', 'RUBRB · off 17'];
+    const onSvg = scope(), tracksOn = sidTrks();
+    assert('names are on by default',
+      globalThis.DD.sidNames() === true && names.every(n => onSvg.includes(n)), names.filter(n => !onSvg.includes(n)).join(' | '));
+    globalThis.ddSidNames(false);
+    const offSvg = scope();
+    assert('off hides every SID name and transition, and the RUBRB caption',
+      globalThis.DD.sidNames() === false && names.every(n => !offSvg.includes(n)) && !/>[A-Z]{4,5}\d [A-Z]{3,5}[/<]/.test(offSvg));
+    assert('and leaves every track, the Runway 17 segment and the key as they were',
+      sidTrks() === tracksOn && (offSvg.match(/stroke-dasharray="1 3"/g) || []).length === 2 && offSvg.includes('SID EXIT DIRECTION OFF MSP'));
+    globalThis.ddSidNames();
+    assert('it toggles back on', globalThis.DD.sidNames() === true && scope().includes('BITEZ1 DKOTA/LEINY'));
+    globalThis.ddLayers('tracked');
+  }
   /* With every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
      too — field, RUBRB, first fix — finer than a track and named once. */
   {
