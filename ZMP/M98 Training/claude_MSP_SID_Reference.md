@@ -117,9 +117,18 @@ N44 53 47.40 / W093 14 11.51 — the deck's `MSP0`.
 | SKITO | 44.99819 | −94.00346 | 281/33.1 | | KBREW | 45.58435 | −94.51478 | 307/68.0 |
 | | | | | | FOOLS | 43.78283 | −92.59581 | 158/72.3 |
 
-*Italic* fixes are DUHCK1's — satellite-only, and not in the deck, which flies MSP departures
-only. **The first fix beyond 80 NM on any transition is MDIAN (82.7) or JAYYJ (83.8);** nothing
-past the limit is plotted.
+*Italic* fixes are DUHCK1's — satellite-only, so no MSP track passes them; the deck plots them
+for departures off ANE, FCM and STP (issue #67). **The first fix beyond 80 NM on any MSP
+transition is MDIAN (82.7) or JAYYJ (83.8);** nothing past the limit is plotted.
+
+**DUHCK1 past MGHTY — named, not plotted** (CIFP 261029, MSP DME, decoded 2026-10-22). Every
+transition runs GGREY → DUHCK → MGHTY, the last fix inside 80 NM, so the three share one mapped
+track. After it: **LLUKY** MGHTY → GRRAT (96.9) → DDOWN (137.8) → LLUKY (271.2) · **SBRNA** MGHTY →
+IDEEA (85.6) → MDKNG (119.6) → SBRNA (194.2) · **STIER** MGHTY → GRRAT → DDOWN → STIER (174.6).
+The crossing at the start is GGREY **at or above 4,000** — the one the deck carries, as at every SID
+in the set. The same records also hold a second altitude value, **18,000**, on GGREY and on the first
+leg of each transition; this reference has not decoded that field for any SID in the set, so it is
+recorded here and not read.
 
 **Old names on new routes — and two of them MOVE.** HRBEK, HOMUR, DWIYT, JEDET, ZMBRO, CORDY and
 PEDLN were on retired SIDs and sit at the same positions in CIFP 261029 (PEDLN is now coded as a
@@ -156,7 +165,13 @@ revision number is said as a word: *BITEZ ONE departure*.
 - **The owner's rule for the retired set** — *STP, ANE and FCM may fly the MSP SIDs except LEINY* —
   **does not carry over**, and the new set needs it restated (issue #61). (It already disagreed
   with CIFP once: 260903 coded SMERF at MSP only.)
-- **The deck does not fly a satellite departure** — it refuses the strip and names the SIDs that field has.
+- **The deck flies a satellite departure** (issue #67, 2026-10-22): the track starts at the field and
+  runs the coded fixes — identical at the three fields, route types 5 and 6 only, so **no runway
+  transition** — to the same 80 NM limit from MSP. A strip names a SID its field does not code
+  (HTDSH1 or SNOWZ1 at a satellite, DUHCK1 at MSP) and is refused by name; Crystal is refused with
+  its radar-vectored note, because the engine has no track for a vectored departure.
+- **The release is ZMP-M98 LOA 4.c, measured from the MSP DME whatever field the aircraft left.** The
+  paragraph says "departing aircraft" and names no field; the 25 NM and the 11,000 are the same.
 - Related routing (ZMP-M98 LOA 4.f): satellite departures previously routed via the **DWN** SID now route **INUNE GENEO DKOTA**.
 
 ## Gates — TABLED for the new set

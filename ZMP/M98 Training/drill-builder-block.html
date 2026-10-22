@@ -1402,21 +1402,34 @@ function validate(rec){
   var role=roleOf(a);
   if(!(a.alt>=2000 && a.alt<=24000)) errs.push(tag+': altitude must be between 2,000 and 24,000.');
   if(role==='departure'){
-   if(SIDS.indexOf(a.sid)<0){
+   var dFld=a.dep||'KMSP', dName=(dFld==='KMSP') ? 'MSP' : dFld.replace(/^K/,'');
+   /* the track it will actually fly — through RUBRB off 17 for HTDSH1 and
+      SNOWZ1, which are valid off every runway (owner, 2026-10-18); off a
+      satellite, that field's own track (issue #67) */
+   var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
+   if(!dTrk){
     /* a strip saved before 2026-10-14 names the retired set, and says so */
     if(DD.sidRetired(a.sid))
      errs.push(tag+': '+a.sid+' went with the SID set that ends on '+DD.SID_CHANGE.effective+'. This deck flies the '+DD.SID_CHANGE.cycle+' set — '+DD.sidsCarried().join(', ')+' — so pick one of those and its transition (issue #'+DD.SID_CHANGE.issue+').');
+    else if(DD.SID_SET[DD.sidOf(a.sid)]){
+     var atFld=DD.SID_FIELDS[dFld]||[];
+     errs.push(tag+': '+DD.sidOf(a.sid)+' is not coded at '+dFld+' in '+DD.SID_CHANGE.cycle+'. '
+      +(atFld.length ? (dFld+' has '+atFld.join(', ')+'.')
+                     : (dFld+' has no SID in '+DD.SID_CHANGE.cycle+(dFld==='KMIC' ? ' — Crystal IFR departures are radar-vectored (owner), and the engine has no track to fly for a vectored departure.' : '.'))));
+    }
     else
      errs.push(tag+': '+a.sid+' is not a SID this deck carries. The '+DD.SID_CHANGE.cycle+' set is '+DD.sidsCarried().join(', ')+', each filed with its transition — '+DEF_SID+', for one.');
    }
    else {
-    /* the track it will actually fly — through RUBRB off 17 for HTDSH1 and
-       SNOWZ1, which are valid off every runway (owner, 2026-10-18) */
-    var dt=DD.depTrackFor(a.sid, a.depRwy).total;
-    if(!(a.fromStart>=0)) errs.push(tag+': distance from MSP must be a number.');
+    var dt=dTrk.total;
+    /* the join limit and the release are both measured from the MSP DME, which
+       is the same number as the distance along the track only where the track
+       starts at MSP */
+    var dmeS=(dFld==='KMSP') ? a.fromStart : dmeAlong(dTrk, a.fromStart);
+    if(!(a.fromStart>=0)) errs.push(tag+': distance from '+dName+' must be a number.');
     else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are mapped to 80 NM from MSP).');
-    else if(a.fromStart>60) warns.push(tag+': starts '+a.fromStart+' NM out, beyond the 60 NM join limit M98 takes a departure to (ZMP-M98 LOA 4.f).');
-    else if(a.fromStart>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM, already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
+    else if(dmeS>60) warns.push(tag+': starts '+a.fromStart+' NM out'+(dFld==='KMSP'?'':(', '+dmeS.toFixed(0)+' DME from MSP'))+', beyond the 60 NM join limit M98 takes a departure to (ZMP-M98 LOA 4.f).');
+    else if(dmeS>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM'+(dFld==='KMSP'?'':(', '+dmeS.toFixed(0)+' DME from MSP,'))+' already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
    }
    if(a.alt>=DD.DEP_RELEASE.alt) warns.push(tag+': starts at '+DD.fmtAlt(a.alt)+', at or above the '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' release trigger — the release is already due on the first tick.');
   }
@@ -1501,8 +1514,13 @@ function validate(rec){
  }
  /* a departure with nobody working departures is worth saying out loud */
  var hasDep=(rec.ac||[]).some(function(a){ return roleOf(a)==='departure'; });
- if(hasDep && !seatPositions().some(function(p){ return p.job==='departure' || p.id==='H'; }))
+ var hasMspDep=(rec.ac||[]).some(function(a){ return roleOf(a)==='departure' && (a.dep||'KMSP')==='KMSP'; });
+ var hasSatDep=(rec.ac||[]).some(function(a){ return roleOf(a)==='departure' && (a.dep||'KMSP')!=='KMSP'; });
+ if(hasMspDep && !seatPositions().some(function(p){ return p.job==='departure' || p.id==='H'; }))
   warns.push('This drill has departures in it but the seat you are working is not a departure position and is not the combined H. Deliberate, or does the position setup need a look?');
+ /* a departure off a satellite field is worked from a satellite seat, SOP 6-2 */
+ if(hasSatDep && !seatPositions().some(function(p){ return p.job==='satellite' || p.id==='H'; }))
+  warns.push('This drill has departures off a satellite field in it but the seat you are working is not a satellite position and is not the combined H. Deliberate, or does the position setup need a look?');
  /* configuration follows the weather — MSP-M98 LOA 9; it is not a free pick */
  var cfg=configById(rec.cfg), cat=category(rec.ceil, rec.vis);
  if(cfg.min){
@@ -1544,13 +1562,15 @@ function validate(rec){
   /* the job settles what the strip can be and who could have handed it over */
   if(roleOf(a)==='departure'){
    var dapt=DD.airportOf(a.dep||'KMSP');
-   if((a.dep||'KMSP')!=='KMSP')
-    errs.push(tag2+' departs '+(a.dep||'KMSP')+', and the engine flies departures off MSP only — a satellite departure has no track for it to fly yet. '
-      +((DD.SID_FIELDS[a.dep]||[]).length
-        ? (a.dep+' has '+DD.SID_FIELDS[a.dep].join(', ')+' in '+DD.SID_CHANGE.cycle+'.')
-        : (a.dep+' has no SID in '+DD.SID_CHANGE.cycle+'.')));
-   if(a.depRwy && dapt.rwys.indexOf(a.depRwy)<0)
+   /* a satellite departure flies its field's track (issue #67). Whether the
+      SID is coded there is settled with the track above; what is left is the
+      runway, and Airlake carries no inventory to check one against. */
+   if(a.depRwy && !(dapt.rwys||[]).length)
+    errs.push(tag2+' departs runway '+a.depRwy+' at '+(a.dep||'KMSP')+', and that field’s runway inventory is not in the reference set. Leave the runway unstated.');
+   else if(a.depRwy && dapt.rwys.indexOf(a.depRwy)<0)
     errs.push(tag2+' departs runway '+a.depRwy+', which is not a runway at '+(a.dep||'KMSP')+'. That field has '+dapt.rwys.join(', ')+'.');
+   if((a.dep||'KMSP')!=='KMSP' && DD.satSeatFor(a.dep))
+    warns.push(tag2+' departs '+a.dep+', which is '+DD.satSeatFor(a.dep)+' — '+((POSITIONS.filter(function(p){return p.id===DD.satSeatFor(a.dep);})[0]||{}).name||'a satellite seat')+'’s field (SOP 6-2), so working it means that seat is open. The release to Center is graded on the same 25 NM from the MSP DME or leaving 11,000 as an MSP departure — ZMP-M98 LOA 4.c says "departing aircraft" and names no field.');
    if(rules==='IFR' && a.depRwy && dapt.noIfrDep && dapt.noIfrDep.indexOf(a.depRwy)>=0)
     errs.push(tag2+' is an IFR departure off '+(a.dep||'KMSP')+' runway '+a.depRwy+', and that runway is not available for IFR departures (STP 7220.3Q).');
   }
@@ -1858,7 +1878,7 @@ function roleOf(a){ return a.role||'arrival'; }
 function entryBearing(a){
  var role=roleOf(a);
  if(role==='overflight') return ((a.entryR%360)+360)%360;
- var r = (role==='departure') ? DD.depTrackFor(a.sid, a.depRwy) : DD.ROUTES[a.gate];
+ var r = (role==='departure') ? DD.depTrackFor(a.sid, a.depRwy, a.dep) : DD.ROUTES[a.gate];
  if(!r) return null;
  var p = (role==='departure') ? r[r.length-1] : r[0];
  return (Math.atan2(p.e, p.n)*180/Math.PI+360)%360;
@@ -1935,6 +1955,12 @@ function readEditor(){
   if(rv && typeof rv.value==='string') a.route=rv.value;
   a.gate=g('ddb-gate'+i)||a.gate;
   a.sid=g('ddb-sid'+i)||a.sid;
+  /* moving a departure to another field moves it onto a SID that field codes —
+     the picker already shows the first one, so the strip says the same */
+  if(roleOf(a)==='departure'){
+   var kHere=DD.sidKeysAt(a.dep);
+   if(kHere.length && kHere.indexOf(a.sid)<0) a.sid=kHere[0];
+  }
 
   a.fromStart=num(g('ddb-fs'+i), a.fromStart);
   a.entryR=num(g('ddb-er'+i), a.entryR); a.entryD=num(g('ddb-ed'+i), a.entryD);
@@ -1976,9 +2002,9 @@ function readEditor(){
 function rowContext(a){
  var role=roleOf(a);
  if(role==='departure'){
-  var dr=DD.depTrackFor(a.sid, a.depRwy);
+  var dr=DD.depTrackFor(a.sid, a.depRwy, a.dep);
   if(!dr) return '';
-  return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out · released to Center by '
+  return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out'+((a.dep||'KMSP')==='KMSP'?'':(' of '+a.dep.replace(/^K/,'')))+' · released to Center by '
    +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
  }
  if(role==='overflight'){
@@ -2094,16 +2120,24 @@ function acRowHtml(a,i){
    +f('Runway','<select class="dd-sel" id="ddb-drwy'+i+'" onchange="ddbSync()"><option value=""'+(a.depRwy?'':' selected')+'>not stated</option>'
     +DD.runwaysAt(dep).map(function(r){return '<option'+(r===a.depRwy?' selected':'')+'>'+r+'</option>';}).join('')+'</select>')
    +f('SID','<select class="dd-sel" id="ddb-sid'+i+'" onchange="ddbSync()">'
-     /* grouped by SID, one option per transition, the value filed as written */
-     +DD.sidsCarried().map(function(sid){
-       return '<optgroup label="'+sid+(DD.SID_SET[sid].rwy.length?' — via RUBRB off 17':'')+'">'
-         +SIDS.filter(function(k){ return DD.sidOf(k)===sid; }).map(function(k){
-           return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+sid+' · '+DD.transOf(k)+'</option>';
-         }).join('')+'</optgroup>';
-     }).join('')+'</select>'
+     /* grouped by SID, one option per transition, the value filed as written.
+        Only the SIDs THIS field codes are offered: MSP's nine, or the eight at
+        ANE, FCM and STP — the two sets differ by HTDSH1 and SNOWZ1 one way and
+        DUHCK1 the other — and none at all for MIC (issue #67). */
+     +(function(){
+       var keys=DD.sidKeysAt(dep), sids=[];
+       keys.forEach(function(k){ var s=DD.sidOf(k); if(sids.indexOf(s)<0) sids.push(s); });
+       if(!sids.length) return '<option value="">none coded at '+dep+'</option>';
+       return sids.map(function(sid){
+         return '<optgroup label="'+sid+(DD.SID_SET[sid].rwy.length&&dep==='KMSP'?' — via RUBRB off 17':'')+'">'
+           +keys.filter(function(k){ return DD.sidOf(k)===sid; }).map(function(k){
+             return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+sid+' · '+DD.transOf(k)+'</option>';
+           }).join('')+'</optgroup>';
+       }).join('');
+     })()+'</select>'
      /* issue #61 — when the set goes live, and that the gates are tabled */
      +'<span class="dd-sidexp">'+esc(DD.sidChangeShort())+'</span>')
-   +f('NM from MSP','<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
+   +f('NM from '+(dep==='KMSP'?'MSP':dep.replace(/^K/,'')),'<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
  } else if(role==='overflight'){
   job = f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')
    +f('Entry DME','<input class="dd-in" id="ddb-ed'+i+'" value="'+esc(a.entryD)+'" onchange="ddbSync()">')
@@ -2216,7 +2250,7 @@ function previewSvg(rec){
  (rec.ac||[]).forEach(function(a){
   var role=roleOf(a);
   /* the track each departure will fly — through RUBRB when it is off 17 */
-  if(role==='departure'){ var dtr=DD.depTrackFor(a.sid, a.depRwy); if(dtr) sidsUsed[a.sid+'|'+(dtr.rw17?'17':'')]={key:a.sid, route:dtr}; }
+  if(role==='departure'){ var dtr=DD.depTrackFor(a.sid, a.depRwy, a.dep); if(dtr) sidsUsed[(a.dep||'KMSP')+'|'+a.sid+'|'+(dtr.rw17?'17':'')]={key:a.sid, route:dtr}; }
   else if(role==='arrival'){ if(a.gate) gatesUsed[a.gate]=1; }
  });
  Object.keys(gatesUsed).forEach(function(k){
@@ -2256,11 +2290,26 @@ function ptOn(r, dist){
  }
  return {x:r[r.length-1].x, y:r[r.length-1].y};
 }
+/* The MSP DME of the point `dist` NM along a route. The join limit and the
+   release are both measured from the MSP DME, and that is the same number as
+   the distance along the track only where the track starts at MSP — which a
+   satellite departure's does not (issue #67). */
+function dmeAlong(r, dist){
+ if(!r || !r.length) return 0;
+ for(var i=1;i<r.length;i++){
+  if(dist<=r[i].cum){
+   var d0=r[i-1].cum, d1=r[i].cum, t=(d1===d0)?0:(dist-d0)/(d1-d0);
+   var e=r[i-1].e+(r[i].e-r[i-1].e)*t, n=r[i-1].n+(r[i].n-r[i-1].n)*t;
+   return Math.sqrt(e*e+n*n);
+  }
+ }
+ var L=r[r.length-1]; return Math.sqrt(L.e*L.e+L.n*L.n);
+}
 function posAt(gate, dist){ return ptOn(routeOf(gate), dist); }
 /* the route a built strip will actually fly, and where on it it starts */
 function routeFor(a){
  var role=roleOf(a);
- if(role==='departure') return DD.depTrackFor(a.sid, a.depRwy);
+ if(role==='departure') return DD.depTrackFor(a.sid, a.depRwy, a.dep);
  if(role==='overflight') return DD.overflightRoute({r:a.entryR,d:a.entryD},{r:a.exitR,d:a.exitD});
  var base=DD.ROUTES[a.gate];
  /* Same rule as the deck's routeFor: a runway on the strip wins over the

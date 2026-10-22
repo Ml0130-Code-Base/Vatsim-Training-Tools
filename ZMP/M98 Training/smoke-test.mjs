@@ -443,9 +443,10 @@ try {
      each mapped to 80 NM from MSP (owner, 2026-10-14). */
   {
     const DP = globalThis.DD.DEPS, SS = globalThis.DD.SID_SET, keys = Object.keys(DP);
-    assert('the nine SIDs of CIFP 261029 are carried, one entry per transition',
-      Object.keys(SS).join() === 'BITEZ1,BUNYN1,HTDSH1,KBREW1,NRTHN1,SNOWZ1,SNUPE1,TOTTZ1,ZMBRO1'
-      && keys.length === 25, keys.length);
+    assert('the nine SIDs MSP codes in CIFP 261029 are carried, one entry per transition, and DUHCK1 beside them',
+      Object.keys(SS).filter(s => globalThis.DD.SID_FIELDS.KMSP.includes(s)).join() === 'BITEZ1,BUNYN1,HTDSH1,KBREW1,NRTHN1,SNOWZ1,SNUPE1,TOTTZ1,ZMBRO1'
+      && Object.keys(SS).length === 10 && SS.DUHCK1 !== undefined
+      && keys.length === 25 && keys.every(k => !k.startsWith('DUHCK1.')), keys.length);
     assert('every entry is keyed SID.TRANSITION, the way a flight plan files it',
       keys.every(k => /^[A-Z]{3,5}\d\.[A-Z]{3,5}$/.test(k) && SS[k.split('.')[0]].trans[k.split('.')[1]] !== undefined));
     assert('every track starts at the field, and only the first point is the field',
@@ -458,8 +459,11 @@ try {
       PRRCH:32.5, PIIKE:32.7, PLOWW:33.0, SKITO:33.1, ZOGAP:33.8, JEDET:34.0, HRBEK:34.8, TOTTZ:36.2,
       TICKK:39.1, SNUPE:39.6, PAGOZ:41.5, GPERS:45.7, BAYBB:46.6, DWIYT:47.0, ZMBRO:47.3, HOMUR:47.4,
       WDSTK:47.8, PEDLN:48.1, SLAYR:48.3, WAHLI:49.5, CORDY:49.5, HHCEE:52.1, HSTIN:62.0, KBREW:68.0, FOOLS:72.3};
-    assert('the coordinate table and the reference name the same forty fixes',
-      Object.keys(globalThis.DD.SID_FIX).sort().join() === Object.keys(SID_DME).sort().join(),
+    /* DUHCK1's three fixes, from the same reference table — satellite-only, so the
+       MSP loop below never meets them; the satellite loop further down does */
+    const SAT_DME = {GGREY:20.3, DUHCK:31.1, MGHTY:45.9};
+    assert('the coordinate table and the reference name the same forty-three fixes',
+      Object.keys(globalThis.DD.SID_FIX).sort().join() === Object.keys(SID_DME).concat(Object.keys(SAT_DME)).sort().join(),
       Object.keys(globalThis.DD.SID_FIX).length);
     /* The reference distances are true ranges; the deck's plane is flat and fixed
        at 44.5 N (COSL), so a far fix plots up to half a mile off — 0.53 NM at
@@ -506,7 +510,60 @@ try {
       DP['KBREW1.KEETN'].slice(-1)[0].f === 'KBREW' && DP['ZMBRO1.BRIBE'].slice(-1)[0].f === 'ZMBRO');
     assert('ANE, FCM and STP have eight SIDs, MIC none, and DUHCK1 is theirs alone',
       ['KANE', 'KFCM', 'KSTP'].every(f => globalThis.DD.SID_FIELDS[f].join() === 'BITEZ1,BUNYN1,DUHCK1,KBREW1,NRTHN1,SNUPE1,TOTTZ1,ZMBRO1')
-      && globalThis.DD.SID_FIELDS.KMIC.length === 0 && SS.DUHCK1 === undefined);
+      && globalThis.DD.SID_FIELDS.KMIC.length === 0 && !globalThis.DD.SID_FIELDS.KMSP.includes('DUHCK1'));
+
+    /* ---- satellite departures fly — issue #67 ----
+       CIFP 261029, KANE/KFCM/KSTP: route types 5 (common) and 6 (en route
+       transition) only, legs identical at all three; DUHCK1 is GGREY at or above
+       4,000, DUHCK, then MGHTY on each of LLUKY, SBRNA and STIER. */
+    const DA = globalThis.DD.DEPS_AT, SATS = { KANE: 'ANE', KFCM: 'FCM', KSTP: 'STP' };
+    assert('ANE, FCM and STP each carry eighteen entries, MIC and LVN none',
+      Object.keys(SATS).every(f => Object.keys(DA[f]).length === 18) && DA.KMIC === undefined && DA.KLVN === undefined,
+      Object.keys(DA).map(f => f + ':' + Object.keys(DA[f]).length).join());
+    assert('a satellite track starts at its own field, at the airport reference point, and nowhere else is the field',
+      Object.keys(SATS).every(f => Object.keys(DA[f]).every(k => DA[f][k][0].field === true && DA[f][k][0].f === SATS[f]
+        && DA[f][k][0].lat === globalThis.DD.AIRPORTS[f].lat && DA[f][k][0].lon === globalThis.DD.AIRPORTS[f].lon
+        && DA[f][k].filter(p => p.field).length === 1)));
+    assert('DUHCK1 is the field, GGREY at or above 4,000, DUHCK, MGHTY — the same on all three transitions inside 80 NM',
+      Object.keys(SATS).every(f => ['LLUKY', 'SBRNA', 'STIER'].every(t =>
+        DA[f]['DUHCK1.' + t].slice(1).map(p => p.f).join() === 'GGREY,DUHCK,MGHTY' && DA[f]['DUHCK1.' + t][1].climbAA === 4000)));
+    Object.keys(SATS).forEach(f => Object.keys(DA[f]).forEach(k => DA[f][k].forEach(p => {
+      if (p.field) return;
+      const d = Math.sqrt(p.e*p.e + p.n*p.n);
+      if (d > 80) fail('satellite SID within 80 NM', f + '/' + k + '/' + p.f + ' is ' + d.toFixed(1) + ' from MSP');
+      const want = SID_DME[p.f] !== undefined ? SID_DME[p.f] : SAT_DME[p.f];
+      if (Math.abs(d - want) > 1.0) fail('satellite SID fix distance', f + '/' + k + '/' + p.f + ' plots at ' + d.toFixed(1) + ', the reference says ' + want);
+    })));
+    ok('every satellite SID fix is within 80 NM of MSP and plots where the reference puts it');
+    assert('the seven a satellite shares with MSP fly the same fixes after the first leg',
+      Object.keys(SATS).every(f => keys.every(k => /^(HTDSH1|SNOWZ1)\./.test(k)
+        || DA[f][k].slice(1).map(p => p.f).join() === DP[k].slice(1).map(p => p.f).join())));
+    assert('HTDSH1 and SNOWZ1 are not at a satellite, so the picker never offers them there',
+      Object.keys(SATS).every(f => Object.keys(DA[f]).every(k => !/^(HTDSH1|SNOWZ1)\./.test(k)))
+      && globalThis.DD.sidKeysAt('KSTP').length === 18 && globalThis.DD.sidKeysAt('KMSP').length === 25
+      && globalThis.DD.sidKeysAt('KMIC').length === 0 && globalThis.DD.sidKeysAt('KLVN').length === 0);
+    assert('depTrackFor answers per field: a satellite its own, MSP never DUHCK1, and the runway does not move a satellite track',
+      globalThis.DD.depTrackFor('DUHCK1.LLUKY', null, 'KSTP') === DA.KSTP['DUHCK1.LLUKY']
+      && globalThis.DD.depTrackFor('DUHCK1.LLUKY', '14', 'KSTP') === DA.KSTP['DUHCK1.LLUKY']
+      && globalThis.DD.depTrackFor('DUHCK1.LLUKY', null, 'KMSP') === null
+      && globalThis.DD.depTrackFor('DUHCK1.LLUKY', null) === null
+      && globalThis.DD.depTrackFor('BITEZ1.DKOTA', null, 'KANE') === DA.KANE['BITEZ1.DKOTA']
+      && globalThis.DD.depTrackFor('BITEZ1.DKOTA', null, 'KANE') !== DP['BITEZ1.DKOTA']
+      && globalThis.DD.depTrackFor('BITEZ1.DKOTA', null, 'KMIC') === null);
+    {
+      const sd = globalThis.DD.sidDrawGroups(globalThis.DD.satOnlySidItems());
+      assert('the SID only a satellite codes is drawn once per field, each named for its field and all three transitions',
+        globalThis.DD.satOnlySidItems().length === 9 && sd.length === 3
+        && sd.map(g => g.label).sort().join('|') === 'DUHCK1 LLUKY/SBRNA/STIER · ANE|DUHCK1 LLUKY/SBRNA/STIER · FCM|DUHCK1 LLUKY/SBRNA/STIER · STP',
+        sd.map(g => g.label).join('|'));
+    }
+    {
+      const sa = globalThis.DD.mkAc({ cs: 'SAT1', type: 'C172', role: 'departure', sid: 'DUHCK1.STIER', dep: 'KANE', fromStart: 3, alt: 3000, ias: 180 });
+      assert('an aircraft built off Anoka is on the ANE track, files DUHCK1.STIER, and calls Approach',
+        sa.route === DA.KANE['DUHCK1.STIER'] && sa.route[0].f === 'ANE' && sa.filed === 'DUHCK1.STIER'
+        && globalThis.DD.depCall(sa) === 'Minneapolis Approach'
+        && globalThis.DD.depCall({ dep: 'KMSP' }) === 'Minneapolis Departure');
+    }
     assert('the SID is said with its number as a word, and nothing else is invented',
       globalThis.DD.sidSpoken('BITEZ1.DKOTA') === 'BITEZ ONE' && globalThis.DD.sidSpoken('KBREW1.KEETN') === 'KBREW ONE');
     assert('a shared track is labelled once with every transition on it',
@@ -577,9 +634,10 @@ try {
   assert('the retired set is recorded — twelve at MSP, the same seven at each satellite',
     SC.retired.KMSP.length === 12 && SC.retired.KSTP.join() === 'COULT7,KBREW2,ORSKY3,RST1,SCHEP1,WLSTN7,ZMBRO7'
     && SC.retired.KANE === SC.retired.KFCM && SC.retired.KANE === SC.retired.KSTP);
-  assert('the deck carries exactly the new MSP set, and none of the retired names',
-    globalThis.DD.sidsCarried().join() === globalThis.DD.SID_FIELDS.KMSP.join()
-    && globalThis.DD.SID_RETIRED_KEYS.every(k => globalThis.DD.DEPS[k] === undefined));
+  assert('the deck carries exactly the new MSP set plus the satellites’ DUHCK1, and none of the retired names',
+    globalThis.DD.sidsAtMsp().join() === globalThis.DD.SID_FIELDS.KMSP.join()
+    && globalThis.DD.sidsCarried().slice().sort().join() === globalThis.DD.SID_FIELDS.KMSP.concat('DUHCK1').sort().join()
+    && globalThis.DD.SID_RETIRED_KEYS.every(k => globalThis.DD.DEPS[k] === undefined && globalThis.DD.DEPS_AT.KSTP[k] === undefined));
   assert('a retired name is known as retired, and a current one is not',
     globalThis.DD.sidRetired('WLSTN') && globalThis.DD.sidRetired('KBREW') && !globalThis.DD.sidRetired('BITEZ1.DKOTA'));
   assert('early the day before, live on the day',
@@ -645,9 +703,13 @@ try {
   /* Fourteen tracks, not twenty-five: transitions that share a mapped track inside
      80 NM are drawn once (sidDrawGroups) — it was nine, one per SID, before the
      2026-10-29 set came in. */
-  const nSidTrk = globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS)).length;
+  /* Seventeen with issue #67: the fourteen MSP tracks, and DUHCK1 from each of the
+     three satellite fields that code it — the seven SIDs a satellite shares with MSP
+     are not drawn a second time from three more starting points. */
+  const nSidTrk = globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS).concat(globalThis.DD.satOnlySidItems())).length;
   assert('all SIDs adds every distinct SID track without hiding the tracked ladders',
-    lSidsL === 3 && lSidsS === nSidTrk && nSidTrk === 14, lSidsL + '/' + lSidsS);
+    lSidsL === 3 && lSidsS === nSidTrk && nSidTrk === 17
+    && globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS)).length === 14, lSidsL + '/' + lSidsS);
   assert('all SIDs and STARs draws everything', lBothL === 6 && lBothS === nSidTrk, lBothL + '/' + lBothS);
   assert('off draws no route geometry at all', lOffL === 0 && sidTrks() === 0, lOffL);
   /* Under "off" this used to leave exactly one polyline, the RST boundary. Issue
@@ -1820,9 +1882,28 @@ try {
       !plain.errors.concat(plain.warnings).some(x => /SID|Runway 17/.test(x)), plain.errors.concat(plain.warnings).join(' | '));
     assert('a start beyond the 60 NM join limit is warned against (ZMP-M98 LOA 4.f)',
       dv({ sid: 'HTDSH1.ALO', depRwy: '17', fromStart: 65 }).warnings.some(w => w.includes('60 NM join limit')));
-    const sat = dv({ sid: 'BITEZ1.DKOTA', dep: 'KSTP' });
-    assert('a satellite departure is still refused, and names the SIDs that field has',
-      sat.errors.some(e => e.includes('engine flies departures off MSP only') && e.includes('DUHCK1')), sat.errors.join(' | '));
+    /* satellite departures fly — issue #67. Only the SID rules are under test; the
+       fixture is a bare strip, so other rules fire on it too. */
+    const sat = dv({ sid: 'DUHCK1.LLUKY', dep: 'KSTP', depRwy: '14' });
+    assert('DUHCK1 off St. Paul is an ordinary departure — nothing said against the SID or the field',
+      !sat.errors.some(e => /SID|coded at|engine flies|inventory/.test(e)), sat.errors.join(' | '));
+    assert('and it says whose field it is, and that 4.c is the MSP DME whatever field it left',
+      sat.warnings.some(w => w.includes('KSTP') && w.includes('SOP 6-2') && w.includes('names no field')), sat.warnings.join(' | '));
+    const satWrong = dv({ sid: 'HTDSH1.ALO', dep: 'KFCM' });
+    assert('HTDSH1 off Flying Cloud is refused by name, and the refusal lists the eight FCM does have',
+      satWrong.errors.some(e => e.includes('HTDSH1 is not coded at KFCM') && e.includes('DUHCK1') && !e.includes('HTDSH1,')), satWrong.errors.join(' | '));
+    const mspDuhck = dv({ sid: 'DUHCK1.LLUKY', dep: 'KMSP' });
+    assert('DUHCK1 off MSP is refused: MSP does not code it',
+      mspDuhck.errors.some(e => e.includes('DUHCK1 is not coded at KMSP') && !e.includes('DUHCK1,') ), mspDuhck.errors.join(' | '));
+    const mic = dv({ sid: 'BITEZ1.DKOTA', dep: 'KMIC' });
+    assert('Crystal has no SID, and the refusal says its IFR departures are radar-vectored',
+      mic.errors.some(e => e.includes('KMIC has no SID') && e.includes('radar-vectored')), mic.errors.join(' | '));
+    const lvn = dv({ sid: 'BITEZ1.DKOTA', dep: 'KLVN', depRwy: '30' });
+    assert('Airlake has no runway inventory, so a runway there is refused rather than throwing',
+      lvn.errors.some(e => e.includes('inventory is not in the reference set')), lvn.errors.join(' | '));
+    assert('a satellite departure’s join and release are measured from the MSP DME, not along the track',
+      dv({ sid: 'BITEZ1.DKOTA', dep: 'KANE', depRwy: '9', fromStart: 4 }).warnings.every(w => !w.includes('release point') && !w.includes('join limit'))
+      && dv({ sid: 'DUHCK1.LLUKY', dep: 'KSTP', depRwy: '14', fromStart: 40 }).warnings.some(w => w.includes('DME from MSP') && w.includes('release point')));
     /* the generator draws from all nine now, HTDSH1 and SNOWZ1 included */
     {
       const picked = {};
@@ -1830,7 +1911,7 @@ try {
         globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 2, deps: 4 })
           .ac.filter(a => a.role === 'departure').forEach(a => { picked[globalThis.DD.sidOf(a.sid)] = 1; });
       assert('the generator draws on all nine SIDs, the two with a Runway 17 segment among them',
-        Object.keys(picked).sort().join() === Object.keys(globalThis.DD.SID_SET).sort().join(), Object.keys(picked).sort().join());
+        Object.keys(picked).sort().join() === globalThis.DD.SID_FIELDS.KMSP.slice().sort().join(), Object.keys(picked).sort().join());
     }
     /* a stored drill naming a retired SID is not flown — and is not put on an arrival ladder */
     globalThis.DD.SCENARIOS.push({id:'oldsid', name:'Old SID', frame:'test', altim:'2980', brief:'',
@@ -1963,6 +2044,20 @@ try {
   assert('the release grades to post-handoff both ways',
     globalThis.ddb.tallyFeed().posthandoff.good >= 1 && globalThis.ddb.tallyFeed().posthandoff.flag >= 1,
     JSON.stringify(globalThis.ddb.tallyFeed().posthandoff));
+  /* the same release off a satellite field — issue #67. The datum is the MSP DME
+     whichever field the aircraft left (4.c says "departing aircraft" and names no
+     field), and the engine flies the track from the field. */
+  {
+    const s9 = globalThis.DD.mkAc({ cs: 'SAT9', type: 'C172', role: 'departure', sid: 'DUHCK1.LLUKY', dep: 'KSTP',
+      depRwy: '14', fromStart: 2, alt: 4000, ias: 250, ckdIn: true });
+    const d0 = globalThis.DD.dmeOf(s9);
+    globalThis.DD.sim.ac.push(s9);
+    for (let i = 0; i < 200; i++) tickFn();
+    assert('a departure off St. Paul flies its own track and is graded on the 25 DME release like any other',
+      d0 > 4 && d0 < 15 && s9.route[0].f === 'STP' && s9.relChecked === true && globalThis.DD.dmeOf(s9) >= 25,
+      d0.toFixed(1) + ' ' + s9.relChecked);
+    globalThis.DD.sim.ac.splice(globalThis.DD.sim.ac.indexOf(s9), 1);
+  }
   /* rules-driven behaviour and refusals */
   const vfrChecks = globalThis.ddb.validate({name:'x', cfg:'12', ceil:5000, vis:10, ac:[
     {cs:'DAL1', type:'B738', role:'arrival', rules:'IFR', route:'', gate:'NITZR', dtg:20, alt:12000, ias:280, mode:'published', ckdIn:true},

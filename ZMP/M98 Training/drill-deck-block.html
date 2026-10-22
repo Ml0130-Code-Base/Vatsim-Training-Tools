@@ -790,9 +790,14 @@ function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
    KBREW AND ZMBRO ARE NAMES CARRIED OVER, NOT ROUTES. KBREW1 starts at HRBEK
    (KBREW2 started at GEP) and ZMBRO1 at JEDET (ZMBRO7 at the MSP VOR).
 
-   ANE, FCM and STP have eight SIDs, MIC none (SID_FIELDS). The engine does not
-   fly a satellite departure, so DUHCK1 — the one SID coded at the satellites
-   and not at MSP — is named there and drawn nowhere. */
+   ANE, FCM and STP have eight SIDs, MIC none (SID_FIELDS). THE ENGINE FLIES A
+   SATELLITE DEPARTURE (issue #67): DEPS_AT holds the track each of those three
+   fields flies, the field then the same coded fixes, and DUHCK1 — the one SID
+   coded at the satellites and not at MSP — is carried with them. It is a
+   satellite SID: GGREY (at or above 4,000), DUHCK, then MGHTY, 45.8 NM out,
+   which is the last fix inside the 80 NM limit on all three of its
+   transitions. IDEEA, GRRAT and everything after are named in the reference
+   and not plotted. */
 var SID_SRC = 'CIFP 261029 — ARINC 424 PD records, decoded 2026-10-14';
 /* generated from CIFP 261029 — every fix within 80 NM of MSP that the set passes */
 var SID_SET = {
@@ -800,6 +805,10 @@ var SID_SET = {
    trans:{DKOTA:['SKITO','TICKK','HHCEE'], LEINY:['SKITO','TICKK','HHCEE'], SMERF:['ZOGAP','PAGOZ']}},
  BUNYN1:{rwy:[], common:['JBUGG','BUNYN'], aa:{JBUGG:4000},
    trans:{DLH:['BAYBB'], KVUSI:['GPERS']}},
+ /* coded at ANE, FCM and STP and NOT at MSP (CIFP 261029, route types 5 and 6
+    at all three, identical legs) — SID_FIELDS says where, DEPS_AT holds the track */
+ DUHCK1:{rwy:[], common:['GGREY','DUHCK'], aa:{GGREY:4000},
+   trans:{LLUKY:['MGHTY'], SBRNA:['MGHTY'], STIER:['MGHTY']}},
  HTDSH1:{rwy:['RUBRB'], common:['ITZME','HTDSH'], aa:{ITZME:3500, RUBRB:3500},
    trans:{ALO:['TOTTZ','CORDY','FOOLS'], BRIBE:['JEDET','ZMBRO'], OANNA:['TOTTZ','CORDY','FOOLS'], OHHMY:['TOTTZ','CORDY','FOOLS'], ZZIPR:['TOTTZ','CORDY','FOOLS']}},
  KBREW1:{rwy:[], common:['HRBEK','HOMUR','KBREW'], aa:{HRBEK:5000},
@@ -855,7 +864,10 @@ var SID_FIX = {
  KBREW:{lat:45.58435, lon:-94.51478},
  HOMUR:{lat:45.41821, lon:-94.07681},
  HRBEK:{lat:45.31453, lon:-93.80699},
- GPERS:{lat:45.65891, lon:-93.24655}
+ GPERS:{lat:45.65891, lon:-93.24655},
+ GGREY:{lat:44.62650, lon:-93.52541},
+ DUHCK:{lat:44.50413, lon:-93.71264},
+ MGHTY:{lat:44.35583, lon:-93.99581}
 };
 /* Which SIDs each field has in CIFP 261029. ANE, FCM and STP code identical
    legs; MIC has no SID in either cycle, and its IFR departures are radar
@@ -868,10 +880,15 @@ var SID_FIELDS = {
 /* The tracks: the field, then the coded procedure — the common route and the
    transition, as far as 80 NM. DEPS17 adds the Runway 17 segment in front for
    the two SIDs that code one (`rwy`, RUBRB), and is marked so the scope can
-   say which it is. */
+   say which it is. DEPS is MSP's — a SID is in it only if MSP codes it, so
+   DUHCK1 is not; DEPS_AT (below the airports) is the satellites'. */
 var DEPS = {}, DEPS17 = {};
-function sidTrack(S, t, with17){
- var pts=[{f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true}];
+/* `icao` names a satellite field to start the track on; absent, it is MSP. The
+   first leg is a stand-in at either, because the climb-out is not coded. */
+function sidTrack(S, t, with17, icao){
+ var ap = (icao && icao!=='KMSP') ? AIRPORTS[icao] : null;
+ var pts=[ap ? {f:icao.replace(/^K/,''), lat:ap.lat, lon:ap.lon, field:true}
+             : {f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true}];
  (with17 ? S.rwy : []).concat(S.common, S.trans[t]).forEach(function(n){
   var x=SID_FIX[n], p={f:n, lat:x.lat, lon:x.lon};
   if(S.aa[n]!=null) p.climbAA=S.aa[n];
@@ -881,6 +898,7 @@ function sidTrack(S, t, with17){
 }
 Object.keys(SID_SET).forEach(function(sid){
  var S=SID_SET[sid];
+ if(SID_FIELDS.KMSP.indexOf(sid)<0) return;
  Object.keys(S.trans).forEach(function(t){
   DEPS[sid+'.'+t]=sidTrack(S, t, false);
   if(S.rwy.length){ DEPS17[sid+'.'+t]=sidTrack(S, t, true); DEPS17[sid+'.'+t].rw17=true; }
@@ -893,8 +911,15 @@ function sidRw17Leg(key){ var S=SID_SET[sidOf(key)]; return !!(S && S.rwy.length
 /* The track a departure flies: the Runway 17 segment when it is off 17 and its
    SID codes one, the any-runway track otherwise — including when the strip
    names no runway, which is most of them. */
-function depTrackFor(key, rwy){
+function depTrackFor(key, rwy, dep){
+ /* a satellite departure: the field's own track, whatever the runway — none of
+    the eight codes a runway transition at ANE, FCM or STP (CIFP 261029) */
+ if(dep && dep!=='KMSP') return (DEPS_AT[dep] && DEPS_AT[dep][key]) || null;
  return (String(rwy||'').toUpperCase()==='17' && DEPS17[key]) || DEPS[key] || null;
+}
+/* every SID-and-transition key a field can fly, as the builder's picker lists them */
+function sidKeysAt(icao){
+ return Object.keys((!icao || icao==='KMSP') ? DEPS : (DEPS_AT[icao] || {}));
 }
 /* "BITEZ1.DKOTA" is said "BITEZ ONE": the revision number as a word, the way
    the procedure is named on the radio. The name itself is written as-is — no
@@ -936,13 +961,15 @@ function sidChangeState(day){
 /* The SIDs this deck carries, read off SID_SET so the banner cannot name a set
    the table does not hold. */
 function sidsCarried(){ return Object.keys(SID_SET); }
+/* the ones MSP codes — the banner's "MSP's new set". DUHCK1 is the satellites'. */
+function sidsAtMsp(){ return SID_FIELDS.KMSP.slice().sort(); }
 function andList(a){ return a.length<2 ? a.join('') : (a.slice(0,-1).join(', ')+' and '+a[a.length-1]); }
 function sidChangeHtml(day){
  if(sidChangeState(day)==='live') return '';
  var c = SID_CHANGE;
  var gone = c.retired.KMSP.filter(function(s){ return ['HSTIN6','MEDOW5','SLAYR4'].indexOf(s)<0; });
  return '<b>These are the SIDs from '+c.effective+'.</b> The deck flies MSP’s new set early, so it can be learned before it goes live — '
-  +andList(sidsCarried())+' ('+c.cycle+'). Until '+c.effective+' the network still files the old set, which the deck no longer carries: '+andList(gone)+'.'
+  +andList(sidsAtMsp())+' ('+c.cycle+'), and the satellites’ DUHCK1, which Anoka, Flying Cloud and St. Paul code and MSP does not. Until '+c.effective+' the network still files the old set, which the deck no longer carries: '+andList(gone)+'.'
   +'<span class="dd-expiry-sub">KBREW and ZMBRO are new routes under old names. Gate letters for the new SIDs are not known yet, so a departure carries no scratchpad gate. This comes down by itself on '+c.effective+'. Issue #'+c.issue+'.</span>';
 }
 /* One short line for the place a SID is picked. */
@@ -1000,6 +1027,26 @@ var AIRPORTS = {
    line puts the north-west fields with K and the east and south-east ones
    with G. */
 function satSeatFor(icao){ var ap=AIRPORTS[icao]; return (ap && ap.sat) || null; }
+
+/* ---------- Satellite departures — issue #67 ----------
+   ANE, FCM and STP each code eight SIDs in CIFP 261029 (SID_FIELDS), with legs
+   identical to one another and to MSP's for the seven they share, and only
+   route types 5 (common) and 6 (en route transition) — no runway transition,
+   so the strip's runway does not move the track. The track starts at the field
+   and runs the same coded fixes, mapped to the same 80 NM limit measured from
+   MSP. The leg from the field to the first fix is a stand-in, as it is at MSP:
+   the climb-out is not coded and the tower's departure heading decides it.
+   MIC and LVN code none, so they have no entry here and a strip on them is
+   refused by name. Built here and not beside DEPS because it needs AIRPORTS. */
+var DEPS_AT = {};
+Object.keys(SID_FIELDS).forEach(function(icao){
+ if(icao==='KMSP' || !SID_FIELDS[icao].length) return;
+ DEPS_AT[icao]={};
+ SID_FIELDS[icao].forEach(function(sid){
+  var S=SID_SET[sid];
+  Object.keys(S.trans).forEach(function(t){ DEPS_AT[icao][sid+'.'+t]=sidTrack(S, t, false, icao); });
+ });
+});
 
 /* ---------- Arrivals, and which field each one actually serves ----------
    The bug this exists to stop: the six RNAV gates are MSP arrivals and nothing
@@ -1553,7 +1600,7 @@ function scratchpadValid(s){
 function routeTextFor(o){
  var role=(o&&o.role)||'arrival';
  if(role==='departure'){
-  return DEPS[o.sid] ? String(o.sid) : '';
+  return depTrackFor(o.sid, o.depRwy, o.dep) ? String(o.sid) : '';
  }
  if(role==='arrival'){
   var g=ROUTES[o.gate]; if(!g) return '';
@@ -1731,11 +1778,16 @@ function towerHandoffFor(icao){
  return {name:ap.tower, frq:(ap.twrFrq&&ap.twrFrq[0])||null, kind:'tower',
          why:'a departure is handed off by the tower at the field it left, and '+ap.name+' is '+ap.tower};
 }
+/* What a departure calls on check-in. M98's three departure seats are *_DEP
+   callsigns and its three satellite seats *_APP (SOP 2-1, claude_M98_SOP_
+   Reference.md: MSP_D_DEP, MSP_R_DEP, MSP_L_DEP; MSP_E_APP, MSP_G_APP,
+   MSP_K_APP), so a departure shipped by a satellite tower calls Approach. */
+function depCall(a){ return (a.dep && a.dep!=='KMSP') ? 'Minneapolis Approach' : 'Minneapolis Departure'; }
 function mkAc(o){
  var role = o.role || 'arrival';
  var rad = normRadar(o.radar, (o.rules==='VFR'?'VFR':'IFR'), role);
  var rs  = RADAR_STATES[rad] || RADAR_STATES.established;
- var route = role==='departure' ? depTrackFor(o.sid, o.depRwy)
+ var route = role==='departure' ? depTrackFor(o.sid, o.depRwy, o.dep)
            : role==='overflight' ? overflightRoute(o.entry||{r:180,d:38}, o.exit||{r:0,d:38})
            : routeFor(o);
  /* `|| null` rather than bare: in a configuration Table 2 does not name,
@@ -2410,7 +2462,7 @@ function checkIn(a){
     contact" is the call rather than a redundancy. */
  if(a.radar==='departure'){
   var ap=airportOf(a.dep), rwTxt=(a.depRwy?(' off runway '+sayRunway(a.depRwy)):'');
-  log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing'+rwTxt
+  log('crew','<b>'+a.cs+':</b> "'+depCall(a)+', '+a.cs+', '+lvl+' climbing'+rwTxt
     +(a.sid?(', '+sidSpoken(a.sid)+' departure'):'')+'."');
   log('info','<span class="dd-chip info">note</span><b>'+a.cs+'</b> was shipped by '+ap.tower+' on a clearance and a discrete code, but it is not radar identified yet. That is yours before you work it.');
   return;
@@ -2422,7 +2474,7 @@ function checkIn(a){
   return;
  }
  if(a.role==='departure'){
-  log('crew','<b>'+a.cs+':</b> "Minneapolis Departure, '+a.cs+', '+lvl+' climbing, '+sidSpoken(a.sid)+' departure."');
+  log('crew','<b>'+a.cs+':</b> "'+depCall(a)+', '+a.cs+', '+lvl+' climbing, '+sidSpoken(a.sid)+' departure."');
  } else if(a.role==='overflight'){
   log('crew','<b>'+a.cs+':</b> "Minneapolis Approach, '+a.cs+', '+lvl+', requesting transit of your airspace."');
  } else {
@@ -2955,6 +3007,20 @@ function fixDot(p, big){ return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFix
    printing over each other, and run away from the field so the two BUNYN1
    labels, a few miles apart at the top of the scope, do not collide.
    Shared with the builder's preview through DD. */
+/* The SIDs only a satellite codes, drawn from each field that does — what
+   "all SIDs" adds to MSP's set. The seven a satellite shares with MSP follow
+   the same fixes from the first one on, so they are not drawn a second time
+   from three more starting points; a tracked satellite departure draws its
+   own. */
+function satOnlySidItems(){
+ var out=[];
+ Object.keys(DEPS_AT).forEach(function(icao){
+  Object.keys(DEPS_AT[icao]).forEach(function(k){
+   if(SID_FIELDS.KMSP.indexOf(sidOf(k))<0) out.push({key:k, route:DEPS_AT[icao][k]});
+  });
+ });
+ return out;
+}
 /* Takes keys, which draw the any-runway track, or {key, route} items, which
    draw the route given — what a tracked departure is actually flying, so one
    off 17 shows its RUBRB segment. */
@@ -2969,7 +3035,10 @@ function sidDrawGroups(items){
   if(by[sig].keys.indexOf(k)<0) by[sig].keys.push(k);
  });
  out.forEach(function(g){
-  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/')+(g.route.rw17?' via RUBRB':'');
+  /* a track that starts anywhere but MSP says which field it left, so three
+     fields' DUHCK1 do not stack as three identical labels */
+  var from=g.route[0].f;
+  g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/')+(g.route.rw17?' via RUBRB':'')+(from!=='MSP'?(' · '+from):'');
   g.anchor=null;
   /* inside the 700 x 560 frame with room left for a second, stacked line */
   for(var i=g.route.length-1;i>0;i--){
@@ -3080,7 +3149,7 @@ function scopeSvg(){
  var wantStar= (LAYERS==='stars'||LAYERS==='both') ? 'all' : (LAYERS==='off' ? 'none' : 'tracked');
  var sidsUp={}, gatesUp={};
  sim.ac.forEach(function(a){
-  if(a.role==='departure'&&a.sid&&a.route) sidsUp[a.sid+'|'+(a.route.rw17?'17':'')]={key:a.sid, route:a.route};
+  if(a.role==='departure'&&a.sid&&a.route) sidsUp[a.dep+'|'+a.sid+'|'+(a.route.rw17?'17':'')]={key:a.sid, route:a.route};
   /* DRAW THE LADDER THE AIRCRAFT IS ACTUALLY ON, which is not always the
      Table 2 one — a strip can arrive on any published transition for its gate
      (LOA 5.b(b)). ROUTES holds the flow's default and is what "all STARs"
@@ -3089,7 +3158,7 @@ function scopeSvg(){
   if((a.role||'arrival')==='arrival'&&a.gate&&a.route)
    gatesUp[a.gate+(a.rwy?('/'+a.rwy):'')]={route:a.route};
  });
- var sidKeys = wantSid==='all' ? Object.keys(DEPS)
+ var sidKeys = wantSid==='all' ? Object.keys(DEPS).concat(satOnlySidItems())
    : (wantSid==='tracked' ? Object.keys(sidsUp).map(function(k){ return sidsUp[k]; }) : []);
  /* "all STARs" is the flow's Table 2 set; "tracked" is what is being flown. */
  var starDraw = wantStar==='all'
@@ -3307,7 +3376,7 @@ window.ddLoad=function(id){
     why, below. */
  var specs=sc.ac(), dropped=[];
  specs=specs.filter(function(o){
-  if((o.role||'arrival')==='departure' && !DEPS[o.sid]){ dropped.push(o); return false; }
+  if((o.role||'arrival')==='departure' && !depTrackFor(o.sid, o.depRwy, o.dep)){ dropped.push(o); return false; }
   return true;
  });
  sim.ac=specs.map(mkAc); sim.feed=[]; sim.sel=null; sim.losFlag=false; sim.ended=false; sim.scen=sc;
@@ -3495,7 +3564,7 @@ window.DD = {
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
- DEPS:DEPS, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
+ DEPS:DEPS, DEPS_AT:DEPS_AT, sidKeysAt:sidKeysAt, sidsAtMsp:sidsAtMsp, satOnlySidItems:satOnlySidItems, depCall:depCall, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
  SID_CHANGE:SID_CHANGE, sidChangeState:sidChangeState, sidChangeHtml:sidChangeHtml,
  sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
  SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC,
