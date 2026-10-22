@@ -613,8 +613,8 @@ try {
         const scale = Math.hypot(r[1].x - r[0].x, r[1].y - r[0].y) / Math.hypot(r[1].e - r[0].e, r[1].n - r[0].n);
         const sx = seg[0].pts[2][0] - r[1].x, sy = seg[0].pts[2][1] - r[1].y;
         const brg = (Math.atan2(sx, -sy) * 180 / Math.PI + 360) % 360, len = Math.hypot(sx, sy) / scale;
-        assert('the stub leaves RUBRB on 215.0 — the course on the coded vector leg — for five miles, and is not a leg to the join fix',
-          D.RW17_HDG.course === 215 && Math.abs(brg - 215) < 0.5 && Math.abs(len - 5) < 0.1 && !near(seg[0].pts[2], r[2]), brg.toFixed(1) + '/' + len.toFixed(2));
+        assert('the stub leaves RUBRB on 215.0 — the course on the coded vector leg — for two miles, and is not a leg to the join fix',
+          D.RW17_HDG.course === 215 && Math.abs(brg - 215) < 0.5 && Math.abs(len - 2) < 0.1 && !near(seg[0].pts[2], r[2]), brg.toFixed(1) + '/' + len.toFixed(2));
         const all = polys(D.sidRw17Svg(1)).filter(p => p.dash === '1 3');
         assert('"all SIDs" draws the same segment and stub, once for each of the two SIDs, never to the join fix',
           all.length === 2 && all.every(p => p.pts.length === 3 && near(p.pts[0], r[0]) && near(p.pts[1], r[1]) && Math.abs(p.pts[2][0] - seg[0].pts[2][0]) < 0.06));

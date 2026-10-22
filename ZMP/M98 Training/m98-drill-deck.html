@@ -3216,7 +3216,7 @@ function sidLegendSvg(groups, x, y){
    where the line to the join fix used to be, and it is a stub, not a track —
    the join is a vector, so there is no line to draw. MSP's magnetic variation
    is carried as zero throughout this deck, so the course plots as written. */
-var RW17_HDG = {course:215.0, nm:5};
+var RW17_HDG = {course:215.0, nm:2};
 function rw17Stub(r){
  var f=r[1], a=RW17_HDG.course*Math.PI/180;
  return px(f.lat+Math.cos(a)*RW17_HDG.nm/60, f.lon+Math.sin(a)*RW17_HDG.nm/(60*COSL));
