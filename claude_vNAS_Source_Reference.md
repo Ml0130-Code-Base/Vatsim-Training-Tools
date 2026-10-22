@@ -77,8 +77,8 @@ Method: take the SimAware ring we already carry, sample it every nautical mile, 
 
 **Two outlines are older in vNAS than in SimAware, and the disagreement is named, not resolved.**
 
-- **SDF.** The vNAS map (2024-08-05) runs its south-east edge through 38.182 N 85.112 W, 37.870 N 85.122 W, 37.705 N 85.168 W and 37.516 N 85.982 W. The SimAware ring (files last changed 2025-03-27, carried in the SDF deck) runs through 38.211 N 85.153 W, 37.840 N 85.069 W, 37.582 N 85.004 W and 37.517 N 85.983 W. The two part by as much as about nine nautical miles.
-- **IND.** The vNAS map draws the IND/SDF shared border at 39.0 N to 39.083 N; the SimAware ring has it at 38.95 N to 38.90 N, three to five miles south.
+- **SDF.** The vNAS map (2024-08-05) runs its south-east edge through 38.182 N 85.112 W, 37.870 N 85.122 W, 37.705 N 85.168 W and 37.516 N 85.982 W. The SimAware ring (files last changed 2025-03-27, carried in the SDF deck) runs through 38.211 N 85.153 W, 37.840 N 85.069 W, 37.582 N 85.004 W and 37.517 N 85.983 W. The two part by as much as about eleven nautical miles (worst sample 10.8 NM, mean 2.8 NM over the ring).
+- **IND.** The vNAS map draws the IND/SDF shared border at 39.0 N to 39.083 N; the SimAware ring has it at 38.95 N to 38.90 N, six to eight miles south; the worst sample along the IND ring is 7.6 NM from any vNAS line (mean 1.0 NM).
 - **Why it is probably a stale map and not a bad ring.** Each ZID SOP's changelog records a combined-airspace and ATCT boundary update on **2025-02-03** (`ZID/CLAUDE.md`), which falls between the two. CVG's boundary did not move, and CVG's 2024 map matches SimAware exactly. **That is an inference.** The facility has not said which is current, and the SOP diagrams (SVG) are the arbiter nobody has measured.
 
 **vNAS carries no altitude.** For ZLC and ZAU the altitude strata and ownership chains stay where they were, in the VATGlasses datasets (`claude_Community_Geometry_Sources.md` sections 2 and 3). Precedence is therefore per slot: lateral outline from vNAS first; strata from VATGlasses only.

@@ -12,7 +12,7 @@ Assembled 2026-10-19 from a full read of the saved Louisville (SDF) ATCT SOP pag
 
 ### 1. The sector boundaries, as GeoJSON or the .sct2
 
-Every sector and flow diagram in the SOP is a picture (Part 3). **The smallest useful ask:** the STARS video-map GeoJSON or the `.sct2` the SDF maps were built from, or the Departure, Arrival and Final boundaries for the north, south and west flows as radial/DME points. The saved SOP pages already hold the diagrams as SVG.
+Every sector and flow diagram in the SOP is a picture (Part 3). **The STARS video maps are already public** (vNAS serves the 122 listed maps, checked 2026-10-22; `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7), so the file is no longer the ask. **The smallest useful ask:** which SDF map, if any, is the Departure, Arrival or Final boundary for each flow, and whether the 2024 `SDF TRACON Boundary` map or the 2025 outline is current on the south-east edge; or failing that the Departure, Arrival and Final boundaries for the north, south and west flows as radial/DME points. The saved SOP pages already hold the diagrams as SVG.
 
 ### 2. Is the Bowman Local STARS ID U or Z?
 

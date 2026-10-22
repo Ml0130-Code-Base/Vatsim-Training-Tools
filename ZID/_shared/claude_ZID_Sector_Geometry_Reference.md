@@ -10,7 +10,8 @@ Checked **2026-10-18**; the SimAware outline was put into the three decks on the
 | --- | --- | --- | --- | --- |
 | **VATGlasses** (`lennycolton/vatglasses-data`, `data/`) | no dataset | no dataset | no dataset | nothing to use. The listing carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob, zse and others; **there is no `zid`** |
 | **SimAware TRACON Project** (`VATSIM-Radar/simaware-tracon-project`, `Boundaries/<ID>/<ID>.json`) | yes | yes | yes | **lateral outline only**, carried in each deck as `FOOTPRINT` |
-| The facility's own export (CRC video-map GeoJSON, or the `.sct2`) | not held | not held | not held | the ask in each gap analysis, Part 1 |
+| **vNAS video maps** (`/Files/VideoMaps/ZID/{id}.geojson`, the facility's own, **primary since 2026-10-22**) | map 2024-09-30 | map 2024-08-05 | map 2024-09-30 | **CVG: the same polygon as SimAware. IND and SDF: older than SimAware and they disagree.** Section 7. Not carried yet |
+| The facility's own export (the `.sct2`) | not held | not held | not held | only for what the public maps do not answer, Part 1 of each gap analysis |
 | The SOP diagrams | pictures (SVG) | pictures (SVG) | pictures (SVG) | unmeasured; a lead, not a result |
 
 **Nothing in hand gives a sector split, a flow boundary or an altitude.** The outline answers *is this point inside the facility*, and that is all.
@@ -193,3 +194,41 @@ Decoded from the three files, `[lat, lon]`, rounded to five decimals (about a me
 | 24 | 39.45556 | -85.50028 |
 | 25 | 39.57806 | -85.31750 |
 
+
+## 7. The vNAS video maps, 2026-10-22
+
+Added when the owner made vNAS the primary geometry source. The decks are unchanged: they still carry the SimAware ring, for the reason in this section. Method, endpoint and the other facilities' results in root `claude_vNAS_Source_Reference.md`; the map ids below are the citation.
+
+### The three outline maps against the SimAware rings
+
+Each SimAware ring was sampled every nautical mile (331, 320 and 269 samples) and each sample measured to the nearest line in the facility's vNAS map. Maps pulled 2026-10-22.
+
+| Facility | vNAS map (id, `lastUpdatedAt`) | Samples within 0.15 NM | Worst | Mean |
+| --- | --- | --- | --- | --- |
+| CVG | `CVG TRACON Boundary` (`01H1AR93YBYE4T1QH55QKQBSBY`, 2024-09-30) | **100%** (269 of 269) | 0.07 NM | 0.02 NM |
+| IND | `IND TRACON Boundary` (`01H1ANPCMZ93CWNMTBPSP38P85`, 2024-09-30) | 70% (232 of 331) | 7.6 NM | 1.0 NM |
+| SDF | `SDF TRACON Boundary` (`01GZRPETBPZ0B20JM5K9T6Z1F8`, 2024-08-05) | 35% (111 of 320) | 10.8 NM | 2.8 NM |
+
+**CVG is the same polygon.** The vNAS map reproduces the SimAware ring along its whole length, so for CVG the two are one source seen twice, as `claude_ZID_ControllerTools_Reference.md` found for the Indy Center tools site. Adding the other ZID TRACON boundary maps (HUF, LEX, CRW, HTS, CMH) moves IND to 73% and SDF to 38%; adding the February 2025 maps (`Filter 2 - ATCT Bound Lines`, `CVG OUTER BOUNDARIES`, `Adjacent Airspace`, `Filter 1 - Low Boundary`) instead moves them to 77% and 36%. Neither closes the gap.
+
+### Where IND and SDF disagree
+
+- **SDF south-east edge.** vNAS: 38.474 N 84.972 W, 38.182 N 85.112 W, 37.870 N 85.122 W, 37.705 N 85.168 W, 37.648 N 85.363 W, 37.594 N 85.543 W, 37.516 N 85.982 W. SimAware (vertices 2 to 9 above): 38.473 N 84.967 W, 38.211 N 85.153 W, 37.840 N 85.069 W, 37.726 N 85.044 W, 37.582 N 85.004 W, 37.553 N 85.440 W, 37.517 N 85.983 W. Only the two ends meet; the middle sits up to about eleven miles apart.
+- **IND/SDF shared border.** vNAS draws it along 39.0 N to 39.083 N, from 86.5 W to 85.5 W; the SimAware ring has IND vertices 7 to 9 (38.956 N 85.499 W, 38.952 N 85.727 W, 38.897 N 86.372 W), six to eight miles south of it.
+- **Why the vNAS maps are probably the stale ones.** Both are dated 2024. Each ZID SOP's changelog records a combined-airspace and ATCT boundary update on **2025-02-03**, and the SimAware files were last changed **2025-03-27**. CVG's boundary did not move, and CVG's 2024 map matches. **This is an inference from dates.** Nobody has said which ring is current, and the SOP diagrams (SVG) are the arbiter.
+- **Not resolved, and the decks stay on SimAware** for that reason. If the owner or the facility says the vNAS maps are current, the `FOOTPRINT` rings change and the containment table in section 3 is recomputed.
+
+### What else the ZID record lists, pulled 2026-10-22
+
+| Map | Id | Content read |
+| --- | --- | --- |
+| `ZID ARTCC Sectors` | `01JK5ZAQRXB0V6RPFM066S7084` | 45 lines, 38.02 to 40.01 N, 86.24 to 82.92 W. Sector lines; not matched to sector numbers. |
+| `Filter 1 - Low Sectors` | `01JK67Q3G3FBYD47HD0R6B24VM` | 132 lines and a label point, 36.79 to 40.67 N. |
+| `Filter 1 - Low Boundary`, `Filter 2 - ATCT Bound Lines` | `01JK6ZE5WFAGD2W7HSBACSP5MT`, `01JK67Q3G4G8STXK2ND2K967FB` | One line each over the whole ARTCC. |
+| `ZID Approach Boundaries w HO IDs` | `01HCDKNWJG03R9QSR0D7PTXWKD` | 31 points labelled `<facility>: <digit>` (for example `IND: 5` at 38.91 N 86.30 W and 39.89 N 85.08 W). Not interpreted; a second source for the handoff-ID reference to be compared against, not a replacement for it. |
+
+**Named, not pulled:** `Filter 11 - High Sectors`, the MVA maps (`IND MVA 3NM` and `5NM` dated 2025-10-24, `SDF SDF 3NM MVA`, `SDF FUSION 5NM MVA`, the shared `3NM MVA`, `5NM MVA`, `MVA`), `CVG Class B`, `IND CLASS C-D`, the event splits (`IND Fright Night Event Split`, `Filter 12 - IND_HUF 3-way Event Split`, `Filter 12 - SDF 2-way 1 (E_W) Event Split`, `Filter 12 - CVG-MEM FNO 4-way Event Split`). **No map has been identified as a TRACON sector, flow or runway-configuration boundary for IND, SDF or CVG**, so the slots `boundaries` and `flowairspace` stay `empty`.
+
+### The record
+
+`ZID_vnas.json` was re-pulled the same day (`lastUpdatedAt` 2026-10-22T02:21:21.771Z). No position, frequency, TCP, handoff ID, scratchpad rule or restriction changed against the 2026-10-17 copy the decks were built from.

@@ -1,9 +1,9 @@
 # ZID vNAS Reference - what the record carries for IND, SDF and CVG
 
-Source: `https://data-api.vnas.vatsim.net/api/artccs/ZID`, pulled **2026-10-18**, `lastUpdatedAt` **2026-10-17T02:35:43.475Z**, committed as `ZID_vnas.json` (about 1 MB). This is source 3 of the four (root `CLAUDE.md` section 10). It is **the only source for handoff identifiers**, and a second independent source for positions, scratchpad rules, TDLS defaults and coordination restrictions.
+Source: `https://data-api.vnas.vatsim.net/api/artccs/ZID`, pulled **2026-10-18** and **re-pulled 2026-10-22**, `lastUpdatedAt` **2026-10-22T02:21:21.771Z**, committed as `ZID_vnas.json` (about 1 MB). The decks were built from the 2026-10-17 record and still say so; `tools/vnas/vnas.pl diff` between the two found **no change to a position, frequency, TCP, handoff ID, scratchpad rule or restriction** — the only changes are a third Center airspace configuration, `Consolidated` (owning sector 83, 58 assigned IDs), ID 76 moving between two assignments of the existing configuration, and a new `isExcluded: 0` on every ERAM sector. This is source 3 of the four (root `CLAUDE.md` section 10). It is **the only source for handoff identifiers**, and a second independent source for positions, scratchpad rules, TDLS defaults and coordination restrictions.
 
 ```bash
-curl -sS -A "Mozilla/5.0" -o ZID_vnas.json https://data-api.vnas.vatsim.net/api/artccs/ZID
+perl tools/vnas/vnas.pl artcc ZID ZID/_vnas/ZID_vnas.json   # or: curl -sS -A "Mozilla/5.0" -o ZID_vnas.json https://data-api.vnas.vatsim.net/api/artccs/ZID
 ```
 
 ## The facility tree
@@ -36,7 +36,7 @@ The user's saved SOPs cover IND, SDF and CVG only. The other seven TRACONs are i
 - **RNAV patterns:** GIIBS# JAKKS# KOLTS# MAREO# SMUKE# SNKPT#
 - **ATPA volumes:** IND RWY 05L (ceiling 13000); IND RWY 05R (ceiling 13000); IND RWY 23L (ceiling 13000); IND RWY 23R (ceiling 13000); IND RWY 14 (ceiling 13000); IND RWY 32 (ceiling 13000)
 - **Runway-pair configurations (RPCs):** #1 IND: 05L+14; #2 IND: 05L+32; #3 IND: 05R+14; #4 IND: 05R+32; #5 IND: 23L+14; #6 IND: 23L+32; #7 IND: 23R+14; #8 IND: 23R+32
-- **Video maps listed for this STARS facility:** 158 ids. **vNAS does not expose video-map geometry** (probed 2026-09-01; the ZID record carries names, brightness and source filenames only).
+- **Video maps listed for this STARS facility:** 158 ids. **The record lists names, brightness and source filenames only; the geometry is served separately** at `/Files/VideoMaps/ZID/{id}.geojson` (corrected 2026-10-22, `claude_vNAS_Source_Reference.md`; outcome for the outlines in `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7).
 - **Scratchpad rules (20), route-based coordinations (12), restrictions involving IND (26):** in the facility LOA reference.
 - **TDLS:** departure frequencies 124.950, 119.050; initial altitudes 5000, 3000; expect 10 MIN AFT DP; 2 operation configurations (Master, FedEx Ramp).
 
@@ -49,7 +49,7 @@ The user's saved SOPs cover IND, SDF and CVG only. The other seven TRACONs are i
 - **RNAV patterns:** DLAMP# EEVAA# GTGON# HIDEY# JMONY# LEDDL# LLIZY# LOKRD# MBELL# RDHSE# SPILR#
 - **ATPA volumes:** SDF17L (ceiling 8000); SDF17R (ceiling 8000); SDF35L (ceiling 8000); SDF35R (ceiling 8000); SDF29 (ceiling 8000)
 - **Runway-pair configurations (RPCs):** #1 SDF: 17R+27R; #2 SDF: 17L+27L; #3 SDF: 35R+25R; #4 SDF: 35L+25L
-- **Video maps listed for this STARS facility:** 122 ids. **vNAS does not expose video-map geometry** (probed 2026-09-01; the ZID record carries names, brightness and source filenames only).
+- **Video maps listed for this STARS facility:** 122 ids. **The record lists names, brightness and source filenames only; the geometry is served separately** at `/Files/VideoMaps/ZID/{id}.geojson` (corrected 2026-10-22, `claude_vNAS_Source_Reference.md`; outcome for the outlines in `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7).
 - **Scratchpad rules (14), route-based coordinations (20), restrictions involving SDF (36):** in the facility LOA reference.
 - **TDLS:** departure frequencies 132.075, 123.675; initial altitudes 5000FT, 3000FT; expect 10 MIN AFT DP; 2 operation configurations (Master, UPS Ramp).
 
@@ -62,7 +62,7 @@ The user's saved SOPs cover IND, SDF and CVG only. The other seven TRACONs are i
 - **RNAV patterns:** BNGLE# CEGRM# CHCLL# GAVNN# GIPLE# HAGOL# HEDEE# JAKIE# JBNCH# KENLN# LOVEY# ROCKT# SARGO# SILKS# TIGGR#
 - **ATPA volumes:** APPROACH 18C (ceiling 8000); APPROACH 18L (ceiling 8000); APPROACH 18R (ceiling 8000); APPROACH 36C (ceiling 8000); APPROACH 36L (ceiling 8000); APPROACH 36R (ceiling 8000); APPROACH R09 (ceiling 8000); APPROACH 27 (ceiling 8000)
 - **Runway-pair configurations (RPCs):** #1 CVG: 01+02
-- **Video maps listed for this STARS facility:** 97 ids. **vNAS does not expose video-map geometry** (probed 2026-09-01; the ZID record carries names, brightness and source filenames only).
+- **Video maps listed for this STARS facility:** 97 ids. **The record lists names, brightness and source filenames only; the geometry is served separately** at `/Files/VideoMaps/ZID/{id}.geojson` (corrected 2026-10-22, `claude_vNAS_Source_Reference.md`; outcome for the outlines in `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7).
 - **Scratchpad rules (17), route-based coordinations (14), restrictions involving CVG (47):** in the facility LOA reference.
 - **TDLS:** departure frequencies 126.650, 128.700; initial altitudes 5000, 4000; expect 10 MIN AFT DP; 17 operation configurations (Master, Northwest, Southwest, North, South, East, West, 36R Only, 18L Only, NW RC, SW RC, North RC, South RC, East RC, West RC, 36R O RC, 18L O RC).
 
@@ -76,4 +76,4 @@ The user's saved SOPs cover IND, SDF and CVG only. The other seven TRACONs are i
 
 ## What the record does not carry
 
-Sector polygons, altitude strata, video-map geometry, MVA, delegation text. `eramConfiguration.sectors` is `{id, sectorId, name}` only. Nothing here closes the geometry gap (root `CLAUDE.md` section 7).
+Sector polygons, altitude strata, MVA values and delegation text. `eramConfiguration.sectors` is `{id, sectorId, name}` (and, since 2026-10, `isExcluded`) only. The video-map geometry the record lists by id is served separately and was measured 2026-10-22: see `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7.

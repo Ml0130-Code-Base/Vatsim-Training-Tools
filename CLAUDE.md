@@ -325,7 +325,7 @@ changes. Read `claude_vNAS_Source_Reference.md` before using it; four things in 
 - **Where an outline was found it is the same polygon SimAware carries** (M98, R90 Omaha, AZO, CVG,
   to a tenth of a mile). That is one source seen twice, not two confirmations.
 - **A map is dated and can be older than the facility's last change.** The IND and SDF outline maps
-  (2024) disagree with the SimAware rings (2025-03) by up to nine miles, and the SOPs record a
+  (2024) disagree with the SimAware rings (2025-03) by up to about eleven miles (SDF) and eight (IND), and the SOPs record a
   boundary update on 2025-02-03 between them. Named, not resolved.
 - **An owner-supplied boundary is not outranked by the change on its own.** The M98 ring stays the
   owner's until the owner moves it, as the Rochester segment was moved in #59.

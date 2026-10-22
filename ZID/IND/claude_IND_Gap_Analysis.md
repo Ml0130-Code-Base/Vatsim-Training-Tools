@@ -12,7 +12,7 @@ Assembled 2026-10-19 from a full read of the saved Indianapolis (IND) ATCT SOP p
 
 ### 1. The sector boundaries, as GeoJSON or the .sct2
 
-Every sector and flow diagram in the SOP is a picture (Part 3). **The smallest useful ask:** the STARS video-map GeoJSON or the `.sct2` that the IND maps were built from (root `CLAUDE.md` section 7, the third path), or failing that the Departure, Feeder, Final and Satellite boundaries for runway flows 5 and 23 as radial/DME points. The saved SOP pages already hold the diagrams as SVG - a second route that needs no one's permission but a georeference.
+Every sector and flow diagram in the SOP is a picture (Part 3). **The STARS video maps are already public** (vNAS serves the 158 listed maps, checked 2026-10-22; `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7), so the file is no longer the ask. **The smallest useful ask:** which IND map, if any, is the Departure, Feeder, Final or Satellite boundary for each flow, and whether the 2024 `IND TRACON Boundary` map or the 2025 outline is current at the IND/SDF border; or failing that the Departure, Feeder, Final and Satellite boundaries for runway flows 5 and 23 as radial/DME points. The saved SOP pages already hold the diagrams as SVG - a second route that needs no one's permission but a georeference.
 
 ### 2. What is INDY#, and why are OOM5 and ROCKY1 not coded at KIND?
 

@@ -611,7 +611,7 @@ SDF SOP 10.
 
 *Source: SDF SOP 10 STARS Maps*
 
-Map names only. The vNAS record lists 122 map ids for this STARS facility; vNAS does not expose video-map geometry (probed 2026-09-01).
+Map names only. The vNAS record lists 122 map ids for this STARS facility; the video-map geometry is served separately by vNAS (checked 2026-10-22; see `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7).
 
 124 maps; the list is in the SOP chapter 10 and in the deck's STARS maps table.
 

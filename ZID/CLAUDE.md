@@ -49,7 +49,7 @@ Root `CLAUDE.md` section 10. Every one was checked; the empty ones are recorded.
 2. **CIFP 261001** (and 261029, identical at every field worked) - runways, localizers, SIDs and STARs. Decoded with the
    fixed-column offsets in `../claude_CIFP_Source_Reference.md`; the Indiana records use region `K5`, not the `K3` the
    Minnesota records use.
-3. **vNAS** - `_vnas/ZID_vnas.json`, `lastUpdatedAt 2026-10-17T02:35:43Z`. The only source for handoff identifiers, and a
+3. **vNAS** - `_vnas/ZID_vnas.json`, `lastUpdatedAt 2026-10-22T02:21:21Z` (re-pulled 2026-10-22; the decks were built from the 2026-10-17 record and nothing operational differs between them). The only source for handoff identifiers, and a
    second source for positions, consolidation hierarchy, scratchpad rules, TDLS defaults and the coordination restrictions (26 involve IND, 36 SDF, 47 CVG, as owner or requester; a restriction between two of them counts on both sides).
 4. **Community geometry - a lateral outline and nothing else.** **VATGlasses has no ZID dataset** (the upstream listing
    carries zab, zak, zau, zeg, zhn, zhu, zjx, zlc, zma, zny, zoa, zob and others, not zid). **SimAware publishes a
@@ -61,6 +61,11 @@ Root `CLAUDE.md` section 10. Every one was checked; the empty ones are recorded.
    below anything the owner supplies, and must never overwrite either. Every field with a CIFP coordinate falls inside;
    KCFJ and I34 (IND) and KBFR, KSER and KIMS (SDF, KIMS 0.1 NM from the edge) are inside the outline's own error. Pinned
    commits, per-field distances and the vertices are in `_shared/claude_ZID_Sector_Geometry_Reference.md`.
+   **vNAS serves the facility's own video maps, and is now the primary geometry source (2026-10-22, root
+   `claude_vNAS_Source_Reference.md`).** CVG's `TRACON Boundary` map is the same polygon as the SimAware ring (worst
+   0.07 NM). **IND's and SDF's 2024 maps are not**: they differ by up to about eleven miles (SDF) and eight (IND) on the IND/SDF border and SDF's
+   south-east edge, and the SimAware rings are the newer of the two. Named, not resolved; the decks keep the SimAware
+   ring. Section 7 of the geometry reference has the measurements.
 5. **The vATIS profile** (`_vatis/`) - serial 2026081300, from `github.com/Indy-Center/vatisfiles`. **The owner's
    downloaded copy was a 257-byte stub with `stations: []`;** the real profile is fetched from its own `updateUrl`.
 6. **The Indy Center tools site** (`tools.flyindycenter.com`, source `Indy-Center/controller-tools`, no licence) - checked

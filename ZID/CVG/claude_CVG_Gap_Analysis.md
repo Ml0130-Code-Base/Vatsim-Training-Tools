@@ -16,7 +16,7 @@ SOP 2 gives CD 127.17 and DHL Ramp 120.40; vNAS gives CD 120.400 and DHL Ramp 12
 
 ### 2. The sector boundaries, as GeoJSON or the .sct2
 
-Every sector and flow diagram in the SOP is a picture (Part 3), twelve groups of them. **The smallest useful ask:** the STARS video-map GeoJSON or the `.sct2` the CVG maps were built from, or the Departure, Arrival, Final and Satellite boundaries for the north and south flows as radial/DME points. The saved SOP pages already hold the diagrams as SVG.
+Every sector and flow diagram in the SOP is a picture (Part 3), twelve groups of them. **The STARS video maps are already public** (vNAS serves the 97 listed maps, checked 2026-10-22; `../_shared/claude_ZID_Sector_Geometry_Reference.md` section 7), so the file is no longer the ask. **The smallest useful ask:** which CVG map, if any, is the Departure, Arrival, Final or Satellite boundary for each flow; or failing that the Departure, Arrival, Final and Satellite boundaries for the north and south flows as radial/DME points. The saved SOP pages already hold the diagrams as SVG.
 
 ### 3. Is Ground Control East STARS ID T or X?
 
