@@ -438,21 +438,24 @@ Buddy. Features carry `color`, `bcg` (brightness control group 1–40), `filters
 with an optional `asdex` role; symbols and text are Points. STARS maps additionally carry a
 map ID, a short name, a brightness category A or B and an always-visible flag.
 
-**The docs describe no download endpoint or API** — consistent with our 2026-09-01 probe, where
-every candidate vNAS video-map endpoint 404'd.
+**The docs describe no download endpoint or API, and there is one.** *Corrected 2026-10-22.* This
+paragraph used to add *"consistent with our 2026-09-01 probe, where every candidate vNAS video-map
+endpoint 404'd"*. That probe tried guessed paths. The stored maps are served, unauthenticated, at
+`https://data-api.vnas.vatsim.net/Files/VideoMaps/{ARTCC}/{ulid}.geojson` with the ULID taken from
+`videoMaps[].id` in the ARTCC record. What was measured there, and the puller, are in
+`claude_vNAS_Source_Reference.md`.
 
-> **This reframes the standing blocker.** Our gap analyses currently ask the owner for
-> boundary *points*, which is a slow and error-prone ask. But the boundaries already exist, at
-> every one of our facilities, as GeoJSON features in that ARTCC's video map library — and
-> before that, as the `.sct2` sector file the maps were converted from. **The better ask is
-> for the file, not the points:** *"can you export the sector-boundary GeoJSON from vNAS Data
-> Admin, or send the `.sct2` the maps were built from?"* Anyone with facility data-admin access
-> can do it in one action, the format is standard, and it arrives surveyed rather than traced.
+> **This reframes the standing blocker, and then reframes it again.** The 2026-09-01 reading was
+> that the boundaries exist at every one of our facilities as GeoJSON features in that ARTCC's video
+> map library, so the ask should be for the file rather than for boundary *points*. **The file is
+> downloadable by anyone**, so that ask is mostly answered. What it does not supply is a map that is
+> labelled as a sector boundary: the maps are drawings with the facility's own titles, no altitude in
+> the geometry, and the outline has to be found among them. The surviving ask to a facility data admin
+> is narrower and cheaper to answer: *"which map is the sector boundary for X, and at what altitudes?"*
 >
-> This is the same ask at ZMP, R90, C90, AZO, S56 and Big Sky, and making it Part 1 item 1 of
-> every gap analysis is **issue #52**. Nothing about invariant 1 changes — a GeoJSON export is
-> a citable source with a name and a date, and it would be recorded in the source-documents
-> index like any other pull.
+> Issue #52 (the gap-analysis ask) should be read that way. Nothing about invariant 1 changes — a map
+> is a citable source with an id and a `lastUpdatedAt`, and a pull is recorded in the
+> source-documents index like any other.
 
 ### 5.2 vNAS already has a training scenario format
 
@@ -527,8 +530,9 @@ sweatbox servers.**
 - **Which facilities are adapted for CWT** versus the legacy wake scheme — that is per-facility
   adaptation and the docs do not enumerate it.
 - **Whether video maps can be exported** by a facility data admin, as opposed to uploaded. The
-  page documents upload and batch upload; it does not mention a download. The ask in §5.1
-  should be phrased so a "no" is cheap.
+  page documents upload and batch upload; it does not mention a download. *Answered 2026-10-22
+  for our purposes:* the stored maps are served publicly (§5.1), so an export is not needed to
+  read them.
 - **How restrictions surface to the controller in CRC** — the page defines the data model and
   says nothing about the display.
 - The **Tower Cab, ASDE-X and SAID** pages were not read; they matter for tower positions,

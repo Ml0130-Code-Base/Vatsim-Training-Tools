@@ -9,6 +9,16 @@ trusted.
 every facility is blocked on geometry because the boundaries are pictures. That is still true
 of the *facility documents*. It is no longer true of ZLC and ZAU, and this file is why.
 
+> **Precedence changed 2026-10-22.** The owner has made **vNAS the primary geometry source, then
+> VATGlasses, then SimAware** — vNAS being what the facilities edit when something changes. This
+> file describes VATGlasses and SimAware and is otherwise unchanged; **everything in it that says
+> geometry is blocked at ZMP is out of date**, because vNAS serves the facility video maps
+> (`claude_vNAS_Source_Reference.md`). Two things from that measurement bear on this file: where a
+> vNAS outline was found it is the **same polygon** SimAware carries (M98, R90 Omaha, AZO, CVG, to a
+> tenth of a mile), so SimAware is one rendering of the facility's own data and not an independent
+> check on it; and vNAS carries no altitude, so **strata still come from VATGlasses** (ZLC and ZAU).
+> Where SimAware and a vNAS map disagree (IND and SDF) the vNAS map is the older of the two.
+
 ---
 
 ## 1. The one-paragraph answer

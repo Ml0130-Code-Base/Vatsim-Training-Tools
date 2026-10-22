@@ -35,6 +35,11 @@ from **outside** the facility document sets — VATGlasses, SimAware TRACON and 
 each actually contains, how far each may be trusted, and under what licence. Pulled and
 verified 2026-09-02. **Read it before writing anything spatial into a tool**, and see §7.
 
+`claude_vNAS_Source_Reference.md` sits alongside both: the vNAS public data, including the **video-map
+GeoJSON that §7 said did not exist** (2026-10-22), how `tools/vnas/vnas.pl` pulls it, what it was
+measured to hold and where it is older than the community sources. **vNAS is the primary geometry
+source** (owner, 2026-10-22); read that file before saying vNAS lacks anything.
+
 ---
 
 ## 1. The invariants
@@ -303,9 +308,27 @@ corrected.
 boundary is described in words anywhere in its document set. Every ZMP sector map, the
 high-sector chart and the approach-sector chart are images. Every ZLC airspace appendix is a
 chart image. C90's Appendices B through G are chart images, and so are the AZO SOP's two West
-Wall appendices and the airspace attachments to both AZO LOAs. vNAS does not expose video-map
-GeoJSON (probed 2026-09-01; every candidate endpoint 404s), and its `eramConfiguration.sectors`
-carries only `{id, sectorId, name}` — no polygon, no stratum (re-probed 2026-09-02).
+Wall appendices and the airspace attachments to both AZO LOAs. The vNAS ARTCC record's
+`eramConfiguration.sectors` carries only `{id, sectorId, name}` — no polygon, no stratum
+(re-probed 2026-09-02).
+
+**vNAS publishes the facilities' own video-map GeoJSON, and this file said it did not until
+2026-10-22.** The 2026-09-01 probe tried guessed paths and every one 404'd; the real one is
+`https://data-api.vnas.vatsim.net/Files/VideoMaps/{ARTCC}/{ulid}.geojson`, unauthenticated, with the
+ULID in `videoMaps[]` of the record we already hold. **Owner decision, 2026-10-22: vNAS is the primary
+geometry source, then VATGlasses, then SimAware** — it is what the facilities edit when something
+changes. Read `claude_vNAS_Source_Reference.md` before using it; four things in it are load-bearing:
+
+- **The maps are lines with no altitude**, full of sentinel points, and a facility outline is found
+  among them, not handed over. Altitude strata stay with VATGlasses (ZLC and ZAU); the precedence
+  is per slot.
+- **Where an outline was found it is the same polygon SimAware carries** (M98, R90 Omaha, AZO, CVG,
+  to a tenth of a mile). That is one source seen twice, not two confirmations.
+- **A map is dated and can be older than the facility's last change.** The IND and SDF outline maps
+  (2024) disagree with the SimAware rings (2025-03) by up to nine miles, and the SOPs record a
+  boundary update on 2025-02-03 between them. Named, not resolved.
+- **An owner-supplied boundary is not outranked by the change on its own.** The M98 ring stays the
+  owner's until the owner moves it, as the Rochester segment was moved in #59.
 
 **A community source closes the gap for ZLC and ZAU, and not for ZMP.** VATGlasses publishes
 sector polygons **with altitude stratums and ownership chains** for both, and nothing at all
@@ -342,7 +365,8 @@ it are load-bearing:
 - **ZAU's terminal facilities are a footprint and a ceiling, not a sectorisation.** C90 is one
   polygon surface–FL150 shared by four positions; AZO is one polygon surface–FL100 shared by
   three. Enough for *inside, and under the lid*; **not** enough for *which sector owns this*.
-  AZO's six West Wall sector boundaries stay empty.
+  AZO's six West Wall sector boundaries stay empty — **but vNAS lists an `AZO SECTORS` map (56 lines,
+  pulled and not yet read as sectors)**, and its record names six AZO sectors where VATGlasses has three.
 - **ZLC's geometry carries the flow branch.** The runway gate on each block is the
   configuration selector: `KSLC 34L/R,35` is North Flow and `16L/R,17` is South, `KBOI 10L/R`
   is East and `28L/R` is West. Decoded per sector in
@@ -358,8 +382,11 @@ sector-boundary slots stay empty.** **The Indy Center SOP diagrams are SVG, not 
 pages — a measurable source that has not been measured, so a lead and not a path. Details in
 `ZID/CLAUDE.md` and `ZID/_shared/claude_ZID_Sector_Geometry_Reference.md`.
 
-**M98 and R90 are unchanged and remain blocked.** For them, two paths have actually worked, and
-no further one should be invented:
+**M98 and R90 now have a lateral outline from vNAS and nothing else (2026-10-22).** M98's is the
+nine-vertex closed line `M98 106 AIRSPAC`; R90's Omaha ring sits inside `R90 001 MAIN`. Neither gives
+a sector split, and no map has been identified as one. Detail in
+`ZMP/_vnas/claude_ZMP_vNAS_Geometry_Reference.md`. Before 2026-10-22, two paths had actually worked
+for them, and both remain valid:
 
 1. **Carve the images out of the PDF and measure them.** This is how the M98 DDA polygon was
    recovered — the chart pages were extracted as embedded JPEGs and measured, good to about
@@ -369,15 +396,14 @@ no further one should be invented:
 2. **Owner-supplied points.** The M98 lateral boundary came in as nine MSP radial/DME pairs.
    This is what Part 1 of every gap analysis is for.
 
-**A third path exists on paper and has not been tried.** CRC video maps are authored in
-**GeoJSON**, stored centrally per ARTCC, and converted from the facility's legacy `.sct2` with
-FE Buddy — so every boundary we are missing already exists as a geometry file that someone with
-facility data-admin access holds. No public download endpoint is documented and our 2026-09-01
-API probe found none, so this is **an ask, not a capability**: *"can you export the
-sector-boundary GeoJSON, or send the `.sct2` the maps were built from?"* It is the same ask at
-every facility, it arrives surveyed rather than traced, and it is a cheaper "no" than a request
-for hand-measured points. Details in `claude_CRC_Platform_Reference.md` §5.1. **Until an export
-actually lands, treat this as untested** and keep the owner-supplied-points ask in place.
+**The third path was answered by the public endpoint above, not by an export.** CRC video maps are
+authored in **GeoJSON**, stored centrally per ARTCC, and converted from the facility's legacy `.sct2`
+with FE Buddy — and the stored copies turn out to be downloadable by anyone. What that does not
+supply is a **sector split we can identify**: the maps are drawings, titled by the facility, and
+finding the one that is a boundary is the work (`claude_vNAS_Source_Reference.md` section 5). So the
+ask to a facility data admin survives in a narrower form — *"which map is the sector boundary for
+X?"* — and issue #52 should be read that way. Keep the owner-supplied-points ask in place where no
+map has been identified.
 
 Until geometry exists: **nothing spatial gets built, and the engine says so** (invariant 3).
 Pick drill targets that need no geometry — R90's scratchpad encoding and STAR-gap heading
@@ -490,8 +516,8 @@ They are pulled in this order because each one narrows what the next has to answ
 |---|---|---|---|
 | 1 | **The facility orders** — SOP, and one LOA per interface that matters | Positions, frequencies, the combining chain, delegation, local rules, who owns what and when | the vARTCC's document library |
 | 2 | **CIFP** — the FAA's coded procedures | Every published SID, STAR and approach: fixes, crossing restrictions, speed limits, coordinates | `aeronav.faa.gov`, §10.1 below |
-| 3 | **vNAS** — the machine-readable facility record | Airport inventories, sector adjacency, **and every handoff identifier** | `data-api.vnas.vatsim.net/api/artccs/<ID>` |
-| 4 | **Community geometry** — VATGlasses, SimAware | Sector polygons with altitude stratums, where the vARTCC owns the dataset | §7 and `claude_Community_Geometry_Sources.md` |
+| 3 | **vNAS** — the machine-readable facility record, **and the facility's video maps** | Airport inventories, sector adjacency, **every handoff identifier**, and the lateral outlines the facility draws | `data-api.vnas.vatsim.net/api/artccs/<ID>` and `/Files/VideoMaps/` — `tools/vnas/vnas.pl`, `claude_vNAS_Source_Reference.md` |
+| 4 | **Community geometry** — VATGlasses, SimAware | Sector polygons with altitude stratums (VATGlasses, where the vARTCC owns the dataset); a second rendering of the outline | §7 and `claude_Community_Geometry_Sources.md` |
 
 **The order is not arbitrary and skipping ahead wastes work.** The orders name the positions
 that everything else is indexed by. CIFP then closes the procedure half of the reference
@@ -923,8 +949,8 @@ They are the reason for the rule, not a precedent for it: under it, `7b781f4` wo
 three commits — the root reference document, then ZLC, then ZAU.
 
 **Repo-level files are not a facility, and they do not launder a cross-ARTCC commit.** Root
-`CLAUDE.md`, `claude_CRC_Platform_Reference.md`, `claude_Community_Geometry_Sources.md` and the
-site harness (`build-site.sh`, `serve-site.ps1`, `site/index.html`, `.github/workflows/`,
+`CLAUDE.md`, `claude_CRC_Platform_Reference.md`, `claude_Community_Geometry_Sources.md`,
+`claude_vNAS_Source_Reference.md`, `tools/` and the site harness (`build-site.sh`, `serve-site.ps1`, `site/index.html`, `.github/workflows/`,
 `.gitignore`) may ride along with one ARTCC's commit when the change came out of that work — a
 house rule learned at C90 lands with the C90 change that taught it. A root change that stands
 on its own, or that came out of work in two trees, is its own commit and touches no facility
