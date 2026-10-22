@@ -2254,7 +2254,9 @@ function previewSvg(rec){
   else if(role==='arrival'){ if(a.gate) gatesUsed[a.gate]=1; }
  });
  Object.keys(gatesUsed).forEach(function(k){
-  var r=DD.ROUTES[k]; if(!r) return;
+  /* a satellite STAR is drawn too — it used to be skipped here, so a drill
+     built on AGUDE, ENCEE or TWOLF previewed with no ladder at all */
+  var r=DD.ROUTES[k]||DD.SAT_ROUTES[k]; if(!r) return;
   s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.35"/>';
   s+='<text x="'+(r[0].x+8).toFixed(1)+'" y="'+(r[0].y+14).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
  });

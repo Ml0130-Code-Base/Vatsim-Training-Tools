@@ -756,7 +756,7 @@ try {
   globalThis.ddLayers('off');     const lOffL = ladders(), lOffAll = polys();
   assert('tracked draws only the ladders in use, and no SID track', lTracked === 3 && sTracked === 0,
     lTracked + '/' + sTracked);
-  assert('all STARs draws all six ladders', lStars === 6, lStars);
+  assert('all STARs draws the six MSP ladders, the three satellite STARs the engine flies and GOPHER ONE', lStars === 10, lStars);
   /* Fourteen tracks, not twenty-five: transitions that share a mapped track inside
      80 NM are drawn once (sidDrawGroups) — it was nine, one per SID, before the
      2026-10-29 set came in. */
@@ -767,7 +767,7 @@ try {
   assert('all SIDs adds every distinct SID track without hiding the tracked ladders',
     lSidsL === 3 && lSidsS === nSidTrk && nSidTrk === 17
     && globalThis.DD.sidDrawGroups(Object.keys(globalThis.DD.DEPS)).length === 14, lSidsL + '/' + lSidsS);
-  assert('all SIDs and STARs draws everything', lBothL === 6 && lBothS === nSidTrk, lBothL + '/' + lBothS);
+  assert('all SIDs and STARs draws everything', lBothL === 10 && lBothS === nSidTrk, lBothL + '/' + lBothS);
   assert('off draws no route geometry at all', lOffL === 0 && sidTrks() === 0, lOffL);
   /* Under "off" this used to leave exactly one polyline, the RST boundary. Issue
      #60 (5d995f6, owner 2026-09-21) took that line off the scope and kept the
@@ -846,7 +846,8 @@ try {
     globalThis.DD.setFlow('30');
     globalThis.ddLayers('stars');
     const pts30 = ladderPts();
-    assert('both flows draw six ladders', pts12.length === 6 && pts30.length === 6,
+    assert('both flows draw the six MSP ladders plus the four satellite ones, which do not follow the flow',
+      pts12.length === 10 && pts30.length === 10 && pts12.filter(p => pts30.includes(p)).length >= 4,
       pts12.length + '/' + pts30.length);
     assert('and the lines on the scope are different lines',
       pts12.join('|') !== pts30.join('|'));
@@ -858,8 +859,8 @@ try {
        throwing. This is the regression that already happened once. */
     globalThis.DD.setFlow('4');
     globalThis.ddLayers('stars');
-    assert('an uncarried configuration draws no ladder and does not throw',
-      ladderPts().length === 0 && typeof scope() === 'string', ladderPts().length);
+    assert('an uncarried configuration draws no MSP ladder — only the four satellite ones, which do not follow the flow — and does not throw',
+      ladderPts().length === 4 && typeof scope() === 'string', ladderPts().length);
     assert('and the aircraft still on the scope keep their own tracks',
       globalThis.DD.sim.ac.every(a => a.role !== 'arrival' || !!a.route));
     globalThis.DD.setFlow('12');
@@ -1364,6 +1365,51 @@ try {
   assert('the GEP VOR plots where CIFP puts it',
     Math.abs(globalThis.DD.SAT_ROUTES.AGUDE.slice(-1)[0].lat - 45.14569) < 0.001
     && Math.abs(globalThis.DD.SAT_ROUTES.AGUDE.slice(-1)[0].lon - -93.37318) < 0.001);
+
+  /* ---- the satellite STARs against CIFP 261029, 2026-10-22 ----
+     Decoded from the EA waypoint records and the GEP VOR record; the STAR records
+     at KANE, KFCM, KMIC, KSTP and KLVN code AGUDE6, ENCEE3, TWOLF4 and GEP1 with
+     the same legs at all five fields. WOOOD (ENCEE) and LYNKS (TWOLF) were missing
+     from the deck and the reference until this check. */
+  {
+    const CIFP_SAT = {
+      AGUDE: [45.12936, -92.39194], STILS: [45.13439, -92.64478], WHISK: [45.13988, -92.96214], GEP: [45.14569, -93.37318],
+      ENCEE: [44.58672, -95.43330], WOOOD: [44.69134, -94.93819], CASNS: [44.77143, -94.55086], MLHOF: [44.82295, -94.29768],
+      RIXIE: [44.85477, -94.13946], MAYER: [44.91799, -93.97474], FUDGE: [45.06758, -93.58106],
+      TWOLF: [43.31663, -93.54833], KGEEE: [43.74904, -93.50791], LYNKS: [44.11488, -93.47325], TRGET: [44.23127, -93.46213], KEWTY: [44.64694, -93.42204],
+      GOLLF: [45.75364, -93.69950], OLLEE: [45.53552, -93.58152], SAUGR: [45.34846, -93.48117], VYKES: [45.03667, -93.31417] };
+    const SEQ = { AGUDE: 'AGUDE,STILS,WHISK,GEP', ENCEE: 'ENCEE,WOOOD,CASNS,MLHOF,RIXIE,MAYER,FUDGE,GEP',
+      TWOLF: 'TWOLF,KGEEE,LYNKS,TRGET,KEWTY', GEP: 'GOLLF,OLLEE,SAUGR,GEP,VYKES' };
+    const all = Object.assign({}, globalThis.DD.SAT_ROUTES, globalThis.DD.SAT_DRAWN);
+    assert('each satellite STAR carries the fixes CIFP 261029 codes, in order — WOOOD and LYNKS included',
+      Object.keys(SEQ).every(k => all[k].map(p => p.f).join() === SEQ[k]), Object.keys(SEQ).map(k => all[k].map(p => p.f).join()).join(' | '));
+    const kmOff = (p, c) => Math.hypot((p.lat - c[0]) * 60, (p.lon - c[1]) * 60 * Math.cos(p.lat * Math.PI / 180));
+    assert('and every one of them is within a few hundredths of a mile of its CIFP record',
+      Object.keys(all).every(k => all[k].every(p => kmOff(p, CIFP_SAT[p.f]) < 0.03)),
+      Object.keys(all).map(k => all[k].map(p => p.f + ':' + kmOff(p, CIFP_SAT[p.f]).toFixed(3)).join(' ')).join(' | '));
+    /* AGUDE and RIXIE carry no altitude in CIFP, so their 8,000 jet / 6,000 and 7,000
+       turboprop values are LOA Table 4's alone. TRGET is coded "between 8,000 and
+       7,000" and the deck holds the Table 4 7,000 (the reference says the plate shows
+       the window); KEWTY 5,000 is coded and agrees. */
+    assert('the crossings are unchanged — TRGET 7,000 and the rest from LOA Table 4, KEWTY 5,000 agreeing with CIFP',
+      globalThis.DD.SAT_ROUTES.ENCEE.filter(p => p.at !== undefined).map(p => p.f).join() === 'RIXIE'
+      && globalThis.DD.SAT_ROUTES.TWOLF.filter(p => p.at !== undefined).map(p => p.f).join() === 'TRGET,KEWTY'
+      && globalThis.DD.SAT_ROUTES.TWOLF.filter(p => p.f === 'KEWTY')[0].at === 5000
+      && globalThis.DD.SAT_ROUTES.AGUDE.filter(p => p.at !== undefined).map(p => p.f).join() === 'AGUDE');
+    assert('GOPHER ONE is drawn and carries no crossing, and it is not a flown procedure',
+      globalThis.DD.SAT_DRAWN.GEP.every(p => p.at === undefined && p.atProp === undefined)
+      && globalThis.DD.SAT_ROUTES.GEP === undefined && globalThis.DD.ARRIVALS.GEP.flies === false);
+    /* drawn: all STARs puts the satellite ladders and GOPHER ONE on the scope */
+    globalThis.ddLayers('stars');
+    const svg = scope();
+    assert('all STARs draws the satellite ladders — each of their first fixes is a labelled dot on the scope',
+      ['AGUDE', 'ENCEE', 'TWOLF', 'GOLLF'].every(f => svg.includes('>' + f + '<')) && (svg.match(/>GOLLF</g) || []).length === 1 && (svg.match(/>BAINY</g) || []).length === 1,
+      ['AGUDE', 'ENCEE', 'TWOLF', 'GOLLF', 'BAINY'].map(f => f + ':' + (svg.match(new RegExp('>' + f + '<', 'g')) || []).length).join());
+    const yOf = f => Number((svg.match(new RegExp('y="([\\d.]+)"[^>]*>' + f + '<')) || [])[1]);
+    assert('BAINY and GOLLF are one point, so their labels are stacked and do not overprint',
+      Math.abs(yOf('GOLLF') - yOf('BAINY')) >= 10, yOf('BAINY') + '/' + yOf('GOLLF'));
+    globalThis.ddLayers('tracked');
+  }
 
   /* the non-STAR entries — ZMP-M98 LOA 3g */
   assert('the direct satellite entries are carried with their citations',

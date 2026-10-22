@@ -1261,6 +1261,7 @@ var SAT_ROUTES = {
  ],
  ENCEE: [
   {f:'ENCEE', lat:44.586667, lon:-95.433333, spd:280},
+  {f:'WOOOD', lat:44.691340, lon:-94.938190},
   {f:'CASNS', lat:44.771500, lon:-94.550833},
   {f:'MLHOF', lat:44.823000, lon:-94.297667},
   {f:'RIXIE', lat:44.854833, lon:-94.139500, at:8000, atProp:7000},
@@ -1271,10 +1272,37 @@ var SAT_ROUTES = {
  TWOLF: [
   {f:'TWOLF', lat:43.316667, lon:-93.548333, spd:280},
   {f:'KGEEE', lat:43.749000, lon:-93.507833},
+  {f:'LYNKS', lat:44.114880, lon:-93.473250},
   {f:'TRGET', lat:44.231333, lon:-93.462167, at:7000, atProp:7000},
   {f:'KEWTY', lat:44.647000, lon:-93.422000, at:5000, atProp:5000}
  ]
 };
+/* WOOOD (ENCEE) and LYNKS (TWOLF) were missing from this table and from the
+   STAR reference until the 2026-10-22 cross-check against CIFP 261029, which
+   codes both; each sits on the straight leg between its neighbours (WOOOD
+   within 0.1 NM of ENCEE-CASNS, LYNKS on KGEEE-TRGET), so no distance moved.
+   Coordinates are the CIFP records'. */
+/* GOPHER ONE as CIFP 261029 codes it at the five satellite fields — GOLLF,
+   OLLEE, SAUGR, the GEP VOR, VYKES — DRAWN ONLY. It carries no crossings and is
+   not in SAT_ROUTES because everything keyed off that table is a procedure the
+   engine flies, and ARRIVALS.GEP still says it does not. GOLLF and BAINY are
+   the same point (claude_MSP_STAR_Reference.md), so the labels stack. */
+var SAT_DRAWN = {
+ GEP: [
+  {f:'GOLLF', lat:45.753640, lon:-93.699500},
+  {f:'OLLEE', lat:45.535520, lon:-93.581520},
+  {f:'SAUGR', lat:45.348460, lon:-93.481170},
+  {f:'GEP',   lat:GEP_FIX.lat, lon:GEP_FIX.lon},
+  {f:'VYKES', lat:45.036670, lon:-93.314170}
+ ]
+};
+Object.keys(SAT_DRAWN).forEach(function(k){ finalize(SAT_DRAWN[k]); });
+/* every satellite STAR ladder the scope can draw: the three the engine flies,
+   and GOPHER ONE */
+function satStarRoutes(){
+ return Object.keys(SAT_ROUTES).map(function(k){ return SAT_ROUTES[k]; })
+  .concat(Object.keys(SAT_DRAWN).map(function(k){ return SAT_DRAWN[k]; }));
+}
 Object.keys(SAT_ROUTES).forEach(function(k){ finalize(SAT_ROUTES[k]); });
 ['AGUDE','ENCEE','TWOLF'].forEach(function(k){ ARRIVALS[k].flies=true; });
 
@@ -3376,7 +3404,7 @@ function scopeSvg(){
    : (wantSid==='tracked' ? Object.keys(sidsUp).map(function(k){ return sidsUp[k]; }) : []);
  /* "all STARs" is the flow's Table 2 set; "tracked" is what is being flown. */
  var starDraw = wantStar==='all'
-   ? Object.keys(ROUTES).map(function(k){ return ROUTES[k]; })
+   ? Object.keys(ROUTES).map(function(k){ return ROUTES[k]; }).concat(satStarRoutes())
    : (wantStar==='tracked'
       ? Object.keys(gatesUp).map(function(k){ return gatesUp[k].route; })
       : []);
@@ -3410,6 +3438,7 @@ function scopeSvg(){
   s+='<polyline points="'+a.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--dim)" stroke-width="1" opacity="0.5" stroke-dasharray="6 3"/>';
  });
  /* arrival ladders */
+ var lblAt={};
  starDraw.forEach(function(r){
   if(!r) return;
   var pts=r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ');
@@ -3417,7 +3446,13 @@ function scopeSvg(){
   r.forEach(function(p,i){ s+=fixDot(p, i===0);
    if(i===0||p.f==='ELLKO'||p.f==='SAVVG'||p.f==='KRUGG'||p.f==='OFSON'){
     var anch=(p.f==='OFSON'||p.f==='KRUGG')?'end':'start';
-    var dx=(anch==='end')?-7:8, dy=(i===0)?14:4;
+    /* two ladders that start on one point — BAINY and GOLLF — stack their labels */
+    var lk=Math.round(p.x)+','+Math.round(p.y), seenAt=lblAt[lk]||(lblAt[lk]=[]);
+    /* the same name already printed at this point — ELLKO on several ladders —
+       is not printed again; a different one stacks under it */
+    if(seenAt.indexOf(p.f)>=0) return;
+    var ln=seenAt.length; seenAt.push(p.f);
+    var dx=(anch==='end')?-7:8, dy=((i===0)?14:4)+ln*11;
     s+='<text x="'+(p.x+dx).toFixed(1)+'" y="'+(p.y+dy).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10" text-anchor="'+anch+'">'+p.f+'</text>';
    }});
  });
@@ -3785,6 +3820,7 @@ window.DD = {
  sidOf:sidOf, transOf:transOf, sidRw17Leg:sidRw17Leg, sidSpoken:sidSpoken,
  DEPS17:DEPS17, depTrackFor:depTrackFor, sidRw17Svg:sidRw17Svg,
  sidDrawGroups:sidDrawGroups, sidLabelSvg:sidLabelSvg,
+ SAT_DRAWN:SAT_DRAWN, satStarRoutes:satStarRoutes,
  SID_FAMILIES:SID_FAMILIES, sidFamilyOf:sidFamilyOf, sidColor:sidColor, sidTrackSvg:sidTrackSvg, sidLegendSvg:sidLegendSvg, RW17_HDG:RW17_HDG, rw17Stub:rw17Stub,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
@@ -6082,7 +6118,9 @@ function previewSvg(rec){
   else if(role==='arrival'){ if(a.gate) gatesUsed[a.gate]=1; }
  });
  Object.keys(gatesUsed).forEach(function(k){
-  var r=DD.ROUTES[k]; if(!r) return;
+  /* a satellite STAR is drawn too — it used to be skipped here, so a drill
+     built on AGUDE, ENCEE or TWOLF previewed with no ladder at all */
+  var r=DD.ROUTES[k]||DD.SAT_ROUTES[k]; if(!r) return;
   s+='<polyline points="'+r.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.35"/>';
   s+='<text x="'+(r[0].x+8).toFixed(1)+'" y="'+(r[0].y+14).toFixed(1)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="10">'+k+'</text>';
  });

@@ -257,8 +257,29 @@ On the **Runway 30/17** config, NITZR (WRSAW 11,000) and BLUEM (HHAMR 10,000) ar
 - **TORGY 4/17/22/30L**: TORGY N44 38.61/W094 22.52 · OFSON N44 40.42/W094 14.48 · HMBRG N44 42.07/W094 07.17 · CONIA N44 45.17/W093 53.28 · JAEDN N44 47.34/W093 43.59 · HDEEE N44 51.24/W093 25.86 · MAUER N44 46.90/W093 15.86 · LEDRZ N44 45.34/W093 12.26
 - **TORGY 35**: TORGY N44 38.61/W094 22.52 · OFSON N44 40.42/W094 14.48 · HMBRG N44 42.07/W094 07.17 · CONIA N44 45.17/W093 53.28 · JAEDN N44 47.34/W093 43.59 · HDEEE N44 51.24/W093 25.86 · BRNVL N44 48.27/W093 18.99 · LISEL N44 46.09/W093 18.93
 - **AGUDE sat** [satellite]: AGUDE N45 07.76/W092 23.52 · STILS N45 08.06/W092 38.69 · WHISK N45 08.39/W092 57.73 · GEP N45 08.74/W093 22.39
-- **ENCEE sat** [satellite]: ENCEE N44 35.20/W095 26.00 · CASNS N44 46.29/W094 33.05 · MLHOF N44 49.38/W094 17.86 · RIXIE N44 51.29/W094 08.37 · MAYER N44 55.08/W093 58.48 · FUDGE N45 04.05/W093 34.86 · GEP N45 08.74/W093 22.39
-- **TWOLF sat** [satellite]: TWOLF N43 19.00/W093 32.90 · KGEEE N43 44.94/W093 30.47 · TRGET N44 13.88/W093 27.73 · KEWTY N44 38.82/W093 25.32
+- **ENCEE sat** [satellite]: ENCEE N44 35.20/W095 26.00 · *WOOOD N44 41.48/W094 56.29 (CIFP 261029, added 2026-10-22)* · CASNS N44 46.29/W094 33.05 · MLHOF N44 49.38/W094 17.86 · RIXIE N44 51.29/W094 08.37 · MAYER N44 55.08/W093 58.48 · FUDGE N45 04.05/W093 34.86 · GEP N45 08.74/W093 22.39
+- **TWOLF sat** [satellite]: TWOLF N43 19.00/W093 32.90 · KGEEE N43 44.94/W093 30.47 · *LYNKS N44 06.89/W093 28.39 (CIFP 261029, added 2026-10-22)* · TRGET N44 13.88/W093 27.73 · KEWTY N44 38.82/W093 25.32
+
+## Satellite STARs cross-checked against CIFP 261029 (2026-10-22)
+
+CIFP 261029 codes **AGUDE6, ENCEE3, TWOLF4 and GEP1** at each of KANE, KFCM, KMIC, KSTP and KLVN, with
+the same legs at all five fields; the set is identical in 260903 and 261001. Every fix this reference
+carried for them matches the CIFP waypoint record to **within 0.01 NM**. What the check found:
+
+- **Two fixes were missing, both collinear, so no distance moved.** **WOOOD** sits between ENCEE and
+  CASNS (0.06 NM off the straight leg) and **LYNKS** between KGEEE and TRGET (on it). Both are added above.
+- **The coded sequences:** AGUDE → STILS → WHISK → GEP, then an `FM` leg out of GEP on **265°** ·
+  ENCEE → WOOOD → CASNS → MLHOF → RIXIE → MAYER → FUDGE → GEP, then a `VM` on **060°** to the field ·
+  TWOLF → KGEEE → LYNKS → TRGET → KEWTY, ending there · GEP1 (GOPHER ONE) GOLLF → OLLEE → SAUGR → GEP →
+  **VYKES (N45 02.20/W093 18.85)**, with AXN and FAR entry transitions that join at GOLLF.
+- **Crossings agree where CIFP codes one.** TRGET is coded **between 8,000 and 7,000**, which is the
+  "7,000–8,000 window" the plate note above describes; the 7,000 the deck flies is the LOA Table 4 value.
+  KEWTY is coded **5,000**. AGUDE and RIXIE carry **no** altitude in CIFP, so their 8,000/6,000 and
+  8,000/7,000 are LOA Table 4's alone.
+- **The revision numbers disagree and are not resolved here:** CIFP says **AGUDE6** where this reference
+  says AGUDE FIVE, and **KASPR8** where it says KASPR SEVEN (ENCEE3, TWOLF4 and GEP1 agree). Plate and
+  coded revision may differ; which one the network files is an owner question.
+- The headings after the last fix (AGUDE 265, ENCEE 060) are the coded vector legs and are not drawn.
 
 ## Notes
 
