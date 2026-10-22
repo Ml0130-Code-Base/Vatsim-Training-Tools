@@ -55,7 +55,7 @@ No PDF rasteriser is available on this machine — `pdftoppm`, `pdfimages`, Imag
 
 It **confirms all six R90 positions** — frequency, STARS ID and callsign — independently of the SOP, and the two agree exactly.
 
-It carries **no geometry**. Video-map endpoints were probed on 2026-09-01 and all return 404.
+The record carries no geometry itself, but the video maps it lists are served publicly (corrected 2026-10-22; the 2026-09-01 probe used guessed paths). The Omaha ring is inside `R90 001 MAIN`; no R90 sector boundary has been identified. See `../_vnas/claude_ZMP_vNAS_Geometry_Reference.md`.
 
 ## Not pulled
 

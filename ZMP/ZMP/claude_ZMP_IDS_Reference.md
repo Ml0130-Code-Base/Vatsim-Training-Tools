@@ -59,7 +59,7 @@ Sector numbers here are **not zero-padded** (`7`, not `07`), unlike 7200.1O and 
 
 ## Leads this opens
 
-- **The IDS loads `d3.js`** (`d3js.org/d3.v4.min.js`) in its public shell. d3 is a data-visualisation library, and an IDS that draws airspace splits needs **sector geometry** to draw them against. **That is the strongest lead yet on the boundary problem** — every other avenue has closed (the SOP maps are pictures, the sector charts have no text layer, and vNAS exposes no video-map endpoint). If the authenticated IDS ships sector polygons to the browser, they are a data file the owner can reach by logging in.
+- **The IDS loads `d3.js`** (`d3js.org/d3.v4.min.js`) in its public shell. d3 is a data-visualisation library, and an IDS that draws airspace splits needs **sector geometry** to draw them against. **That is the strongest lead yet on the boundary problem** — every other avenue has closed (the SOP maps are pictures, the sector charts have no text layer, and, as of 2026-10-22, the vNAS video maps are served publicly but no Center sector boundary has been identified in them). If the authenticated IDS ships sector polygons to the browser, they are a data file the owner can reach by logging in.
 - **`/rni`** is a separate gated area whose purpose is not stated in the public shell.
 
 **Both are owner-side questions.** Ask the owner to log in and check whether the IDS draws a sector map, and if so what data file it loads.

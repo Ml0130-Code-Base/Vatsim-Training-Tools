@@ -62,9 +62,9 @@ No PDF rasteriser is available on this machine — `pdftoppm`, `pdfimages`, Imag
 
 ## A second source, and its limits
 
-`../_vnas/ZMP_vnas.json` — the vNAS facility record for ZMP, 853 KB, `lastUpdatedAt` 2026-08-26, from `https://data-api.vnas.vatsim.net/api/artccs/ZMP`. It is genuinely independent of the documents and it carries things they do not: all 44 adapted `MSP_nn_CTR` positions with frequencies, the 13 TRACON areas with their underlying airports, and **125 route-based coordination records** naming owning and requesting sectors, altitude restrictions, routes and notes.
+`../_vnas/ZMP_vnas.json` — the vNAS facility record for ZMP, 854 KB, `lastUpdatedAt` 2026-10-01 (refreshed 2026-10-22; the earlier copy was 2026-08-26 and differed only by a new `isExcluded` field), from `https://data-api.vnas.vatsim.net/api/artccs/ZMP`. It is genuinely independent of the documents and it carries things they do not: all 44 adapted `MSP_nn_CTR` positions with frequencies, the 13 TRACON areas with their underlying airports, and **125 route-based coordination records** naming owning and requesting sectors, altitude restrictions, routes and notes.
 
-**It does not carry geometry.** Every candidate video-map endpoint was probed on 2026-09-01 — `/api/videomaps/{id}`, `/api/video_maps/{id}`, `/api/artccs/ZMP/videomaps`, `/api/artccs/ZMP/video-maps`, `/data/video_maps/{id}.geojson` — and all return 404. No public documentation of such an endpoint was found. **vNAS is not a path to ZMP sector boundaries.**
+**The record itself carries no geometry, but the maps it lists are served.** *Corrected 2026-10-22.* This paragraph said every candidate video-map endpoint 404'd on 2026-09-01. Those candidates (`/api/videomaps/{id}`, `/api/video_maps/{id}`, `/api/artccs/ZMP/videomaps`, `/api/artccs/ZMP/video-maps`, `/data/video_maps/{id}.geojson`) were guesses. The real path is `https://data-api.vnas.vatsim.net/Files/VideoMaps/ZMP/{id}.geojson`, with the ids from `videoMaps[]` in this record. It holds the M98 boundary as a closed line and the R90 Omaha ring; **no ZMP Center sector boundary has been identified yet.** See `../_vnas/claude_ZMP_vNAS_Geometry_Reference.md` and root `claude_vNAS_Source_Reference.md`.
 
 It also **disagrees with 7200.1O on four sector frequencies** (13, 22, 24, 25). See `claude_ZMP_Sector_Reference.md`.
 

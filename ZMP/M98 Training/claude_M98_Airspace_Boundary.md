@@ -127,6 +127,12 @@ hold. A real change has to come from the facility or the owner.
 91.78 W — far outside anything M98 touches. The three points above are the *shared* edge and not
 the RST boundary, which is the right thing for this tool to carry.
 
+### 3.2 The vNAS map, 2026-10-22
+
+vNAS serves the facility's own video map `M98 106 AIRSPAC` (`01H7X13T4WF4EFJMD76VQ6YH54`, `lastUpdatedAt` 2026-04-03), and feature 0 is this boundary as a closed nine-vertex line. Eight of its nine vertices are within 1.5 NM of the owner's list; **vertex 3 reads 077/040 where the list reads 077/037, 3.0 NM out**, and vertex 5 reads 157.8/040.9, the 158/041 end of the question above. The SimAware ring is the same polygon (within 0.5 NM everywhere), so this is one source seen twice. Full table, method and the four readings in `../_vnas/claude_ZMP_vNAS_Geometry_Reference.md` section 1.
+
+**Owner decision pending.** vNAS is now the primary geometry source (root `claude_vNAS_Source_Reference.md`), but this list is owner-verified and was never to be overwritten by a community source. Whether to move `BOUNDARY` onto the vNAS ring, as the Rochester segment moved onto SimAware in #59, or to keep the list and correct only the 077 vertex, is the owner's call. Nothing in the deck has changed.
+
 ---
 
 ## 4. What this boundary is not
@@ -146,11 +152,11 @@ the RST boundary, which is the right thing for this tool to carry.
 
 ## 5. If a better boundary ever arrives
 
-The path is root `CLAUDE.md` §7: a **CRC video-map GeoJSON export**, or the **`.sct2`** the maps
-were built from, from someone with facility data-admin access. That would arrive surveyed rather
-than read off a chart, and it would supersede this list. Until an export actually lands, treat
-that as an ask and not a capability — vNAS exposes no video-map GeoJSON, probed 2026-09-01, and
-every candidate endpoint 404s.
+The path in root `CLAUDE.md` §7 was a **CRC video-map GeoJSON export**, or the **`.sct2`** the maps
+were built from. *Corrected 2026-10-22:* the maps are served publicly (`claude_vNAS_Source_Reference.md`),
+and the one that carries this boundary is the map in §3.2. It is drawn by the facility, not surveyed,
+so it does not by that fact alone supersede an owner-verified list. A `.sct2` would still arrive
+surveyed rather than read off a chart.
 
 **An owner-supplied or facility-exported boundary always supersedes a community one, and must
 never be overwritten by it.**

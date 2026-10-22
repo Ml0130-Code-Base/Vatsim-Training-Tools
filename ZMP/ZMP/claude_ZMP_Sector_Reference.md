@@ -11,7 +11,7 @@ The center definition, assembled 2026-09-01 from **three independent sources** s
 - **Frequencies: 29 of 33 confirmed by two sources. Four conflict.** See *Frequency conflicts* below. Do not quote 13, 22, 24 or 25 without naming the source.
 - **Strata, scope ranges and ERAM filters: single-source (7200.1O only).** vNAS does not publish them. They are transcribed verbatim from the `Unique Sector Equipment Configurations` paragraph on each sector page.
 - **Adjacency: single-source (vNAS only), and it is a coordination map, not a boundary map.** It says which sectors have a route-based coordination rule with which facility. Two sectors can border each other with no rule between them, so **absence of a pair here is not evidence they do not touch.**
-- **Sector boundaries are UNREAD.** Every `Sector NN Map` page in 7200.1O is a picture. `ZMP_High_Sectors.pdf` and `ZMP_Approach_Sectors.pdf` have no text layer at all. vNAS does not expose video-map geometry — every candidate endpoint was probed on 2026-09-01 and returns 404. **No lateral boundary in this document is derived; none is stated.**
+- **Sector boundaries are UNREAD.** Every `Sector NN Map` page in 7200.1O is a picture. `ZMP_High_Sectors.pdf` and `ZMP_Approach_Sectors.pdf` have no text layer at all. The ZMP record lists 1,359 video maps and **vNAS serves them publicly** (corrected 2026-10-22; the 2026-09-01 probe tried guessed paths), but no Center sector-boundary map has been identified — see `../_vnas/claude_ZMP_vNAS_Geometry_Reference.md` section 5. **No lateral boundary in this document is derived; none is stated.**
 
 ## The 33 sectors
 

@@ -68,7 +68,7 @@ Work that is available in the documents and simply has not been walked yet.
 | 7200.1O Appendix 02 | The three-mile areas. UNREAD. |
 | 7200.1O Appendix 03 Figure 1 | The delegated-airspace overview. UNREAD. |
 | 7200.1O Chapter 10 split diagrams | Six pictures, two per split. UNREAD. |
-| **vNAS video maps** | Probed 2026-09-01 — `data-api.vnas.vatsim.net` exposes the facility record but **no video-map endpoint**. Every candidate URL returns 404, and no public documentation of one was found. **vNAS is not a path to ZMP geometry.** |
+| **vNAS video maps** | *Corrected 2026-10-22.* The 2026-09-01 probe tried guessed URLs and concluded there was no video-map endpoint. The maps are served at `/Files/VideoMaps/ZMP/{id}.geojson` (ids in the ZMP record). **Found:** the M98 boundary and the R90 Omaha ring. **Not found:** any Center sector boundary (the 400-plus `AREA<n>_FILTER` and `FILTER` maps are unread). See `../_vnas/claude_ZMP_vNAS_Geometry_Reference.md`. |
 
 ---
 
