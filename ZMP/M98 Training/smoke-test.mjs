@@ -589,6 +589,38 @@ try {
       const fg = D.sidDrawGroups(keys.concat(D.satOnlySidItems()));
       assert('each drawn track is stroked and labelled in its own family colour',
         fg.every(g => D.sidTrackSvg(g).includes('stroke="' + g.fam.hue + '"') && D.sidLabelSvg([g], 1).includes('fill="' + g.fam.hue + '"')));
+      /* the line from the airport to the start of the SID is not drawn (owner,
+         2026-10-22) — it is the uncoded stand-in leg. The one exception is the
+         coded Runway 17 segment at MSP: field to RUBRB, then a short stub on the
+         heading held after it, which is the course on the coded vector leg. */
+      const polys = svg => (svg.match(/<polyline [^>]*>/g) || []).map(t => ({
+        pts: t.match(/points="([^"]+)"/)[1].split(' ').map(p => p.split(',').map(Number)), dash: t.match(/stroke-dasharray="([^"]+)"/)[1] }));
+      const near = (p, q) => Math.abs(p[0] - q.x) < 0.06 && Math.abs(p[1] - q.y) < 0.06;
+      {
+        const r = DP['BITEZ1.DKOTA'], g0 = D.sidDrawGroups(['BITEZ1.DKOTA'])[0], pl = polys(D.sidTrackSvg(g0));
+        assert('a track is drawn from its first SID fix, not from the airport',
+          pl.length === 1 && pl[0].dash === '3 3' && pl[0].pts.length === r.length - 1 && near(pl[0].pts[0], r[1]) && !near(pl[0].pts[0], r[0]));
+        const sr = DA.KSTP['DUHCK1.LLUKY'], sg = D.sidDrawGroups([{ key: 'DUHCK1.LLUKY', route: sr }])[0], sp = polys(D.sidTrackSvg(sg));
+        assert('and a satellite track the same, from GGREY and not from St. Paul',
+          sp.length === 1 && sp[0].pts.length === sr.length - 1 && near(sp[0].pts[0], sr[1]));
+      }
+      {
+        const r = D17['HTDSH1.ALO'], g1 = D.sidDrawGroups([{ key: 'HTDSH1.ALO', route: r }])[0], pl = polys(D.sidTrackSvg(g1));
+        const seg = pl.filter(p => p.dash === '1 3'), trk = pl.filter(p => p.dash === '3 3');
+        assert('off 17 the coded segment is drawn field to RUBRB, then a stub, and the track starts at ITZME',
+          seg.length === 1 && seg[0].pts.length === 3 && near(seg[0].pts[0], r[0]) && near(seg[0].pts[1], r[1])
+          && trk.length === 1 && near(trk[0].pts[0], r[2]) && trk[0].pts.length === r.length - 2);
+        const scale = Math.hypot(r[1].x - r[0].x, r[1].y - r[0].y) / Math.hypot(r[1].e - r[0].e, r[1].n - r[0].n);
+        const sx = seg[0].pts[2][0] - r[1].x, sy = seg[0].pts[2][1] - r[1].y;
+        const brg = (Math.atan2(sx, -sy) * 180 / Math.PI + 360) % 360, len = Math.hypot(sx, sy) / scale;
+        assert('the stub leaves RUBRB on 215.0 — the course on the coded vector leg — for five miles, and is not a leg to the join fix',
+          D.RW17_HDG.course === 215 && Math.abs(brg - 215) < 0.5 && Math.abs(len - 5) < 0.1 && !near(seg[0].pts[2], r[2]), brg.toFixed(1) + '/' + len.toFixed(2));
+        const all = polys(D.sidRw17Svg(1)).filter(p => p.dash === '1 3');
+        assert('"all SIDs" draws the same segment and stub, once for each of the two SIDs, never to the join fix',
+          all.length === 2 && all.every(p => p.pts.length === 3 && near(p.pts[0], r[0]) && near(p.pts[1], r[1]) && Math.abs(p.pts[2][0] - seg[0].pts[2][0]) < 0.06));
+        assert('the aircraft still flies the stand-in leg — only the drawing changed',
+          r[0].field === true && r[1].f === 'RUBRB' && r[2].f === 'ITZME' && r.length > 3);
+      }
       const leg = D.sidLegendSvg(fg, 14, 548);
       assert('the key names each family on the scope once, and says it is the exit direction off MSP',
         leg.includes('SID EXIT DIRECTION OFF MSP') && ['north', 'north-east', 'south-east', 'south', 'south-west', 'west', 'north-west'].every(n => leg.includes('>' + n + '<'))

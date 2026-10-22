@@ -3201,9 +3201,37 @@ function sidLegendSvg(groups, x, y){
  });
  return s;
 }
-/* the polyline for one drawn track, in its family's colour */
+/* ---------- What a SID track draws, and what it leaves out ----------
+   Owner, 2026-10-22: do not draw the line from the airport to the start of a
+   SID. It is the stand-in leg — the climb-out to the first fix is not coded,
+   dispersal decides it — and drawing it as though it were procedure is
+   redundant. The aircraft still flies it (the route is unchanged); it is
+   only not drawn.
+
+   THE ONE EXCEPTION IS THE RUNWAY 17 SEGMENT AT MSP, which IS coded: off 17,
+   HTDSH1 and SNOWZ1 fly heading 169.5 to RUBRB, then vectors. So the segment
+   is drawn field to RUBRB, and then a SHORT STUB on the heading the aircraft
+   holds if nothing is done: the course on the coded vector leg out of RUBRB,
+   215.0 (CIFP 261029, the FM record at RUBRB on RW17 of both SIDs). It stands
+   where the line to the join fix used to be, and it is a stub, not a track —
+   the join is a vector, so there is no line to draw. MSP's magnetic variation
+   is carried as zero throughout this deck, so the course plots as written. */
+var RW17_HDG = {course:215.0, nm:5};
+function rw17Stub(r){
+ var f=r[1], a=RW17_HDG.course*Math.PI/180;
+ return px(f.lat+Math.cos(a)*RW17_HDG.nm/60, f.lon+Math.sin(a)*RW17_HDG.nm/(60*COSL));
+}
+function ptsStr(a){ return a.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' '); }
+/* the polylines for one drawn track, in its family's colour */
 function sidTrackSvg(g){
- return '<polyline points="'+g.route.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="'+sidColor(g.fam)+'" stroke-width="1" opacity="0.6" stroke-dasharray="3 3"/>';
+ var r=g.route, s='';
+ if(r.rw17){
+  s+='<polyline points="'+ptsStr([r[0],r[1],rw17Stub(r)])+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5" stroke-dasharray="1 3"/>';
+  r=r.slice(2);
+ } else if(r[0] && r[0].field) r=r.slice(1);
+ if(r.length>1)
+  s+='<polyline points="'+ptsStr(r)+'" fill="none" stroke="'+sidColor(g.fam)+'" stroke-width="1" opacity="0.6" stroke-dasharray="3 3"/>';
+ return s;
 }
 /* Takes keys, which draw the any-runway track, or {key, route} items, which
    draw the route given — what a tracked departure is actually flying, so one
@@ -3233,16 +3261,17 @@ function sidDrawGroups(items){
  });
  return out;
 }
-/* The Runway 17 segment HTDSH1 and SNOWZ1 code — field, RUBRB, then their
-   first common fix — drawn finer than a track, once per SID, and named once at
-   RUBRB. Off any other runway those two are vectored straight to that fix. */
+/* The Runway 17 segment HTDSH1 and SNOWZ1 code — field, RUBRB, then the stub
+   on the heading held after it (RW17_HDG) — drawn finer than a track, once per
+   SID, and named once at RUBRB. Off any other runway those two are vectored
+   straight to their first fix. */
 function sidRw17Svg(opacity){
  var s='', seen={}, rubrb=null;
  Object.keys(DEPS17).forEach(function(k){
   var sid=sidOf(k); if(seen[sid]) return; seen[sid]=1;
-  var r=DEPS17[k], seg=r.slice(0,3);
+  var r=DEPS17[k], seg=[r[0], r[1], rw17Stub(r)];
   rubrb=r[1];
-  s+='<polyline points="'+seg.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' ')+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5" stroke-dasharray="1 3"/>';
+  s+='<polyline points="'+ptsStr(seg)+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5" stroke-dasharray="1 3"/>';
  });
  if(rubrb) s+='<text x="'+(rubrb.x-7).toFixed(1)+'" y="'+(rubrb.y+4).toFixed(1)+'" text-anchor="end" fill="var(--amber)" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">RUBRB · off 17</text>';
  return s;
@@ -3756,7 +3785,7 @@ window.DD = {
  sidOf:sidOf, transOf:transOf, sidRw17Leg:sidRw17Leg, sidSpoken:sidSpoken,
  DEPS17:DEPS17, depTrackFor:depTrackFor, sidRw17Svg:sidRw17Svg,
  sidDrawGroups:sidDrawGroups, sidLabelSvg:sidLabelSvg,
- SID_FAMILIES:SID_FAMILIES, sidFamilyOf:sidFamilyOf, sidColor:sidColor, sidTrackSvg:sidTrackSvg, sidLegendSvg:sidLegendSvg,
+ SID_FAMILIES:SID_FAMILIES, sidFamilyOf:sidFamilyOf, sidColor:sidColor, sidTrackSvg:sidTrackSvg, sidLegendSvg:sidLegendSvg, RW17_HDG:RW17_HDG, rw17Stub:rw17Stub,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
