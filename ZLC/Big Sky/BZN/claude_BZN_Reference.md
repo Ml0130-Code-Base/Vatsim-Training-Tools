@@ -74,7 +74,7 @@ VFR aircraft, and IFR Category I/II aircraft going around off a visual, are inst
 
 - **The STARS ID for Bozeman Radar.** Blank in BOI 7110.2B Table 1-2-1, and the community dataset does not carry STARS IDs either.
 - **Whether Bozeman Radar has arrival sequencing tables** of the kind Boise has (3-2-1 / 3-2-2). None appear in the source.
-- **Handoff identifiers — a live blocker.** No source anywhere in the repository. `B1Z` is a VATGlasses display handle, not a STARS ID, and no ZLC vNAS record is held locally. Until `curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC"` is pulled, no drill may quote one.
+- **Handoff identifiers.** `B1Z` is a VATGlasses display handle, not a STARS ID. The ZLC vNAS record has been held since 2026-10-22 and carries them: Bozeman is `NNN`/`N`, Field E `OneLetterAndSubset`, and the radar position is TCP 1B (`../../_vnas/claude_ZLC_vNAS_Reference.md`). The deck does not carry them yet, so no drill may quote one until it does.
 - **MVAs and any route geometry.** Not present in any source.
 
 ### Sector geometry — carried since 2026-09-02

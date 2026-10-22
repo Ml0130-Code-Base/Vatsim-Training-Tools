@@ -398,7 +398,7 @@ var OPEN_Q=[
   w:'Every block for Alpine and Valley in the community dataset is gated on KSLC 34L/R, 35 — North Flow only. But the SOP is explicit that both work in South Flow: 3-9-2a says "During South Flow, coordinate all IFR aircraft with Jordan", and Valley’s VFR job under the Class B shelf does not stop when the airport turns around. This looks like a gap in the dataset rather than an operational fact. Do not read the empty state as "the sector closes in South Flow".', isNew:true},
 
  {id:'q-handoff', q:'What are the handoff identifiers for these sectors?',
-  w:'There is no answer anywhere in this repository. The community dataset carries none — its keys (S5K, S5B) are display handles, not STARS IDs — and there is no ZLC vNAS record held locally. One request closes it: curl the vNAS ARTCC endpoint for ZLC. Until then no drill may quote a handoff ID.', isNew:true},
+  w:'The answer is in the vNAS record, now held at ZLC/_vnas/ZLC_vnas.json (pulled 2026-10-22), and this deck does not carry it yet. The community dataset carries none — its keys (S5K, S5B) are display handles, not STARS IDs. Until the deck carries them no drill may quote a handoff ID.', isNew:true},
 
  {id:'q-geom', q:'Where are the gates and the shelf lines?',
   w:'The sector boundaries arrived on 2026-09-02, but the gates did not. Antelope, Keyhole, Jepson, Avon and Bird are still names without coordinates, the P2/P3/P4 areas have no shape, the Heber Shelf line has no position, and no MVA data exists in any community source. VATGlasses draws sectors, not gates.'}
@@ -770,7 +770,7 @@ function stubHtml(){
   +'<p>Arrived with the geometry. Every block is gated on a runway configuration &mdash; <code>KSLC 34L/R, 35</code> North across 36 blocks, <code>KSLC 16L/R, 17</code> South across 46. Selecting a flow selects which blocks exist, and the selector above now models it. Note that Alpine and Valley have <b>no South Flow blocks at all</b>, which contradicts the SOP and is treated here as a dataset gap.</p></div>'
 
   +'<div class="zlc-stub block"><span class="lbl">Slot 3 &middot; live blocker</span><h3>Handoff identifiers</h3>'
-  +'<p>S56 has <b>no handoff ID source at all today</b>, and the geometry did not help: the community dataset carries none, and its keys (<code>S5K</code>, <code>S5B</code>) are display handles, not STARS IDs. STARS-side identifiers come from vNAS, always &mdash; and there is no ZLC vNAS record in this repository. One request closes it: <code>curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC"</code>. Endpoint verified 2026-09-02, 344 KB, and the payload does carry <code>starsId</code> and <code>singleCharacterStarsId</code>.</p></div>'
+  +'<p>S56 has <b>does not carry the handoff IDs yet</b>, and the geometry did not help: the community dataset carries none, and its keys (<code>S5K</code>, <code>S5B</code>) are display handles, not STARS IDs. STARS-side identifiers come from vNAS, always &mdash; and the ZLC vNAS record is now held (<code>ZLC/_vnas/ZLC_vnas.json</code>, pulled 2026-10-22) and carries them, but this tool does not yet.</p></div>'
 
   +'<div class="zlc-stub"><span class="lbl">Slot 4 &middot; empty</span><h3>Routes, fixes and MVAs</h3>'
   +'<p>Named but unlocated: UDUZU, IRRON, NICHOL, HLMET and STACO. No MVA data exists in any community source either, so nothing can check an altitude against terrain.</p></div>'

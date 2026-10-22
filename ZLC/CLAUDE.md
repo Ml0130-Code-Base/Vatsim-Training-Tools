@@ -77,6 +77,10 @@ The columns were re-paired by order and confirmed against the narrative paragrap
 
 ---
 
+## The vNAS record (pulled 2026-10-22)
+
+Source 3 of the four (root `CLAUDE.md` §10) was never pulled for ZLC until 2026-10-22: `_vnas/ZLC_vnas.json`, `lastUpdatedAt` 2026-10-22T00:40Z, with the tables and the comparison in **`_vnas/claude_ZLC_vNAS_Reference.md`**. It is the only source for handoff identifiers (S56 `QQQ`/`Q`, Boise `BBB`/`B`, Bozeman `NNN`/`N`, all Field E `OneLetterAndSubset`, all subset 1) and **neither deck carries them yet**; the `handoff` slots and the S56 open question say so. Three results: every vNAS frequency and callsign matches the references (Bozeman's second frequency, 119.550 "LVM", is the one thing no reference mentions); vNAS confirms the three Big Sky frequencies and the Mountain Home radio name ("Cowboy Control") that VATGlasses has wrong; and **seven of S56's nine parent TCPs disagree with the AFV-tree chain the deck carries**, named and not resolved. The video maps it lists are served publicly (`claude_vNAS_Source_Reference.md`); the S56 and Big Sky outlines were not isolated in them.
+
 ## Student notes (S56)
 
 The notes layer is not a scratchpad bolted on the side; it is the intake path for the next version of the tool.

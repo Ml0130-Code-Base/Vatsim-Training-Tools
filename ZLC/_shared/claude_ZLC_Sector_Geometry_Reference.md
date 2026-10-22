@@ -323,19 +323,17 @@ same commit (root `CLAUDE.md` §11). These are **not** filled by it:
 - **Any handoff ID**, and this one is a live blocker rather than a footnote. The dataset carries
   none — its positions have only `callsign`, `colours`, `frequency`, `pre`, `type`, and the
   keys `S5A`/`B1Z` are display handles (`../../claude_Community_Geometry_Sources.md` §6).
-  **STARS-side IDs come from vNAS, always** — and **there is no ZLC vNAS record in this
-  repository.** `ZMP/_vnas/ZMP_vnas.json` is the only one held. So S56 and Big Sky have **no
-  handoff ID source at all today**, and nothing in this file may be pressed into that role.
+  **STARS-side IDs come from vNAS, always** — and **the ZLC vNAS record has been held since 2026-10-22** (`ZLC/_vnas/ZLC_vnas.json`; the IDs, TCPs and Field E formats are tabulated in `../_vnas/claude_ZLC_vNAS_Reference.md`). Nothing in this file may be pressed into the handoff-ID role.
 
-  The pull that would close it, matching how ZMP's was obtained:
+  The pull (done 2026-10-22; `perl tools/vnas/vnas.pl artcc ZLC ZLC/_vnas/ZLC_vnas.json` does the same):
 
   ```bash
   curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC" -o ZLC_vnas.json
   ```
 
-  **Endpoint verified 2026-09-02** — HTTP 200, 344 KB, and the payload does carry `starsId`
+  **Endpoint verified 2026-09-02, pulled 2026-10-22** — HTTP 200, 345 KB, and the payload does carry `starsId`
   (`BBB`, `FFF`, `GGG`, `HHH`, `LLL`, `MMM`, `NNN`, `QQQ`, `UUU`, `VVV`, `ZZZ`) and
-  `singleCharacterStarsId`. One `curl` closes this gap.
+  `singleCharacterStarsId`. **This gap is closed at the source and open in the decks**: they do not carry the IDs yet.
 
   What to read out of it: each position's `starsConfiguration` (TCP), and the ARTCC's
   `neighboringStarsConfigurations` entries — `starsId`, `twoCharacterStarsId`,

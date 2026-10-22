@@ -90,7 +90,7 @@ Local quick-looks the Alpine sector, and the Sage sector when Alpine is combined
 - **Which positions are primary.** Table 1-2-1 ends "Bold designates a primary position"; bold does not survive text extraction.
 - **The Ellis Corridor, the pre-arranged coordination areas and the arrival zones.** Appendices 1A, 2A–2B and 3A–3B are chart images with no text layer. VATGlasses draws sectors, not gates, so it did not close these.
 - **Fix positions** for KOURT, SPUUD, SADYL, JIMMI, KYANN, BEWTE and TOILS. No MVA data either.
-- **Handoff identifiers — a live blocker.** No source anywhere in the repository. The community dataset carries none (`B1S`/`B1A` are display handles, not STARS IDs) and no ZLC vNAS record is held locally. Until `curl -sL "https://data-api.vnas.vatsim.net/api/artccs/ZLC"` is pulled, no drill may quote one.
+- **Handoff identifiers.** The community dataset carries none (`B1S`/`B1A` are display handles, not STARS IDs). The ZLC vNAS record has been held since 2026-10-22 and carries them: Boise is `BBB`/`B`, Field E `OneLetterAndSubset`, and Sage and Alpine are TCPs 1G and 1A (`../../_vnas/claude_ZLC_vNAS_Reference.md`). The deck does not carry them yet, so no drill may quote one until it does.
 
 ### Sector geometry — carried since 2026-09-02
 

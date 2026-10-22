@@ -399,6 +399,8 @@ frequencies agree; the radio name and the sector naming do not. **Recorded, not 
 Ours comes from `MUO_NFCT_RAPCON.pdf` and outranks community data, but the disagreement is
 worth an owner question.
 
+**Settled in our favour 2026-10-22.** The vNAS record names `MUO_S_APP` "Cowboy Control" 134.100 ("Cowboy Range"), as the reference does; VATGlasses is the source with the wrong radio name (`claude_vNAS_Source_Reference.md`, `ZLC/_vnas/claude_ZLC_vNAS_Reference.md` section 1).
+
 ### Licence — decided 2026-09-02, use it with attribution
 
 **The owner has decided to use the VATGlasses sector boundaries**, on the grounds that the ZLC
