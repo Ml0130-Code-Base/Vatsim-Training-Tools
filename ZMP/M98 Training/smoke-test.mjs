@@ -1266,6 +1266,25 @@ try {
       JSON.stringify([tf('NITZR').aa, tf('BLUEM').aa]));
   }
 
+  /* AANAH on the NITZR 30s ladder follows CIFP, by the owner's ruling of
+     2026-09-06 ("Go with CIFP for AANAH", issue #22; applied 2026-10-26).
+     CIFP 260903, 261001 and 261029 code NITZR46 RW30B AANAH "+ 09000" with no
+     speed. The plate-derived reference said cross at 10,000 at 250, and the
+     deck flew that for seven weeks with a comment telling the next reader not
+     to change it. The assertion pins the settled reading in all three parts:
+     the value, the kind of restriction, and the absence of a speed. */
+  {
+    const aanah = rwy => ((globalThis.DD.ladderFor('30', 'NITZR', rwy) || []).filter(q => q.f === 'AANAH')[0]) || {};
+    ['30L', '30R'].forEach(rwy => {
+      const p = aanah(rwy);
+      assert('AANAH on the NITZR ' + rwy + ' ladder is at or above 9,000 with no speed (CIFP, owner ruling 2026-09-06)',
+        p.aa === 9000 && p.at == null && p.spd == null, JSON.stringify(p));
+    });
+    assert('and the rest of that ladder is untouched: WBSTR still crosses 8,000 at 250',
+      ((globalThis.DD.ladderFor('30', 'NITZR', '30L') || []).filter(q => q.f === 'WBSTR')[0] || {}).at === 8000
+      && ((globalThis.DD.ladderFor('30', 'NITZR', '30L') || []).filter(q => q.f === 'WBSTR')[0] || {}).spd === 250);
+  }
+
   /* ============ 3d. Flight rules and route ============ */
   /* An arrival files the fix sequence and no procedure name; a departure files
      its SID as a flight plan writes it, because CIFP 261029 names the revision. */

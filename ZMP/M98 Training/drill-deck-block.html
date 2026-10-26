@@ -392,14 +392,14 @@ function trunkFor(gate){
    {f:'NITZR', lat:44.18617, lon:-93.46600, aa:11000, spd:280},
    {f:'WRSAW', lat:44.28317, lon:-93.41250, aa:11000, spd:280},
    {f:'DAHRL', lat:44.36483, lon:-93.36683},
-   /* CONFLICT, unresolved. claude_MSP_STAR_Reference.md says AANAH 10/250 —
-      cross at 10,000, speed 250 — and is owner-verified against the plates.
-      CIFP 260903 codes NITZR46 RW30B AANAH as "+ 09000" with NO speed: at or
-      above 9,000. Three differences at once — the value, the kind of
-      restriction, and whether a speed is published at all. The reference
-      stands until the owner adjudicates, per root CLAUDE.md §6, which is how
-      ELLKO was settled. Do not silently switch this to CIFP. */
-   {f:'AANAH', lat:44.39450, lon:-93.34583, at:10000, spd:250},
+   /* AANAH — CIFP governs, owner ruling 2026-09-06 ("Go with CIFP for AANAH",
+      issue #22). CIFP 260903, 261001 and 261029 all code NITZR46 RW30B AANAH
+      as "+ 09000" with NO speed: at or above 9,000. The plate-derived
+      reference said cross at 10,000 at 250; that was the conflict, and it was
+      settled the way ELLKO was. The earlier 10/250 is kept in
+      claude_MSP_STAR_Reference.md as the superseded value, not here. Applied
+      2026-10-26. */
+   {f:'AANAH', lat:44.39450, lon:-93.34583, aa:9000},
    {f:'WBSTR', lat:44.47583, lon:-93.28733, at:8000, spd:250},
    {f:'CANDD', lat:44.60633, lon:-93.01417, at:7000, spd:230},
    {f:'HAPTN', lat:44.62833, lon:-92.99183, at:7000, spd:210}
