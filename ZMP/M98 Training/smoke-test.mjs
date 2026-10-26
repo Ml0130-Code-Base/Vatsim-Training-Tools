@@ -552,15 +552,14 @@ try {
       && globalThis.DD.depTrackFor('BITEZ1.DKOTA', null, 'KMIC') === null);
     {
       const sd = globalThis.DD.sidDrawGroups(globalThis.DD.satOnlySidItems());
-      assert('DUHCK1 off the three satellites is one drawn track and one label — all three transitions, all three fields (owner, 2026-10-22)',
+      assert('DUHCK1 off the three satellites is one drawn track — all three transitions, all three fields (owner, 2026-10-22)',
         globalThis.DD.satOnlySidItems().length === 9 && sd.length === 1
-        && sd[0].label === 'DUHCK1 LLUKY/SBRNA/STIER · ANE/FCM/STP' && sd[0].fields.join() === 'ANE,FCM,STP',
-        sd.map(g => g.label).join('|'));
-      /* a tracked satellite departure beside an MSP one on the same SID shares the drawn
-         track, and the label says it is both */
+        && sd[0].fields.join() === 'ANE,FCM,STP' && sd[0].keys.map(k => k.split('.')[1]).join() === 'LLUKY,SBRNA,STIER',
+        sd.map(g => g.keys.join('/') + '@' + g.fields.join('/')).join('|'));
+      /* a tracked satellite departure beside an MSP one on the same SID shares the drawn track */
       const mixed = globalThis.DD.sidDrawGroups(['BITEZ1.DKOTA', { key: 'BITEZ1.DKOTA', route: globalThis.DD.DEPS_AT.KSTP['BITEZ1.DKOTA'] }]);
-      assert('and an MSP and a satellite departure on one SID are one track named for both',
-        mixed.length === 1 && mixed[0].label === 'BITEZ1 DKOTA · MSP/STP', mixed.map(g => g.label).join('|'));
+      assert('and an MSP and a satellite departure on one SID are one track that leaves from both',
+        mixed.length === 1 && mixed[0].fields.join() === 'MSP,STP', mixed.map(g => g.fields.join('/')).join('|'));
     }
     {
       const sa = globalThis.DD.mkAc({ cs: 'SAT1', type: 'C172', role: 'departure', sid: 'DUHCK1.STIER', dep: 'KANE', fromStart: 3, alt: 3000, ias: 180 });
@@ -571,9 +570,9 @@ try {
     }
     assert('the SID is said with its number as a word, and nothing else is invented',
       globalThis.DD.sidSpoken('BITEZ1.DKOTA') === 'BITEZ ONE' && globalThis.DD.sidSpoken('KBREW1.KEETN') === 'KBREW ONE');
-    assert('a shared track is labelled once with every transition on it',
-      globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR')
-      && globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'BITEZ1 DKOTA/LEINY'));
+    assert('transitions that share a drawn track are one group with every transition on it',
+      globalThis.DD.sidDrawGroups(keys).some(g => g.sid === 'TOTTZ1' && g.keys.map(k => k.split('.')[1]).join() === 'ALO,FOOLS,OANNA,OHHMY,ZZIPR')
+      && globalThis.DD.sidDrawGroups(keys).some(g => g.sid === 'BITEZ1' && g.keys.map(k => k.split('.')[1]).join() === 'DKOTA,LEINY'));
     /* SID colours — owner request 2026-10-22: SIDs that leave in a similar direction
        or share a lateral path get DIFFERENT colours (a first cut did the opposite).
        A conflict is derived here from the fix data, not typed: two SIDs that share a
@@ -603,8 +602,8 @@ try {
         && Object.values(D.SID_HUES).every(h => !['#4FE0A0', '#E8A23D', '#E8604D'].includes(h.toUpperCase()))
         && D.SID_HUES.BITEZ1 === D.SID_HUES.ZMBRO1 && D.SID_HUES.KBREW1 === D.SID_HUES.SNUPE1);
       const fg = D.sidDrawGroups(keys.concat(D.satOnlySidItems()));
-      assert('each drawn track is stroked and labelled in its own SID colour',
-        fg.every(g => D.sidTrackSvg(g).includes('stroke="' + D.SID_HUES[g.sid] + '"') && D.sidLabelSvg([g], 1).includes('fill="' + D.SID_HUES[g.sid] + '"')));
+      assert('each drawn track is stroked in its own SID colour',
+        fg.every(g => D.sidTrackSvg(g).includes('stroke="' + D.SID_HUES[g.sid] + '"')));
       assert('two SIDs never share a drawn track, even where they share every fix',
         fg.every(g => g.keys.every(k => k.split('.')[0] === g.sid)));
       /* the line from the airport to the start of the SID is not drawn (owner,
@@ -669,8 +668,6 @@ try {
         && D.sidLegendSvg([], 14, 554) === '' && !leg.includes('EXIT DIRECTION')
         && (leg.match(/<rect /g) || []).length === 10 && new Set((leg.match(/ y="([\d.]+)" width="10"/g) || [])).size === 1);
     }
-    assert('and FOOLS being off the bottom of the scope, those two are named at CORDY',
-      globalThis.DD.sidDrawGroups(['TOTTZ1.ALO', 'HTDSH1.ALO']).every(g => g.anchor && g.anchor.f === 'CORDY'));
   }
   assert('the release rule is 25 DME or leaving 11,000',
     globalThis.DD.DEP_RELEASE.dme === 25 && globalThis.DD.DEP_RELEASE.alt === 11000);
@@ -819,22 +816,20 @@ try {
      shaped is drawn now. The harness failed here from 5d995f6 until 2026-10-14. */
   assert('and "off" now draws no polyline at all, the RST line included (issue #60)',
     lOffAll === 0, lOffAll);
-  /* The SID names toggle — owner request 2026-10-22. Off hides the labels and the
-     RUBRB caption and nothing else: every track, the stub and the key stay. */
+  /* SID names and transitions are NOT drawn on the scope (owner, 2026-10-22: the
+     key says which colour is which SID, so the labels were redundant). The tracks,
+     the Runway 17 stub, its RUBRB caption and the key stay; the transitions are in the
+     Direct-to fixes list. There is no names toggle any more. */
   {
-    globalThis.ddLayers('sids');
-    const names = ['BITEZ1 DKOTA/LEINY', 'TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR', 'DUHCK1 LLUKY/SBRNA/STIER · ANE/FCM/STP', 'RUBRB · off 17'];
-    const onSvg = scope(), tracksOn = sidTrks();
-    assert('names are on by default',
-      globalThis.DD.sidNames() === true && names.every(n => onSvg.includes(n)), names.filter(n => !onSvg.includes(n)).join(' | '));
-    globalThis.ddSidNames(false);
-    const offSvg = scope();
-    assert('off hides every SID name and transition, and the RUBRB caption',
-      globalThis.DD.sidNames() === false && names.every(n => !offSvg.includes(n)) && !/>[A-Z]{4,5}\d [A-Z]{3,5}[/<]/.test(offSvg));
-    assert('and leaves every track, the Runway 17 segment and the key as they were',
-      sidTrks() === tracksOn && (offSvg.match(/stroke-dasharray="1 3"/g) || []).length === 2 && offSvg.includes('>HTDSH1<') && offSvg.includes('fill="#E6D36A"'));
-    globalThis.ddSidNames();
-    assert('it toggles back on', globalThis.DD.sidNames() === true && scope().includes('BITEZ1 DKOTA/LEINY'));
+    globalThis.ddLayers('both');
+    const svg = scope();
+    assert('no SID name or transition is written on the scope with every SID up',
+      !svg.includes('BITEZ1 DKOTA') && !svg.includes('TOTTZ1 ALO') && !svg.includes('DUHCK1 LLUKY') && !svg.includes('SNOWZ1 ISTIQ')
+      && !/>[A-Z]{4,5}\d [A-Z]{3,5}[\/ <]/.test(svg.replace(/<text[^>]*>(?:[A-Z]{4,5}\d)<\/text>/g, '')));
+    assert('the key, the tracks and the RUBRB caption are still drawn',
+      svg.includes('>HTDSH1<') && svg.includes('fill="#E6D36A"') && sidTrks() > 0 && svg.includes('RUBRB · off 17'));
+    assert('and the labeller and the toggle are gone',
+      globalThis.DD.sidLabelSvg === undefined && globalThis.DD.sidNames === undefined && globalThis.ddSidNames === undefined);
     globalThis.ddLayers('tracked');
   }
   /* The 25 DME circle is gone from the scope (owner, 2026-10-22: not needed). The
