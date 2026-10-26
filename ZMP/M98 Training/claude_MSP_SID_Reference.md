@@ -174,6 +174,16 @@ revision number is said as a word: *BITEZ ONE departure*.
   paragraph says "departing aircraft" and names no field; the 25 NM and the 11,000 are the same.
 - Related routing (ZMP-M98 LOA 4.f): satellite departures previously routed via the **DWN** SID now route **INUNE GENEO DKOTA**.
 
+## Open question — which SID is preferred off Runway 17
+
+**Not answered by any document, and the deck assumes nothing** (owner, 2026-10-22). HTDSH1 and SNOWZ1 are
+both valid off every runway and fly the same coded segment off 17 (heading 169.5 to RUBRB ≥ 3,500, then
+vectors to join). **The owner expects HTDSH1 to be preferred of the two when departing 17** — a feeling,
+recorded as such, not a rule: the current SOP, tower order and LOAs rank neither, and the updated SOP and
+LOA for the 2026-10-29 set are not out. It closes when one of them publishes a preference. Gap analysis
+Part 6, item 7. Until then no choice here is a preference: the generator draws all nine alike and no
+grading rule favours either SID.
+
 ## Gates — TABLED for the new set
 
 **Which gate each 2026-10-29 SID exits through is not known yet** (owner, 2026-10-14), so the deck

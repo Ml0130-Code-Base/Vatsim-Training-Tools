@@ -984,6 +984,14 @@ function sidChangeHtml(day){
   +andList(sidsAtMsp())+' ('+c.cycle+'), and the satellites’ DUHCK1, which Anoka, Flying Cloud and St. Paul code and MSP does not. Until '+c.effective+' the network still files the old set, which the deck no longer carries: '+andList(gone)+'.'
   +'<span class="dd-expiry-sub">KBREW and ZMBRO are new routes under old names. Gate letters for the new SIDs are not known yet, so a departure carries no scratchpad gate. This comes down by itself on '+c.effective+'. Issue #'+c.issue+'.</span>';
 }
+/* An open question the deck shows rather than hides (root CLAUDE.md invariant 2).
+   Owner, 2026-10-22: HTDSH1 and SNOWZ1 are both valid off Runway 17, and the
+   owner EXPECTS HTDSH1 to be the preferred one — a feeling, not a source. No
+   current document ranks them and the updated SOP and LOA for the 2026-10-29
+   set are not out, so it is recorded as open (claude_M98_MD_Gap_Analysis.md,
+   Part 6 item 7) and the deck prefers neither. Shown beside the SID picker on a
+   strip departing 17. */
+var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. Open until the updated SOP and LOA come out.';
 /* One short line for the place a SID is picked. */
 function sidChangeShort(day){
  return (sidChangeState(day)==='live' ? '' : ('live on '+SID_CHANGE.effective+' · ')) + 'gate letters not known yet';
@@ -3302,15 +3310,12 @@ function scopeSvg(){
  /* with every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
     too, so the off-17 shape can be learned alongside the any-runway one */
  if(wantSid==='all') s+=sidRw17Svg(0.8, SID_NAMES);
- /* the 25 DME release ring — ZMP-M98 LOA 4.c */
- if(sidKeys.length){
-  s+='<circle cx="'+CX+'" cy="'+CY+'" r="'+(DEP_RELEASE.dme*SC).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.35" stroke-dasharray="2 5"/>';
-  s+='<text x="'+(CX+DEP_RELEASE.dme*SC*0.72).toFixed(1)+'" y="'+(CY-DEP_RELEASE.dme*SC*0.72).toFixed(1)+'" fill="var(--amber)" font-family="IBM Plex Mono" font-size="9" opacity="0.7">25 DME</text>';
- }
+ /* The 25 DME release ring (ZMP-M98 LOA 4.c) is NOT drawn — owner, 2026-10-22:
+    it is not needed. The release itself is still graded, and a departure's strip
+    still counts down to it; only the circle is gone. */
  /* The 15 NM ring — the far-gate transfer deadline, 4-5b(1). Drawn only when
-    there is a far-gate crossover airborne to measure against, the same way the
-    25 DME release ring is drawn only when a SID is shown: a ring with nothing
-    to measure is decoration. */
+    there is a far-gate crossover airborne to measure against: a ring with
+    nothing to measure is decoration. */
  if(LAYERS!=='off' && sim.ac.some(function(a){
       return a.alive && a.role==='arrival' && a.rwy
              && crossoverFor(a.gate, a.rwy, ROUTE_CFG).type==='far'; })){
@@ -3826,7 +3831,7 @@ window.DD = {
  RST_CLOSED_OWNER:RST_CLOSED_OWNER,
  neighbourAt:neighbourAt, exitBearing:exitBearing,
  setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
- LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, sidNames:function(){ return SID_NAMES; },
+ LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, sidNames:function(){ return SID_NAMES; }, SID17_OPEN:SID17_OPEN,
  directFixes:directFixes, directFixesHtml:directFixesHtml, directList:function(){ return DIRECT_LIST; }, DIRECT_LIMIT:DIRECT_LIMIT,
  overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,

@@ -799,6 +799,26 @@ try {
     assert('it toggles back on', globalThis.DD.sidNames() === true && scope().includes('BITEZ1 DKOTA/LEINY'));
     globalThis.ddLayers('tracked');
   }
+  /* The 25 DME circle is gone from the scope (owner, 2026-10-22: not needed). The
+     release itself is untouched: DEP_RELEASE is still 25 / 11,000 and the 4.c
+     grading and the strip countdown are asserted elsewhere. */
+  {
+    globalThis.ddLayers('both');
+    const ringSvg = scope();
+    assert('no 25 DME circle or caption is drawn with every SID up',
+      !ringSvg.includes('>25 DME<') && !/<circle[^>]*stroke-dasharray="2 5"/.test(ringSvg) && sidTrks() > 0);
+    assert('and the release is still 25 NM or 11,000', globalThis.DD.DEP_RELEASE.dme === 25 && globalThis.DD.DEP_RELEASE.alt === 11000);
+    globalThis.ddLayers('tracked');
+  }
+  /* An open question the deck shows — which SID is preferred off 17 (owner,
+     2026-10-22; claude_M98_MD_Gap_Analysis.md Part 6 item 7). */
+  {
+    const q = globalThis.DD.SID17_OPEN;
+    assert('the off-17 question names HTDSH1 as the owner’s expectation, says it is not a published rule, and says it is open',
+      typeof q === 'string' && q.includes('HTDSH1') && /owner/.test(q) && /not a published rule/.test(q) && /Open until the updated SOP and LOA/.test(q), q);
+    assert('and the deck prefers neither SID — both are generated and offered',
+      globalThis.DD.sidKeysAt('KMSP').some(k => k.startsWith('HTDSH1.')) && globalThis.DD.sidKeysAt('KMSP').some(k => k.startsWith('SNOWZ1.')));
+  }
   /* The direct-to list — owner request 2026-10-22: the fixes a departure can be
      cleared direct to and still be within ZMP-M98 LOA 4.f (60 NM of the MSP DME).
      Read off SID_SET and SID_FIX, hidden until its button is pressed. */

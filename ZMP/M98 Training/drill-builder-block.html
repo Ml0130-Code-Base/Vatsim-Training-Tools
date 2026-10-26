@@ -2137,7 +2137,9 @@ function acRowHtml(a,i){
        }).join('');
      })()+'</select>'
      /* issue #61 — when the set goes live, and that the gates are tabled */
-     +'<span class="dd-sidexp">'+esc(DD.sidChangeShort())+'</span>')
+     +'<span class="dd-sidexp">'+esc(DD.sidChangeShort())+'</span>'
+     /* the open question, on a strip that is off 17 from MSP */
+     +((dep==='KMSP' && String(a.depRwy||'')==='17') ? '<span class="dd-sidexp" style="display:block;color:var(--dim);">'+esc(DD.SID17_OPEN)+'</span>' : ''))
    +f('NM from '+(dep==='KMSP'?'MSP':dep.replace(/^K/,'')),'<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
  } else if(role==='overflight'){
   job = f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')
@@ -2264,9 +2266,6 @@ function previewSvg(rec){
  var sidGroups=DD.sidDrawGroups(Object.keys(sidsUsed).map(function(k){ return sidsUsed[k]; }));
  sidGroups.forEach(function(g){ s+=DD.sidTrackSvg(g); });
  s+=DD.sidLabelSvg(sidGroups, 1);
- if(Object.keys(sidsUsed).length){
-  s+='<circle cx="350" cy="255" r="'+(DD.DEP_RELEASE.dme*4.5).toFixed(1)+'" fill="none" stroke="var(--amber)" stroke-width="0.8" opacity="0.3" stroke-dasharray="2 5"/>';
- }
  (rec.ac||[]).forEach(function(a){
   var r=routeFor(a); if(!r) return;
   if(roleOf(a)==='overflight'){
