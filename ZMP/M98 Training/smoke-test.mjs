@@ -894,6 +894,30 @@ try {
     const dh = D.directFixesHtml();
     assert('the panel states the rule, that the LOA names no fixes, the release and the 169.5 off 17',
       ['LOA 4.f', '60 NM', 'LOA 4.c', 'technique, not a published requirement', 'heading 169.5', 'DUHCK1', 'not a direct target'].every(s => dh.includes(s)));
+    /* the same fixes ringed and named on the scope while the button is on */
+    {
+      globalThis.ddLayers('sids');
+      const listed = new Set(); dl.rows.forEach(r => r.common.concat(...r.trans.map(t => t.fixes), r.rwy || []).forEach(x => listed.add(x.f)));
+      const pts = D.directFixPoints();
+      assert('one point per listed fix, each once, sorted nearest first, and the list is non-trivial',
+        pts.length === listed.size && listed.size > 30 && pts.every(q => listed.has(q.f)) && pts.every((q, i) => i === 0 || pts[i - 1].nm <= q.nm), pts.length + '/' + listed.size);
+      const offSvg = scope();
+      globalThis.ddDirectList(true);
+      const onSvg = scope(), rings = (onSvg.match(/<circle[^>]*r="2\.8"[^>]*stroke-width="1\.2"/g) || []).length;
+      assert('with the button on, every listed fix is ringed and named on the scope',
+        rings === listed.size && [...listed].every(f => onSvg.includes('>' + f + '</text>')), rings + '/' + listed.size);
+      assert('fixes past 60 NM are not shown, HHCEE (53, past the drawn tracks) is, and CORDY carries RST',
+        ['FOOLS', 'KBREW', 'HSTIN'].every(f => !onSvg.includes('>' + f + '</text>')) && onSvg.includes('>HHCEE</text>') && onSvg.includes('>RST</text>'));
+      assert('a fix one SID uses takes its colour; a shared one is neutral — GGREY is DUHCK1 cyan, HTDSH neutral',
+        pts.filter(q => q.f === 'GGREY')[0].sids.join() === 'DUHCK1' && pts.filter(q => q.f === 'HTDSH')[0].sids.length > 1
+        && new RegExp('stroke="' + D.SID_HUES.DUHCK1 + '"[^>]*/><text[^>]*>GGREY<').test(onSvg) && /stroke="#E7EDE9"[^>]*\/><text[^>]*>HTDSH</.test(onSvg));
+      assert('and names do not sit on top of one another',
+        (() => { const bx = [...onSvg.matchAll(/<text x="([\d.]+)" y="([\d.]+)" fill="(?:#[0-9A-Fa-f]{6})" font-family="IBM Plex Mono" font-size="9">([A-Z]+)<\/text>/g)].map(m => ({ x: +m[1], y: +m[2], w: m[3].length * 5.7 }));
+                 return bx.length >= listed.size && bx.every((a, i) => bx.every((b, j) => i >= j || !(a.x < b.x + b.w && a.x + a.w > b.x && Math.abs(a.y - b.y) < 9))); })());
+      globalThis.ddDirectList(false);
+      assert('off again, none of them is drawn', !scope().includes('>HHCEE</text>') && !scope().includes('>GGREY</text>') && scope().length === offSvg.length);
+      globalThis.ddLayers('tracked');
+    }
     assert('it is hidden until asked for, and the button toggles it',
       D.directList() === false && (globalThis.ddDirectList(), D.directList() === true) && (globalThis.ddDirectList(), D.directList() === false));
   }

@@ -3482,6 +3482,8 @@ function scopeSvg(){
  /* with every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
     too, so the off-17 shape can be learned alongside the any-runway one */
  if(wantSid==='all') s+=sidRw17Svg(0.8);
+ /* the Direct-to fixes button: the listed fixes, ringed and named */
+ if(DIRECT_LIST) s+=directFixesSvg();
  /* The 25 DME release ring (ZMP-M98 LOA 4.c) is NOT drawn — owner, 2026-10-22:
     it is not needed. The release itself is still graded, and a departure's strip
     still counts down to it; only the circle is gone. */
@@ -3629,6 +3631,48 @@ function directFixesHtml(){
   +'. The scope draws a SID only out to '+SID_MAP.nm+' NM, and everything beyond 80 NM is named in claude_MSP_SID_Reference.md. <span class="dd-rst">RST</span> marks a fix on the Rochester side of the boundary, so a direct there needs the point-out. Not a gate table and not a sector map — neither exists for the new SIDs yet.</p>';
  return h;
 }
+/* The same fixes, as points on the scope — owner request, 2026-10-22: the
+   Direct-to fixes button shows the list AND the fixes on the scope, named. One
+   ring and one name per fix, whatever number of SIDs and transitions use it; a
+   fix only one SID uses takes that SID's colour, a fix several SIDs share (HTDSH,
+   TOTTZ, CORDY, JEDET, ZMBRO, the first fixes) is drawn in the neutral ink. The
+   fixes between 50 and 60 NM (HHCEE) are drawn although the tracks stop at 50 —
+   they are on the list, so they are shown. CORDY carries the RST tag, as in the
+   list. Names are pushed down a line where they would overprint. Read off
+   directFixes(), so there is still one copy of a fix. */
+function directFixPoints(){
+ var d=directFixes(), by={}, out=[];
+ function add(x, sid){
+  var q=by[x.f];
+  if(!q){ q=by[x.f]={f:x.f, nm:x.nm, rst:false, sids:[], p:px(SID_FIX[x.f].lat, SID_FIX[x.f].lon)}; out.push(q); }
+  if(q.sids.indexOf(sid)<0) q.sids.push(sid);
+  if(x.rst) q.rst=true;
+ }
+ d.rows.forEach(function(r){
+  (r.rwy||[]).forEach(function(x){ add(x, r.sid); });
+  r.common.forEach(function(x){ add(x, r.sid); });
+  r.trans.forEach(function(t){ t.fixes.forEach(function(x){ add(x, r.sid); }); });
+ });
+ return out.sort(function(a,b){ return a.nm-b.nm; });
+}
+function directFixesSvg(){
+ var pts=directFixPoints(), placed=[], s='';
+ pts.forEach(function(q){
+  var col=(q.sids.length===1) ? sidColor(q.sids[0]) : '#E7EDE9';
+  var w=q.f.length*5.7+(q.rst?24:0), left=(q.p.x>600);
+  var x=left ? q.p.x-7-w : q.p.x+7, y=q.p.y+3.5;
+  for(var n=0; n<8; n++){
+   var hit=placed.some(function(b){ return x<b.x+b.w && x+w>b.x && Math.abs(y-b.y)<9.5; });
+   if(!hit) break;
+   y+=9.5;
+  }
+  placed.push({x:x, y:y, w:w});
+  s+='<circle cx="'+q.p.x.toFixed(1)+'" cy="'+q.p.y.toFixed(1)+'" r="2.8" fill="none" stroke="'+col+'" stroke-width="1.2"/>'
+    +'<text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" fill="'+col+'" font-family="IBM Plex Mono" font-size="9">'+q.f+'</text>';
+  if(q.rst) s+='<text x="'+(x+q.f.length*5.7+4).toFixed(1)+'" y="'+y.toFixed(1)+'" fill="var(--red)" font-family="IBM Plex Mono" font-size="8">RST</text>';
+ });
+ return s;
+}
 var DIRECT_LIST=false;
 window.ddDirectList=function(on){
  DIRECT_LIST = (on===undefined) ? !DIRECT_LIST : !!on;
@@ -3639,6 +3683,7 @@ window.ddDirectList=function(on){
   if(b.classList) b.classList.toggle('on', DIRECT_LIST);
   if(b.setAttribute) b.setAttribute('aria-pressed', DIRECT_LIST ? 'true' : 'false');
  }
+ render();
 };
 window.ddLayers=function(m){
  if(!LAYER_MODES.some(function(x){return x.id===m;})) return;
@@ -3992,7 +4037,7 @@ window.DD = {
  neighbourAt:neighbourAt, exitBearing:exitBearing,
  setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
  LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, SID17_OPEN:SID17_OPEN,
- directFixes:directFixes, directFixesHtml:directFixesHtml, directList:function(){ return DIRECT_LIST; }, DIRECT_LIMIT:DIRECT_LIMIT,
+ directFixes:directFixes, directFixesHtml:directFixesHtml, directFixPoints:directFixPoints, directFixesSvg:directFixesSvg, directList:function(){ return DIRECT_LIST; }, DIRECT_LIMIT:DIRECT_LIMIT,
  overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,
  FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,
