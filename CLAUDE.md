@@ -195,7 +195,7 @@ the move**, so anything that looks one up still works.
 --amber --red`, `--display --body --mono`. Dark radar aesthetic. **No new fonts, no new accent
 colours.** New CSS classes are namespaced to the tool: `dd-`/`ddb-`, `rd-`/`rdb-`,
 `zd-`/`zdb-`, `zlc-`. **One owner-approved exception (2026-10-22): M98's SID tracks carry an
-eight-hue family palette** (`SID_FAMILIES` in the M98 deck), used on SID tracks and their key and
+ten-SID palette** (`SID_HUES` in the M98 deck: eight hues, two reused by non-conflicting SIDs), used on SID tracks and their key and
 nowhere else — an exception for that one job, not licence for another tool to add accents.
 
 **Persistence.** `localStorage` under `<tool-file-basename>-v1`, wrapped in try/catch. Where

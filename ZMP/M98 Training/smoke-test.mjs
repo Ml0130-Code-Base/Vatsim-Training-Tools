@@ -574,26 +574,39 @@ try {
     assert('a shared track is labelled once with every transition on it',
       globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'TOTTZ1 ALO/FOOLS/OANNA/OHHMY/ZZIPR')
       && globalThis.DD.sidDrawGroups(keys).some(g => g.label === 'BITEZ1 DKOTA/LEINY'));
-    /* SID families — owner request 2026-10-22: tracks that leave the same way share a
-       colour. A family is the exit direction off MSP, the bearing of the last mapped
-       fix in 45-degree sectors, so it falls out of the fix data. */
+    /* SID colours — owner request 2026-10-22: SIDs that leave in a similar direction
+       or share a lateral path get DIFFERENT colours (a first cut did the opposite).
+       A conflict is derived here from the fix data, not typed: two SIDs that share a
+       mapped fix, or whose last mapped fixes leave within 30 degrees of each other. */
     {
-      const D = globalThis.DD, fam = r => D.sidFamilyOf(r).id;
-      const want = k => {
-        const sid = k.split('.')[0];
-        if (sid === 'HTDSH1') return k.endsWith('.BRIBE') ? 'se' : 's';
-        return { BITEZ1: 'w', BUNYN1: 'n', KBREW1: 'nw', NRTHN1: 'ne', SNUPE1: 'se', ZMBRO1: 'se', TOTTZ1: 's', SNOWZ1: 'sw', DUHCK1: 'sw' }[sid];
-      };
-      assert('every MSP track falls in the family its exit direction names',
-        keys.every(k => fam(DP[k]) === want(k)), keys.filter(k => fam(DP[k]) !== want(k)).map(k => k + ':' + fam(DP[k])).join());
-      assert('DUHCK1 is one family, south-west, off all three satellites — the bearing is taken from MSP',
-        Object.keys(SATS).every(f => Object.keys(DA[f]).filter(k => k.startsWith('DUHCK1.')).every(k => fam(DA[f][k]) === 'sw')));
-      assert('the eight families have eight different hues, none of them the STAR green, the amber or the red',
-        D.SID_FAMILIES.length === 8 && new Set(D.SID_FAMILIES.map(f => f.hue)).size === 8
-        && D.SID_FAMILIES.every(f => !['#4FE0A0', '#E8A23D', '#E8604D'].includes(f.hue.toUpperCase())));
+      const D = globalThis.DD, sids = Object.keys(D.SID_SET);
+      const trackOf = sid => sid === 'DUHCK1' ? Object.keys(DA.KSTP).filter(k => k.startsWith('DUHCK1.')).map(k => DA.KSTP[k])
+                                              : keys.filter(k => k.startsWith(sid + '.')).map(k => DP[k]);
+      const exits = sid => trackOf(sid).map(r => { const p = r[r.length - 1]; return (Math.atan2(p.e, p.n) * 180 / Math.PI + 360) % 360; });
+      const fixesOf = sid => new Set([].concat(...trackOf(sid).map(r => r.slice(1).map(p => p.f))));
+      const angd = (a, b) => { const d = Math.abs(a - b); return d > 180 ? 360 - d : d; };
+      const conflicts = [];
+      for (let i = 0; i < sids.length; i++) for (let j = i + 1; j < sids.length; j++) {
+        const a = sids[i], b = sids[j];
+        const share = [...fixesOf(a)].some(f => fixesOf(b).has(f));
+        const close = exits(a).some(x => exits(b).some(y => angd(x, y) <= 30));
+        if (share || close) conflicts.push([a, b]);
+      }
+      assert('the conflict rule finds the eight pairs the colours were designed around',
+        conflicts.map(c => c.join('+')).sort().join() === 'BITEZ1+KBREW1,BUNYN1+NRTHN1,DUHCK1+SNOWZ1,HTDSH1+SNUPE1,HTDSH1+TOTTZ1,HTDSH1+ZMBRO1,SNUPE1+ZMBRO1,TOTTZ1+ZMBRO1',
+        conflicts.map(c => c.join('+')).join());
+      assert('every SID has a hue, and no two SIDs that conflict share one',
+        sids.every(s => /^#[0-9A-F]{6}$/i.test(D.SID_HUES[s])) && conflicts.every(([a, b]) => D.SID_HUES[a] !== D.SID_HUES[b]),
+        conflicts.filter(([a, b]) => D.SID_HUES[a] === D.SID_HUES[b]).map(c => c.join('+')).join());
+      assert('only eight hues serve ten SIDs: two are reused, each by a pair that does not conflict, none the STAR green, amber or red',
+        new Set(Object.values(D.SID_HUES)).size === 8 && Object.keys(D.SID_HUES).length === 10
+        && Object.values(D.SID_HUES).every(h => !['#4FE0A0', '#E8A23D', '#E8604D'].includes(h.toUpperCase()))
+        && D.SID_HUES.BITEZ1 === D.SID_HUES.ZMBRO1 && D.SID_HUES.KBREW1 === D.SID_HUES.SNUPE1);
       const fg = D.sidDrawGroups(keys.concat(D.satOnlySidItems()));
-      assert('each drawn track is stroked and labelled in its own family colour',
-        fg.every(g => D.sidTrackSvg(g).includes('stroke="' + g.fam.hue + '"') && D.sidLabelSvg([g], 1).includes('fill="' + g.fam.hue + '"')));
+      assert('each drawn track is stroked and labelled in its own SID colour',
+        fg.every(g => D.sidTrackSvg(g).includes('stroke="' + D.SID_HUES[g.sid] + '"') && D.sidLabelSvg([g], 1).includes('fill="' + D.SID_HUES[g.sid] + '"')));
+      assert('two SIDs never share a drawn track, even where they share every fix',
+        fg.every(g => g.keys.every(k => k.split('.')[0] === g.sid)));
       /* the line from the airport to the start of the SID is not drawn (owner,
          2026-10-22) — it is the uncoded stand-in leg. The one exception is the
          coded Runway 17 segment at MSP: field to RUBRB, then a short stub on the
@@ -626,10 +639,35 @@ try {
         assert('the aircraft still flies the stand-in leg — only the drawing changed',
           r[0].field === true && r[1].f === 'RUBRB' && r[2].f === 'ITZME' && r.length > 3);
       }
-      const leg = D.sidLegendSvg(fg, 14, 548);
-      assert('the key names each family on the scope once, and says it is the exit direction off MSP',
-        leg.includes('SID EXIT DIRECTION OFF MSP') && ['north', 'north-east', 'south-east', 'south', 'south-west', 'west', 'north-west'].every(n => leg.includes('>' + n + '<'))
-        && !leg.includes('>east<') && D.sidLegendSvg([], 14, 548) === '');
+      /* two SIDs on one leg are drawn side by side, not one over the other — owner,
+         2026-10-22. HTDSH1 and TOTTZ1 share HTDSH, TOTTZ, CORDY, FOOLS; HTDSH1's BRIBE
+         and ZMBRO1 share JEDET to ZMBRO. */
+      {
+        const pg = D.sidDrawGroups(['HTDSH1.ALO', 'TOTTZ1.ALO', 'HTDSH1.BRIBE', 'ZMBRO1.BRIBE']);
+        const gOf = (sid, fix) => pg.filter(g => g.sid === sid && g.drawn.some(p => p.f === fix))[0];
+        const at = (g, f) => g.pts[g.drawn.findIndex(p => p.f === f)], raw = (g, f) => g.drawn.find(p => p.f === f);
+        const lat = (g, f) => Math.hypot(at(g, f).x - raw(g, f).x, at(g, f).y - raw(g, f).y);
+        const hA = gOf('HTDSH1', 'CORDY'), tA = gOf('TOTTZ1', 'CORDY'), hB = gOf('HTDSH1', 'ZMBRO'), zB = gOf('ZMBRO1', 'ZMBRO');
+        assert('the two SIDs on a shared leg are one lane width apart, each half a lane either side of the leg',
+          Math.abs(Math.hypot(at(hA, 'CORDY').x - at(tA, 'CORDY').x, at(hA, 'CORDY').y - at(tA, 'CORDY').y) - D.SID_LANE) < 0.01
+          && Math.abs(lat(hA, 'CORDY') - D.SID_LANE / 2) < 0.01 && Math.abs(lat(tA, 'CORDY') - D.SID_LANE / 2) < 0.01
+          && Math.abs(Math.hypot(at(hB, 'ZMBRO').x - at(zB, 'ZMBRO').x, at(hB, 'ZMBRO').y - at(zB, 'ZMBRO').y) - D.SID_LANE) < 0.01);
+        assert('and HTDSH1 keeps the same side along the whole shared leg',
+          (() => { const side = f => Math.sign((at(hA, f).x - at(tA, f).x) * (raw(hA, 'FOOLS').y - raw(hA, 'HTDSH').y) - (at(hA, f).y - at(tA, f).y) * (raw(hA, 'FOOLS').x - raw(hA, 'HTDSH').x));
+                   return side('TOTTZ') === side('CORDY') && side('CORDY') === side('FOOLS') && side('CORDY') !== 0; })());
+        assert('the lead-in to the shared leg tapers rather than jumping: ITZME is untouched, HTDSH moves half as far',
+          lat(hA, 'ITZME') === 0 && Math.abs(lat(hA, 'HTDSH') - D.SID_LANE / 4) < 0.01);
+        assert('a SID on a leg nobody else flies is not moved — BITEZ1, and DUHCK1 off the satellites',
+          D.sidDrawGroups(keys.concat(D.satOnlySidItems())).filter(g => ['BITEZ1', 'BUNYN1', 'DUHCK1', 'KBREW1', 'NRTHN1', 'SNOWZ1', 'SNUPE1'].includes(g.sid))
+            .every(g => g.pts.every((p, i) => Math.abs(p.x - g.drawn[i].x) < 1e-9 && Math.abs(p.y - g.drawn[i].y) < 1e-9)));
+        assert('two transitions of one SID on one leg are not pushed apart',
+          (() => { const b = D.sidDrawGroups(['BITEZ1.DKOTA', 'BITEZ1.SMERF']); return b.length === 2 && b.every(g => g.pts.every((p, i) => p.x === g.drawn[i].x && p.y === g.drawn[i].y)); })());
+      }
+      const leg = D.sidLegendSvg(fg, 14, 554);
+      assert('the key names each SID on the scope once, in SID order, in one row along the bottom — and nothing for an empty scope',
+        Object.keys(D.SID_SET).every(s => leg.includes('>' + s + '<') && (leg.match(new RegExp('>' + s + '<', 'g')) || []).length === 1)
+        && D.sidLegendSvg([], 14, 554) === '' && !leg.includes('EXIT DIRECTION')
+        && (leg.match(/<rect /g) || []).length === 10 && new Set((leg.match(/ y="([\d.]+)" width="10"/g) || [])).size === 1);
     }
     assert('and FOOLS being off the bottom of the scope, those two are named at CORDY',
       globalThis.DD.sidDrawGroups(['TOTTZ1.ALO', 'HTDSH1.ALO']).every(g => g.anchor && g.anchor.f === 'CORDY'));
@@ -794,7 +832,7 @@ try {
     assert('off hides every SID name and transition, and the RUBRB caption',
       globalThis.DD.sidNames() === false && names.every(n => !offSvg.includes(n)) && !/>[A-Z]{4,5}\d [A-Z]{3,5}[/<]/.test(offSvg));
     assert('and leaves every track, the Runway 17 segment and the key as they were',
-      sidTrks() === tracksOn && (offSvg.match(/stroke-dasharray="1 3"/g) || []).length === 2 && offSvg.includes('SID EXIT DIRECTION OFF MSP'));
+      sidTrks() === tracksOn && (offSvg.match(/stroke-dasharray="1 3"/g) || []).length === 2 && offSvg.includes('>HTDSH1<') && offSvg.includes('fill="#E6D36A"'));
     globalThis.ddSidNames();
     assert('it toggles back on', globalThis.DD.sidNames() === true && scope().includes('BITEZ1 DKOTA/LEINY'));
     globalThis.ddLayers('tracked');

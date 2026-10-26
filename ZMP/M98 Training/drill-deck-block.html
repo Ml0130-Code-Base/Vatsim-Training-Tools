@@ -3069,44 +3069,44 @@ function satOnlySidItems(){
  });
  return out;
 }
-/* ---------- SID families — tracks that leave the same way share a colour ----------
-   Owner request, 2026-10-22: colour-code SIDs whose lateral paths are similar.
-   A family is the EXIT DIRECTION off the MSP VOR — the bearing of the last
-   mapped fix, in 45-degree sectors centred on the compass points — so it is
-   read off the fix data and nothing is asserted that the geometry does not
-   show. It is a drawing aid for learning the shapes. It is NOT a gate (the
-   gate letters are tabled) and NOT a ZMP sector (no SID-to-sector table
-   exists), and the page says so. A track's bearing is taken from MSP whatever
-   field it starts at, so DUHCK1 from ANE, FCM and STP is one family.
-   The hues are an owner-approved exception to "no new accent colours", used
-   on SID tracks, their labels and their key and nowhere else; green stays the
-   STARs, amber the release ring and the Runway 17 segment, red the warnings.
-   They live here and not as :root tokens so the block-only paste files carry
-   them — a paste into a page without the tokens would draw the tracks with no
-   stroke at all. */
-var SID_FAMILIES = [
- {id:'n',  name:'north',      hue:'#5AA9E6'}, {id:'ne', name:'north-east', hue:'#9A8CF2'},
- {id:'e',  name:'east',       hue:'#E6D36A'}, {id:'se', name:'south-east', hue:'#D685D0'},
- {id:'s',  name:'south',      hue:'#45C6D8'}, {id:'sw', name:'south-west', hue:'#B5D655'},
- {id:'w',  name:'west',       hue:'#F08A9E'}, {id:'nw', name:'north-west', hue:'#C0C8F4'}
-];
-function sidFamilyOf(route){
- var p=route[route.length-1];
- var b=(Math.atan2(p.e, p.n)*180/Math.PI+360)%360;
- return SID_FAMILIES[Math.floor(((b+22.5)%360)/45)];
-}
-function sidColor(fam){ return fam.hue; }
-/* one key line per family actually on the scope, in compass order */
+/* ---------- SID colours — one hue per SID, neighbours always different ----------
+   Owner, 2026-10-22: SIDs that leave in a similar direction, or that share a
+   lateral path, must NOT share a colour, so the eye can tell them apart. (This
+   replaced a first cut that gave similar-direction SIDs ONE colour — the wrong
+   way round.) Each SID has its own hue; its transitions share it and the label
+   names them. There are eight hues for ten SIDs, so two are reused, and only
+   between SIDs that do not conflict and sit on opposite sides of MSP: BITEZ1
+   (west) and ZMBRO1 (south-east) are blue, KBREW1 (north-west) and SNUPE1
+   (east-south-east) are rose. A conflict is two SIDs that share a fix or whose
+   last mapped fixes leave within 30 degrees of each other; the harness derives
+   the conflicts from the fix data and fails if any conflicting pair shares a hue.
+   Today: HTDSH1+TOTTZ1, HTDSH1+ZMBRO1 (shared tracks), HTDSH1+SNUPE1,
+   SNUPE1+ZMBRO1, TOTTZ1+ZMBRO1, DUHCK1+SNOWZ1, BITEZ1+KBREW1, BUNYN1+NRTHN1.
+   Where two SIDs run on one leg they are drawn as parallel lines side by side
+   (sidDrawGroups), not one over the other. The colour is a drawing aid. It is
+   NOT a gate (the gate letters are tabled) and NOT a ZMP sector (no
+   SID-to-sector table exists).
+   The hues are an owner-approved exception to "no new accent colours", used on
+   SID tracks, their labels and their key and nowhere else; green stays the
+   STARs, amber the Runway 17 segment, red the warnings. They live here and not
+   as :root tokens so the block-only paste files carry them. */
+var SID_HUES = {
+ BITEZ1:'#5AA9E6', BUNYN1:'#B5D655', DUHCK1:'#45C6D8', HTDSH1:'#E6D36A',
+ KBREW1:'#F08A9E', NRTHN1:'#9A8CF2', SNOWZ1:'#D685D0', SNUPE1:'#F08A9E',
+ TOTTZ1:'#C0C8F4', ZMBRO1:'#5AA9E6'
+};
+function sidColor(sid){ return SID_HUES[sid] || '#9AA7A0'; }
+/* the key: one chip per SID actually on the scope, in one row along the bottom */
 function sidLegendSvg(groups, x, y){
- var seen={}, fams=[];
- groups.forEach(function(g){ if(!seen[g.fam.id]){ seen[g.fam.id]=1; fams.push(g.fam); } });
- fams.sort(function(a,b){ return SID_FAMILIES.indexOf(a)-SID_FAMILIES.indexOf(b); });
- if(!fams.length) return '';
- var s='<text x="'+x+'" y="'+(y-fams.length*12-4)+'" fill="var(--dim2)" font-family="IBM Plex Mono" font-size="9">SID EXIT DIRECTION OFF MSP</text>';
- fams.forEach(function(f,i){
-  var yy=y-(fams.length-1-i)*12;
-  s+='<rect x="'+x+'" y="'+(yy-7)+'" width="9" height="3" fill="'+sidColor(f)+'"/>'
-    +'<text x="'+(x+14)+'" y="'+(yy-3)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="9">'+f.name+'</text>';
+ var seen={}, sids=[];
+ groups.forEach(function(g){ if(!seen[g.sid]){ seen[g.sid]=1; sids.push(g.sid); } });
+ sids.sort(function(a,b){ return Object.keys(SID_SET).indexOf(a)-Object.keys(SID_SET).indexOf(b); });
+ if(!sids.length) return '';
+ var s='';
+ sids.forEach(function(sid,i){
+  var xx=x+i*64;
+  s+='<rect x="'+xx+'" y="'+(y-6)+'" width="10" height="3" fill="'+sidColor(sid)+'"/>'
+    +'<text x="'+(xx+14)+'" y="'+(y-2)+'" fill="var(--dim)" font-family="IBM Plex Mono" font-size="9">'+sid+'</text>';
  });
  return s;
 }
@@ -3133,16 +3133,58 @@ function rw17Stub(r){
  return px(f.lat+Math.cos(a)*RW17_HDG.nm/60, f.lon+Math.sin(a)*RW17_HDG.nm/(60*COSL));
 }
 function ptsStr(a){ return a.map(function(p){return p.x.toFixed(1)+','+p.y.toFixed(1);}).join(' '); }
-/* the polylines for one drawn track, in its family's colour */
+/* the polylines for one drawn track, in its SID's colour. g.pts is the drawn
+   track from the first fix on, already moved sideways where another SID runs on
+   the same leg (sidDrawGroups). */
 function sidTrackSvg(g){
  var r=g.route, s='';
- if(r.rw17){
+ if(r.rw17)
   s+='<polyline points="'+ptsStr([r[0],r[1],rw17Stub(r)])+'" fill="none" stroke="var(--amber)" stroke-width="1" opacity="0.5" stroke-dasharray="1 3"/>';
-  r=r.slice(2);
- } else if(r[0] && r[0].field) r=r.slice(1);
- if(r.length>1)
-  s+='<polyline points="'+ptsStr(r)+'" fill="none" stroke="'+sidColor(g.fam)+'" stroke-width="1" opacity="0.6" stroke-dasharray="3 3"/>';
+ var pts=g.pts || g.drawn;
+ if(pts && pts.length>1)
+  s+='<polyline points="'+ptsStr(pts)+'" fill="none" stroke="'+sidColor(g.sid)+'" stroke-width="1" opacity="0.75" stroke-dasharray="3 3"/>';
  return s;
+}
+/* ---------- Two SIDs on one leg are drawn side by side ----------
+   HTDSH1 and TOTTZ1 fly HTDSH, TOTTZ, CORDY on one line, and ZMBRO1 flies
+   JEDET to ZMBRO along HTDSH1's BRIBE track. Drawn one over the other the
+   second hid the first, and a dashed overlay read as noise (owner, 2026-10-22:
+   "I don't know how I like the coloring for the HTDSH"), so a leg that two or
+   more DIFFERENT SIDs share is drawn as parallel lines, SID_LANE px apart,
+   in a fixed order (the order of SID_SET) so a SID keeps its side along the
+   leg. Transitions of one SID share its colour and are not offset from each
+   other. A vertex between a shared and an unshared leg moves half as far, so
+   the line tapers in rather than jumping. It moves the DRAWING only; the route
+   an aircraft flies is untouched. */
+var SID_LANE = 2.4;
+function segKey(a, b){ return a<b ? a+'>'+b : b+'>'+a; }
+function offsetGroups(out){
+ var users={}, order=Object.keys(SID_SET);
+ out.forEach(function(g){
+  for(var i=1;i<g.drawn.length;i++){
+   var k=segKey(g.drawn[i-1].f, g.drawn[i].f);
+   (users[k]=users[k]||[]);
+   if(users[k].indexOf(g.sid)<0) users[k].push(g.sid);
+  }
+ });
+ Object.keys(users).forEach(function(k){ users[k].sort(function(a,b){ return order.indexOf(a)-order.indexOf(b); }); });
+ out.forEach(function(g){
+  var d=g.drawn, n=d.length, segOff=[], segNorm=[];
+  for(var i=1;i<n;i++){
+   var a=d[i-1], b=d[i], sh=users[segKey(a.f,b.f)];
+   /* the side is taken looking OUTWARD from MSP along the leg, whichever way a
+      track happens to list its fixes, so a SID keeps its side along the whole
+      leg and two SIDs listing it in opposite orders still land on opposite sides */
+   var fwd=((a.e*a.e+a.n*a.n)<=(b.e*b.e+b.n*b.n)), dx=(fwd?b.x-a.x:a.x-b.x), dy=(fwd?b.y-a.y:a.y-b.y), len=Math.sqrt(dx*dx+dy*dy)||1;
+   segNorm.push([-dy/len, dx/len]);
+   segOff.push(sh.length>1 ? (sh.indexOf(g.sid)-(sh.length-1)/2)*SID_LANE : 0);
+  }
+  g.pts=d.map(function(p,i){
+   var sx=0, sy=0, c=0;
+   [i-1, i].forEach(function(j){ if(j>=0 && j<n-1){ sx+=segOff[j]*segNorm[j][0]; sy+=segOff[j]*segNorm[j][1]; c++; } });
+   return c ? {f:p.f, x:p.x+sx/c, y:p.y+sy/c} : p;
+  });
+ });
 }
 /* Takes keys, which draw the any-runway track, or {key, route} items, which
    draw the route given — what a tracked departure is actually flying, so one
@@ -3158,9 +3200,10 @@ function sidDrawGroups(items){
      and STP is therefore one track and one label naming the three fields
      (owner, 2026-10-22). The Runway 17 segment is drawn from the field, so it
      stays its own. */
-  var drawn=r.rw17 ? r : ((r[0] && r[0].field) ? r.slice(1) : r);
-  var sig=(r.rw17?'17:':'')+drawn.map(function(p){ return p.f; }).join(' ');
-  if(!by[sig]){ by[sig]={route:r, keys:[], fields:[]}; out.push(by[sig]); }
+  var drawn=r.rw17 ? r.slice(2) : ((r[0] && r[0].field) ? r.slice(1) : r);
+  /* one track per SID and per drawn path: two SIDs never merge, whatever they share */
+  var sig=sidOf(k)+(r.rw17?' 17: ':': ')+drawn.map(function(p){ return p.f; }).join(' ');
+  if(!by[sig]){ by[sig]={route:r, drawn:drawn, sid:sidOf(k), keys:[], fields:[]}; out.push(by[sig]); }
   if(by[sig].keys.indexOf(k)<0) by[sig].keys.push(k);
   var fld=(r[0] && r[0].field) ? r[0].f : 'MSP';
   if(by[sig].fields.indexOf(fld)<0) by[sig].fields.push(fld);
@@ -3169,7 +3212,6 @@ function sidDrawGroups(items){
   /* a track that is not MSP's alone says which field or fields it leaves */
   var named=(g.fields.length===1 && g.fields[0]==='MSP') ? '' : (' · '+g.fields.join('/'));
   g.label=sidOf(g.keys[0])+' '+g.keys.map(transOf).join('/')+(g.route.rw17?' via RUBRB':'')+named;
-  g.fam=sidFamilyOf(g.route);
   g.anchor=null;
   /* inside the 700 x 560 frame with room left for a second, stacked line */
   for(var i=g.route.length-1;i>0;i--){
@@ -3177,6 +3219,7 @@ function sidDrawGroups(items){
    if(p.x>=20 && p.x<=680 && p.y>=16 && p.y<=540){ g.anchor=p; break; }
   }
  });
+ offsetGroups(out);
  return out;
 }
 /* The Runway 17 segment HTDSH1 and SNOWZ1 code — field, RUBRB, then the stub
@@ -3206,7 +3249,7 @@ function sidLabelSvg(groups, opacity){
      line is the longest — so its end is pushed in until its start is inside */
   var lx=left ? Math.max(p.x-7, 8+g.label.length*6.1) : p.x+7;
   s+='<text x="'+lx.toFixed(1)+'" y="'+(p.y+4+n*11).toFixed(1)+'"'+(left?' text-anchor="end"':'')
-    +' fill="'+sidColor(g.fam)+'" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">'+g.label+'</text>';
+    +' fill="'+sidColor(g.sid)+'" font-family="IBM Plex Mono" font-size="10" opacity="'+opacity+'">'+g.label+'</text>';
  });
  return s;
 }
@@ -3306,7 +3349,7 @@ function scopeSvg(){
  var sidGroups=sidDrawGroups(sidKeys);
  sidGroups.forEach(function(g){ s+=sidTrackSvg(g); });
  if(SID_NAMES) s+=sidLabelSvg(sidGroups, 0.9);
- s+=sidLegendSvg(sidGroups, 14, 548);
+ s+=sidLegendSvg(sidGroups, 14, 554);
  /* with every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
     too, so the off-17 shape can be learned alongside the any-runway one */
  if(wantSid==='all') s+=sidRw17Svg(0.8, SID_NAMES);
@@ -3487,7 +3530,10 @@ window.ddLayers=function(m){
  LAYERS=m;
  var bar=document.getElementById('dd-layerbar');
  if(bar && bar.querySelectorAll){
-  Array.prototype.slice.call(bar.querySelectorAll('button')).forEach(function(b){
+  /* only the layer buttons — the SID names and Direct-to fixes toggles live on
+     this bar too and have their own state; without the selector a layer change
+     cleared their highlight */
+  Array.prototype.slice.call(bar.querySelectorAll('button[data-l]')).forEach(function(b){
    if(b.classList) b.classList.toggle('on', (b.dataset&&b.dataset.l)===m);
   });
  }
@@ -3808,7 +3854,7 @@ window.DD = {
  DEPS17:DEPS17, depTrackFor:depTrackFor, sidRw17Svg:sidRw17Svg,
  sidDrawGroups:sidDrawGroups, sidLabelSvg:sidLabelSvg,
  SAT_DRAWN:SAT_DRAWN, satStarRoutes:satStarRoutes,
- SID_FAMILIES:SID_FAMILIES, sidFamilyOf:sidFamilyOf, sidColor:sidColor, sidTrackSvg:sidTrackSvg, sidLegendSvg:sidLegendSvg, RW17_HDG:RW17_HDG, rw17Stub:rw17Stub,
+ SID_HUES:SID_HUES, SID_LANE:SID_LANE, sidColor:sidColor, sidTrackSvg:sidTrackSvg, sidLegendSvg:sidLegendSvg, RW17_HDG:RW17_HDG, rw17Stub:rw17Stub,
  materialize:materialize, TURN_RATE:TURN_RATE, beginVector:beginVector, onVector:onVector, trackAt:trackAt,
  turnStep:turnStep, inPoly:inPoly, inM98:inM98, sayHdg:sayHdg, receiverFor:receiverFor, dmeOf:dmeOf,
  POS_NAME:POS_NAME, posName:posName, sideOfPos:sideOfPos, arrivalSideFor:arrivalSideFor,
