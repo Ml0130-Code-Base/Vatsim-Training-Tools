@@ -54,7 +54,7 @@ vectored to join — RUBRB is on the segment, and the join fix (ITZME or MANCY) 
 | FOOLS | 72.3 | TOTTZ1 and HTDSH1 (ALO, OANNA, OHHMY, ZZIPR) |
 | IDEEA, GRRAT | about 85.6, 96.9 | DUHCK1 (SBRNA; LLUKY and STIER) |
 
-The first fix beyond 80 NM on any MSP transition is MDIAN (82.7) or JAYYJ (83.8); the SID reference
+**The scope draws a SID only to 50 NM** (owner, 2026-10-22), so the fixes between 50 and 60 NM on this list — HHCEE, 53 — are listed and not drawn. The first fix beyond 80 NM on any MSP transition is MDIAN (82.7) or JAYYJ (83.8); the SID reference
 names everything past that.
 
 ## Two things to check before you issue one

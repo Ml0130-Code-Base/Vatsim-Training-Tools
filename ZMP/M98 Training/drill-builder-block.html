@@ -1426,7 +1426,7 @@ function validate(rec){
        starts at MSP */
     var dmeS=(dFld==='KMSP') ? a.fromStart : dmeAlong(dTrk, a.fromStart);
     if(!(a.fromStart>=0)) errs.push(tag+': distance from '+dName+' must be a number.');
-    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are mapped to 80 NM from MSP).');
+    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are drawn only to '+DD.SID_MAP.nm+' NM from MSP).');
     else if(dmeS>60) warns.push(tag+': starts '+a.fromStart+' NM out'+(dFld==='KMSP'?'':(', '+dmeS.toFixed(0)+' DME from MSP'))+', beyond the 60 NM join limit M98 takes a departure to (ZMP-M98 LOA 4.f).');
     else if(dmeS>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM'+(dFld==='KMSP'?'':(', '+dmeS.toFixed(0)+' DME from MSP,'))+' already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
    }

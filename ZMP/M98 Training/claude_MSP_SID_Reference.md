@@ -6,8 +6,9 @@
 > flow"*). **Until 2026-10-29 the network still files the retired set** — recorded at the end of
 > this file — and the deck says so in a banner on every page until the day. Issue #61.
 >
-> **Gate letters for the new set are TABLED** (owner, 2026-10-14: not known yet). **Fixes are
-> mapped only within 80 NM of MSP** (owner, 2026-10-14); the rest are named, not plotted.
+> **Gate letters for the new set are TABLED** (owner, 2026-10-14: not known yet). **The scope draws a
+> SID only out to 50 NM from MSP** (owner, 2026-10-22 — the STARS limit; it was 80 NM from
+> 2026-10-14). The tables below still list every fix to 80 NM; the rest are named, not plotted.
 
 ## Source self-check — LOAs + SOP + plates (read before quoting a routing/altitude in a drill)
 
@@ -63,7 +64,8 @@ grep "^SUSAP KMSPK3D" FAACIFP18                          # the legs
 
 ### The SIDs, with their transitions
 
-Fixes **inside 80 NM** are plotted in the deck; **beyond →** they are named only. "≥" is the
+Fixes **inside 50 NM** are drawn on the scope; fixes out to 80 NM are listed here and held in the
+deck's data table, which the direct-to list reads; **beyond →** they are named only. "≥" is the
 at-or-above crossing CIFP codes at that fix.
 
 | SID | Starts | Common route | Transitions | Coded at |
@@ -79,15 +81,15 @@ at-or-above crossing CIFP codes at that fix.
 | **ZMBRO1** | JEDET ≥ 4,000 | JEDET · ZMBRO | **BRIBE**: → PEKTE · BRIBE | MSP, ANE, FCM, STP |
 | **DUHCK1** | GGREY ≥ 4,000 | GGREY · DUHCK | **LLUKY**: MGHTY → GRRAT · DDOWN · LLUKY · **SBRNA**: MGHTY → IDEEA · MDKNG · SBRNA · **STIER**: MGHTY → GRRAT · DDOWN · STIER | **ANE, FCM, STP only** |
 
-**Several transitions share one track inside 80 NM** — BITEZ1's DKOTA and LEINY part company
-beyond HHCEE; TOTTZ1's five and four of HTDSH1's beyond FOOLS; SNOWZ1's DABOY and ZZEEE beyond
-HSTIN, and its other three beyond SLAYR. So the deck's 25 MSP entries draw as **14 tracks**, each
+**Several transitions share one track inside 50 NM** — BITEZ1's DKOTA and LEINY part company
+beyond TICKK (HHCEE, 52 NM, is past the limit); TOTTZ1's five and four of HTDSH1's beyond CORDY;
+SNOWZ1's DABOY and ZZEEE beyond PEDLN, and its other three beyond SLAYR. KBREW1 ends at HOMUR. So the deck's 25 MSP entries draw as **14 tracks**, each
 labelled with every transition on it. **The ones that leave through the Rochester arc**
 (MSP 148.1–184.8, issue #59) are every track that runs down through CORDY to FOOLS — TOTTZ1, and
 HTDSH1 except its BRIBE transition, which turns off at HTDSH for JEDET and leaves east of the arc.
 Below 9,000 those go to Rochester, above it to Center.
 
-### The fixes inside 80 NM
+### The fixes out to 80 NM
 
 From the CIFP 261029 waypoint records. Bearing (true) and distance in NM are from the MSP DME,
 N44 53 47.40 / W093 14 11.51 — the deck's `MSP0`.
@@ -122,7 +124,7 @@ for departures off ANE, FCM and STP (issue #67). **The first fix beyond 80 NM on
 transition is MDIAN (82.7) or JAYYJ (83.8);** nothing past the limit is plotted.
 
 **DUHCK1 past MGHTY — named, not plotted** (CIFP 261029, MSP DME, decoded 2026-10-22). Every
-transition runs GGREY → DUHCK → MGHTY, the last fix inside 80 NM, so the three share one mapped
+transition runs GGREY → DUHCK → MGHTY, the last fix inside 50 NM, so the three share one mapped
 track. After it: **LLUKY** MGHTY → GRRAT (96.9) → DDOWN (137.8) → LLUKY (271.2) · **SBRNA** MGHTY →
 IDEEA (85.6) → MDKNG (119.6) → SBRNA (194.2) · **STIER** MGHTY → GRRAT → DDOWN → STIER (174.6).
 The crossing at the start is GGREY **at or above 4,000** — the one the deck carries, as at every SID
@@ -167,7 +169,7 @@ revision number is said as a word: *BITEZ ONE departure*.
   with CIFP once: 260903 coded SMERF at MSP only.)
 - **The deck flies a satellite departure** (issue #67, 2026-10-22): the track starts at the field and
   runs the coded fixes — identical at the three fields, route types 5 and 6 only, so **no runway
-  transition** — to the same 80 NM limit from MSP. A strip names a SID its field does not code
+  transition** — to the same 50 NM limit from MSP. A strip names a SID its field does not code
   (HTDSH1 or SNOWZ1 at a satellite, DUHCK1 at MSP) and is refused by name; Crystal is refused with
   its radar-vectored note, because the engine has no track for a vectored departure.
 - **The release is ZMP-M98 LOA 4.c, measured from the MSP DME whatever field the aircraft left.** The

@@ -440,7 +440,7 @@ try {
 
   /* ============ The 2026-10-29 SID set — CIFP 261029, issue #61 ============
      Carried early by the owner's choice (2026-10-14), one entry per transition,
-     each mapped to 80 NM from MSP (owner, 2026-10-14). */
+     each drawn out to 50 NM from MSP (owner, 2026-10-22; it was 80 NM from 2026-10-14). */
   {
     const DP = globalThis.DD.DEPS, SS = globalThis.DD.SID_SET, keys = Object.keys(DP);
     assert('the nine SIDs MSP codes in CIFP 261029 are carried, one entry per transition, and DUHCK1 beside them',
@@ -451,8 +451,23 @@ try {
       keys.every(k => /^[A-Z]{3,5}\d\.[A-Z]{3,5}$/.test(k) && SS[k.split('.')[0]].trans[k.split('.')[1]] !== undefined));
     assert('every track starts at the field, and only the first point is the field',
       keys.every(k => DP[k][0].field === true && DP[k][0].f === 'MSP' && DP[k].filter(p => p.field).length === 1));
-    assert('no mapped fix is more than 80 NM from MSP — owner, 2026-10-14',
-      keys.every(k => DP[k].every(p => Math.sqrt(p.e*p.e + p.n*p.n) <= 80)));
+    assert('no drawn fix is more than 50 NM from MSP — owner, 2026-10-22, the STARS limit',
+      globalThis.DD.SID_MAP.nm === 50 && keys.every(k => DP[k].every(p => Math.sqrt(p.e*p.e + p.n*p.n) <= 50)));
+    /* the table still holds every fix out to 80 NM exactly as CIFP gives it — the limit is
+       applied when the tracks are built, so the direct-to list and the reference are unaffected */
+    assert('the SID table keeps the fixes past 50 NM — FOOLS, HHCEE, HSTIN, KBREW — and none of them is drawn',
+      SS.TOTTZ1.trans.ALO.includes('FOOLS') && SS.BITEZ1.trans.DKOTA.includes('HHCEE') && SS.SNOWZ1.trans.DABOY.includes('HSTIN') && SS.KBREW1.common.includes('KBREW')
+      && keys.every(k => DP[k].every(p => !['FOOLS', 'HHCEE', 'HSTIN', 'KBREW'].includes(p.f))));
+    {
+      const END = { 'BITEZ1.DKOTA': 'TICKK', 'BITEZ1.LEINY': 'TICKK', 'BITEZ1.SMERF': 'PAGOZ', 'BUNYN1.DLH': 'BAYBB', 'BUNYN1.KVUSI': 'GPERS',
+        'HTDSH1.ALO': 'CORDY', 'HTDSH1.OANNA': 'CORDY', 'HTDSH1.OHHMY': 'CORDY', 'HTDSH1.ZZIPR': 'CORDY', 'HTDSH1.BRIBE': 'ZMBRO',
+        'KBREW1.KEETN': 'HOMUR', 'NRTHN1.AROND': 'WAHLI', 'NRTHN1.TTOWN': 'DWIYT', 'SNOWZ1.DABOY': 'PEDLN', 'SNOWZ1.ZZEEE': 'PEDLN',
+        'SNOWZ1.ISTIQ': 'SLAYR', 'SNOWZ1.LLUKY': 'SLAYR', 'SNOWZ1.SMTHA': 'SLAYR', 'SNUPE1.DLL': 'WDSTK', 'TOTTZ1.ALO': 'CORDY',
+        'TOTTZ1.FOOLS': 'CORDY', 'TOTTZ1.OANNA': 'CORDY', 'TOTTZ1.OHHMY': 'CORDY', 'TOTTZ1.ZZIPR': 'CORDY', 'ZMBRO1.BRIBE': 'ZMBRO' };
+      assert('every track stops at the last coded fix inside 50 NM — they end 39 to 50 NM out, not at the ring',
+        keys.every(k => DP[k].slice(-1)[0].f === END[k]) && Object.keys(END).length === keys.length,
+        keys.filter(k => DP[k].slice(-1)[0].f !== END[k]).map(k => k + ':' + DP[k].slice(-1)[0].f).join());
+    }
     /* every mapped fix where claude_MSP_SID_Reference.md puts it, from MSP */
     const SID_DME = {MANCY:6.9, RUBRB:7.0, HHOBA:12.8, ITZME:13.1, SIEDL:15.2, SNOWZ:15.3, SLALM:19.3,
       SLUSH:21.2, JBUGG:22.3, HTDSH:22.8, BITEZ:22.8, NRTHN:24.1, PNUTZ:28.4, BUNYN:31.6, MOGLL:31.9,
@@ -506,8 +521,8 @@ try {
       DP['KBREW1.KEETN'].every(p => p.f !== 'GEP') && DP['ZMBRO1.BRIBE'][1].f === 'JEDET');
     assert('a departure crossing rides as climbAA, never as an arrival field',
       keys.every(k => DP[k].every(p => p.aa === undefined && p.at === undefined)));
-    assert('a transition with no fix inside 80 NM is kept by name and ends at the SID fix',
-      DP['KBREW1.KEETN'].slice(-1)[0].f === 'KBREW' && DP['ZMBRO1.BRIBE'].slice(-1)[0].f === 'ZMBRO');
+    assert('a transition with no fix inside 50 NM is kept by name and ends at the last fix that is — KBREW is 69 out, so KBREW1 ends at HOMUR',
+      DP['KBREW1.KEETN'].slice(-1)[0].f === 'HOMUR' && DP['ZMBRO1.BRIBE'].slice(-1)[0].f === 'ZMBRO');
     assert('ANE, FCM and STP have eight SIDs, MIC none, and DUHCK1 is theirs alone',
       ['KANE', 'KFCM', 'KSTP'].every(f => globalThis.DD.SID_FIELDS[f].join() === 'BITEZ1,BUNYN1,DUHCK1,KBREW1,NRTHN1,SNUPE1,TOTTZ1,ZMBRO1')
       && globalThis.DD.SID_FIELDS.KMIC.length === 0 && !globalThis.DD.SID_FIELDS.KMSP.includes('DUHCK1'));
@@ -524,17 +539,17 @@ try {
       Object.keys(SATS).every(f => Object.keys(DA[f]).every(k => DA[f][k][0].field === true && DA[f][k][0].f === SATS[f]
         && DA[f][k][0].lat === globalThis.DD.AIRPORTS[f].lat && DA[f][k][0].lon === globalThis.DD.AIRPORTS[f].lon
         && DA[f][k].filter(p => p.field).length === 1)));
-    assert('DUHCK1 is the field, GGREY at or above 4,000, DUHCK, MGHTY — the same on all three transitions inside 80 NM',
+    assert('DUHCK1 is the field, GGREY at or above 4,000, DUHCK, MGHTY — the same on all three transitions inside 50 NM',
       Object.keys(SATS).every(f => ['LLUKY', 'SBRNA', 'STIER'].every(t =>
         DA[f]['DUHCK1.' + t].slice(1).map(p => p.f).join() === 'GGREY,DUHCK,MGHTY' && DA[f]['DUHCK1.' + t][1].climbAA === 4000)));
     Object.keys(SATS).forEach(f => Object.keys(DA[f]).forEach(k => DA[f][k].forEach(p => {
       if (p.field) return;
       const d = Math.sqrt(p.e*p.e + p.n*p.n);
-      if (d > 80) fail('satellite SID within 80 NM', f + '/' + k + '/' + p.f + ' is ' + d.toFixed(1) + ' from MSP');
+      if (d > 50) fail('satellite SID within 50 NM', f + '/' + k + '/' + p.f + ' is ' + d.toFixed(1) + ' from MSP');
       const want = SID_DME[p.f] !== undefined ? SID_DME[p.f] : SAT_DME[p.f];
       if (Math.abs(d - want) > 1.0) fail('satellite SID fix distance', f + '/' + k + '/' + p.f + ' plots at ' + d.toFixed(1) + ', the reference says ' + want);
     })));
-    ok('every satellite SID fix is within 80 NM of MSP and plots where the reference puts it');
+    ok('every satellite SID fix is within 50 NM of MSP and plots where the reference puts it');
     assert('the seven a satellite shares with MSP fly the same fixes after the first leg',
       Object.keys(SATS).every(f => keys.every(k => /^(HTDSH1|SNOWZ1)\./.test(k)
         || DA[f][k].slice(1).map(p => p.f).join() === DP[k].slice(1).map(p => p.f).join())));
@@ -639,7 +654,7 @@ try {
           r[0].field === true && r[1].f === 'RUBRB' && r[2].f === 'ITZME' && r.length > 3);
       }
       /* two SIDs on one leg are drawn side by side, not one over the other — owner,
-         2026-10-22. HTDSH1 and TOTTZ1 share HTDSH, TOTTZ, CORDY, FOOLS; HTDSH1's BRIBE
+         2026-10-22. HTDSH1 and TOTTZ1 share HTDSH, TOTTZ and CORDY (FOOLS is past the 50 NM limit); HTDSH1's BRIBE
          and ZMBRO1 share JEDET to ZMBRO. */
       {
         const pg = D.sidDrawGroups(['HTDSH1.ALO', 'TOTTZ1.ALO', 'HTDSH1.BRIBE', 'ZMBRO1.BRIBE']);
@@ -652,8 +667,8 @@ try {
           && Math.abs(lat(hA, 'CORDY') - D.SID_LANE / 2) < 0.01 && Math.abs(lat(tA, 'CORDY') - D.SID_LANE / 2) < 0.01
           && Math.abs(Math.hypot(at(hB, 'ZMBRO').x - at(zB, 'ZMBRO').x, at(hB, 'ZMBRO').y - at(zB, 'ZMBRO').y) - D.SID_LANE) < 0.01);
         assert('and HTDSH1 keeps the same side along the whole shared leg',
-          (() => { const side = f => Math.sign((at(hA, f).x - at(tA, f).x) * (raw(hA, 'FOOLS').y - raw(hA, 'HTDSH').y) - (at(hA, f).y - at(tA, f).y) * (raw(hA, 'FOOLS').x - raw(hA, 'HTDSH').x));
-                   return side('TOTTZ') === side('CORDY') && side('CORDY') === side('FOOLS') && side('CORDY') !== 0; })());
+          (() => { const side = f => Math.sign((at(hA, f).x - at(tA, f).x) * (raw(hA, 'CORDY').y - raw(hA, 'HTDSH').y) - (at(hA, f).y - at(tA, f).y) * (raw(hA, 'CORDY').x - raw(hA, 'HTDSH').x));
+                   return side('TOTTZ') === side('CORDY') && side('CORDY') !== 0; })());
         assert('the lead-in to the shared leg tapers rather than jumping: ITZME is untouched, HTDSH moves half as far',
           lat(hA, 'ITZME') === 0 && Math.abs(lat(hA, 'HTDSH') - D.SID_LANE / 4) < 0.01);
         assert('a SID on a leg nobody else flies is not moved — BITEZ1, and DUHCK1 off the satellites',
@@ -2089,8 +2104,11 @@ try {
     const plain = dv({ sid: 'BITEZ1.DKOTA', depRwy: '30L' });
     assert('an ordinary SID from any runway raises nothing about the SID',
       !plain.errors.concat(plain.warnings).some(x => /SID|Runway 17/.test(x)), plain.errors.concat(plain.warnings).join(' | '));
-    assert('a start beyond the 60 NM join limit is warned against (ZMP-M98 LOA 4.f)',
-      dv({ sid: 'HTDSH1.ALO', depRwy: '17', fromStart: 65 }).warnings.some(w => w.includes('60 NM join limit')));
+    /* The 60 NM join-limit warning (ZMP-M98 LOA 4.f) can no longer be reached from the
+       builder: tracks are drawn only to 50 NM (owner, 2026-10-22), so a start more than
+       about 50 NM along one is refused as past the end of the track — and says why. */
+    assert('a start past the end of a track is refused, naming the 50 NM the tracks are drawn to',
+      dv({ sid: 'HTDSH1.ALO', depRwy: '17', fromStart: 65 }).errors.some(e => e.includes('past the end of the HTDSH1.ALO track') && e.includes('drawn only to 50 NM')));
     /* satellite departures fly — issue #67. Only the SID rules are under test; the
        fixture is a bare strip, so other rules fire on it too. */
     const sat = dv({ sid: 'DUHCK1.LLUKY', dep: 'KSTP', depRwy: '14' });

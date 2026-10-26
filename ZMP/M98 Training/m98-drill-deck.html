@@ -925,13 +925,20 @@ function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
    other seven — and DEPS17 the one off 17, through RUBRB; depTrackFor() picks
    by the strip's departure runway.
 
-   MAPPED TO 80 NM — owner, 2026-10-14: map only the fixes within 80 NM of MSP.
-   A transition is kept BY NAME even when none of its own fixes fall inside
-   that (KBREW1's only transition is KEETN, 183 NM out, so its track ends at
-   KBREW), and the reference file names every fix beyond the limit. So several
-   transitions share one mapped track — BITEZ1's DKOTA and LEINY part company
-   beyond HHCEE, TOTTZ1's five beyond FOOLS — and the scope draws a shared
-   track once and names every transition on it.
+   MAPPED TO 50 NM — owner, 2026-10-22, cutting the 80 NM of 2026-10-14: the
+   scope draws a SID only out to 50 miles, because that is as far as STARS draws
+   one. SID_MAP is the limit and sidTrack applies it, so a track STOPS AT THE
+   LAST CODED FIX INSIDE 50 NM (HHCEE, FOOLS, HSTIN and KBREW are no longer
+   drawn; CORDY and WAHLI, both 49.5 NM, still are). SID_SET below keeps every
+   fix out to 80 NM exactly as CIFP 261029 gives it — the limit is applied when
+   the tracks are built, not by editing the table — and the direct-to list reads
+   that table, so it is unaffected. A transition is kept BY NAME even when none
+   of its own fixes fall inside the limit (KBREW1's only transition is KEETN,
+   183 NM out, so its track ends at HOMUR), and the reference file names every
+   fix beyond it. Several transitions therefore share one mapped track —
+   BITEZ1's DKOTA and LEINY, TOTTZ1's five and HTDSH1's four — and the scope
+   draws a shared track once. A track ends where its last fix is, not at
+   exactly 50 NM: the leg to the next coded fix is not clipped at the ring.
 
    ONE ENTRY PER SID AND TRANSITION, keyed the way it is filed: 'BITEZ1.DKOTA'.
    The crossing at the start of each SID rides on that fix as `climbAA`, NOT
@@ -946,9 +953,9 @@ function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
    fields flies, the field then the same coded fixes, and DUHCK1 — the one SID
    coded at the satellites and not at MSP — is carried with them. It is a
    satellite SID: GGREY (at or above 4,000), DUHCK, then MGHTY, 45.8 NM out,
-   which is the last fix inside the 80 NM limit on all three of its
-   transitions. IDEEA, GRRAT and everything after are named in the reference
-   and not plotted. */
+   which is the last fix inside the drawing limit on all three of its
+   transitions (it is inside 50 NM too). IDEEA, GRRAT and everything after are
+   named in the reference and not plotted. */
 var SID_SRC = 'CIFP 261029 — ARINC 424 PD records, decoded 2026-10-14';
 /* generated from CIFP 261029 — every fix within 80 NM of MSP that the set passes */
 var SID_SET = {
@@ -1029,22 +1036,33 @@ var SID_FIELDS = {
  KANE:SID_SAT, KFCM:SID_SAT, KSTP:SID_SAT, KMIC:[]
 };
 /* The tracks: the field, then the coded procedure — the common route and the
-   transition, as far as 80 NM. DEPS17 adds the Runway 17 segment in front for
+   transition, as far as SID_MAP.nm. DEPS17 adds the Runway 17 segment in front for
    the two SIDs that code one (`rwy`, RUBRB), and is marked so the scope can
    say which it is. DEPS is MSP's — a SID is in it only if MSP codes it, so
    DUHCK1 is not; DEPS_AT (below the airports) is the satellites'. */
 var DEPS = {}, DEPS17 = {};
+/* How far out a SID is drawn: 50 NM from the MSP DME — owner, 2026-10-22, "the
+   STARS map for SIDs only draws out to 50 miles" (it was 80 NM from 2026-10-14).
+   Measured on the same flat plane the scope is drawn on; the nearest fixes to the
+   line are CORDY and WAHLI (49.5 true, 49.5 and 49.8 flat) inside it and HHCEE
+   (52.1 true) outside, so true range and flat plane agree on every fix. */
+var SID_MAP = {nm:50, src:'owner, 2026-10-22 — STARS draws a SID out to 50 miles'};
+function mapDme(f){ var q=nmOf(SID_FIX[f].lat, SID_FIX[f].lon); return Math.sqrt(q.e*q.e+q.n*q.n); }
 /* `icao` names a satellite field to start the track on; absent, it is MSP. The
-   first leg is a stand-in at either, because the climb-out is not coded. */
+   first leg is a stand-in at either, because the climb-out is not coded. The
+   track STOPS at the first fix beyond SID_MAP.nm. */
 function sidTrack(S, t, with17, icao){
  var ap = (icao && icao!=='KMSP') ? AIRPORTS[icao] : null;
  var pts=[ap ? {f:icao.replace(/^K/,''), lat:ap.lat, lon:ap.lon, field:true}
              : {f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true}];
- (with17 ? S.rwy : []).concat(S.common, S.trans[t]).forEach(function(n){
+ var names=(with17 ? S.rwy : []).concat(S.common, S.trans[t]);
+ for(var i=0; i<names.length; i++){
+  var n=names[i];
+  if(mapDme(n)>SID_MAP.nm) break;
   var x=SID_FIX[n], p={f:n, lat:x.lat, lon:x.lon};
   if(S.aa[n]!=null) p.climbAA=S.aa[n];
   pts.push(p);
- });
+ }
  return finalize(pts);
 }
 Object.keys(SID_SET).forEach(function(sid){
@@ -1192,7 +1210,7 @@ function satSeatFor(icao){ var ap=AIRPORTS[icao]; return (ap && ap.sat) || null;
    identical to one another and to MSP's for the seven they share, and only
    route types 5 (common) and 6 (en route transition) — no runway transition,
    so the strip's runway does not move the track. The track starts at the field
-   and runs the same coded fixes, mapped to the same 80 NM limit measured from
+   and runs the same coded fixes, mapped to the same SID_MAP limit measured from
    MSP. The leg from the field to the first fix is a stand-in, as it is at MSP:
    the climb-out is not coded and the tower's departure heading decides it.
    MIC and LVN code none, so they have no entry here and a strip on them is
@@ -3608,7 +3626,7 @@ function directFixesHtml(){
  });
  h+='<p class="dd-hint" style="margin:10px 0 0;"><b>On a SID but past '+d.limit.nm+' NM — not a direct target:</b> '
   +d.past.map(function(x){ return x.f+' '+x.nm; }).join(' · ')
-  +'. Everything beyond 80 NM is named in claude_MSP_SID_Reference.md. <span class="dd-rst">RST</span> marks a fix on the Rochester side of the boundary, so a direct there needs the point-out. Not a gate table and not a sector map — neither exists for the new SIDs yet.</p>';
+  +'. The scope draws a SID only out to '+SID_MAP.nm+' NM, and everything beyond 80 NM is named in claude_MSP_SID_Reference.md. <span class="dd-rst">RST</span> marks a fix on the Rochester side of the boundary, so a direct there needs the point-out. Not a gate table and not a sector map — neither exists for the new SIDs yet.</p>';
  return h;
 }
 var DIRECT_LIST=false;
@@ -3944,7 +3962,7 @@ window.DD = {
  DEPS:DEPS, DEPS_AT:DEPS_AT, sidKeysAt:sidKeysAt, sidsAtMsp:sidsAtMsp, satOnlySidItems:satOnlySidItems, depCall:depCall, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
  SID_CHANGE:SID_CHANGE, sidChangeState:sidChangeState, sidChangeHtml:sidChangeHtml,
  sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
- SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC,
+ SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC, SID_MAP:SID_MAP,
  SID_RETIRED_KEYS:SID_RETIRED_KEYS, sidRetired:sidRetired,
  sidOf:sidOf, transOf:transOf, sidRw17Leg:sidRw17Leg, sidSpoken:sidSpoken,
  DEPS17:DEPS17, depTrackFor:depTrackFor, sidRw17Svg:sidRw17Svg,
@@ -5420,7 +5438,7 @@ function validate(rec){
        starts at MSP */
     var dmeS=(dFld==='KMSP') ? a.fromStart : dmeAlong(dTrk, a.fromStart);
     if(!(a.fromStart>=0)) errs.push(tag+': distance from '+dName+' must be a number.');
-    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are mapped to 80 NM from MSP).');
+    else if(a.fromStart>dt+0.5) errs.push(tag+': '+a.fromStart+' NM out is past the end of the '+a.sid+' track ('+dt.toFixed(1)+' NM — the tracks are drawn only to '+DD.SID_MAP.nm+' NM from MSP).');
     else if(dmeS>60) warns.push(tag+': starts '+a.fromStart+' NM out'+(dFld==='KMSP'?'':(', '+dmeS.toFixed(0)+' DME from MSP'))+', beyond the 60 NM join limit M98 takes a departure to (ZMP-M98 LOA 4.f).');
     else if(dmeS>=DD.DEP_RELEASE.dme) warns.push(tag+': starts at '+a.fromStart+' NM'+(dFld==='KMSP'?'':(', '+dmeS.toFixed(0)+' DME from MSP,'))+' already at or beyond the '+DD.DEP_RELEASE.dme+' DME release point — the 4.c clock has run out before the drill begins.');
    }
