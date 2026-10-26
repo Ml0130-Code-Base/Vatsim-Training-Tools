@@ -799,6 +799,36 @@ try {
     assert('it toggles back on', globalThis.DD.sidNames() === true && scope().includes('BITEZ1 DKOTA/LEINY'));
     globalThis.ddLayers('tracked');
   }
+  /* The direct-to list — owner request 2026-10-22: the fixes a departure can be
+     cleared direct to and still be within ZMP-M98 LOA 4.f (60 NM of the MSP DME).
+     Read off SID_SET and SID_FIX, hidden until its button is pressed. */
+  {
+    const D = globalThis.DD, dl = D.directFixes(), row = s => dl.rows.filter(r => r.sid === s)[0];
+    const names = r => r.trans.map(t => t.names.join('/') + ':' + (t.fixes.map(x => x.f).join(',') || 'none')).join(' | ');
+    assert('the limit is the LOA 4.f join limit, 60 NM', dl.limit.nm === 60 && /LOA 4\.f/.test(dl.limit.src));
+    assert('every SID the deck carries is listed, DUHCK1 among them and coded at the satellites only',
+      dl.rows.map(r => r.sid).join() === Object.keys(D.SID_SET).join() && row('DUHCK1').codedAt === 'ANE, FCM and STP only'
+      && row('HTDSH1').codedAt === 'MSP only' && row('BITEZ1').codedAt === 'MSP and the satellites');
+    assert('no fix listed is farther than 60 NM from MSP, and the three that are come back as past the limit',
+      dl.rows.every(r => r.common.concat(...r.trans.map(t => t.fixes)).every(x => x.nm <= 60))
+      && dl.past.map(x => x.f).join() === 'HSTIN,KBREW,FOOLS' && dl.past.every(x => x.nm > 60));
+    assert('transitions that share their in-limit fixes are one line: HTDSH1 four on TOTTZ and CORDY, BRIBE apart',
+      names(row('HTDSH1')) === 'ALO/OANNA/OHHMY/ZZIPR:TOTTZ,CORDY | BRIBE:JEDET,ZMBRO'
+      && names(row('TOTTZ1')) === 'ALO/FOOLS/OANNA/OHHMY/ZZIPR:CORDY');
+    assert('a transition with nothing inside 60 NM says so rather than vanishing — KBREW1 KEETN, ZMBRO1 BRIBE',
+      names(row('KBREW1')) === 'KEETN:none' && names(row('ZMBRO1')) === 'BRIBE:none' && row('KBREW1').common.map(x => x.f).join() === 'HRBEK,HOMUR');
+    assert('the first fix carries its at-or-above crossing, and the Runway 17 segment names RUBRB',
+      row('HTDSH1').common[0].f === 'ITZME' && row('HTDSH1').common[0].aa === 3500 && row('BITEZ1').common[0].aa === 4000
+      && row('DUHCK1').common[0].aa === 4000 && row('HTDSH1').rwy[0].f === 'RUBRB' && row('BUNYN1').rwy === null);
+    assert('only CORDY is on the Rochester side of the boundary',
+      dl.rows.every(r => r.common.concat(...r.trans.map(t => t.fixes)).filter(x => x.rst).every(x => x.f === 'CORDY'))
+      && row('HTDSH1').trans[0].fixes.filter(x => x.rst).length === 1);
+    const dh = D.directFixesHtml();
+    assert('the panel states the rule, that the LOA names no fixes, the release and the 169.5 off 17',
+      ['LOA 4.f', '60 NM', 'LOA 4.c', 'technique, not a published requirement', 'heading 169.5', 'DUHCK1', 'not a direct target'].every(s => dh.includes(s)));
+    assert('it is hidden until asked for, and the button toggles it',
+      D.directList() === false && (globalThis.ddDirectList(), D.directList() === true) && (globalThis.ddDirectList(), D.directList() === false));
+  }
   /* With every SID up, the Runway 17 segment HTDSH1 and SNOWZ1 code is drawn
      too — field, RUBRB, first fix — finer than a track and named once. */
   {

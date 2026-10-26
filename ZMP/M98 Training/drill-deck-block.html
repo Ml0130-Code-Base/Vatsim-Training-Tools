@@ -13,6 +13,18 @@ var css = ''
 + '.dd-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
 + '.dd-mono{font-family:var(--mono);}'
 + '.dd-scopewrap{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}'
++ '.dd-direct{margin:8px 0 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:6px;}'
++ '.dd-dsid{border-top:1px solid var(--line);padding:7px 0;font-family:var(--mono);font-size:11px;color:var(--dim);}'
++ '.dd-dhead{display:flex;gap:10px;align-items:baseline;margin-bottom:3px;}'
++ '.dd-dhead b{color:var(--ink);font-size:12px;}'
++ '.dd-dhead span{color:var(--dim2);font-size:10px;}'
++ '.dd-dline{display:flex;gap:14px;line-height:1.7;}'
++ '.dd-dline b{color:var(--ink);font-weight:500;}'
++ '.dd-dlab{flex:0 0 250px;color:var(--dim2);}'
++ '@media (max-width:600px){.dd-dline{display:block;}.dd-dlab{display:block;}}'
++ '.dd-dnone{color:var(--dim2);}'
++ '.dd-aa{color:var(--amber);}'
++ '.dd-rst{color:var(--red);font-size:9px;border:1px solid var(--red);border-radius:3px;padding:0 3px;}'
 + '.dd-scope{width:100%;height:auto;display:block;}'
 + '.dd-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
 + '.dd-bar button,.dd-quick button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
@@ -3105,7 +3117,9 @@ function sidLegendSvg(groups, x, y){
    where the line to the join fix used to be, and it is a stub, not a track —
    the join is a vector, so there is no line to draw. MSP's magnetic variation
    is carried as zero throughout this deck, so the course plots as written. */
-var RW17_HDG = {course:215.0, nm:2};
+/* rwyHdg is the heading flown off 17 to RUBRB — the CIFP 261029 VI leg, 169.5 —
+   which the direct-to list quotes; it is not drawn */
+var RW17_HDG = {course:215.0, nm:2, rwyHdg:169.5};
 function rw17Stub(r){
  var f=r[1], a=RW17_HDG.course*Math.PI/180;
  return px(f.lat+Math.cos(a)*RW17_HDG.nm/60, f.lon+Math.sin(a)*RW17_HDG.nm/(60*COSL));
@@ -3383,6 +3397,86 @@ window.ddSidNames=function(on){
  }
  render();
 };
+/* ---------- Direct-to fixes inside the LOA — owner request, 2026-10-22 ----------
+   Per SID and transition, the fixes a departure can be cleared direct to and
+   still be within ZMP-M98 LOA 4.f: a fix on the aircraft's own SID, ahead of
+   it, no more than 60 NM from the MSP DME. The 60 is the LOA's join limit — an
+   aircraft filed 9,000 or above is established on the SID or on a heading to
+   join it within 60 NM. THE LOA NAMES NO FIXES: choosing a SID fix as the direct
+   is the owner's stated technique (claude_MSP_SID_Reference.md, routing rule),
+   and the panel says so. Everything is read off SID_SET and SID_FIX, so there
+   is no second copy of a fix or a distance; the figures are whole NM off the
+   deck's flat plane, which differs from the reference's true ranges by up to
+   about a mile at the far end (KBREW reads 69 here against 68.0 true), never
+   enough to move a fix across the 60 NM line (claude_M98_SID_Direct_Fixes.md
+   carries the true ranges to a decimal).
+   Hidden until the Direct-to fixes button is pressed. */
+var DIRECT_LIMIT = {nm:60, src:'ZMP-M98 LOA 4.f'};
+function fixDme(f){ var q=nmOf(SID_FIX[f].lat, SID_FIX[f].lon); return Math.sqrt(q.e*q.e+q.n*q.n); }
+function fixBrg(f){ var q=nmOf(SID_FIX[f].lat, SID_FIX[f].lon); return (Math.atan2(q.e,q.n)*180/Math.PI+360)%360; }
+/* a fix on the Rochester side of the M98 boundary — outside the ring, on a
+   bearing the RST arc covers — which is Rochester's below RST_CEILING */
+function fixOnRstSide(f){
+ var q=nmOf(SID_FIX[f].lat, SID_FIX[f].lon), b=fixBrg(f);
+ return !inM98(q.e, q.n) && b>=RST_ARC[0] && b<=RST_ARC[1];
+}
+function sidCodedAt(sid){
+ var at=Object.keys(SID_FIELDS).filter(function(k){ return SID_FIELDS[k].indexOf(sid)>=0; });
+ var msp=at.indexOf('KMSP')>=0, sats=at.filter(function(k){ return k!=='KMSP'; }).map(function(k){ return k.replace(/^K/,''); });
+ if(msp && sats.length) return 'MSP and the satellites';
+ if(msp) return 'MSP only';
+ return andList(sats)+' only';
+}
+function directFixes(){
+ var rows=[], past={};
+ Object.keys(SID_SET).forEach(function(sid){
+  var S=SID_SET[sid];
+  var keep=function(a){
+   return a.filter(function(f){ var d=fixDme(f); if(d>DIRECT_LIMIT.nm){ past[f]=d; return false; } return true; })
+    .map(function(f){ return {f:f, nm:Math.round(fixDme(f)), aa:(S.aa[f]!=null?S.aa[f]:null), rst:fixOnRstSide(f)}; });
+  };
+  var by={}, trans=[];
+  Object.keys(S.trans).forEach(function(t){
+   var fx=keep(S.trans[t]), sig=fx.map(function(x){ return x.f; }).join(' ');
+   if(!by[sig]){ by[sig]={names:[], fixes:fx}; trans.push(by[sig]); }
+   by[sig].names.push(t);
+  });
+  rows.push({sid:sid, codedAt:sidCodedAt(sid), rwy:S.rwy.length?S.rwy.map(function(f){ return {f:f, nm:Math.round(fixDme(f)), aa:(S.aa[f]!=null?S.aa[f]:null)}; }):null,
+             common:keep(S.common), trans:trans});
+ });
+ var pastList=Object.keys(past).map(function(f){ return {f:f, nm:Math.round(past[f])}; }).sort(function(a,b){ return a.nm-b.nm; });
+ return {limit:DIRECT_LIMIT, rows:rows, past:pastList};
+}
+function directFixText(x){ return '<b>'+x.f+'</b> '+x.nm+(x.aa?(' <span class="dd-aa">≥ '+fmtAlt(x.aa)+'</span>'):'')+(x.rst?' <span class="dd-rst" title="Outside the M98 ring on the Rochester side — Rochester’s below '+fmtAlt(RST_CEILING)+'">RST</span>':''); }
+function directFixesHtml(){
+ var d=directFixes(), h='';
+ h+='<div class="dd-sub a">Direct-to fixes inside the LOA</div>'
+  +'<p class="dd-hint" style="margin:0 0 10px;">A fix on the aircraft’s own SID, ahead of it, <b>no more than '+d.limit.nm+' NM from the MSP DME</b> ('+d.limit.src+': filed 9,000 or above is established on the SID or on a heading to join it within '+d.limit.nm+' NM). The LOA names no fixes — using a SID fix as the direct is technique, not a published requirement. Filed 7,000 or 8,000 goes on a heading or course clear of the STAR arrival areas, and a direct cuts the corner, so check it. The first fix of each SID carries an at-or-above crossing. Release is separate: '+DEP_RELEASE.dme+' NM from the MSP DME or leaving '+fmtAlt(DEP_RELEASE.alt)+' (LOA 4.c). Distances are whole NM from the MSP DME.</p>';
+ d.rows.forEach(function(r){
+  h+='<div class="dd-dsid"><div class="dd-dhead"><b>'+r.sid+'</b><span>'+r.codedAt+'</span></div>';
+  if(r.rwy) h+='<div class="dd-dline"><span class="dd-dlab">off 17</span><span>heading '+RW17_HDG.rwyHdg+' to '+r.rwy.map(directFixText).join(' · ')+', then vectors to join</span></div>';
+  h+='<div class="dd-dline"><span class="dd-dlab">common</span><span>'+(r.common.length?r.common.map(directFixText).join(' · '):'none inside '+d.limit.nm+' NM')+'</span></div>';
+  r.trans.forEach(function(t){
+   h+='<div class="dd-dline"><span class="dd-dlab">'+t.names.join(' / ')+'</span><span>'+(t.fixes.length?t.fixes.map(directFixText).join(' · '):'<span class="dd-dnone">none inside '+d.limit.nm+' NM</span>')+'</span></div>';
+  });
+  h+='</div>';
+ });
+ h+='<p class="dd-hint" style="margin:10px 0 0;"><b>On a SID but past '+d.limit.nm+' NM — not a direct target:</b> '
+  +d.past.map(function(x){ return x.f+' '+x.nm; }).join(' · ')
+  +'. Everything beyond 80 NM is named in claude_MSP_SID_Reference.md. <span class="dd-rst">RST</span> marks a fix on the Rochester side of the boundary, so a direct there needs the point-out. Not a gate table and not a sector map — neither exists for the new SIDs yet.</p>';
+ return h;
+}
+var DIRECT_LIST=false;
+window.ddDirectList=function(on){
+ DIRECT_LIST = (on===undefined) ? !DIRECT_LIST : !!on;
+ var p=document.getElementById('dd-directlist');
+ if(p && p.style) p.style.display = DIRECT_LIST ? 'block' : 'none';
+ var b=document.getElementById('dd-directbtn');
+ if(b){
+  if(b.classList) b.classList.toggle('on', DIRECT_LIST);
+  if(b.setAttribute) b.setAttribute('aria-pressed', DIRECT_LIST ? 'true' : 'false');
+ }
+};
 window.ddLayers=function(m){
  if(!LAYER_MODES.some(function(x){return x.id===m;})) return;
  LAYERS=m;
@@ -3613,8 +3707,10 @@ function liveHtml(){
  +'<span class="dd-mono" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);">Routes drawn</span>'
  + LAYER_MODES.map(function(m){return '<button data-l="'+m.id+'"'+(m.id===LAYERS?' class="on"':'')+' onclick="ddLayers(\''+m.id+'\')">'+m.label+'</button>';}).join('')
  +'<button id="dd-sidnames" aria-pressed="'+(SID_NAMES?'true':'false')+'"'+(SID_NAMES?' class="on"':'')+' style="margin-left:10px;" title="Show or hide the SID names and transitions on the scope" onclick="ddSidNames()">SID names</button>'
+ +'<button id="dd-directbtn" aria-pressed="false" title="List the SID fixes a departure can be cleared direct to inside the LOA" onclick="ddDirectList()">Direct-to fixes</button>'
  +'</div>'
  +'<div class="dd-scopewrap"><div id="dd-scopebox"></div></div>'
+ +'<div class="dd-direct" id="dd-directlist" style="display:none;">'+directFixesHtml()+'</div>'
  +'<div class="dd-strips" id="dd-strips"></div>'
  +'<div class="dd-cmdrow"><input class="dd-cmd" id="dd-cmd" placeholder="Transmit \u2014 e.g. DAL589 expect runway 12L \u00b7 resume published speed \u00b7 flash \u00b7 contact approach 126.95" onkeydown="if(event.key===\'Enter\')ddSend()">'
  +'<button class="dd-send" onclick="ddSend()">Transmit</button></div>'
@@ -3731,6 +3827,7 @@ window.DD = {
  neighbourAt:neighbourAt, exitBearing:exitBearing,
  setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
  LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, sidNames:function(){ return SID_NAMES; },
+ directFixes:directFixes, directFixesHtml:directFixesHtml, directList:function(){ return DIRECT_LIST; }, DIRECT_LIMIT:DIRECT_LIMIT,
  overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,
  FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,
