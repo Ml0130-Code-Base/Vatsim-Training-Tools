@@ -30,6 +30,7 @@ var css = ''
 + '.dd-in,.dd-sel,.dd-ta{background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:7px 8px;width:100%;}'
 + '.dd-ta{line-height:1.55;resize:vertical;min-height:66px;}'
 + '.dd-in:focus,.dd-sel:focus,.dd-ta:focus{outline:2px solid var(--green);outline-offset:1px;}'
++ '.dd-sel:disabled,.dd-in:disabled{color:var(--dim);cursor:not-allowed;}'
 + '.dd-btn{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 11px;cursor:pointer;}'
 + '.dd-btn:hover{color:var(--ink);border-color:var(--dim2);}'
 + '.dd-btn.pri{background:var(--green);color:#062;border-color:var(--green);font-weight:600;}'
@@ -80,6 +81,7 @@ if(document.head && document.head.appendChild) document.head.appendChild(st);
 var KEY = 'm98-drill-deck-v1';
 var state = {v:1, drills:[], entries:[], retired:{}, target:20, seq:11, hot:false,
  layers:'tracked',
+ genMode:'training', genPush:'mixed',   /* the Generate panel: training issues or a general push */
  pos:{seats:{H:1}, open:{H:1, R:1, N:1, S:1}, towers:'satellite towers open', rstOpen:true, midnight:false}};
 var storeOk = true;
 function store(){
@@ -97,6 +99,8 @@ function restore(){
   state.drills=o.drills||[]; state.entries=o.entries||[]; state.retired=o.retired||{};
   state.target=o.target||20; state.seq=o.seq||11; state.hot=!!o.hot;
   if(o.layers) state.layers=o.layers;
+  if(o.genMode==='general') state.genMode='general';
+  if(o.genPush && PUSH[o.genPush]) state.genPush=o.genPush;
   if(o.pos && o.pos.open){
    /* v1 stored a single seat string; carry it forward as a one-seat set */
    var seats = o.pos.seats || (o.pos.seat ? (function(){ var s={}; s[o.pos.seat]=1; return s; })() : null);
@@ -1249,10 +1253,23 @@ function mixGates(id){
  var o=mixOptions().filter(function(x){ return x.id===id; })[0];
  return (o && o.gates.length) ? o.gates.slice() : GATES.slice();
 }
+/* General mode does not offer a choice of gates: a general push is worked from the seat,
+   so it draws on the gates the seat owns — or all six when the seat owns none. */
+function generalGates(){
+ var mine=seatGates();
+ return mine.length ? mine : GATES.slice();
+}
 /* Rewrite the gate options whenever the seat or the configuration moves. */
 function syncMixOptions(){
  var sel=document.getElementById('ddb-mix');
  if(!sel || typeof sel.innerHTML!=='string') return;
+ if(state.genMode==='general'){
+  var gg=generalGates(), mine=seatGates().length>0;
+  sel.innerHTML='<option value="">'+esc(mine ? 'Follows the seat — '+gg.join(', ') : 'All six gates — this seat owns none')+'</option>';
+  sel.disabled=true;
+  return;
+ }
+ sel.disabled=false;
  var was=sel.value, opts=mixOptions();
  sel.innerHTML=opts.map(function(o){
   return '<option value="'+esc(o.id)+'">'+esc(o.label)+'</option>';
@@ -1308,11 +1325,45 @@ function mixWords(m){
  if(m.overflights) p.push(m.overflights+' overflight'+(m.overflights===1?'':'s'));
  return p.length ? p.join(', ') : 'nothing';
 }
+/* The Generate panel's General mode (owner request, 2026-10-27). FOCUS weights one of
+   the standing training items; a PUSH only says which traffic dominates, and nothing is
+   weighted — a push drill is always generated `free`. `share` is arrivals, departures
+   and overflights as a percentage of the strips. Those percentages are this generator's
+   own design, not a figure from any document, and they only fill the three counts, which
+   stay editable. */
+var PUSH={
+ mixed:     {label:'Mixed push — arrivals and departures together',
+             line:'Arrivals and departures together with the odd overflight. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:50, d:40, o:10}},
+ arrival:   {label:'Arrival push — mostly inbound',
+             line:'Mostly inbound traffic. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:75, d:15, o:10}},
+ departure: {label:'Departure push — mostly outbound',
+             line:'Mostly outbound traffic. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:15, d:75, o:10}},
+ overflight:{label:'Overflight push — VFR traffic crossing',
+             line:'Mostly VFR traffic crossing the airspace, with some arrivals and departures. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:25, d:15, o:60}}
+};
+/* A push's shares worked out into whole strips. Largest remainder, so the three always
+   add up to the total exactly; a tie goes to the stream the push is about. */
+function pushMix(key, total){
+ var p=PUSH[key]||PUSH.mixed, n=Math.max(1, Math.min(STRIP_MAX, genInt(total,3)));
+ var sh=[p.share.a, p.share.d, p.share.o];
+ var out=sh.map(function(s){ return Math.floor(s*n/100); });
+ var rem=sh.map(function(s){ return (s*n)%100; });
+ var left=n-out[0]-out[1]-out[2];
+ var order=[0,1,2].sort(function(i,j){ return (rem[j]-rem[i]) || (sh[j]-sh[i]) || (i-j); });
+ for(var k=0;k<left;k++) out[order[k%3]]++;
+ return {arrivals:out[0], deps:out[1], overflights:out[2]};
+}
 function gen(o){
  o=o||{};
  var seed = (o.seed!=null) ? (o.seed|0) : Math.floor(Math.random()*100000);
  var rnd=lcg(seed);
- var focus=FOCUS[o.focus]?o.focus:'free';
+ /* a push (General mode) never weights anything, whatever focus was passed with it */
+ var pk=PUSH[o.push]?PUSH[o.push]:null;
+ var focus=pk ? 'free' : (FOCUS[o.focus]?o.focus:'free');
  var press=PRESS[o.pressure]||PRESS.compressed;
  var mix=(o.mixGates && o.mixGates.length) ? o.mixGates.slice() : GATES.slice();
  /* Shuffle the mix on the seed. The gate is picked by strip index, so without
@@ -1425,14 +1476,17 @@ function gen(o){
   ovfT=Math.max(ovfT, ac[ac.length-1].spawnAt);
  }
  var fc=FOCUS[focus];
+ /* a push is named and briefed by the kind of push; a focus by the training item. The
+    id carries the push key, which no focus key shares, so the two cannot collide. */
+ var what=pk ? pk.label.replace(/ — .*$/,'') : fc.label;
  return {
-  id:'u'+seed+'-'+focus,
-  name:'Built — '+fc.label+' · seed '+seed,
+  id:'u'+seed+'-'+(pk?o.push:focus),
+  name:'Built — '+what+' · seed '+seed,
   cfg:o.cfg||'12', wind:o.wind||'150/9', ceil:(o.ceil==null?5000:o.ceil), vis:(o.vis==null?10:o.vis),
   atis:'J', altim:'2980', seat:o.seat||seatLabel(), towers:state.pos.towers,
   open:openLabel(), rstOpen:rstOpen(), midnight:midnightOn(),
-  brief:fc.line+' Generated '+press.label+' push, '+mixN.flights+' strip'+(mixN.flights===1?'':'s')+' — '+mixWords(mixN)+', seed '+seed+' — same seed rebuilds the same drill.',
-  focus:focus, seed:seed, rate:1, hot:!!o.hot,
+  brief:(pk?pk.line:fc.line)+(pk?' Generated at '+press.label+' pressure, ':' Generated '+press.label+' push, ')+mixN.flights+' strip'+(mixN.flights===1?'':'s')+' — '+mixWords(mixN)+', seed '+seed+' — same seed rebuilds the same drill.',
+  focus:focus, push:(pk?o.push:undefined), seed:seed, rate:1, hot:!!o.hot,
   speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12', cfg:''}, events:[], ac:ac
  };
 }
@@ -2815,6 +2869,16 @@ var MIXF={count:'ddb-count', arr:'ddb-arr', deps:'ddb-deps', ovf:'ddb-ovf'};
 function mixEl(k){ return document.getElementById(MIXF[k]); }
 function mixRaw(k){ var e=mixEl(k); return (e&&typeof e.value==='string') ? parseInt(e.value,10) : NaN; }
 window.ddbMixSync=function(changed){
+ /* General mode: a new total, or a new kind of push, re-splits the strips by the push's
+    shares. Anything typed into a count afterwards is kept — Generate settles the boxes
+    without re-splitting — until the total or the push changes again. */
+ if(state.genMode==='general' && (changed==='count' || changed==='push')){
+  var X0=mixRaw('count'); X0=isNaN(X0)?3:Math.max(1,Math.min(STRIP_MAX,X0));
+  var ps=pushMix(state.genPush, X0), a0=mixEl('arr');
+  var pe=function(k,v){ var e=mixEl(k); if(e) e.value=String(v); };
+  pe('arr',ps.arrivals); pe('deps',ps.deps); pe('ovf',ps.overflights);
+  if(a0 && a0.setAttribute) a0.setAttribute('data-auto','0');
+ }
  var X=mixRaw('count'); X=isNaN(X)?3:Math.max(1,Math.min(STRIP_MAX,X));
  var Z=Math.max(0, mixRaw('deps')||0), L=Math.max(0, mixRaw('ovf')||0);
  var ae=mixEl('arr'), yRaw=mixRaw('arr');
@@ -2844,19 +2908,66 @@ window.ddbGenerate=function(){
  var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:''; };
  var seedRaw=g('ddb-seed');
  /* settle the four counts first, so what is generated is what the boxes say */
- var m=window.ddbMixSync('count');
+ var m=window.ddbMixSync();
  if(!m.flights) return;
  var ae=mixEl('arr'), auto=!(ae && ae.getAttribute && ae.getAttribute('data-auto')==='0');
+ /* General: a push, nothing weighted, gates from the seat. Training issues: the focus and gates as chosen. */
+ var general=(state.genMode==='general');
  draft=gen({seed: seedRaw===''?null:parseInt(seedRaw,10),
-            focus:g('ddb-focus')||'free', mixGates:mixGates(g('ddb-mix')),
+            focus:(general?'free':(g('ddb-focus')||'free')), push:(general?(PUSH[g('ddb-focus')]?g('ddb-focus'):state.genPush):undefined),
+            mixGates:(general?generalGates():mixGates(g('ddb-mix'))),
             pressure:g('ddb-pressure')||'compressed', count:m.total,
             arrivals:(auto?null:m.arrivals), deps:m.deps, overflights:m.overflights});
  var sd=document.getElementById('ddb-seed'); if(sd) sd.value=String(draft.seed);
  renderEditor();
  var sec=document.getElementById('ddb-editor'); if(sec&&sec.scrollIntoView) sec.scrollIntoView({behavior:'smooth'});
 };
+/* Drill for: training issues (the focus and gates dropdowns as they were) or a general push
+   (a kind of push in place of the focus, gates following the seat). Remembered between visits. */
+var lastFocus='free';   /* the training focus, held while the select is showing kinds of push */
+function modeNote(){
+ return state.genMode==='general'
+  ? 'General — nothing is weighted toward a training item. Pick the kind of push you want to work: the strips are split by it, the gates follow your seat, and the three counts stay editable.'
+  : 'Training issues — the drill is weighted toward one of your standing items, and you choose the gates.';
+}
+function syncFocusOptions(){
+ var sel=document.getElementById('ddb-focus');
+ if(!sel || typeof sel.innerHTML!=='string') return;
+ var general=(state.genMode==='general');
+ var lab=document.getElementById('ddb-focuslab'); if(lab) lab.textContent=general?'Kind of push':'Focus';
+ sel.innerHTML = general
+  ? Object.keys(PUSH).map(function(k){ return '<option value="'+k+'">'+esc(PUSH[k].label)+'</option>'; }).join('')
+  : Object.keys(FOCUS).map(function(k){ return '<option value="'+k+'">'+esc(k==='free'?'Open push — nothing weighted':FOCUS[k].label)+'</option>'; }).join('');
+ sel.value = general ? state.genPush : lastFocus;
+}
+window.ddbFocusChange=function(){
+ var fo=document.getElementById('ddb-focus'); if(!fo) return;
+ if(state.genMode==='general'){
+  if(PUSH[fo.value]){ state.genPush=fo.value; save(); }
+  window.ddbMixSync('push');
+ } else lastFocus=fo.value;
+};
+window.ddbMode=function(m){
+ var was=state.genMode;
+ state.genMode=(m==='general')?'general':'training'; save();
+ var me=document.getElementById('ddb-mode'); if(me) me.value=state.genMode;
+ syncFocusOptions(); syncMixOptions();
+ if(state.genMode==='general') window.ddbMixSync('push');
+ else if(was==='general'){
+  /* back to Training issues as it was: the push's split does not follow you, so every strip
+     is an arrival again (arrivals take the rest) at the same total */
+  var ar=mixEl('arr'), dp=mixEl('deps'), ov=mixEl('ovf');
+  if(ar && ar.setAttribute) ar.setAttribute('data-auto','1');
+  if(dp) dp.value='0'; if(ov) ov.value='0';
+  window.ddbMixSync();
+ }
+ setHtml('ddb-modenote', esc(modeNote()));
+};
 window.ddbGenFor=function(id){
  if(window.ddbPage) window.ddbPage('setup');   /* building starts on the setup page */
+ /* "build a drill for this" is a training-issue drill whatever mode the panel was left in */
+ if(state.genMode!=='training') window.ddbMode('training');
+ lastFocus=id;
  var fo=document.getElementById('ddb-focus'); if(fo) fo.value=id;
  syncMixOptions();
  var mx=document.getElementById('ddb-mix');
@@ -3000,6 +3111,9 @@ function syncDraftFrame(){
  if(!draft) return;
  draft.seat=seatLabel(); draft.open=openLabel(); draft.towers=state.pos.towers;
  renderEditor();
+ /* the Gates list is built from the seat, so it moves with it — until 2026-10-27 only a
+    change to the draft's configuration refreshed it, and the label could lag the seat */
+ syncMixOptions();
 }
 window.ddbTarget=function(){
  var e=document.getElementById('ddb-targetin');
@@ -3043,9 +3157,9 @@ window.ddbImport=function(){
 
 /* ---------- 15. Sections ---------- */
 function buildHtml(){
- var focusOpts=Object.keys(FOCUS).map(function(k){
-  return '<option value="'+k+'">'+(k==='free'?'Open push — nothing weighted':FOCUS[k].label)+'</option>';
- }).join('');
+ /* the Focus and Gates lists are written by syncFocusOptions and syncMixOptions at mount,
+    because what they offer depends on the mode, the seat and the configuration */
+ var generalOn=(state.genMode==='general');
  return '<section class="module dd-section" id="mod-build" data-mod="build">'
  +'<div class="modhead"><div><span class="tag">BUILD</span><h2>Drill Builder</h2>'
  +'<p class="modsub">Author a drill, or let the notebook pick one — every number checked against the route data before it flies</p></div></div>'
@@ -3056,7 +3170,8 @@ function buildHtml(){
 
  +'<div class="dd-panel"><div class="dd-sub">Generate</div>'
  +'<div class="dd-grid">'
- +f('Focus','<select class="dd-sel" id="ddb-focus">'+focusOpts+'</select>')
+ +f('Drill for','<select class="dd-sel" id="ddb-mode" onchange="ddbMode(this.value)"><option value="training"'+(generalOn?'':' selected')+'>Training issues</option><option value="general"'+(generalOn?' selected':'')+'>General</option></select>')
+ +f('<span id="ddb-focuslab">Focus</span>','<select class="dd-sel" id="ddb-focus" onchange="ddbFocusChange()"></select>')
  +f('Gates','<select class="dd-sel" id="ddb-mix" onchange="ddbSync()"></select>')
  +f('Pressure','<select class="dd-sel" id="ddb-pressure"><option value="routine">routine</option><option value="compressed" selected>compressed</option><option value="saturated">saturated</option></select>')
  +f('Strips (total)','<input class="dd-in" id="ddb-count" type="number" inputmode="numeric" min="1" max="'+STRIP_MAX+'" step="1" value="3" onchange="ddbMixSync(\'count\')">')
@@ -3065,6 +3180,7 @@ function buildHtml(){
  +f('Overflights','<input class="dd-in" id="ddb-ovf" type="number" inputmode="numeric" min="0" max="3" step="1" value="0" onchange="ddbMixSync(\'ovf\')">')
  +f('Seed','<input class="dd-in" id="ddb-seed" placeholder="any number">')
  +'</div>'
+ +'<div class="dd-hint" id="ddb-modenote" style="margin:10px 0 0;">'+esc(modeNote())+'</div>'
  +'<div class="dd-hint" id="ddb-mixnote" style="margin:10px 0 0;">'+esc(genMix({count:3}).flights+' of 3 strips — '+mixWords(genMix({count:3}))+' (arrivals take the rest).')+'</div>'
  +'<div class="dd-hint" style="margin:4px 0 0;">Strips is the most the drill will carry, and no drill carries more than '+STRIP_MAX+' — past that another controller would have to open. Arrivals, departures and overflights share it and can never come to more; leave Arrivals empty and it takes whatever the other two leave.</div>'
  +'<div class="dd-actions"><button class="dd-btn pri" onclick="ddbGenerate()">Generate drill</button>'
@@ -3213,6 +3329,8 @@ function mount(){
  put(notesHtml(), 'mod-log');
  buildPages();
  syncMixOptions();
+ syncFocusOptions();
+ if(state.genMode==='general') window.ddbMixSync('push');   /* a remembered General mode comes back with its split */
  var nav=document.getElementById('modnav');
  /* the old anchor nav is replaced by the page tabs */
  if(nav && typeof nav.innerHTML==='string') nav.innerHTML='';
@@ -3245,7 +3363,7 @@ function mount(){
 
 /* ---------- 17. Test surface ---------- */
 window.ddb = {
- state:state, gen:gen, genMix:genMix, STRIP_MAX:STRIP_MAX, validate:validate, saveDrill:saveDrill, deleteDrill:deleteDrill,
+ state:state, gen:gen, genMix:genMix, PUSH:PUSH, pushMix:pushMix, generalGates:generalGates, STRIP_MAX:STRIP_MAX, validate:validate, saveDrill:saveDrill, deleteDrill:deleteDrill,
  runDrill:runDrill, publish:publish, toScenario:toScenario, toCode:toCode, toMd:toMd,
  draftFromSim:draftFromSim, bank:bank, tallyFeed:tallyFeed, itemStats:itemStats,
  statusOf:statusOf, pertinence:pertinence, ranked:ranked, timing:TIMING,

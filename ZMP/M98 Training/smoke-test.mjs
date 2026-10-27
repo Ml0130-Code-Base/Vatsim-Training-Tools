@@ -2190,6 +2190,60 @@ try {
       G.gen({ seed: 32, count: 1 }).brief.includes('1 strip — 1 arrival,'), G.gen({ seed: 32, count: 1 }).brief);
   }
 
+  /* ============ 4b. General mode — a kind of push in place of a training focus — 2026-10-27 ============
+     The Generate panel's "Drill for" switch. Training issues is the focus and gates dropdowns as
+     they were. General swaps the focus for a kind of push, which only says which traffic
+     dominates (nothing is weighted, so the drill is always `free`), and locks the gates to the
+     seat. The shares behind each push are the generator's own design, not a document's. */
+  {
+    const G = globalThis.ddb, roleOf = a => a.role || 'arrival';
+    const tallyStr = d => ['arrival', 'departure', 'overflight'].map(r => d.ac.filter(a => roleOf(a) === r).length).join('/');
+    assert('four kinds of push are offered', Object.keys(G.PUSH).join() === 'mixed,arrival,departure,overflight', Object.keys(G.PUSH).join());
+
+    let badSplit = 0;
+    const dominant = { mixed: 'arrivals', arrival: 'arrivals', departure: 'deps', overflight: 'overflights' };
+    for (const k of Object.keys(G.PUSH))
+      for (let n = 1; n <= 50; n++) {
+        const m = G.pushMix(k, n), sum = m.arrivals + m.deps + m.overflights, top = m[dominant[k]];
+        if (sum !== n) { badSplit++; fail('a push split does not add up to the strips', k + ' ' + n + ' gave ' + sum); }
+        if (top < m.arrivals || top < m.deps || top < m.overflights) { badSplit++; fail('the stream a push is about is not the largest', k + ' ' + n + ' gave ' + JSON.stringify(m)); }
+      }
+    ok('every push splits every total from 1 to 50 exactly, and the stream it is about is never the smaller one (' + (4 * 50) + ' splits)');
+
+    const asStr = m => m.arrivals + '/' + m.deps + '/' + m.overflights;
+    assert('ten strips split the way each push says',
+      asStr(G.pushMix('mixed', 10)) === '5/4/1' && asStr(G.pushMix('arrival', 10)) === '8/1/1'
+      && asStr(G.pushMix('departure', 10)) === '1/8/1' && asStr(G.pushMix('overflight', 10)) === '3/1/6',
+      ['mixed', 'arrival', 'departure', 'overflight'].map(k => asStr(G.pushMix(k, 10))).join(' '));
+    assert('a single strip goes to the stream the push is about',
+      asStr(G.pushMix('mixed', 1)) === '1/0/0' && asStr(G.pushMix('arrival', 1)) === '1/0/0'
+      && asStr(G.pushMix('departure', 1)) === '0/1/0' && asStr(G.pushMix('overflight', 1)) === '0/0/1');
+    assert('a split past the cap is held to it, and an unknown push is a mixed one',
+      (m => m.arrivals + m.deps + m.overflights)(G.pushMix('arrival', 999)) === G.STRIP_MAX
+      && asStr(G.pushMix('nonsense', 10)) === asStr(G.pushMix('mixed', 10)));
+
+    const split = G.pushMix('departure', 10);
+    const pd = G.gen({ seed: 41, push: 'departure', focus: 'sep', count: 10, arrivals: split.arrivals, deps: split.deps, overflights: split.overflights });
+    assert('a push drill is named and briefed by the push', pd.name === 'Built — Departure push · seed 41'
+      && pd.brief.includes('Mostly outbound traffic') && pd.brief.includes('Generated at compressed pressure, 10 strips'), pd.name + ' | ' + pd.brief);
+    assert('and it is never weighted, whatever focus came with it', pd.focus === 'free' && pd.push === 'departure' && pd.id === 'u41-departure', pd.focus + ' ' + pd.push + ' ' + pd.id);
+    assert('and it carries the split it was given, and validates clean',
+      tallyStr(pd) === '1/8/1' && G.validate(pd).errors.length === 0, tallyStr(pd) + ' ' + G.validate(pd).errors.join(' | '));
+    assert('the same seed and push rebuild the same drill',
+      JSON.stringify(G.gen({ seed: 41, push: 'departure', count: 10, arrivals: 1, deps: 8, overflights: 1 }).ac)
+        === JSON.stringify(G.gen({ seed: 41, push: 'departure', count: 10, arrivals: 1, deps: 8, overflights: 1 }).ac));
+
+    const fd = G.gen({ seed: 41, focus: 'floors', count: 4 });
+    assert('a focus drill is untouched by all of this — named by its focus, no push on it',
+      fd.name.includes('Floors cited aloud') && fd.focus === 'floors' && fd.push === undefined && fd.id === 'u41-floors', fd.name + ' ' + fd.id);
+    assert('an unknown push is ignored, so the focus still applies',
+      (d => d.focus === 'floors' && d.name.includes('Floors cited aloud'))(G.gen({ seed: 41, push: 'nonsense', focus: 'floors', count: 4 })));
+
+    const gg = G.generalGates();
+    assert('General mode draws on the gates the seat owns, or all six when it owns none',
+      gg.length >= 1 && gg.every(x => Object.keys(globalThis.DD.ROUTES).includes(x)), gg.join());
+  }
+
   /* validation refuses what the reference data will not carry */
   v = globalThis.ddb.validate({
     name: '', cfg: '12', ceil: 5000, vis: 10, ac: [
