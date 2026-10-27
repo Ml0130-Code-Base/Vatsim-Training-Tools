@@ -248,6 +248,19 @@ try {
   assert('a field with no runway list is null in the contract', N.FIELD_ORDER.every(f => (F.airports[f].rwys === null) === (N.FIELDS[f].rwys === null)));
   assert('a stored strip is checked: a foreign field is refused by name',
     globalThis.strip.checkStrip({role:'arrival', cs:'X1', dest:'KORD', gate:''}, 'x').some(e => /does not work/.test(e)));
+  /* The ceiling on a drill (owner, 2026-10-27): the master block holds it, the deck's add and drop call it. */
+  {
+    const add = globalThis[F.prefix + 'Add'], drop = globalThis[F.prefix + 'Drop'], at = globalThis[F.prefix + 'RowAt'];
+    const rowCount = () => { let n = 0; while (at(n)) n++; return n; };
+    assert('the strip block carries the 50-strip ceiling and says it is full at 50, not at 49',
+      globalThis.strip.MAX === 50 && globalThis.strip.refuseAdd(50) === true && globalThis.strip.refuseAdd(49) === false);
+    for (let i = 0; i < 60; i++) add();
+    assert('sixty adds leave exactly fifty strips: the 51st is refused', rowCount() === 50, 'got ' + rowCount());
+    drop(0);
+    assert('a drop makes room again', rowCount() === 49, 'got ' + rowCount());
+    add(); add();
+    assert('and one add fills it back to fifty, no further', rowCount() === 50, 'got ' + rowCount());
+  }
 
   /* ============ 8. Facility-specific facts, written by hand ============ */
   /* IND: all thirteen SOP positions agree with vNAS; the SOP prints three channels to two decimals */

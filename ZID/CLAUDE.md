@@ -151,7 +151,7 @@ in step by `diff`, not by a generator. Root `CLAUDE.md` section 11: regenerate n
 
 `smoke-test.mjs` in each folder, with `smoke-test-browser.html` (copied from the M98 runner; the title and default deck
 changed). **There is no Node on the owner's machine**, so the harnesses were run through the browser runner, served over
-a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289; with the D-ATIS block and the flow trim, IND 248, SDF 262, CVG 340.** Each asserts the block count
+a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289; with the D-ATIS block and the flow trim, IND 248, SDF 262, CVG 340; 2026-10-27, with the 50-strip ceiling on a drill, IND 252, SDF 266, CVG 344.** Each asserts the block count
 (6), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
 terminates, that a frequency the SOP truncates is told apart from a real disagreement, that every fix resolves to
 coordinates inside the ZID region, that the strip contract is the derived one, that `STANDING` is `[]`, that sector and
