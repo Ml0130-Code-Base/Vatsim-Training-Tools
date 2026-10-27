@@ -4997,7 +4997,8 @@ window.drill = {store:function(){ return store; }, generate:generate, rng:rng, c
    that does not exist would be the tool asserting something it does
    not have. The weather block's zlc-page-notes lookup therefore
    never matches here and falls back to the footer; placement is
-   decided below instead — mod-bskw is listed under 'fly'.
+   decided below instead — mod-bskw is listed under 'setup', beside the
+   area and flow it drives, and the Fly it page holds the player alone.
    ================================================================ */
 (function(){ 'use strict';
 
@@ -5005,12 +5006,12 @@ var DECK = (window.ZLC && window.ZLC.facility === 'BIGSKY') ? window.ZLC : null;
 if(!DECK) return;
 
 var PAGES = [
- {id:'setup', label:'Set up a drill', hint:'area, flow, sectors, who owns what, seat, and the strips and drill built from them',
-  sections:['mod-area','mod-pos','mod-seat','bskdrill-head','mod-bskst','bskdrill-tail']},
- {id:'fly',   label:'Fly it',         hint:'the weather, the live player, and the published procedures',
-  sections:['mod-bskw','mod-bskfly','mod-bskp']},
- {id:'data',  label:'What this tool knows', hint:'the slots that are filled, and the ones that are not',
-  sections:['mod-stubs']}
+ {id:'setup', label:'Set up a drill', hint:'area, flow and the weather behind it, sectors, who owns what, seat, and the strips and drill built from them',
+  sections:['mod-area','mod-bskw','mod-pos','mod-seat','bskdrill-head','mod-bskst','bskdrill-tail']},
+ {id:'fly',   label:'Fly it',         hint:'the live player',
+  sections:['mod-bskfly']},
+ {id:'data',  label:'What this tool knows', hint:'the slots that are filled and the ones that are not, and the published procedures',
+  sections:['mod-stubs','mod-bskp']}
 ];
 
 /* Copied from the M98 tab styling so the two read as one toolset. The
