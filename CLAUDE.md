@@ -11,7 +11,7 @@ certification at several facilities. Four ARTCCs, ten tools:
 | `ZAU/C90/c90-drill-deck.html` | C90 — Chicago TRACON | terminal | `DD` | skeleton |
 | `ZAU/AZO/azo-drill-deck.html` | Great Lakes, West Wall | terminal | `DD` | skeleton |
 | `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | skeleton |
-| `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | skeleton |
+| `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | skeleton + published-track player |
 | `ZID/IND/ind-drill-deck.html` | IND — Indianapolis TRACON | terminal, STARS | `IND` | Tier 1 shell + published-track player |
 | `ZID/SDF/sdf-drill-deck.html` | SDF — Louisville TRACON | terminal, STARS | `SDF` | Tier 1 shell + published-track player |
 | `ZID/CVG/cvg-drill-deck.html` | CVG — Cincinnati TRACON | terminal, STARS | `CVG` | Tier 1 shell + published-track player |
@@ -163,7 +163,7 @@ ladder. That waives the gate below **for what CIFP itself publishes and nothing 
 clock, the published crossings and the published speeds. It adds no boundary, no sector owner,
 no handoff grading and no wind; `STANDING` stays `[]`; every check says *"reminder, not a
 judgement"*. Two masters carry it, `fly-block.html` and `drill-block.html`
-(`claude_Fly_Block_Reference.md`). *IND, SDF, CVG and R90 today; the rest are issue #76.*
+(`claude_Fly_Block_Reference.md`). *IND, SDF, CVG, R90 and Big Sky today; the rest are issue #76.*
 
 **The jump from 1 to 2 is gated on geometry and on a first OJT session, in that order** — and
 neither is a coding task. See §7 and invariant 4. The player above does not make a deck Tier 2:
@@ -185,7 +185,7 @@ explicit ask.
 `strip-block.html` (the flight-strip row and the 50-strip ceiling on a drill, `claude_Strip_Block_Reference.md`),
 `fly-block.html` (the *Fly it* player: clock, scope, transmit box, feed, debrief, flying each strip along its
 published CIFP track) and `drill-block.html` (the *Set up a drill* builder: seeded generator, per-strip
-transition, saved drills, JSON) — both in `claude_Fly_Block_Reference.md`, 2026-10-27, **in the three ZID decks and R90 only**,
+transition, saved drills, JSON) — both in `claude_Fly_Block_Reference.md`, 2026-10-27, **in the three ZID decks, R90 and Big Sky only**,
 `routedraw-block.html` (M98's *Routes drawn* bar — open procedure, all STARs, all SIDs, all SIDs + STARs,
 off — on a deck's plot, trimmed to the flow in force, `claude_RouteDraw_Block_Reference.md`, 2026-10-20) and
 `datis-block.html` (the D-ATIS reader that finds the flow and sets the frame,
@@ -485,6 +485,7 @@ section says what is true, not what to do about it next.
   persistence at all**, and deliberately: its weather block sets `STORE_KEY` to the empty string
   and `storeSave()` returns early rather than inventing a key as a drive-by — issue **#45**
   gives it one, and that is the cheap moment to do it, before there is banked work to strand.
+  **Since 2026-10-27 it stores one thing**: saved drills, under `bigsky-drill-deck-fly-v1` (the drill master), and nothing else.
   Don't ship another key with a status word in it.
 - **ZAU and ZLC have no drill-format, OJT-intake, practice-log or TTS layer**, and **no smoke
   test.** They are Tier 0. That is a legitimate place to be; it is not a legitimate place to

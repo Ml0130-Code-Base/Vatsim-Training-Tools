@@ -2,7 +2,7 @@
 
 Single-file, offline-first HTML training tools for VATSIM controllers working Salt Lake City ARTCC terminal facilities. Built on the pattern established by `../ZMP/M98 Training/` — read that CLAUDE.md before making architectural decisions here.
 
-**Current state: skeleton.** The position selectors are real and their data is verified. The traffic engine, the scope, the clock and the grading are not built. Stubs on the page say so by name rather than rendering something plausible and empty.
+**Current state: skeleton.** The position selectors are real and their data is verified. The sector-level traffic engine and the grading are not built. **Big Sky carries a published-track player and a drill builder since 2026-10-27 (issue #76, `../claude_Fly_Block_Reference.md`): the aircraft fly the CIFP 261001 SIDs and STARs straight between fixes, the *Set up a drill* page holds the strips and the seeded generator, and nothing is graded.** S56 does not carry them yet. Stubs on the page say so by name rather than rendering something plausible and empty.
 
 Treat correctness of aviation data as safety-critical for training value: **never invent procedures, fixes, altitudes, frequencies or paragraph citations.** Every operational number must trace to a document in `source-docs/`.
 
@@ -143,9 +143,8 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    PAGES block, which stays last, and `mod-bskp` is named in that block's `fly` page.
 
    Three things to keep true here. **Procedures are keyed by airport, then by procedure**,
-   because an identifier is not unique across fields. **`flies` stays false** — Big Sky has no
-   traffic model — while `track:true` says the ladder is carried, and the strip row renders
-   *"track only"* rather than *"frame only"* for the difference. And a **runway transition
+   because an identifier is not unique across fields. **`flies` is true since 2026-10-27** — the
+   fly block (before the PAGES block, which stays last) flies the published track — while `track:true` says the ladder is carried, and the two are different claims the strip row labels differently. BOI3 is a radar-vectored SID with no fix and the player refuses it by name; Bozeman has no runway gate, so a Bozeman drill has no flow and its strips carry no runway; a drill is held to one area's field (`only:true`), because the two areas share no airspace. And a **runway transition
    named `RW10L` is the procedure's runway, not the flow**: the flow branch lives in the
    geometry (item 3), and nothing in this block touches it.
 
