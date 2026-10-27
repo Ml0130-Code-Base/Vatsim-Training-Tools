@@ -1266,8 +1266,8 @@ function wireNotes(){
 /* ---------- 5. Pages ---------- */
 var PAGES = [
   { id:'setup', label:'Set up a drill', sections:[B+'-frame', P+'-positions', P+'-fields'] },
-  { id:'fly',   label:'Fly it',         sections:[P+'-footprint', P+'-live'] },
-  { id:'notes', label:'Notes and log',  sections:[B+'-notes', P+'-refindex'].concat(NS.GROUPS.map(function(g){ return P+'-ref-'+g.id; }), [P+'-vnas', P+'-handoff', P+'-vatis', P+'-knows', P+'-log']) }
+  { id:'fly',   label:'Fly it',         sections:[P+'-live'] },
+  { id:'notes', label:'Notes and log',  sections:[B+'-notes', P+'-footprint', P+'-refindex'].concat(NS.GROUPS.map(function(g){ return P+'-ref-'+g.id; }), [P+'-vnas', P+'-handoff', P+'-vatis', P+'-knows', P+'-log']) }
 ];
 function buildPages(){
   var wrap = document.querySelector('.wrap'); if(!wrap) return;
@@ -1965,11 +1965,13 @@ function mount(){
   holder.innerHTML = section();
   var sec = holder.firstChild;
   if(!sec) return;
-  /* Land on the page the deck already built. This block runs after the
-     page builder and before the strips block, so the wrapper exists by
-     now; without one, fall in above the footer. */
-  var page = document.getElementById(P + 'b-page-fly');
-  if(page){ page.appendChild(sec); }
+  /* Land beside the lateral footprint on the third page: the Fly it page
+     holds the player alone, as M98's does. This block runs after the page
+     builder and before the strips block, so the wrapper exists by now;
+     without one, fall in above the footer. */
+  var page = document.getElementById(P + 'b-page-notes'), fp = document.getElementById(P + '-footprint');
+  if(fp && fp.parentNode){ fp.parentNode.insertBefore(sec, fp.nextSibling); }
+  else if(page){ page.appendChild(sec); }
   else {
     var foot = wrap.querySelector('footer');
     if(foot) wrap.insertBefore(sec, foot); else wrap.appendChild(sec);
