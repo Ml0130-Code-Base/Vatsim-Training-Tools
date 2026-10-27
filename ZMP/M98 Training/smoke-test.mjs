@@ -2149,10 +2149,29 @@ try {
     for (let sd = 1; sd <= 30; sd++) if (!uniqueCs(G.gen({ seed: sd, count: 40, arrivals: 0, overflights: 40 }))) regs++;
     assert('forty overflights never repeat a registration, across thirty seeds', regs === 0, regs + ' seeds repeated one');
 
-    /* a sanity ceiling, not a rule — and exactly what the panel quotes */
-    assert('a count far past the ceiling is held to it', G.genMix({ count: 999999 }).total === G.GEN_MAX && G.GEN_MAX >= 100, G.genMix({ count: 999999 }).total);
-    assert('a drill generated past it carries the ceiling and no more',
-      G.gen({ seed: 23, count: 10 * G.GEN_MAX, deps: 5 }).ac.length === G.GEN_MAX);
+    /* THE CAP IS FIFTY, owner 2026-10-27: past that it is more load than one controller works and
+       a second would have to open. It is one constant, held by the generator, by "add a strip"
+       and by validate, so a hand-built or imported drill cannot get past it either. It was a
+       sanity ceiling of 200 for a few hours that day, until the owner named the real figure. */
+    assert('the cap is fifty strips', G.STRIP_MAX === 50, G.STRIP_MAX);
+    assert('a count far past the cap is held to it', G.genMix({ count: 999999 }).total === G.STRIP_MAX, G.genMix({ count: 999999 }).total);
+    assert('a drill generated past it carries the cap and no more',
+      G.gen({ seed: 23, count: 10 * G.STRIP_MAX, deps: 5 }).ac.length === G.STRIP_MAX);
+    const atCap = G.gen({ seed: 25, count: G.STRIP_MAX, arrivals: 30, deps: 12, overflights: 8, pressure: 'saturated' });
+    assert('exactly fifty strips is a drill, and it validates clean with no repeated callsign',
+      atCap.ac.length === 50 && tallyStr(tally(atCap)) === '30/12/8' && G.validate(atCap).errors.length === 0 && uniqueCs(atCap),
+      tallyStr(tally(atCap)) + ' ' + G.validate(atCap).errors.join(' | '));
+    /* a drill built by hand, or imported, is held to it as well — validate is what refuses it */
+    const tooMany = JSON.parse(JSON.stringify(atCap));
+    tooMany.ac.push(Object.assign({}, tooMany.ac[0], { cs: 'DAL9999' }));
+    const overErr = G.validate(tooMany).errors;
+    assert('a drill with fifty-one strips is refused, saying why',
+      overErr.some(e => e.includes('at most 50 strips') && e.includes('another would have to open') && e.includes('51')), overErr.join(' | '));
+    assert('and refusing it does not hide the other checks — the same drill with one fewer is clean',
+      G.validate(atCap).errors.length === 0);
+    assert('a hand-built drill well over the cap is refused the same way',
+      G.validate(Object.assign(JSON.parse(JSON.stringify(atCap)), { ac: Array.from({ length: 120 }, (_, i) => Object.assign({}, atCap.ac[0], { cs: 'DAL' + (1000 + i) })) }))
+        .errors.some(e => e.includes('at most 50 strips') && e.includes('120')));
     assert('a count of zero or less is one strip, not none', G.genMix({ count: 0 }).total === 1 && G.genMix({ count: -4 }).total === 1);
     assert('text where a number should be falls back to the default of three',
       G.genMix({ count: 'abc' }).total === 3 && G.genMix({ count: '' }).total === 3);
