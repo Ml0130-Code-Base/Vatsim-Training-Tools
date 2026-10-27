@@ -5331,6 +5331,38 @@ var FOCUS={
  speed:{label:'Speed-restoration constructs', line:'Everyone arrives on an assigned speed. Restore the ladder before GREAK or the delivery spec breaks.'},
  posthandoff:{label:'Post-handoff discipline', line:'A runway flip mid-stream. Re-flash to the new receiver, then switch — in that order, and nothing after.'}
 };
+/* How many of each kind of strip a generated drill carries. Strips (count) is the
+   most the drill will hold; arrivals, departures and overflights are shares of
+   it and never add up to more. Arrivals left unset take whatever the other two
+   leave. Where the asks do overrun the total they are cut, arrivals last — the
+   generator's focus, gate mix and pressure all work on arrivals. The ceiling is
+   a sanity guard, not a rule: callsigns are drawn at random and a typo like
+   10000000 should not hang the page. */
+var GEN_MAX=200;
+function genInt(v, dflt){ var k=parseInt(v,10); return isNaN(k)?dflt:k; }
+function genMix(o){
+ o=o||{};
+ var total=Math.max(1, Math.min(GEN_MAX, genInt(o.count,3)));
+ var dep=Math.max(0, genInt(o.deps,0)), ovf=Math.max(0, genInt(o.overflights,0));
+ var arr=(o.arrivals==null || o.arrivals==='') ? null : Math.max(0, genInt(o.arrivals,0));
+ var arr0=arr, dep0=dep, ovf0=ovf;
+ if(arr==null){
+  dep=Math.min(dep,total); ovf=Math.min(ovf,total-dep); arr=total-dep-ovf;
+ } else {
+  arr=Math.min(arr,total); dep=Math.min(dep,total-arr); ovf=Math.min(ovf,total-arr-dep);
+ }
+ /* cut: what was asked for did not fit in the total and something was reduced */
+ return {total:total, arrivals:arr, deps:dep, overflights:ovf, flights:arr+dep+ovf,
+         cut:(dep!==dep0 || ovf!==ovf0 || (arr0!=null && arr!==arr0))};
+}
+/* "3 arrivals, 1 departure, 1 overflight" — the counts that are not zero */
+function mixWords(m){
+ var p=[];
+ if(m.arrivals)    p.push(m.arrivals+' arrival'+(m.arrivals===1?'':'s'));
+ if(m.deps)        p.push(m.deps+' departure'+(m.deps===1?'':'s'));
+ if(m.overflights) p.push(m.overflights+' overflight'+(m.overflights===1?'':'s'));
+ return p.length ? p.join(', ') : 'nothing';
+}
 function gen(o){
  o=o||{};
  var seed = (o.seed!=null) ? (o.seed|0) : Math.floor(Math.random()*100000);
@@ -5345,7 +5377,8 @@ function gen(o){
  for(var mi=mix.length-1; mi>0; mi--){
   var mj=Math.floor(rnd()*(mi+1)), mt=mix[mi]; mix[mi]=mix[mj]; mix[mj]=mt;
  }
- var n=Math.max(1,Math.min(6, o.count|0 || 3));
+ var mixN=genMix(o);
+ var n=mixN.arrivals;
  var live=Math.min(n, press.live + (focus==='sep'?1:0));
  var near = (focus==='floors'||focus==='posthandoff');
  var band = near ? [6,13] : [17,31];
@@ -5403,9 +5436,13 @@ function gen(o){
   r.from = (rn.pos==='RST') ? 'Rochester approach' : ('ZMP Sector '+pick(rnd,['5','9','10']));
   ac.push(r);
  }
- /* departures and an overflight ride alongside whatever the focus asked for */
- var nDep=Math.max(0, Math.min(3, o.deps|0));
- for(var d=0; d<nDep; d++){
+ /* departures and overflights ride alongside the arrivals, as many as the mix
+    asks for. The first three departures and the first overflight draw exactly
+    as they always did, so a seed that already means something still rebuilds
+    the same drill; past those, each one is released a pressure-spaced gap after
+    the one before rather than all landing inside the same minute. */
+ var depT=0;
+ for(var d=0; d<mixN.deps; d++){
   var ftd=pick(rnd,FLEET), dcs;
   do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
   used[dcs]=1;
@@ -5415,22 +5452,32 @@ function gen(o){
            fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
            gate:'NITZR', dtg:20, mode:'free', asg:230, rwy:'',
            entryR:180, entryD:38, exitR:20, exitD:38,
-           ckdIn:(d===0), altim:false, spawnAt:(d===0?0:ri(rnd,30,90))});
+           ckdIn:(d===0), altim:false,
+           spawnAt:(d===0 ? 0 : (d<3 ? ri(rnd,30,90) : depT+ri(rnd,press.spawn[0],press.spawn[1])))});
+  depT=Math.max(depT, ac[ac.length-1].spawnAt);
  }
- if(o.overflight){
+ var ovfT=0;
+ for(var ov=0; ov<mixN.overflights; ov++){
   var er=ri(rnd,150,240), xr=(er+ri(rnd,120,200))%360;
   /* an overflight arriving from Rochester comes in at one of the three
      altitudes the LOA allows; anything else would need coordinating */
   var oAlt=ri(rnd,40,75)*100, oRadar=(rnd()<0.5?'none':'established');
   var oNb=DD.neighbourAt(er, oAlt);
   if(oNb.pos==='RST'){ oAlt=pick(rnd,DD.RST_OVF_ALTS); oNb=DD.neighbourAt(er, oAlt); }
-  ac.push({cs:'N'+ri(rnd,100,999)+pick(rnd,['SP','GT','DP','ER','CM']), type:pick(rnd,['C172','SR22','BE36','PA46']), wake:'',
+  /* a registration only has 4,500 combinations, so more than a couple of
+     overflights need the same uniqueness check the airline callsigns get */
+  var ocs;
+  do{ ocs='N'+ri(rnd,100,999)+pick(rnd,['SP','GT','DP','ER','CM']); }while(used[ocs]);
+  used[ocs]=1;
+  ac.push({cs:ocs, type:pick(rnd,['C172','SR22','BE36','PA46']), wake:'',
            role:'overflight', rules:'VFR', route:'',
            radar:oRadar, from:(oRadar==='established'?oNb.name:''),
            entryR:er, entryD:38, exitR:xr, exitD:38,
            alt:oAlt, ias:ri(rnd,110,180),
            gate:'NITZR', dtg:20, sid:DEF_SID, fromStart:4, mode:'free', asg:230, rwy:'',
-           ckdIn:false, altim:false, spawnAt:ri(rnd,20,70)});
+           ckdIn:false, altim:false,
+           spawnAt:(ov===0 ? ri(rnd,20,70) : ovfT+ri(rnd,press.spawn[0],press.spawn[1]))});
+  ovfT=Math.max(ovfT, ac[ac.length-1].spawnAt);
  }
  var fc=FOCUS[focus];
  return {
@@ -5439,7 +5486,7 @@ function gen(o){
   cfg:o.cfg||'12', wind:o.wind||'150/9', ceil:(o.ceil==null?5000:o.ceil), vis:(o.vis==null?10:o.vis),
   atis:'J', altim:'2980', seat:o.seat||seatLabel(), towers:state.pos.towers,
   open:openLabel(), rstOpen:rstOpen(), midnight:midnightOn(),
-  brief:fc.line+' Generated '+press.label+' push, '+n+' strip'+(n>1?'s':'')+', seed '+seed+' — same seed rebuilds the same drill.',
+  brief:fc.line+' Generated '+press.label+' push, '+mixN.flights+' strip'+(mixN.flights===1?'':'s')+' — '+mixWords(mixN)+', seed '+seed+' — same seed rebuilds the same drill.',
   focus:focus, seed:seed, rate:1, hot:!!o.hot,
   speci:{on:!!o.speci, at:ri(rnd,150,300), ceil:1800, vis:3, wind:o.wind||'150/12', cfg:''}, events:[], ac:ac
  };
@@ -6808,16 +6855,50 @@ window.ddbAddRow=function(){ readEditor(); draft.ac.push(blankAc()); renderEdito
 window.ddbDropRow=function(i){ readEditor(); if(draft.ac.length>1) draft.ac.splice(i,1); renderEditor(); };
 window.ddbNew=function(){ draft=blankDrill(); renderEditor(); };
 window.ddbDice=function(){ var e=document.getElementById('ddb-seed'); if(e) e.value=String(Math.floor(Math.random()*100000)); };
+/* The Generate panel's four counts. Strips is the total; arrivals, departures and
+   overflights are shares of it and can never come to more. A box that would
+   overrun is held to the room the others leave when you leave it, and the
+   arrivals box left empty follows whatever the other two leave (data-auto). */
+var MIXF={count:'ddb-count', arr:'ddb-arr', deps:'ddb-deps', ovf:'ddb-ovf'};
+function mixEl(k){ return document.getElementById(MIXF[k]); }
+function mixRaw(k){ var e=mixEl(k); return (e&&typeof e.value==='string') ? parseInt(e.value,10) : NaN; }
+window.ddbMixSync=function(changed){
+ var X=mixRaw('count'); X=isNaN(X)?3:Math.max(1,Math.min(GEN_MAX,X));
+ var Z=Math.max(0, mixRaw('deps')||0), L=Math.max(0, mixRaw('ovf')||0);
+ var ae=mixEl('arr'), yRaw=mixRaw('arr');
+ var auto = (changed==='arr') ? isNaN(yRaw) : !(ae && ae.getAttribute && ae.getAttribute('data-auto')==='0');
+ var Y = auto ? null : Math.max(0, isNaN(yRaw)?0:yRaw);
+ /* the box you just changed gives way, not the ones you set before it */
+ var y0 = auto ? 0 : Y;
+ if(changed==='deps')      Z=Math.max(0, Math.min(Z, X-L-y0));
+ else if(changed==='ovf')  L=Math.max(0, Math.min(L, X-Z-y0));
+ else if(changed==='arr' && !auto) Y=Math.max(0, Math.min(Y, X-Z-L));
+ var m=genMix({count:X, arrivals:Y, deps:Z, overflights:L});
+ var put=function(k,v){ var e=mixEl(k); if(e) e.value=String(v); };
+ put('count',m.total); put('arr',m.arrivals); put('deps',m.deps); put('ovf',m.overflights);
+ if(ae && ae.setAttribute) ae.setAttribute('data-auto', auto?'1':'0');
+ /* what each box can still take, so the browser's own spinner stops there too */
+ var room=function(k,v){ var e=mixEl(k); if(e) e.max=String(Math.max(0,v)); };
+ var yHeld=auto?0:m.arrivals;
+ room('arr', m.total-m.deps-m.overflights); room('deps', m.total-m.overflights-yHeld); room('ovf', m.total-m.deps-yHeld);
+ var note=document.getElementById('ddb-mixnote');
+ if(note) note.textContent = m.flights+' of '+m.total+' strip'+(m.total===1?'':'s')+' — '+mixWords(m)
+   +(auto?' (arrivals take the rest)':'')+'.'
+   +(m.flights<m.total ? ' '+(m.total-m.flights)+' not used.' : '')
+   +(m.flights===0 ? ' Nothing to generate yet.' : '');
+ return m;
+};
 window.ddbGenerate=function(){
  var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:''; };
  var seedRaw=g('ddb-seed');
- /* a typed count is held to what gen() will build (1 to 6) and written back, so the box never says more than the drill has */
- var cnt=parseInt(g('ddb-count'),10); cnt=isNaN(cnt)?3:Math.max(1,Math.min(6,cnt));
- var ce=document.getElementById('ddb-count'); if(ce) ce.value=String(cnt);
+ /* settle the four counts first, so what is generated is what the boxes say */
+ var m=window.ddbMixSync('count');
+ if(!m.flights) return;
+ var ae=mixEl('arr'), auto=!(ae && ae.getAttribute && ae.getAttribute('data-auto')==='0');
  draft=gen({seed: seedRaw===''?null:parseInt(seedRaw,10),
             focus:g('ddb-focus')||'free', mixGates:mixGates(g('ddb-mix')),
-            pressure:g('ddb-pressure')||'compressed', count:cnt,
-            deps:parseInt(g('ddb-deps'),10)||0, overflight:!!g('ddb-ovf')});
+            pressure:g('ddb-pressure')||'compressed', count:m.total,
+            arrivals:(auto?null:m.arrivals), deps:m.deps, overflights:m.overflights});
  var sd=document.getElementById('ddb-seed'); if(sd) sd.value=String(draft.seed);
  renderEditor();
  var sec=document.getElementById('ddb-editor'); if(sec&&sec.scrollIntoView) sec.scrollIntoView({behavior:'smooth'});
@@ -7026,11 +7107,14 @@ function buildHtml(){
  +f('Focus','<select class="dd-sel" id="ddb-focus">'+focusOpts+'</select>')
  +f('Gates','<select class="dd-sel" id="ddb-mix" onchange="ddbSync()"></select>')
  +f('Pressure','<select class="dd-sel" id="ddb-pressure"><option value="routine">routine</option><option value="compressed" selected>compressed</option><option value="saturated">saturated</option></select>')
- +f('Strips','<input class="dd-in" id="ddb-count" type="number" inputmode="numeric" min="1" max="6" step="1" value="3">')
- +f('Departures','<select class="dd-sel" id="ddb-deps"><option value="0">none</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>')
- +f('Overflight','<select class="dd-sel" id="ddb-ovf"><option value="">none</option><option value="1">one crossing</option></select>')
+ +f('Strips (total)','<input class="dd-in" id="ddb-count" type="number" inputmode="numeric" min="1" max="'+GEN_MAX+'" step="1" value="3" onchange="ddbMixSync(\'count\')">')
+ +f('Arrivals','<input class="dd-in" id="ddb-arr" type="number" inputmode="numeric" min="0" max="3" step="1" value="3" data-auto="1" placeholder="the rest" onchange="ddbMixSync(\'arr\')">')
+ +f('Departures','<input class="dd-in" id="ddb-deps" type="number" inputmode="numeric" min="0" max="3" step="1" value="0" onchange="ddbMixSync(\'deps\')">')
+ +f('Overflights','<input class="dd-in" id="ddb-ovf" type="number" inputmode="numeric" min="0" max="3" step="1" value="0" onchange="ddbMixSync(\'ovf\')">')
  +f('Seed','<input class="dd-in" id="ddb-seed" placeholder="any number">')
  +'</div>'
+ +'<div class="dd-hint" id="ddb-mixnote" style="margin:10px 0 0;">'+esc(genMix({count:3}).flights+' of 3 strips — '+mixWords(genMix({count:3}))+' (arrivals take the rest).')+'</div>'
+ +'<div class="dd-hint" style="margin:4px 0 0;">Strips is the most the drill will carry. Arrivals, departures and overflights share it and can never come to more; leave Arrivals empty and it takes whatever the other two leave.</div>'
  +'<div class="dd-actions"><button class="dd-btn pri" onclick="ddbGenerate()">Generate drill</button>'
  +'<button class="dd-btn" onclick="ddbDice()">new seed</button>'
  +'<button class="dd-btn" onclick="ddbNew()">start blank instead</button>'
@@ -7209,7 +7293,7 @@ function mount(){
 
 /* ---------- 17. Test surface ---------- */
 window.ddb = {
- state:state, gen:gen, validate:validate, saveDrill:saveDrill, deleteDrill:deleteDrill,
+ state:state, gen:gen, genMix:genMix, GEN_MAX:GEN_MAX, validate:validate, saveDrill:saveDrill, deleteDrill:deleteDrill,
  runDrill:runDrill, publish:publish, toScenario:toScenario, toCode:toCode, toMd:toMd,
  draftFromSim:draftFromSim, bank:bank, tallyFeed:tallyFeed, itemStats:itemStats,
  statusOf:statusOf, pertinence:pertinence, ranked:ranked, timing:TIMING,

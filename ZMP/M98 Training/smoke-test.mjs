@@ -2063,11 +2063,16 @@ try {
         for (const c of [2, 3, 4, 5, 6])
           for (const sd of [1, 77, 4242, 90210]) {
             combos++;
-            const g = globalThis.ddb.gen({ seed: sd, focus: f, mixGates: mx, pressure: p, count: c,
-                                          deps: sd % 3, overflight: sd === 77 });
+            /* 2026-10-27: `count` became the TOTAL, with arrivals, departures and overflights
+               as shares of it. The extras that used to ride on top of `count` arrivals are now
+               in the total, and `arrivals: c` keeps every drill here the one it always was. */
+            const extraDep = sd % 3, extraOvf = sd === 77 ? 1 : 0;
+            const g = globalThis.ddb.gen({ seed: sd, focus: f, mixGates: mx, pressure: p,
+                                          count: c + extraDep + extraOvf, arrivals: c,
+                                          deps: extraDep, overflights: extraOvf });
             const gv = globalThis.ddb.validate(g);
             if (gv.errors.length) fail('generated ' + f + '/' + p + '/' + mx.join('-') + '/' + c + '/' + sd, gv.errors.join(' | '));
-            const wantN = c + (sd % 3) + (sd === 77 ? 1 : 0);
+            const wantN = c + extraDep + extraOvf;
             if (g.ac.length !== wantN) fail('generated strip count', f + '/' + c + ' wanted ' + wantN + ' gave ' + g.ac.length);
             g.ac.forEach(a => {
               if (a.rules === 'IFR' && !String(a.route || '').trim())
@@ -2077,6 +2082,94 @@ try {
             });
           }
   ok('every generated drill validates and starts at or above its gate floor (' + combos + ' combinations)');
+
+  /* ============ 4a. The generator's mix — 2026-10-27 ============
+     Strips is the TOTAL. Arrivals, departures and overflights are shares of it and
+     never come to more; arrivals left unset take the rest. Until this date `count`
+     was the arrival count, capped at six, with up to three departures and one
+     overflight riding on top — so a "six strip" drill could carry ten flights. */
+  {
+    const G = globalThis.ddb, roleOf = a => a.role || 'arrival';
+    const tally = d => ({ a: d.ac.filter(x => roleOf(x) === 'arrival').length,
+                          d: d.ac.filter(x => roleOf(x) === 'departure').length,
+                          o: d.ac.filter(x => roleOf(x) === 'overflight').length });
+    const tallyStr = t => t.a + '/' + t.d + '/' + t.o;
+    const uniqueCs = d => new Set(d.ac.map(a => a.cs)).size === d.ac.length;
+
+    const exact = G.gen({ seed: 11, count: 12, arrivals: 7, deps: 3, overflights: 2 });
+    assert('a drill carries exactly the arrivals, departures and overflights it was asked for',
+      exact.ac.length === 12 && tallyStr(tally(exact)) === '7/3/2', tallyStr(tally(exact)) + ' of ' + exact.ac.length);
+    assert('and it validates clean', G.validate(exact).errors.length === 0, G.validate(exact).errors.join(' | '));
+    assert('arrivals left unset take whatever the other two leave',
+      tallyStr(tally(G.gen({ seed: 12, count: 9, deps: 2, overflights: 1 }))) === '6/2/1');
+    assert('with nothing else asked, every strip is an arrival, as the old default was',
+      tallyStr(tally(G.gen({ seed: 13, count: 3 }))) === '3/0/0');
+
+    let fuzz = 0, over = 0;
+    for (const count of [1, 2, 5, 12])
+      for (const arrivals of [undefined, 0, 1, 4, 9, 50])
+        for (const deps of [0, 1, 3, 8])
+          for (const overflights of [0, 2, 9]) {
+            fuzz++;
+            const d = G.gen({ seed: fuzz, count, arrivals, deps, overflights });
+            const m = G.genMix({ count, arrivals, deps, overflights });
+            const t = tally(d);
+            if (d.ac.length > count) over++, fail('flights exceed the strip count', count + '/' + arrivals + '/' + deps + '/' + overflights + ' gave ' + d.ac.length);
+            if (m.flights !== d.ac.length || m.arrivals !== t.a || m.deps !== t.d || m.overflights !== t.o)
+              fail('genMix disagrees with what gen built', JSON.stringify(m) + ' vs ' + tallyStr(t));
+            if (arrivals !== undefined && t.a > arrivals) fail('more arrivals than asked', arrivals + ' gave ' + t.a);
+            if (t.d > deps || t.o > overflights) fail('more departures or overflights than asked', deps + '/' + overflights + ' gave ' + t.d + '/' + t.o);
+          }
+    ok('flights never exceed the strip count, and no share ever exceeds what was asked (' + fuzz + ' combinations)');
+
+    const cut1 = G.genMix({ count: 5, arrivals: 9, deps: 9, overflights: 9 });
+    const cut2 = G.genMix({ count: 5, arrivals: 2, deps: 9, overflights: 9 });
+    const cut3 = G.genMix({ count: 4, deps: 9, overflights: 9 });
+    assert('when the asks overrun the total they are cut, arrivals last',
+      cut1.arrivals === 5 && cut1.deps === 0 && cut1.overflights === 0
+      && cut2.arrivals === 2 && cut2.deps === 3 && cut2.overflights === 0
+      && cut3.arrivals === 0 && cut3.deps === 4 && cut3.overflights === 0
+      && cut1.cut && cut2.cut && cut3.cut, JSON.stringify([cut1, cut2, cut3]));
+    assert('a mix that fits is not reported as cut', G.genMix({ count: 10, arrivals: 4, deps: 3, overflights: 2 }).cut === false);
+
+    /* the old ceiling of six arrivals, three departures and one overflight is gone */
+    const big = G.gen({ seed: 21, count: 30, focus: 'free', pressure: 'routine' });
+    assert('thirty arrivals are generated, not six', tally(big).a === 30 && big.ac.length === 30, big.ac.length);
+    assert('and they validate clean with no repeated callsign', G.validate(big).errors.length === 0 && uniqueCs(big), G.validate(big).errors.join(' | '));
+    const crowd = G.gen({ seed: 22, count: 20, arrivals: 0, deps: 10, overflights: 10, pressure: 'saturated' });
+    assert('ten departures and ten overflights, with no arrival at all',
+      tallyStr(tally(crowd)) === '0/10/10', tallyStr(tally(crowd)));
+    assert('and they validate clean with no repeated callsign — an overflight registration included',
+      G.validate(crowd).errors.length === 0 && uniqueCs(crowd), G.validate(crowd).errors.join(' | '));
+    const depStrips = crowd.ac.filter(a => a.role === 'departure'), early = Math.max.apply(null, depStrips.slice(0, 3).map(a => a.spawnAt));
+    assert('departures past the third are released after the ones before them, not inside the same minute',
+      depStrips.slice(3).every(a => a.spawnAt > early) && depStrips.slice(3).every((a, i, all) => i === 0 || a.spawnAt > all[i - 1].spawnAt),
+      depStrips.map(a => a.spawnAt).join(','));
+    let regs = 0;
+    for (let sd = 1; sd <= 30; sd++) if (!uniqueCs(G.gen({ seed: sd, count: 40, arrivals: 0, overflights: 40 }))) regs++;
+    assert('forty overflights never repeat a registration, across thirty seeds', regs === 0, regs + ' seeds repeated one');
+
+    /* a sanity ceiling, not a rule — and exactly what the panel quotes */
+    assert('a count far past the ceiling is held to it', G.genMix({ count: 999999 }).total === G.GEN_MAX && G.GEN_MAX >= 100, G.genMix({ count: 999999 }).total);
+    assert('a drill generated past it carries the ceiling and no more',
+      G.gen({ seed: 23, count: 10 * G.GEN_MAX, deps: 5 }).ac.length === G.GEN_MAX);
+    assert('a count of zero or less is one strip, not none', G.genMix({ count: 0 }).total === 1 && G.genMix({ count: -4 }).total === 1);
+    assert('text where a number should be falls back to the default of three',
+      G.genMix({ count: 'abc' }).total === 3 && G.genMix({ count: '' }).total === 3);
+
+    /* asking for nothing builds nothing — and the drill is refused for it, not padded */
+    const none = G.gen({ seed: 24, count: 4, arrivals: 0, deps: 0, overflights: 0 });
+    assert('arrivals, departures and overflights all at zero builds no strips',
+      none.ac.length === 0 && G.validate(none).errors.some(e => e.includes('at least one strip')), none.ac.length);
+
+    assert('the same seed and the same mix rebuild the same drill',
+      JSON.stringify(G.gen({ seed: 31, count: 14, arrivals: 8, deps: 4, overflights: 2 }).ac)
+        === JSON.stringify(G.gen({ seed: 31, count: 14, arrivals: 8, deps: 4, overflights: 2 }).ac));
+    assert('the brief says what is in the drill, by kind',
+      exact.brief.includes('12 strips — 7 arrivals, 3 departures, 2 overflights'), exact.brief);
+    assert('and a single strip is singular',
+      G.gen({ seed: 32, count: 1 }).brief.includes('1 strip — 1 arrival,'), G.gen({ seed: 32, count: 1 }).brief);
+  }
 
   /* validation refuses what the reference data will not carry */
   v = globalThis.ddb.validate({
@@ -2178,7 +2271,7 @@ try {
     {
       const picked = {};
       for (let seed = 1; seed <= 40; seed++)
-        globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 2, deps: 4 })
+        globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 6, arrivals: 2, deps: 4 })
           .ac.filter(a => a.role === 'departure').forEach(a => { picked[globalThis.DD.sidOf(a.sid)] = 1; });
       assert('the generator draws on all nine SIDs, the two with a Runway 17 segment among them',
         Object.keys(picked).sort().join() === globalThis.DD.SID_FIELDS.KMSP.slice().sort().join(), Object.keys(picked).sort().join());
@@ -2483,7 +2576,7 @@ try {
   assert('VFR against an IFR field is flagged',
     vfrImc.warnings.some(w => w.indexOf('is VFR and the field is IFR') >= 0), vfrImc.warnings.join(' | '));
   assert('every generated IFR strip carries a route',
-    globalThis.ddb.gen({seed:5150, focus:'free', pressure:'routine', count:3, deps:2, overflight:true})
+    globalThis.ddb.gen({seed:5150, focus:'free', pressure:'routine', count:6, arrivals:3, deps:2, overflights:1})
       .ac.every(a => a.rules !== 'IFR' || String(a.route || '').trim().length > 0));
 
   /* THESE TWO BELONG TO THE `mixed` DRILL, and they had drifted away from it:
