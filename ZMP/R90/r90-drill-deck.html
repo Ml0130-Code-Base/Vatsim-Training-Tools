@@ -1989,8 +1989,11 @@ function mount(){
  var sec = host.firstChild;
  if(!sec) return;
 
- var page = document.getElementById('rdb-page-notes');
- if(page){ page.appendChild(sec); }
+ /* Set up a drill, ahead of the builder it feeds, as M98 sets the weather
+    in setting up the drill; the third page holds notes and reference. */
+ var page = document.getElementById('rdb-page-setup'), anchor = document.getElementById('rdb-build');
+ if(anchor && anchor.parentNode){ anchor.parentNode.insertBefore(sec, anchor); }
+ else if(page){ page.appendChild(sec); }
  else {
   var footer = wrap.querySelector('footer');
   if(footer) wrap.insertBefore(sec, footer); else wrap.appendChild(sec);
@@ -2424,10 +2427,11 @@ function mount(){
   holder.innerHTML = section();
   var sec = holder.firstChild;
   if(!sec) return;
-  /* Land on the page the deck already built, where it built one. This
+  /* Land on the third page, where it built one: the Fly it page holds the
+     player alone, as M98's does. This
      block runs after the page builder and before the strips block, so
      the wrapper exists by now; without one, fall in above the footer. */
-  var page = null, ids = ['rdb-page-fly'];
+  var page = null, ids = ['rdb-page-notes'];
   for(var i = 0; i < ids.length && !page; i++) page = document.getElementById(ids[i]);
   if(page){ page.appendChild(sec); }
   else {
