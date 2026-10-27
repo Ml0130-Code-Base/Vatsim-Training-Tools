@@ -269,6 +269,21 @@ try {
     Object.values(SP).every(v => v.flies === false && v.track === true));
   assert('serves is a list and names KOMA', SP.AANDY2.serves.join(',') === 'KOMA');
 
+  /* The ceiling on a drill (owner, 2026-10-27): the master block holds it, the deck's add and drop call it. */
+  {
+    const pfx = globalThis.strip.prefix;
+    const add = globalThis[pfx + 'Add'], drop = globalThis[pfx + 'Drop'], at = globalThis[pfx + 'RowAt'];
+    const rowCount = () => { let n = 0; while (at(n)) n++; return n; };
+    assert('the strip block carries the 50-strip ceiling and says it is full at 50, not at 49',
+      globalThis.strip.MAX === 50 && globalThis.strip.refuseAdd(50) === true && globalThis.strip.refuseAdd(49) === false);
+    for (let i = 0; i < 60; i++) add();
+    assert('sixty adds leave exactly fifty strips: the 51st is refused', rowCount() === 50, 'got ' + rowCount());
+    drop(0);
+    assert('a drop makes room again', rowCount() === 49, 'got ' + rowCount());
+    add(); add();
+    assert('and one add fills it back to fifty, no further', rowCount() === 50, 'got ' + rowCount());
+  }
+
   /* ============ 8. Closures out of the notices — issue #18 ============
      EVERY STRING BELOW IS VERBATIM FROM A LIVE PULL — datis.clowd.io/api/all,
      2026-09-21 0852Z, by the recipe in claude_DATIS_Field_Survey.md §1. Fixture
