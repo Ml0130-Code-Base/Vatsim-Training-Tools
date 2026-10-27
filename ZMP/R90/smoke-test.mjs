@@ -10,7 +10,7 @@ const html = fs.readFileSync(path, 'utf8');
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]);
 /* every script in the page is an extension block, in dependency order:
    Radar Deck, Drill Builder, Handoff ID resolver, D-ATIS and weather,
-   Published procedures, Flight strips.
+   Published procedures, Flight strips, Fly it, Drill builder.
    Evaluate them the way the browser would.
 
    THIS COUNT IS A GUARD, NOT A FORMALITY. It was left at 3 while the
@@ -19,7 +19,7 @@ const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1
    because there is no Node on the owner's machine and it has never
    been executed (root CLAUDE.md §12). Update it in the same commit
    that adds a block. */
-const EXPECTED_BLOCKS = 6;
+const EXPECTED_BLOCKS = 8;
 const blocks = scripts;
 if (blocks.length !== EXPECTED_BLOCKS) { console.error("FAIL: expected " + EXPECTED_BLOCKS + " extension blocks, found " + blocks.length); process.exit(1); }
 
@@ -265,8 +265,8 @@ try {
   const SP = P.stripProcs('STAR');
   assert('the strip contract carries the same five arrivals',
     Object.keys(SP).sort().join(',') === 'AANDY2,HOWRY3,LANTK2,MARWI4,TIMMO1');
-  assert('no arrival claims to be flown, and each declares its track',
-    Object.values(SP).every(v => v.flies === false && v.track === true));
+  assert('every arrival is marked flown by the fly block, and each declares its track',
+    Object.values(SP).every(v => v.flies === true && v.track === true));
   assert('serves is a list and names KOMA', SP.AANDY2.serves.join(',') === 'KOMA');
 
   /* The ceiling on a drill (owner, 2026-10-27): the master block holds it, the deck's add and drop call it. */
@@ -353,6 +353,103 @@ try {
     assert('#58 — the second bare-list approach clause is still lost',
       o.land.join(',') === '36', JSON.stringify(o.land));
   }
+
+  /* ============ 11. The fly block and the drill builder (blocks 7 and 8) ============
+     The aircraft fly the facility's own published tracks, straight between fixes, and the only
+     numbers they carry are the ones the procedures block does. These checks hold that line: no
+     coordinate is added, nothing that cannot be flown is flown without saying why, the generator is
+     deterministic and builds only strips the strip block accepts, and an untouched drill never flags
+     a published crossing the engine itself should have met. */
+  const FL = globalThis.fly, DR = globalThis.drill, ST11 = globalThis.strip, FF = globalThis.FLY_FACILITY;
+  assert('the fly block exports window.fly and the drill block window.drill', !!FL && typeof FL.load === 'function' && typeof FL.transmit === 'function' && !!DR && typeof DR.generate === 'function');
+  assert('the fly contract names this facility and the deck carries procedures to fly', FF.id === 'R90' && FL.haveProcs === true);
+  assert('the drill contract names this facility and its own storage key, never the builder\'s', globalThis.DRILL_FACILITY.id === 'R90' && DR.KEY !== 'r90-drill-deck-v1' && !/skeleton|shell|tier/i.test(DR.KEY), DR.KEY);
+  assert('blocks 7 and 8 carry no network call - the D-ATIS fetch stays the only one', ![blocks[6], blocks[7]].some(b => /\bfetch\s*\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon/.test(b)));
+  assert('no standing item exists for the fly block to score against', RD.STANDING.length === 0);
+
+  /* every published procedure the deck carries builds a line out of its own coordinates, or is refused by name */
+  let builtS = 0, builtD = 0, refused11 = 0; const bad11 = [];
+  for (const apt of ST11.airportsHere()) {
+    for (const kind of ['STAR', 'SID']) {
+      const tab = (kind === 'SID' ? RD.SIDS : RD.STARS)[apt] || {};
+      for (const id of Object.keys(tab)) {
+        const s = ST11.blank();
+        if (kind === 'SID') { s.role = 'departure'; s.dep = apt; s.sid = id; } else { s.role = 'arrival'; s.dest = apt; s.gate = id; }
+        const T = FL.track(s);
+        if (!T.ok) { refused11++; if (typeof T.note !== 'string' || T.note.length < 10) bad11.push(apt + ' ' + id + ': refused without a reason'); continue; }
+        if (kind === 'SID') builtD++; else builtS++;
+        let prev = -1;
+        for (const p of T.pts) {
+          if (p.cum < prev - 1e-9) bad11.push(apt + ' ' + id + ': distance runs backwards at ' + p.fix);
+          prev = p.cum;
+          if (p.field) continue;
+          const ll = RD.PFIX[p.fix], q = ll ? FL.xy(ll) : null;
+          if (!q || Math.abs(q.x - p.x) > 1e-9 || Math.abs(q.y - p.y) > 1e-9) bad11.push(apt + ' ' + id + ': ' + p.fix + ' is not at the procedure table\'s own coordinate');
+        }
+        if (Math.abs(T.total - T.pts[T.pts.length - 1].cum) > 1e-9) bad11.push(apt + ' ' + id + ': total is not the last fix');
+      }
+    }
+  }
+  assert('every track is built from the procedure table\'s own coordinates, in order, and a refusal says why', bad11.length === 0, bad11.slice(0, 3).join('; '));
+  assert('at least one STAR builds a track, and KOMA and Lincoln still have no SID to fly', builtS > 0 && builtD === 0, builtS + ' STARs, ' + builtD + ' SIDs, ' + refused11 + ' refused');
+
+  const ov = ST11.blank(); ov.role = 'overflight'; ov.entryR = '270'; ov.entryD = '40'; ov.exitR = '90'; ov.exitD = '40';
+  const To = FL.track(ov);
+  assert('an overflight flies the straight line between its two radial-and-distance points', To.ok && To.pts.length === 2 && Math.abs(To.total - 80) < 1e-6, JSON.stringify(To.total));
+  const ov2 = ST11.blank(); ov2.role = 'overflight'; ov2.entryR = '270';
+  assert('an overflight with a box empty is refused by name, not flown from a guess', !FL.track(ov2).ok && /entry radial and distance/.test(FL.track(ov2).note));
+
+  assert('an altitude is read the way the strip box says it: hundreds under 1,000, FL, commas, and 0 is none',
+    FL.parseAlt('80') === 8000 && FL.parseAlt('FL240') === 24000 && FL.parseAlt('11,000') === 11000 && FL.parseAlt('0') === null && FL.parseAlt('') === null);
+  assert('spoken digits read as the number they are, so 11,000 is never 110', /11000/.test(FL.despell('descend and maintain one one thousand')) && /\b250\b/.test(FL.despell('reduce speed to two five zero')));
+
+  /* the generator: same seed, same drill, and only strips the strip block accepts */
+  const g1 = JSON.stringify(DR.generate(5, 6, 'both').strips), g2 = JSON.stringify(DR.generate(5, 6, 'both').strips);
+  assert('the same seed builds the same drill', g1 === g2 && g1.length > 10);
+  assert('a different seed builds a different drill', g1 !== JSON.stringify(DR.generate(6, 6, 'both').strips));
+  let illegal11 = 0, unflyable11 = 0, gen11 = 0;
+  for (let seed = 1; seed <= 12; seed++) {
+    const g = DR.generate(seed, 8, 'both');
+    for (const s of g.strips) { gen11++; if (ST11.checkStrip(s, s.cs).length) illegal11++; }
+    if (FL.validate({name:'g', strips:g.strips}).errs.length) unflyable11++;
+  }
+  assert('every generated strip is legal for this facility and every generated drill can be flown', gen11 > 0 && illegal11 === 0 && unflyable11 === 0, illegal11 + ' illegal, ' + unflyable11 + ' unflyable of ' + gen11);
+  assert('a drill the engine cannot fly is refused by strip, not loaded',
+    FL.load({name:'empty', strips:[]}).ok === false && FL.load({name:'two', strips:[Object.assign(ST11.blank(), {cs:'DAL1', alt:'100'}), Object.assign(ST11.blank(), {cs:'DAL1', alt:'100'})]}).ok === false);
+
+  /* the engine, untouched: no published crossing the engine should have met is flagged */
+  let miss11 = 0, flown11 = 0;
+  for (let seed = 1; seed <= 8; seed++) {
+    const g = DR.generate(seed, 8, 'both');
+    const r = FL.load({name:'sweep ' + seed, strips:g.strips, rate:0});
+    if (!r.ok) continue;
+    for (let i = 0; i < 2400; i++) FL.step(1);
+    flown11 += g.strips.length;
+    miss11 += FL.sim.feed.filter(f => /the published crossing|the published limit/.test(f.html)).length;
+  }
+  assert('an untouched generated drill never misses a published crossing or speed limit', flown11 > 0 && miss11 === 0, miss11 + ' missed over ' + flown11 + ' strips');
+
+  /* the transmit box: one transmission carries as many instructions as a real one */
+  const g3 = DR.generate(3, 6, 'arrivals');
+  assert('a drill of arrivals loads', FL.load({name:'tx', strips:g3.strips, rate:0}).ok === true);
+  const A = FL.sim.ac[0];
+  A.onFreq = true; A.spawnAt = 0;
+  FL.transmit(A.cs + ' descend and maintain 11000, reduce speed to 250');
+  assert('altitude and speed in one transmission are both taken, and the altitude is not cut short into a speed', A.altAsg === 11000 && A.spdAsg === 250, A.altAsg + ' / ' + A.spdAsg);
+  FL.transmit(A.cs + ' fly heading 270');
+  assert('a heading takes the aircraft off its published track', A.nav === 'hdg' && A.hdgTgt === 270 && A.via === false);
+  const alt0 = A.altAsg; FL.transmit(A.cs + ' maintain 3000');
+  assert('a bare maintain far from the current altitude is queried, not taken', A.altAsg === alt0);
+  const pos11 = FF.positions(), me = pos11.find(p => p.self), tw = pos11.find(p => !p.self && p.open);
+  FL.transmit(A.cs + ' contact ' + me.freq);
+  assert('a switch to the position you are working is refused', !A.handed);
+  FL.transmit(A.cs + ' contact ' + tw.freq);
+  assert('a switch to an open position by its own frequency hands the aircraft off', !!A.handed && A.handed.name === tw.name, JSON.stringify(A.handed));
+  FL.transmit(FL.sim.ac[1].cs + ' contact 199.999');
+  assert('a frequency no position in the deck is on is refused and says so', FL.sim.feed.some(f => /No position in this deck/.test(f.html)));
+
+  const end11 = FL.end();
+  assert('the debrief states that nothing is scored against a standing item', !!end11 && /No standing item is exercised/.test(globalThis.document.getElementById(FF.prefix + '-debriefbox').innerHTML));
 
   console.log('\n' + checks + ' checks passed.');
 } catch (e) {

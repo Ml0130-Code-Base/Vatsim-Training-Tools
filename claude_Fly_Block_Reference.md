@@ -2,7 +2,7 @@
 
 `fly-block.html` and `drill-block.html` at the repository root are the masters. Together they give a deck the two M98 pages the owner asked to have everywhere: **Set up a drill** (a brief, a seeded generator, a per-strip "flown on" panel, saved drills, JSON) and **Fly it** (a live clock, a scope, strips, a transmit box, a frequency feed, response timing, a debrief). Written 2026-10-27 on the owner's instruction: *"go through all facilities besides M98 and make sure they all have the same feel like M98 on the Set up a drill and fly it pages"*, with the scope settled as *"option 2 plus check if some of these inconsistencies are stemming from master blocks not being updated or current, go ahead and update the relative master block."* Tracked as issue #76.
 
-**They are wired into the three ZID decks (IND, SDF, CVG). They are not in M98, which keeps its own engine and builder, and they are not in any other deck yet.**
+**They are wired into the three ZID decks (IND, SDF, CVG) and into R90. They are not in M98, which keeps its own engine and builder, and they are not in any other deck yet.**
 
 ## 1. What the owner decided, and what it waives
 
@@ -127,3 +127,8 @@ A change to a master lands in every copy in the same commit **within one ARTCC**
 - **M98's Position Setup panel** (seat set, quick setups) is not in the drill master. The ZID decks already carry a seat and open-position set in their own builder; folding the two into a position master is a later piece of work.
 - **S56 has no procedures block** (issue #3), so its arrivals and departures cannot fly until it has one. **AZO** has CIFP confirmed empty at all four fields, so it flies overflights only; **ZMP Center** is en route and flies overflights and direct only.
 - **CIFP 261029 rolls on 2026-10-29** (issue #65). A procedure table is regenerated, never patched (root `CLAUDE.md` section 11), and the fly block reads whatever cycle the table carries.
+
+## 9. Where a deck's contract differs from ZID's, and why
+
+- **R90 (2026-10-27).** The builder has a seat and a north/south flow and nothing else, so the contract reads the flow from `rdb.state().flow` and takes the runways from `DEP_HEADINGS.OMA` (OMA 7110.4A 5.c.4). There is **no outline** (R90 has no boundary and the SimAware footprint is deliberately not wired in), **no `callName`** (the radio name is not stated in the R90 documents, so the feed uses the bare facility id), **no `bank`** (the builder has no debrief box), and `positions()` offers all six R90 positions as staffed because the combining table is a picture (issue #30); nothing is graded about the choice. KOMA and Lincoln have **no coded SID**, so the generator skips departures and says so, and the strip contract's `flies:true` covers the five STARs only. The drill contract adds a small listener so the frame line follows the builder's position and flow selects.
+- **Fallback route layers.** A deck without the route-draw master gets the fly block's own *all STARs / all SIDs* layers, which draw each entry transition, the common route and each runway transition as separate lines (changed 2026-10-27: it used to draw only the common route, so MARWI4 and LANTK2 at KOMA were missing). A deck with the route-draw master uses that instead.
