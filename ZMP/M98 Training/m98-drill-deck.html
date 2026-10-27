@@ -6811,9 +6811,12 @@ window.ddbDice=function(){ var e=document.getElementById('ddb-seed'); if(e) e.va
 window.ddbGenerate=function(){
  var g=function(id){ var e=document.getElementById(id); return (e&&typeof e.value==='string')?e.value:''; };
  var seedRaw=g('ddb-seed');
+ /* a typed count is held to what gen() will build (1 to 6) and written back, so the box never says more than the drill has */
+ var cnt=parseInt(g('ddb-count'),10); cnt=isNaN(cnt)?3:Math.max(1,Math.min(6,cnt));
+ var ce=document.getElementById('ddb-count'); if(ce) ce.value=String(cnt);
  draft=gen({seed: seedRaw===''?null:parseInt(seedRaw,10),
             focus:g('ddb-focus')||'free', mixGates:mixGates(g('ddb-mix')),
-            pressure:g('ddb-pressure')||'compressed', count:parseInt(g('ddb-count'),10)||3,
+            pressure:g('ddb-pressure')||'compressed', count:cnt,
             deps:parseInt(g('ddb-deps'),10)||0, overflight:!!g('ddb-ovf')});
  var sd=document.getElementById('ddb-seed'); if(sd) sd.value=String(draft.seed);
  renderEditor();
@@ -7023,7 +7026,7 @@ function buildHtml(){
  +f('Focus','<select class="dd-sel" id="ddb-focus">'+focusOpts+'</select>')
  +f('Gates','<select class="dd-sel" id="ddb-mix" onchange="ddbSync()"></select>')
  +f('Pressure','<select class="dd-sel" id="ddb-pressure"><option value="routine">routine</option><option value="compressed" selected>compressed</option><option value="saturated">saturated</option></select>')
- +f('Strips','<select class="dd-sel" id="ddb-count"><option>2</option><option selected>3</option><option>4</option><option>5</option><option>6</option></select>')
+ +f('Strips','<input class="dd-in" id="ddb-count" type="number" inputmode="numeric" min="1" max="6" step="1" value="3">')
  +f('Departures','<select class="dd-sel" id="ddb-deps"><option value="0">none</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>')
  +f('Overflight','<select class="dd-sel" id="ddb-ovf"><option value="">none</option><option value="1">one crossing</option></select>')
  +f('Seed','<input class="dd-in" id="ddb-seed" placeholder="any number">')
