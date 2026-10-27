@@ -4964,7 +4964,11 @@ function reframe(){
    };
 
    The configuration and the frame are read from window.FLY_FACILITY
-   (flow, frame, host), so the deck states each of them once.
+   (flow, frame, host), so the deck states each of them once. A flow may
+   carry only:true, which keeps the generator to the one field it names
+   (Big Sky's two areas share no airspace, so a Boise drill carries no
+   Bozeman traffic); without it a drill leans toward that field and
+   draws on the others too.
    ================================================================ */
 (function(){
 'use strict';
@@ -5063,7 +5067,7 @@ function canClimb(track, alt0, from, eng, ias){
 }
 
 function genArrival(R, used, fl){
- var apts = ST.airportsHere().filter(function(a){ return ST.arrivalsFor(a).length; });
+ var apts = ST.airportsHere().filter(function(a){ return ST.arrivalsFor(a).length && !(fl && fl.only && fl.airport && a !== fl.airport); });
  if(!apts.length) return null;
  var apt = (fl && fl.airport && apts.indexOf(fl.airport) >= 0 && R() < 0.8) ? fl.airport : pick(R, apts);
  var land = (fl && fl.airport === apt && fl.land && fl.land.length) ? fl.land : [''];
@@ -5093,7 +5097,7 @@ function genArrival(R, used, fl){
  return null;
 }
 function genDeparture(R, used, fl){
- var apts = ST.airportsHere().filter(function(a){ return ST.departuresFor(a).length; });
+ var apts = ST.airportsHere().filter(function(a){ return ST.departuresFor(a).length && !(fl && fl.only && fl.airport && a !== fl.airport); });
  if(!apts.length) return null;
  var apt = (fl && fl.airport && apts.indexOf(fl.airport) >= 0 && R() < 0.8) ? fl.airport : pick(R, apts);
  var rwys = (fl && fl.airport === apt && fl.dep && fl.dep.length) ? fl.dep : [''];
