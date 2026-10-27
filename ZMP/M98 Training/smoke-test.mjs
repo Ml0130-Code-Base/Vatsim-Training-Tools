@@ -2199,8 +2199,9 @@ try {
     const G = globalThis.ddb, roleOf = a => a.role || 'arrival';
     const tallyStr = d => ['arrival', 'departure', 'overflight'].map(r => d.ac.filter(a => roleOf(a) === r).length).join('/');
     const KEYS = 'msp-arrival-heavy,msp-arrival-light,msp-departure-heavy,msp-departure-light,'
-               + 'sat-arrival-heavy,sat-arrival-light,sat-departure-heavy,sat-departure-light,departure,arrival,mixed';
-    assert('eleven kinds of push are offered, in the owner\'s order', Object.keys(G.PUSH).join() === KEYS, Object.keys(G.PUSH).join());
+               + 'sat-arrival-heavy,sat-arrival-light,sat-departure-heavy,sat-departure-light,'
+               + 'departure,arrival,all-departure,all-arrival,mixed';
+    assert('thirteen kinds of push are offered, in the owner\'s order', Object.keys(G.PUSH).join() === KEYS, Object.keys(G.PUSH).join());
 
     /* heavy and light are traffic volume: they set the Strips and Pressure boxes, and the three
        generic pushes leave those boxes alone. The numbers are the generator's design. */
@@ -2209,8 +2210,8 @@ try {
       Object.keys(G.PUSH).filter(k => /-heavy$/.test(k)).every(k => vol(k) === '30 saturated')
       && Object.keys(G.PUSH).filter(k => /-light$/.test(k)).every(k => vol(k) === '8 routine'),
       Object.keys(G.PUSH).map(k => k + '=' + vol(k)).join(' '));
-    assert('departure only, arrival only and mixed leave Strips and Pressure as they were',
-      ['departure', 'arrival', 'mixed'].every(k => vol(k) === '-'));
+    assert('departure only, arrival only (either kind) and mixed leave Strips and Pressure as they were',
+      ['departure', 'arrival', 'all-departure', 'all-arrival', 'mixed'].every(k => vol(k) === '-'));
     assert('a heavy push is no bigger than one controller works', Object.keys(G.PUSH).every(k => (G.PUSH[k].count || 0) <= G.STRIP_MAX));
 
     let badSplit = 0;
@@ -2221,7 +2222,7 @@ try {
         if (sum !== n) { badSplit++; fail('a push split does not add up to the strips', k + ' ' + n + ' gave ' + sum); }
         if (top < m.arrivals || top < m.deps || top < m.overflights) { badSplit++; fail('the stream a push is about is not the largest', k + ' ' + n + ' gave ' + JSON.stringify(m)); }
       }
-    ok('every push splits every total from 1 to 50 exactly, and the stream it is about is never the smaller one (' + (11 * 50) + ' splits)');
+    ok('every push splits every total from 1 to 50 exactly, and the stream it is about is never the smaller one (' + (13 * 50) + ' splits)');
 
     const asStr = m => m.arrivals + '/' + m.deps + '/' + m.overflights;
     assert('ten strips split the way each push says',
@@ -2229,8 +2230,8 @@ try {
       && asStr(G.pushMix('departure', 10)) === '0/10/0'
       && asStr(G.pushMix('msp-arrival-heavy', 10)) === '8/1/1' && asStr(G.pushMix('sat-departure-light', 10)) === '1/8/1',
       ['mixed', 'arrival', 'departure', 'msp-arrival-heavy', 'sat-departure-light'].map(k => asStr(G.pushMix(k, 10))).join(' '));
-    assert('arrival only and departure only carry nothing else, at any size',
-      [1, 7, 30, 50].every(n => asStr(G.pushMix('arrival', n)) === n + '/0/0' && asStr(G.pushMix('departure', n)) === '0/' + n + '/0'));
+    assert('arrival only and departure only carry nothing else, at any size, in either kind',
+      [1, 7, 30, 50].every(n => ['', 'all-'].every(p => asStr(G.pushMix(p + 'arrival', n)) === n + '/0/0' && asStr(G.pushMix(p + 'departure', n)) === '0/' + n + '/0')));
     assert('a single strip goes to the stream the push is about',
       asStr(G.pushMix('mixed', 1)) === '1/0/0' && asStr(G.pushMix('arrival', 1)) === '1/0/0'
       && asStr(G.pushMix('departure', 1)) === '0/1/0' && asStr(G.pushMix('msp-departure-light', 1)) === '0/1/0'
@@ -2250,11 +2251,48 @@ try {
     assert('the same seed and push rebuild the same drill',
       JSON.stringify(G.gen({ seed: 41, push: 'msp-departure-light', count: 8, arrivals: 1, deps: 6, overflights: 1 }).ac)
         === JSON.stringify(G.gen({ seed: 41, push: 'msp-departure-light', count: 8, arrivals: 1, deps: 6, overflights: 1 }).ac));
-    assert('an MSP push is MSP traffic only: the six gates, and no strip off or into a satellite',
+    assert('an MSP push (heavy or light) is MSP traffic only: the six gates, and no strip off or into a satellite',
       pd.ac.filter(a => roleOf(a) === 'arrival').every(a => globalThis.DD.ROUTES[a.gate] && !a.dest)
       && pd.ac.filter(a => roleOf(a) === 'departure').every(a => !a.dep));
     assert('arrival only is arrivals and nothing else',
       (d => tallyStr(d) === '12/0/0' && G.validate(d).errors.length === 0)(G.gen({ seed: 9, push: 'arrival', count: 12, arrivals: 12, deps: 0, overflights: 0 })));
+
+    /* Departure only and arrival only come in two kinds (owner, 2026-10-27): the MSP one, which never
+       touches a satellite, and a whole-facility one, which is MSP's traffic and the satellites' together,
+       FACILITY_SAT_SHARE in every hundred going to the satellites. */
+    {
+      const D = globalThis.DD, SATP = ['AGUDE', 'ENCEE', 'TWOLF'], SATD = Object.keys(D.DEPS_AT);
+      const isSatArr = a => roleOf(a) === 'arrival' && SATP.includes(a.gate), isSatDep = a => roleOf(a) === 'departure' && !!a.dep && a.dep !== 'KMSP';
+      const mk = (k, n, seed) => { const m = G.pushMix(k, n); return G.gen({ seed: seed || 9, push: k, count: n, arrivals: m.arrivals, deps: m.deps, overflights: m.overflights }); };
+      assert('the MSP kind of arrival only and departure only never touches a satellite',
+        mk('arrival', 30).ac.every(a => D.ROUTES[a.gate] && !a.dest) && mk('departure', 30).ac.every(a => roleOf(a) === 'departure' && !a.dep));
+
+      const fa = mk('all-arrival', 20, 41), fd = mk('all-departure', 10, 41);
+      assert('the share going to the satellites is thirty in a hundred, and one strip is always MSP\'s',
+        [1, 2, 3, 8, 10, 20, 30, 50].map(n => mk('all-arrival', n).ac.filter(isSatArr).length).join() === '0,1,1,2,3,6,9,15',
+        [1, 2, 3, 8, 10, 20, 30, 50].map(n => mk('all-arrival', n).ac.filter(isSatArr).length).join());
+      assert('a whole-facility arrival drill is MSP on the six gates and the satellites on their own STARs, nothing else',
+        fa.ac.length === 20 && tallyStr(fa) === '20/0/0' && fa.ac.filter(isSatArr).length === 6
+        && fa.ac.filter(a => !isSatArr(a)).length === 14 && fa.ac.filter(a => !isSatArr(a)).every(a => D.ROUTES[a.gate] && !a.dest)
+        && fa.ac.filter(isSatArr).every(a => a.dest !== 'KMSP' && D.arrivalServes(a.gate, a.dest)),
+        tallyStr(fa) + ' ' + fa.ac.filter(isSatArr).length + ' satellite');
+      assert('a whole-facility departure drill is MSP\'s SIDs and the satellites\' own, spread through the list',
+        fd.ac.length === 10 && tallyStr(fd) === '0/10/0' && fd.ac.filter(isSatDep).length === 3
+        && fd.ac.filter(isSatDep).every(a => SATD.includes(a.dep) && D.sidKeysAt(a.dep).includes(a.sid) && a.from === D.towerHandoffFor(a.dep).name)
+        && fd.ac.filter(a => !isSatDep(a)).every(a => !a.dep)
+        && fd.ac.findIndex(isSatDep) < 5 && fd.ac.findIndex(a => !isSatDep(a)) < 3,
+        fd.ac.map(a => isSatDep(a) ? 'S' : 'M').join(''));
+      assert('both validate clean and carry their own names',
+        G.validate(fa).errors.length === 0 && G.validate(fd).errors.length === 0
+        && fa.name === 'Built — Arrival only, whole facility · seed 41' && fd.name === 'Built — Departure only, whole facility · seed 41'
+        && fa.id === 'u41-all-arrival' && mk('arrival', 5, 41).name === 'Built — Arrival only, MSP · seed 41',
+        G.validate(fa).errors.concat(G.validate(fd).errors).join(' | ') + ' ' + fa.name);
+      assert('the same seed rebuilds the same whole-facility drill',
+        JSON.stringify(mk('all-arrival', 20, 41).ac) === JSON.stringify(fa.ac) && JSON.stringify(mk('all-arrival', 20, 42).ac) !== JSON.stringify(fa.ac));
+      assert('the satellites\' strips are spread over as long as MSP\'s, not all in the opening minutes',
+        (last => last(fa.ac.filter(isSatArr)) >= 0.6 * last(fa.ac.filter(a => !isSatArr(a))))(l => Math.max(...l.map(a => a.spawnAt))),
+        'last spawn, satellite ' + Math.max(...fa.ac.filter(isSatArr).map(a => a.spawnAt)) + ' vs MSP ' + Math.max(...fa.ac.filter(a => !isSatArr(a)).map(a => a.spawnAt)));
+    }
 
     /* Satellite pushes — the satellite STARs in, the satellite fields' own SIDs out. The engine flies
        AGUDE, ENCEE and TWOLF and the DUHCK1-led tracks off ANE, FCM and STP; the direct routings

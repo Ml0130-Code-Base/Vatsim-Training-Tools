@@ -5323,9 +5323,10 @@ function syncMixOptions(){
  if(state.genMode==='general'){
   var gg=generalGates(), mine=seatGates().length>0;
   /* a satellite push does not come in through the six MSP gates at all */
-  var satPush=(PUSH[state.genPush] && PUSH[state.genPush].field==='sat');
-  sel.innerHTML='<option value="">'+esc(satPush ? 'Not used — satellite traffic comes in on '+Object.keys(DD.SAT_ROUTES).join(', ')
-                                                : (mine ? 'Follows the seat — '+gg.join(', ') : 'All six gates — this seat owns none'))+'</option>';
+  var fld=(PUSH[state.genPush] && PUSH[state.genPush].field), satStars=Object.keys(DD.SAT_ROUTES).join(', ');
+  var mspGates=(mine ? 'Follows the seat — '+gg.join(', ') : 'All six gates — this seat owns none');
+  sel.innerHTML='<option value="">'+esc(fld==='sat' ? 'Not used — satellite traffic comes in on '+satStars
+                                                : (fld==='all' ? mspGates+' for MSP; the satellites on '+satStars : mspGates))+'</option>';
   sel.disabled=true;
   return;
  }
@@ -5399,9 +5400,16 @@ function mixWords(m){
    call and this generator's design, not a document figure — heavy is about the most one
    controller works before another would have to open (STRIP_MAX is fifty), light is a
    quiet period. `field` says whose traffic it is: 'msp' is the six MSP gates and MSP SIDs
-   as always; 'sat' is the satellite STARs and the satellite fields' own SIDs. Departure
-   only, arrival only and mixed are MSP traffic and leave the Strips and Pressure boxes
-   as they were. */
+   as always; 'sat' is the satellite STARs and the satellite fields' own SIDs; 'all' is the
+   whole facility, FACILITY_SAT_SHARE in every hundred of a stream going to the satellites
+   and the rest to MSP. Departure only and arrival only come in an MSP kind and a
+   whole-facility kind (owner, 2026-10-27); those two and mixed are MSP traffic otherwise,
+   and none of them touches the Strips and Pressure boxes. */
+/* How much of a whole-facility push goes to the satellites. The generator's own design, not
+   a figure from any document: MSP carries the traffic, and the satellites' IFR share of it is
+   the minority. Worked into whole strips by satSplit, so one strip is always an MSP one. */
+var FACILITY_SAT_SHARE=30;
+function satSplit(n){ return Math.floor(n*FACILITY_SAT_SHARE/100+0.5); }
 var PUSH_SHARE={ arrival:{a:75, d:15, o:10}, departure:{a:15, d:75, o:10} };
 var PUSH_VOL={ heavy:{count:30, pressure:'saturated'}, light:{count:8, pressure:'routine'} };
 function mkPush(field, lean, vol){
@@ -5423,12 +5431,18 @@ var PUSH={
  'sat-arrival-light':   mkPush('sat','arrival','light'),
  'sat-departure-heavy': mkPush('sat','departure','heavy'),
  'sat-departure-light': mkPush('sat','departure','light'),
- departure: {label:'Departure only — MSP, no arrivals or overflights',
-             line:'Outbound traffic only. Nothing weighted — everything is owed from the first transmission.',
+ departure: {label:'Departure only, MSP — no arrivals or overflights',
+             line:'Outbound traffic only, all of it off MSP. Nothing weighted — everything is owed from the first transmission.',
              share:{a:0, d:100, o:0}, field:'msp'},
- arrival:   {label:'Arrival only — MSP, no departures or overflights',
-             line:'Inbound traffic only. Nothing weighted — everything is owed from the first transmission.',
+ arrival:   {label:'Arrival only, MSP — no departures or overflights',
+             line:'Inbound traffic only, all of it to MSP on the six gates. Nothing weighted — everything is owed from the first transmission.',
              share:{a:100, d:0, o:0}, field:'msp'},
+ 'all-departure': {label:'Departure only, whole facility — MSP and the satellites, no arrivals or overflights',
+             line:'Outbound traffic only, off MSP and off the satellite fields that code a SID — about '+FACILITY_SAT_SHARE+' in 100 from the satellites. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:0, d:100, o:0}, field:'all'},
+ 'all-arrival':   {label:'Arrival only, whole facility — MSP and the satellites, no departures or overflights',
+             line:'Inbound traffic only, to MSP on the six gates and to the satellite fields on AGUDE, ENCEE and TWOLF — about '+FACILITY_SAT_SHARE+' in 100 to the satellites. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:100, d:0, o:0}, field:'all'},
  mixed:     {label:'Mixed push — arrivals and departures together',
              line:'Arrivals and departures together with the odd overflight. Nothing weighted — everything is owed from the first transmission.',
              share:{a:50, d:40, o:10}, field:'msp'}
@@ -5461,6 +5475,8 @@ function gen(o){
  var pk=PUSH[o.push]?PUSH[o.push]:null;
  /* a satellite push is the satellites' traffic: no MSP gate, no MSP SID */
  var sat=!!(pk && pk.field==='sat');
+ /* a whole-facility push is both: MSP's traffic and the satellites', split by satSplit */
+ var allFac=!!(pk && pk.field==='all');
  var focus=pk ? 'free' : (FOCUS[o.focus]?o.focus:'free');
  var press=PRESS[o.pressure]||PRESS.compressed;
  var mix=(o.mixGates && o.mixGates.length) ? o.mixGates.slice() : GATES.slice();
@@ -5472,7 +5488,10 @@ function gen(o){
   var mj=Math.floor(rnd()*(mi+1)), mt=mix[mi]; mix[mi]=mix[mj]; mix[mj]=mt;
  }
  var mixN=genMix(o);
- var n=sat ? 0 : mixN.arrivals;          /* the MSP gates build none of a satellite push's arrivals */
+ /* how many arrivals and departures are the satellites' — all of them, none, or the facility's share */
+ var nSatA = sat ? mixN.arrivals : (allFac ? satSplit(mixN.arrivals) : 0);
+ var nSatD = sat ? mixN.deps     : (allFac ? satSplit(mixN.deps)     : 0);
+ var n=mixN.arrivals-nSatA;              /* the MSP gates build the rest; none of a satellite push's */
  var live=Math.min(n, press.live + (focus==='sep'?1:0));
  var near = (focus==='floors'||focus==='posthandoff');
  var band = near ? [6,13] : [17,31];
@@ -5537,13 +5556,16 @@ function gen(o){
     crossing so there is a descent to work; the rest spawn at the start of it. The STARs
     are dealt out in a seed-shuffled order, so the strips checked in at the start sit on
     different ones and are not stacked on one another. */
- if(sat){
+ if(nSatA>0){
   var sProcs=Object.keys(DD.SAT_ROUTES);
   for(var sj=sProcs.length-1; sj>0; sj--){
    var sk=Math.floor(rnd()*(sj+1)), sw=sProcs[sj]; sProcs[sj]=sProcs[sk]; sProcs[sk]=sw;
   }
-  var sLive=Math.min(mixN.arrivals, press.live), sSpawn=ri(rnd,8,22);
-  for(var si=0; si<mixN.arrivals; si++){
+  /* beside MSP's own strips, the satellites get what the live count leaves — one at least — and
+     spawn slowly enough to last as long as MSP's do, not all in the first few minutes */
+  var sLive=Math.min(nSatA, Math.max(1, press.live-live)), sSpawn=ri(rnd,8,22);
+  var sScale=(allFac && n>nSatA) ? n/nSatA : 1;
+  for(var si=0; si<nSatA; si++){
    var sProc=sProcs[si%sProcs.length], sRoute=DD.SAT_ROUTES[sProc], sTotal=sRoute.total;
    var sft=pick(rnd,SAT_FLEET), scs;
    do{ scs='N'+ri(rnd,100,999)+pick(rnd,['SP','GT','DP','ER','CM']); }while(used[scs]);
@@ -5563,7 +5585,7 @@ function gen(o){
     sr.alt = Math.max(2000, Math.min(24000, Math.round(((sCap||0)+ri(rnd,press.margin[0],press.margin[1]))/100)*100));
    } else {
     sFlown = 0;
-    sr.dtg = Math.round(sTotal*10)/10; sr.spawnAt = sSpawn; sSpawn += ri(rnd,press.spawn[0],press.spawn[1]);
+    sr.dtg = Math.round(sTotal*10)/10; sr.spawnAt = sSpawn; sSpawn += Math.round(ri(rnd,press.spawn[0],press.spawn[1])*sScale);
     sr.alt = Math.max(2000, Math.min(24000, Math.round(((capAt(sProc,0)||0)+ri(rnd,6000,9000))/1000)*1000));
    }
    sr.ias = Math.round(pubSpdAt(sProc, sFlown)||280);
@@ -5588,7 +5610,9 @@ function gen(o){
     the one before rather than all landing inside the same minute. */
  var depT=0;
  for(var d=0; d<mixN.deps; d++){
-  if(sat){
+  /* in a whole-facility push the satellites' departures are spread through the list, not
+     bunched at the end, so both kinds are up from the first minutes */
+  if(sat || (nSatD>0 && Math.floor((d+1)*nSatD/mixN.deps)>Math.floor(d*nSatD/mixN.deps))){
    /* off a satellite field that codes a SID — ANE, FCM or STP; MIC and Airlake code none,
       so a strip there would be refused. Its own tower hands it off, and it flies that
       field's track (issue #67). */
@@ -7103,7 +7127,7 @@ window.ddbGenerate=function(){
 var lastFocus='free';   /* the training focus, held while the select is showing kinds of push */
 function modeNote(){
  return state.genMode==='general'
-  ? 'General — nothing is weighted toward a training item. Pick the kind of push you want to work: the strips are split by it and the three counts stay editable. Heavy and light set the size too — Strips and Pressure fill in for you. MSP pushes follow your seat’s gates; satellite pushes come in on the satellite STARs and leave on the satellite fields’ SIDs.'
+  ? 'General — nothing is weighted toward a training item. Pick the kind of push you want to work: the strips are split by it and the three counts stay editable. Heavy and light set the size too — Strips and Pressure fill in for you. MSP pushes follow your seat’s gates; satellite pushes come in on the satellite STARs and leave on the satellite fields’ SIDs; whole-facility pushes are both, with about '+FACILITY_SAT_SHARE+' in 100 strips to the satellites.'
   : 'Training issues — the drill is weighted toward one of your standing items, and you choose the gates.';
 }
 function syncFocusOptions(){
