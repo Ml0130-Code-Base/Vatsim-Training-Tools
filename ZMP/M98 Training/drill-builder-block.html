@@ -1265,7 +1265,10 @@ function syncMixOptions(){
  if(!sel || typeof sel.innerHTML!=='string') return;
  if(state.genMode==='general'){
   var gg=generalGates(), mine=seatGates().length>0;
-  sel.innerHTML='<option value="">'+esc(mine ? 'Follows the seat — '+gg.join(', ') : 'All six gates — this seat owns none')+'</option>';
+  /* a satellite push does not come in through the six MSP gates at all */
+  var satPush=(PUSH[state.genPush] && PUSH[state.genPush].field==='sat');
+  sel.innerHTML='<option value="">'+esc(satPush ? 'Not used — satellite traffic comes in on '+Object.keys(DD.SAT_ROUTES).join(', ')
+                                                : (mine ? 'Follows the seat — '+gg.join(', ') : 'All six gates — this seat owns none'))+'</option>';
   sel.disabled=true;
   return;
  }
@@ -1330,21 +1333,57 @@ function mixWords(m){
    weighted — a push drill is always generated `free`. `share` is arrivals, departures
    and overflights as a percentage of the strips. Those percentages are this generator's
    own design, not a figure from any document, and they only fill the three counts, which
-   stay editable. */
+   stay editable.
+
+   The kinds of push (owner, 2026-10-27): heavy and light for arrivals and for departures,
+   at MSP and again at the satellites, then departure only, arrival only and mixed.
+   HEAVY AND LIGHT ARE TRAFFIC VOLUME: picking one fills the Strips and Pressure boxes
+   (`count`, `pressure`), which stay editable. Both numbers are the owner's training-load
+   call and this generator's design, not a document figure — heavy is about the most one
+   controller works before another would have to open (STRIP_MAX is fifty), light is a
+   quiet period. `field` says whose traffic it is: 'msp' is the six MSP gates and MSP SIDs
+   as always; 'sat' is the satellite STARs and the satellite fields' own SIDs. Departure
+   only, arrival only and mixed are MSP traffic and leave the Strips and Pressure boxes
+   as they were. */
+var PUSH_SHARE={ arrival:{a:75, d:15, o:10}, departure:{a:15, d:75, o:10} };
+var PUSH_VOL={ heavy:{count:30, pressure:'saturated'}, light:{count:8, pressure:'routine'} };
+function mkPush(field, lean, vol){
+ var v=PUSH_VOL[vol], sat=(field==='sat');
+ var who=sat ? 'Satellite' : 'MSP';
+ var lead=(lean==='arrival')
+  ? (sat ? 'Mostly inbound to the satellite fields on AGUDE, ENCEE and TWOLF' : 'Mostly inbound to MSP on the six gates')
+  : (sat ? 'Mostly outbound from the satellite fields that code a SID' : 'Mostly outbound from MSP');
+ return {label:who+' '+vol+' '+lean+' push — '+v.count+' strips, '+v.pressure,
+         line:lead+', with some '+(lean==='arrival'?'departures':'arrivals')+' and the odd overflight. A '+vol+' push. Nothing weighted — everything is owed from the first transmission.',
+         share:PUSH_SHARE[lean], field:field, count:v.count, pressure:v.pressure};
+}
 var PUSH={
+ 'msp-arrival-heavy':   mkPush('msp','arrival','heavy'),
+ 'msp-arrival-light':   mkPush('msp','arrival','light'),
+ 'msp-departure-heavy': mkPush('msp','departure','heavy'),
+ 'msp-departure-light': mkPush('msp','departure','light'),
+ 'sat-arrival-heavy':   mkPush('sat','arrival','heavy'),
+ 'sat-arrival-light':   mkPush('sat','arrival','light'),
+ 'sat-departure-heavy': mkPush('sat','departure','heavy'),
+ 'sat-departure-light': mkPush('sat','departure','light'),
+ departure: {label:'Departure only — MSP, no arrivals or overflights',
+             line:'Outbound traffic only. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:0, d:100, o:0}, field:'msp'},
+ arrival:   {label:'Arrival only — MSP, no departures or overflights',
+             line:'Inbound traffic only. Nothing weighted — everything is owed from the first transmission.',
+             share:{a:100, d:0, o:0}, field:'msp'},
  mixed:     {label:'Mixed push — arrivals and departures together',
              line:'Arrivals and departures together with the odd overflight. Nothing weighted — everything is owed from the first transmission.',
-             share:{a:50, d:40, o:10}},
- arrival:   {label:'Arrival push — mostly inbound',
-             line:'Mostly inbound traffic. Nothing weighted — everything is owed from the first transmission.',
-             share:{a:75, d:15, o:10}},
- departure: {label:'Departure push — mostly outbound',
-             line:'Mostly outbound traffic. Nothing weighted — everything is owed from the first transmission.',
-             share:{a:15, d:75, o:10}},
- overflight:{label:'Overflight push — VFR traffic crossing',
-             line:'Mostly VFR traffic crossing the airspace, with some arrivals and departures. Nothing weighted — everything is owed from the first transmission.',
-             share:{a:25, d:15, o:60}}
+             share:{a:50, d:40, o:10}, field:'msp'}
 };
+/* Who flies in and out of the satellite fields on an IFR clearance: corporate jets and
+   turboprops. `e` is the engine, because the satellite crossings are published once for
+   jets and once for turboprops (ZMP-M98 LOA Table 4) and the strip has to say which it is.
+   The mix itself is this generator's design — no document says what flies at ANE or FCM. */
+var SAT_FLEET=[
+ {t:'C56X',e:'jet'},{t:'C525',e:'jet'},{t:'LJ45',e:'jet'},{t:'E55P',e:'jet'},{t:'CL35',e:'jet'},
+ {t:'PC12',e:'turboprop'},{t:'TBM9',e:'turboprop'},{t:'BE20',e:'turboprop'},{t:'B350',e:'turboprop'}
+];
 /* A push's shares worked out into whole strips. Largest remainder, so the three always
    add up to the total exactly; a tie goes to the stream the push is about. */
 function pushMix(key, total){
@@ -1363,6 +1402,8 @@ function gen(o){
  var rnd=lcg(seed);
  /* a push (General mode) never weights anything, whatever focus was passed with it */
  var pk=PUSH[o.push]?PUSH[o.push]:null;
+ /* a satellite push is the satellites' traffic: no MSP gate, no MSP SID */
+ var sat=!!(pk && pk.field==='sat');
  var focus=pk ? 'free' : (FOCUS[o.focus]?o.focus:'free');
  var press=PRESS[o.pressure]||PRESS.compressed;
  var mix=(o.mixGates && o.mixGates.length) ? o.mixGates.slice() : GATES.slice();
@@ -1374,7 +1415,7 @@ function gen(o){
   var mj=Math.floor(rnd()*(mi+1)), mt=mix[mi]; mix[mi]=mix[mj]; mix[mj]=mt;
  }
  var mixN=genMix(o);
- var n=mixN.arrivals;
+ var n=sat ? 0 : mixN.arrivals;          /* the MSP gates build none of a satellite push's arrivals */
  var live=Math.min(n, press.live + (focus==='sep'?1:0));
  var near = (focus==='floors'||focus==='posthandoff');
  var band = near ? [6,13] : [17,31];
@@ -1432,6 +1473,57 @@ function gen(o){
   r.from = (rn.pos==='RST') ? 'Rochester approach' : ('ZMP Sector '+pick(rnd,['5','9','10']));
   ac.push(r);
  }
+ /* A satellite push's arrivals: the three satellite STARs the engine flies, into the
+    fields each one serves (ARRIVALS.serves). The direct routings are left out — they
+    need an entry radial and DME the reference set does not carry, and a generator
+    would be inventing it. The first few check in on the ladder, in front of the first
+    crossing so there is a descent to work; the rest spawn at the start of it. The STARs
+    are dealt out in a seed-shuffled order, so the strips checked in at the start sit on
+    different ones and are not stacked on one another. */
+ if(sat){
+  var sProcs=Object.keys(DD.SAT_ROUTES);
+  for(var sj=sProcs.length-1; sj>0; sj--){
+   var sk=Math.floor(rnd()*(sj+1)), sw=sProcs[sj]; sProcs[sj]=sProcs[sk]; sProcs[sk]=sw;
+  }
+  var sLive=Math.min(mixN.arrivals, press.live), sSpawn=ri(rnd,8,22);
+  for(var si=0; si<mixN.arrivals; si++){
+   var sProc=sProcs[si%sProcs.length], sRoute=DD.SAT_ROUTES[sProc], sTotal=sRoute.total;
+   var sft=pick(rnd,SAT_FLEET), scs;
+   do{ scs='N'+ri(rnd,100,999)+pick(rnd,['SP','GT','DP','ER','CM']); }while(used[scs]);
+   used[scs]=1;
+   var sr={cs:scs, type:sft.t, engine:sft.e, gate:sProc, dest:pick(rnd,DD.ARRIVALS[sProc].serves),
+           rules:'IFR', route:sRoute.map(function(p){ return p.f; }).join(' '), radar:'established',
+           from:'', rwy:'', ckdIn:false, altim:false, spawnAt:0, mode:'published', asg:230};
+   var sFlown;
+   if(si<sLive){
+    /* flown as far as 60% of the way to the first crossing, so the crossing is still ahead */
+    var sX=0; for(var sp=0; sp<sRoute.length; sp++){ if(sRoute[sp].at!=null){ sX=sRoute[sp].cum; break; } }
+    sFlown = sX>0 ? ri(rnd,0,Math.floor(sX*0.6)) : 0;
+    sr.dtg = Math.round((sTotal-sFlown)*10)/10;
+    sr.ckdIn = true;
+    sr.altim = rnd()<0.6;
+    var sCap = capAt(sProc, sFlown);
+    sr.alt = Math.max(2000, Math.min(24000, Math.round(((sCap||0)+ri(rnd,press.margin[0],press.margin[1]))/100)*100));
+   } else {
+    sFlown = 0;
+    sr.dtg = Math.round(sTotal*10)/10; sr.spawnAt = sSpawn; sSpawn += ri(rnd,press.spawn[0],press.spawn[1]);
+    sr.alt = Math.max(2000, Math.min(24000, Math.round(((capAt(sProc,0)||0)+ri(rnd,6000,9000))/1000)*1000));
+   }
+   sr.ias = Math.round(pubSpdAt(sProc, sFlown)||280);
+   /* who handed it over follows from where it is and how high, as it does at MSP */
+   var sPt=sRoute[sRoute.length-1];
+   for(var sq=1; sq<sRoute.length; sq++){
+    if(sRoute[sq].cum>=sFlown){
+     var s0=sRoute[sq-1], s1=sRoute[sq], st=(s1.cum>s0.cum)?(sFlown-s0.cum)/(s1.cum-s0.cum):0;
+     sPt={e:s0.e+(s1.e-s0.e)*st, n:s0.n+(s1.n-s0.n)*st};
+     break;
+    }
+   }
+   var sn=DD.neighbourAt((Math.atan2(sPt.e, sPt.n)*180/Math.PI+360)%360, sr.alt);
+   sr.from = (sn.pos==='RST') ? 'Rochester approach' : ('ZMP Sector '+pick(rnd,['5','9','10']));
+   ac.push(sr);
+  }
+ }
  /* departures and overflights ride alongside the arrivals, as many as the mix
     asks for. The first three departures and the first overflight draw exactly
     as they always did, so a seed that already means something still rebuilds
@@ -1439,6 +1531,25 @@ function gen(o){
     the one before rather than all landing inside the same minute. */
  var depT=0;
  for(var d=0; d<mixN.deps; d++){
+  if(sat){
+   /* off a satellite field that codes a SID — ANE, FCM or STP; MIC and Airlake code none,
+      so a strip there would be refused. Its own tower hands it off, and it flies that
+      field's track (issue #67). */
+   var sdFld=pick(rnd,Object.keys(DD.DEPS_AT)), sdSid=pick(rnd,DD.sidKeysAt(sdFld));
+   var sdf=pick(rnd,SAT_FLEET), sdcs;
+   do{ sdcs='N'+ri(rnd,100,999)+pick(rnd,['SP','GT','DP','ER','CM']); }while(used[sdcs]);
+   used[sdcs]=1;
+   ac.push({cs:sdcs, type:sdf.t, engine:sdf.e, role:'departure', rules:'IFR', radar:'established',
+            from:DD.towerHandoffFor(sdFld).name, dep:sdFld, sid:sdSid,
+            route:DD.routeTextFor({role:'departure', sid:sdSid, dep:sdFld}),
+            fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
+            gate:'NITZR', dtg:20, mode:'free', asg:230, rwy:'',
+            entryR:180, entryD:38, exitR:20, exitD:38,
+            ckdIn:(d===0), altim:false,
+            spawnAt:(d===0 ? 0 : (d<3 ? ri(rnd,30,90) : depT+ri(rnd,press.spawn[0],press.spawn[1])))});
+   depT=Math.max(depT, ac[ac.length-1].spawnAt);
+   continue;
+  }
   var ftd=pick(rnd,FLEET), dcs;
   do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
   used[dcs]=1;
@@ -1672,7 +1783,7 @@ function validate(rec){
     errs.push(tag2+' departs runway '+a.depRwy+' at '+(a.dep||'KMSP')+', and that field’s runway inventory is not in the reference set. Leave the runway unstated.');
    else if(a.depRwy && dapt.rwys.indexOf(a.depRwy)<0)
     errs.push(tag2+' departs runway '+a.depRwy+', which is not a runway at '+(a.dep||'KMSP')+'. That field has '+dapt.rwys.join(', ')+'.');
-   if((a.dep||'KMSP')!=='KMSP' && DD.satSeatFor(a.dep))
+   if((a.dep||'KMSP')!=='KMSP' && DD.satSeatFor(a.dep) && !warns.some(function(w){ return w.indexOf(' departs '+a.dep+', which is ')>=0; }))
     warns.push(tag2+' departs '+a.dep+', which is '+DD.satSeatFor(a.dep)+' — '+((POSITIONS.filter(function(p){return p.id===DD.satSeatFor(a.dep);})[0]||{}).name||'a satellite seat')+'’s field (SOP 6-2), so working it means that seat is open. The release to Center is graded on the same 25 NM from the MSP DME or leaving 11,000 as an MSP departure — ZMP-M98 LOA 4.c says "departing aircraft" and names no field.');
    if(rules==='IFR' && a.depRwy && dapt.noIfrDep && dapt.noIfrDep.indexOf(a.depRwy)>=0)
     errs.push(tag2+' is an IFR departure off '+(a.dep||'KMSP')+' runway '+a.depRwy+', and that runway is not available for IFR departures (STP 7220.3Q).');
@@ -1691,7 +1802,8 @@ function validate(rec){
    }
    if(proc && !proc.flies)
     errs.push(tag2+' is on the '+a.gate+(proc.rev?(' ('+proc.rev+')'):'')+' arrival. The route data carries ladder geometry only for the six MSP RNAV gates, so this one sets the frame and the coordination picture but the engine cannot fly it.');
-   if(dest!=='KMSP' && DD.satSeatFor(dest))
+   /* once per field, not once per strip — a heavy satellite push lands a dozen at the same few */
+   if(dest!=='KMSP' && DD.satSeatFor(dest) && !warns.some(function(w){ return w.indexOf(' is landing '+dest+', which is ')>=0; }))
     warns.push(tag2+' is landing '+dest+', which is '+DD.satSeatFor(dest)+' — '+((POSITIONS.filter(function(p){return p.id===DD.satSeatFor(dest);})[0]||{}).name||'a satellite seat')+'’s field (SOP 6-2). Working it means that seat is open and the arrival is coordinated there, not down the MSP split.');
    if(a.rwy && !DD.runwaysAt(dest).length)
     errs.push(tag2+' is assigned runway '+a.rwy+' at '+dest+', and that field’s runway inventory is not in the reference set. Leave the runway unissued.');
@@ -2873,6 +2985,13 @@ window.ddbMixSync=function(changed){
     shares. Anything typed into a count afterwards is kept — Generate settles the boxes
     without re-splitting — until the total or the push changes again. */
  if(state.genMode==='general' && (changed==='count' || changed==='push')){
+  /* a heavy or light push sets the size as well as the split: Strips and Pressure fill in
+     (still editable). Only when the push itself changes — typing a total must not be undone. */
+  var pv=PUSH[state.genPush];
+  if(changed==='push' && pv){
+   var ce0=mixEl('count'); if(ce0 && pv.count!=null) ce0.value=String(pv.count);
+   var pe0=document.getElementById('ddb-pressure'); if(pe0 && pv.pressure) pe0.value=pv.pressure;
+  }
   var X0=mixRaw('count'); X0=isNaN(X0)?3:Math.max(1,Math.min(STRIP_MAX,X0));
   var ps=pushMix(state.genPush, X0), a0=mixEl('arr');
   var pe=function(k,v){ var e=mixEl(k); if(e) e.value=String(v); };
@@ -2927,7 +3046,7 @@ window.ddbGenerate=function(){
 var lastFocus='free';   /* the training focus, held while the select is showing kinds of push */
 function modeNote(){
  return state.genMode==='general'
-  ? 'General — nothing is weighted toward a training item. Pick the kind of push you want to work: the strips are split by it, the gates follow your seat, and the three counts stay editable.'
+  ? 'General — nothing is weighted toward a training item. Pick the kind of push you want to work: the strips are split by it and the three counts stay editable. Heavy and light set the size too — Strips and Pressure fill in for you. MSP pushes follow your seat’s gates; satellite pushes come in on the satellite STARs and leave on the satellite fields’ SIDs.'
   : 'Training issues — the drill is weighted toward one of your standing items, and you choose the gates.';
 }
 function syncFocusOptions(){
@@ -2944,6 +3063,7 @@ window.ddbFocusChange=function(){
  var fo=document.getElementById('ddb-focus'); if(!fo) return;
  if(state.genMode==='general'){
   if(PUSH[fo.value]){ state.genPush=fo.value; save(); }
+  syncMixOptions();                   /* a satellite push has no MSP gates to follow */
   window.ddbMixSync('push');
  } else lastFocus=fo.value;
 };
