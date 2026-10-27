@@ -5380,9 +5380,20 @@ function tracksFor(mode){
    if(!want[k[1]] || !k[2]) return;
    Object.keys(k[2]).forEach(function(apt){
     Object.keys(k[2][apt]).forEach(function(id){
-     var legs = NS.trackTo(apt, id, null, null) || [], pts = [];
-     legs.forEach(function(g){ if(g.f && NS.PFIX[g.f]){ var p = xy(NS.PFIX[g.f]); p.fix = g.f; pts.push(p); } });
-     if(pts.length > 1) out[k[1]].push({label:id, pts:pts});
+     /* every published segment is its own line - each entry transition, the common route, each runway
+        transition - so a procedure with no common route (MARWI at KOMA) or one that ends in a vector
+        is still drawn, and the lines meet at the fixes the segments share */
+     var p0 = NS.procOf ? NS.procOf(apt, id) : null, segs = [], kk;
+     if(p0){
+      for(kk in (p0.trans || {})) segs.push(p0.trans[kk]);
+      segs.push(p0.common);
+      for(kk in (p0.rwy || {})) segs.push(p0.rwy[kk]);
+     } else { segs.push(NS.trackTo(apt, id, null, null) || []); }
+     segs.forEach(function(legs){
+      var pts = [];
+      (legs || []).forEach(function(g){ if(g.f && NS.PFIX[g.f]){ var p = xy(NS.PFIX[g.f]); p.fix = g.f; pts.push(p); } });
+      if(pts.length > 1) out[k[1]].push({label:id, pts:pts});
+     });
     });
    });
   });
