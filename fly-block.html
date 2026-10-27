@@ -1,0 +1,1306 @@
+<script>
+/* ================================================================
+   MASTER FLY BLOCK - the live drill player, facility-agnostic.
+
+   Extracted from the M98 "Fly it" page (the Live Drill Player: clock,
+   scope, strips, transmit box, frequency feed, response timing,
+   debrief) and generalised so every deck can fly the strips it builds.
+   Paste it in after the procedures block and the strip block, give it
+   a facility contract, and the deck's Fly it page becomes a player.
+
+   WHAT FLIES, AND WHAT IT FLIES ON. An arrival flies its STAR, a
+   departure its SID, an overflight a straight line between the radial
+   and distance the strip gives. A STAR or SID is the facility's own
+   published track: fix coordinates, crossing restrictions and speed
+   limits from the FAA coded source (CIFP), read through the procedures
+   block's own exports (PFIX, STARS, SIDS, procOf, trackTo) and never
+   copied, so there is ONE copy of every coordinate (invariant 5). An
+   arrival descends via the published altitudes and flies the published
+   speeds until it is told something else, as M98's does.
+
+   WHAT IT DELIBERATELY DOES NOT DO, AND SAYS SO IN THE FEED.
+
+     - It asserts nothing a document does not carry (invariant 3). No
+       boundary is claimed, no sector owner, no handoff receiver: a
+       transmission to a frequency is read back and the aircraft goes,
+       and whether that was the right position is not graded, because no
+       deck carries the combining table or the delegation that would say.
+       Where a check is weaker than it looks the feed says "reminder,
+       not a judgement".
+     - It carries no standing training item (invariant 4). Nothing it
+       flags is tagged to one, and the debrief says so.
+     - It flies no approach intercept. Same reason M98 held back until it
+       had runway records: the final approach course and the threshold
+       are not in every deck. A clearance is read back; the aircraft is
+       handed to the tower.
+     - There is no wind model, so heading and track are the same number.
+     - Straight between fixes. Arcs, holds and procedure turns are not
+       flown, and a vector leg ends the published track.
+     - Climb, descent and speed-change rates are ENGINE PARAMETERS, not
+       aviation data. They set how fast the scope moves and are written
+       as such below.
+
+   ---------------------------------------------------------------
+   THE CONTRACT
+
+   window.FLY_FACILITY = {
+     id:      'IND',          // facility label, used in every message
+     prefix:  'indfly',       // id/class prefix and the stem of every
+                              //   global this block defines
+     ns:      'IND',          // the deck's namespace; needs the procedures
+                              //   block's PFIX, procOf, trackTo for flown
+                              //   procedures (without them only overflights)
+     host:    function(){},   // the element the player fills, or null
+     airportLL: function(icao){ return [lat,lon] },   // from the deck's data
+     ref:     [lat,lon] | function(){},  // OPTIONAL. Origin of the scope and
+                              //   of an overflight's radial and distance.
+                              //   Default: the first airport with coordinates.
+     outline: function(){ return [ring,...] },  // OPTIONAL. Lateral rings as
+                              //   [[lat,lon],...], drawn dashed.
+     flow:    function(){ return {airport,land:[..],dep:[..],name} | null },
+                              // OPTIONAL. The configuration in force.
+     frame:   function(){ return {text, seat, cfg, open:[..]} },  // OPTIONAL.
+                              //   One line stating the frame before traffic.
+     positions: function(){ return [{id,name,freq,open,owner:{id,name,freq}}] },
+                              // OPTIONAL. What "contact ..." can switch to.
+     towerFor: function(icao){ return {name,freq} | null },  // OPTIONAL.
+     callName: function(role){ return 'Indianapolis Approach' }, // OPTIONAL.
+     spoken:  function(cs){},  // OPTIONAL. Spoken callsign; lets "delta five
+                              //   eight nine" find the strip.
+     radiusNm: 60,            // OPTIONAL. Scope reach. Default: fitted.
+     bank:    function(entry){},  // OPTIONAL. Receives the debrief.
+     cycle:   'CIFP 261001'   // OPTIONAL. Quoted beside a published crossing.
+   };
+
+   A deck that cannot answer an optional function gets the honest
+   fallback: the line is left out, never guessed.
+
+   ---------------------------------------------------------------
+   WHAT IT EXPORTS
+
+   window.fly = { load(drill), validate(drill), step(dt), transmit(text),
+                  mk(strip,i), track(strip), sim, FACILITY, ... }
+   window[<prefix>Load|Rate|End|Send|Quick|Layers|Pick|Target]  the handlers
+
+   A DRILL is {id, name, frame, strips:[strip...], rate:0|1|4|'hot'}, a
+   STRIP is the strip block's row. `fly.load` refuses a drill whose strips
+   cannot be flown and says why, strip by strip.
+   ================================================================ */
+(function(){
+'use strict';
+
+var F = window.FLY_FACILITY;
+if(!F || !F.ns){ return; }                       /* no contract - do nothing, per the block contract */
+var NS = window[F.ns];
+var ST = window.strip;
+if(!NS || !ST){ return; }                         /* no deck or no strip block */
+
+var PFX = F.prefix || 'fly';
+var FID = F.id || F.ns;
+var HAVE_PROCS = !!(NS.PFIX && NS.procOf && NS.trackTo);
+
+/* ---------- 0. small helpers ---------- */
+function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function el(id){ return document.getElementById(PFX + '-' + id); }
+function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+function fmtAlt(a){ return (Math.round(a / 100) * 100).toLocaleString('en-US'); }
+function hundreds(a){ var h = Math.round(a / 100); return (h < 100 ? (h < 10 ? '00' : '0') : '') + h; }
+function parseNum(v){ var n = parseFloat(String(v == null ? '' : v).replace(/[^\d.]/g, '')); return isFinite(n) ? n : null; }
+/* A bare number under 1,000 is read as hundreds of feet - 80 is 8,000, 240 is
+   24,000 - and FLnnn the way it is written. validate() says how it read. */
+function parseAlt(v){
+ if(v == null) return null;
+ var s = String(v).trim().toUpperCase().replace(/,/g, '');
+ if(!s) return null;
+ var m = /^FL\s*(\d{2,3})$/.exec(s);
+ if(m) return +m[1] * 100;
+ m = /^(\d+)$/.exec(s);
+ if(!m) return null;
+ var n = +m[1];
+ return n === 0 ? null : (n < 1000 ? n * 100 : n);
+}
+var DIG = ['zero','one','two','three','four','five','six','seven','eight','niner'];
+function sayDigits(s){ return String(s).split('').map(function(c){ return /\d/.test(c) ? DIG[+c] : c; }).join(' '); }
+function sayRwy(r){
+ var m = /^(\d{1,2})([LRC]?)$/.exec(String(r));
+ if(!m) return String(r);
+ var w = {L:'left', R:'right', C:'center'}[m[2]] || '';
+ return sayDigits(m[1]) + (w ? ' ' + w : '');
+}
+function airportLL(icao){ return (typeof F.airportLL === 'function') ? (F.airportLL(icao) || null) : null; }
+function cycleTag(){ return F.cycle || (NS.CIFP_CYCLE ? ('CIFP ' + NS.CIFP_CYCLE) : 'CIFP'); }
+
+/* ---------- 1. geometry - a flat plane around one reference point ---------- */
+var REFLL = null;
+function refLL(){
+ if(REFLL) return REFLL;
+ var r = (typeof F.ref === 'function') ? F.ref() : F.ref;
+ if(!r){
+  var ap = ST.airportsHere();
+  for(var i = 0; i < ap.length && !r; i++){ r = airportLL(ap[i]); }
+ }
+ REFLL = r || [0, 0];
+ return REFLL;
+}
+function xy(ll){
+ var r = refLL();
+ return {x:(ll[1] - r[1]) * Math.cos(r[0] * Math.PI / 180) * 60, y:(ll[0] - r[0]) * 60};
+}
+function dist(a, b){ var dx = a.x - b.x, dy = a.y - b.y; return Math.sqrt(dx * dx + dy * dy); }
+function crs(a, b){ return (Math.atan2(b.x - a.x, b.y - a.y) * 180 / Math.PI + 360) % 360; }
+function angDiff(from, to){ return ((to - from + 540) % 360) - 180; }
+function radial(r, d){ var t = r * Math.PI / 180; return {x:d * Math.sin(t), y:d * Math.cos(t)}; }
+
+/* ---------- 2. the published track ---------- */
+function procFor(s){
+ var dep = (ST.roleOf(s) === 'departure');
+ var apt = dep ? s.dep : s.dest, id = dep ? s.sid : s.gate;
+ return {dep:dep, apt:apt, id:id,
+         p:(HAVE_PROCS && apt && id) ? NS.procOf(apt, id) : null};
+}
+function transOptions(s){
+ var q = procFor(s);
+ return (q.p && q.p.trans) ? Object.keys(q.p.trans).sort() : [];
+}
+/* Runway transitions are keyed RWnn, RWnnL, RWnnB in the coded source, and a
+   runway the strip names as 5L may be filed RW05L. Try the spellings in turn;
+   nothing is invented when none matches. */
+function rwKey(p, rwy){
+ if(!p || !p.rwy || !rwy) return null;
+ var m = /^(\d{1,2})([LRC]?)$/.exec(String(rwy));
+ if(!m) return null;
+ var n1 = String(+m[1]), n2 = (m[1].length < 2 ? '0' : '') + m[1], s = m[2];
+ var cand = ['RW' + n2 + s, 'RW' + n1 + s, 'RW' + n2 + 'B', 'RW' + n1 + 'B', 'RW' + n2, 'RW' + n1];
+ for(var i = 0; i < cand.length; i++){ if(p.rwy[cand[i]]) return cand[i]; }
+ return null;
+}
+function legHas(legs, fix){
+ for(var i = 0; i < (legs || []).length; i++){ if(legs[i].f === fix) return true; }
+ return false;
+}
+/* Which transition the strip is on. The transition the trainee chose, else the
+   one that holds the fix it is running to; none when that fix is in the common
+   part, because the aircraft has already flown past every transition. A SID is
+   the other way round and needs one to reach anywhere, so it takes the first. */
+function pickTrans(s, q){
+ var keys = (q.p && q.p.trans) ? Object.keys(q.p.trans).sort() : [];
+ if(!keys.length) return null;
+ if(s.trans && q.p.trans[s.trans]) return s.trans;
+ if(!q.dep){
+  if(s.dtgFix){
+   for(var i = 0; i < keys.length; i++){ if(legHas(q.p.trans[keys[i]], s.dtgFix)) return keys[i]; }
+   return null;
+  }
+  return keys[0];
+ }
+ return keys[0];
+}
+/* A restriction as the published table writes it, as an allowed band. */
+function band(g){
+ var lo = null, hi = null;
+ if(g.at != null){ lo = g.at; hi = g.at; }
+ if(g.above != null) lo = g.above;
+ if(g.below != null) hi = g.below;
+ if(g.lo != null) lo = g.lo;
+ if(g.hi != null) hi = g.hi;
+ return {lo:lo, hi:hi};
+}
+function conText(pt){
+ if(pt.lo != null && pt.hi != null) return pt.lo === pt.hi ? ('at ' + fmtAlt(pt.lo)) : ('between ' + fmtAlt(pt.lo) + ' and ' + fmtAlt(pt.hi));
+ if(pt.lo != null) return 'at or above ' + fmtAlt(pt.lo);
+ if(pt.hi != null) return 'at or below ' + fmtAlt(pt.hi);
+ return '';
+}
+
+function overflightTrack(s){
+ var er = parseNum(s.entryR), ed = parseNum(s.entryD), xr = parseNum(s.exitR), xd = parseNum(s.exitD);
+ var out = {ok:false, pts:[], total:0, endVec:false, kind:'overflight', id:'', note:''};
+ if(er == null || ed == null || xr == null || xd == null){
+  out.note = 'an overflight needs an entry radial and distance and an exit radial and distance';
+  return out;
+ }
+ var a = radial(er, ed), b = radial(xr, xd);
+ var d = dist(a, b);
+ if(d < 1){ out.note = 'the entry and the exit are the same point'; return out; }
+ out.pts = [{x:a.x, y:a.y, fix:'entry', cum:0}, {x:b.x, y:b.y, fix:'exit', cum:d}];
+ out.total = d; out.ok = true;
+ return out;
+}
+function buildTrack(s){
+ var role = ST.roleOf(s);
+ if(role === 'overflight') return overflightTrack(s);
+ var q = procFor(s);
+ var out = {ok:false, pts:[], total:0, endVec:false, kind:q.dep ? 'SID' : 'STAR', id:q.id || '', apt:q.apt, entry:null, rw:null, skipped:0, note:''};
+ if(!HAVE_PROCS){ out.note = 'this deck carries no published procedures to fly'; return out; }
+ if(!q.p){ out.note = 'no ' + (q.dep ? 'departure' : 'arrival') + ' procedure is selected, or ' + (q.id || 'it') + ' is not published at ' + (q.apt || 'that field'); return out; }
+ out.entry = pickTrans(s, q);
+ out.rw = rwKey(q.p, q.dep ? s.depRwy : s.rwy);
+ var legs = NS.trackTo(q.apt, q.id, out.entry, out.rw) || [];
+ var pts = [], last = null, cum = 0;
+ for(var i = 0; i < legs.length; i++){
+  var g = legs[i];
+  if(!g.f) continue;                                   /* a vector leg names no fix: it ends the line or is the stand-in climb-out */
+  var ll = NS.PFIX[g.f];
+  if(!ll || !isFinite(ll[0])){ out.skipped++; continue; }
+  var p = xy(ll), b = band(g);
+  if(last && last.fix === g.f){                        /* a join printed twice is one crossing */
+   if(b.lo != null) last.lo = b.lo;
+   if(b.hi != null) last.hi = b.hi;
+   if(g.spd != null) last.spd = g.spd;
+   continue;
+  }
+  if(last) cum += dist(last, p);
+  last = {x:p.x, y:p.y, fix:g.f, cum:cum, lo:b.lo, hi:b.hi, spd:(g.spd != null ? g.spd : null)};
+  pts.push(last);
+ }
+ out.endVec = !!(legs.length && legs[legs.length - 1].vec);
+ if(q.dep){
+  /* The published SID starts at its first coded fix, never at the field: the
+     climb-out to it is not coded. Start at the field and draw that leg straight,
+     the way M98 does, and say it is a stand-in. */
+  var fll = airportLL(q.apt);
+  if(fll && pts.length){
+   var f0 = xy(fll), gap = dist(f0, pts[0]);
+   if(gap > 0.2){
+    for(var k = 0; k < pts.length; k++) pts[k].cum += gap;
+    pts.unshift({x:f0.x, y:f0.y, fix:q.apt, cum:0, lo:null, hi:null, spd:null, field:true});
+    out.standIn = gap;
+   }
+  }
+ }
+ if(pts.length < 2){ out.note = (q.id + ' carries fewer than two fixes with coordinates for this runway and transition, so there is no line to fly'); return out; }
+ out.pts = pts; out.total = pts[pts.length - 1].cum; out.ok = true;
+ return out;
+}
+function fixCum(tr, name){
+ for(var i = 0; i < tr.pts.length; i++){ if(tr.pts[i].fix === name) return tr.pts[i].cum; }
+ return null;
+}
+function pointAt(tr, d){
+ var p = tr.pts;
+ if(!p.length) return null;
+ if(d <= 0 || p.length < 2) return {x:p[0].x, y:p[0].y, hdg:p.length > 1 ? crs(p[0], p[1]) : 0};
+ for(var i = 1; i < p.length; i++){
+  if(d <= p[i].cum){
+   var a = p[i - 1], b = p[i], seg = b.cum - a.cum, f = seg > 0 ? (d - a.cum) / seg : 0;
+   return {x:a.x + (b.x - a.x) * f, y:a.y + (b.y - a.y) * f, hdg:crs(a, b)};
+  }
+ }
+ var L = p[p.length - 1], pv = p[p.length - 2];
+ return {x:L.x, y:L.y, hdg:crs(pv, L)};
+}
+
+/* ---------- 3. sim state ---------- */
+var sim = {t:0, rate:0, hot:false, ac:[], feed:[], sel:null, drill:null, ended:false,
+           layers:'tracked', target:20, timing:[], tx:0, pausedTx:0, tally:{good:0, flag:0, crit:0},
+           los:{}, scale:null, lastTx:null, lastReal:0};
+var LAYER_MODES = [
+ {id:'tracked', label:'tracked traffic'},
+ {id:'stars',   label:'all STARs'},
+ {id:'sids',    label:'all SIDs'},
+ {id:'both',    label:'all SIDs + STARs'},
+ {id:'off',     label:'off'}
+];
+function clock(){ var m = Math.floor(sim.t / 60), s = Math.floor(sim.t % 60); return (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s; }
+function log(kind, html){
+ sim.feed.unshift({t:clock(), kind:kind, html:html});
+ if(kind === 'good' || kind === 'flag' || kind === 'crit') sim.tally[kind]++;
+ if(sim.feed.length > 160) sim.feed.pop();
+ renderFeed();
+}
+function chip(kind, label){ return '<span class="' + PFX + '-chip ' + kind + '">' + esc(label || kind) + '</span>'; }
+
+/* ENGINE PARAMETERS - how fast the scope moves, not facts about any aircraft
+   or facility. Feet per minute climbing and descending by engine type, speed
+   change in knots per second, and the 3-degree descent gradient that sets when
+   an aircraft on a descend-via starts down. */
+var CLIMB = {jet:2400, turboprop:1500, piston:700};
+var DESC  = {jet:2000, turboprop:1200, piston:700};
+var ACCEL = 1.5;
+var GRAD  = 318;
+var TURN  = 3;
+
+/* ---------- 4. aircraft ---------- */
+function mkAc(s, i){
+ var role = ST.roleOf(s);
+ var rules = (s.rules === 'VFR') ? 'VFR' : 'IFR';
+ var tr = buildTrack(s);
+ var eng = s.engine || 'jet';
+ var ias = parseNum(s.ias);
+ var st = ST.RADAR_STATES[ST.normRadar(s.radar, rules, role)] || {};
+ var a = {i:i, strip:s, cs:String(s.cs || '').toUpperCase(), role:role, type:s.type || '', wake:ST.wakeOf(s.type),
+  rules:rules, radar:ST.normRadar(s.radar, rules, role), ident:!!st.ident, code:!!st.code, cleared:!!st.cleared,
+  engine:eng, alive:true, onFreq:false, handed:null, handedAt:0, flashed:false, flashTo:null,
+  spawnAt:(s.ckdIn ? 0 : Math.max(0, parseNum(s.spawnAt) || 0)), checkT:null, checkReal:0, distAtCheck:0, firstWord:null,
+  track:tr, dist:0, nav:'track', hdg:0, hdgTgt:null, turn:null, directTo:null, next:0,
+  alt:parseAlt(s.alt) || 0, altAsg:null, via:false,
+  ias:ias || ({jet:250, turboprop:180, piston:110}[eng] || 250), spdAsg:null, pubLimit:null, pubOn:true,
+  gs:0, x:0, y:0, trail:[], endT:null, notes:{}, wasInside:null, rwy:s.rwy || '', appr:null, altim:!!s.altim};
+ a.iasNorm = a.ias;
+ /* a departure's cleared altitude, when the drill carries one; the strip row itself has no box for it */
+ if(role === 'departure' && parseAlt(s.climbTo) != null){ a.altAsg = parseAlt(s.climbTo); a.altFrom = 'drill'; }
+ if(s.mode === 'assigned' && parseNum(s.asg)){ a.spdAsg = parseNum(s.asg); a.ias = Math.min(a.ias, a.spdAsg) || a.ias; a.iasNorm = a.ias; }
+ if(tr.ok){
+  if(role === 'arrival'){
+   var d0 = 0;
+   if(s.dtgFix && fixCum(tr, s.dtgFix) != null) d0 = fixCum(tr, s.dtgFix) - (parseNum(s.dtgNm) || 0);
+   else if(parseNum(s.dtg)) d0 = tr.total - parseNum(s.dtg);
+   a.dist = clamp(d0, 0, tr.total);
+   a.via = (rules === 'IFR');
+  } else if(role === 'departure'){
+   a.dist = clamp(parseNum(s.fromStart) || 0, 0, tr.total);
+  }
+  var p = pointAt(tr, a.dist);
+  a.x = p.x; a.y = p.y; a.hdg = p.hdg;
+  while(a.next < tr.pts.length && tr.pts[a.next].cum <= a.dist) a.next++;
+ }
+ return a;
+}
+function maxDist(){ return 400; }
+
+/* Descend via: the altitude an arrival must be at or below NOW to meet every
+   published ceiling ahead on a 3-degree path, never below the next published
+   floor. Nothing ahead and it holds what it has. */
+function viaTarget(a){
+ var p = a.track.pts, d = a.dist, maxNow = Infinity, floor = null;
+ /* The path is never steeper than the aircraft can fly it: at a high true airspeed a fixed
+    descent rate covers more ground per foot, so the gradient it can hold shrinks, and the
+    aircraft starts down earlier rather than missing the crossing. */
+ var gs = Math.max(a.gs || a.ias, 150), g = Math.min(GRAD, ((DESC[a.engine] || 2000) / (gs / 60)) * 0.85);
+ for(var i = 0; i < p.length; i++){
+  var pt = p[i];
+  if(pt.cum < d - 0.05) continue;
+  var dd = Math.max(0, pt.cum - d);
+  if(pt.hi != null) maxNow = Math.min(maxNow, pt.hi + g * dd);
+  if(floor == null && pt.lo != null) floor = pt.lo;
+ }
+ if(maxNow === Infinity) return null;
+ var t = Math.min(a.alt, maxNow);
+ if(floor != null) t = Math.max(t, Math.min(floor, a.alt));
+ return t;
+}
+/* A departure with no altitude assigned climbs to the highest FLOOR the SID still has
+   ahead of it - a published "at or above" - and no further. The published SID gives no
+   top altitude, so the engine does not make one up: past the last floor it holds what it
+   has until it is told, and says so once. */
+function climbTarget(a){
+ var p = a.track.pts, top = null;
+ for(var i = 0; i < p.length; i++){
+  if(p[i].cum < a.dist - 0.05) continue;
+  if(p[i].lo != null && (top == null || p[i].lo > top)) top = p[i].lo;
+ }
+ return top;
+}
+function altTarget(a){
+ if(a.altAsg != null) return a.altAsg;
+ if(a.role === 'departure' && a.nav === 'track') return climbTarget(a);
+ if(a.via && a.nav === 'track') return viaTarget(a);
+ return null;
+}
+/* Published speed: the limit last passed holds until the next one, and the
+   aircraft starts slowing early enough to meet the next. */
+function speedTarget(a){
+ var base = a.iasNorm;
+ if(a.spdAsg != null) base = a.spdAsg;
+ else if(a.pubOn && a.nav === 'track'){
+  var lim = (a.pubLimit != null) ? a.pubLimit : Infinity;
+  var p = a.track.pts, gs = Math.max(a.gs || a.ias, 100);
+  for(var i = 0; i < p.length; i++){
+   var pt = p[i];
+   if(pt.spd == null || pt.cum < a.dist) continue;
+   var need = (a.ias - pt.spd) > 0 ? ((a.ias - pt.spd) / ACCEL) * (gs / 3600) + 0.5 : 0;
+   if(pt.cum - a.dist <= need) lim = Math.min(lim, pt.spd);
+   break;                                              /* the next restriction only */
+  }
+  if(lim < Infinity) base = Math.min(base, lim);
+ }
+ return base;
+}
+function inside(ring, p){
+ var c = false;
+ for(var i = 0, j = ring.length - 1; i < ring.length; j = i++){
+  var a = ring[i], b = ring[j];
+  if(((a.y > p.y) !== (b.y > p.y)) && (p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x)) c = !c;
+ }
+ return c;
+}
+var OUTLINE = null;
+function outlineRings(){
+ if(OUTLINE) return OUTLINE;
+ var rings = (typeof F.outline === 'function') ? (F.outline() || []) : [];
+ OUTLINE = rings.map(function(r){ return r.map(function(v){ return xy(v); }); });
+ return OUTLINE;
+}
+function insideOutline(p){
+ var rs = outlineRings();
+ for(var i = 0; i < rs.length; i++){ if(inside(rs[i], p)) return true; }
+ return false;
+}
+function onWhat(a){
+ return a.track.kind === 'overflight' ? 'its line' : ('the ' + a.track.id + (a.track.kind === 'SID' ? ' departure' : ' arrival'));
+}
+
+function crossed(a, pt){
+ var bad = null;
+ if(pt.hi != null && a.alt > pt.hi + 100) bad = 'above';
+ if(pt.lo != null && a.alt < pt.lo - 100) bad = 'below';
+ var con = conText(pt);
+ if(con){
+  if(bad){
+   log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> crossed ' + esc(pt.fix) + ' at ' + fmtAlt(a.alt)
+    + ' - the published crossing is ' + esc(con) + ' (' + esc(cycleTag()) + '). '
+    + (a.altAsg != null ? (a.altFrom === 'drill' ? 'The drill cleared it to that altitude, which overrides the published crossing. ' : 'An assigned altitude overrides a published crossing; that one is yours. ') : '')
+    + 'Reminder, not a judgement: the engine flies straight between fixes and has no wind.');
+  } else {
+   log('good', chip('good') + '<b>' + esc(a.cs) + '</b> crossed ' + esc(pt.fix) + ' at ' + fmtAlt(a.alt) + ' - ' + esc(con) + ': met.');
+  }
+ }
+ if(pt.spd != null && a.ias > pt.spd + 10){
+  log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> crossed ' + esc(pt.fix) + ' at ' + Math.round(a.ias)
+   + ' kt - the published limit is ' + pt.spd + ' (' + esc(cycleTag()) + ').'
+   + (a.spdAsg != null ? ' An assigned speed overrides published until you restore it.' : ''));
+ }
+ if(pt.spd != null) a.pubLimit = pt.spd;
+}
+function toVector(a, why){
+ if(a.nav === 'track'){
+  var p = pointAt(a.track, a.dist);
+  if(p){ a.x = p.x; a.y = p.y; a.hdg = a.hdg || p.hdg; }
+ }
+ a.nav = (why === 'direct') ? 'direct' : 'hdg';
+ if(a.via){
+  a.via = false;
+  if(a.altAsg == null) a.altAsg = a.alt;
+  log('info', chip('info', 'vectored') + '<b>' + esc(a.cs) + '</b> is off ' + esc(onWhat(a))
+   + '. A vectored arrival stops descending via the arrival and stops flying published speeds - both belong to the procedure it is no longer on. It holds what it was last assigned.');
+ }
+ if(a.pubOn){ a.pubOn = false; if(a.spdAsg == null) a.spdAsg = Math.round(a.ias); }
+}
+function airborne(a){ return a.role !== 'departure' || a.dist >= 2 || a.nav !== 'track'; }
+
+function advance(a, dt){
+ if(!a.alive) return;
+ if(!a.onFreq){
+  if(sim.t >= a.spawnAt) putOnFreq(a); else return;
+ }
+ if(a.handed){
+  if(sim.t - a.handedAt > 20 && a.alive){ a.alive = false; }
+  /* still flies, off your frequency, until it drops off the scope */
+ }
+ /* speed */
+ var tgt = Math.min(speedTarget(a), a.alt < 10000 ? 250 : 999);
+ var dS = tgt - a.ias, r = ACCEL * dt;
+ a.ias += Math.abs(dS) <= r ? dS : (dS > 0 ? r : -r);
+ a.gs = a.ias * (1 + 0.02 * a.alt / 1000);
+ /* altitude */
+ var at = altTarget(a);
+ if(at != null){
+  var dA = at - a.alt, rate = ((dA > 0 ? CLIMB : DESC)[a.engine] || 1500) * dt / 60;
+  a.alt += Math.abs(dA) <= rate ? dA : (dA > 0 ? rate : -rate);
+ }
+ /* lateral */
+ var step = a.gs / 3600 * dt;
+ if(a.nav === 'track' && a.track.ok){
+  var prev = a.dist;
+  a.dist = Math.min(a.dist + step, a.track.total);
+  var p = pointAt(a.track, a.dist);
+  a.x = p.x; a.y = p.y; a.hdg = p.hdg;
+  while(a.next < a.track.pts.length && a.track.pts[a.next].cum <= a.dist + 1e-6){
+   var pt = a.track.pts[a.next]; a.next++;
+   if(pt.cum > prev - 1e-6 && !pt.field) crossed(a, pt);
+  }
+  if(a.dist >= a.track.total - 1e-6){
+   if(a.role !== 'overflight' || true){
+    a.nav = 'hdg'; a.endT = sim.t;
+    if(!a.notes.end){
+     a.notes.end = true;
+     if(a.role === 'overflight'){
+      log('info', chip('info', 'exit') + '<b>' + esc(a.cs) + '</b> is at its exit point. It continues on '
+       + Math.round(a.hdg) + ' until you hand it off or point it out.');
+     } else {
+      log('info', chip('info', 'end of track') + '<b>' + esc(a.cs) + '</b> is at the last coded fix of ' + esc(a.track.id)
+       + (a.track.endVec ? ', where the published procedure ends on a vector' : '')
+       + '. It holds ' + Math.round(a.hdg) + ' - vector it, hand it off'
+       + (a.role === 'arrival' ? ' or clear the approach (the engine flies no intercept)' : '') + '.');
+     }
+    }
+   }
+  }
+ } else if(a.nav === 'hdg' || a.nav === 'direct'){
+  if(a.nav === 'direct' && a.directTo){
+   a.hdgTgt = crs(a, a.directTo);
+   if(dist(a, a.directTo) <= Math.max(0.6, step)){
+    if(a.directTo.cum != null){
+     a.nav = 'track'; a.dist = a.directTo.cum; a.next = a.track.pts.indexOf(a.directTo) + 1;
+     var jp = pointAt(a.track, a.dist); a.x = jp.x; a.y = jp.y; a.hdg = jp.hdg;
+     a.directTo = null; a.hdgTgt = null;
+     log('info', chip('info', 'rejoined') + '<b>' + esc(a.cs) + '</b> is back on ' + esc(onWhat(a)) + ' at ' + esc(a.track.pts[a.next - 1].fix) + '.');
+    } else { a.nav = 'hdg'; a.hdgTgt = null; a.directTo = null; }
+   }
+  }
+  if(a.nav !== 'track'){
+   if(a.hdgTgt != null){
+    var df = angDiff(a.hdg, a.hdgTgt), tr = TURN * dt;
+    if(a.turn === 'L' && df > 0) df -= 360;
+    if(a.turn === 'R' && df < 0) df += 360;
+    if(Math.abs(df) <= tr){ a.hdg = a.hdgTgt; a.turn = null; if(a.nav === 'hdg') a.hdgTgt = null; }
+    else a.hdg = (a.hdg + (df > 0 ? tr : -tr) + 360) % 360;
+   }
+   a.x += Math.sin(a.hdg * Math.PI / 180) * step;
+   a.y += Math.cos(a.hdg * Math.PI / 180) * step;
+  }
+ }
+ a.trail.push([a.x, a.y]);
+ if(a.trail.length > 6) a.trail.shift();
+ /* the lateral outline, where the deck carries one - second tier, stated */
+ if(outlineRings().length){
+  var inn = insideOutline(a);
+  if(a.wasInside === true && !inn && !a.notes.left && !a.handed){
+   a.notes.left = true;
+   log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> has left the lateral outline still on your frequency. Reminder, not a judgement: the outline is a community footprint good to about two miles, not the facility boundary, and no document here says where it hands off.');
+  }
+  if(inn) a.wasInside = true; else if(a.wasInside == null) a.wasInside = false;
+ }
+ /* nobody has it */
+ if(a.endT != null && !a.handed && !a.notes.orphan && sim.t - a.endT > 120){
+  a.notes.orphan = true;
+  log('crit', chip('crit') + '<b>' + esc(a.cs) + '</b> reached the end of ' + esc(onWhat(a)) + ' two minutes ago and is still on your frequency. Nobody has it.');
+ }
+ if(dist(a, {x:0, y:0}) > maxDist()){ a.alive = false; }
+}
+function step(dt){
+ sim.t += dt;
+ for(var i = 0; i < sim.ac.length; i++) advance(sim.ac[i], dt);
+ checkLos();
+}
+function checkLos(){
+ var live = sim.ac.filter(function(a){ return a.alive && a.onFreq && !a.handed && airborne(a); });
+ for(var i = 0; i < live.length; i++){
+  for(var j = i + 1; j < live.length; j++){
+   var A = live[i], B = live[j], key = A.cs + '|' + B.cs;
+   var dh = dist(A, B), dv = Math.abs(A.alt - B.alt);
+   if(dh < 3 && dv < 1000){
+    if(!sim.los[key]){
+     sim.los[key] = true;
+     log('crit', chip('crit') + 'Loss of separation - <b>' + esc(A.cs) + '</b> / <b>' + esc(B.cs) + '</b>, '
+      + dh.toFixed(1) + ' NM and ' + Math.round(dv) + ' ft. Reminder, not a judgement: this applies 3 NM and 1,000 ft and nothing else - it does not know where the radar is, the wake class or the facility’s own minima.');
+    }
+   } else if(dh > 3.5 || dv > 1500){ delete sim.los[key]; }
+  }
+ }
+}
+
+/* ---------- 5. check-in ---------- */
+function callName(a){
+ if(typeof F.callName === 'function'){ var n = F.callName(a.role); if(n) return n; }
+ return FID + (a.role === 'departure' ? ' departure' : ' approach');
+}
+function putOnFreq(a){
+ a.onFreq = true; a.checkT = sim.t; a.checkReal = Date.now(); a.distAtCheck = a.dist;
+ var st = ST.RADAR_STATES[a.radar] || {};
+ var line;
+ if(a.role === 'departure') line = 'passing ' + fmtAlt(a.alt) + ' on the ' + (a.track.id || 'departure');
+ else if(a.role === 'overflight') line = 'level ' + fmtAlt(a.alt);
+ else line = (a.via ? 'descending via the ' : 'on the ') + (a.track.id || 'arrival') + ' arrival, ' + fmtAlt(a.alt);
+ var tail = '';
+ if(a.role === 'arrival' && a.strip.altim) tail = ', with the altimeter';
+ log('coach', '<span class="crew">' + esc(callName(a)) + ', ' + esc(a.cs) + ', ' + esc(line) + esc(tail) + '.</span>');
+ if(a.role === 'departure' && a.altAsg == null && climbTarget(a) == null){
+  log('info', chip('info', 'note') + '<b>' + esc(a.cs) + '</b>: ' + esc(a.track.id) + ' publishes no altitude to climb to from here, so it holds ' + fmtAlt(a.alt) + ' until you assign one.');
+ }
+ if(!st.ident && !a.notes.unident){
+  a.notes.unident = true;
+  log('info', chip('info', 'note') + '<b>' + esc(a.cs) + '</b> is not radar identified'
+   + (st.code ? '' : ' and has no code') + (st.cleared ? '' : ' and is not on a clearance')
+   + '. Code, identify, then work it.');
+ }
+}
+
+/* ---------- 6. the transmission ---------- */
+var UNITS = {zero:0, oh:null, one:1, two:2, three:3, tree:3, four:4, fower:4, five:5, fife:5, six:6, seven:7, eight:8, nine:9, niner:9};
+var TEENS = {ten:10, eleven:11, twelve:12, thirteen:13, fourteen:14, fifteen:15, sixteen:16, seventeen:17, eighteen:18, nineteen:19};
+var TENS  = {twenty:20, thirty:30, forty:40, fifty:50, sixty:60};
+/* Spoken to written, so "descend and maintain one one thousand" and
+   "contact tower one one eight point seven" read the way the digits do. */
+function despell(t){
+ t = ' ' + String(t).toLowerCase().replace(/[,;]/g, ' ') + ' ';
+ t = t.replace(/\b(twenty|thirty|forty|fifty|sixty)[\s-]+(one|two|three|four|five|six|seven|eight|nine)\b/g, function(m, a, b){ return String(TENS[a] + UNITS[b]); });
+ t = t.replace(/\b(ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)\b/g, function(m){ return String(TEENS[m]); });
+ t = t.replace(/\b(twenty|thirty|forty|fifty|sixty)\b/g, function(m){ return String(TENS[m]); });
+ t = t.replace(/\b(zero|one|two|three|tree|four|fower|five|fife|six|seven|eight|nine|niner)\b/g, function(m){ return String(UNITS[m]); });
+ t = t.replace(/\b(point|decimal)\b/g, '.');
+ t = t.replace(/(\d+)\s*thousand(?:\s+(\d)\s*hundred)?/g, function(m, a, b){ return String(+a * 1000 + (b ? +b * 100 : 0)); });
+ t = t.replace(/(\d)\s*hundred/g, function(m, a){ return String(+a * 100); });
+ t = t.replace(/(\d)\s+(?=\d)/g, '$1').replace(/(\d)\s*\.\s*(?=\d)/g, '$1.');
+ return t.replace(/\s+/g, ' ').trim();
+}
+function normCs(s){ return String(s).toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+function findAc(raw){
+ var up = normCs(raw), found = null, dt = despell(raw);
+ sim.ac.forEach(function(a){
+  if(found || !a.cs) return;
+  if(up.indexOf(normCs(a.cs)) >= 0) found = a;
+  else if(typeof F.spoken === 'function'){
+   var sp = F.spoken(a.cs);
+   if(sp && dt.indexOf(despell(sp)) >= 0) found = a;
+  }
+ });
+ if(found) return found;
+ return sim.sel != null ? (sim.ac.filter(function(a){ return a.cs === sim.sel; })[0] || null) : null;
+}
+function stripCs(a, raw){
+ var t = String(raw);
+ var re = new RegExp(a.cs.split('').join('[\\s-]*'), 'i');
+ t = t.replace(re, ' ');
+ if(typeof F.spoken === 'function'){
+  var sp = F.spoken(a.cs);
+  if(sp){ t = t.replace(new RegExp(sp.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '[\\s,]+'), 'i'), ' '); }
+ }
+ return t;
+}
+function normFreq(f){ var n = parseFloat(String(f)); return isFinite(n) ? n.toFixed(3) : ''; }
+function receivers(){ return (typeof F.positions === 'function') ? (F.positions() || []) : []; }
+function findReceiver(t, a){
+ var m = /(\d{3}\.\d{1,3})/.exec(t), list = receivers();
+ if(m){
+  for(var i = 0; i < list.length; i++){ if(normFreq(list[i].freq) === normFreq(m[1])) return list[i]; }
+  if(typeof F.towerFor === 'function' && a.role === 'arrival'){
+   var tw = F.towerFor(a.strip.dest); if(tw && normFreq(tw.freq) === normFreq(m[1])) return {id:'TWR', name:tw.name, freq:tw.freq, open:true, kind:'twr'};
+  }
+  return {unknown:true, freq:m[1]};
+ }
+ if(/\btower\b/.test(t) && typeof F.towerFor === 'function'){
+  var tw2 = F.towerFor(a.role === 'departure' ? a.strip.dep : a.strip.dest);
+  if(tw2) return {id:'TWR', name:tw2.name, freq:tw2.freq, open:true, kind:'twr'};
+ }
+ var best = null;
+ list.forEach(function(p){
+  var n = String(p.name || '').toLowerCase(), id = String(p.id || '').toLowerCase();
+  if((n && t.indexOf(n) >= 0) || (id && new RegExp('(?:^|[^a-z0-9])' + id.replace(/[^a-z0-9]/g, '') + '(?![a-z0-9])').test(t))){
+   if(!best || n.length > String(best.name || '').length) best = p;
+  }
+ });
+ return best;
+}
+function nextAlt(a){
+ for(var i = 0; i < a.track.pts.length; i++){
+  var pt = a.track.pts[i];
+  if(pt.cum >= a.dist && pt.hi != null && pt.hi < a.alt) return pt.hi;
+ }
+ return null;
+}
+
+function transmit(raw){
+ raw = String(raw == null ? '' : raw).trim();
+ if(!raw) return null;
+ var a = findAc(raw);
+ log('info', chip('info', 'you') + '<span class="' + PFX + '-mono">' + esc(raw) + '</span>');
+ if(!a){ log('coach', '<span class="coach">No strip selected and no callsign heard - click a strip or lead with the callsign.</span>'); return null; }
+ if(!a.alive || a.handed){ log('coach', '<span class="coach">' + esc(a.cs) + ' is no longer on your frequency.</span>'); return null; }
+ if(!a.onFreq){ log('coach', '<span class="coach">' + esc(a.cs) + ' has not checked in yet.</span>'); return null; }
+ /* response timing, in real seconds: the clock can be paused and the lag is still real */
+ sim.tx++;
+ if(sim.rate === 0 && !sim.hot) sim.pausedTx++;
+ if(a.firstWord == null){
+  a.firstWord = Date.now();
+  var lag = (a.firstWord - a.checkReal) / 1000, covered = Math.max(0, a.dist - a.distAtCheck);
+  sim.timing.push({cs:a.cs, lag:lag});
+  if(lag > sim.target){
+   log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> checked in ' + Math.round(lag) + ' s before your first word - the target is ' + sim.target
+    + ' s. It covered ' + covered.toFixed(1) + ' NM while you composed.');
+  }
+ }
+ sim.lastTx = Date.now();
+ var t = despell(stripCs(a, raw));
+ var acks = [], acted = false, control = false;
+
+ /* a runway - read only from the word onward, so a digit in a callsign can never be one */
+ var isAppr = /\bcleared\b/.test(t) && /\b(approach|apch)\b/.test(t);
+ var rwys = ST.runwaysAt(a.strip.dest || a.strip.dep);
+ var mR = null;
+ if(!isAppr && a.role === 'arrival' && /(expect|runway)/.test(t)){
+  var ix = [t.indexOf('expect'), t.indexOf('runway')].filter(function(x){ return x >= 0; });
+  var seg = t.slice(Math.min.apply(null, ix));
+  var cands = rwys.slice().sort(function(x, y){ return y.length - x.length; });
+  for(var ri = 0; ri < cands.length && !mR; ri++){
+   var rr = cands[ri], num = rr.replace(/[LRC]$/, ''), sfx = (rr.match(/[LRC]$/) || [''])[0].toLowerCase();
+   var word = sfx === 'l' ? 'left' : (sfx === 'r' ? 'right' : (sfx === 'c' ? 'center' : ''));
+   var tail = sfx ? '[ ]*(?:' + sfx + '|' + word + ')(?![a-z])' : '(?![a-z0-9])';
+   if(new RegExp('(?:^|[^a-z0-9])0?' + num + tail).test(seg)) mR = rr;
+  }
+ }
+ if(mR){ acted = true; control = true; a.rwy = mR; acks.push('expect runway ' + sayRwy(mR)); }
+
+ /* an approach clearance: read back, never flown */
+ if(isAppr && a.role === 'arrival'){
+  acted = true; control = true;
+  var kind = /\bils\b/.test(t) ? 'ILS' : /\brnav\b|\bgps\b/.test(t) ? 'RNAV' : /\bvisual\b/.test(t) ? 'visual' : /\bvor\b/.test(t) ? 'VOR' : /\blocalizer\b/.test(t) ? 'localizer' : 'straight-in';
+  var rm = /runway\s*0?(\d{1,2})\s*(left|right|center|l|r|c)?/.exec(t), cr = null;
+  if(rm){ var sx = rm[2] ? rm[2][0].toUpperCase() : ''; cr = String(+rm[1]) + sx; rwys.forEach(function(r){ if(r.replace(/^0/, '') === cr) cr = r; }); }
+  a.appr = {kind:kind, rwy:cr};
+  acks.push('cleared ' + kind + ' ' + (cr ? 'runway ' + sayRwy(cr) + ' ' : '') + 'approach');
+  log('info', chip('info', 'approach') + '<b>' + esc(a.cs) + '</b> is cleared. The engine flies no intercept - the final approach course and the threshold are not carried for every field - so there is no localizer to join and nothing to grade. Hand it to the tower.');
+ }
+
+ /* altimeter - read back and nothing else, there is no setting to check it against */
+ var mAl = /altimeter\s*(\d{4})/.exec(t);
+ if(mAl){ acted = true; a.altim = true; acks.push('altimeter ' + sayDigits(mAl[1])); }
+
+ /* descend via the arrival */
+ if(/\b(descend|resume)\s+(via|the (?:arrival|descent|profile))|\bdescend via\b/.test(t) && a.track.ok && a.role === 'arrival'){
+  acted = true; control = true;
+  a.via = true; a.altAsg = null;
+  if(a.nav !== 'track'){ log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> is off the arrival, so there is no published profile to descend via. Give it an altitude.'); acks.push('unable, not on the arrival'); a.via = false; }
+  else acks.push('descend via the ' + (a.track.id || 'arrival') + ' arrival');
+ }
+
+ /* speed - keyword-gated, and its match cut out of the text so altitude and speed can share a breath */
+ var tt = t;
+ /* A speed is a speed verb or the word speed before the number, or a number with knots after it.
+    "maintain" alone is an altitude verb: it only counts here with knots behind it, and the number is
+    never cut short of a digit, so 11,000 can never be read as 110. */
+ var mSp = /\b(?:reduce|increase|decrease|slow)(?:\s+speed)?(?:\s+to|\s+by)?\s+(\d{2,3})(?!\d)|\bspeed\s+(?:to\s+|of\s+)?(\d{2,3})(?!\d)|\bmaintain\s+(\d{2,3})\s*(?:knots?|kts?)\b|\b(\d{2,3})\s*(?:knots?|kts?)\b/.exec(tt);
+ if(mSp){
+  var sv = parseInt(mSp[1] || mSp[2] || mSp[3] || mSp[4], 10);
+  if(sv >= 100 && sv <= 400){
+   acted = true; control = true;
+   a.spdAsg = sv; a.pubOn = false;
+   acks.push(String(sv).split('').join(' ') + ' on the speed');
+   tt = tt.replace(mSp[0], ' ');
+   if(sv > 250 && a.alt < 10000) log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> is below 10,000 and the crew holds 250 there regardless of what is assigned. It will fly 250.');
+  }
+ }
+ if(/resume (?:normal|own) speed|resume normal/.test(t)){ acted = true; control = true; a.spdAsg = null; a.pubOn = false; a.iasNorm = Math.round(a.ias); acks.push('resume normal speed'); }
+ else if(/resume (?:the )?published|comply with (?:the )?published|resume published/.test(t)){
+  acted = true; control = true;
+  if(a.nav === 'track'){ a.spdAsg = null; a.pubOn = true; acks.push('resume published speed'); }
+  else { acks.push('unable, not on the procedure'); log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> is off the procedure, so there is no published speed to resume.'); }
+ }
+ if(/delete (?:speed|all speed)|speed restrictions? (?:deleted|cancel)|no speed restriction/.test(t)){ acted = true; control = true; a.spdAsg = null; a.pubOn = false; a.iasNorm = Math.max(a.iasNorm, 250); acks.push('speed restrictions deleted'); }
+
+ /* altitude */
+ var mAlt = /(descend|climb|maintain)(?:\s+and\s+maintain|\s+and)?\s*(?:fl|flight level)?\s*(\d{1,5})/.exec(tt);
+ if(mAlt && !mAl){
+  var raw2 = parseInt(mAlt[2], 10), isFl = /\b(?:fl|flight level)\b/.test(tt.slice(Math.max(0, mAlt.index - 2), mAlt.index + mAlt[0].length + 2));
+  var val = isFl ? raw2 * 100 : (raw2 < 1000 ? raw2 * 100 : raw2);
+  if(val >= 100 && val <= 60000){
+   acted = true; control = true;
+   var verb = mAlt[1];
+   if(verb === 'maintain' && !/descend|climb/.test(tt) && Math.abs(val - a.alt) > 1000){
+    log('flag', chip('flag') + 'Bare “maintain” ' + fmtAlt(val) + ' is ' + Math.round(Math.abs(val - a.alt)).toLocaleString('en-US') + ' ft from where <b>' + esc(a.cs) + '</b> is. Say climb or descend. The crew queries it.');
+    acks.push('say again, climb or descend and maintain ' + fmtAlt(val) + '?');
+   } else {
+    if(verb === 'descend' && val > a.alt + 50) log('flag', chip('flag') + 'You said descend, ' + fmtAlt(val) + ' is above <b>' + esc(a.cs) + '</b> at ' + fmtAlt(a.alt) + '. The crew reads back a climb.');
+    if(verb === 'climb' && val < a.alt - 50) log('flag', chip('flag') + 'You said climb, ' + fmtAlt(val) + ' is below <b>' + esc(a.cs) + '</b> at ' + fmtAlt(a.alt) + '. The crew reads back a descent.');
+    a.altAsg = val; a.altFrom = 'you'; a.via = false;
+    acks.push((val < a.alt ? 'descend and maintain ' : 'climb and maintain ') + fmtAlt(val));
+   }
+  }
+ }
+
+ /* heading */
+ var mH = /(?:turn\s+(left|right)\s+)?(?:fly\s+)?(?:heading|hdg)\s*(\d{1,3})/.exec(tt);
+ if(/fly present heading|present heading/.test(t)){
+  acted = true; control = true; toVector(a, 'hdg'); a.hdgTgt = null; a.turn = null;
+  acks.push('present heading ' + sayDigits(pad3(Math.round(a.hdg))));
+ } else if(mH){
+  var hv = parseInt(mH[2], 10);
+  if(hv >= 1 && hv <= 360){
+   acted = true; control = true; toVector(a, 'hdg');
+   a.hdgTgt = hv % 360; a.turn = mH[1] ? mH[1][0].toUpperCase() : null; a.directTo = null;
+   acks.push((mH[1] ? 'turn ' + mH[1] + ' ' : 'fly ') + 'heading ' + sayDigits(pad3(hv)));
+  }
+ }
+
+ /* direct to a fix the deck knows */
+ var mD = /\b(?:proceed\s+)?direct(?:\s+to)?\s+([a-z]{3,5})\b/.exec(tt);
+ if(mD && mD[1] !== 'to'){
+  var want = mD[1].toUpperCase(), ll = HAVE_PROCS ? NS.PFIX[want] : null;
+  if(ll){
+   acted = true; control = true;
+   var onTrack = null;
+   a.track.pts.forEach(function(p){ if(p.fix === want) onTrack = p; });
+   if(onTrack && onTrack.cum < a.dist && a.nav === 'track'){
+    acks.push('unable direct ' + want + ', already past it');
+    log('flag', chip('flag') + '<b>' + esc(a.cs) + '</b> is already past ' + esc(want) + '.');
+   } else {
+    var wasVia = a.via;
+    toVector(a, 'direct');
+    var p2 = onTrack || xy(ll);
+    a.directTo = onTrack ? onTrack : {x:p2.x, y:p2.y, fix:want, cum:null};
+    a.hdgTgt = crs(a, a.directTo); a.turn = null;
+    acks.push('direct ' + want);
+    if(wasVia && onTrack) a.via = false;
+    if(!onTrack) log('flag', chip('flag') + esc(want) + ' is not on <b>' + esc(a.cs) + '</b>’s track, so it leaves ' + esc(onWhat(a)) + ' there and holds the heading it ends on. Reminder, not a judgement: nothing here says that routing is allowed.');
+   }
+  } else {
+   log('flag', chip('flag') + '<b>' + esc(want) + '</b> is not a fix this deck carries coordinates for. Say again.');
+   acks.push('say again the fix');
+  }
+ }
+
+ /* radar service */
+ var mSq = /squawk\s*(\d{4})/.exec(t);
+ if(mSq){ acted = true; a.code = true; a.squawk = mSq[1]; acks.push('squawk ' + sayDigits(mSq[1])); }
+ if(/\bradar contact\b/.test(t)){
+  acted = true;
+  if(a.ident){ log('info', chip('info', 'note') + '<b>' + esc(a.cs) + '</b> arrived identified, so “radar contact” is redundant.'); }
+  else if(!a.code){ acks.push('negative, no code yet'); log('flag', chip('flag') + 'Radar contact on <b>' + esc(a.cs) + '</b> before a code. Assign one first.'); }
+  else { a.ident = true; acks.push('roger'); }
+ }
+ if(control && !a.ident && !a.notes.working){
+  a.notes.working = true;
+  log('flag', chip('flag') + 'You are working <b>' + esc(a.cs) + '</b>, which is not radar identified. Identify it first.');
+ }
+
+ /* handoff: flash, then contact */
+ var mFl = /\b(flash|handoff|hand off|initiate)\b/.test(t);
+ var mCt = /\b(contact|switch|frequency change|change to|go to|monitor)\b/.test(t);
+ var rcv = (mFl || mCt) ? findReceiver(t, a) : null;
+ if(mFl && !mCt){
+  acted = true; a.flashed = true; a.flashTo = rcv && !rcv.unknown ? rcv : null;
+  log('info', chip('info', 'flash') + 'Handoff of <b>' + esc(a.cs) + '</b> initiated' + (a.flashTo ? ' to ' + esc(a.flashTo.name) + ' ' + esc(a.flashTo.freq) : '') + '. It stays with you until you switch it.');
+ }
+ if(mCt){
+  acted = true;
+  if(!rcv){ acks.push('say again the frequency'); log('coach', '<span class="coach">Name a position or give a frequency: “contact tower 118.3”. No position in this deck’s reference set matched.</span>'); }
+  else if(rcv.unknown){
+   acks.push('say again the frequency');
+   log('flag', chip('flag') + 'No position in this deck’s reference set is on ' + esc(rcv.freq) + '. <b>' + esc(a.cs) + '</b> stays with you.');
+  } else if(rcv.self){
+   acks.push('say again, that is this frequency');
+   log('flag', chip('flag') + esc(rcv.name) + ' (' + esc(rcv.freq) + ') is the position you are working. There is nobody to switch <b>' + esc(a.cs) + '</b> to.');
+  } else if(rcv.open === false){
+   var ow = rcv.owner;
+   log('flag', chip('flag') + esc(rcv.name) + ' (' + esc(rcv.freq) + ') is not open in this frame, so nobody is there. ' + (ow ? ('It answers on ' + esc(ow.name) + ' ' + esc(ow.freq) + '. ') : '') + '<b>' + esc(a.cs) + '</b> comes back to you.');
+   acks.push('nobody on that frequency, back with you');
+  } else {
+   if(!a.flashed) log('info', chip('info', 'note') + 'No flash before the switch on <b>' + esc(a.cs) + '</b>. In the room the receiving controller accepts the handoff before communications move. Reminder, not a judgement: nothing here says who should have received it.');
+   if(rcv.kind === 'twr' && a.role === 'arrival'){
+    var apLL = airportLL(a.strip.dest);
+    if(apLL) log('info', chip('info', 'note') + '<b>' + esc(a.cs) + '</b> goes to ' + esc(rcv.name) + ' ' + dist(a, xy(apLL)).toFixed(0) + ' NM from ' + esc(a.strip.dest) + ' at ' + fmtAlt(a.alt) + '. Reminder, not a judgement: the engine does not know where that tower wants it.');
+   }
+   a.handed = {name:rcv.name, freq:rcv.freq}; a.handedAt = sim.t;
+   acks.push('contact ' + rcv.name + ' ' + String(rcv.freq).split('').join(' ').replace(/ \. /g, ' point '));
+   log('good', chip('good', 'switched') + '<b>' + esc(a.cs) + '</b> is with ' + esc(rcv.name) + ' on ' + esc(rcv.freq) + '. It is off your frequency.');
+  }
+ }
+ if(/\bradar service terminated\b/.test(t)){ acted = true; acks.push('radar service terminated'); }
+
+ if(acks.length){
+  log('coach', '<span class="crew">' + esc(acks.join(', ')) + ', ' + esc(a.cs) + '.</span>');
+ } else if(!acted){
+  log('coach', '<span class="coach">' + esc(a.cs) + ' did not take that as an instruction. Try an altitude, speed, heading, direct, a runway, “descend via”, “flash” or “contact <position> <frequency>”.</span>');
+ }
+ render();
+ return {ac:a, acks:acks, acted:acted};
+}
+function pad3(n){ return (n < 10 ? '00' : n < 100 ? '0' : '') + n; }
+
+/* ---------- 7. drills ---------- */
+/* A drill is flown only if every strip can be: a field this facility works, a
+   procedure published there, a track with coordinates, and the numbers a strip
+   has to carry. Strip by strip, by name. */
+function validate(drill){
+ var errs = [], warns = [];
+ var strips = (drill && drill.strips) || [];
+ if(!strips.length) errs.push('The drill has no strips.');
+ if(strips.length > ST.MAX) errs.push('A drill carries at most ' + ST.MAX + ' strips.');
+ var seen = {};
+ strips.forEach(function(s, i){
+  var tag = (s.cs || ('Strip ' + (i + 1)));
+  var role = ST.roleOf(s);
+  if(!s.cs || !/^[A-Z]{1,3}\d{1,4}[A-Z]{0,2}$|^N\d{1,5}[A-Z]{0,2}$/i.test(String(s.cs).replace(/\s+/g, ''))) errs.push(tag + ': the callsign should read like DAL589 or N172ER.');
+  else if(seen[normCs(s.cs)]) errs.push(tag + ': the callsign is on two strips.');
+  seen[normCs(s.cs)] = 1;
+  ST.checkStrip(s, tag).forEach(function(e){ errs.push(e); });
+  if(parseAlt(s.alt) == null) errs.push(tag + ' has no altitude. Every strip needs the altitude it starts at.');
+  else if(/^\d+$/.test(String(s.alt).trim()) && +String(s.alt).trim() < 1000) warns.push(tag + ': altitude ' + s.alt + ' is read as ' + fmtAlt(parseAlt(s.alt)) + ' ft.');
+  if(parseNum(s.ias) == null) warns.push(tag + ' has no speed; ' + (({jet:250, turboprop:180, piston:110})[s.engine || 'jet']) + ' kt is assumed for its engine.');
+  var tr = buildTrack(s);
+  if(!tr.ok) errs.push(tag + ' cannot be flown: ' + tr.note + '.');
+  else if(tr.skipped) warns.push(tag + ': ' + tr.skipped + ' fix' + (tr.skipped === 1 ? '' : 'es') + ' on ' + tr.id + ' carry no coordinate and are left out of the line.');
+  if(role === 'arrival' && s.dtgFix && tr.ok && fixCum(tr, s.dtgFix) == null) warns.push(tag + ': ' + s.dtgFix + ' is not on the track chosen for it, so it starts at the beginning of the track.');
+ });
+ return {errs:errs, warns:warns};
+}
+function load(drill){
+ var v = validate(drill);
+ if(v.errs.length){
+  log('crit', chip('crit', 'cannot fly') + 'This drill cannot be flown yet:<br>' + v.errs.map(esc).join('<br>'));
+  return {ok:false, errs:v.errs, warns:v.warns};
+ }
+ stopClock();
+ sim.t = 0; sim.rate = 0; sim.hot = false; sim.ended = false; sim.drill = drill; sim.sel = null;
+ sim.feed = []; sim.timing = []; sim.tx = 0; sim.pausedTx = 0; sim.tally = {good:0, flag:0, crit:0}; sim.los = {}; sim.lastTx = null;
+ sim.ac = (drill.strips || []).map(function(s, i){ return mkAc(s, i); });
+ sim.scale = null;
+ var title = drill.name || 'Untitled drill';
+ var fr = drill.frame && drill.frame.text ? drill.frame.text : (typeof F.frame === 'function' && F.frame() ? F.frame().text : '');
+ sim.title = title + (fr ? ' - ' + fr : '');
+ v.warns.forEach(function(w){ log('info', chip('info', 'note') + esc(w)); });
+ var fl = typeof F.flow === 'function' ? F.flow() : null;
+ if(!fl) log('info', chip('info', 'frame') + 'No configuration is set, so no flow is stated and no route is trimmed to one.');
+ sim.ac.forEach(function(a){ if(a.spawnAt <= 0) putOnFreq(a); });
+ sim.ac.forEach(function(a){ if(!a.track.ok && a.role !== 'overflight') a.nav = 'hdg'; });
+ var rate = drill.rate;
+ setRate(rate === 'hot' ? 'hot' : (rate === 4 ? 4 : (rate === 1 ? 1 : 0)));
+ log('coach', '<span class="coach">Drill loaded. ' + sim.ac.length + ' strip' + (sim.ac.length === 1 ? '' : 's') + '. ' + (sim.rate === 0 ? 'The clock is paused - set the rate and key up.' : 'The clock is running.') + '</span>');
+ render();
+ return {ok:true, warns:v.warns};
+}
+
+/* ---------- 8. clock and controls ---------- */
+var timer = null;
+function startClock(){
+ if(timer || typeof setInterval !== 'function') return;
+ timer = setInterval(function(){ if(sim.rate > 0 && !sim.ended){ for(var k = 0; k < sim.rate; k++) step(1); render(); } }, 1000);
+ if(timer && timer.unref) timer.unref();       /* a harness run under Node must be free to exit */
+}
+function stopClock(){ if(timer){ clearInterval(timer); timer = null; } }
+function setRate(r){
+ if(r === 'hot'){ sim.hot = true; r = 1; }
+ else if(sim.hot && r === 0){ log('coach', '<span class="coach">Run hot is on - there is no pausing.</span>'); return; }
+ else if(r !== 0) sim.hot = sim.hot && false;
+ sim.rate = r;
+ if(r > 0) startClock(); else stopClock();
+ render();
+}
+function endDrill(){
+ if(sim.ended || !sim.drill) return null;
+ sim.ended = true; setRate(0);
+ var left = sim.ac.filter(function(a){ return a.alive && a.onFreq && !a.handed; });
+ var handed = sim.ac.filter(function(a){ return a.handed; });
+ var lags = sim.timing.map(function(x){ return x.lag; }).sort(function(a, b){ return a - b; });
+ var med = lags.length ? lags[Math.floor(lags.length / 2)] : null;
+ var sum = {name:sim.drill.name || 'Untitled drill', t:clock(), strips:sim.ac.length, handed:handed.length, left:left.map(function(a){ return a.cs; }),
+  good:sim.tally.good, flag:sim.tally.flag, crit:sim.tally.crit, tx:sim.tx, pausedTx:sim.pausedTx, median:med, target:sim.target};
+ var h = '<div class="' + PFX + '-debrief ' + PFX + '-panel"><h3>Debrief — ' + esc(sum.name) + '</h3><ul>'
+  + '<li>' + sum.t + ' on the clock, ' + sum.strips + ' strip' + (sum.strips === 1 ? '' : 's') + ', ' + sum.tx + ' transmission' + (sum.tx === 1 ? '' : 's') + (sum.pausedTx ? (' (' + sum.pausedTx + ' composed while paused)') : '') + '.</li>'
+  + '<li>' + sum.handed + ' handed off' + (left.length ? '; still on your frequency: ' + esc(sum.left.join(', ')) : '; none left on your frequency') + '.</li>'
+  + '<li>' + chip('good') + sum.good + ' &nbsp;' + chip('flag') + sum.flag + ' &nbsp;' + chip('crit') + sum.crit + '</li>'
+  + '<li>Acknowledgement: ' + (med == null ? 'no first words recorded' : ('median ' + med.toFixed(1) + ' s against a ' + sum.target + ' s target')) + '.</li>'
+  + '<li>No standing item is exercised: nothing here is scored against one, and nothing it flagged is a judgement on how the facility does it.</li>'
+  + '</ul>'
+  + (typeof F.bank === 'function' ? '<button class="' + PFX + '-send" onclick="' + PFX + 'Bank()">Bank it in the log</button>' : '')
+  + '</div>';
+ var box = el('debriefbox'); if(box) box.innerHTML = h;
+ sim.summary = sum;
+ render();
+ return sum;
+}
+function bank(){
+ if(!sim.summary || typeof F.bank !== 'function') return;
+ var s = sim.summary;
+ F.bank({title:'Drill - ' + s.name, text:s.strips + ' strips, ' + s.t + ' on the clock, ' + s.tx + ' transmissions, ' + s.handed + ' handed off; '
+  + s.good + ' met, ' + s.flag + ' flagged, ' + s.crit + ' critical; median acknowledgement ' + (s.median == null ? 'not recorded' : s.median.toFixed(1) + ' s') + '.', summary:s});
+ var box = el('debriefbox'); if(box) box.innerHTML += '<div class="' + PFX + '-panel">' + chip('good', 'banked') + 'The drill is in the log.</div>';
+}
+
+/* ---------- 9. drawing ---------- */
+var VW = 900, VH = 560;
+/* The range: a number the viewer picked, else the contract's radius, else the lateral outline
+   plus a margin so the facility fills the glass, else the farthest point of the tracks flown
+   (capped, because a STAR starts a hundred miles out). Aircraft beyond it are off the glass
+   until they come in, as on a real scope. */
+function fitScale(){
+ var R = sim.range || F.radiusNm || 0, far = 0;
+ if(!R){
+  outlineRings().forEach(function(r){ r.forEach(function(p){ far = Math.max(far, Math.sqrt(p.x * p.x + p.y * p.y)); }); });
+  if(far) R = clamp(far * 1.2, 20, 140);
+ }
+ if(!R){
+  sim.ac.forEach(function(a){
+   far = Math.max(far, Math.sqrt(a.x * a.x + a.y * a.y));
+   a.track.pts.forEach(function(p){ var d = Math.sqrt(p.x * p.x + p.y * p.y); if(d < 110) far = Math.max(far, d); });
+  });
+  R = clamp(far * 1.08 + 3, 20, 140);
+ }
+ sim.scale = {R:R, k:Math.min(VW, VH) / 2 / R};
+}
+function sx(x){ return (VW / 2 + x * sim.scale.k).toFixed(1); }
+function sy(y){ return (VH / 2 - y * sim.scale.k).toFixed(1); }
+function ringStep(R){ return R > 90 ? 50 : R > 40 ? 25 : 10; }
+function tracksFor(mode){
+ var out = {stars:[], sids:[]};
+ if(mode === 'off') return out;
+ if(mode === 'tracked'){
+  sim.ac.forEach(function(a){
+   if(!a.track.ok || a.track.kind === 'overflight') return;
+   var key = a.track.kind + a.track.id + (a.track.entry || '') + (a.track.rw || '');
+   var arr = a.track.kind === 'SID' ? out.sids : out.stars;
+   for(var i = 0; i < arr.length; i++){ if(arr[i].key === key) return; }
+   arr.push({key:key, label:a.track.id, pts:a.track.pts});
+  });
+  return out;
+ }
+ if(NS.routeDraw && NS.routeDraw.plan){
+  var pl = null;
+  try{ pl = NS.routeDraw.plan(mode); }catch(e){ pl = null; }
+  if(pl){
+   (pl.stars || []).forEach(function(t){ (t.runs || []).forEach(function(run){ out.stars.push({label:t.id, pts:run.map(function(c){ var p = xy([c[0], c[1]]); p.fix = c[2]; return p; })}); }); });
+   (pl.sids || []).forEach(function(t){ (t.runs || []).forEach(function(run){ out.sids.push({label:t.id, pts:run.map(function(c){ var p = xy([c[0], c[1]]); p.fix = c[2]; return p; })}); }); });
+   return out;
+  }
+ }
+ if(HAVE_PROCS){
+  var want = {stars:(mode === 'stars' || mode === 'both'), sids:(mode === 'sids' || mode === 'both')};
+  [['STARS', 'stars', NS.STARS], ['SIDS', 'sids', NS.SIDS]].forEach(function(k){
+   if(!want[k[1]] || !k[2]) return;
+   Object.keys(k[2]).forEach(function(apt){
+    Object.keys(k[2][apt]).forEach(function(id){
+     var legs = NS.trackTo(apt, id, null, null) || [], pts = [];
+     legs.forEach(function(g){ if(g.f && NS.PFIX[g.f]){ var p = xy(NS.PFIX[g.f]); p.fix = g.f; pts.push(p); } });
+     if(pts.length > 1) out[k[1]].push({label:id, pts:pts});
+    });
+   });
+  });
+ }
+ return out;
+}
+function poly(pts){ return pts.map(function(p){ return sx(p.x) + ',' + sy(p.y); }).join(' '); }
+function scopeSvg(){
+ if(!sim.scale) fitScale();
+ var R = sim.scale.R, o = '';
+ o += '<svg class="' + PFX + '-scope" viewBox="0 0 ' + VW + ' ' + VH + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Live scope">';
+ o += '<rect width="' + VW + '" height="' + VH + '" fill="var(--bg)"/>';
+ var rs = ringStep(R);
+ for(var r = rs; r <= R * 1.4; r += rs){
+  o += '<circle cx="' + (VW / 2) + '" cy="' + (VH / 2) + '" r="' + (r * sim.scale.k).toFixed(1) + '" fill="none" stroke="var(--line)" stroke-width="1"/>'
+    + '<text x="' + (VW / 2 + 3) + '" y="' + (VH / 2 - r * sim.scale.k - 2).toFixed(1) + '" fill="var(--dim2)" font-size="9" font-family="var(--mono)">' + r + '</text>';
+ }
+ outlineRings().forEach(function(ring){ o += '<polygon points="' + poly(ring) + '" fill="rgba(79,224,160,0.03)" stroke="var(--dim)" stroke-width="1.2" stroke-dasharray="5 4"/>'; });
+ var tk = tracksFor(sim.layers);
+ tk.stars.forEach(function(t){ o += '<polyline points="' + poly(t.pts) + '" fill="none" stroke="var(--green)" stroke-width="1.3" opacity="0.7"/>'; });
+ tk.sids.forEach(function(t){ o += '<polyline points="' + poly(t.pts) + '" fill="none" stroke="var(--amber)" stroke-width="1.3" stroke-dasharray="5 3" opacity="0.8"/>'; });
+ if(sim.layers === 'tracked'){
+  var done = {};
+  sim.ac.forEach(function(a){
+   if(!a.track.ok) return;
+   a.track.pts.forEach(function(p){
+    var k = p.fix + '@' + Math.round(p.x) + ',' + Math.round(p.y);
+    if(done[k] || p.field) return; done[k] = 1;
+    o += '<circle cx="' + sx(p.x) + '" cy="' + sy(p.y) + '" r="2" fill="var(--dim)"/>'
+      + '<text x="' + (+sx(p.x) + 4) + '" y="' + (+sy(p.y) + 3) + '" fill="var(--dim)" font-size="8.5" font-family="var(--mono)">' + esc(p.fix) + '</text>';
+   });
+  });
+ }
+ ST.airportsHere().forEach(function(ap){
+  var ll = airportLL(ap); if(!ll) return;
+  var p = xy(ll);
+  if(Math.abs(p.x) > R * 1.4 || Math.abs(p.y) > R * 1.4) return;
+  o += '<path d="M' + sx(p.x) + ' ' + (+sy(p.y) - 5) + ' l4 8 h-8 z" fill="none" stroke="var(--ink)" stroke-width="1"/>'
+    + '<text x="' + (+sx(p.x) + 7) + '" y="' + (+sy(p.y) + 3) + '" fill="var(--ink)" font-size="9" font-family="var(--mono)">' + esc(ap.replace(/^K/, '')) + '</text>';
+ });
+ Object.keys(sim.los).forEach(function(k){
+  var ab = k.split('|'), A = null, B = null;
+  sim.ac.forEach(function(a){ if(a.cs === ab[0]) A = a; if(a.cs === ab[1]) B = a; });
+  if(A && B) o += '<line x1="' + sx(A.x) + '" y1="' + sy(A.y) + '" x2="' + sx(B.x) + '" y2="' + sy(B.y) + '" stroke="var(--red)" stroke-width="1.5"/>';
+ });
+ sim.ac.forEach(function(a){
+  if(!a.alive || !a.onFreq) return;
+  var X = +sx(a.x), Y = +sy(a.y), dim = !!a.handed, sel = (a.cs === sim.sel);
+  var col = dim ? 'var(--dim2)' : (a.role === 'departure' ? 'var(--amber)' : 'var(--green)');
+  a.trail.forEach(function(t, i){ o += '<circle cx="' + sx(t[0]) + '" cy="' + sy(t[1]) + '" r="' + (0.8 + i * 0.12).toFixed(2) + '" fill="' + col + '" opacity="' + (0.15 + i * 0.1).toFixed(2) + '"/>'; });
+  var hx = X + Math.sin(a.hdg * Math.PI / 180) * 11, hy = Y - Math.cos(a.hdg * Math.PI / 180) * 11;
+  o += '<g class="' + PFX + '-tgt" onclick="' + PFX + 'Pick(\'' + esc(a.cs) + '\')" style="cursor:pointer">'
+    + (sel ? '<circle cx="' + X + '" cy="' + Y + '" r="9" fill="none" stroke="var(--green)" stroke-width="1.5"/>' : '')
+    + '<rect x="' + (X - 3) + '" y="' + (Y - 3) + '" width="6" height="6" fill="' + col + '"/>'
+    + '<line x1="' + X + '" y1="' + Y + '" x2="' + hx.toFixed(1) + '" y2="' + hy.toFixed(1) + '" stroke="' + col + '" stroke-width="1.2"/>'
+    + '<text x="' + (X + 9) + '" y="' + (Y - 6) + '" fill="' + (dim ? 'var(--dim2)' : 'var(--ink)') + '" font-size="10" font-family="var(--mono)" font-weight="600">' + esc(a.cs) + '</text>'
+    + '<text x="' + (X + 9) + '" y="' + (Y + 5) + '" fill="' + col + '" font-size="9.5" font-family="var(--mono)">' + hundreds(a.alt) + ' ' + Math.round(a.gs / 10) * 10 + (a.wake.cls === 'heavy' ? 'H' : (a.wake.cls === 'super' ? 'J' : '')) + ' ' + esc(a.type) + '</text>'
+    + '</g>';
+ });
+ o += '<text x="8" y="' + (VH - 8) + '" fill="var(--dim2)" font-size="9" font-family="var(--mono)">north up · rings every ' + rs + ' NM · schematic, not survey</text>';
+ o += '</svg>';
+ return o;
+}
+function nextFixOf(a){
+ if(!a.track.ok || a.nav !== 'track') return null;
+ for(var i = 0; i < a.track.pts.length; i++){ if(a.track.pts[i].cum > a.dist + 1e-6) return a.track.pts[i]; }
+ return null;
+}
+function stripsHtml(){
+ if(!sim.ac.length) return '';
+ return sim.ac.map(function(a){
+  if(!a.onFreq) return '<div class="' + PFX + '-strip gone"><b>' + esc(a.cs) + '</b> ' + esc(a.type) + '<br>checks in at T+' + Math.round(a.spawnAt) + ' s</div>';
+  var nf = nextFixOf(a), at = altTarget(a), cls = PFX + '-strip' + (a.cs === sim.sel ? ' sel' : '') + ((a.handed || !a.alive) ? ' gone' : '');
+  var st = '';
+  if(a.handed) st = '<span class="warn">with ' + esc(a.handed.name) + ' ' + esc(a.handed.freq) + '</span>';
+  else if(a.flashed) st = '<span class="warn">flashed</span>';
+  else if(a.nav === 'hdg') st = '<span class="warn">heading ' + pad3(Math.round(a.hdg)) + '</span>';
+  else if(a.nav === 'direct') st = '<span class="warn">direct ' + esc(a.directTo && a.directTo.fix) + '</span>';
+  return '<div class="' + cls + '" onclick="' + PFX + 'Pick(\'' + esc(a.cs) + '\')">'
+   + '<b>' + esc(a.cs) + '</b> ' + esc(a.type) + (a.wake.cls === 'heavy' || a.wake.cls === 'super' ? ' ' + esc(a.wake.label) : '') + ' · ' + esc(a.role)
+   + '<br>' + fmtAlt(a.alt) + (at != null && Math.abs(at - a.alt) > 50 ? ' → ' + fmtAlt(at) : (a.altAsg != null && Math.abs(a.altAsg - a.alt) > 50 ? ' → ' + fmtAlt(a.altAsg) : '')) + ' ft · ' + Math.round(a.ias) + ' kt'
+   + (a.rwy ? ' · rwy ' + esc(a.rwy) : '')
+   + (nf ? '<br>next ' + esc(nf.fix) + ' ' + (nf.cum - a.dist).toFixed(1) + ' NM' + (conText(nf) ? ' · ' + esc(conText(nf)) : '') + (nf.spd != null ? ' · ≤' + nf.spd + ' kt' : '') : '')
+   + (st ? '<br>' + st : '') + '</div>';
+ }).join('');
+}
+function renderFeed(){
+ var e = el('feed'); if(!e) return;
+ e.innerHTML = sim.feed.length
+  ? sim.feed.map(function(f){ return '<p><span class="t">' + f.t + '</span>' + f.html + '</p>'; }).join('')
+  : '<p class="coach">Frequency quiet. Load a drill, set the rate, and key up.</p>';
+}
+function median(a){ var s = a.slice().sort(function(x, y){ return x - y; }); return s.length ? s[Math.floor(s.length / 2)] : null; }
+function statsHtml(){
+ var since = sim.lastTx ? Math.round((Date.now() - sim.lastTx) / 1000) + ' s' : '—';
+ var med = median(sim.timing.map(function(x){ return x.lag; }));
+ var old = null;
+ sim.ac.forEach(function(a){ if(a.onFreq && a.alive && !a.handed && a.firstWord == null){ var w = (Date.now() - a.checkReal) / 1000; if(old == null || w > old.w) old = {cs:a.cs, w:w}; } });
+ return 'Key-up target <input class="' + PFX + '-tin" id="' + PFX + '-target" value="' + sim.target + '" onchange="' + PFX + 'Target()" size="3">s'
+  + ' · Since last transmission ' + since
+  + ' · Median acknowledgement ' + (med == null ? '—' : med.toFixed(1) + ' s')
+  + ' · Oldest unanswered ' + (old ? esc(old.cs) + ' ' + Math.round(old.w) + ' s' : 'none');
+}
+function quickHtml(){
+ var a = sim.ac.filter(function(x){ return x.cs === sim.sel; })[0] || null;
+ var q = [], fl = typeof F.flow === 'function' ? F.flow() : null;
+ function add(label, cmd){ q.push('<button onclick="' + PFX + 'Quick(\'' + esc(cmd).replace(/'/g, '&#39;') + '\')">' + esc(label) + '</button>'); }
+ if(a && a.role === 'arrival'){
+  var rw = (fl && fl.land && fl.land.length) ? fl.land : ST.runwaysAt(a.strip.dest).slice(0, 2);
+  rw.forEach(function(r){ add('expect ' + r, 'expect runway ' + r); });
+  if(a.track.ok){ add('descend via', 'descend via the arrival'); add('resume published', 'resume published speed'); }
+  var na = nextAlt(a); if(na != null) add('descend + maintain ' + fmtAlt(na), 'descend and maintain ' + na);
+ }
+ if(a && a.role === 'departure'){ add('climb + maintain', 'climb and maintain ' + (Math.ceil((a.alt + 3000) / 1000) * 1000)); }
+ if(a){ add('speed 210', 'reduce speed to 210'); add('present heading', 'fly present heading'); add('flash', 'flash');
+  if(typeof F.towerFor === 'function'){ var tw = F.towerFor(a.role === 'departure' ? a.strip.dep : a.strip.dest); if(tw) add('contact tower', 'contact tower ' + tw.freq); }
+  /* a deck that cannot say which tower owns which runway offers every open tower, by name and frequency, and picks none */
+  else receivers().filter(function(p){ return p.kind === 'twr' && p.open && p.freq; }).slice(0, 2).forEach(function(p){ add('contact ' + p.name, 'contact ' + p.name + ' ' + p.freq); });
+ }
+ return q.join('');
+}
+function barHtml(){
+ return '<span id="' + PFX + '-ratebar"><button data-r="0" onclick="' + PFX + 'Rate(0)">pause</button> <button data-r="1" onclick="' + PFX + 'Rate(1)">1×</button> <button data-r="4" onclick="' + PFX + 'Rate(4)">4×</button> <button data-r="hot" onclick="' + PFX + 'Rate(\'hot\')">run hot</button></span>'
+  + '<button onclick="' + PFX + 'End()">End drill + debrief</button>'
+  + '<span class="' + PFX + '-clock" id="' + PFX + '-clock">T+' + clock() + ' · ' + (sim.rate === 0 ? 'paused' : sim.rate + '×') + '</span>';
+}
+function liveHtml(){
+ return '<div class="' + PFX + '-bar" id="' + PFX + '-barhost">' + barHtml() + '</div>'
+  + '<div class="' + PFX + '-mono" id="' + PFX + '-title" style="font-size:11.5px;color:var(--dim);margin-bottom:8px;">Load a drill to begin - build one under Set up a drill.</div>'
+  + '<div class="' + PFX + '-bar" id="' + PFX + '-layerbar" style="margin:6px 0 8px;"><span class="' + PFX + '-mono" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);">Routes drawn</span>'
+  + LAYER_MODES.map(function(m){ return '<button data-l="' + m.id + '"' + (m.id === sim.layers ? ' class="on"' : '') + ' onclick="' + PFX + 'Layers(\'' + m.id + '\')">' + m.label + '</button>'; }).join('')
+  + '<span class="' + PFX + '-mono" style="font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);margin-left:14px;">Range</span>'
+  + ['fit', 40, 80, 160].map(function(r){ return '<button data-rg="' + r + '"' + (String(sim.range || 'fit') === String(r) ? ' class="on"' : '') + ' onclick="' + PFX + 'Range(\'' + r + '\')">' + (r === 'fit' ? 'fit' : r + ' NM') + '</button>'; }).join('') + '</div>'
+  + '<div class="' + PFX + '-scopewrap"><div id="' + PFX + '-scopebox"></div></div>'
+  + '<div class="' + PFX + '-strips" id="' + PFX + '-strips"></div>'
+  + '<div class="' + PFX + '-cmdrow"><input class="' + PFX + '-cmd" id="' + PFX + '-cmd" placeholder="Transmit — e.g. DAL589 descend and maintain 8000 · reduce speed to 210 · fly heading 270 · flash · contact tower 118.3" onkeydown="if(event.key===\'Enter\')' + PFX + 'Send()">'
+  + '<button class="' + PFX + '-send" onclick="' + PFX + 'Send()">Transmit</button></div>'
+  + '<div class="' + PFX + '-quick" id="' + PFX + '-quick"></div>'
+  + '<div class="' + PFX + '-stat" id="' + PFX + '-stat"></div>'
+  + '<div class="' + PFX + '-feed" id="' + PFX + '-feed"><p class="coach">Frequency quiet. Load a drill, set the rate, and key up.</p></div>'
+  + '<div id="' + PFX + '-debriefbox"></div>'
+  + '<div class="' + PFX + '-note">Engine notes: the aircraft fly the facility’s own published tracks - the fix coordinates, crossing restrictions and speed limits are ' + esc(cycleTag()) + ' and nothing here adds to them. An arrival descends via the published altitudes and flies the published speeds until it is told something else; below 10,000 the crew holds 250; a bare “maintain” away from the current altitude draws a crew query. Straight between fixes, no wind, no approach intercept. <b>Nothing is scored against a standing item</b> and nothing flagged is a judgement on how the facility works - the engine does not know who owns a handoff, where a sector boundary is or what a sector’s own minima are. Climb, descent and speed-change rates are engine parameters, not aviation data.</div>';
+}
+function render(){
+ var b = el('scopebox'); if(!b) return;
+ b.innerHTML = scopeSvg();
+ var s = el('strips'); if(s) s.innerHTML = stripsHtml();
+ var c = el('clock'); if(c) c.textContent = 'T+' + clock() + ' · ' + (sim.ended ? 'ended' : (sim.rate === 0 ? 'paused' : (sim.hot ? 'run hot' : sim.rate + '×')));
+ var t = el('title'); if(t && sim.title) t.textContent = sim.title;
+ var q = el('quick'); if(q) q.innerHTML = quickHtml();
+ var st = el('stat'); if(st && document.activeElement !== el('target')) st.innerHTML = statsHtml();
+ var rb = el('ratebar');
+ if(rb && rb.querySelectorAll){
+  [].slice.call(rb.querySelectorAll('button')).forEach(function(x){
+   var r = x.getAttribute('data-r'), on = (r === 'hot') ? sim.hot : (!sim.hot && String(sim.rate) === r);
+   if(x.classList) x.classList.toggle('on', on);
+  });
+ }
+ var lb = el('layerbar');
+ if(lb && lb.querySelectorAll){
+  [].slice.call(lb.querySelectorAll('button')).forEach(function(x){
+   if(!x.classList) return;
+   var l = x.getAttribute('data-l'), rg = x.getAttribute('data-rg');
+   x.classList.toggle('on', l ? l === sim.layers : String(sim.range || 'fit') === rg);
+  });
+ }
+}
+
+/* ---------- 10. the look ---------- */
+var CSS = ''
+ + '.' + PFX + '-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
+ + '.' + PFX + '-mono{font-family:var(--mono);}'
+ + '.' + PFX + '-scopewrap{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px;}'
+ + '.' + PFX + '-scope{width:100%;height:auto;display:block;}'
+ + '.' + PFX + '-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0;}'
+ + '.' + PFX + '-bar button,.' + PFX + '-quick button{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
+ + '.' + PFX + '-bar button:hover,.' + PFX + '-quick button:hover{color:var(--ink);border-color:var(--dim2);}'
+ + '.' + PFX + '-bar button.on{color:var(--green);border-color:var(--green);}'
+ + '.' + PFX + '-clock{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:auto;}'
+ + '.' + PFX + '-strips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}'
+ + '.' + PFX + '-strip{flex:1 1 190px;min-width:170px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:11.5px;line-height:1.5;cursor:pointer;}'
+ + '.' + PFX + '-strip.sel{border-color:var(--green);}'
+ + '.' + PFX + '-strip.gone{opacity:0.35;}'
+ + '.' + PFX + '-strip b{color:var(--ink);font-size:12.5px;}'
+ + '.' + PFX + '-strip .warn{color:var(--amber);}'
+ + '.' + PFX + '-cmdrow{display:flex;gap:8px;flex-wrap:wrap;}'
+ + '.' + PFX + '-cmd{flex:1 1 260px;background:var(--panel2);border:1px solid var(--line);border-radius:4px;color:var(--ink);font-family:var(--mono);font-size:12.5px;padding:9px 10px;}'
+ + '.' + PFX + '-cmd:focus{outline:2px solid var(--green);outline-offset:1px;}'
+ + '.' + PFX + '-send{font-family:var(--mono);font-size:12px;background:var(--green);color:#062;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;font-weight:600;}'
+ + '.' + PFX + '-quick{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}'
+ + '.' + PFX + '-stat{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:10px;}'
+ + '.' + PFX + '-tin{background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:var(--mono);font-size:11px;padding:2px 4px;width:34px;}'
+ + '.' + PFX + '-feed{max-height:300px;overflow-y:auto;background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:10px 12px;font-size:12.5px;margin-top:12px;}'
+ + '.' + PFX + '-feed p{margin:0 0 7px;line-height:1.45;}'
+ + '.' + PFX + '-feed .t{font-family:var(--mono);font-size:10.5px;color:var(--dim2);margin-right:6px;}'
+ + '.' + PFX + '-feed .crew{font-style:italic;color:var(--ink);}'
+ + '.' + PFX + '-feed .coach{color:var(--dim);}'
+ + '.' + PFX + '-chip{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:0.06em;border-radius:2px;padding:1px 6px;margin-right:6px;text-transform:uppercase;}'
+ + '.' + PFX + '-chip.good{background:rgba(79,224,160,0.15);color:var(--green);}'
+ + '.' + PFX + '-chip.flag{background:rgba(232,162,61,0.15);color:var(--amber);}'
+ + '.' + PFX + '-chip.crit{background:rgba(232,96,77,0.18);color:var(--red);}'
+ + '.' + PFX + '-chip.info{background:rgba(111,128,121,0.18);color:var(--dim);}'
+ + '.' + PFX + '-note{font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:12px;}'
+ + '.' + PFX + '-debrief h3{font-family:var(--display);font-size:17px;margin:0 0 10px;}'
+ + '.' + PFX + '-debrief li{margin-bottom:6px;font-size:13.5px;}'
+ + '@media (max-width:600px){.' + PFX + '-strip{flex-basis:100%;}.' + PFX + '-feed{max-height:240px;}}';
+function mountCss(){
+ if(typeof document === 'undefined' || !document.getElementById || document.getElementById(PFX + '-css')) return;
+ var st = document.createElement('style'); st.id = PFX + '-css'; st.textContent = CSS; document.head.appendChild(st);
+}
+
+/* ---------- 11. handlers and mount ---------- */
+window[PFX + 'Load'] = function(d){ return load(d); };
+window[PFX + 'Rate'] = function(r){ setRate(r); };
+window[PFX + 'End'] = function(){ endDrill(); };
+window[PFX + 'Bank'] = function(){ bank(); };
+window[PFX + 'Send'] = function(){ var e = el('cmd'); if(!e) return; var v = e.value; e.value = ''; transmit(v); };
+window[PFX + 'Quick'] = function(c){ var e = el('cmd'); if(!e) return; e.value = (sim.sel ? sim.sel + ' ' : '') + c; var v = e.value; e.value = ''; transmit(v); };
+window[PFX + 'Layers'] = function(m){ sim.layers = m; render(); };
+window[PFX + 'Range'] = function(r){ sim.range = (r === 'fit') ? null : parseInt(r, 10); sim.scale = null; render(); };
+window[PFX + 'Pick'] = function(cs){ sim.sel = (sim.sel === cs) ? null : cs; render(); };
+window[PFX + 'Target'] = function(){ var e = el('target'); var v = e ? parseInt(e.value, 10) : NaN; if(v >= 5 && v <= 120){ sim.target = v; render(); } };
+
+function mount(){
+ mountCss();
+ var host = (typeof F.host === 'function') ? F.host() : null;
+ if(!host) return;
+ host.innerHTML = liveHtml();
+ renderFeed(); render();
+ startClockIdle();
+}
+/* The clock is only started by a rate button; this keeps the stats line fresh
+   while paused, because "since last transmission" is wall time. */
+function startClockIdle(){
+ if(typeof setInterval !== 'function') return;
+ var h = setInterval(function(){ var st = el('stat'); if(st && document.activeElement !== el('target')) st.innerHTML = statsHtml(); }, 1000);
+ if(h && h.unref) h.unref();
+}
+
+window.fly = {
+ FACILITY:F, sim:sim, load:load, validate:validate, step:step, transmit:transmit, mk:mkAc, track:buildTrack,
+ viaTarget:viaTarget, parseAlt:parseAlt, despell:despell, pointAt:pointAt, xy:xy, render:render, setRate:setRate,
+ end:endDrill, tracksFor:tracksFor, LAYER_MODES:LAYER_MODES, transOptions:transOptions, procFor:procFor, fixCum:fixCum,
+ conText:conText, esc:esc, mountCss:mountCss, haveProcs:HAVE_PROCS, find:findAc,
+ CLIMB:CLIMB, DESC:DESC, ACCEL:ACCEL, GRAD:GRAD
+};
+
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+
+})();
+</script>

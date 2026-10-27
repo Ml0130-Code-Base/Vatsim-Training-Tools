@@ -1,0 +1,501 @@
+<script>
+/* ================================================================
+   MASTER DRILL BLOCK - the Drill Builder, facility-agnostic.
+
+   The Set up a drill half of M98's builder, generalised: a brief, a
+   seeded generator that builds strips from the facility's own published
+   procedures and the configuration in force, a per-strip "flown on"
+   panel (which transition, and a departure's cleared altitude), Save and
+   fly it / Save only, a list of saved drills, and JSON export and
+   import. The strip row itself is the strip block's and stays there;
+   this block builds AROUND it and never draws a strip.
+
+   It needs the fly block under it (window.fly) and the strip block
+   under that (window.strip). With either missing it does nothing.
+
+   WHAT THE GENERATOR DOES NOT CLAIM. Every procedure, runway and
+   transition it picks is one the deck carries and the strip block
+   accepts for that field; the runway comes from the configuration in
+   force, never from a guess. The numbers that are NOT published - the
+   altitude an arrival starts at, a departure's cleared altitude, the
+   speed it starts at, the callsigns, the types, the stagger of the
+   check-ins - are DRILL PARAMETERS, picked from the fixture lists
+   below. Each one is a box on the strip the trainee can change, and the
+   panel says so. Nothing here is aviation data.
+
+   ---------------------------------------------------------------
+   THE CONTRACT
+
+   window.DRILL_FACILITY = {
+     id:       'IND',
+     prefix:   'inddrill',            // id/class prefix and handler stem
+     sectionClass: 'ind-section',     // OPTIONAL. The deck's own section class,
+                                      //   so the headings match the page.
+     storeKey: 'ind-drill-deck-fly-v1',  // localStorage. Never a status word:
+                                      //   the key outlives the status.
+     anchor:   function(){},          // the strips section; the builder opens
+                                      //   above it and the save bar sits below
+     rows:     function(next){},      // the strip block's rows: with an array,
+                                      //   replace them and re-render; always
+                                      //   return the current array
+     page:     function(id){},        // OPTIONAL. 'fly' / 'setup'
+     mountRails: function(el){}       // OPTIONAL. The notes rail, per section
+   };
+
+   The configuration and the frame are read from window.FLY_FACILITY
+   (flow, frame, host), so the deck states each of them once.
+   ================================================================ */
+(function(){
+'use strict';
+
+var D = window.DRILL_FACILITY, ST = window.strip, FL = window.fly;
+if(!D || !ST || !FL || !D.prefix || typeof D.rows !== 'function'){ return; }
+
+var PFX = D.prefix;
+var FLYF = window.FLY_FACILITY || {};
+var SEC = D.sectionClass || (PFX + '-sec');
+var esc = ST.esc;
+
+/* ---------- 0. fixtures - drill parameters, not aviation data ---------- */
+var CARRIERS = ['DAL', 'UAL', 'AAL', 'SWA', 'JBU', 'ASA', 'FFT', 'RPA', 'SKW', 'EDV', 'FDX', 'UPS'];
+var JETS = ['B738', 'A320', 'B739', 'E75L', 'CRJ9', 'A21N', 'B38M', 'E170', 'A319', 'B752'];
+var PROPS = ['DH8D', 'AT72'];
+var PISTONS = ['C172', 'SR22', 'PA28'];
+var CLEARED = [5000, 6000, 8000, 10000];
+
+/* a small seeded generator: the same seed builds the same drill */
+function rng(seed){
+ var s = (seed >>> 0) || 1;
+ return function(){ s = (s * 1664525 + 1013904223) % 4294967296; return s / 4294967296; };
+}
+function pick(R, a){ return a[Math.floor(R() * a.length)]; }
+function between(R, lo, hi){ return lo + Math.floor(R() * (hi - lo + 1)); }
+function shuffled(R, a){
+ var o = a.slice(), i, j, t;
+ for(i = o.length - 1; i > 0; i--){ j = Math.floor(R() * (i + 1)); t = o[i]; o[i] = o[j]; o[j] = t; }
+ return o;
+}
+
+/* ---------- 1. state and storage ---------- */
+var KEY = D.storeKey || (PFX + '-v1');
+var store = {v:1, drills:[]}, storeOk = true;
+function load(){
+ try{
+  var raw = window.localStorage.getItem(KEY);
+  if(raw){ var o = JSON.parse(raw); if(o && o.drills && o.drills.length != null) store = o; }
+ }catch(e){ storeOk = false; }
+}
+function save(){
+ try{ window.localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){ storeOk = false; }
+}
+var ui = {name:'', brief:'', rate:0, seed:'', n:6, mix:'both', msg:'', exportText:''};
+
+/* ---------- 2. the generator ---------- */
+var hasFlyable = FL.haveProcs;
+function flow(){ return (typeof FLYF.flow === 'function') ? FLYF.flow() : null; }
+function engineOf(type){
+ if(PROPS.indexOf(type) >= 0) return 'turboprop';
+ if(PISTONS.indexOf(type) >= 0) return 'piston';
+ return 'jet';
+}
+function callsign(R, used, piston){
+ for(var k = 0; k < 40; k++){
+  var cs = piston ? ('N' + between(R, 100, 9999) + String.fromCharCode(65 + between(R, 0, 25)) + String.fromCharCode(65 + between(R, 0, 25)))
+                  : (pick(R, CARRIERS) + String(between(R, 1, 9999)));
+  if(!used[cs]){ used[cs] = 1; return cs; }
+ }
+ return 'DAL' + between(R, 1000, 9999);
+}
+/* The altitude an arrival starts at: what its first published ceiling ahead allows on the
+   engine's descent path, rounded to a thousand; with no ceiling anywhere on the track, a
+   fixture. Said so on the strip. */
+function startAlt(track, from){
+ var G = 240, pts = track.pts, best = null;     /* ft per NM, below what any aircraft here can descend at, so the start is on or under the path */
+ /* the LOWEST allowance over every ceiling ahead, not the first: a nearer, lower ceiling is the one that binds */
+ for(var i = 0; i < pts.length; i++){
+  if(pts[i].cum >= from && pts[i].hi != null){
+   var a = pts[i].hi + G * (pts[i].cum - from);
+   if(best == null || a < best) best = a;
+  }
+ }
+ var firstLo = null;
+ for(var j = 0; j < pts.length && firstLo == null; j++){ if(pts[j].cum >= from && pts[j].lo != null) firstLo = pts[j].lo; }
+ if(best == null) return firstLo != null ? Math.ceil(firstLo / 1000) * 1000 : 12000;
+ /* rounded DOWN: a start above the path could not get back onto it before the ceiling */
+ var a0 = clamp(Math.floor(best / 1000) * 1000, 3000, 24000);
+ /* ...but never under the next published floor, which an arrival descending via cannot climb back to */
+ if(firstLo != null && a0 < firstLo) a0 = Math.ceil(firstLo / 1000) * 1000;
+ return a0;
+}
+function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+/* Can an aircraft of this engine climb to every published floor ahead at the rate the engine
+   gives it? Climb rate in feet per minute against ground speed in NM per minute, with a margin. */
+function canClimb(track, alt0, from, eng, ias){
+ var cap = (FL.CLIMB[eng] || 1500) / ((ias * 1.1) / 60);
+ for(var i = 0; i < track.pts.length; i++){
+  var p = track.pts[i];
+  if(p.lo == null || p.cum <= from) continue;
+  if((p.lo - alt0) / Math.max(p.cum - from, 1) > cap * 0.8) return false;
+ }
+ return true;
+}
+
+function genArrival(R, used, fl){
+ var apts = ST.airportsHere().filter(function(a){ return ST.arrivalsFor(a).length; });
+ if(!apts.length) return null;
+ var apt = (fl && fl.airport && apts.indexOf(fl.airport) >= 0 && R() < 0.8) ? fl.airport : pick(R, apts);
+ var land = (fl && fl.airport === apt && fl.land && fl.land.length) ? fl.land : [''];
+ var ids = shuffled(R, ST.arrivalsFor(apt));
+ for(var t = 0; t < ids.length; t++){
+  var rws = shuffled(R, land);
+  for(var r = 0; r < rws.length; r++){
+   var type = pick(R, R() < 0.15 ? PROPS : JETS);
+   var s = ST.blank();
+   s.role = 'arrival'; s.rules = 'IFR'; s.dest = apt; s.gate = ids[t]; s.rwy = rws[r]; s.type = type;
+   s.engine = engineOf(type);
+   s.cs = callsign(R, used, false);
+   var q = FL.procFor(s), tr = q.p ? Object.keys(q.p.trans || {}).sort() : [];
+   if(tr.length){ s.trans = pick(R, tr); }
+   var T = FL.track(s);
+   if(!T.ok) { delete used[s.cs]; continue; }
+   /* start 35 to 80 NM from the end of the track, so something happens within minutes
+      rather than twenty minutes out on a long transition; a shorter track starts at its beginning */
+   var remain = between(R, 35, 80), d0 = Math.max(0, T.total - remain);
+   s.dtg = String(Math.round((T.total - d0) * 10) / 10);
+   s.alt = String(startAlt(T, d0));
+   s.ias = s.engine === 'turboprop' ? '180' : (+s.alt >= 10000 ? '280' : '250');
+   s.radar = ST.normRadar('established', 'IFR', 'arrival');
+   return s;
+  }
+ }
+ return null;
+}
+function genDeparture(R, used, fl){
+ var apts = ST.airportsHere().filter(function(a){ return ST.departuresFor(a).length; });
+ if(!apts.length) return null;
+ var apt = (fl && fl.airport && apts.indexOf(fl.airport) >= 0 && R() < 0.8) ? fl.airport : pick(R, apts);
+ var rwys = (fl && fl.airport === apt && fl.dep && fl.dep.length) ? fl.dep : [''];
+ var ids = shuffled(R, ST.departuresFor(apt));
+ for(var t = 0; t < ids.length; t++){
+  var type = pick(R, R() < 0.15 ? PROPS : JETS);
+  var s = ST.blank();
+  s.role = 'departure'; s.rules = 'IFR'; s.dep = apt; s.sid = ids[t]; s.depRwy = pick(R, rwys); s.type = type;
+  s.engine = engineOf(type);
+  s.cs = callsign(R, used, false);
+  var q = FL.procFor(s), tr = q.p ? Object.keys(q.p.trans || {}).sort() : [];
+  if(tr.length){ s.trans = pick(R, tr); }
+  var T = FL.track(s);
+  if(!T.ok){ delete used[s.cs]; continue; }
+  s.fromStart = String(between(R, 0, 4));
+  s.alt = String(1500 + between(R, 0, 3) * 500);
+  /* a departure must be able to make the SID's own floors at the climb rate it has: a slow
+     turboprop is swapped for a jet, and a SID no aircraft here could climb is skipped */
+  if(!canClimb(T, +s.alt, +s.fromStart, s.engine, 190)){
+   s.type = 'B738'; s.engine = 'jet';
+   if(!canClimb(T, +s.alt, +s.fromStart, 'jet', 190)){ delete used[s.cs]; continue; }
+  }
+  /* a cleared altitude that does not contradict the SID's own floor: never below the highest
+     "at or above" the published track carries */
+  var floorAlt = null;
+  T.pts.forEach(function(p){ if(p.lo != null && (floorAlt == null || p.lo > floorAlt)) floorAlt = p.lo; });
+  var ct = pick(R, CLEARED);
+  if(floorAlt != null && ct < floorAlt) ct = Math.ceil(floorAlt / 1000) * 1000;
+  s.climbTo = String(ct);
+  s.ias = s.engine === 'turboprop' ? '160' : '190';
+  s.radar = ST.normRadar('departure', 'IFR', 'departure');
+  return s;
+ }
+ return null;
+}
+function genOverflight(R, used){
+ var type = pick(R, R() < 0.5 ? PISTONS : JETS), eng = engineOf(type);
+ var s = ST.blank();
+ s.role = 'overflight'; s.type = type; s.engine = eng;
+ s.rules = eng === 'piston' ? 'VFR' : 'IFR';
+ s.cs = callsign(R, used, eng === 'piston');
+ var er = between(R, 0, 359), xr = (er + 180 + between(R, -40, 40) + 360) % 360;
+ s.entryR = String(er); s.entryD = '40'; s.exitR = String(xr); s.exitD = '40';
+ s.alt = eng === 'piston' ? String(pick(R, [4000, 6000, 8000])) : String(pick(R, [24000, 28000, 34000]));
+ s.ias = eng === 'piston' ? '110' : '420';
+ s.radar = ST.normRadar(eng === 'piston' ? 'following' : 'established', s.rules, 'overflight');
+ return s;
+}
+function generate(seed, n, mix){
+ var R = rng(seed), used = {}, fl = flow(), out = [], i, s;
+ var want = {arr:0, dep:0, over:0};
+ for(i = 0; i < n; i++){
+  var r = R();
+  if(mix === 'arrivals') want.arr++;
+  else if(mix === 'departures') want.dep++;
+  else if(r < 0.5) want.arr++; else if(r < 0.85) want.dep++; else want.over++;
+ }
+ var kinds = [];
+ for(i = 0; i < want.arr; i++) kinds.push('a');
+ for(i = 0; i < want.dep; i++) kinds.push('d');
+ for(i = 0; i < want.over; i++) kinds.push('o');
+ kinds = shuffled(R, kinds);
+ var skipped = [];
+ kinds.forEach(function(k){
+  s = (k === 'a') ? genArrival(R, used, fl) : (k === 'd' ? genDeparture(R, used, fl) : genOverflight(R, used));
+  if(s) out.push(s); else skipped.push(k === 'a' ? 'an arrival' : (k === 'd' ? 'a departure' : 'an overflight'));
+ });
+ /* stagger: the first two are already on the frequency, the rest check in over ten minutes */
+ var t = 0;
+ out.forEach(function(x, idx){
+  if(idx < 2){ x.ckdIn = true; x.spawnAt = ''; }
+  else { t += between(R, 30, 150); x.ckdIn = false; x.spawnAt = String(t); }
+ });
+ return {strips:out, skipped:skipped};
+}
+
+/* ---------- 3. the drill ---------- */
+function frameText(){
+ var f = (typeof FLYF.frame === 'function') ? FLYF.frame() : null;
+ return (f && f.text) || '';
+}
+function snapshot(){
+ var rows = D.rows();
+ return JSON.parse(JSON.stringify(rows));
+}
+function collect(){
+ return {id:'d' + Date.now().toString(36), name:(ui.name || '').trim() || ('Drill ' + (store.drills.length + 1)),
+  brief:ui.brief, rate:ui.rate, at:new Date().toISOString().slice(0, 16).replace('T', ' '),
+  seed:ui.seed || null, frame:{text:frameText()}, strips:snapshot()};
+}
+function say(html, kind){ ui.msg = '<div class="' + PFX + '-msg ' + (kind || '') + '">' + html + '</div>'; paint(); }
+function flyIt(drill){
+ var r = FL.load(drill);
+ if(!r.ok){
+  say('<b>This drill cannot be flown yet.</b><br>' + r.errs.map(esc).join('<br>'), 'bad');
+  return false;
+ }
+ ui.msg = '';
+ if(typeof D.page === 'function') D.page('fly');
+ var h = (typeof FLYF.host === 'function') ? FLYF.host() : null;
+ if(h && h.scrollIntoView){ try{ h.scrollIntoView(); }catch(e){} }
+ paint();
+ return true;
+}
+
+/* ---------- 4. markup ---------- */
+function opt(v, label, cur){ return '<option value="' + esc(v) + '"' + (String(v) === String(cur) ? ' selected' : '') + '>' + esc(label) + '</option>'; }
+function headHtml(){
+ var f = frameText();
+ var gen = hasFlyable
+  ? '<div class="' + PFX + '-row">'
+   + '<label>Seed <input class="' + PFX + '-in" id="' + PFX + '-seed" value="' + esc(ui.seed) + '" placeholder="any number" size="10" oninput="' + PFX + 'Set()"></label>'
+   + '<label>Strips <input class="' + PFX + '-in" id="' + PFX + '-n" value="' + ui.n + '" size="3" oninput="' + PFX + 'Set()"></label>'
+   + '<label>Mix <select class="' + PFX + '-sel" id="' + PFX + '-mix" onchange="' + PFX + 'Set()">' + opt('both', 'arrivals, departures, overflights', ui.mix) + opt('arrivals', 'arrivals only', ui.mix) + opt('departures', 'departures only', ui.mix) + '</select></label>'
+   + '<button class="' + PFX + '-btn' + '" onclick="' + PFX + 'Gen()">Generate strips</button>'
+   + '</div>'
+  : '<div class="' + PFX + '-note">This deck carries no published procedures to fly, so there is nothing to generate from: build overflights below by radial and distance.</div>';
+ return '<section class="' + SEC + ' ' + PFX + '-sec" id="' + PFX + '-head" data-note="drill">'
+  + '<h2>Drill builder</h2>'
+  + '<p class="' + PFX + '-dim">Name the drill, build or generate its strips, then fly it. The frame below is the one the Fly it page will state before traffic.</p>'
+  + '<div class="' + PFX + '-panel">'
+  + '<div class="' + PFX + '-frame">' + (f ? esc(f) : '<span class="' + PFX + '-gap">No frame set - choose a position and a configuration above.</span>') + '</div>'
+  + '<div class="' + PFX + '-row">'
+  + '<label>Drill name <input class="' + PFX + '-in" id="' + PFX + '-name" value="' + esc(ui.name) + '" placeholder="e.g. Runway 5 arrivals" size="30" oninput="' + PFX + 'Set()"></label>'
+  + '<label>Clock <select class="' + PFX + '-sel" id="' + PFX + '-rate" onchange="' + PFX + 'Set()">' + opt('0', 'starts paused', ui.rate) + opt('1', 'starts at 1x', ui.rate) + opt('4', 'starts at 4x', ui.rate) + opt('hot', 'run hot', ui.rate) + '</select></label>'
+  + '</div>'
+  + '<label class="' + PFX + '-blk">What this drill is for <textarea class="' + PFX + '-in" id="' + PFX + '-brief" rows="2" placeholder="Optional. One line the coach would say before traffic." oninput="' + PFX + 'Set()">' + esc(ui.brief) + '</textarea></label>'
+  + gen
+  + '<div class="' + PFX + '-note">The generator picks procedures, runways and transitions this deck carries and the configuration in force allows. <b>The start altitude, cleared altitude, speed, callsign, type and check-in time are drill parameters, not published data</b> - each is a box on the strip you can change.</div>'
+  + '</div>'
+  + '</section>';
+}
+function detailsHtml(){
+ var rows = D.rows(), out = '';
+ rows.forEach(function(s, i){
+  var role = ST.roleOf(s);
+  if(role === 'overflight') return;
+  var q = FL.procFor(s);
+  if(!q.id) return;
+  var tr = FL.transOptions(s);
+  var T = FL.track(s);
+  var line = '<div class="' + PFX + '-drow"><b>' + esc(s.cs || ('strip ' + (i + 1))) + '</b> <span class="' + PFX + '-dim">' + esc(q.id) + ' ' + (role === 'departure' ? 'departure' : 'arrival') + '</span> ';
+  if(!T.ok){ line += '<span class="' + PFX + '-gap">cannot be flown: ' + esc(T.note) + '</span></div>'; out += line; return; }
+  if(tr.length){
+   line += '<label>transition <select class="' + PFX + '-sel" onchange="' + PFX + 'Trans(' + i + ',this.value)">'
+    + opt('', 'engine picks: ' + (T.entry || 'none'), s.trans || '') + tr.map(function(t){ return opt(t, t, s.trans || ''); }).join('') + '</select></label> ';
+  }
+  if(role === 'departure'){
+   line += '<label>cleared altitude <input class="' + PFX + '-in" size="7" value="' + esc(s.climbTo || '') + '" placeholder="none" onchange="' + PFX + 'Climb(' + i + ',this.value)"></label> ';
+  }
+  line += '<span class="' + PFX + '-dim">' + Math.round(T.total) + ' NM' + (T.rw ? ' · runway transition ' + esc(T.rw) : '') + (T.endVec ? ' · ends on a vector' : '') + (T.standIn ? ' · first leg is a straight stand-in from the field' : '') + '</span></div>';
+  out += line;
+ });
+ return out || '<div class="' + PFX + '-dim">No strip here follows a published procedure.</div>';
+}
+function tailHtml(){
+ var list = store.drills.map(function(d, i){
+  return '<div class="' + PFX + '-drow"><b>' + esc(d.name) + '</b> <span class="' + PFX + '-dim">' + (d.strips ? d.strips.length : 0) + ' strips · ' + esc(d.at || '') + (d.seed ? ' · seed ' + esc(d.seed) : '') + '</span> '
+   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Fly(' + i + ')">Fly it</button> '
+   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Open(' + i + ')">Load into the strips</button> '
+   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Del(' + i + ')">Delete</button>'
+   + (d.brief ? '<div class="' + PFX + '-dim">' + esc(d.brief) + '</div>' : '') + '</div>';
+ }).join('');
+ return '<section class="' + SEC + ' ' + PFX + '-sec" id="' + PFX + '-tail" data-note="drill.saved">'
+  + '<h2>Fly or save this drill</h2>'
+  + '<div class="' + PFX + '-panel">'
+  + '<h3>Flown on</h3>'
+  + '<div id="' + PFX + '-details">' + detailsHtml() + '</div>'
+  + '<div class="' + PFX + '-row" style="margin-top:12px;">'
+  + '<button class="' + PFX + '-go" onclick="' + PFX + 'SaveFly()">Save and fly it</button>'
+  + '<button class="' + PFX + '-btn" onclick="' + PFX + 'SaveOnly()">Save only</button>'
+  + '</div>'
+  + ui.msg
+  + '</div>'
+  + '<div class="' + PFX + '-panel"><h3>Saved drills</h3>'
+  + (storeOk ? '' : '<div class="' + PFX + '-msg bad">Local storage is not available in this context, so saved drills live only until the page is closed. Export them before you leave.</div>')
+  + (list || '<div class="' + PFX + '-dim">None saved yet.</div>')
+  + '<div class="' + PFX + '-row" style="margin-top:12px;">'
+  + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Export()">Export as JSON</button>'
+  + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Import()">Import from the box below</button>'
+  + '</div>'
+  + '<textarea class="' + PFX + '-in ' + PFX + '-json" id="' + PFX + '-json" rows="6" placeholder="Exported drills appear here. To import, paste JSON here and press Import.">' + esc(ui.exportText) + '</textarea>'
+  + '</div>'
+  + '</section>';
+}
+
+/* ---------- 5. painting ---------- */
+function paint(){
+ var h = document.getElementById(PFX + '-head'), t = document.getElementById(PFX + '-tail');
+ if(h){ var nh = document.createElement('div'); nh.innerHTML = headHtml(); h.parentNode.replaceChild(nh.firstChild, h); }
+ if(t){ var nt = document.createElement('div'); nt.innerHTML = tailHtml(); t.parentNode.replaceChild(nt.firstChild, t); }
+}
+/* repaint only the flown-on panel, so typing in the head never loses focus */
+function paintDetails(){ var e = document.getElementById(PFX + '-details'); if(e) e.innerHTML = detailsHtml(); }
+
+/* ---------- 6. handlers ---------- */
+function read(){
+ function v(id){ var e = document.getElementById(PFX + '-' + id); return e ? e.value : null; }
+ if(v('name') != null) ui.name = v('name');
+ if(v('brief') != null) ui.brief = v('brief');
+ if(v('rate') != null) ui.rate = (v('rate') === 'hot') ? 'hot' : parseInt(v('rate'), 10);
+ if(v('seed') != null) ui.seed = v('seed');
+ if(v('n') != null){ var n = parseInt(v('n'), 10); ui.n = (n >= 1 && n <= ST.MAX) ? n : ui.n; }
+ if(v('mix') != null) ui.mix = v('mix');
+}
+window[PFX + 'Set'] = function(){ read(); };
+window[PFX + 'Gen'] = function(){
+ read();
+ var seed = parseInt(String(ui.seed).replace(/\D/g, ''), 10);
+ if(!isFinite(seed)){ seed = Math.floor(Math.random() * 100000); ui.seed = String(seed); }
+ var g = generate(seed, ui.n, ui.mix);
+ if(!g.strips.length){ say('Nothing could be generated: no strip could be built on a published procedure this deck can fly.', 'bad'); return; }
+ D.rows(g.strips);
+ ui.msg = '<div class="' + PFX + '-msg">Built ' + g.strips.length + ' strip' + (g.strips.length === 1 ? '' : 's') + ' from seed ' + esc(ui.seed) + '.'
+  + (g.skipped.length ? ' Could not build ' + esc(g.skipped.join(', ')) + ' on a flyable procedure.' : '')
+  + ' Change any box you like, then fly it.</div>';
+ paint();
+};
+window[PFX + 'Trans'] = function(i, v){ var r = D.rows()[i]; if(!r) return; if(v) r.trans = v; else delete r.trans; paintDetails(); };
+window[PFX + 'Climb'] = function(i, v){ var r = D.rows()[i]; if(!r) return; if(String(v).trim()) r.climbTo = String(v).trim(); else delete r.climbTo; paintDetails(); };
+function readyDrill(){
+ read();
+ if(typeof window[ST.prefix + 'Sync'] === 'function') window[ST.prefix + 'Sync']();
+ return collect();
+}
+window[PFX + 'SaveFly'] = function(){
+ var d = readyDrill(), v = FL.validate(d);
+ if(v.errs.length){ say('<b>This drill cannot be flown yet.</b><br>' + v.errs.map(esc).join('<br>'), 'bad'); return; }
+ store.drills.push(d); save();
+ flyIt(d);
+};
+window[PFX + 'SaveOnly'] = function(){
+ var d = readyDrill();
+ store.drills.push(d); save();
+ var v = FL.validate(d);
+ say('Saved <b>' + esc(d.name) + '</b>, ' + d.strips.length + ' strip' + (d.strips.length === 1 ? '' : 's') + '.'
+  + (v.errs.length ? '<br>It cannot be flown yet: ' + v.errs.map(esc).join(' ') : ''), v.errs.length ? 'bad' : '');
+};
+window[PFX + 'Fly'] = function(i){ var d = store.drills[i]; if(d) flyIt(d); };
+window[PFX + 'Open'] = function(i){
+ var d = store.drills[i]; if(!d) return;
+ var moved = [], strips = JSON.parse(JSON.stringify(d.strips || []));
+ strips.forEach(function(s){ var r = ST.normStrip(s); (r.moved || []).forEach(function(m){ moved.push((s.cs || 'a strip') + ': ' + m); }); });
+ ui.name = d.name; ui.brief = d.brief || ''; ui.rate = d.rate || 0; ui.seed = d.seed || '';
+ D.rows(strips);
+ ui.msg = '<div class="' + PFX + '-msg">Loaded <b>' + esc(d.name) + '</b>.'
+  + (moved.length ? ' What could not follow into this facility moved: ' + esc(moved.join('; ')) + '.' : '') + '</div>';
+ paint();
+};
+window[PFX + 'Del'] = function(i){
+ var d = store.drills[i]; if(!d) return;
+ if(!window.confirm('Delete the drill "' + d.name + '"? Export it first if you want to keep it.')) return;
+ store.drills.splice(i, 1); save(); paint();
+};
+window[PFX + 'Export'] = function(){
+ ui.exportText = JSON.stringify({kind:'drills', facility:(ST.FACILITY && ST.FACILITY.id) || '', drills:store.drills}, null, 1);
+ paint();
+};
+window[PFX + 'Import'] = function(){
+ var e = document.getElementById(PFX + '-json'), txt = e ? e.value : '';
+ var o;
+ try{ o = JSON.parse(txt); }catch(err){ say('That is not JSON: ' + esc(String(err.message || err)), 'bad'); return; }
+ var list = Array.isArray(o) ? o : (o && o.drills ? o.drills : (o && o.strips ? [o] : null));
+ if(!list){ say('No drills found in that JSON. It should carry a drills list or a drill with strips.', 'bad'); return; }
+ var n = 0, moved = [];
+ list.forEach(function(d){
+  if(!d || !d.strips || !d.strips.length) return;
+  d.strips.forEach(function(s){ var r = ST.normStrip(s); (r.moved || []).forEach(function(m){ moved.push((s.cs || 'a strip') + ': ' + m); }); });
+  d.id = 'd' + Date.now().toString(36) + n; d.name = d.name || 'Imported drill';
+  store.drills.push(d); n++;
+ });
+ save(); ui.exportText = '';
+ say('Imported ' + n + ' drill' + (n === 1 ? '' : 's') + '.' + (moved.length ? ' What could not follow into this facility moved: ' + esc(moved.join('; ')) + '.' : ''));
+};
+
+/* ---------- 7. mount ---------- */
+function mountCss(){
+ if(document.getElementById(PFX + '-css')) return;
+ var c = '.' + PFX + '-sec{margin-top:22px;}'
+  + '.' + PFX + '-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:12px 0;}'
+  + '.' + PFX + '-panel h3{font-family:var(--display);font-size:15px;margin:0 0 10px;}'
+  + '.' + PFX + '-frame{font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:12px;}'
+  + '.' + PFX + '-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:10px 0;}'
+  + '.' + PFX + '-row label,.' + PFX + '-blk{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);}'
+  + '.' + PFX + '-blk{margin:10px 0;}'
+  + '.' + PFX + '-drow label{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--dim);margin-right:8px;}'
+  + '.' + PFX + '-in,.' + PFX + '-sel{background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:6px 8px;text-transform:none;letter-spacing:0;}'
+  + '.' + PFX + '-in:focus,.' + PFX + '-sel:focus{outline:2px solid var(--green);outline-offset:1px;}'
+  + '.' + PFX + '-json{width:100%;box-sizing:border-box;margin-top:10px;}'
+  + '.' + PFX + '-btn{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
+  + '.' + PFX + '-btn:hover{color:var(--ink);border-color:var(--dim2);}'
+  + '.' + PFX + '-go{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--green);color:#062;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;}'
+  + '.' + PFX + '-drow{padding:8px 0;border-top:1px solid var(--line);font-size:13px;}'
+  + '.' + PFX + '-drow:first-of-type{border-top:0;}'
+  + '.' + PFX + '-dim{color:var(--dim);font-size:12px;}'
+  + '.' + PFX + '-gap{color:var(--amber);}'
+  + '.' + PFX + '-note{font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:10px;}'
+  + '.' + PFX + '-msg{font-size:13px;margin-top:12px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);}'
+  + '.' + PFX + '-msg.bad{border-color:var(--amber);color:var(--amber);}';
+ var st = document.createElement('style'); st.id = PFX + '-css'; st.textContent = c; document.head.appendChild(st);
+}
+function mount(){
+ mountCss(); load();
+ var anchor = (typeof D.anchor === 'function') ? D.anchor() : null;
+ var hd = document.createElement('div'), tl = document.createElement('div');
+ hd.innerHTML = headHtml(); tl.innerHTML = tailHtml();
+ var head = hd.firstChild, tail = tl.firstChild;
+ if(anchor && anchor.parentNode){
+  anchor.parentNode.insertBefore(head, anchor);
+  anchor.parentNode.insertBefore(tail, anchor.nextSibling);
+ } else { return; }
+ if(typeof D.mountRails === 'function'){ try{ D.mountRails(head); D.mountRails(tail); }catch(e){} }
+ /* The strips' own handlers keep the panel honest: wrap them, never edit them. */
+ ['Sync', 'Add', 'Drop'].forEach(function(n){
+  var name = ST.prefix + n, orig = window[name];
+  if(typeof orig !== 'function') return;
+  window[name] = function(){ var r = orig.apply(this, arguments); paintDetails(); return r; };
+ });
+ paintDetails();
+}
+if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
+else { mount(); }
+
+window.drill = {store:function(){ return store; }, generate:generate, rng:rng, collect:collect, flyIt:flyIt, KEY:KEY, storeOk:function(){ return storeOk; }};
+})();
+</script>

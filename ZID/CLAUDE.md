@@ -2,17 +2,19 @@
 
 Single-file, offline-first HTML training tools for VATSIM Indianapolis Center (vZID / Indy Center) terminal
 facilities, built to the same architecture as the R90 and M98 toolsets. **Three facilities have folders here, and
-each holds one Tier 1 tool.** This is the ARTCC-level file; per root `CLAUDE.md` section 9 it covers all three while
+each holds one Tier 1 tool with a published-track player.** This is the ARTCC-level file; per root `CLAUDE.md` section 9 it covers all three while
 they are Tier 1, and splits when one reaches Tier 2 and its data section starts crowding out the others.
 
 | Tool | Facility | Namespace | Storage key | Status |
 |---|---|---|---|---|
-| `IND/ind-drill-deck.html` | IND - Indianapolis ATCT/TRACON | `IND` | `ind-drill-deck-v1` | Tier 1 |
-| `SDF/sdf-drill-deck.html` | SDF - Louisville ATCT/TRACON | `SDF` | `sdf-drill-deck-v1` | Tier 1 |
-| `CVG/cvg-drill-deck.html` | CVG - Cincinnati ATCT/TRACON | `CVG` | `cvg-drill-deck-v1` | Tier 1 |
+| `IND/ind-drill-deck.html` | IND - Indianapolis ATCT/TRACON | `IND` | `ind-drill-deck-v1`, saved drills `ind-drill-deck-fly-v1` | Tier 1 + player |
+| `SDF/sdf-drill-deck.html` | SDF - Louisville ATCT/TRACON | `SDF` | `sdf-drill-deck-v1`, saved drills `sdf-drill-deck-fly-v1` | Tier 1 + player |
+| `CVG/cvg-drill-deck.html` | CVG - Cincinnati ATCT/TRACON | `CVG` | `cvg-drill-deck-v1`, saved drills `cvg-drill-deck-fly-v1` | Tier 1 + player |
 
 **Tier 1 means:** the data spine and the shell, the full reference layer, a smoke test that asserts the spine and the
-emptiness - and **no traffic model, no clock and no grading** (root `CLAUDE.md` section 3). `STANDING` is `[]` in all
+emptiness - and **no sector-level traffic model and no grading** (root `CLAUDE.md` section 3). Since 2026-10-27 each deck also
+carries a player that flies a strip along its published CIFP track (owner decision, issue #76; root `CLAUDE.md` section 3 and
+`../claude_Fly_Block_Reference.md`): a clock, the published crossings and speeds, and nothing else. `STANDING` is `[]` in all
 three and the smoke test asserts it. The jump to Tier 2 is gated on geometry and on a first OJT session, neither of
 which is a coding task.
 
@@ -116,13 +118,13 @@ in the smoke tests. SDF's scratchpad table matches vNAS row for row; so does CVG
 
 ## Architecture
 
-Six extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
+Eight extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
 every reference table and rule, the vNAS and vATIS sections, handoff IDs, `SLOTS`, conflicts, open questions), **the
 builder and notebook** (the frame, the three-page wrapper `Set up a drill` / `Fly it` / `Notes and log`, persistence, the
 note rail copied from C90 with a `data-note` anchor on every table and slot, the practice log), **the published
 procedures** (the R90 block with the namespace changed, keyed by airport then by procedure) and **the flight strips**
 (the master block, byte for byte from `../../strip-block.html`, with a contract derived from the procedures block and
-`flies:false, track:true`) and **the route draw** (the master block, byte for byte from `../../routedraw-block.html`: M98's *Routes drawn* bar - open procedure, all STARs, all SIDs, all SIDs + STARs, off - on the lateral-footprint plot, reading the procedures block's own tracks and the deck's own projection, `fpProject`; the *tracked traffic* mode becomes *open procedure* because there is no traffic; see `../../claude_RouteDraw_Block_Reference.md`). and **the D-ATIS block** (the master `../../datis-block.html` behind a contract; sets the frame). Splice any new block before the **last** `</body>`.
+`flies:true, track:true`) and **the route draw** (the master block, byte for byte from `../../routedraw-block.html`: M98's *Routes drawn* bar - open procedure, all STARs, all SIDs, all SIDs + STARs, off - on the lateral-footprint plot, reading the procedures block's own tracks and the deck's own projection, `fpProject`; the *tracked traffic* mode becomes *open procedure* because there is no traffic; see `../../claude_RouteDraw_Block_Reference.md`). and **the D-ATIS block** (the master `../../datis-block.html` behind a contract; sets the frame). Splice any new block before the **last** `</body>`.
 
 **The D-ATIS block is the one network call, and it is optional.** Block 6 (the master `../../datis-block.html`,
 `../../claude_DATIS_Block_Reference.md`) reads a pasted or fetched D-ATIS - the fetch asks `atis.info` and nothing else, every
@@ -140,8 +142,7 @@ use is not drawn. Only the primary field is trimmed (a configuration names that 
 RACYR6 carry no runway transition in CIFP, so they cannot be trimmed and are drawn in every flow** - the page says so. A button
 turns the trim off.
 
-**`flies` is false everywhere and the strip row says "track only".** The coordinates of every fix are carried; nothing
-is flown along them because there is no traffic model.
+**`flies` is true on every procedure strip, and the strip row says it.** The fly block (block 7, the master `../../fly-block.html`) flies a strip along the track the procedures block builds, straight between fixes, with the published crossings and speeds and nothing else; the drill block (block 8, `../../drill-block.html`) builds around the strip row. Both are checked against their masters with the one-liner in `../claude_Fly_Block_Reference.md` section 7, never by date. IND's SIDs carry almost no altitude in CIFP (DAWNN1 above 10000 at DAWNN, MAREO1 above 3000 at LUIJE), so the drill gives an IND departure a cleared altitude of its own. Saved drills live under `<basename>-fly-v1`.
 
 **The decks were assembled from one template by a script that is not committed.** They are ordinary single files and are
 maintained by editing them; the three copies are expected to diverge, as the five strip-block copies elsewhere are kept
@@ -151,8 +152,8 @@ in step by `diff`, not by a generator. Root `CLAUDE.md` section 11: regenerate n
 
 `smoke-test.mjs` in each folder, with `smoke-test-browser.html` (copied from the M98 runner; the title and default deck
 changed). **There is no Node on the owner's machine**, so the harnesses were run through the browser runner, served over
-a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289; with the D-ATIS block and the flow trim, IND 248, SDF 262, CVG 340; 2026-10-27, with the 50-strip ceiling on a drill, IND 252, SDF 266, CVG 344.** Each asserts the block count
-(6), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
+a local `HttpListener`, on **2026-10-19**: **IND 198 checks, SDF 214, CVG 269, all passing; 2026-10-20, with the route-draw block, IND 218, SDF 234, CVG 289; with the D-ATIS block and the flow trim, IND 248, SDF 262, CVG 340; 2026-10-27, with the 50-strip ceiling on a drill, IND 252, SDF 266, CVG 344; 2026-10-27, with the fly and drill blocks (blocks 7 and 8), IND 276, SDF 290, CVG 368.** Each asserts the block count
+(8), unique frequencies and callsigns, that every consolidation edge agrees with the vNAS parent letter and every chain
 terminates, that a frequency the SOP truncates is told apart from a real disagreement, that every fix resolves to
 coordinates inside the ZID region, that the strip contract is the derived one, that `STANDING` is `[]`, that sector and
 flow boundaries are an `empty` slot and the lateral outline a `partial` one, that the footprint is one ring with no

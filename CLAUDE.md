@@ -12,9 +12,9 @@ certification at several facilities. Four ARTCCs, ten tools:
 | `ZAU/AZO/azo-drill-deck.html` | Great Lakes, West Wall | terminal | `DD` | skeleton |
 | `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | skeleton |
 | `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | skeleton |
-| `ZID/IND/ind-drill-deck.html` | IND — Indianapolis TRACON | terminal, STARS | `IND` | Tier 1 shell |
-| `ZID/SDF/sdf-drill-deck.html` | SDF — Louisville TRACON | terminal, STARS | `SDF` | Tier 1 shell |
-| `ZID/CVG/cvg-drill-deck.html` | CVG — Cincinnati TRACON | terminal, STARS | `CVG` | Tier 1 shell |
+| `ZID/IND/ind-drill-deck.html` | IND — Indianapolis TRACON | terminal, STARS | `IND` | Tier 1 shell + published-track player |
+| `ZID/SDF/sdf-drill-deck.html` | SDF — Louisville TRACON | terminal, STARS | `SDF` | Tier 1 shell + published-track player |
+| `ZID/CVG/cvg-drill-deck.html` | CVG — Cincinnati TRACON | terminal, STARS | `CVG` | Tier 1 shell + published-track player |
 
 Each facility folder carries its own `CLAUDE.md` with the verified data, the engine map and
 the roadmap for that facility. **This file carries what is true everywhere.** Read it before
@@ -24,7 +24,9 @@ between them is a bug in one of them.
 
 **Only M98 has been flown.** Everything else is a skeleton, and the word is load-bearing:
 the frame is real and cited, the geometry is not carried, and the tool renders the
-difference rather than hiding it.
+difference rather than hiding it. The three ZID decks also carry a player that flies each
+strip along its published CIFP track (§3), but nobody has flown a session on it and it
+grades nothing.
 
 `claude_CRC_Platform_Reference.md` sits alongside this file: what STARS and ERAM can actually
 do in CRC, transcribed from `docs.virtualnas.net` on 2026-09-01. **Read it before designing a
@@ -154,8 +156,18 @@ emptiness. Still no traffic model. *ZMP, R90.*
 deterministic grading tagged to standing items derived from flown sessions, a notebook that
 tallies exposures and staleness across one ledger. *M98 only.*
 
+**Tier 1 with a published-track player (owner decision, 2026-10-27, issue #76).** The owner
+asked for every deck besides M98 to feel like M98 on *Set up a drill* and *Fly it*, and chose
+interface parity plus a shared engine that flies each strip along the facility's own CIFP
+ladder. That waives the gate below **for what CIFP itself publishes and nothing else**: the
+clock, the published crossings and the published speeds. It adds no boundary, no sector owner,
+no handoff grading and no wind; `STANDING` stays `[]`; every check says *"reminder, not a
+judgement"*. Two masters carry it, `fly-block.html` and `drill-block.html`
+(`claude_Fly_Block_Reference.md`). *IND, SDF, CVG today; the rest are issue #76.*
+
 **The jump from 1 to 2 is gated on geometry and on a first OJT session, in that order** — and
-neither is a coding task. See §7 and invariant 4.
+neither is a coding task. See §7 and invariant 4. The player above does not make a deck Tier 2:
+Tier 2 is grading against standing items derived from a flown session.
 
 ---
 
@@ -169,8 +181,11 @@ as a new block after them. The markup outside the blocks — topbar, hero, empty
 footer — is chrome, and the blocks mount everything else. Leave the chrome alone without an
 explicit ask.
 
-**Three master blocks live at the repository root and are copied into decks byte for byte:**
+**Five master blocks live at the repository root and are copied into decks byte for byte:**
 `strip-block.html` (the flight-strip row and the 50-strip ceiling on a drill, `claude_Strip_Block_Reference.md`),
+`fly-block.html` (the *Fly it* player: clock, scope, transmit box, feed, debrief, flying each strip along its
+published CIFP track) and `drill-block.html` (the *Set up a drill* builder: seeded generator, per-strip
+transition, saved drills, JSON) — both in `claude_Fly_Block_Reference.md`, 2026-10-27, **in the three ZID decks only**,
 `routedraw-block.html` (M98's *Routes drawn* bar — open procedure, all STARs, all SIDs, all SIDs + STARs,
 off — on a deck's plot, trimmed to the flow in force, `claude_RouteDraw_Block_Reference.md`, 2026-10-20) and
 `datis-block.html` (the D-ATIS reader that finds the flow and sets the frame,
@@ -202,7 +217,9 @@ nowhere else — an exception for that one job, not licence for another tool to 
 storage is unavailable — some `file://` and sandboxed contexts — the tool still works in
 memory **and says so on the page**; the Markdown or JSON export is the real fallback. There is
 no server. **Never put a status word like `skeleton` in the storage key**: the key outlives
-the status, and renaming it later silently orphans everything the trainee wrote.
+the status, and renaming it later silently orphans everything the trainee wrote. **A deck with the
+drill master keeps its saved drills under a second key, `<basename>-fly-v1`**, so a corrupt drill
+list can never sit in the way of the notes and the practice log (issue #70).
 
 **Interface language.** Full terminology, sentence case, no new abbreviations. Domain
 abbreviations are fine — TRACON, ARTCC, STARS, ERAM, LOA, SOP, STAR, SID, MVA, PACP, AIT,
