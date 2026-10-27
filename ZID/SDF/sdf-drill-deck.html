@@ -1254,9 +1254,9 @@ function wireNotes(){
 
 /* ---------- 5. Pages ---------- */
 var PAGES = [
-  { id:'setup', label:'Set up a drill', sections:[B+'-frame', P+'-positions', P+'-fields'] },
+  { id:'setup', label:'Set up a drill', sections:[B+'-frame'] },
   { id:'fly',   label:'Fly it',         sections:[P+'-live'] },
-  { id:'notes', label:'Notes and log',  sections:[B+'-notes', P+'-footprint', P+'-refindex'].concat(NS.GROUPS.map(function(g){ return P+'-ref-'+g.id; }), [P+'-vnas', P+'-handoff', P+'-vatis', P+'-knows', P+'-log']) }
+  { id:'notes', label:'Notes and log',  sections:[B+'-notes', P+'-footprint', P+'-positions', P+'-fields', P+'-refindex'].concat(NS.GROUPS.map(function(g){ return P+'-ref-'+g.id; }), [P+'-vnas', P+'-handoff', P+'-vatis', P+'-knows', P+'-log']) }
 ];
 function buildPages(){
   var wrap = document.querySelector('.wrap'); if(!wrap) return;
@@ -3501,7 +3501,7 @@ var prim = NS.FAC.primary;
 window.DATIS_FACILITY = {
  id:'SDF', ns:'SDF', prefix:'sdfw', sectionClass:NS.P + '-section',
  fields:[{id:prim, name:(NS.FIELDS[prim] && NS.FIELDS[prim].name) || prim, datis:true}],
- before:NS.P + 'b-frame',
+ before:'mod-' + NS.P + 'st',
  configs:function(){ return NS.CONFIGS; },
  apply:function(set){ if(bld() && bld().setFrame) bld().setFrame(set); },
  load:function(){ var s = bld() && bld().state(); return (s && s.wx) ? s.wx : null; },
@@ -4058,7 +4058,7 @@ function flowText(m, o){
  }
  if(m.kind === 'many'){
   return '<span class="' + c('note') + '">ambiguous - ' + esc(m.configs.map(cfgName).join('; ')) + '.</span> '
-   + '<span class="' + c('dim') + '">More than one configuration fits what the broadcast states. Choose one in the frame below; '
+   + '<span class="' + c('dim') + '">More than one configuration fits what the broadcast states. Choose one in the frame; '
    + 'nothing was set.</span>';
  }
  return '<span class="' + c('note') + '">no matching configuration.</span> <span class="' + c('dim') + '">'

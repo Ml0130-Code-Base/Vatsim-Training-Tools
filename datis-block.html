@@ -547,7 +547,7 @@ function flowText(m, o){
  }
  if(m.kind === 'many'){
   return '<span class="' + c('note') + '">ambiguous - ' + esc(m.configs.map(cfgName).join('; ')) + '.</span> '
-   + '<span class="' + c('dim') + '">More than one configuration fits what the broadcast states. Choose one in the frame below; '
+   + '<span class="' + c('dim') + '">More than one configuration fits what the broadcast states. Choose one in the frame; '
    + 'nothing was set.</span>';
  }
  return '<span class="' + c('note') + '">no matching configuration.</span> <span class="' + c('dim') + '">'

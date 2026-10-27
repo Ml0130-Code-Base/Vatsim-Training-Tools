@@ -44,7 +44,7 @@ Both fail **safe** in the shared reader (no runway read, and it says so), but a 
 window.DATIS_FACILITY = {
   id: 'IND', ns: 'IND', prefix: 'indw', sectionClass: 'ind-section',
   fields: [{id: 'KIND', name: 'Indianapolis Intl', datis: true}],
-  before: 'indb-frame',                  // id of the section this goes ahead of
+  before: 'mod-indst',                    // id of a section already on the page; this goes ahead of it
   configs: function(){ return NS.CONFIGS; },   // [{id, name, land:[], dep:[]}]
   // optional
   apply: function(set){...},             // {config, wdir, wkt, cat}: only what the broadcast settled
@@ -52,6 +52,8 @@ window.DATIS_FACILITY = {
   rails: function(section){...},  log: function(msg, kind){...}
 };
 ```
+
+**Where it lands (2026-10-27, issue #76).** The ZID decks set `before` to the strips section, which the strips block has already mounted by then, so on *Set up a drill* the broadcast sits under *Take the position* and ahead of the drill builder, as M98 sets the weather inside setting up the drill. `before` has to name a section that exists when this block mounts; a missing id falls back to the footer, outside the page system. The reader's ambiguous-configuration message says "the frame" with no "below", because the frame is now above it.
 
 In the ZID decks `apply` calls the builder's `setFrame`, and `load`/`save` keep the pasted text in the builder's own state under `wx`, so there is still **one storage key** per tool. The builder gained a frame API for this and for the route-draw block: `config()`, `setFrame(set)`, `save()` and `onFrame(fn)`. `setFrame` touches only the keys given, refuses an unknown configuration or category, and brings the controls into line with the state.
 

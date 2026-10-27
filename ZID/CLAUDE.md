@@ -120,7 +120,7 @@ in the smoke tests. SDF's scratchpad table matches vNAS row for row; so does CVG
 
 Eight extension blocks, in dependency order: **the deck** (data spine, positions, fields, runways, configurations, wind,
 every reference table and rule, the vNAS and vATIS sections, handoff IDs, `SLOTS`, conflicts, open questions), **the
-builder and notebook** (the frame, the three-page wrapper `Set up a drill` / `Fly it` / `Notes and log` (the Fly page holds the player alone, as M98's does; the lateral footprint and the published procedures sit at the top of the third page), persistence, the
+builder and notebook** (the frame, the three-page wrapper `Set up a drill` / `Fly it` / `Notes and log` (the Fly page holds the player alone, as M98's does; the lateral footprint, the published procedures, the positions and the fields and configurations tables sit at the top of the third page, and Set up reads position, then the D-ATIS and the flow, then the drill builder, as M98's does), persistence, the
 note rail copied from C90 with a `data-note` anchor on every table and slot, the practice log), **the published
 procedures** (the R90 block with the namespace changed, keyed by airport then by procedure) and **the flight strips**
 (the master block, byte for byte from `../../strip-block.html`, with a contract derived from the procedures block and
