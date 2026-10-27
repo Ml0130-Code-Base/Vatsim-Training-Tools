@@ -48,7 +48,7 @@ window.FLY_FACILITY = {
 };
 ```
 
-`flow()` returns `{airport, land, dep, name}` and is what the generator reads, so **the runway comes from the configuration in force**. `positions()` returns `[{id, name, freq, open, owner, kind, self}]`. `bank(entry)` receives the debrief. `cycle` is quoted beside a published crossing (`CIFP 261001`) so the citation travels with the number.
+`flow()` returns `{airport, land, dep, name}` and is what the generator reads, so **the runway comes from the configuration in force**. It may also carry `only:true`, which keeps the generator to the one field it names (Big Sky's two areas share no airspace, so a Boise drill carries no Bozeman traffic); without it a drill leans toward that field 80% of the time and draws on the others too. `positions()` returns `[{id, name, freq, open, owner, kind, self}]`. `bank(entry)` receives the debrief. `cycle` is quoted beside a published crossing (`CIFP 261001`) so the citation travels with the number.
 
 `towerFor` is omitted at IND because the deck holds no tower or runway-ownership data to answer it. Without it the *contact tower* quick button is left out and "tower" is not an addressable receiver by name; a tower position the deck lists in `positions()` still receives by its own frequency.
 
