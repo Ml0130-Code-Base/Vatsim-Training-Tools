@@ -170,7 +170,7 @@ footer — is chrome, and the blocks mount everything else. Leave the chrome alo
 explicit ask.
 
 **Three master blocks live at the repository root and are copied into decks byte for byte:**
-`strip-block.html` (the flight-strip row, `claude_Strip_Block_Reference.md`),
+`strip-block.html` (the flight-strip row and the 50-strip ceiling on a drill, `claude_Strip_Block_Reference.md`),
 `routedraw-block.html` (M98's *Routes drawn* bar — open procedure, all STARs, all SIDs, all SIDs + STARs,
 off — on a deck's plot, trimmed to the flow in force, `claude_RouteDraw_Block_Reference.md`, 2026-10-20) and
 `datis-block.html` (the D-ATIS reader that finds the flow and sets the frame,

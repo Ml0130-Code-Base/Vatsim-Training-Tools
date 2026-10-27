@@ -126,6 +126,16 @@
                   bearing and distance, which no other deck does.
 
    ---------------------------------------------------------------
+   THE CEILING ON A DRILL (2026-10-27)
+
+   window.strip.MAX is 50 and window.strip.refuseAdd(have) enforces it.
+   The deck's "add a strip" calls refuseAdd(rows.length) first and stops
+   if it returns true; its "drop a strip" calls it again after the
+   splice so the note clears once there is room. The note is written
+   above the rows (<prefix>-cap) and says why. M98 does not carry this
+   block and holds the same number as STRIP_MAX in its builder.
+
+   ---------------------------------------------------------------
    THE RE-RENDER IS NOT OPT-IN
 
    Every control here carries an onchange that calls <prefix>Sync,
@@ -758,6 +768,31 @@ function blankStrip(){
          alt:'', ias:'', mode:'published', asg:'', spawnAt:'', ckdIn:false, altim:false, route:''};
 }
 
+/* THE CEILING ON A DRILL. Owner, 2026-10-27, set at M98: past about fifty strips it is more
+   load than one controller works, and a second would have to open. Every deck that builds a
+   drill out of strips holds to it. M98 keeps its own copy of the number (STRIP_MAX in its
+   builder) because it does not carry this block, so if the number ever moves it moves in
+   both. The deck calls refuseAdd from "add a strip", before it pushes, and again after a
+   drop: it says so above the rows and returns true when the list is already full, and it
+   clears the note when there is room again. */
+var MAX_STRIPS = 50;
+function refuseAdd(have){
+ var full = have >= MAX_STRIPS;
+ var host = document.getElementById(PFX + '-rows');
+ if(host && host.parentNode){
+  var m = document.getElementById(PFX + '-cap');
+  if(full){
+   if(!m){
+    m = document.createElement('div');
+    m.id = PFX + '-cap'; m.className = PFX + '-err';
+    host.parentNode.insertBefore(m, host);
+   }
+   m.textContent = 'A drill carries at most ' + MAX_STRIPS + ' strips — past that it is more than one controller works and another position would have to open, so there is no room for another.';
+  } else if(m){ m.parentNode.removeChild(m); }
+ }
+ return full;
+}
+
 window.strip = {
  FACILITY:F, airportsHere:airportsHere, worksAirport:worksAirport, airportName:airportName,
  runwaysAt:runwaysAt, arrivalsFor:arrivalsFor, departuresFor:departuresFor,
@@ -765,7 +800,8 @@ window.strip = {
  jobFields:jobFields, readJob:readJob,
  row:rowHtml, readRow:readRow, blank:blankStrip, mountCss:mountCss, esc:esc,
  wakeOf:wakeOf, RADAR_STATES:RADAR_STATES, radarStatesFor:radarStatesFor, normRadar:normRadar,
- ROLES:ROLES, roleOf:roleOf, fixesFor:fixesFor, prefix:PFX
+ ROLES:ROLES, roleOf:roleOf, fixesFor:fixesFor, prefix:PFX,
+ MAX:MAX_STRIPS, refuseAdd:refuseAdd
 };
 
 })();

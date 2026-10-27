@@ -204,6 +204,24 @@ The procedure picker has no blank option, so with nothing set the browser shows 
 while the context line read *"no departure procedure selected"*: the two halves of one strip
 disagreeing, which is the failure the whole block exists to prevent.
 
+### 4.3 The ceiling on a drill — fifty strips (2026-10-27)
+
+`window.strip.MAX` is **50** and `window.strip.refuseAdd(have)` enforces it. **Owner, 2026-10-27,
+set first at M98** (`STRIP_MAX` in its builder): past about fifty strips a drill is more load than
+one controller works and a second position would have to open. The same ceiling now holds in every
+deck that builds a drill out of strips, so a hand-built drill cannot be longer than a generated one.
+
+- **The deck's add calls it before it pushes** — `if(S.refuseAdd(rows.length)) return;` — and its
+  drop calls it again after the splice, so the note clears the moment there is room.
+- **It refuses by name.** The note sits above the rows (`<prefix>-cap`, class `<prefix>-err`) and
+  says the limit and why. A silent refusal teaches that the button is broken.
+- **Not a rule about the facility, a rule about the drill.** 50 is a design ceiling chosen by the
+  owner, not a number from any facility document, and nothing here is aviation data. M98 does not
+  carry this block and keeps its own copy of the number; **if it ever moves it moves in both.**
+- **What it does not cover:** a drill that arrives some other way (a stored drill, a pasted
+  scenario) is not trimmed by this. No deck loads strips from storage today; the day one does, it
+  must call `refuseAdd` or check `MAX` itself.
+
 ## 5. Ready-made contracts
 
 Procedure inventories per field, from **CIFP 260903** — see
@@ -280,10 +298,21 @@ Where a deck cannot answer a hook, the fallback was checked rather than assumed:
 render the bare distance box and no *fill from the procedure* button, because neither carries a
 ladder — AZO has no coded procedure at any field and S56 has no procedures block.
 
+### Re-verified 2026-10-27, the fifty-strip ceiling
+
+All eight decks driven over local HTTP: sixty calls to the deck's add leave exactly fifty rows with
+the note present, and one drop leaves forty-nine and clears it. On IND further: the note sits
+directly above the rows and names the limit, two more adds land on fifty with a single note (no
+duplicate), and the console is clean. Where a harness exists (IND, SDF, CVG, R90) four assertions carry it: the block says it is full
+at 50 and not at 49, sixty adds leave fifty, a drop makes room, and one add fills it again. Two
+mutants of the IND deck were run through the browser runner and both fail at the intended
+assertion — the ceiling moved to 51, and the add stripped of its call.
+
 ### Wiring status
 
-Wired into **R90, C90, AZO, S56 and Big Sky**, all five byte-identical to this file. C90 and
-AZO host it as the deck's only strip entry, with the facility's placement fields alongside
+Wired into **eight decks** — R90, C90, AZO, S56, Big Sky and the three ZID decks (IND, SDF, CVG)
+— all carrying this file's body as of 2026-10-27, the `diff` against it being the check to re-run.
+C90 and AZO host it as the deck's only strip entry, with the facility's placement fields alongside
 through `extraFields`. **M98 still uses its own row** — it is the source the format came from,
 its row is wired into the ladder engine and the grading, and swapping it remains its own
 decision.
