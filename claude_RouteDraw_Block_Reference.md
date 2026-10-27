@@ -15,7 +15,7 @@ M98's scope has `LAYERS`, `LAYER_MODES`, the `ddLayers(mode)` function and a bar
 | STARs green 1px, 0.45 opacity; SIDs amber dashed 1px, 0.4 | the same | the open procedure is heavier (1.6px, 0.9) |
 | a layer choice never hides the track under what you are working | the same, enforced in `plan()` | only *off* is bare |
 
-**One rename, and it is deliberate.** M98's first button reads *tracked traffic* because M98 has traffic. A deck with no traffic model has none to track, and a button that said so would be the tool asserting something it cannot know (root `CLAUDE.md` invariant 3). In the master the first button is **open procedure**, the procedure open in the Published procedures viewer. The id is still `tracked`.
+**One rename, and it is deliberate.** M98's first button reads *tracked traffic* because M98 has traffic. A plot with no traffic on it has none to track, and a button that said so would be the tool asserting something it cannot know (root `CLAUDE.md` invariant 3). That is true of the lateral-footprint plot in the three ZID decks even now that they carry a live player: the player on the *Fly it* page has its own Routes drawn bar (`claude_Fly_Block_Reference.md`). In the master the first button is **open procedure**, the procedure open in the Published procedures viewer. The id is still `tracked`.
 
 ## 2. The contract
 
