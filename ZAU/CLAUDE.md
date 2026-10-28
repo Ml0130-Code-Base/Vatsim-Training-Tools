@@ -243,3 +243,27 @@ Commit after each completed subtask. When aviation data is involved, cite which 
 paragraph the number came from in the commit message. **One commit touches one ARTCC:** C90
 and AZO may share a commit, and nothing under `ZMP/` or `ZLC/` may join it. Root `CLAUDE.md`
 §14.
+
+## The player and the drill builder (issue #76, 2026-10-27)
+
+**C90 carries the master fly and drill blocks** (`../fly-block.html`, `../drill-block.html`; contract in
+`../claude_Fly_Block_Reference.md`) as blocks 6 and 7, byte for byte after a contract (`diff`-checked, never by
+date). The aircraft fly the CIFP 261001 STARs and SIDs the procedures block carries, straight between fixes, with
+the published crossings and speeds, and nothing is graded; `STANDING` stays `[]`.
+
+- **The legacy engine is retired.** Block 1's own traffic model (`DD.sim.ac`, `mkAc`, `tick`, `transmit`, the scope,
+  the strip list and the feed) placed a strip by bearing and distance and flew a heading. It could not fly a
+  published track, and a second traffic model on one page would contradict the first. `DD.sim` keeps only the frame
+  the trainee sets (`cfg`, `mdw`, `open`, `seat`); `DD.frameText()`, `DD.flowNow()` and `DD.openSet()` are what the
+  contract reads. **What was lost:** the scope's remark that a strip is above the FL150 lid, and the strip's bearing,
+  distance and heading boxes with their *place on the scope* button. The footprint's own note still states the lid.
+- **Set up a drill** reads as M98's does: *Position Setup* (Quick setups, Which seat are you working, Open around
+  you, Configuration, What that resolves to), then the weather reader, then the drill builder around the strip row.
+  The positions, configurations, Finals, capture points and fields tables are on the third page. The seat is new
+  state: C90 had only a set of open positions.
+- **The configuration lands O'Hare's runways** as the union of what each Final owns in it (4-3.b.1), read from
+  `FINALS` and written the way CIFP writes a runway (`09L`, not `9L`). A configuration states no departure runway,
+  so none is claimed. The MDW configuration is stated in the frame line and nothing else.
+- **Two landing-page faults were fixed on the way:** the weather reader looked for `dd-page-notes`, which does not
+  exist, so it sat under all three tabs; and the procedures block landed on the Fly page, which holds the player alone.
+- **The feeder gate stays a label** on the strip (issue #44).
