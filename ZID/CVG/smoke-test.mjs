@@ -526,6 +526,60 @@ try {
   const end11 = FL.end();
   assert('the debrief states that nothing is scored against a standing item', !!end11 && /No standing item is exercised/.test(globalThis.document.getElementById(FF.prefix + '-debriefbox').innerHTML));
 
+  /* ============ 12. The Set up page's anatomy, the scheduled events and the start-positions preview ============
+     Issue #76, 2026-10-27. M98's Set up a drill page names its sub-panels, and the owner asked for the
+     same names here. The events a drill schedules are notices the author typed, fired once by the
+     player's clock; they re-plan nothing, grade nothing and add no number of their own. */
+  const DF = globalThis.DRILL_FACILITY;
+  const setupSrc = blocks.filter(b => b.indexOf('Position Setup') >= 0);
+  assert('the builder block alone mounts Position Setup', setupSrc.length === 1);
+  assert('Position Setup carries M98\'s four sub-panels, by name', ['Quick setups', 'Which seat are you working', 'Open around you', 'What that resolves to'].every(t => setupSrc[0].indexOf(t) >= 0));
+  assert('the drill builder carries M98\'s sub-panels by name: Special observation, Landline events, Brief, Start positions',
+    ['Special observation - the frame changes mid-drill', 'Landline events - the other side of the operation', 'Brief - what the drill is asking of you', 'Start positions - same geometry as the live scope'].every(t => blocks[7].indexOf(t) >= 0));
+  assert('the drill contract hands the builder this deck\'s own configurations, by id and name',
+    typeof DF.configs === 'function' && DF.configs().length > 0 && DF.configs().every(c => typeof c.id === 'string' && c.id && typeof c.name === 'string' && c.name)  && DF.configs().every((c, i) => c.id === N.CONFIGS[i].id));
+  assert('a drill nobody edited schedules no event', DR.events().length === 0 && DR.ui().speci.on === false && DR.ui().lines.length === 0);
+
+  const evStrips = DR.generate(2, 4, 'arrivals').strips;
+  const cfg12 = DF.configs()[0];
+  const ld12 = FL.load({name:'events', brief:'Hold everything to two five zero.', strips:evStrips, rate:0, events:[
+    {kind:'speci', at:30, ceil:'800 overcast', vis:'2', wind:'180 at 12', cat:'IFR'},
+    {kind:'landline', at:60, from:'Tower', text:'Runway one two is closed.'},
+    {kind:'speci', at:90, cfg:cfg12.id, cfgName:cfg12.name},
+    {kind:'speci', at:40},
+    {kind:'landline', at:50, from:'Tower', text:'   '},
+    {kind:'weather', at:10, text:'not an event'},
+    {kind:'landline', text:'no time given'}
+  ]});
+  assert('a drill with events loads, and says plainly which events it left out', ld12.ok === true && ld12.warns.filter(w => /left out/.test(w)).length === 4, JSON.stringify(ld12.warns));
+  assert('only the events that say something are scheduled', FL.sim.events.length === 3 && FL.sim.events.every(e => e.fired === false));
+  assert('the brief is stated in the feed before traffic', FL.sim.feed.some(f => /Brief: Hold everything to two five zero\./.test(f.html)));
+  const feedAt = re => FL.sim.feed.filter(f => re.test(f.html)).length;
+  for (let i = 0; i < 29; i++) FL.step(1);
+  assert('nothing fires before its time', feedAt(/Special observation|on the landline/) === 0);
+  FL.step(1);
+  assert('a special observation fires when the clock reaches it, carrying exactly what the author typed',
+    feedAt(/Special observation: ceiling 800 overcast, visibility 2, wind 180 at 12, flight category IFR\./) === 1);
+  for (let i = 0; i < 30; i++) FL.step(1);
+  assert('a landline call fires when the clock reaches it, from the side the author named, saying what the author typed',
+    feedAt(/<b>Tower<\/b> on the landline: Runway one two is closed\./) === 1);
+  for (let i = 0; i < 30; i++) FL.step(1);
+  assert('a special observation that changes the configuration says the player does not re-plan strips already flying',
+    FL.sim.feed.filter(f => f.html.indexOf('The configuration is now <b>') >= 0 && f.html.indexOf('does not re-plan') >= 0).length === 1);
+  for (let i = 0; i < 60; i++) FL.step(1);
+  assert('each event fires once and only once', feedAt(/Special observation/) === 2 && feedAt(/on the landline/) === 1 && FL.sim.events.every(e => e.fired === true));
+  assert('no event is graded: STANDING is still empty and no event text claims a standing item', N.STANDING.length === 0 && !FL.sim.feed.some(f => /Special observation|on the landline/.test(f.html) && /standing item|graded|score/i.test(f.html)));
+
+  /* the start positions are the player's own scope, drawn from strips that are not yet flying */
+  const pvStrips = DR.generate(4, 5, 'both').strips;
+  const pvAc = FL.sim.ac.length, pvFeed = FL.sim.feed.length;
+  const pv = FL.preview(pvStrips);
+  assert('the preview draws one target per flyable strip and names each strip it cannot draw', pv.count > 0 && pv.count + pv.skipped.length === pvStrips.length, pv.count + ' + ' + pv.skipped.length + ' of ' + pvStrips.length);
+  assert('the preview is the live scope\'s own svg, relabelled, with nothing clickable in it', /<svg/.test(pv.svg) && /aria-label="Start positions"/.test(pv.svg) && !/Live scope/.test(pv.svg) && !/ onclick=/.test(pv.svg));
+  assert('drawing the preview leaves the loaded drill and its feed alone', FL.sim.ac.length === pvAc && FL.sim.feed.length === pvFeed && FL.sim.events.length === 3);
+  const pv0 = FL.preview([]);
+  assert('with no strips there is nothing to draw and the preview says so', pv0.count === 0 && pv0.svg === '' && pv0.skipped.length === 0);
+
   console.log('\nSMOKE PASS — ' + checks + ' checks');
 } catch (e) {
   console.error('FAIL: threw —', e && e.stack ? e.stack : e);

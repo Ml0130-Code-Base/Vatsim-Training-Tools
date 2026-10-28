@@ -964,6 +964,10 @@ var css = ''
 + '.'+B+'-frame b{color:var(--ink);}'
 + '.'+B+'-open{display:flex;gap:6px 14px;flex-wrap:wrap;margin:6px 0;font-family:var(--mono);font-size:11.5px;}'
 + '.'+B+'-open label{color:var(--dim);cursor:pointer;}'
++ '.'+B+'-sub{font-family:var(--mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;}'
++ '.'+B+'-sub.a{color:var(--amber);}'
++ '.'+B+'-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0;}'
++ '.'+B+'-pp{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
 + '.'+B+'-btn{font-family:var(--mono);font-size:11.5px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:7px 12px;cursor:pointer;}'
 + '.'+B+'-btn:hover{border-color:var(--green);color:var(--green);}'
 + '.'+B+'-notebtn{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--dim);background:transparent;border:1px dashed var(--dim2);border-radius:3px;padding:2px 7px;cursor:pointer;margin-left:8px;}'
@@ -1164,20 +1168,36 @@ function frameHtml(){
 function sectionFrame(){
   return ''
   + '<section class="'+P+'-section" id="'+B+'-frame">'
-  + '<h2>Take the position</h2>'
-  + '<p class="lede">The student picks the position. The coach sets the weather and the flow follows from it, and sets who else is open. The frame is stated before traffic, in the header line below.</p>'
+  + '<h2>Position Setup</h2>'
+  + '<p class="lede">The seat is your pick &mdash; say what you are working and what is open around you, and the rest of the tool follows. The coach sets the weather and the flow follows from it. The frame is stated before traffic, in the header line below.</p>'
+
+  + '<div class="'+B+'-pp"><div class="'+B+'-sub">Quick setups</div>'
+  + '<div class="'+B+'-actions"><button class="'+B+'-btn" data-preset="all">Every radar position open</button><button class="'+B+'-btn" data-preset="solo">Only this seat open</button></div>'
+  + '<div class="'+P+'-note">Each button sets who is open around you and nothing else. Anything left closed folds along the consolidation chain recorded from the SOP and the vNAS record, and the frame below lists where each fold lands.</div></div>'
+
+  + '<div class="'+B+'-pp"><div class="'+B+'-sub a">Which seat are you working</div>'
+  + '<div class="'+B+'-f"><label class="'+B+'-lab" for="'+B+'-seat">Position</label><select class="'+B+'-in" id="'+B+'-seat">' + seatOptions() + '</select></div></div>'
+
+  + '<div class="'+B+'-pp"><div class="'+B+'-sub">Open around you</div>'
+  + '<div class="'+B+'-open" id="'+B+'-open">' + openBoxes() + '</div>'
+  + '<div class="'+P+'-note">Check each radar position that is staffed besides yours. Clearance, ramp, ground and tower are not offered as a choice: they are assumed open (24-hour facility, owner direction, 2026-10-20).</div></div>'
+
+  + '<div class="'+B+'-pp"><div class="'+B+'-sub">Configuration and weather</div>'
   + '<div class="'+B+'-row">'
-  + '<div class="'+B+'-f"><label class="'+B+'-lab" for="'+B+'-seat">Position</label><select class="'+B+'-in" id="'+B+'-seat">' + seatOptions() + '</select></div>'
   + '<div class="'+B+'-f"><label class="'+B+'-lab" for="'+B+'-config">Configuration</label><select class="'+B+'-in" id="'+B+'-config">' + configOptions() + '</select></div>'
   + '<div class="'+B+'-f"><label class="'+B+'-lab" for="'+B+'-wdir">Wind (mag)</label><input class="'+B+'-in" type="number" id="'+B+'-wdir" min="0" max="360" placeholder="dir" value="' + esc(state.wdir) + '"></div>'
   + '<div class="'+B+'-f"><label class="'+B+'-lab" for="'+B+'-wkt">Knots</label><input class="'+B+'-in" type="number" id="'+B+'-wkt" min="0" max="99" placeholder="kt" value="' + esc(state.wkt) + '"></div>'
   + '<div class="'+B+'-f"><label class="'+B+'-lab" for="'+B+'-cat">Flight category</label><select class="'+B+'-in" id="'+B+'-cat">'
   + ['VFR','MVFR','IFR','LIFR'].map(function(x){ return opt(x, x, state.cat); }).join('') + '</select></div>'
   + '</div>'
-  + '<div class="'+B+'-lab" style="margin-top:8px;">Who else is open</div><div class="'+B+'-open" id="'+B+'-open">' + openBoxes() + '</div>'
+  + '<div class="'+P+'-note">The coach sets the weather and the flow follows from it. A D-ATIS read below sets these four, and only when exactly one configuration fits the runways in use.</div></div>'
+
+  + '<div class="'+B+'-pp" data-note="frame"><div class="'+B+'-sub">What that resolves to</div>'
   + '<div id="'+B+'-frameout">' + frameHtml() + '</div>'
   + '<div class="'+B+'-row"><button class="'+B+'-btn" id="'+B+'-bank">Bank this frame in the log</button></div>'
-  + '<div data-note="frame.wind"><h3>Wind components</h3><div id="'+B+'-wind">' + windHtml() + '</div></div>'
+  + '<div class="'+P+'-note">This is the frame the Fly it page states before traffic, and its position list follows who is open here.</div></div>'
+
+  + '<div class="'+B+'-pp" data-note="frame.wind"><div class="'+B+'-sub">Wind components</div><div id="'+B+'-wind">' + windHtml() + '</div></div>'
   + '<div class="'+P+'-note">' + esc(NS.FAC.frameNote) + '</div>'
   + '</section>';
 }
@@ -1394,6 +1414,15 @@ function mount(){
     save(); renderNotebook(); NS.log('Frame banked in the practice log.');
   });
   wireOpen();
+  /* Quick setups: who is open around you, and nothing else. The chain does the folding. */
+  Array.prototype.forEach.call(document.querySelectorAll('#'+B+'-frame [data-preset]'), function(b){
+    b.addEventListener('click', function(){
+      var all = b.getAttribute('data-preset') === 'all';
+      TRACON_ORDER.forEach(function(k){ if(k !== state.seat) state.open[k] = all; });
+      save(); refresh();
+      NS.log(all ? 'Quick setup: every radar position open.' : 'Quick setup: only your seat open.');
+    });
+  });
   if(!storageOk){
     var el = document.getElementById(B+'-notelist');
     if(el) el.innerHTML = '<div class="'+B+'-room">Local storage is not available in this context, so notes live only until the page is closed. Export them as Markdown before you leave.</div>' + el.innerHTML;
@@ -4472,9 +4501,23 @@ window.FLY_FACILITY = {
                   mk(strip,i), track(strip), sim, FACILITY, ... }
    window[<prefix>Load|Rate|End|Send|Quick|Layers|Pick|Target]  the handlers
 
-   A DRILL is {id, name, frame, strips:[strip...], rate:0|1|4|'hot'}, a
-   STRIP is the strip block's row. `fly.load` refuses a drill whose strips
-   cannot be flown and says why, strip by strip.
+   A DRILL is {id, name, brief, frame, strips:[strip...], rate:0|1|4|'hot',
+   events:[event...]}, a STRIP is the strip block's row. `fly.load` refuses
+   a drill whose strips cannot be flown and says why, strip by strip.
+
+   AN EVENT fires once, into the feed, when the clock reaches its time. It
+   is typed by whoever builds the drill; the block carries no canned text.
+     {kind:'speci',    at:seconds, ceil, vis, wind, cat, cfg, cfgName}
+         a special observation: the weather the trainee typed, and, if
+         cfg is set, the configuration now in force. The block states
+         plainly that it does NOT re-plan strips already flying.
+     {kind:'landline', at:seconds, from, text, cs}
+         a call on the landline: who it is from and what they say.
+   Nothing here is graded and no event is tagged to a standing item.
+
+   fly.preview(strips) draws the start positions on the SAME scope code
+   the live player uses (same fit, same rings, same outline), for the
+   drill builder to show before the drill is flown.
    ================================================================ */
 (function(){
 'use strict';
@@ -4683,7 +4726,7 @@ function pointAt(tr, d){
 /* ---------- 3. sim state ---------- */
 var sim = {t:0, rate:0, hot:false, ac:[], feed:[], sel:null, drill:null, ended:false,
            layers:'tracked', target:20, timing:[], tx:0, pausedTx:0, tally:{good:0, flag:0, crit:0},
-           los:{}, scale:null, lastTx:null, lastReal:0};
+           los:{}, scale:null, lastTx:null, lastReal:0, events:[]};
 var LAYER_MODES = [
  {id:'tracked', label:'tracked traffic'},
  {id:'stars',   label:'all STARs'},
@@ -4962,6 +5005,29 @@ function step(dt){
  sim.t += dt;
  for(var i = 0; i < sim.ac.length; i++) advance(sim.ac[i], dt);
  checkLos();
+ fireEvents();
+}
+/* Scheduled events: a SPECI and landline calls, fired once when the clock reaches them. The text
+   is whatever the drill's author typed; the block adds only the chip and the statement of what
+   it does not do. */
+function speciText(e){
+ var bits = [];
+ if(e.ceil) bits.push('ceiling ' + esc(e.ceil));
+ if(e.vis) bits.push('visibility ' + esc(e.vis));
+ if(e.wind) bits.push('wind ' + esc(e.wind));
+ if(e.cat) bits.push('flight category ' + esc(e.cat));
+ var s = 'Special observation' + (bits.length ? ': ' + bits.join(', ') : '') + '.';
+ if(e.cfg) s += ' The configuration is now <b>' + esc(e.cfgName || e.cfg) + '</b>. The strips already flying keep their published tracks: this player does not re-plan them, so re-vector or re-assign any that need it.';
+ return s;
+}
+function fireEvents(){
+ for(var i = 0; i < sim.events.length; i++){
+  var e = sim.events[i];
+  if(e.fired || !(e.at <= sim.t)) continue;
+  e.fired = true;
+  if(e.kind === 'speci') log('info', chip('info', 'SPECI') + speciText(e));
+  else if(e.kind === 'landline') log('info', chip('info', 'landline') + '<b>' + esc(e.from || 'The other side') + '</b> on the landline' + (e.cs ? ' about ' + esc(e.cs) : '') + ': ' + esc(e.text));
+ }
 }
 function checkLos(){
  var live = sim.ac.filter(function(a){ return a.alive && a.onFreq && !a.handed && airborne(a); });
@@ -5312,6 +5378,13 @@ function validate(drill){
   else if(tr.skipped) warns.push(tag + ': ' + tr.skipped + ' fix' + (tr.skipped === 1 ? '' : 'es') + ' on ' + tr.id + ' carry no coordinate and are left out of the line.');
   if(role === 'arrival' && s.dtgFix && tr.ok && fixCum(tr, s.dtgFix) == null) warns.push(tag + ': ' + s.dtgFix + ' is not on the track chosen for it, so it starts at the beginning of the track.');
  });
+ ((drill && drill.events) || []).forEach(function(e, i){
+  var tag = 'Event ' + (i + 1);
+  if(!e || (e.kind !== 'speci' && e.kind !== 'landline')) warns.push(tag + ' is not a special observation or a landline call and is left out.');
+  else if(parseNum(e.at) == null) warns.push(tag + ' (' + e.kind + ') has no time in seconds from the start and is left out.');
+  else if(e.kind === 'landline' && !String(e.text || '').trim()) warns.push(tag + ' (landline) has nothing to say and is left out.');
+  else if(e.kind === 'speci' && !(e.ceil || e.vis || e.wind || e.cat || e.cfg)) warns.push(tag + ' (special observation) changes nothing and is left out.');
+ });
  return {errs:errs, warns:warns};
 }
 function load(drill){
@@ -5324,11 +5397,16 @@ function load(drill){
  sim.t = 0; sim.rate = 0; sim.hot = false; sim.ended = false; sim.drill = drill; sim.sel = null;
  sim.feed = []; sim.timing = []; sim.tx = 0; sim.pausedTx = 0; sim.tally = {good:0, flag:0, crit:0}; sim.los = {}; sim.lastTx = null;
  sim.ac = (drill.strips || []).map(function(s, i){ return mkAc(s, i); });
+ sim.events = ((drill.events || []).filter(function(e){
+  return e && (e.kind === 'speci' || e.kind === 'landline') && parseNum(e.at) != null
+   && (e.kind === 'landline' ? String(e.text || '').trim() : (e.ceil || e.vis || e.wind || e.cat || e.cfg));
+ })).map(function(e){ var c = {}, k; for(k in e) c[k] = e[k]; c.at = parseNum(e.at); c.fired = false; return c; });
  sim.scale = null;
  var title = drill.name || 'Untitled drill';
  var fr = drill.frame && drill.frame.text ? drill.frame.text : (typeof F.frame === 'function' && F.frame() ? F.frame().text : '');
  sim.title = title + (fr ? ' - ' + fr : '');
  v.warns.forEach(function(w){ log('info', chip('info', 'note') + esc(w)); });
+ if(drill.brief && String(drill.brief).trim()) log('coach', '<span class="coach">Brief: ' + esc(String(drill.brief).trim()) + '</span>');
  var fl = typeof F.flow === 'function' ? F.flow() : null;
  if(!fl) log('info', chip('info', 'frame') + 'No configuration is set, so no flow is stated and no route is trimmed to one.');
  sim.ac.forEach(function(a){ if(a.spawnAt <= 0) putOnFreq(a); });
@@ -5516,6 +5594,29 @@ function scopeSvg(){
  o += '</svg>';
  return o;
 }
+/* The start positions of a list of strips, drawn by scopeSvg() itself so the geometry is the live
+   scope's by construction: same fit, same rings, same outline, same tracks. The live sim is
+   swapped out for the call and put back, so nothing a drill is doing is touched. A strip with no
+   flyable track has no position and is named in the returned list. */
+function preview(strips){
+ var keep = sim, acs = [], skipped = [], svg = '';
+ (strips || []).forEach(function(s, i){
+  var a = mkAc(s, i);
+  if(!a.track.ok){ skipped.push((s.cs || ('strip ' + (i + 1))) + ': ' + (a.track.note || 'no track')); return; }
+  a.alive = true; a.onFreq = true; a.gs = a.ias;
+  /* the live scope dims a target that is no longer on the frequency; here the same dimming marks one that checks in later */
+  if(a.spawnAt > 0) a.handed = 'later';
+  acs.push(a);
+ });
+ if(acs.length){
+  sim = {t:0, rate:0, hot:false, ac:acs, feed:[], sel:null, drill:null, ended:false, layers:'tracked', target:20, timing:[], tx:0, pausedTx:0,
+         tally:{good:0, flag:0, crit:0}, los:{}, scale:null, lastTx:null, lastReal:0, events:[], range:0};
+  try{ svg = scopeSvg(); }catch(e){ svg = ''; }
+  sim = keep;
+  svg = svg.replace(/ onclick="[^"]*"/g, '').replace(/ style="cursor:pointer"/g, '').replace('aria-label="Live scope"', 'aria-label="Start positions"');
+ }
+ return {svg:svg, count:acs.length, skipped:skipped};
+}
 function nextFixOf(a){
  if(!a.track.ok || a.nav !== 'track') return null;
  for(var i = 0; i < a.track.pts.length; i++){ if(a.track.pts[i].cum > a.dist + 1e-6) return a.track.pts[i]; }
@@ -5696,7 +5797,7 @@ window.fly = {
  FACILITY:F, sim:sim, load:load, validate:validate, step:step, transmit:transmit, mk:mkAc, track:buildTrack,
  viaTarget:viaTarget, parseAlt:parseAlt, despell:despell, pointAt:pointAt, xy:xy, render:render, setRate:setRate,
  end:endDrill, tracksFor:tracksFor, LAYER_MODES:LAYER_MODES, transOptions:transOptions, procFor:procFor, fixCum:fixCum,
- conText:conText, esc:esc, mountCss:mountCss, haveProcs:HAVE_PROCS, find:findAc,
+ conText:conText, esc:esc, mountCss:mountCss, haveProcs:HAVE_PROCS, find:findAc, preview:preview,
  CLIMB:CLIMB, DESC:DESC, ACCEL:ACCEL, GRAD:GRAD
 };
 
@@ -5733,19 +5834,30 @@ window.DRILL_FACILITY = {
  anchor:function(){ return document.getElementById('mod-' + window.strip.prefix); },
  rows:function(next){ return window.indstRows(next); },
  page:function(id){ if(window.indPage) window.indPage(id); },
- mountRails:function(el){ if(window.indb && window.indb.mountRailsIn) window.indb.mountRailsIn(el); }
+ mountRails:function(el){ if(window.indb && window.indb.mountRailsIn) window.indb.mountRailsIn(el); },
+ configs:function(){ var C = window.IND && window.IND.CONFIGS; return (C || []).map(function(c){ return {id:c.id, name:c.name}; }); }
 };
 })();
 /* ================================================================
    MASTER DRILL BLOCK - the Drill Builder, facility-agnostic.
 
-   The Set up a drill half of M98's builder, generalised: a brief, a
-   seeded generator that builds strips from the facility's own published
-   procedures and the configuration in force, a per-strip "flown on"
-   panel (which transition, and a departure's cleared altitude), Save and
-   fly it / Save only, a list of saved drills, and JSON export and
-   import. The strip row itself is the strip block's and stays there;
-   this block builds AROUND it and never draws a strip.
+   The Set up a drill half of M98's builder, generalised, in M98's
+   order and under M98's headings: Generate (a seeded generator that
+   builds strips from the facility's own published procedures and the
+   configuration in force, new seed, start blank instead), Edit (the
+   frame, a name, the opening rate, run hot), Special observation - the
+   frame changes mid-drill, Landline events - the other side of the
+   operation, Brief - what the drill is asking of you, then the strips
+   (the strip block's, which this block builds AROUND and never draws),
+   Start positions - drawn by the player's own scope code (fly.preview),
+   Flown on (which transition, and a departure's cleared altitude), Save
+   and fly it / Save only, the saved drills, and JSON export and import.
+
+   WHAT THE EVENTS ARE. A special observation and a landline call are
+   scheduled notices the trainee types; they ride on the drill as
+   events:[...] (shape in the fly block's header) and land in the Fly it
+   feed. This block carries no catalogue of calls and no canned weather,
+   grades nothing, and does not re-plan strips already flying.
 
    It needs the fly block under it (window.fly) and the strip block
    under that (window.strip). With either missing it does nothing.
@@ -5776,7 +5888,13 @@ window.DRILL_FACILITY = {
                                       //   replace them and re-render; always
                                       //   return the current array
      page:     function(id){},        // OPTIONAL. 'fly' / 'setup'
-     mountRails: function(el){}       // OPTIONAL. The notes rail, per section
+     mountRails: function(el){},      // OPTIONAL. The notes rail, per section
+     configs:  function(){},           // OPTIONAL. [{id, name}], the configurations
+                                      //   the deck carries; with none the special
+                                      //   observation has no "re-configure to"
+     note:     ''                     // OPTIONAL. Plain text the Generate panel
+                                      //   adds to its note: what this deck's
+                                      //   generator cannot build, and why
    };
 
    The configuration and the frame are read from window.FLY_FACILITY
@@ -5829,7 +5947,8 @@ function load(){
 function save(){
  try{ window.localStorage.setItem(KEY, JSON.stringify(store)); }catch(e){ storeOk = false; }
 }
-var ui = {name:'', brief:'', rate:0, seed:'', n:6, mix:'both', msg:'', exportText:''};
+var ui = {name:'', brief:'', rate:1, hot:false, seed:'', n:6, mix:'both', msg:'', exportText:'',
+ speci:{on:false, at:'', ceil:'', vis:'', wind:'', cat:'', cfg:''}, lines:[]};
 
 /* ---------- 2. the generator ---------- */
 var hasFlyable = FL.haveProcs;
@@ -5999,10 +6118,57 @@ function snapshot(){
  var rows = D.rows();
  return JSON.parse(JSON.stringify(rows));
 }
+function configs(){
+ var c = (typeof D.configs === 'function') ? D.configs() : null;
+ return (c && c.length) ? c : [];
+}
+function cfgName(id){
+ var c = configs();
+ for(var i = 0; i < c.length; i++){ if(String(c[i].id) === String(id)) return c[i].name || String(id); }
+ return String(id);
+}
+function numOf(v){ var n = parseFloat(String(v == null ? '' : v).replace(/[^0-9.]/g, '')); return isFinite(n) ? n : null; }
+
+/* The events the builder has typed, as the fly block's drill carries them. Whatever is blank is
+   left off the event; the fly block's validate names any that cannot fire. Nothing here is data
+   from a document - it is the trainee's own scenario text. */
+function eventsOut(){
+ var out = [], sp = ui.speci;
+ if(sp.on){
+  var e = {kind:'speci', at:numOf(sp.at)};
+  if(sp.ceil.trim()) e.ceil = sp.ceil.trim();
+  if(sp.vis.trim()) e.vis = sp.vis.trim();
+  if(sp.wind.trim()) e.wind = sp.wind.trim();
+  if(sp.cat) e.cat = sp.cat;
+  if(sp.cfg){ e.cfg = sp.cfg; e.cfgName = cfgName(sp.cfg); }
+  out.push(e);
+ }
+ ui.lines.forEach(function(l){
+  if(!(String(l.at).trim() || l.from.trim() || l.text.trim() || l.cs.trim())) return;
+  var e = {kind:'landline', at:numOf(l.at), from:l.from.trim(), text:l.text.trim()};
+  if(l.cs.trim()) e.cs = l.cs.trim().toUpperCase();
+  out.push(e);
+ });
+ return out;
+}
+/* A landline call about a callsign the drill does not carry reads as a call about nothing. */
+function eventNotes(d){
+ var notes = [], have = {}, n = 0;
+ (d.strips || []).forEach(function(s){ if(s.cs) have[String(s.cs).toUpperCase()] = 1; });
+ (d.events || []).forEach(function(e){
+  if(e.kind !== 'landline') return;
+  n++;
+  if(e.cs && !have[String(e.cs).toUpperCase()]) notes.push('Landline call ' + n + ' is about ' + e.cs + ', which is not a strip in this drill.');
+ });
+ return notes;
+}
 function collect(){
- return {id:'d' + Date.now().toString(36), name:(ui.name || '').trim() || ('Drill ' + (store.drills.length + 1)),
-  brief:ui.brief, rate:ui.rate, at:new Date().toISOString().slice(0, 16).replace('T', ' '),
+ var d = {id:'d' + Date.now().toString(36), name:(ui.name || '').trim() || ('Drill ' + (store.drills.length + 1)),
+  brief:ui.brief, rate:ui.hot ? 'hot' : ui.rate, at:new Date().toISOString().slice(0, 16).replace('T', ' '),
   seed:ui.seed || null, frame:{text:frameText()}, strips:snapshot()};
+ var ev = eventsOut();
+ if(ev.length) d.events = ev;
+ return d;
 }
 function say(html, kind){ ui.msg = '<div class="' + PFX + '-msg ' + (kind || '') + '">' + html + '</div>'; paint(); }
 function flyIt(drill){
@@ -6021,29 +6187,91 @@ function flyIt(drill){
 
 /* ---------- 4. markup ---------- */
 function opt(v, label, cur){ return '<option value="' + esc(v) + '"' + (String(v) === String(cur) ? ' selected' : '') + '>' + esc(label) + '</option>'; }
-function headHtml(){
- var f = frameText();
- var gen = hasFlyable
-  ? '<div class="' + PFX + '-row">'
-   + '<label>Seed <input class="' + PFX + '-in" id="' + PFX + '-seed" value="' + esc(ui.seed) + '" placeholder="any number" size="10" oninput="' + PFX + 'Set()"></label>'
-   + '<label>Strips <input class="' + PFX + '-in" id="' + PFX + '-n" value="' + ui.n + '" size="3" oninput="' + PFX + 'Set()"></label>'
-   + '<label>Mix <select class="' + PFX + '-sel" id="' + PFX + '-mix" onchange="' + PFX + 'Set()">' + opt('both', 'arrivals, departures, overflights', ui.mix) + opt('arrivals', 'arrivals only', ui.mix) + opt('departures', 'departures only', ui.mix) + '</select></label>'
-   + '<button class="' + PFX + '-btn' + '" onclick="' + PFX + 'Gen()">Generate strips</button>'
+function fld(label, ctl){ return '<label>' + label + ctl + '</label>'; }
+function inp(id, val, size, ph){
+ return '<input class="' + PFX + '-in" id="' + PFX + '-' + id + '" value="' + esc(val) + '"' + (size ? ' size="' + size + '"' : '') + (ph ? ' placeholder="' + esc(ph) + '"' : '') + ' oninput="' + PFX + 'Set()">';
+}
+function frameInner(f){
+ return f ? esc(f) : '<span class="' + PFX + '-gap">No frame set - choose a position and a configuration above.</span>';
+}
+var lastFrame = null;
+
+function genPanel(){
+ var body;
+ if(hasFlyable){
+  body = '<div class="' + PFX + '-row">'
+   + fld('Seed', inp('seed', ui.seed, 10, 'any number'))
+   + fld('Strips', inp('n', ui.n, 3))
+   + fld('Mix', '<select class="' + PFX + '-sel" id="' + PFX + '-mix" onchange="' + PFX + 'Set()">' + opt('both', 'arrivals, departures, overflights', ui.mix) + opt('arrivals', 'arrivals only', ui.mix) + opt('departures', 'departures only', ui.mix) + '</select>')
    + '</div>'
-  : '<div class="' + PFX + '-note">This deck carries no published procedures to fly, so there is nothing to generate from: build overflights below by radial and distance.</div>';
+   + '<div class="' + PFX + '-hint">Strips is the most the drill will carry, and no drill carries more than ' + ST.MAX + '. Arrivals, departures and overflights share it.</div>'
+   + '<div class="' + PFX + '-actions">'
+   + '<button class="' + PFX + '-go" onclick="' + PFX + 'Gen()">Generate drill</button>'
+   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Dice()">new seed</button>'
+   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Blank()">start blank instead</button>'
+   + '<span class="' + PFX + '-hint" style="margin:0;">Same seed, same drill - write the number in your notes and you can fly it again cold.</span>'
+   + '</div>'
+   + '<div class="' + PFX + '-note">The generator picks procedures, runways and transitions this deck carries and the configuration in force allows. <b>The start altitude, cleared altitude, speed, callsign, type and check-in time are drill parameters, not published data</b> - each is a box on the strip you can change.' + (D.note ? ' ' + esc(D.note) : '') + '</div>';
+ } else {
+  body = '<div class="' + PFX + '-note">This deck carries no published procedures to fly, so there is nothing to generate from: build overflights below by radial and distance.</div>'
+   + '<div class="' + PFX + '-actions"><button class="' + PFX + '-btn" onclick="' + PFX + 'Blank()">start blank instead</button></div>';
+ }
+ return '<div class="' + PFX + '-panel"><div class="' + PFX + '-sub">Generate</div>' + body + '</div>';
+}
+function lineHtml(l, i){
+ return '<div class="' + PFX + '-line">'
+  + '<div class="' + PFX + '-linehead"><b>Call ' + (i + 1) + '</b> <button class="' + PFX + '-btn" onclick="' + PFX + 'DropLine(' + i + ')">remove</button></div>'
+  + '<div class="' + PFX + '-row">'
+  + fld('At T-plus (seconds)', inp('lat' + i, l.at, 8))
+  + fld('From', inp('lfrom' + i, l.from, 22, 'who is calling'))
+  + fld('About callsign (optional)', inp('lcs' + i, l.cs, 10))
+  + '</div>'
+  + '<label class="' + PFX + '-blk">What they say <textarea class="' + PFX + '-in" id="' + PFX + '-ltxt' + i + '" rows="2" oninput="' + PFX + 'Set()">' + esc(l.text) + '</textarea></label>'
+  + '</div>';
+}
+function editPanel(){
+ var f = frameText(), sp = ui.speci, cf = configs();
+ lastFrame = f;
+ var cfSel = cf.length
+  ? fld('Re-configure to', '<select class="' + PFX + '-sel" id="' + PFX + '-specicfg" onchange="' + PFX + 'Set()">' + opt('', 'no change', sp.cfg) + cf.map(function(c){ return opt(c.id, c.name || c.id, sp.cfg); }).join('') + '</select>')
+  : '';
+ return '<div class="' + PFX + '-panel" id="' + PFX + '-editor"><div class="' + PFX + '-sub">Edit</div>'
+  + '<div class="' + PFX + '-frame" id="' + PFX + '-frame">' + frameInner(f) + '</div>'
+  + '<div class="' + PFX + '-hint" style="margin-top:-4px;">This is the frame the Fly it page will state before traffic. It is read off the position and weather panels above; change it there.</div>'
+  + '<div class="' + PFX + '-row">'
+  + fld('Name', inp('name', ui.name, 30, 'what this drill is for'))
+  + fld('Opening rate', '<select class="' + PFX + '-sel" id="' + PFX + '-rate" onchange="' + PFX + 'Set()">' + opt('0', 'paused', ui.rate) + opt('1', '1x - real time', ui.rate) + opt('4', '4x', ui.rate) + '</select>')
+  + '<label class="' + PFX + '-chk"><input type="checkbox" id="' + PFX + '-hot"' + (ui.hot ? ' checked' : '') + ' onchange="' + PFX + 'Set()">run hot - no pausing</label>'
+  + '</div>'
+
+  + '<div class="' + PFX + '-sub" style="margin-top:16px;">Special observation - the frame changes mid-drill</div>'
+  + '<div class="' + PFX + '-row">'
+  + '<label class="' + PFX + '-chk"><input type="checkbox" id="' + PFX + '-speci"' + (sp.on ? ' checked' : '') + ' onchange="' + PFX + 'Set()">drop a SPECI</label>'
+  + fld('At T-plus (seconds)', inp('speciat', sp.at, 8))
+  + fld('New ceiling', inp('specic', sp.ceil, 10))
+  + fld('New visibility', inp('speciv', sp.vis, 10))
+  + fld('New wind', inp('speciw', sp.wind, 14))
+  + fld('New flight category', '<select class="' + PFX + '-sel" id="' + PFX + '-specicat" onchange="' + PFX + 'Set()">' + opt('', 'no change', sp.cat) + opt('VFR', 'VFR', sp.cat) + opt('MVFR', 'MVFR', sp.cat) + opt('IFR', 'IFR', sp.cat) + opt('LIFR', 'LIFR', sp.cat) + '</select>')
+  + cfSel
+  + '</div>'
+  + '<div class="' + PFX + '-hint">A special observation is unscheduled: it lands between the hourly reports when the weather crosses a threshold. When the clock reaches the time you set, the Fly it feed announces what you typed here - the values are yours, none is a published number.'
+  + (cf.length ? ' <b>Re-configure to</b> names the configuration now in force. <b>This player does not re-plan the strips already flying</b> - they keep their published tracks, and the feed says so - so re-vector or re-assign any that need it.' : ' This deck has no configuration list to switch between, so a special observation changes the weather only.')
+  + ' Nothing here is graded.</div>'
+
+  + '<div class="' + PFX + '-sub" style="margin-top:16px;">Landline events - the other side of the operation</div>'
+  + '<div id="' + PFX + '-lines">' + ui.lines.map(lineHtml).join('') + '</div>'
+  + '<div class="' + PFX + '-actions"><button class="' + PFX + '-btn" onclick="' + PFX + 'AddLine()">add a landline event</button></div>'
+  + '<div class="' + PFX + '-hint">A landline event is a call from the other side - a tower, a neighbouring sector, a supervisor - that lands in the Fly it feed at the time you set. You write who it is from and what they say: this deck carries no catalogue of coordination calls to draw on, because the paragraphs of the order that would define one are not transcribed here as such. <b>Content is not graded</b> and no answer is expected by the player: it is a notice on the feed, not a transmission to reply to.</div>'
+
+  + '<label class="' + PFX + '-blk" style="margin-top:14px;">Brief - what the drill is asking of you <textarea class="' + PFX + '-in" id="' + PFX + '-brief" rows="3" placeholder="Optional. One line the coach would say before traffic." oninput="' + PFX + 'Set()">' + esc(ui.brief) + '</textarea></label>'
+  + '</div>';
+}
+function headHtml(){
  return '<section class="' + SEC + ' ' + PFX + '-sec" id="' + PFX + '-head" data-note="drill">'
   + '<h2>Drill builder</h2>'
-  + '<p class="' + PFX + '-dim">Name the drill, build or generate its strips, then fly it. The frame below is the one the Fly it page will state before traffic.</p>'
-  + '<div class="' + PFX + '-panel">'
-  + '<div class="' + PFX + '-frame">' + (f ? esc(f) : '<span class="' + PFX + '-gap">No frame set - choose a position and a configuration above.</span>') + '</div>'
-  + '<div class="' + PFX + '-row">'
-  + '<label>Drill name <input class="' + PFX + '-in" id="' + PFX + '-name" value="' + esc(ui.name) + '" placeholder="e.g. Runway 5 arrivals" size="30" oninput="' + PFX + 'Set()"></label>'
-  + '<label>Clock <select class="' + PFX + '-sel" id="' + PFX + '-rate" onchange="' + PFX + 'Set()">' + opt('0', 'starts paused', ui.rate) + opt('1', 'starts at 1x', ui.rate) + opt('4', 'starts at 4x', ui.rate) + opt('hot', 'run hot', ui.rate) + '</select></label>'
-  + '</div>'
-  + '<label class="' + PFX + '-blk">What this drill is for <textarea class="' + PFX + '-in" id="' + PFX + '-brief" rows="2" placeholder="Optional. One line the coach would say before traffic." oninput="' + PFX + 'Set()">' + esc(ui.brief) + '</textarea></label>'
-  + gen
-  + '<div class="' + PFX + '-note">The generator picks procedures, runways and transitions this deck carries and the configuration in force allows. <b>The start altitude, cleared altitude, speed, callsign, type and check-in time are drill parameters, not published data</b> - each is a box on the strip you can change.</div>'
-  + '</div>'
+  + '<p class="' + PFX + '-dim">Generate a drill or build one strip by strip, say what changes while it runs, then fly it.</p>'
+  + genPanel()
+  + editPanel()
   + '</section>';
 }
 function detailsHtml(){
@@ -6069,29 +6297,48 @@ function detailsHtml(){
  });
  return out || '<div class="' + PFX + '-dim">No strip here follows a published procedure.</div>';
 }
+/* The start positions, drawn by the player's own scope code (fly.preview), so the fit, the rings,
+   the outline and the tracks are the ones that will be flown. */
+function previewHtml(){
+ var rows = (D.rows() || []).filter(function(s){ return s && String(s.cs || '').trim(); }), p = null;
+ if(typeof FL.preview === 'function'){ try{ p = FL.preview(rows); }catch(e){ p = null; } }
+ if(!p) return '<div class="' + PFX + '-dim">The player cannot draw start positions here.</div>';
+ var out = '';
+ if(p.count){
+  out += '<div class="' + PFX + '-cap">Start positions - same geometry as the live scope</div>'
+   + '<div class="' + PFX + '-scopewrap">' + p.svg + '</div>'
+   + '<div class="' + PFX + '-hint">Dimmed targets check in later. Each is drawn at the point on its published track where the strip starts it, on the Fly it page\'s own scope code.</div>';
+ } else {
+  out += '<div class="' + PFX + '-dim">Nothing to draw yet: a strip needs a callsign and either a published procedure or an overflight\'s radials before it has a start position.</div>';
+ }
+ if(p.skipped.length) out += '<div class="' + PFX + '-gap" style="margin-top:8px;">No start position: ' + esc(p.skipped.join('; ')) + '.</div>';
+ return out;
+}
 function tailHtml(){
  var list = store.drills.map(function(d, i){
-  return '<div class="' + PFX + '-drow"><b>' + esc(d.name) + '</b> <span class="' + PFX + '-dim">' + (d.strips ? d.strips.length : 0) + ' strips · ' + esc(d.at || '') + (d.seed ? ' · seed ' + esc(d.seed) : '') + '</span> '
+  var ne = d.events ? d.events.length : 0;
+  return '<div class="' + PFX + '-drow"><b>' + esc(d.name) + '</b> <span class="' + PFX + '-dim">' + (d.strips ? d.strips.length : 0) + ' strips' + (ne ? ' · ' + ne + ' event' + (ne === 1 ? '' : 's') : '') + ' · ' + esc(d.at || '') + (d.seed ? ' · seed ' + esc(d.seed) : '') + '</span> '
    + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Fly(' + i + ')">Fly it</button> '
    + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Open(' + i + ')">Load into the strips</button> '
    + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Del(' + i + ')">Delete</button>'
    + (d.brief ? '<div class="' + PFX + '-dim">' + esc(d.brief) + '</div>' : '') + '</div>';
  }).join('');
  return '<section class="' + SEC + ' ' + PFX + '-sec" id="' + PFX + '-tail" data-note="drill.saved">'
-  + '<h2>Fly or save this drill</h2>'
+  + '<div class="' + PFX + '-panel"><div class="' + PFX + '-sub">Start positions</div>'
+  + '<div id="' + PFX + '-preview">' + previewHtml() + '</div></div>'
   + '<div class="' + PFX + '-panel">'
-  + '<h3>Flown on</h3>'
+  + '<div class="' + PFX + '-sub a">Flown on</div>'
   + '<div id="' + PFX + '-details">' + detailsHtml() + '</div>'
-  + '<div class="' + PFX + '-row" style="margin-top:12px;">'
+  + '<div class="' + PFX + '-actions">'
   + '<button class="' + PFX + '-go" onclick="' + PFX + 'SaveFly()">Save and fly it</button>'
   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'SaveOnly()">Save only</button>'
   + '</div>'
   + ui.msg
   + '</div>'
-  + '<div class="' + PFX + '-panel"><h3>Saved drills</h3>'
+  + '<div class="' + PFX + '-panel"><div class="' + PFX + '-sub">Saved drills</div>'
   + (storeOk ? '' : '<div class="' + PFX + '-msg bad">Local storage is not available in this context, so saved drills live only until the page is closed. Export them before you leave.</div>')
   + (list || '<div class="' + PFX + '-dim">None saved yet.</div>')
-  + '<div class="' + PFX + '-row" style="margin-top:12px;">'
+  + '<div class="' + PFX + '-actions">'
   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Export()">Export as JSON</button>'
   + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Import()">Import from the box below</button>'
   + '</div>'
@@ -6106,18 +6353,42 @@ function paint(){
  if(h){ var nh = document.createElement('div'); nh.innerHTML = headHtml(); h.parentNode.replaceChild(nh.firstChild, h); }
  if(t){ var nt = document.createElement('div'); nt.innerHTML = tailHtml(); t.parentNode.replaceChild(nt.firstChild, t); }
 }
-/* repaint only the flown-on panel, so typing in the head never loses focus */
-function paintDetails(){ var e = document.getElementById(PFX + '-details'); if(e) e.innerHTML = detailsHtml(); }
+/* the frame line follows the position and weather panels above, which this block does not own */
+function paintFrame(){
+ var e = document.getElementById(PFX + '-frame');
+ if(!e) return;
+ var t = frameText();
+ if(t === lastFrame) return;
+ lastFrame = t; e.innerHTML = frameInner(t);
+}
+/* repaint only the flown-on panel and the start positions, so typing in the head never loses focus */
+function paintDetails(){
+ var e = document.getElementById(PFX + '-details'); if(e) e.innerHTML = detailsHtml();
+ var p = document.getElementById(PFX + '-preview'); if(p) p.innerHTML = previewHtml();
+ paintFrame();
+}
 
 /* ---------- 6. handlers ---------- */
 function read(){
  function v(id){ var e = document.getElementById(PFX + '-' + id); return e ? e.value : null; }
+ function c(id){ var e = document.getElementById(PFX + '-' + id); return e ? !!e.checked : null; }
  if(v('name') != null) ui.name = v('name');
  if(v('brief') != null) ui.brief = v('brief');
- if(v('rate') != null) ui.rate = (v('rate') === 'hot') ? 'hot' : parseInt(v('rate'), 10);
+ if(v('rate') != null) ui.rate = parseInt(v('rate'), 10) || 0;
+ if(c('hot') != null) ui.hot = c('hot');
  if(v('seed') != null) ui.seed = v('seed');
  if(v('n') != null){ var n = parseInt(v('n'), 10); ui.n = (n >= 1 && n <= ST.MAX) ? n : ui.n; }
  if(v('mix') != null) ui.mix = v('mix');
+ if(c('speci') != null){
+  var sp = ui.speci;
+  sp.on = c('speci'); sp.at = v('speciat') || ''; sp.ceil = v('specic') || ''; sp.vis = v('speciv') || '';
+  sp.wind = v('speciw') || ''; sp.cat = v('specicat') || '';
+  sp.cfg = (v('specicfg') != null) ? v('specicfg') : sp.cfg;
+ }
+ ui.lines.forEach(function(l, i){
+  if(v('lat' + i) == null) return;
+  l.at = v('lat' + i); l.from = v('lfrom' + i) || ''; l.cs = v('lcs' + i) || ''; l.text = v('ltxt' + i) || '';
+ });
 }
 window[PFX + 'Set'] = function(){ read(); };
 window[PFX + 'Gen'] = function(){
@@ -6130,6 +6401,27 @@ window[PFX + 'Gen'] = function(){
  ui.msg = '<div class="' + PFX + '-msg">Built ' + g.strips.length + ' strip' + (g.strips.length === 1 ? '' : 's') + ' from seed ' + esc(ui.seed) + '.'
   + (g.skipped.length ? ' Could not build ' + esc(g.skipped.join(', ')) + ' on a flyable procedure.' : '')
   + ' Change any box you like, then fly it.</div>';
+ paint();
+};
+window[PFX + 'Dice'] = function(){
+ read();
+ ui.seed = String(Math.floor(Math.random() * 100000));
+ var e = document.getElementById(PFX + '-seed'); if(e) e.value = ui.seed;
+};
+window[PFX + 'Blank'] = function(){
+ read();
+ D.rows([ST.blank()]);
+ ui.msg = '<div class="' + PFX + '-msg">Started blank. Fill in the strips below, then fly it.</div>';
+ paint();
+};
+window[PFX + 'AddLine'] = function(){
+ read();
+ ui.lines.push({at:'', from:'', cs:'', text:''});
+ paint();
+};
+window[PFX + 'DropLine'] = function(i){
+ read();
+ ui.lines.splice(i, 1);
  paint();
 };
 window[PFX + 'Trans'] = function(i, v){ var r = D.rows()[i]; if(!r) return; if(v) r.trans = v; else delete r.trans; paintDetails(); };
@@ -6148,18 +6440,33 @@ window[PFX + 'SaveFly'] = function(){
 window[PFX + 'SaveOnly'] = function(){
  var d = readyDrill();
  store.drills.push(d); save();
- var v = FL.validate(d);
- say('Saved <b>' + esc(d.name) + '</b>, ' + d.strips.length + ' strip' + (d.strips.length === 1 ? '' : 's') + '.'
-  + (v.errs.length ? '<br>It cannot be flown yet: ' + v.errs.map(esc).join(' ') : ''), v.errs.length ? 'bad' : '');
+ var v = FL.validate(d), notes = v.warns.concat(eventNotes(d));
+ say('Saved <b>' + esc(d.name) + '</b>, ' + d.strips.length + ' strip' + (d.strips.length === 1 ? '' : 's')
+  + (d.events ? ' and ' + d.events.length + ' event' + (d.events.length === 1 ? '' : 's') : '') + '.'
+  + (v.errs.length ? '<br>It cannot be flown yet: ' + v.errs.map(esc).join(' ') : '')
+  + (notes.length ? '<br>' + notes.map(esc).join('<br>') : ''), v.errs.length ? 'bad' : '');
 };
 window[PFX + 'Fly'] = function(i){ var d = store.drills[i]; if(d) flyIt(d); };
 window[PFX + 'Open'] = function(i){
  var d = store.drills[i]; if(!d) return;
  var moved = [], strips = JSON.parse(JSON.stringify(d.strips || []));
  strips.forEach(function(s){ var r = ST.normStrip(s); (r.moved || []).forEach(function(m){ moved.push((s.cs || 'a strip') + ': ' + m); }); });
- ui.name = d.name; ui.brief = d.brief || ''; ui.rate = d.rate || 0; ui.seed = d.seed || '';
+ ui.name = d.name; ui.brief = d.brief || ''; ui.seed = d.seed || '';
+ ui.hot = (d.rate === 'hot'); ui.rate = ui.hot ? 1 : (parseInt(d.rate, 10) || 0);
+ ui.speci = {on:false, at:'', ceil:'', vis:'', wind:'', cat:'', cfg:''}; ui.lines = [];
+ var specis = 0;
+ (d.events || []).forEach(function(e){
+  if(!e) return;
+  if(e.kind === 'speci'){
+   specis++;
+   if(specis === 1) ui.speci = {on:true, at:String(e.at == null ? '' : e.at), ceil:String(e.ceil || ''), vis:String(e.vis || ''), wind:String(e.wind || ''), cat:String(e.cat || ''), cfg:String(e.cfg || '')};
+  } else if(e.kind === 'landline'){
+   ui.lines.push({at:String(e.at == null ? '' : e.at), from:String(e.from || ''), cs:String(e.cs || ''), text:String(e.text || '')});
+  }
+ });
  D.rows(strips);
  ui.msg = '<div class="' + PFX + '-msg">Loaded <b>' + esc(d.name) + '</b>.'
+  + (specis > 1 ? ' The drill carries ' + specis + ' special observations; the builder edits one, the first.' : '')
   + (moved.length ? ' What could not follow into this facility moved: ' + esc(moved.join('; ')) + '.' : '') + '</div>';
  paint();
 };
@@ -6193,22 +6500,31 @@ window[PFX + 'Import'] = function(){
 function mountCss(){
  if(document.getElementById(PFX + '-css')) return;
  var c = '.' + PFX + '-sec{margin-top:22px;}'
-  + '.' + PFX + '-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:12px 0;}'
-  + '.' + PFX + '-panel h3{font-family:var(--display);font-size:15px;margin:0 0 10px;}'
+  + '.' + PFX + '-panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:14px;margin:14px 0;}'
+  + '.' + PFX + '-sub{font-family:var(--mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim);margin:0 0 10px;}'
+  + '.' + PFX + '-sub.a{color:var(--amber);}'
   + '.' + PFX + '-frame{font-family:var(--mono);font-size:12px;color:var(--ink);background:var(--panel2);border:1px solid var(--line);border-radius:4px;padding:8px 10px;margin-bottom:12px;}'
   + '.' + PFX + '-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:10px 0;}'
   + '.' + PFX + '-row label,.' + PFX + '-blk{display:flex;flex-direction:column;gap:4px;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--dim);}'
+  + '.' + PFX + '-row label.' + PFX + '-chk,.' + PFX + '-chk{flex-direction:row;align-items:center;gap:6px;font-size:11px;letter-spacing:0;text-transform:none;color:var(--dim);cursor:pointer;padding-bottom:7px;}'
   + '.' + PFX + '-blk{margin:10px 0;}'
   + '.' + PFX + '-drow label{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--dim);margin-right:8px;}'
   + '.' + PFX + '-in,.' + PFX + '-sel{background:var(--panel2);border:1px solid var(--line);border-radius:3px;color:var(--ink);font-family:var(--mono);font-size:12px;padding:6px 8px;text-transform:none;letter-spacing:0;}'
   + '.' + PFX + '-in:focus,.' + PFX + '-sel:focus{outline:2px solid var(--green);outline-offset:1px;}'
   + '.' + PFX + '-json{width:100%;box-sizing:border-box;margin-top:10px;}'
+  + '.' + PFX + '-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;}'
   + '.' + PFX + '-btn{font-family:var(--mono);font-size:11.5px;color:var(--dim);background:var(--panel2);border:1px solid var(--line);border-radius:3px;padding:6px 10px;cursor:pointer;}'
   + '.' + PFX + '-btn:hover{color:var(--ink);border-color:var(--dim2);}'
   + '.' + PFX + '-go{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--green);color:#062;border:0;border-radius:4px;padding:9px 16px;cursor:pointer;}'
   + '.' + PFX + '-drow{padding:8px 0;border-top:1px solid var(--line);font-size:13px;}'
   + '.' + PFX + '-drow:first-of-type{border-top:0;}'
+  + '.' + PFX + '-line{background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:10px 12px;margin:8px 0;}'
+  + '.' + PFX + '-linehead{display:flex;gap:10px;align-items:center;font-size:13px;}'
+  + '.' + PFX + '-cap{font-family:var(--mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--dim2);margin-bottom:6px;}'
+  + '.' + PFX + '-scopewrap{background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px;}'
+  + '.' + PFX + '-scopewrap svg{display:block;width:100%;height:auto;}'
   + '.' + PFX + '-dim{color:var(--dim);font-size:12px;}'
+  + '.' + PFX + '-hint{font-size:11.5px;color:var(--dim2);line-height:1.55;margin-top:8px;}'
   + '.' + PFX + '-gap{color:var(--amber);}'
   + '.' + PFX + '-note{font-size:12px;color:var(--dim2);border-left:2px solid var(--line);padding-left:10px;margin-top:10px;}'
   + '.' + PFX + '-msg{font-size:13px;margin-top:12px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);}'
@@ -6233,11 +6549,19 @@ function mount(){
   window[name] = function(){ var r = orig.apply(this, arguments); paintDetails(); return r; };
  });
  paintDetails();
+ /* the frame line is owned by blocks this one does not wrap, so it is read again after any click or
+    change on the page and now and then (a fetched D-ATIS lands later); it touches the page only when
+    the text has changed */
+ function soon(){ setTimeout(paintFrame, 60); }
+ document.addEventListener('click', soon, true);
+ document.addEventListener('change', soon, true);
+ setInterval(paintFrame, 1500);
 }
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', mount); }
 else { mount(); }
 
-window.drill = {store:function(){ return store; }, generate:generate, rng:rng, collect:collect, flyIt:flyIt, KEY:KEY, storeOk:function(){ return storeOk; }};
+window.drill = {store:function(){ return store; }, generate:generate, rng:rng, collect:collect, flyIt:flyIt, KEY:KEY, storeOk:function(){ return storeOk; },
+ events:eventsOut, ui:function(){ return ui; }, refresh:paintDetails};
 })();
 </script>
 </body>
