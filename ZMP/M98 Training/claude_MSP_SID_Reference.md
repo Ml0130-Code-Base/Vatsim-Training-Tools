@@ -190,6 +190,10 @@ the satellites**; and **it spells the fifth TOTTZ transition FOOLZ where CIFP 26
 
 **Partly reframed by the briefing above, not answered:** SNOWZ takes the ORSKY and SCHEP traffic and HTDSH the
 ZMBRO and TOTTZ traffic on a 30s/17, so they are not rivals for one aircraft. What is still unsaid is below.
+**The deck carries the swap as data (owner, 2026-10-28):** in a 30-17 drill the generator does not draw ZMBRO1 or
+TOTTZ1 at MSP, and the validator warns on a strip that names one (*reminder, not a judgement* — a briefing, not an
+order). HTDSH1 stays valid in every configuration, satellites are untouched, and **TOTTZ1.FOOLS has no HTDSH1
+counterpart in CIFP 261029** (HTDSH1: ALO, BRIBE, OANNA, OHHMY, ZZIPR).
 
 **Not answered by any document, and the deck assumes nothing** (owner, 2026-10-22). HTDSH1 and SNOWZ1 are
 both valid off every runway and fly the same coded segment off 17 (heading 169.5 to RUBRB ≥ 3,500, then

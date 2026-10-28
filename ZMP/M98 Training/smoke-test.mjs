@@ -2560,6 +2560,57 @@ try {
       assert('the generator draws on all nine SIDs, the two with a Runway 17 segment among them',
         Object.keys(picked).sort().join() === globalThis.DD.SID_FIELDS.KMSP.slice().sort().join(), Object.keys(picked).sort().join());
     }
+    /* HTDSH on a 30s/17 — vZMP PBN Phase II briefing p.12 and p.16. A briefing, not an
+       order: the generator follows it, the validator WARNS, nothing is refused, and every
+       other configuration is untouched. */
+    {
+      const D = globalThis.DD, dep = c => {
+        const out = [];
+        for (let seed = 1; seed <= 60; seed++) {
+          const g = globalThis.ddb.gen({ seed: seed, cfg: c, focus: 'free', pressure: 'routine', count: 6, arrivals: 2, deps: 4 });
+          g.ac.filter(a => a.role === 'departure' && (a.dep || 'KMSP') === 'KMSP').forEach(a => out.push(D.sidOf(a.sid)));
+        }
+        return out;
+      };
+      assert('the 30-17 swap is data: ZMBRO1 and TOTTZ1 become HTDSH1, at MSP, citing the briefing pages',
+        D.SID_SWAP['30-17'] && D.SID_SWAP['30-17'].to === 'HTDSH1' && D.SID_SWAP['30-17'].from.join() === 'ZMBRO1,TOTTZ1'
+        && D.SID_SWAP['30-17'].field === 'KMSP' && /p\.12 and p\.16/.test(D.SID_SWAP['30-17'].src)
+        && /not an order/.test(D.SID_SWAP['30-17'].src) && Object.keys(D.SID_SWAP).join() === '30-17',
+        JSON.stringify(D.SID_SWAP));
+      assert('sidSwapFor answers for the two SIDs at MSP in 30-17, by SID and not by transition, and for nothing else',
+        !!D.sidSwapFor('30-17', 'ZMBRO1.BRIBE', 'KMSP') && !!D.sidSwapFor('30-17', 'TOTTZ1.FOOLS')
+        && !D.sidSwapFor('30-17', 'HTDSH1.ALO') && !D.sidSwapFor('30-17', 'BITEZ1.DKOTA') && !D.sidSwapFor('30-17', 'SNOWZ1.ISTIQ')
+        && !D.sidSwapFor('30-17', 'ZMBRO1.BRIBE', 'KSTP') && !D.sidSwapFor('30', 'ZMBRO1.BRIBE') && !D.sidSwapFor('12', 'TOTTZ1.FOOLS')
+        && !D.sidSwapFor('12-17', 'ZMBRO1.BRIBE') && !D.sidSwapFor('17-22', 'TOTTZ1.FOOLS'));
+      const in3017 = dep('30-17'), elsewhere = dep('12');
+      assert('the generator never draws ZMBRO1 or TOTTZ1 at MSP in a 30s/17, and still draws HTDSH1',
+        in3017.length > 20 && in3017.indexOf('ZMBRO1') < 0 && in3017.indexOf('TOTTZ1') < 0 && in3017.indexOf('HTDSH1') >= 0,
+        in3017.length + ' departures; ' + Array.from(new Set(in3017)).sort().join());
+      assert('and in a 12 configuration it still draws both, so the rule is not a global removal',
+        elsewhere.indexOf('ZMBRO1') >= 0 && elsewhere.indexOf('TOTTZ1') >= 0, Array.from(new Set(elsewhere)).sort().join());
+      const sv = (cfg, sid) => globalThis.ddb.validate({ name: 'swap', cfg: cfg, ceil: 5000, vis: 10,
+        ac: [{ cs: 'DAL10', type: 'B738', role: 'departure', rules: 'IFR', radar: 'established',
+               dep: 'KMSP', fromStart: 4, alt: 5000, ias: 250, route: '', sid: sid, depRwy: '30L' }] });
+      const swapSays = v => v.warnings.filter(w => /HTDSH1/.test(w) && /30s\/17/.test(w));
+      const a17 = sv('30-17', 'ZMBRO1.BRIBE'), b17 = sv('30-17', 'TOTTZ1.FOOLS');
+      assert('a ZMBRO1 or TOTTZ1 strip in 30-17 is warned, citing the briefing, and not refused',
+        swapSays(a17).length === 1 && swapSays(b17).length === 1 && /p\.12 and p\.16/.test(swapSays(a17)[0])
+        && /Reminder, not a judgement/.test(swapSays(a17)[0])
+        && !a17.errors.some(e => /HTDSH|swap/i.test(e)) && !b17.errors.some(e => /HTDSH|swap/i.test(e)),
+        swapSays(a17).join(' | ') + ' || ' + a17.errors.join(' | '));
+      assert('the same strips in 12, 30 and 12-17 draw no warning, and HTDSH1 and BITEZ1 in 30-17 draw none',
+        ['12', '30', '12-17'].every(c => swapSays(sv(c, 'ZMBRO1.BRIBE')).length === 0 && swapSays(sv(c, 'TOTTZ1.FOOLS')).length === 0)
+        && swapSays(sv('30-17', 'HTDSH1.ALO')).length === 0 && swapSays(sv('30-17', 'BITEZ1.DKOTA')).length === 0);
+      assert('a satellite departure on a ZMBRO1-named SID is left alone in 30-17 (the swap is MSP only)',
+        globalThis.ddb.validate({ name: 'sat', cfg: '30-17', ceil: 5000, vis: 10,
+          ac: [{ cs: 'DAL11', type: 'B738', role: 'departure', rules: 'IFR', radar: 'established',
+                 dep: 'KSTP', fromStart: 4, alt: 5000, ias: 250, route: '', sid: 'ZMBRO1.BRIBE', depRwy: '14' }] })
+          .warnings.filter(w => /flown as HTDSH1/.test(w)).length === 0);
+      assert('sidSwapNote reads for 30-17 and is empty elsewhere; SID17_OPEN now points at the briefing but keeps its caveats',
+        /HTDSH1 replaces ZMBRO1 and TOTTZ1 at MSP/.test(D.sidSwapNote('30-17')) && D.sidSwapNote('12') === ''
+        && /briefing/.test(D.SID17_OPEN) && /not a published rule/.test(D.SID17_OPEN) && /Open until the updated SOP and LOA/.test(D.SID17_OPEN),
+        D.SID17_OPEN);
+    }
     /* a stored drill naming a retired SID is not flown — and is not put on an arrival ladder */
     globalThis.DD.SCENARIOS.push({id:'oldsid', name:'Old SID', frame:'test', altim:'2980', brief:'',
       ac:() => [

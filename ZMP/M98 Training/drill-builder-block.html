@@ -1578,6 +1578,9 @@ function gen(o){
   do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
   used[dcs]=1;
   var dsid=pick(rnd,SIDS_GEN);
+  /* in a 30s/17 ZMBRO1 and TOTTZ1 are HTDSH1 (briefing p.16): draw again rather than
+     rewrite the pick, so every other configuration's seed builds the drill it always did */
+  for(var swapTry=0; swapTry<50 && DD.sidSwapFor(o.cfg, dsid, 'KMSP'); swapTry++) dsid=pick(rnd,SIDS_GEN);
   ac.push({cs:dcs, type:ftd.t, role:'departure', rules:'IFR', radar:'established', from:'MSP tower', sid:dsid,
            route:DD.routeTextFor({role:'departure', sid:dsid}),
            fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
@@ -1645,6 +1648,9 @@ function validate(rec){
       SNOWZ1, which are valid off every runway (owner, 2026-10-18); off a
       satellite, that field's own track (issue #67) */
    var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
+   /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP (briefing p.16) — a reminder, not a refusal */
+   var swp=DD.sidSwapFor(rec.cfg, a.sid, dFld);
+   if(swp) warns.push(tag+': '+DD.sidOf(a.sid)+' is flown as '+swp.to+' in a 30s/17 — '+swp.src+'. Reminder, not a judgement.');
    if(!dTrk){
     /* MSP1 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
     if(DD.isMsp1(a.sid))
@@ -2401,7 +2407,9 @@ function acRowHtml(a,i){
      /* issue #61 — when the set goes live, and that the gates are tabled */
      +'<span class="dd-sidexp">'+esc(DD.sidChangeShort())+'</span>'
      /* the open question, on a strip that is off 17 from MSP */
-     +((dep==='KMSP' && String(a.depRwy||'')==='17') ? '<span class="dd-sidexp" style="display:block;color:var(--dim);">'+esc(DD.SID17_OPEN)+'</span>' : ''))
+     +((dep==='KMSP' && String(a.depRwy||'')==='17') ? '<span class="dd-sidexp" style="display:block;color:var(--dim);">'+esc(DD.SID17_OPEN)+'</span>' : '')
+     /* a 30s/17 swaps two SIDs for HTDSH1 — said at the picker, with the briefing it comes from */
+     +((dep==='KMSP' && DD.sidSwapNote((draft&&draft.cfg)||'12')) ? '<span class="dd-sidexp" style="display:block;color:var(--amber);">'+esc(DD.sidSwapNote(draft.cfg))+'</span>' : ''))
    +f('NM from '+(dep==='KMSP'?'MSP':dep.replace(/^K/,'')),'<input class="dd-in" id="ddb-fs'+i+'" value="'+esc(a.fromStart)+'" onchange="ddbSync()">');
  } else if(role==='overflight'){
   job = f('Entry radial','<input class="dd-in" id="ddb-er'+i+'" value="'+esc(a.entryR)+'" onchange="ddbSync()">')

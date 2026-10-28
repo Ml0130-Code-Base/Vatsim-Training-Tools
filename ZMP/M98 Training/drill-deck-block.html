@@ -1062,7 +1062,32 @@ function sidChangeHtml(day){
    set are not out, so it is recorded as open (claude_M98_MD_Gap_Analysis.md,
    Part 6 item 7) and the deck prefers neither. Shown beside the SID picker on a
    strip departing 17. */
-var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. Open until the updated SOP and LOA come out.';
+var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. Open until the updated SOP and LOA come out. (The vZMP briefing does say HTDSH1 replaces ZMBRO1 and TOTTZ1 in a 30s/17, and that SNOWZ1 replaces ORSKY and SCHEP — they serve different traffic.)';
+/* HTDSH on a 30s/17 — vZMP PBN Phase II briefing p.12 and p.16 (owner, 2026-10-28):
+   "ZMBRO and TOTTZ merge into a new SID on 30s/17" and "on a 30s/17 configuration
+   the ZMBRO and TOTTZ departures get swapped to a combined SID called HTDSH".
+   Carried as DATA keyed by configuration, so another swap is a row and not a
+   branch. WHAT IT COVERS: MSP only (CIFP 261029 codes HTDSH1 at MSP alone; the
+   satellites keep ZMBRO1 and TOTTZ1), every runway (the swap is by configuration,
+   and 30-17 departs 30L/R and 17), the SID and not its transition. WHAT IT DOES NOT
+   SAY, and the deck therefore does not assert: that HTDSH1 is wrong in any other
+   configuration (the owner ruled it valid off every runway, 2026-10-18); what the
+   swap does to TOTTZ1's FOOLS transition, which HTDSH1 does not carry in CIFP 261029.
+   It is a briefing, not an order — the SOP and LOA are not revised — so a strip that
+   disagrees is WARNED, never refused: reminder, not a judgement. */
+var SID_SWAP = {
+ '30-17': { from:['ZMBRO1','TOTTZ1'], to:'HTDSH1', field:'KMSP',
+            src:'vZMP PBN Phase II briefing p.12 and p.16 — a briefing, not an order; the SOP and LOA are not revised' }
+};
+function sidSwapFor(cfg, key, field){
+ var s=SID_SWAP[cfg];
+ if(!s || (field||'KMSP')!==s.field) return null;
+ return s.from.indexOf(sidOf(key))>=0 ? s : null;
+}
+function sidSwapNote(cfg){
+ var s=SID_SWAP[cfg];
+ return s ? ('In this configuration '+s.to+' replaces '+s.from.join(' and ')+' at MSP ('+s.src+').') : '';
+}
 /* One short line for the place a SID is picked. */
 function sidChangeShort(day){
  return (sidChangeState(day)==='live' ? '' : ('live on '+SID_CHANGE.effective+' · ')) + 'gate letters not known yet';
@@ -3956,6 +3981,7 @@ window.DD = {
  neighbourAt:neighbourAt, exitBearing:exitBearing,
  setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
  LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, SID17_OPEN:SID17_OPEN,
+ SID_SWAP:SID_SWAP, sidSwapFor:sidSwapFor, sidSwapNote:sidSwapNote,
  directFixes:directFixes, directFixesHtml:directFixesHtml, directFixPoints:directFixPoints, directFixesSvg:directFixesSvg, directList:function(){ return DIRECT_LIST; }, DIRECT_LIMIT:DIRECT_LIMIT,
  overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,

@@ -118,7 +118,9 @@ Q934 PONCT JFUND2 KBOS` — i.e. the SID and its transition written as two words
 3. **ZOGAP and PAGOZ.** The briefing says ZOGAP moved west and PAGOZ east; the comparison chart shows the same.
    The deck's note says they moved 4.3 and 6.4 NM from where SMERF used them. **The directions were not
    cross-checked against the old and new coordinates.**
-4. **HTDSH is a 30s/17 SID in the briefing; the deck treats it as valid in any configuration.** See section 6.
+4. **HTDSH is a 30s/17 SID in the briefing; the deck treats it as valid in any configuration, and since 2026-10-28
+   swaps ZMBRO1 and TOTTZ1 to it in a 30-17 drill.** See sections 6 and 8. **HTDSH1 carries no FOOLS or FOOLZ in CIFP
+   261029**, where the briefing's HTDSH list shows FOOLZ.
 
 ## 6. What this does to the open questions
 
@@ -153,7 +155,25 @@ Q934 PONCT JFUND2 KBOS` — i.e. the SID and its transition written as two words
 `MSP1`, `MSP1_DEPS`, `isMsp1`; keys `MSP1.FAR` … `MSP1.DLL`; a drill saved under `MSP9` is refused by name and the
 refusal says MSP9 is MSP1. The harness is 701 checks. The tower order still says MSP9 and is quoted as written.
 
+**A second thing, on the owner's word (2026-10-28): the 30s/17 swap.** `SID_SWAP['30-17']` in the deck is data:
+ZMBRO1 and TOTTZ1 become HTDSH1 at MSP (p.12, p.16). Three effects, all reminders and none a refusal, because this is
+a briefing and not an order:
+
+- **the generator** never draws ZMBRO1 or TOTTZ1 at MSP in a 30-17 drill (it draws again; every other configuration's
+  seeds build what they always did);
+- **the validator** warns on an MSP strip naming either SID in a 30-17 drill, citing p.12 and p.16 and saying
+  *"reminder, not a judgement"*;
+- **the SID picker** shows the swap beside an MSP departure while the draft configuration is 30-17.
+
+What it does **not** do: it does not restrict HTDSH1 anywhere (still valid in every other configuration, owner
+ruling 2026-10-18, so the briefing's "30s/17 only" is read as *where it replaces the other two*, not *the only place it
+may be flown*); it does not touch satellite departures (CIFP 261029 codes HTDSH1 at MSP only); it does not rank HTDSH1
+against SNOWZ1 off Runway 17. **One edge is left open:** the briefing's HTDSH list shows a **FOOLZ** transition and
+TOTTZ1 has **FOOLS** in CIFP 261029, but **HTDSH1 has no FOOLS or FOOLZ in CIFP 261029** (ALO, BRIBE, OANNA, OHHMY,
+ZZIPR). So a TOTTZ1.FOOLS strip is warned toward HTDSH1 and the deck cannot say which HTDSH1 track it becomes. The
+harness is 709 checks.
+
 **Everything else is unchanged, on purpose.** The deck flies the CIFP 261029 SIDs. This file is a source, and the
 deck takes from it only what the owner decides to. Candidates, none done: the fifteen scratchpad codes as a display
-beside a departure's SID and transition; HTDSH1 offered only in a 30s/17. Each asserts something the SOP has not yet
-said, so each wants the owner's word first (root `CLAUDE.md` invariant 3).
+beside a departure's SID and transition; the 170° / 5,000 satellite-airspace entry rule; the Area F landline change.
+Each asserts something the SOP has not yet said, so each wants the owner's word first (root `CLAUDE.md` invariant 3).
