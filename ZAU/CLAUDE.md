@@ -159,7 +159,7 @@ collapsed to `from:['KLOT']` and the strip row refused three otherwise valid com
 source is what makes them lists in fact rather than in intent.
 
 The row also distinguishes two claims it used to conflate. **`flies`** means this deck's engine
-has geometry it can fly — false at both, because neither has a traffic model. **`track`** means
+has geometry it can fly — false at both until 2026-10-27, when the shared player arrived (see the last section): C90 flies its procedures, AZO its overflights. **`track`** means
 the published ladder is carried. `flies:false, track:true` renders **"track only"**; no track
 still renders "frame only".
 
@@ -267,3 +267,13 @@ the published crossings and speeds, and nothing is graded; `STANDING` stays `[]`
 - **Two landing-page faults were fixed on the way:** the weather reader looked for `dd-page-notes`, which does not
   exist, so it sat under all three tabs; and the procedures block landed on the Fly page, which holds the player alone.
 - **The feeder gate stays a label** on the strip (issue #44).
+
+**AZO carries the same two blocks (6 and 7) and flies overflights only.** CIFP 261001 codes no SID and no STAR at any West Wall field, so an arrival or a departure has no track and the player refuses it by name; the strips block's two procedure lists stay empty, the row says *frame only*, and a new strip is an overflight.
+
+- **The legacy engine is retired**, as at C90. `DD.sim` keeps `seat` and `open`; the contract reads `DD.frameText()`, `DD.flowNow()` and `DD.openSet()`. Overflight radials and distances are measured from the Kalamazoo field (`AZO0`, the VATGlasses airport coordinate the deck always quoted from; the order cites no radar site).
+- **There is no configuration**, and the page says so in a *Configuration* sub-panel: the Great Lakes order names no runway configuration and no West Wall field publishes a D-ATIS, so `flowNow()` is null and the drill builder has nothing to set. *Position Setup* is Quick setups, Which seat are you working, Open around you, Configuration and What that resolves to. **A closed sector names no owner**: the order publishes no fold-up order beyond 2-3 naming GRIFFIN the combined position, and the LOA 7.h pairs are a coordination rule, not a chain.
+- **What was lost with the engine:** the four altitude reminders (SHORELINE/BRONCO 7,000, BELLS+BRONCO 9,000, GRIFFIN+WHITECAP 6,000, a departure to ZAU at 10,000), which were tied to arrivals and departures that cannot be flown here — the same altitudes are the *Altitudes you owe* table on the third page — and the bearing, distance and heading placement boxes. **What was kept:** the beacon-code reminder (LOA 7.b), re-homed as block 8, a wrapper around the player's send, with the blocks read out of `BEACON.loa` so the numbers have one copy; it is a reminder, not a judgement, and prints the SOP 3-7 conflict.
+- **Three landing-page faults fixed on the way:** the weather reader looked for `dd-page-notes` (it now lands on the Set up page), the procedures table sat on the Fly page (it is reference, so it joined the third page), and the builder called `DD.render()`, which no longer exists.
+- **One C90 regression fixed with it:** retiring the engine also removed the `.dd-send` button style, which the builder's *Bank it* and *Save note* still use; it is back.
+- **The drill master gained one rule** at the root: a kind the deck has no procedure for anywhere is drawn as an overflight in the mixed draw, so asking AZO for six strips builds six overflights rather than one (root `claude_Fly_Block_Reference.md`).
+- **Verified by driving the real page**, not by a harness: pages and tabs, the five sub-panels, seat and presets, an arrival refused by name, an overflight flying, an out-of-block code raising the reminder and an in-block one not, the generator building six overflights, console clean. There is no smoke test for either ZAU deck (issue #42).
