@@ -277,6 +277,46 @@ Previously cited by name only; the actual bands:
 
 Clear departures **via the first fix in the route**, point them out to any affected Center position, and climb **turboprops/props to 17,000** (or lower on request). The whole TRACON is collapsed onto **124.7** in this regime — see the Config reference for the arrival side.
 
+## MSP9, the radar-vector departure — its charted fixes and navaids (MSP ATCT 7110.26G 6-3-1.a.4; CIFP 261001)
+
+**What the order says.** Turbojets off runways 30L/30R who do not file a SID get the Minneapolis Nine
+(MSP9) or current version, and MSP9 is flown to an **initial fix by direction**
+(*MSP ATCT 7110.26G* paragraph 6-3-1.a.4, `source-docs/txt/MSP_ATCT_7110_26G.txt`). Unable a SID, they get
+MSP9 to the first filed fix, which must be inside ZMP airspace; unable both, radar vectors to the first
+filed fix. The order names the initial fixes and a track for each:
+
+| Initial track | Fix | What CIFP 261001 holds | Latitude, longitude (CIFP, decimal) |
+|---|---|---|---|
+| 320 | Fargo (FAR) | navaid record | 46.75334, -96.85132 |
+| 340 | Brainerd (BRNRD) | enroute waypoint record | 46.34828, -94.02598 |
+| 340 | Duluth (DLH) | navaid record | 46.80216, -92.20287 |
+| 340 | Hayward (HYR) | navaid record | 46.01901, -91.44640 |
+| 340 | Eau Claire (EAU) | navaid record | 44.89767, -91.47854 |
+| 340 | Green Bay (GRB) | navaid record | 44.55516, -88.19486 |
+| 360 | Dells (DLL) | navaid record | 43.55084, -89.76362 |
+
+The tracks and the fixes are from the order; the coordinates are the CIFP 261001 records of those
+identifiers (28-day cycle, `claude_CIFP_Source_Reference.md`), converted from degrees-minutes-seconds
+to five decimal places. A coordinate is not a procedure: it places the fix and says nothing about how
+MSP9 reaches it.
+
+**What is not in the data, written down so it is not rediscovered.**
+
+- **MSP9 is not in CIFP 261001.** KMSP codes COULT7, HSTIN6, KBREW2, LEINY6, MEDOW5, ORSKY3, RST1, SCHEP1,
+  SLAYR4, SMERF7, WLSTN7 and ZMBRO7, and **no route type T (vector SID)** — checked and empty. The order
+  and the owner's gap analysis (`claude_M98_MD_Gap_Analysis.md`, the 3-2-5 frequency row) are the only
+  sources, so what MSP9 flies before its initial fix has no coded answer.
+- **The tower reference writes Brainerd as BRD** (`claude_MSP_Tower_Reference.md`, dispersal tracks);
+  the order and the gap analysis write **BRNRD**, and BRNRD is the identifier CIFP carries. Preserved as
+  written, not corrected; BRD is the airport identifier.
+- **The M98 deck does not offer MSP9** and carries coordinates for none of these seven points as such;
+  its engine is its own. Offering it is engine work for the owner to schedule, not a reference edit.
+- **Other fields.** Of the fields this repository works, only Salt Lake City (SLC4) and Boise (BOI3) code
+  a radar-vector departure in CIFP 261001; both fly in the shared player as a stand-in line to a charted
+  fix (`claude_Fly_Block_Reference.md`). Chicago O'Hare and Midway, Omaha and the Indiana, Kentucky and Ohio
+  fields code no vector SID. **ORD9 appears in no document in this tree and no CIFP record**, so it is not
+  carried; if it exists, the owner's chart or order is the source.
+
 ## The retired set — in force through 2026-10-28
 
 **CIFP 260903 and 261001 code twelve SIDs at KMSP:** COULT7, HSTIN6, KBREW2, LEINY6, MEDOW5,
