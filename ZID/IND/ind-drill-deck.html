@@ -4455,6 +4455,13 @@ window.FLY_FACILITY = {
      - There is no wind model, so heading and track are the same number.
      - Straight between fixes. Arcs, holds and procedure turns are not
        flown, and a vector leg ends the published track.
+     - A radar-vector SID (ARINC 424 route type T, SLC4 and BOI3 here)
+       codes a heading and an altitude and no fix. The player says the
+       coded part in words and flies a straight stand-in line from the
+       field to a charted fix on the same field's published procedures
+       (where a SID leaves the terminal area, or a STAR begins). Which
+       fix a vectored aircraft's route really uses is not published,
+       so the strip names one and the feed says it is a stand-in.
      - Climb, descent and speed-change rates are ENGINE PARAMETERS, not
        aviation data. They set how fast the scope moves and are written
        as such below.
@@ -4591,10 +4598,38 @@ function procFor(s){
  return {dep:dep, apt:apt, id:id,
          p:(HAVE_PROCS && apt && id) ? NS.procOf(apt, id) : null};
 }
-function transOptions(s){
- var q = procFor(s);
- return (q.p && q.p.trans) ? Object.keys(q.p.trans).sort() : [];
+/* A radar-vector departure (ARINC 424 route type T) is coded as a climb on a
+   heading and then vectors: no fix, so no line. Where the vectors lead is the
+   first fix on the route the aircraft filed, which the procedure does not say.
+   The charted points this deck can name are the ones on the field's own
+   published procedures: where its SIDs leave the terminal area (their
+   transition fixes, or the last fix of a SID that has none) and where its
+   STARs begin (their entry transitions). Not a fix within 5 NM of the field -
+   that is not somewhere to be vectored to. The strip says which it took. */
+function vectorExits(apt, id){
+ var out = [], seen = {}, f0 = airportLL(apt), a0 = f0 ? xy(f0) : null;
+ function add(t){
+  var ll = NS.PFIX && NS.PFIX[t];
+  if(seen[t] || !ll || !isFinite(ll[0])) return;
+  if(a0 && dist(a0, xy(ll)) < 5) return;
+  seen[t] = 1; out.push(t);
+ }
+ var S = (NS.SIDS && NS.SIDS[apt]) || {}, A = (NS.STARS && NS.STARS[apt]) || {};
+ Object.keys(S).forEach(function(k){
+  if(k === id || S[k].vector) return;
+  var tk = Object.keys(S[k].trans || {});
+  tk.forEach(add);
+  if(!tk.length){ var c = S[k].common || [], last = c.length ? c[c.length - 1] : null; if(last && last.f) add(last.f); }
+ });
+ Object.keys(A).forEach(function(k){ Object.keys(A[k].trans || {}).forEach(add); });
+ return out.sort();
 }
+function transKeys(q){
+ if(!q.p) return [];
+ if(q.dep && q.p.vector) return vectorExits(q.apt, q.id);
+ return q.p.trans ? Object.keys(q.p.trans).sort() : [];
+}
+function transOptions(s){ return transKeys(procFor(s)); }
 /* Runway transitions are keyed RWnn, RWnnL, RWnnB in the coded source, and a
    runway the strip names as 5L may be filed RW05L. Try the spellings in turn;
    nothing is invented when none matches. */
@@ -4616,9 +4651,16 @@ function legHas(legs, fix){
    part, because the aircraft has already flown past every transition. A SID is
    the other way round and needs one to reach anywhere, so it takes the first. */
 function pickTrans(s, q){
- var keys = (q.p && q.p.trans) ? Object.keys(q.p.trans).sort() : [];
+ var keys = transKeys(q);
  if(!keys.length) return null;
- if(s.trans && q.p.trans[s.trans]) return s.trans;
+ if(s.trans && keys.indexOf(s.trans) >= 0) return s.trans;
+ if(q.dep && q.p.vector){                                /* no exit chosen: the nearest, the shortest stand-in */
+  var f0 = airportLL(q.apt), best = keys[0], bd = Infinity;
+  if(f0){
+   keys.forEach(function(k){ var d = dist(xy(f0), xy(NS.PFIX[k])); if(d < bd){ bd = d; best = k; } });
+  }
+  return best;
+ }
  if(!q.dep){
   if(s.dtgFix){
    for(var i = 0; i < keys.length; i++){ if(legHas(q.p.trans[keys[i]], s.dtgFix)) return keys[i]; }
@@ -4659,6 +4701,35 @@ function overflightTrack(s){
  out.total = d; out.ok = true;
  return out;
 }
+/* The altitude exactly as coded: fmtAlt rounds to hundreds, and 4,627 is not 4,600. */
+function exactFt(n){ var s = String(Math.round(n)); return s.length > 3 ? s.slice(0, s.length - 3) + ',' + s.slice(-3) : s; }
+/* What a vector leg codes, in words: the course and altitude CIFP carries, and
+   nothing it does not. A course is magnetic as coded. */
+function vecLegText(g){
+ var c = (g.crs != null) ? Math.round(g.crs) + ' degrees' : null, alt = (g.at != null) ? g.at : g.above;
+ if(g.vec === 'CA') return 'climb on ' + (c || 'the coded course') + (alt != null ? ' to ' + exactFt(alt) : '');
+ if(g.vec === 'VM') return 'then radar vectors' + (c ? ', heading ' + c : '');
+ if(g.vec === 'FM') return 'from ' + (g.from || 'the fix') + (c ? ' on ' + c : '') + (alt != null ? ' until ' + exactFt(alt) : '');
+ if(g.vec === 'VA') return 'climb on the runway heading' + (alt != null ? ' to ' + exactFt(alt) : '');
+ return 'then radar vectors';
+}
+/* A vector SID flown as its coded part, said in words, and a straight line from
+   the field to the exit fix the strip names - a stand-in for the vectors, not a
+   published track, and the feed says so. */
+function vectorTrack(s, q, out){
+ var fll = airportLL(q.apt), exit = out.entry, ll = exit ? NS.PFIX[exit] : null;
+ var legs = (out.rw && q.p.rwy && q.p.rwy[out.rw]) || [];
+ out.vectored = true; out.endVec = true;
+ out.coded = legs.map(vecLegText);
+ if(!fll){ out.note = 'no airport reference point for ' + q.apt + ', so there is nowhere to start the line'; return out; }
+ if(!exit || !ll){ out.note = q.id + ' is radar vectors off the runway and codes no fix, and this deck carries no charted departure fix at ' + q.apt + ' to vector it to'; return out; }
+ var a = xy(fll), b = xy(ll), d = dist(a, b);
+ if(d < 1){ out.note = 'the field and ' + exit + ' are the same point'; return out; }
+ out.pts = [{x:a.x, y:a.y, fix:q.apt, cum:0, lo:null, hi:null, spd:null, field:true},
+            {x:b.x, y:b.y, fix:exit, cum:d, lo:null, hi:null, spd:null}];
+ out.total = d; out.standIn = d; out.ok = true;
+ return out;
+}
 function buildTrack(s){
  var role = ST.roleOf(s);
  if(role === 'overflight') return overflightTrack(s);
@@ -4668,6 +4739,7 @@ function buildTrack(s){
  if(!q.p){ out.note = 'no ' + (q.dep ? 'departure' : 'arrival') + ' procedure is selected, or ' + (q.id || 'it') + ' is not published at ' + (q.apt || 'that field'); return out; }
  out.entry = pickTrans(s, q);
  out.rw = rwKey(q.p, q.dep ? s.depRwy : s.rwy);
+ if(q.dep && q.p.vector) return vectorTrack(s, q, out);
  var legs = NS.trackTo(q.apt, q.id, out.entry, out.rw) || [];
  var pts = [], last = null, cum = 0;
  for(var i = 0; i < legs.length; i++){
@@ -4951,8 +5023,8 @@ function advance(a, dt){
       log('info', chip('info', 'exit') + '<b>' + esc(a.cs) + '</b> is at its exit point. It continues on '
        + Math.round(a.hdg) + ' until you hand it off or point it out.');
      } else {
-      log('info', chip('info', 'end of track') + '<b>' + esc(a.cs) + '</b> is at the last coded fix of ' + esc(a.track.id)
-       + (a.track.endVec ? ', where the published procedure ends on a vector' : '')
+      log('info', chip('info', 'end of track') + '<b>' + esc(a.cs) + '</b> is at ' + (a.track.vectored ? esc(a.track.entry) + ', the fix it was vectored to' : 'the last coded fix of ' + esc(a.track.id))
+       + (a.track.endVec && !a.track.vectored ? ', where the published procedure ends on a vector' : '')
        + '. It holds ' + Math.round(a.hdg) + ' - vector it, hand it off'
        + (a.role === 'arrival' ? ' or clear the approach (the engine flies no intercept)' : '') + '.');
      }
@@ -5061,6 +5133,11 @@ function putOnFreq(a){
  var tail = '';
  if(a.role === 'arrival' && a.strip.altim) tail = ', with the altimeter';
  log('coach', '<span class="crew">' + esc(callName(a)) + ', ' + esc(a.cs) + ', ' + esc(line) + esc(tail) + '.</span>');
+ if(a.role === 'departure' && a.track.vectored){
+  log('info', chip('info', 'vectored departure') + '<b>' + esc(a.cs) + '</b> is on ' + esc(a.track.id) + ', which is radar vectors and publishes no fix. Coded: '
+   + (a.track.coded.length ? esc(a.track.coded.join(', ')) : 'nothing for this runway') + '. The line it flies is a straight stand-in from the field to '
+   + esc(a.track.entry) + ', a charted fix on the published procedures at this field. Which fix the route really uses is not published - reminder, not a judgement.');
+ }
  if(a.role === 'departure' && a.altAsg == null && climbTarget(a) == null){
   log('info', chip('info', 'note') + '<b>' + esc(a.cs) + '</b>: ' + esc(a.track.id) + ' publishes no altitude to climb to from here, so it holds ' + fmtAlt(a.alt) + ' until you assign one.');
  }
@@ -5498,7 +5575,7 @@ function tracksFor(mode){
    var key = a.track.kind + a.track.id + (a.track.entry || '') + (a.track.rw || '');
    var arr = a.track.kind === 'SID' ? out.sids : out.stars;
    for(var i = 0; i < arr.length; i++){ if(arr[i].key === key) return; }
-   arr.push({key:key, label:a.track.id, pts:a.track.pts});
+   arr.push({key:key, label:a.track.id + (a.track.vectored ? ' vectors' : ''), pts:a.track.pts});
   });
   return out;
  }
@@ -6015,7 +6092,7 @@ function genArrival(R, used, fl){
    s.role = 'arrival'; s.rules = 'IFR'; s.dest = apt; s.gate = ids[t]; s.rwy = rws[r]; s.type = type;
    s.engine = engineOf(type);
    s.cs = callsign(R, used, false);
-   var q = FL.procFor(s), tr = q.p ? Object.keys(q.p.trans || {}).sort() : [];
+   var q = FL.procFor(s), tr = FL.transOptions(s);
    if(tr.length){ s.trans = pick(R, tr); }
    var T = FL.track(s);
    if(!T.ok) { delete used[s.cs]; continue; }
@@ -6043,7 +6120,7 @@ function genDeparture(R, used, fl){
   s.role = 'departure'; s.rules = 'IFR'; s.dep = apt; s.sid = ids[t]; s.depRwy = pick(R, rwys); s.type = type;
   s.engine = engineOf(type);
   s.cs = callsign(R, used, false);
-  var q = FL.procFor(s), tr = q.p ? Object.keys(q.p.trans || {}).sort() : [];
+  var q = FL.procFor(s), tr = FL.transOptions(s);
   if(tr.length){ s.trans = pick(R, tr); }
   var T = FL.track(s);
   if(!T.ok){ delete used[s.cs]; continue; }
@@ -6293,13 +6370,13 @@ function detailsHtml(){
   var line = '<div class="' + PFX + '-drow"><b>' + esc(s.cs || ('strip ' + (i + 1))) + '</b> <span class="' + PFX + '-dim">' + esc(q.id) + ' ' + (role === 'departure' ? 'departure' : 'arrival') + '</span> ';
   if(!T.ok){ line += '<span class="' + PFX + '-gap">cannot be flown: ' + esc(T.note) + '</span></div>'; out += line; return; }
   if(tr.length){
-   line += '<label>transition <select class="' + PFX + '-sel" onchange="' + PFX + 'Trans(' + i + ',this.value)">'
+   line += '<label>' + (q.p && q.p.vector ? 'vectored to' : 'transition') + ' <select class="' + PFX + '-sel" onchange="' + PFX + 'Trans(' + i + ',this.value)">'
     + opt('', 'engine picks: ' + (T.entry || 'none'), s.trans || '') + tr.map(function(t){ return opt(t, t, s.trans || ''); }).join('') + '</select></label> ';
   }
   if(role === 'departure'){
    line += '<label>cleared altitude <input class="' + PFX + '-in" size="7" value="' + esc(s.climbTo || '') + '" placeholder="none" onchange="' + PFX + 'Climb(' + i + ',this.value)"></label> ';
   }
-  line += '<span class="' + PFX + '-dim">' + Math.round(T.total) + ' NM' + (T.rw ? ' · runway transition ' + esc(T.rw) : '') + (T.endVec ? ' · ends on a vector' : '') + (T.standIn ? ' · first leg is a straight stand-in from the field' : '') + '</span></div>';
+  line += '<span class="' + PFX + '-dim">' + Math.round(T.total) + ' NM' + (T.rw ? ' · runway transition ' + esc(T.rw) : '') + (T.vectored ? ' · radar vectors, a straight stand-in line to ' + esc(T.entry) + (T.coded && T.coded.length ? ' · coded: ' + esc(T.coded.join(', ')) : '') : (T.endVec ? ' · ends on a vector' : '') + (T.standIn ? ' · first leg is a straight stand-in from the field' : '')) + '</span></div>';
   out += line;
  });
  return out || '<div class="' + PFX + '-dim">No strip here follows a published procedure.</div>';
