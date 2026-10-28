@@ -46,7 +46,7 @@ Source documents come from <https://zlcartcc.org/controllers>, served from `zlca
 
 These follow the M98 rules; where they differ it is noted.
 
-1. **Single file, no build step, no dependencies, offline-first.** Vanilla ES5. The Google Fonts link is the only external reference and the page is fully functional without it. **There is no network call in either tool.** Both must work end to end from `file://` with the machine offline.
+1. **Single file, no build step, no dependencies, offline-first.** Vanilla ES5. The Google Fonts link is the only external reference and the page is fully functional without it. **There is no network call a tool needs**: each deck carries an optional D-ATIS fetch (atis.info) and, for fields with no D-ATIS, an optional METAR fetch (api.weather.gov), never on a required path and always falling back to a paste box (whether the second is allowed is issue #72). Both must work end to end from `file://` with the machine offline.
 2. **Additive extension pattern.** Every `<script>` is an extension block. New features go inside an existing block or as a new one after it. The markup outside the blocks is chrome only — topbar, hero, empty `#modnav`, footer — and the blocks mount everything else.
 3. **One copy of every operational number.** Each tool exposes `window.ZLC` — sectors, frequencies, presets, state, and the resolution functions `ownerOf` / `answerFor` / `foldedInto` — plus a `ZLC.hooks` array called at the end of every `render`. Downstream blocks read through `ZLC` and never keep a second copy. Note that `window.ZLC` is **per-facility**: `ZLC.facility` is `'BIGSKY'` or `'S56'`, and the two tools are never loaded into the same page.
 4. **Design system:** the CSS custom properties are copied from M98 verbatim (`--bg --panel --panel2 --ink --dim --dim2 --line --green --amber --red`, `--display --body --mono`). New classes are namespaced `zlc-`. Match the dark radar aesthetic; do not introduce new fonts or accent colours.
@@ -126,10 +126,7 @@ Named on the page as numbered slots so the gaps are visible rather than discover
      **`KYAAN4`** and its fix as `KYAAN`, and there is no `KYANN` at Boise: **`KYANN` does exist in CIFP, but only as an en route waypoint
      at N30 15 / W095 13 in Texas (region K4)**, about 1,300 NM from the field, so it is not a Boise fix and
      does not change the question. The earlier wording of this paragraph, *"no `KYANN` in the
-     cycle"*, and issue **#48**'s were too strong, corrected 2026-10-20. **Not resolved
-     here** — root `CLAUDE.md` §6, conflicts are named. Issue **#48** settles it, and
-     carries both outcomes: an as-written anomaly to preserve, or a dropped letter that four
-     files need fixed.
+     cycle"*, and issue **#48**'s were too strong, corrected 2026-10-20. **Settled as an as-written anomaly, 2026-10-28 (issue #48):** both source documents spell it `KYANN` - `BOI_ATCT_TRACON_7110_2B.txt:794` (the BOI IFR Arrival Sequencing table, `KYANN# / BEWTE#`) and `BOI_ZLC_LOA.txt:159` (`MAALR   KYANN#   BOI086039`), read in the committed text extractions - so it is **preserved, not corrected** (root `CLAUDE.md` §6), with CIFP's `KYAAN4` / `KYAAN` recorded beside it. The deck's Big Sky Slot 4 stub still lists it as unlocated (issue #51).
 
    **CIFP is procedures, not airspace.** It closes fix positions and nothing else — the gates,
    the P2/P3/P4 areas and the Heber Shelf line in item 1 are untouched by it.
