@@ -176,7 +176,7 @@ function genArrival(R, used, fl){
    s.role = 'arrival'; s.rules = 'IFR'; s.dest = apt; s.gate = ids[t]; s.rwy = rws[r]; s.type = type;
    s.engine = engineOf(type);
    s.cs = callsign(R, used, false);
-   var q = FL.procFor(s), tr = q.p ? Object.keys(q.p.trans || {}).sort() : [];
+   var q = FL.procFor(s), tr = FL.transOptions(s);
    if(tr.length){ s.trans = pick(R, tr); }
    var T = FL.track(s);
    if(!T.ok) { delete used[s.cs]; continue; }
@@ -204,7 +204,7 @@ function genDeparture(R, used, fl){
   s.role = 'departure'; s.rules = 'IFR'; s.dep = apt; s.sid = ids[t]; s.depRwy = pick(R, rwys); s.type = type;
   s.engine = engineOf(type);
   s.cs = callsign(R, used, false);
-  var q = FL.procFor(s), tr = q.p ? Object.keys(q.p.trans || {}).sort() : [];
+  var q = FL.procFor(s), tr = FL.transOptions(s);
   if(tr.length){ s.trans = pick(R, tr); }
   var T = FL.track(s);
   if(!T.ok){ delete used[s.cs]; continue; }
@@ -454,13 +454,13 @@ function detailsHtml(){
   var line = '<div class="' + PFX + '-drow"><b>' + esc(s.cs || ('strip ' + (i + 1))) + '</b> <span class="' + PFX + '-dim">' + esc(q.id) + ' ' + (role === 'departure' ? 'departure' : 'arrival') + '</span> ';
   if(!T.ok){ line += '<span class="' + PFX + '-gap">cannot be flown: ' + esc(T.note) + '</span></div>'; out += line; return; }
   if(tr.length){
-   line += '<label>transition <select class="' + PFX + '-sel" onchange="' + PFX + 'Trans(' + i + ',this.value)">'
+   line += '<label>' + (q.p && q.p.vector ? 'vectored to' : 'transition') + ' <select class="' + PFX + '-sel" onchange="' + PFX + 'Trans(' + i + ',this.value)">'
     + opt('', 'engine picks: ' + (T.entry || 'none'), s.trans || '') + tr.map(function(t){ return opt(t, t, s.trans || ''); }).join('') + '</select></label> ';
   }
   if(role === 'departure'){
    line += '<label>cleared altitude <input class="' + PFX + '-in" size="7" value="' + esc(s.climbTo || '') + '" placeholder="none" onchange="' + PFX + 'Climb(' + i + ',this.value)"></label> ';
   }
-  line += '<span class="' + PFX + '-dim">' + Math.round(T.total) + ' NM' + (T.rw ? ' · runway transition ' + esc(T.rw) : '') + (T.endVec ? ' · ends on a vector' : '') + (T.standIn ? ' · first leg is a straight stand-in from the field' : '') + '</span></div>';
+  line += '<span class="' + PFX + '-dim">' + Math.round(T.total) + ' NM' + (T.rw ? ' · runway transition ' + esc(T.rw) : '') + (T.vectored ? ' · radar vectors, a straight stand-in line to ' + esc(T.entry) + (T.coded && T.coded.length ? ' · coded: ' + esc(T.coded.join(', ')) : '') : (T.endVec ? ' · ends on a vector' : '') + (T.standIn ? ' · first leg is a straight stand-in from the field' : '')) + '</span></div>';
   out += line;
  });
  return out || '<div class="' + PFX + '-dim">No strip here follows a published procedure.</div>';

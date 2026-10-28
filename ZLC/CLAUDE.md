@@ -144,7 +144,7 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 
    Three things to keep true here. **Procedures are keyed by airport, then by procedure**,
    because an identifier is not unique across fields. **`flies` is true since 2026-10-27** — the
-   fly block (before the PAGES block, which stays last) flies the published track — while `track:true` says the ladder is carried, and the two are different claims the strip row labels differently. BOI3 is a radar-vectored SID with no fix and the player refuses it by name; Bozeman has no runway gate, so a Bozeman drill has no flow and its strips carry no runway; a drill is held to one area's field (`only:true`), because the two areas share no airspace. And a **runway transition
+   fly block (before the PAGES block, which stays last) flies the published track — while `track:true` says the ladder is carried, and the two are different claims the strip row labels differently. BOI3 is a radar-vectored SID with no fix and the player flies it as a straight stand-in line from the field to a charted fix on KBOI's published procedures (the fly block's vector-SID rule, 2026-10-27), with the coded part said in words; Bozeman has no runway gate, so a Bozeman drill has no flow and its strips carry no runway; a drill is held to one area's field (`only:true`), because the two areas share no airspace. And a **runway transition
    named `RW10L` is the procedure's runway, not the flow**: the flow branch lives in the
    geometry (item 3), and nothing in this block touches it.
 
@@ -152,7 +152,7 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    asked for on 2026-10-27). Big Sky's machinery under S56's data, generated with `tools/cifp/gen.pl` on CIFP 261001: 13 STARs
    (Salt Lake City 11, Ogden 1, Provo 1) and 15 SIDs (Salt Lake City 8, Provo 2, and one each at Brigham City, Ogden,
    Spanish Fork, Tooele and South Valley). **Hill Air Force Base has no coded SID, STAR or approach: checked and
-   empty, CIFP 261001.** SLC4 is a Vector SID (route type T) and the player refuses it by name. The strip contract
+   empty, CIFP 261001.** SLC4 is a Vector SID (route type T); the player says its coded headings in words and flies a straight stand-in line from the field to a charted fix on the published procedures at KSLC (the fly block's vector-SID rule, 2026-10-27). The strip contract
    now derives its arrivals and departures from the block instead of hand-listing names, `PROCS.airportLL` carries
    the eight CIFP airport reference points (KSLC from `PFIX`, the other seven from the airport records of the same file),
    and the block sits before the strips block, with `mod-s56p` on the third page. Like Big Sky's, it is regenerated at the

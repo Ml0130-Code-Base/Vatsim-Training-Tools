@@ -254,6 +254,7 @@ if (defined $only && $only eq 'idtable') {
 
 # ---- deck data: PFIX / STARS / SIDS in the shape the procedures block carries ----
 sub jsalt { my $v=shift; return undef unless defined $v && $v ne ''; if ($v =~ /^FL(\d+)$/) { return $1*100; } return $v+0; }
+my $VEC = 0;   # set while a radar-vector SID (route type T) is emitted: its legs carry the coded course, nothing else does
 sub jsleg {
   my ($g)=@_;
   my @k;
@@ -264,6 +265,7 @@ sub jsleg {
   if ($ad eq 'B' && defined $a1 && defined $a2) { push @k, "lo:$a2", "hi:$a1"; }
   elsif (defined $a1) { push @k, ($ad eq '+' ? "above:$a1" : $ad eq '-' ? "below:$a1" : "at:$a1"); }
   push @k, "spd:".($g->{spd}+0) if $g->{spd} ne '';
+  push @k, "crs:".($g->{crs}/10) if $VEC && $isvec && $g->{crs} =~ /^[0-9]+$/;
   push @k, ($isvec ? "vec:'$g->{pt}'" : "t:'$g->{pt}'");
   return '{'.join(',',@k).'}';
 }
@@ -288,6 +290,7 @@ sub deck_proc_block {
         else { if ($rt =~ /[14T]/) { $r{$tr}=$legs } elsif ($rt =~ /[25]/) { $c{$tr}=$legs } else { $e{$tr}=$legs } }
       }
       my $rnav = coding($P) eq 'RNAV' ? 'true' : 'false';
+      $VEC = coding($P) eq 'vector' ? 1 : 0;
       $o .= "  $id:{rnav:$rnav," . (coding($P) eq 'vector' ? 'vector:true,' : '') . "\n";
       my $trans = sub { my ($h)=@_; return '{'.join(',', map { "'$_':".jslegs($h->{$_}) } sort keys %$h).'}'; };
       my %sec = ( trans => (%e ? "   trans:".$trans->(\%e).",\n" : ''),
@@ -295,6 +298,7 @@ sub deck_proc_block {
                   common=> '' );
       if (%c) { my ($k)=(sort keys %c); $sec{common} = "   common:".jslegs($c{$k}).",\n"; }
       $o .= $kind eq 'E' ? $sec{trans}.$sec{common}.$sec{rwy} : $sec{rwy}.$sec{common}.$sec{trans};
+      $VEC = 0;
       $o .= "  },\n";
     }
     $o .= " },\n";
