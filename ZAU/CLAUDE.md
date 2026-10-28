@@ -237,6 +237,10 @@ flies at the right rate and distance, the AZO altitude and beacon reminders fire
 note export carries its anchor and slot state. Say plainly which of these was actually run
 rather than implying a suite passed.
 
+### Operators by field (2026-10-28, issue #76)
+
+C90's drill contract carries operator tables for KORD and KMDW from the owner's Wikipedia printouts (`C90/claude_C90_Operators_Reference.md`, which wins on a disagreement); the drill generator draws a callsign at those fields from them and every other C90 field stays on the flat list of twelve carriers. **AZO carries no table**: the owner supplied no printout for Kalamazoo or the other Great Lakes fields, so its panel says every field is on the flat list.
+
 ## Session hygiene
 
 Commit after each completed subtask. When aviation data is involved, cite which document and
