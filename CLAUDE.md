@@ -150,7 +150,7 @@ No traffic, no clock, no grading. *No deck sits here any more: ZLC Big Sky, ZLC 
 **Tier 1 — data spine and shell.** Everything above, plus the full reference layer (drill
 format, OJT intake template, empty practice log, TTS voicing, gap analysis), the three-page
 architecture, `localStorage`, and a smoke test that asserts the spine and asserts the
-emptiness. Still no traffic model. *ZMP, R90, and since 2026-10-28 ZAU C90, ZAU AZO, ZLC S56 and ZLC Big Sky (issues #42, #46). C90 asserts 109 checks, AZO 96, S56 100 and Big Sky 98, run in the browser runner; Big Sky persists since issue #45 but has no notes layer.*
+emptiness. Still no traffic model. *ZMP, R90, and since 2026-10-28 ZAU C90, ZAU AZO, ZLC S56 and ZLC Big Sky (issues #42, #46). C90 asserts 109 checks, AZO 96, S56 104 and Big Sky 102, run in the browser runner; Big Sky persists since issue #45 but has no notes layer.*
 
 **Tier 2 — engine.** A real-time tick, aircraft objects, a multi-clause transmission parser,
 deterministic grading tagged to standing items derived from flown sessions, a notebook that
@@ -712,7 +712,7 @@ three ZID decks each ship a `smoke-test-browser.html` beside the `.mjs`; it is s
 HTTP and loads the real deck. It has been run: M98 (700 checks on 2026-10-28) and IND, SDF and
 CVG (248, 262 and 340 on 2026-10-26) pass. **R90 and ZMP Center have only the `.mjs`, and
 ZMP Center's cannot pass against the current deck (issue #69).** C90, AZO, S56 and Big Sky each ship
-a `smoke-test-browser.html` too (109, 96, 100 and 98 checks on 2026-10-28), so every deck but R90 and ZMP Center
+a `smoke-test-browser.html` too (109, 96, 104 and 102 checks on 2026-10-28), so every deck but R90 and ZMP Center
 has been run. Say which of these a claim rests on rather than implying a suite passed,
 and a harness without a runner is verified by being parsed, not by being executed.
 
