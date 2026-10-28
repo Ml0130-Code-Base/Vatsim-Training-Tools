@@ -36,11 +36,8 @@ home page alone. The three SOPs were saved by the owner from a signed-in browser
   tables of frequencies, altitudes and procedures are operational facility data, not personal data, and most of it is
   corroborated by public sources (CIFP, vNAS). **Owner, 2026-10-20: the gate is a VATSIM sign-in, not a roster
   - any VATSIM account can open the wiki and read the SOPs - so this is a lower-stakes publication than "members-only"
-  suggests.** It is still the owner's decision whether to push the transcription; the decks stay out of the site manifest
-  (held 2026-10-19).
-- **The three decks are not in `site/index.html`, so a push does not publish them to Pages.** The Pages workflow
-  rebuilds on any push touching a drill deck, `site/` or `build-site.sh`; the decks sit in the tree and the repository,
-  but not on the site, until the manifest line is added. **Adding it is one line per tool and is the owner's call.**
+  suggests.** The transcription was pushed, and the decks are in the site manifest and published (owner, 2026-10-20, `f98fb28`).
+- **The three decks are in `site/index.html` and on Pages** (owner, 2026-10-20, `f98fb28`; the live pages matched the tree byte for byte on 2026-10-26). The Pages workflow rebuilds on any push touching a drill deck, `site/` or `build-site.sh`, so a push to a ZID deck goes live.
 
 ## The four sources, and what each gave
 
