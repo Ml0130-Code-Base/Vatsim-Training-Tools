@@ -309,8 +309,29 @@ MSP9 reaches it.
 - **The tower reference writes Brainerd as BRD** (`claude_MSP_Tower_Reference.md`, dispersal tracks);
   the order and the gap analysis write **BRNRD**, and BRNRD is the identifier CIFP carries. Preserved as
   written, not corrected; BRD is the airport identifier.
-- **The M98 deck does not offer MSP9** and carries coordinates for none of these seven points as such;
-  its engine is its own. Offering it is engine work for the owner to schedule, not a reference edit.
+- **The M98 deck offers MSP9 as a stand-in (issue #77, 2026-10-28), and it is deliberately less than
+  a procedure.** `MSP9` and `MSP9_DEPS` hold the seven initial fixes and the order's track for each, as
+  departures keyed `MSP9.FAR` through `MSP9.DLL`. They sit **beside** `SID_SET` and `DEPS`, not in them,
+  because those are built from coded CIFP legs and this has none. The aircraft flies a **straight line
+  from the field on the order's track** (320, 340 or 360 — 360 is plotted north) to the 50 NM every SID
+  is drawn to. **That line is not the way to the fix**, and the table above shows why: measured from
+  the MSP VOR on the deck's flat plane, the seven fixes lie at about 306 (FAR), 339 (BRNRD), 021 (DLH),
+  049 (HYR), 090 (EAU), 096 (GRB) and 119 (DLL), against tracks of 320, 340 and 360. The track is the
+  dispersal heading the tower assigns for the initial fix (6-3-1.a.4), and **where the aircraft turns
+  toward the fix is not published**, so it is neither flown nor drawn. The deck carries the seven
+  coordinates above for this comparison only; no fix is plotted on the scope.
+  The deck offers it at KMSP only and off runways 30L and 30R only (6-3-1.a.4); any other runway, or a
+  satellite field, is refused naming the paragraph, a strip with no runway stated is warned, and a
+  turboprop is warned (3-2-4.b-c and 6-3-1.a call it a turbojet departure). The strip files the **first
+  fix as its route and no procedure name**, since 3-2-4.b says MSP9 does not need to be amended into the
+  route string. It takes **no gate and no scratchpad** (the gate table is tabled for every SID), and the
+  spoken form is the order's own words, **"Minneapolis Nine"** — `claude_SID_TTS_Voicing.md` has no entry
+  for it. The climb altitude is the trainee's, as for every departure. Tests: the MSP9 block of
+  `smoke-test.mjs`. **Not done:** the generator never draws MSP9, and radar vectors to the first filed
+  fix (the order's last fallback) are not modelled.
+- **Open on MSP9, for the owner:** how a controller says it on the frequency (the deck says
+  "Minneapolis Nine" as the order writes it); whether 12L and 12R use anything like it (the order gives it
+  to 30L and 30R only, and the deck refuses elsewhere); and the climb altitude it is assigned.
 - **Other fields.** Of the fields this repository works, only Salt Lake City (SLC4) and Boise (BOI3) code
   a radar-vector departure in CIFP 261001; both fly in the shared player as a stand-in line to a charted
   fix (`claude_Fly_Block_Reference.md`). Chicago O'Hare and Midway, Omaha and the Indiana, Kentucky and Ohio

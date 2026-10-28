@@ -945,17 +945,61 @@ function depTrackFor(key, rwy, dep){
  /* a satellite departure: the field's own track, whatever the runway — none of
     the eight codes a runway transition at ANE, FCM or STP (CIFP 261029) */
  if(dep && dep!=='KMSP') return (DEPS_AT[dep] && DEPS_AT[dep][key]) || null;
- return (String(rwy||'').toUpperCase()==='17' && DEPS17[key]) || DEPS[key] || null;
+ return (String(rwy||'').toUpperCase()==='17' && DEPS17[key]) || DEPS[key] || MSP9_DEPS[key] || null;
 }
 /* every SID-and-transition key a field can fly, as the builder's picker lists them */
 function sidKeysAt(icao){
  return Object.keys((!icao || icao==='KMSP') ? DEPS : (DEPS_AT[icao] || {}));
+}
+/* ---------- MSP9, the non-SID turbojet departure (issue #77) ----------
+   Kept OUT of SID_SET and DEPS on purpose: those are built from CIFP SID legs,
+   MSP9 is not in CIFP 261001 (KMSP codes no route type T either — checked and
+   empty, claude_MSP_SID_Reference.md), and the assertions that walk DEPS (draw
+   groups, the first point is the field, no gate scratchpad for any key) are
+   about coded SIDs.
+
+   MSP ATCT 7110.26G 3-2-4.b-c: a turbojet that files no SID gets the Minneapolis
+   Nine Departure (MSP9) or the current version, and one unable a SID gets MSP9
+   to its first filed fix. 6-3-1.a.4: off runways 30L and 30R the tower assigns
+   headings that approximate the track listed for the initial fix — Fargo 320;
+   Brainerd, Duluth, Hayward, Eau Claire or Green Bay 340; Dells 360.
+
+   WHAT IS CARRIED is the order's track and nothing else: a straight line from
+   the field on that track, drawn to the same 50 NM as every SID. It is NOT the
+   line to the fix (Green Bay lies near 095 and Dells near 119 from MSP, so the
+   track is a dispersal heading, not the way to the fix), and where the aircraft
+   turns toward the fix is not published, so it is not drawn. Wind is not
+   modelled, so heading and track are one number. The spoken form is the order's
+   own words, "Minneapolis Nine"; claude_SID_TTS_Voicing.md has none, so how a
+   controller says it is open. The altitude it climbs to is not in the order;
+   the strip carries the trainee's, as for every departure. Reminder, not a
+   judgement. */
+var MSP9 = {
+ id:'MSP9', say:'Minneapolis Nine', rwys:['30L','30R'],
+ src:'MSP ATCT 7110.26G 3-2-4.b-c and 6-3-1.a.4; not in CIFP 261001',
+ fixes:{FAR:320, BRNRD:340, DLH:340, HYR:340, EAU:340, GRB:340, DLL:360}
+};
+var MSP9_DEPS = {};
+Object.keys(MSP9.fixes).forEach(function(fx){
+ var trk=MSP9.fixes[fx], a=trk*Math.PI/180;
+ var t=finalize([
+  {f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true},
+  {f:'trk '+trk, lat:MSP0.lat+Math.cos(a)*SID_MAP.nm/60, lon:MSP0.lon+Math.sin(a)*SID_MAP.nm/(60*COSL)}
+ ]);
+ t.vec=true; t.msp9={fix:fx, trk:trk};
+ MSP9_DEPS['MSP9.'+fx]=t;
+});
+function isMsp9(key){ return sidOf(key)==='MSP9'; }
+/* what the builder's picker offers at a field: the coded SIDs, and MSP9 at MSP */
+function depKeysAt(icao){
+ return sidKeysAt(icao).concat((!icao || icao==='KMSP') ? Object.keys(MSP9_DEPS) : []);
 }
 /* "BITEZ1.DKOTA" is said "BITEZ ONE": the revision number as a word, the way
    the procedure is named on the radio. The name itself is written as-is — no
    spoken form is known for any of the new ones but KBREW and ZMBRO
    (claude_SID_TTS_Voicing.md), and a guessed one would be learned. */
 function sidSpoken(key){
+ if(sidOf(key)==='MSP9') return MSP9.say;      /* the order's own words, not a voicing-table entry */
  var s=sidOf(key), m=s.match(/^([A-Z]+)(\d)$/);
  return m ? (m[1]+' '+SAY_DIGIT[+m[2]].toUpperCase()) : s;
 }
@@ -1666,6 +1710,9 @@ function scratchpadValid(s){
 function routeTextFor(o){
  var role=(o&&o.role)||'arrival';
  if(role==='departure'){
+  /* MSP9 "does not need to be amended into the route string" (7110.26G 3-2-4.b),
+     so a non-SID departure files from its first fix, the initial fix */
+  if(isMsp9(o.sid) && MSP9_DEPS[o.sid]) return MSP9_DEPS[o.sid].msp9.fix;
   return depTrackFor(o.sid, o.depRwy, o.dep) ? String(o.sid) : '';
  }
  if(role==='arrival'){
@@ -3026,7 +3073,9 @@ function transmit(){
    acted=true;
    var firstFix=(a.route[1]&&a.route[1].f)||'its first fix';
    log('flag','<span class="dd-chip flag">flag</span>'+want+' is the field <b>'+a.cs+'</b> just left — where its track on the scope starts, not a fix on the '
-     +(a.sid?(sidOf(a.sid)+' departure, which begins at '+firstFix):'departure')+'. Direct '+want+' turns a climbing departure back over the top into the traffic behind it. Give it a fix on the SID, or a heading.');
+     +(a.sid ? ((isMsp9(a.sid) && MSP9_DEPS[a.sid]) ? (MSP9.say+' departure, which is flown on an initial track of '+MSP9_DEPS[a.sid].msp9.trk+' toward '+MSP9_DEPS[a.sid].msp9.fix)
+                              : (sidOf(a.sid)+' departure, which begins at '+firstFix)) : 'departure')
+     +'. Direct '+want+' turns a climbing departure back over the top into the traffic behind it. Give it a fix on the '+(a.sid&&isMsp9(a.sid)?'route':'SID')+', or a heading.');
   } else if(onRt){
    acted=true; acks.push('direct '+want);
    if(!a.dirNoted){ a.dirNoted=true;
@@ -3218,7 +3267,7 @@ function sidDrawGroups(items){
      and STP is therefore one track and one label naming the three fields
      (owner, 2026-10-22). The Runway 17 segment is drawn from the field, so it
      stays its own. */
-  var drawn=r.rw17 ? r.slice(2) : ((r[0] && r[0].field) ? r.slice(1) : r);
+  var drawn=r.rw17 ? r.slice(2) : ((r[0] && r[0].field && !isMsp9(k)) ? r.slice(1) : r);   /* a vectored track (MSP9) IS the stand-in, so it is drawn whole */
   /* one track per SID and per drawn path: two SIDs never merge, whatever they share */
   var sig=sidOf(k)+(r.rw17?' 17: ':': ')+drawn.map(function(p){ return p.f; }).join(' ');
   if(!by[sig]){ by[sig]={route:r, drawn:drawn, sid:sidOf(k), keys:[], fields:[]}; out.push(by[sig]); }
@@ -3865,7 +3914,7 @@ window.DD = {
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
- DEPS:DEPS, DEPS_AT:DEPS_AT, sidKeysAt:sidKeysAt, sidsAtMsp:sidsAtMsp, satOnlySidItems:satOnlySidItems, depCall:depCall, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
+ DEPS:DEPS, DEPS_AT:DEPS_AT, MSP9:MSP9, MSP9_DEPS:MSP9_DEPS, depKeysAt:depKeysAt, isMsp9:isMsp9, sidKeysAt:sidKeysAt, sidsAtMsp:sidsAtMsp, satOnlySidItems:satOnlySidItems, depCall:depCall, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
  SID_CHANGE:SID_CHANGE, sidChangeState:sidChangeState, sidChangeHtml:sidChangeHtml,
  sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
  SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC, SID_MAP:SID_MAP,
