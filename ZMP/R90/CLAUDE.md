@@ -152,6 +152,10 @@ is an intention and belongs somewhere it can be closed.
 
 **#31 and #32 are the two that can start today.** Both sit entirely inside the text half of the
 document set, which is why they were chosen.
+### Operators by field (2026-10-28, issue #76)
+
+R90's drill contract carries one operator table, KOMA, from the owner's Wikipedia printout (`claude_R90_Operators_Reference.md`, which wins on a disagreement); the generator draws a callsign at Eppley from it and every other R90 field stays on the flat list of twelve carriers, with the panel saying so. The printout holds the passenger table only, so Eppley cargo, charter and general aviation are unknown, not empty. MSP's printout is a record in `../M98 Training/claude_MSP_Operators_Reference.md`; the M98 deck keeps its own fleet and does not read it.
+
 ## Session hygiene
 
 Commit after each completed subtask. Long sessions: `/clear` and let this file re-anchor context. When aviation data is involved, cite which reference file and which paragraph the number came from in the commit message. **One commit touches one ARTCC:** anything under `ZMP/` may share a commit — M98, R90 and ZMP Center together — and nothing under `ZAU/` or `ZLC/` may join it. Root `CLAUDE.md` §14.
