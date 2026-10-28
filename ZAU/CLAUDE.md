@@ -33,12 +33,12 @@ it. See "The skeleton contract" below before adding anything.
    check is weaker than it looks.
 4. **Single file, no build step, no dependencies, offline-first.** Vanilla ES5-style JS. The
    Google Fonts link is the only external reference in the markup and both pages are fully
-   functional without it. There is **no network call at all** in either tool. Both must keep
+   functional without it. There is no network call a tool needs: each deck carries an optional D-ATIS fetch (atis.info) and, for fields with no D-ATIS, an optional METAR fetch (api.weather.gov), never on a required path and always falling back to a paste box (whether the second is allowed is issue #72). Both must keep
    working end to end from `file://` with the machine offline.
-5. **Additive extension pattern.** Exactly two `<script>` blocks per page, in dependency
-   order: the facility deck (engine + data + `window.DD`), then the builder block, which
+5. **Additive extension pattern.** Every `<script>` is a block, in dependency
+   order (seven in C90, eight in AZO on 2026-10-28; the count moves with each master block): the facility deck (engine + data + `window.DD`), then the builder block, which
    reads `window.DD` and returns early if it is absent. New features go inside an existing
-   block or as a third block after them. The chrome outside those blocks — topbar, hero,
+   block or as a new block after them. The chrome outside those blocks — topbar, hero,
    empty `#modnav`, footer — is left alone without an explicit ask.
 6. **One copy of every operational number.** The deck exposes `window.DD`; the builder reads
    through it and never keeps a second copy. `DD.hooks` is called at the end of every tick.
