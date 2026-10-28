@@ -176,7 +176,20 @@ revision number is said as a word: *BITEZ ONE departure*.
   paragraph says "departing aircraft" and names no field; the 25 NM and the 11,000 are the same.
 - Related routing (ZMP-M98 LOA 4.f): satellite departures previously routed via the **DWN** SID now route **INUNE GENEO DKOTA**.
 
+## The vZMP PBN Phase II briefing (owner-supplied 2026-10-28)
+
+A 25-page vZMP briefing now exists for this set — **not an order**; the SOP and LOA revisions are still to come.
+Full transcription, the old-to-new SID table, the **fifteen scratchpad codes** (BUNYN DLH `BAB` · KVUSI `GPR`, NRTHN
+AROND `PRR` · TTOWN `PKE`, SNUPE `SNU`, ZMBRO `BRO`, HTDSH BRIBE `ZMB` · the rest `TTZ`, TOTTZ `TOT`, SNOWZ ISTIQ/LLUKY
+`MGL` · ZZEEE/DABOY `PLW`, DUHCK `DUK`, BITEZ SMERF `PAG` · DKOTA/LEINY `TIK`, KBREW `KBR`) and the four places it
+differs from the CIFP data below, in `claude_M98_PBN_Phase_II_Reference.md`. What it adds to this file: **HTDSH
+replaces ZMBRO and TOTTZ on a 30s/17 only**; **MSP9 becomes MSP1 on 2026-10-29**; **SNOWZ serves MSP only and DUHCK
+the satellites**; and **it spells the fifth TOTTZ transition FOOLZ where CIFP 261029 and this file say FOOLS.**
+
 ## Open question — which SID is preferred off Runway 17
+
+**Partly reframed by the briefing above, not answered:** SNOWZ takes the ORSKY and SCHEP traffic and HTDSH the
+ZMBRO and TOTTZ traffic on a 30s/17, so they are not rivals for one aircraft. What is still unsaid is below.
 
 **Not answered by any document, and the deck assumes nothing** (owner, 2026-10-22). HTDSH1 and SNOWZ1 are
 both valid off every runway and fly the same coded segment off 17 (heading 169.5 to RUBRB ≥ 3,500, then

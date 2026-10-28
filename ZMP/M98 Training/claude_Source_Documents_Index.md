@@ -93,6 +93,22 @@ the differences are a finding to record rather than to overwrite silently.
 **It carries no geometry and does not say which runway transition ZMP assigns** — §7 and issue #15
 are both untouched by it. Full statement of what it can and cannot answer in the reference file.
 
+## Owner-supplied, 2026-10-28 — vZMP PBN Phase II briefing
+
+| | |
+|---|---|
+| file | `vZMP PBN Phase II Procedure Changes.pdf` (the owner's Downloads folder) |
+| title / date | *vZMP PBN Phase II Procedure Changes*, Minneapolis ARTCC; cover dated 10/29/2026 |
+| pages / text | 25 pages, `%PDF-1.4`; **about 4 KB of text — the rest is 17 embedded JPEGs** (SID comparison chart, four SID maps, two prototype SNOWZ1 and HTDSH1 plates, the airspace charts, the scratchpad table) |
+| size / md5 | 1,687,426 bytes · `28956628108a3152e46ad4192dce68aa` |
+| pull | **none** — handed over by the owner; no URL is known |
+| committed? | **No.** Whether the briefing is public is not known, and the repository is public (root `CLAUDE.md` §13). The transcription is in `claude_M98_PBN_Phase_II_Reference.md` |
+| not an order | a briefing ahead of the SOP and LOA revisions it announces; **it supersedes nothing** |
+
+**Reading it without a rasteriser.** `pdftotext -layout` gets the slide text. The images were carved with
+a `perl` script that finds each `/DCTDecode` stream and writes it out as a `.jpg` — the same method that
+recovered the DDA chart pages — and read by eye. The airspace charts' altitude blocks were **not** transcribed.
+
 ## Regenerating this pull
 
 ```bash
