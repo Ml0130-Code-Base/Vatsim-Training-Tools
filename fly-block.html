@@ -82,9 +82,23 @@
                   mk(strip,i), track(strip), sim, FACILITY, ... }
    window[<prefix>Load|Rate|End|Send|Quick|Layers|Pick|Target]  the handlers
 
-   A DRILL is {id, name, frame, strips:[strip...], rate:0|1|4|'hot'}, a
-   STRIP is the strip block's row. `fly.load` refuses a drill whose strips
-   cannot be flown and says why, strip by strip.
+   A DRILL is {id, name, brief, frame, strips:[strip...], rate:0|1|4|'hot',
+   events:[event...]}, a STRIP is the strip block's row. `fly.load` refuses
+   a drill whose strips cannot be flown and says why, strip by strip.
+
+   AN EVENT fires once, into the feed, when the clock reaches its time. It
+   is typed by whoever builds the drill; the block carries no canned text.
+     {kind:'speci',    at:seconds, ceil, vis, wind, cat, cfg, cfgName}
+         a special observation: the weather the trainee typed, and, if
+         cfg is set, the configuration now in force. The block states
+         plainly that it does NOT re-plan strips already flying.
+     {kind:'landline', at:seconds, from, text, cs}
+         a call on the landline: who it is from and what they say.
+   Nothing here is graded and no event is tagged to a standing item.
+
+   fly.preview(strips) draws the start positions on the SAME scope code
+   the live player uses (same fit, same rings, same outline), for the
+   drill builder to show before the drill is flown.
    ================================================================ */
 (function(){
 'use strict';
@@ -293,7 +307,7 @@ function pointAt(tr, d){
 /* ---------- 3. sim state ---------- */
 var sim = {t:0, rate:0, hot:false, ac:[], feed:[], sel:null, drill:null, ended:false,
            layers:'tracked', target:20, timing:[], tx:0, pausedTx:0, tally:{good:0, flag:0, crit:0},
-           los:{}, scale:null, lastTx:null, lastReal:0};
+           los:{}, scale:null, lastTx:null, lastReal:0, events:[]};
 var LAYER_MODES = [
  {id:'tracked', label:'tracked traffic'},
  {id:'stars',   label:'all STARs'},
@@ -572,6 +586,29 @@ function step(dt){
  sim.t += dt;
  for(var i = 0; i < sim.ac.length; i++) advance(sim.ac[i], dt);
  checkLos();
+ fireEvents();
+}
+/* Scheduled events: a SPECI and landline calls, fired once when the clock reaches them. The text
+   is whatever the drill's author typed; the block adds only the chip and the statement of what
+   it does not do. */
+function speciText(e){
+ var bits = [];
+ if(e.ceil) bits.push('ceiling ' + esc(e.ceil));
+ if(e.vis) bits.push('visibility ' + esc(e.vis));
+ if(e.wind) bits.push('wind ' + esc(e.wind));
+ if(e.cat) bits.push('flight category ' + esc(e.cat));
+ var s = 'Special observation' + (bits.length ? ': ' + bits.join(', ') : '') + '.';
+ if(e.cfg) s += ' The configuration is now <b>' + esc(e.cfgName || e.cfg) + '</b>. The strips already flying keep their published tracks: this player does not re-plan them, so re-vector or re-assign any that need it.';
+ return s;
+}
+function fireEvents(){
+ for(var i = 0; i < sim.events.length; i++){
+  var e = sim.events[i];
+  if(e.fired || !(e.at <= sim.t)) continue;
+  e.fired = true;
+  if(e.kind === 'speci') log('info', chip('info', 'SPECI') + speciText(e));
+  else if(e.kind === 'landline') log('info', chip('info', 'landline') + '<b>' + esc(e.from || 'The other side') + '</b> on the landline' + (e.cs ? ' about ' + esc(e.cs) : '') + ': ' + esc(e.text));
+ }
 }
 function checkLos(){
  var live = sim.ac.filter(function(a){ return a.alive && a.onFreq && !a.handed && airborne(a); });
@@ -922,6 +959,13 @@ function validate(drill){
   else if(tr.skipped) warns.push(tag + ': ' + tr.skipped + ' fix' + (tr.skipped === 1 ? '' : 'es') + ' on ' + tr.id + ' carry no coordinate and are left out of the line.');
   if(role === 'arrival' && s.dtgFix && tr.ok && fixCum(tr, s.dtgFix) == null) warns.push(tag + ': ' + s.dtgFix + ' is not on the track chosen for it, so it starts at the beginning of the track.');
  });
+ ((drill && drill.events) || []).forEach(function(e, i){
+  var tag = 'Event ' + (i + 1);
+  if(!e || (e.kind !== 'speci' && e.kind !== 'landline')) warns.push(tag + ' is not a special observation or a landline call and is left out.');
+  else if(parseNum(e.at) == null) warns.push(tag + ' (' + e.kind + ') has no time in seconds from the start and is left out.');
+  else if(e.kind === 'landline' && !String(e.text || '').trim()) warns.push(tag + ' (landline) has nothing to say and is left out.');
+  else if(e.kind === 'speci' && !(e.ceil || e.vis || e.wind || e.cat || e.cfg)) warns.push(tag + ' (special observation) changes nothing and is left out.');
+ });
  return {errs:errs, warns:warns};
 }
 function load(drill){
@@ -934,11 +978,16 @@ function load(drill){
  sim.t = 0; sim.rate = 0; sim.hot = false; sim.ended = false; sim.drill = drill; sim.sel = null;
  sim.feed = []; sim.timing = []; sim.tx = 0; sim.pausedTx = 0; sim.tally = {good:0, flag:0, crit:0}; sim.los = {}; sim.lastTx = null;
  sim.ac = (drill.strips || []).map(function(s, i){ return mkAc(s, i); });
+ sim.events = ((drill.events || []).filter(function(e){
+  return e && (e.kind === 'speci' || e.kind === 'landline') && parseNum(e.at) != null
+   && (e.kind === 'landline' ? String(e.text || '').trim() : (e.ceil || e.vis || e.wind || e.cat || e.cfg));
+ })).map(function(e){ var c = {}, k; for(k in e) c[k] = e[k]; c.at = parseNum(e.at); c.fired = false; return c; });
  sim.scale = null;
  var title = drill.name || 'Untitled drill';
  var fr = drill.frame && drill.frame.text ? drill.frame.text : (typeof F.frame === 'function' && F.frame() ? F.frame().text : '');
  sim.title = title + (fr ? ' - ' + fr : '');
  v.warns.forEach(function(w){ log('info', chip('info', 'note') + esc(w)); });
+ if(drill.brief && String(drill.brief).trim()) log('coach', '<span class="coach">Brief: ' + esc(String(drill.brief).trim()) + '</span>');
  var fl = typeof F.flow === 'function' ? F.flow() : null;
  if(!fl) log('info', chip('info', 'frame') + 'No configuration is set, so no flow is stated and no route is trimmed to one.');
  sim.ac.forEach(function(a){ if(a.spawnAt <= 0) putOnFreq(a); });
@@ -1126,6 +1175,29 @@ function scopeSvg(){
  o += '</svg>';
  return o;
 }
+/* The start positions of a list of strips, drawn by scopeSvg() itself so the geometry is the live
+   scope's by construction: same fit, same rings, same outline, same tracks. The live sim is
+   swapped out for the call and put back, so nothing a drill is doing is touched. A strip with no
+   flyable track has no position and is named in the returned list. */
+function preview(strips){
+ var keep = sim, acs = [], skipped = [], svg = '';
+ (strips || []).forEach(function(s, i){
+  var a = mkAc(s, i);
+  if(!a.track.ok){ skipped.push((s.cs || ('strip ' + (i + 1))) + ': ' + (a.track.note || 'no track')); return; }
+  a.alive = true; a.onFreq = true; a.gs = a.ias;
+  /* the live scope dims a target that is no longer on the frequency; here the same dimming marks one that checks in later */
+  if(a.spawnAt > 0) a.handed = 'later';
+  acs.push(a);
+ });
+ if(acs.length){
+  sim = {t:0, rate:0, hot:false, ac:acs, feed:[], sel:null, drill:null, ended:false, layers:'tracked', target:20, timing:[], tx:0, pausedTx:0,
+         tally:{good:0, flag:0, crit:0}, los:{}, scale:null, lastTx:null, lastReal:0, events:[], range:0};
+  try{ svg = scopeSvg(); }catch(e){ svg = ''; }
+  sim = keep;
+  svg = svg.replace(/ onclick="[^"]*"/g, '').replace(/ style="cursor:pointer"/g, '').replace('aria-label="Live scope"', 'aria-label="Start positions"');
+ }
+ return {svg:svg, count:acs.length, skipped:skipped};
+}
 function nextFixOf(a){
  if(!a.track.ok || a.nav !== 'track') return null;
  for(var i = 0; i < a.track.pts.length; i++){ if(a.track.pts[i].cum > a.dist + 1e-6) return a.track.pts[i]; }
@@ -1306,7 +1378,7 @@ window.fly = {
  FACILITY:F, sim:sim, load:load, validate:validate, step:step, transmit:transmit, mk:mkAc, track:buildTrack,
  viaTarget:viaTarget, parseAlt:parseAlt, despell:despell, pointAt:pointAt, xy:xy, render:render, setRate:setRate,
  end:endDrill, tracksFor:tracksFor, LAYER_MODES:LAYER_MODES, transOptions:transOptions, procFor:procFor, fixCum:fixCum,
- conText:conText, esc:esc, mountCss:mountCss, haveProcs:HAVE_PROCS, find:findAc,
+ conText:conText, esc:esc, mountCss:mountCss, haveProcs:HAVE_PROCS, find:findAc, preview:preview,
  CLIMB:CLIMB, DESC:DESC, ACCEL:ACCEL, GRAD:GRAD
 };
 

@@ -160,7 +160,7 @@ tallies exposures and staleness across one ledger. *M98 only.*
 asked for every deck besides M98 to feel like M98 on *Set up a drill* and *Fly it*, and chose
 interface parity plus a shared engine that flies each strip along the facility's own CIFP
 ladder. That waives the gate below **for what CIFP itself publishes and nothing else**: the
-clock, the published crossings and the published speeds. It adds no boundary, no sector owner,
+clock, the published crossings and the published speeds. A drill may also schedule a special observation or landline calls: notices the author typed, fired once by the clock, never graded, and a configuration change does not re-plan a strip already flying. It adds no boundary, no sector owner,
 no handoff grading and no wind; `STANDING` stays `[]`; every check says *"reminder, not a
 judgement"*. Two masters carry it, `fly-block.html` and `drill-block.html`
 (`claude_Fly_Block_Reference.md`). *IND, SDF, CVG, R90 and Big Sky today; the rest are issue #76.*
