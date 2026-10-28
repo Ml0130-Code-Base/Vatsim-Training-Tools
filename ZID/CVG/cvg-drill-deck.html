@@ -6066,11 +6066,18 @@ function genOverflight(R, used){
 function generate(seed, n, mix){
  var R = rng(seed), used = {}, fl = flow(), out = [], i, s;
  var want = {arr:0, dep:0, over:0};
+ /* A kind the deck has no procedure for anywhere is drawn as an overflight in the mixed draw, so a deck
+    whose fields code no STAR or no SID still builds the drill as long as it was asked for. The draw
+    below consumes the same random numbers either way, so a deck with both kinds is unchanged. */
+ var canArr = ST.airportsHere().some(function(a){ return ST.arrivalsFor(a).length; });
+ var canDep = ST.airportsHere().some(function(a){ return ST.departuresFor(a).length; });
  for(i = 0; i < n; i++){
   var r = R();
   if(mix === 'arrivals') want.arr++;
   else if(mix === 'departures') want.dep++;
-  else if(r < 0.5) want.arr++; else if(r < 0.85) want.dep++; else want.over++;
+  else if(r < 0.5){ if(canArr) want.arr++; else want.over++; }
+  else if(r < 0.85){ if(canDep) want.dep++; else want.over++; }
+  else want.over++;
  }
  var kinds = [];
  for(i = 0; i < want.arr; i++) kinds.push('a');
