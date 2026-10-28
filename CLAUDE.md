@@ -8,10 +8,10 @@ certification at several facilities. Four ARTCCs, ten tools:
 | `ZMP/M98 Training/m98-drill-deck.html` | M98 — Minneapolis approach | terminal, STARS | `DD` | full engine, flown |
 | `ZMP/ZMP/zmp-drill-deck.html` | ZMP — Minneapolis Center | en route, ERAM | `ZD` | skeleton |
 | `ZMP/R90/r90-drill-deck.html` | R90 — Omaha TRACON | terminal, STARS | `RD` | skeleton + published-track player |
-| `ZAU/C90/c90-drill-deck.html` | C90 — Chicago TRACON | terminal | `DD` | skeleton + published-track player |
-| `ZAU/AZO/azo-drill-deck.html` | Great Lakes, West Wall | terminal | `DD` | skeleton + overflight player |
-| `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | skeleton + published-track player |
-| `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | skeleton + published-track player |
+| `ZAU/C90/c90-drill-deck.html` | C90 — Chicago TRACON | terminal | `DD` | Tier 1 + published-track player |
+| `ZAU/AZO/azo-drill-deck.html` | Great Lakes, West Wall | terminal | `DD` | Tier 1 + overflight player |
+| `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | Tier 1 + published-track player |
+| `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | Tier 1 + published-track player |
 | `ZID/IND/ind-drill-deck.html` | IND — Indianapolis TRACON | terminal, STARS | `IND` | Tier 1 shell + published-track player |
 | `ZID/SDF/sdf-drill-deck.html` | SDF — Louisville TRACON | terminal, STARS | `SDF` | Tier 1 shell + published-track player |
 | `ZID/CVG/cvg-drill-deck.html` | CVG — Cincinnati TRACON | terminal, STARS | `CVG` | Tier 1 shell + published-track player |
@@ -125,7 +125,7 @@ name.
 ```
 
 **Shared reference documents are copied, not linked.** `claude_US_Carrier_Callsigns.md` is
-byte-identical in three folders under `ZMP/` and once at `ZID/_shared/`, `claude_Enroute_vs_Terminal_Reference.md` in two, and
+byte-identical in three folders under `ZMP/` and once each at `ZID/_shared/`, `ZAU/_shared/` and `ZLC/_shared/`, `claude_Enroute_vs_Terminal_Reference.md` in two, and
 `claude_ZMP_Handoff_ID_Reference.md` in three (`ZMP/ZMP/`, `ZMP/R90/`, `ZMP/M98 Training/`), on
 purpose: no facility folder may depend on another folder's files, because folders get worked
 on, moved and cleared independently. **The cost is that a change to a shared doc must land in
@@ -145,12 +145,12 @@ reasonable to ask of it and what the next unit of work is.
 
 **Tier 0 — reference and selector.** A cited reference markdown, a tool that resolves
 positions, frequencies and the combining chain, and a rendered statement of what is missing.
-No traffic, no clock, no grading. *ZLC Big Sky, ZLC S56, ZAU AZO, ZAU C90.*
+No traffic, no clock, no grading. *No deck sits here any more: ZLC Big Sky, ZLC S56, ZAU AZO and ZAU C90 left on 2026-10-28.*
 
 **Tier 1 — data spine and shell.** Everything above, plus the full reference layer (drill
 format, OJT intake template, empty practice log, TTS voicing, gap analysis), the three-page
 architecture, `localStorage`, and a smoke test that asserts the spine and asserts the
-emptiness. Still no traffic model. *ZMP, R90.*
+emptiness. Still no traffic model. *ZMP, R90, and since 2026-10-28 ZAU C90, ZAU AZO, ZLC S56 and ZLC Big Sky (issues #42, #46). C90 asserts 109 checks, AZO 96, S56 100 and Big Sky 98, run in the browser runner; Big Sky persists since issue #45 but has no notes layer.*
 
 **Tier 2 — engine.** A real-time tick, aircraft objects, a multi-clause transmission parser,
 deterministic grading tagged to standing items derived from flown sessions, a notebook that
@@ -481,16 +481,16 @@ section says what is true, not what to do about it next.
   divergence on **2026-09-06**: every block in both decks now guards on the discriminator
   rather than on there being only one ZLC tool loaded.
 - **Storage keys.** Nine tools use `<basename>-v1`, S56 included — its key was renamed off the
-  status word and the deck still reads `zlc-s56-skeleton-v1` once, to migrate. **Big Sky has no
-  persistence at all**, and deliberately: its weather block sets `STORE_KEY` to the empty string
-  and `storeSave()` returns early rather than inventing a key as a drive-by — issue **#45**
-  gives it one, and that is the cheap moment to do it, before there is banked work to strand.
-  **Since 2026-10-27 it stores one thing**: saved drills, under `bigsky-drill-deck-fly-v1` (the drill master), and nothing else.
+  status word and the deck still reads `zlc-s56-skeleton-v1` once, to migrate. **Big Sky had no
+  persistence at all until 2026-10-28** (issue **#45**): it now keeps the frame (area, open sectors, seat,
+  flows) under `bigsky-drill-deck-v1` key `deck`, beside the weather reader's `wx`, and saved drills under
+  `bigsky-drill-deck-fly-v1`. It has no notes layer yet, so nothing else is stored.
   Don't ship another key with a status word in it.
-- **ZAU and ZLC have no drill-format, OJT-intake, practice-log or TTS layer**, and **no smoke
-  test.** They are Tier 0. That is a legitimate place to be; it is not a legitimate place to
-  start grading from. The reference layer comes before an engine — issues **#42** (ZAU) and
-  **#46** (ZLC), which also carry the missing smoke tests.
+- **ZAU and ZLC had no drill-format, OJT-intake, practice-log or TTS layer and no smoke test until
+  2026-10-28**, when C90, AZO, S56 and Big Sky each gained the five reference files and a harness (issues
+  **#42** and **#46**). **None of the four has a `PRIOR` array**: C90 and AZO keep their debriefs in
+  `ddb.state.entries`, S56 and Big Sky keep no drill ledger at all, so their practice log is the only one. The
+  four `smoke-test.mjs` files have run only in the browser runner.
 - **The notes layer exists at C90 (anchored rail) and S56 (typed notes against `OPEN_Q`), and
   nowhere else.** AZO has the practice-log half without the rail. **Copy the C90 rail rather
   than reinventing it** — issues **#43** (AZO) and **#45** (Big Sky).
@@ -711,8 +711,9 @@ cannot be run here. **A harness is executed through a browser runner instead.** 
 three ZID decks each ship a `smoke-test-browser.html` beside the `.mjs`; it is served over local
 HTTP and loads the real deck. It has been run: M98 (700 checks on 2026-10-28) and IND, SDF and
 CVG (248, 262 and 340 on 2026-10-26) pass. **R90 and ZMP Center have only the `.mjs`, and
-ZMP Center's cannot pass against the current deck (issue #69); ZAU and ZLC have no smoke test
-(issues #42, #46).** Say which of these a claim rests on rather than implying a suite passed,
+ZMP Center's cannot pass against the current deck (issue #69).** C90, AZO, S56 and Big Sky each ship
+a `smoke-test-browser.html` too (109, 96, 100 and 98 checks on 2026-10-28), so every deck but R90 and ZMP Center
+has been run. Say which of these a claim rests on rather than implying a suite passed,
 and a harness without a runner is verified by being parsed, not by being executed.
 
 The other check, and the one that covers layout: **serve the folder over local HTTP and drive
@@ -987,7 +988,7 @@ copy, `md5sum` checked, no facility work riding along. All three copied document
 (`claude_US_Carrier_Callsigns.md`, `claude_Enroute_vs_Terminal_Reference.md`,
 `claude_ZMP_Handoff_ID_Reference.md`) lived entirely under `ZMP/`, so the exception was not yet
 live. **It went live on 2026-10-19 for `claude_US_Carrier_Callsigns.md`**, which now also has a copy
-at `ZID/_shared/`: a change to it lands in the three `ZMP/` copies and that one together.
+at `ZID/_shared/`, and on 2026-10-28 at `ZAU/_shared/` and `ZLC/_shared/`: a change to it lands in the three `ZMP/` copies and those three together.
 
 **There is no second exception.** A mechanical edit that happens to touch two trees — a licence
 line in both `ATTRIBUTION.md` files, a link fix, a rename — splits by tree. That is the
