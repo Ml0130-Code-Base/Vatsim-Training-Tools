@@ -14,6 +14,10 @@ Both are **skeletons**, and the word is load-bearing: the frame is real and cite
 published geometry is not carried, and the tool renders the difference rather than hiding
 it. See "The skeleton contract" below before adding anything.
 
+**Both reached Tier 1 on 2026-10-28** (root `CLAUDE.md` section 3, issue #42): the full reference
+layer in each folder, the three pages, `localStorage`, a smoke test, and the published-track player
+on top. Nothing here is graded and `STANDING` is `[]` at both. See "The reference layer" below.
+
 ## The skeleton contract
 
 1. **A number is cited or it is absent.** Every operational value in either tool traces to
@@ -229,13 +233,43 @@ the per-anchor rail — issue **#43**.
 
 ## Testing
 
-No Node and no working Python on this machine, so there is no runnable harness yet — the
-M98 `smoke-test.mjs` pattern is the model when one becomes possible. Both tools were
-verified by driving the real page in a browser: sections mount, the page tabs switch, the
-combining chain resolves, a multi-clause transmission produces one readback, the aircraft
-flies at the right rate and distance, the AZO altitude and beacon reminders fire, and the
-note export carries its anchor and slot state. Say plainly which of these was actually run
-rather than implying a suite passed.
+Each deck ships `smoke-test.mjs` and `smoke-test-browser.html` (2026-10-28, issue #42). **There is no Node on
+the owner's machine**, so the harness was run through the browser runner (a copy of the ZID one), served
+over local HTTP, which rewrites four lines of the `.mjs` for the browser and prints `SMOKE PASS: N checks
+passed.` That is the same check in another engine, not `node smoke-test.mjs`.
+
+- **C90 - 109 checks passed.** Seven blocks; 17 positions with unique frequencies, symbols and callsigns; the
+  combining chain rooted at Z; 4 configurations, 4 MDW configurations and 4 Finals; 8 airports with null
+  runway order; the slot states (gates, splits, handoff, ada, mva, zau and towers empty); the 35-point
+  footprint under 15,000; CIFP 261001 (18 STAR and 27 SID records, 293 fixes, **O'Hare and Midway SID zero**);
+  `STANDING` empty; the three page labels.
+- **AZO - 96 checks passed.** Eight blocks; the six West Wall positions and no `ownerOf`; the six East Wall
+  neighbours (three without a frequency); the beacon conflict between the LOA and the SOP preserved; the
+  boundary, TRSA, MVA, handoff and routes slots empty; the 32-point footprint under 10,000; **CIFP zero at
+  every West Wall field**; `STANDING` empty.
+- **Both share a tail** that drives the player: the 50-strip ceiling, a track built from the procedure table's
+  own coordinates, the generator's determinism and legality, transmit parsing, handoff, a debrief that says
+  no standing item is exercised, the *Position Setup* sub-panels by name, scheduled events and the start
+  positions preview. Assertions were confirmed to bite by mutation.
+- **A defect the harness does not assert, found while writing it:** the shared drill generator can start an
+  arrival below its own ladder (25 of 64 strips at C90, for example FYTTE7 via BENNR at 11,000). It is in the
+  master `drill-block.html`, so it is not fixed here; it has its own issue.
+
+Say which of these was actually run rather than implying a suite passed. Layout is checked by driving the
+real page: sections mount, the page tabs switch, the combining chain resolves, a multi-clause transmission
+produces one readback, the AZO altitude and beacon reminders fire, and the note export carries its anchor
+and slot state.
+
+### The reference layer (Tier 1, 2026-10-28)
+
+| File | In each of `C90/` and `AZO/` |
+|---|---|
+| `claude_<FAC>_Drill_Format.md` | How the coach frames a drill, which sections it inherits, and the frame elements the parent lacks |
+| `claude_<FAC>_OJT_Session_Review.md` | **Intake template, empty.** A fenced candidate watch list, never copied into `STANDING` |
+| `claude_<FAC>_AI_Practice_Log.md` | **Empty.** The ledger is `ddb.state.entries`; neither deck has a `PRIOR` array |
+| `claude_<FAC>_TTS_Voicing.md` | Written to spoken forms. **No pronunciation is owner-supplied**, and the names are listed as unspecified |
+| `claude_<FAC>_Gap_Analysis.md` | Parts 1 to 5, ranked asks first |
+| `_shared/claude_US_Carrier_Callsigns.md` | Byte-identical to the copies under `ZMP/` and `ZID/_shared/`, checked with `md5sum` |
 
 ### Operators by field (2026-10-28, issue #76)
 
@@ -280,4 +314,4 @@ the published crossings and speeds, and nothing is graded; `STANDING` stays `[]`
 - **Three landing-page faults fixed on the way:** the weather reader looked for `dd-page-notes` (it now lands on the Set up page), the procedures table sat on the Fly page (it is reference, so it joined the third page), and the builder called `DD.render()`, which no longer exists.
 - **One C90 regression fixed with it:** retiring the engine also removed the `.dd-send` button style, which the builder's *Bank it* and *Save note* still use; it is back.
 - **The drill master gained one rule** at the root: a kind the deck has no procedure for anywhere is drawn as an overflight in the mixed draw, so asking AZO for six strips builds six overflights rather than one (root `claude_Fly_Block_Reference.md`).
-- **Verified by driving the real page**, not by a harness: pages and tabs, the five sub-panels, seat and presets, an arrival refused by name, an overflight flying, an out-of-block code raising the reminder and an in-block one not, the generator building six overflights, console clean. There is no smoke test for either ZAU deck (issue #42).
+- **Verified by driving the real page** (the harness arrived afterwards, see Testing): pages and tabs, the five sub-panels, seat and presets, an arrival refused by name, an overflight flying, an out-of-block code raising the reminder and an in-block one not, the generator building six overflights, console clean..
