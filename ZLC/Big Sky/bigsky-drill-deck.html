@@ -347,6 +347,56 @@ var state = {
  seat:'SAG'
 };
 
+/* ---------- 3a. Persistence (issue #45) ----------
+   One key, <file basename>-v1, with no status word in it: the key outlives the status, and renaming
+   it later orphans what a trainee wrote. The deck keeps its frame under "deck" and the weather
+   reader keeps its pasted text under "wx"; EACH WRITE READS THE WHOLE OBJECT FIRST AND CHANGES ONLY
+   ITS OWN PART, so neither can erase the other (S56 overwrites, which is issue #70). Saved drills
+   live under a second key, bigsky-drill-deck-fly-v1. Where storage is unavailable the deck still
+   works in memory and says so on the page. */
+var KEY = 'bigsky-drill-deck-v1';
+var storageOK = true;
+function persistRead(){
+ try{
+  var raw = window.localStorage.getItem(KEY);
+  if(!raw) return {};
+  var o = JSON.parse(raw);
+  return (o && typeof o === 'object' && !(o instanceof Array)) ? o : {};
+ }catch(e){ storageOK = false; return {}; }
+}
+function persistLoad(){
+ var d = persistRead().deck;
+ if(!d || typeof d !== 'object') return;
+ var area = null, i;
+ for(i = 0; i < AREAS.length; i++){ if(AREAS[i].id === d.area) area = AREAS[i].id; }
+ if(!area) return;
+ var open = {}, any = false;
+ if(d.open && typeof d.open === 'object'){
+  for(var k in d.open){
+   if(d.open.hasOwnProperty(k) && secById(k) && secById(k).area === area){ open[k] = 1; any = true; }
+  }
+ }
+ if(!any) return;
+ state.area = area; state.open = open;
+ state.seat = (typeof d.seat === 'string' && open[d.seat]) ? d.seat : Object.keys(open)[0];
+ for(var a in state.flow){
+  if(!state.flow.hasOwnProperty(a)) continue;
+  var want = d.flow && d.flow[a], ok = false, fa = FLOWS[a] || [];
+  for(i = 0; i < fa.length; i++){ if(fa[i].id === want) ok = true; }
+  if(ok) state.flow[a] = want;
+ }
+}
+function persistSave(){
+ try{
+  var o = persistRead();
+  o.deck = {area:state.area, flow:state.flow, open:state.open, seat:state.seat};
+  window.localStorage.setItem(KEY, JSON.stringify(o));
+ }catch(e){ storageOK = false; }
+}
+function storeNoteHtml(){
+ return storageOK ? '' : '<div class="zlc-note">This browser will not keep what you set, so the frame lives only until the page is closed.</div>';
+}
+
 /* ---------- 4. Resolution ---------- */
 function secById(id){
  for(var i=0;i<SECTORS.length;i++){ if(SECTORS[i].id===id) return SECTORS[i]; }
@@ -666,6 +716,8 @@ function render(){
  el=document.getElementById('zlc-seat');     if(el) el.innerHTML=seatHtml();
  el=document.getElementById('zlc-seatref');  if(el) el.innerHTML=seatRefHtml();
  el=document.getElementById('zlc-credit');   if(el) el.innerHTML=creditHtml();
+ persistSave();
+ el=document.getElementById('zlc-storenote'); if(el) el.innerHTML=storeNoteHtml();
  for(var i=0;i<ZLC.hooks.length;i++){ try{ ZLC.hooks[i](); }catch(e){} }
 }
 
@@ -721,11 +773,12 @@ function mountAll(){
  var wrap=document.querySelector('.wrap')||document.body;
  if(!wrap) return;
  var mount=document.createElement('div');
- mount.innerHTML=posHtml()+stubHtml();
+ mount.innerHTML=posHtml()+stubHtml()+'<div id="zlc-storenote"></div>';
  var foot=wrap.querySelector('footer');
  if(foot){ wrap.insertBefore(mount, foot); foot.innerHTML=footHtml(); } else { wrap.appendChild(mount); }
  var nav=document.getElementById('modnav');
  if(nav){ nav.innerHTML += '<a href="#mod-area">AREA</a><a href="#mod-pos">SECTORS</a><a href="#mod-seat">SEAT</a><a href="#mod-stubs">DATA</a>'; }
+ persistLoad();
  render();
 }
 
@@ -739,7 +792,9 @@ window.ZLC = {
  isOpen:isOpen, ownerOf:ownerOf, answerFor:answerFor, openCount:openCount,
  flowsFor:flowsFor, curFlow:curFlow, flowObj:flowObj, blocksFor:blocksFor,
  envelope:envelope, ft:ft, bandTxt:bandTxt,
- render:render, esc:esc
+ render:render, esc:esc,
+ /* Empty until a session is flown, and the smoke test asserts it (root CLAUDE.md invariant 4). */
+ STANDING:[]
 };
 
 if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
@@ -803,11 +858,12 @@ if(!DECK){ return; }   /* deck absent — do nothing, per the block contract */
    checked against both published sources on 2026-09-04 and is absent from
    each, so it gets the weather half and no fetch.
 
-   STORE_KEY is deliberately empty: this tool has no persistence at all
-   (root CLAUDE.md §9), and introducing a storage key here would be the
-   drive-by that section warns against. What is pasted is held in memory
-   for the visit and the reader says so. */
-var STORE_KEY  = '';
+   STORE_KEY is the deck's own key (issue #45): the reader keeps its pasted
+   text under "wx" in the same object as the deck's frame under "deck", and
+   each side reads the whole object before it writes, so neither erases the
+   other. Where storage is unavailable what is pasted is held in memory for
+   the visit and the reader says so. */
+var STORE_KEY  = 'bigsky-drill-deck-v1';
 var DATIS_URL  = 'https://atis.info/api/';
 var DATIS_NAME = 'atis.info';
 var FIELDS = [

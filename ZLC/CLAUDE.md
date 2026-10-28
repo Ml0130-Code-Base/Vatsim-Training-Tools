@@ -2,7 +2,7 @@
 
 Single-file, offline-first HTML training tools for VATSIM controllers working Salt Lake City ARTCC terminal facilities. Built on the pattern established by `../ZMP/M98 Training/` — read that CLAUDE.md before making architectural decisions here.
 
-**Current state: skeleton.** The position selectors are real and their data is verified. The sector-level traffic engine and the grading are not built. **Big Sky carries a published-track player and a drill builder since 2026-10-27 (issue #76, `../claude_Fly_Block_Reference.md`): the aircraft fly the CIFP 261001 SIDs and STARs straight between fixes, the *Set up a drill* page holds *Position Setup* (M98's four sub-panels by name: *Quick setups*, *Which seat are you working*, *Open around you*, *What that resolves to*) and then the drill builder (*Generate*, *Edit*, *Special observation*, *Landline events*, *Brief*, the strips, *Start positions*, *Flown on*, *Saved drills*), and nothing is graded. The seat's vertical structure and top-down table are reference and sit on the third page. A special observation or a landline call is a notice the author typed, fired once, and the player does not re-plan strips already flying. Big Sky still has no smoke test (issue #46), so this is verified by driving the real page.** **S56 carries the same player and builder since 2026-10-27**, with its own procedures block from CIFP 261001 (13 STARs and 15 SIDs across seven fields; Hill Air Force Base has none) and a *Configuration* sub-panel for its North and South flow ahead of the four named ones; it has no smoke test either (issue #46). Stubs on the page say so by name rather than rendering something plausible and empty.
+**Current state: skeleton.** The position selectors are real and their data is verified. The sector-level traffic engine and the grading are not built. **Big Sky carries a published-track player and a drill builder since 2026-10-27 (issue #76, `../claude_Fly_Block_Reference.md`): the aircraft fly the CIFP 261001 SIDs and STARs straight between fixes, the *Set up a drill* page holds *Position Setup* (M98's four sub-panels by name: *Quick setups*, *Which seat are you working*, *Open around you*, *What that resolves to*) and then the drill builder (*Generate*, *Edit*, *Special observation*, *Landline events*, *Brief*, the strips, *Start positions*, *Flown on*, *Saved drills*), and nothing is graded. The seat's vertical structure and top-down table are reference and sit on the third page. A special observation or a landline call is a notice the author typed, fired once, and the player does not re-plan strips already flying. Both ZLC decks reached Tier 1 on 2026-10-28 (issue #46): the reference layer, a smoke test, and for Big Sky persistence (issue #45).** **S56 carries the same player and builder since 2026-10-27**, with its own procedures block from CIFP 261001 (13 STARs and 15 SIDs across seven fields; Hill Air Force Base has none) and a *Configuration* sub-panel for its North and South flow ahead of the four named ones. Stubs on the page say so by name rather than rendering something plausible and empty.
 
 Treat correctness of aviation data as safety-critical for training value: **never invent procedures, fixes, altitudes, frequencies or paragraph citations.** Every operational number must trace to a document in `source-docs/`.
 
@@ -92,7 +92,7 @@ The notes layer is not a scratchpad bolted on the side; it is the intake path fo
 
 When a note is confirmed, **promote it into the reference markdown and cite who confirmed it** — then it can be trusted by the tool's data. Do not promote an unconfirmed note.
 
-Big Sky has no notes layer yet. Adding one means copying this block, not reinventing it.
+Big Sky has no notes layer yet (issue #45). Adding one means copying this block, not reinventing it.
 
 ---
 
@@ -198,9 +198,38 @@ panel.
 
 ## Testing
 
-- No Node on this machine as of 2026-09-01, so there is no headless harness. Both tools were verified by serving the folder over a local `System.Net.HttpListener` and driving the real pages: no console errors, area switching swaps sectors/Center parent/range/top-down correctly, the combining tree and ownership table resolve correctly, and the S56 notes round-trip through `localStorage` and the markdown export.
-- The preview pane renders `file://` as a static snapshot, so a page opened that way cannot be driven. Serve the folder over HTTP to test interactively.
-- When a change touches layout, describe what to look at.
+Each deck ships `smoke-test.mjs` and `smoke-test-browser.html` (2026-10-28, issue #46). **There is no Node on
+the owner's machine**, so the harness was run through the browser runner (a copy of the ZID one), served over
+local HTTP, which prints `SMOKE PASS: N checks passed.` That is the same check in another engine, not
+`node smoke-test.mjs`. Both decks export `ZLC.STANDING = []`, added the same day so the harness could assert it.
+
+- **S56 - 100 checks passed.** Seven blocks; nine sectors with the stated frequencies, three roots (Lake, Bear,
+  Valley), no combining cycle; North and South flow with 32 North altitude blocks; six `OPEN_Q`; CIFP 261001
+  (13 STARs, 15 SIDs, 164 fixes, **Hill Air Force Base zero**, SLC4 a vector SID, NICHOL absent); `STANDING`
+  empty; the pages block last.
+- **Big Sky - 98 checks passed.** Seven blocks; three sectors (SAG 119.600, ALP 126.900, APB 118.975); **no fold
+  ever crosses an area**; Boise East and West flow and Bozeman none; persistence under `bigsky-drill-deck-v1`
+  with the frame and the weather text coexisting; CIFP 261001 (5 + 5 STARs, 2 + 5 SIDs, 94 fixes, BOI3 a vector
+  SID); `STANDING` empty; the third page named *What this tool knows*, not *Notes and log*.
+- **Both share a tail** that drives the player: the 50-strip ceiling, a track built from the procedure table's own
+  coordinates, the generator's determinism and legality, transmit parsing, handoff, a debrief that names no
+  standing item, the *Position Setup* sub-panels by name, scheduled events and the start positions preview.
+- **A defect the harness does not assert:** the shared drill generator can start an arrival below its own ladder
+  (Big Sky 21, S56 5 strips set aside). It is in the master `drill-block.html`, so it is not fixed here.
+- **Known and unfixed:** S56's `save()` overwrites the weather reader's data (issue #70).
+
+Say which of these was actually run rather than implying a suite passed. Layout is checked by serving the folder
+over HTTP and driving the real page; the preview pane renders `file://` as a static snapshot that cannot be
+driven. When a change touches layout, describe what to look at.
+
+### The reference layer (Tier 1, 2026-10-28)
+
+Each of `S56/` and `Big Sky/` carries `claude_<FAC>_Drill_Format.md`, `_OJT_Session_Review.md` (an empty intake
+template with a fenced candidate watch list), `_AI_Practice_Log.md` (empty; **neither deck has a drill ledger**,
+so the file is the only one), `_TTS_Voicing.md` (**no pronunciation is owner-supplied**) and `_Gap_Analysis.md`.
+`_shared/claude_US_Carrier_Callsigns.md` is byte-identical to the copies under `ZMP/` and `ZID/_shared/`, checked
+with `md5sum`. **Big Sky's persistence** (issue #45) is the key `bigsky-drill-deck-v1`, holding the frame under
+`deck` and the weather reader's text under `wx`; its notes layer is not built, so its third page keeps its name.
 
 ---
 

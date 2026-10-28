@@ -934,7 +934,9 @@ window.ZLC = {
  secById:secById, isOpen:isOpen, ownerOf:ownerOf, answerFor:answerFor,
  foldedInto:foldedInto, notesFor:notesFor,
  flowObj:flowObj, blocksFor:blocksFor, envelope:envelope, ft:ft, bandTxt:bandTxt,
- render:render, renderForm:renderForm, save:save, exportText:exportText, esc:esc
+ render:render, renderForm:renderForm, save:save, exportText:exportText, esc:esc,
+ /* Empty until a session is flown, and the smoke test asserts it (root CLAUDE.md invariant 4). */
+ STANDING:[]
 };
 
 if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', mountAll); }
