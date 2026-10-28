@@ -171,6 +171,10 @@ handoff tables and procedures viewer render, the note rail mounts, and the conso
 The issue tracker, per root `CLAUDE.md` section 14. Gaps stay in each facility's `claude_<FAC>_Gap_Analysis.md`, where
 Part 1 ranks what the owner could supply; a work item belongs in an issue and nowhere else.
 
+### Operators by field (2026-10-28, issue #76)
+
+The drill generator draws a callsign at a field from the operators the owner's printouts name for it, and the *Operators at these fields* disclosure on *Set up a drill* says where each list came from and what it lacks. IND, SDF and CVG each carry one table in their drill contract (`operators`), transcribed from the owner's Wikipedia printouts in `_shared/claude_ZID_Operators_Reference.md`; the reference file wins on a disagreement. Equal chance per operator, because no source in the tree has frequencies; every other airport a ZID deck works stays on the flat list of twelve carriers and the panel says so. The printouts are page ranges, and where a table is cut off or a section (cargo, for most of the printouts) is not printed, that is recorded as unknown, not empty.
+
 ## Session hygiene
 
 Commit after each completed subtask. Cite the document and chapter for any aviation number in the commit message.

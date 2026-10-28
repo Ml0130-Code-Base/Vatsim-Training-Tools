@@ -79,9 +79,14 @@ window.DRILL_FACILITY = {
   page:     function(id){},             // optional: 'fly' / 'setup'
   mountRails: function(el){},           // optional: the notes rail, per section
   configs:  function(){},               // optional: [{id, name}] - the configurations or flows a special observation may name
-  note:     'text'                      // optional: plain text for the Generate panel, saying what this deck's generator cannot build
+  note:     'text',                     // optional: plain text for the Generate panel, saying what this deck's generator cannot build
+  operators: {                          // optional (2026-10-28, issue #76): which operators fly each field
+    KXXX: {src:'', flown:[{n:'Delta Air Lines', k:'passenger', cs:['DAL']}], named:[], gap:''}
+  }
 };
 ```
+
+**`operators` is owner-supplied data, cited at the point of use.** A callsign at a field with an entry is drawn from `flown[]` and nowhere else: one brand, equal chance per brand, then one of the callsign designators that brand flies as (`cs`, from `claude_US_Carrier_Callsigns.md`; a regional brand such as American Eagle lists every operator that document assigns to it, because the sources never say which serves a given field). `named[]` is what the source names and the generator cannot fly (no designator, or not an airline) and `gap` is what the source does not hold; both are printed. **Equal chance is not a claim about traffic**: no source in the tree carries frequencies. A field with no entry keeps the flat list of twelve carriers and the *Operators at these fields* disclosure in the Generate panel says so field by field, so a gap is on the page and not found mid-drill. Overflights have no field and keep the flat list; the aircraft type is still drawn independently of the operator. Today the tables hold the airports the owner's eleven printouts cover (BOI, BZN, CVG, IND, MDW, OMA, ORD, PVU, SDF, SLC, and MSP as a record only); AZO has none. The tables and their sources are in `ZID/_shared/claude_ZID_Operators_Reference.md`, `ZLC/_shared/claude_ZLC_Operators_Reference.md`, `ZAU/C90/claude_C90_Operators_Reference.md` and `ZMP/R90/claude_R90_Operators_Reference.md`.
 
 The frame and the configuration are read from `FLY_FACILITY` (`flow`, `frame`, `host`), so the deck states each of them once. **`configs` is the deck's own list, never the master's**: with it empty the *Special observation* panel offers no configuration to switch to. `note` replaces nothing the master says; it is where a deck states what it cannot draw (R90 and Big Sky have no coded SID to speak of, and Bozeman has no runway gate).
 
@@ -93,7 +98,7 @@ The frame and the configuration are read from `FLY_FACILITY` (`flow`, `frame`, `
 
 ### What the generator claims
 
-Every procedure, runway and transition it picks is one the deck carries and the strip block accepts for that field. **Not aviation data, and each a box on the strip the trainee can change:** the altitude an arrival starts at, a departure's cleared altitude, the starting speed, the callsigns, the aircraft types and the stagger of the check-ins. They come from the fixture lists (`CARRIERS`, `JETS`, `PROPS`, `PISTONS`, `CLEARED`) at the top of the block. The generator is a seeded linear congruential generator (`s = (s * 1664525 + 1013904223) % 4294967296`), so **the same seed builds the same drill**, and the seed is in the box. **A kind the deck has no procedure for anywhere is drawn as an overflight in the mixed draw** (2026-10-27, found at AZO, where CIFP codes no SID or STAR at any field and a draw of six used to build one strip): the draw consumes the same random numbers either way, so a deck with both kinds builds the drill it always did.
+Every procedure, runway and transition it picks is one the deck carries and the strip block accepts for that field. **Not aviation data, and each a box on the strip the trainee can change:** the altitude an arrival starts at, a departure's cleared altitude, the starting speed, the flight numbers (and the carrier at any field the deck names no operators for), the aircraft types and the stagger of the check-ins. They come from the fixture lists (`CARRIERS`, `JETS`, `PROPS`, `PISTONS`, `CLEARED`) at the top of the block. The generator is a seeded linear congruential generator (`s = (s * 1664525 + 1013904223) % 4294967296`), so **the same seed builds the same drill**, and the seed is in the box. **A kind the deck has no procedure for anywhere is drawn as an overflight in the mixed draw** (2026-10-27, found at AZO, where CIFP codes no SID or STAR at any field and a draw of six used to build one strip): the draw consumes the same random numbers either way, so a deck with both kinds builds the drill it always did.
 
 What it guarantees beyond legality, because a drill that misses its own crossing on the first minute teaches the wrong thing:
 
