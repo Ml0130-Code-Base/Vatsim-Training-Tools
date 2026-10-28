@@ -139,6 +139,15 @@ So the category is expressible and CIFP does use it. **What is true at ORD and M
 narrower and worse: CIFP codes no SID of any type there at all** — not a vector one, not an
 RNAV one, nothing. KMKE has two SIDs and neither is a Vector SID. KMSP has twelve and none is.
 
+**Re-checked across the whole file, cycle 261001 (2026-10-27).** Not just our fields: every section-D record
+with route type `T` in the cycle, 66 procedures nationwide. The ones inside the four ARTCCs this repository
+covers are **KSLC SLC4** and **KBOI BOI3** (both carried and now flown by the player as a stand-in line to a
+charted fix, `claude_Fly_Block_Reference.md`), **KDSM DSM2** (Des Moines, ZMP — no deck works the field) and
+**KDAY DAY9** (Dayton, ZID — none of IND, SDF or CVG works it). Nothing at any field the other decks work:
+checked and empty at KMSP, KANE, KFCM, KSTP, KRST, KMIC, KOMA, KORD, KMDW, KDPA, KPWK, KIND, KSDF, KCVG and
+the AZO fields. **MSP9 is not in the cycle**, and no `ORD9` exists in it. The 66 are decoded, not guessed:
+`tools/cifp/gen.pl` marks them `vector:true`, and carries their coded course as `crs`.
+
 **The honest sentence, and the one that replaced the old claim everywhere it appeared:** CIFP
 *can* express a radar-vectored departure and does at Salt Lake City and Boise; where a field
 shows zero it is a gap **at that field**, not a category the dataset cannot carry. Those fields
