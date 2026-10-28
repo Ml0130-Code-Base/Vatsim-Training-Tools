@@ -499,10 +499,8 @@ section says what is true, not what to do about it next.
   *the published ladder is carried* (`track`); it landed everywhere but S56, which was being
   worked in another session where a concurrent edit would have lost one side. **All five copies
   — R90, C90, AZO, S56, Big Sky — are now byte-identical to `strip-block.html`**, checked with
-  `diff`, and that is the check to re-run before assuming it. **S56's rows still read *"frame
-  only"*, and that is the right answer rather than a leftover**: its contract hand-lists CIFP
-  procedure names, not ladders, so `track` stays unset and the row says which of the two is
-  true. It reads *"track only"* the day S56 gets a procedures block. Left here as the record of
+  `diff`, and that is the check to re-run before assuming it. **S56 has had a procedures block since `203e643` (2026-10-27, issue #3), so its contract reads the
+  ladders and sets `flies` and `track` both** - its rows no longer read *"frame only"*. Left here as the record of
   the §2 "every copy in the same commit" rule bent once, knowingly, and of what it cost:
   a copy out of step for a day, and a second session needed to close it.
 - **The two ZLC tools carry the three-page wrapper as of 2026-09-06.** Both were one long
