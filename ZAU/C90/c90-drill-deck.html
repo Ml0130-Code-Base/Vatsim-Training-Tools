@@ -4893,6 +4893,9 @@ function load(drill){
   log('crit', chip('crit', 'cannot fly') + 'This drill cannot be flown yet:<br>' + v.errs.map(esc).join('<br>'));
   return {ok:false, errs:v.errs, warns:v.warns};
  }
+ /* the scope origin and the outline are projected from the deck's reference point, which a deck may move between drills (Big Sky
+    changes area), so they are worked out again for every drill and every preview rather than kept from the first */
+ REFLL = null; OUTLINE = null;
  stopClock();
  sim.t = 0; sim.rate = 0; sim.hot = false; sim.ended = false; sim.drill = drill; sim.sel = null;
  sim.feed = []; sim.timing = []; sim.tx = 0; sim.pausedTx = 0; sim.tally = {good:0, flag:0, crit:0}; sim.los = {}; sim.lastTx = null;
@@ -5099,6 +5102,8 @@ function scopeSvg(){
    swapped out for the call and put back, so nothing a drill is doing is touched. A strip with no
    flyable track has no position and is named in the returned list. */
 function preview(strips){
+ /* not while a drill is flying: its aircraft are already placed against the origin it began with */
+ if(!sim.drill || sim.ended){ REFLL = null; OUTLINE = null; }
  var keep = sim, acs = [], skipped = [], svg = '';
  (strips || []).forEach(function(s, i){
   var a = mkAc(s, i);
