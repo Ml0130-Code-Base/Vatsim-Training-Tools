@@ -15,4 +15,8 @@ transition, when it is said, follows the SID: "BITEZ ONE departure, DKOTA transi
 COULT -> Coult (as-is) · RST -> Rochester · ORSKY -> OR-SKEE · SCHEP -> Shepp · SMERF -> Smurf ·
 LEINY -> Liney. (KBREW and ZMBRO above.)
 
+**MSP1** (MSP9 until 2026-10-29, the non-SID turbojet departure) -> **"Minneapolis One"** — owner, 2026-10-28: the
+order's "Minneapolis Nine" with the number the vZMP briefing gives. How a controller says it on the frequency is not
+documented; the tower order still reads *Nine*.
+
 Use the spoken forms in radio transmissions and prose alike. Fixes (RUMLE, HRBEK, MCONL, etc.) not yet specified — write as-is until Michael provides pronunciations.

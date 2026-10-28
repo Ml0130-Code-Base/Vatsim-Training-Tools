@@ -1084,22 +1084,27 @@ function depTrackFor(key, rwy, dep){
  /* a satellite departure: the field's own track, whatever the runway — none of
     the eight codes a runway transition at ANE, FCM or STP (CIFP 261029) */
  if(dep && dep!=='KMSP') return (DEPS_AT[dep] && DEPS_AT[dep][key]) || null;
- return (String(rwy||'').toUpperCase()==='17' && DEPS17[key]) || DEPS[key] || MSP9_DEPS[key] || null;
+ return (String(rwy||'').toUpperCase()==='17' && DEPS17[key]) || DEPS[key] || MSP1_DEPS[key] || null;
 }
 /* every SID-and-transition key a field can fly, as the builder's picker lists them */
 function sidKeysAt(icao){
  return Object.keys((!icao || icao==='KMSP') ? DEPS : (DEPS_AT[icao] || {}));
 }
-/* ---------- MSP9, the non-SID turbojet departure (issue #77) ----------
+/* ---------- MSP1, the non-SID turbojet departure (issue #77) ----------
+   MSP9 until 2026-10-29: the vZMP PBN Phase II briefing (p.3) up-numbers it to
+   MSP1, and the FAA's Not-in-CIFP workbook lists KMSP MSP9 in 2609 and 2610 and
+   KMSP MSP1 in 2611 — claude_M98_PBN_Phase_II_Reference.md. The MSP tower order
+   below still says MSP9 and has not been revised; its words are quoted as written.
+
    Kept OUT of SID_SET and DEPS on purpose: those are built from CIFP SID legs,
-   MSP9 is not in CIFP 261001 (KMSP codes no route type T either — checked and
+   MSP1 is not in CIFP 261029 (KMSP codes no route type T either — checked and
    empty, claude_MSP_SID_Reference.md), and the assertions that walk DEPS (draw
    groups, the first point is the field, no gate scratchpad for any key) are
    about coded SIDs.
 
    MSP ATCT 7110.26G 3-2-4.b-c: a turbojet that files no SID gets the Minneapolis
-   Nine Departure (MSP9) or the current version, and one unable a SID gets MSP9
-   to its first filed fix. 6-3-1.a.4: off runways 30L and 30R the tower assigns
+   Nine Departure (MSP9, as the order writes it) or the current version, and one
+   unable a SID gets it to its first filed fix. 6-3-1.a.4: off runways 30L and 30R the tower assigns
    headings that approximate the track listed for the initial fix — Fargo 320;
    Brainerd, Duluth, Hayward, Eau Claire or Green Bay 340; Dells 360.
 
@@ -1108,37 +1113,38 @@ function sidKeysAt(icao){
    line to the fix (Green Bay lies near 095 and Dells near 119 from MSP, so the
    track is a dispersal heading, not the way to the fix), and where the aircraft
    turns toward the fix is not published, so it is not drawn. Wind is not
-   modelled, so heading and track are one number. The spoken form is the order's
-   own words, "Minneapolis Nine"; claude_SID_TTS_Voicing.md has none, so how a
-   controller says it is open. The altitude it climbs to is not in the order;
+   modelled, so heading and track are one number. The spoken form is
+   "Minneapolis One" (owner, 2026-10-28: the order's "Minneapolis Nine" with the
+   number the briefing gives); claude_SID_TTS_Voicing.md has none, so how a
+   controller says it on the frequency is still open. The altitude it climbs to is not in the order;
    the strip carries the trainee's, as for every departure. Reminder, not a
    judgement. */
-var MSP9 = {
- id:'MSP9', say:'Minneapolis Nine', rwys:['30L','30R'],
- src:'MSP ATCT 7110.26G 3-2-4.b-c and 6-3-1.a.4; not in CIFP 261001',
+var MSP1 = {
+ id:'MSP1', say:'Minneapolis One', rwys:['30L','30R'],
+ src:'MSP ATCT 7110.26G 3-2-4.b-c and 6-3-1.a.4 (written MSP9 there); renamed by the vZMP PBN Phase II briefing p.3; not in CIFP 261029',
  fixes:{FAR:320, BRNRD:340, DLH:340, HYR:340, EAU:340, GRB:340, DLL:360}
 };
-var MSP9_DEPS = {};
-Object.keys(MSP9.fixes).forEach(function(fx){
- var trk=MSP9.fixes[fx], a=trk*Math.PI/180;
+var MSP1_DEPS = {};
+Object.keys(MSP1.fixes).forEach(function(fx){
+ var trk=MSP1.fixes[fx], a=trk*Math.PI/180;
  var t=finalize([
   {f:'MSP', lat:MSP0.lat, lon:MSP0.lon, field:true},
   {f:'trk '+trk, lat:MSP0.lat+Math.cos(a)*SID_MAP.nm/60, lon:MSP0.lon+Math.sin(a)*SID_MAP.nm/(60*COSL)}
  ]);
- t.vec=true; t.msp9={fix:fx, trk:trk};
- MSP9_DEPS['MSP9.'+fx]=t;
+ t.vec=true; t.msp1={fix:fx, trk:trk};
+ MSP1_DEPS['MSP1.'+fx]=t;
 });
-function isMsp9(key){ return sidOf(key)==='MSP9'; }
-/* what the builder's picker offers at a field: the coded SIDs, and MSP9 at MSP */
+function isMsp1(key){ return sidOf(key)==='MSP1'; }
+/* what the builder's picker offers at a field: the coded SIDs, and MSP1 at MSP */
 function depKeysAt(icao){
- return sidKeysAt(icao).concat((!icao || icao==='KMSP') ? Object.keys(MSP9_DEPS) : []);
+ return sidKeysAt(icao).concat((!icao || icao==='KMSP') ? Object.keys(MSP1_DEPS) : []);
 }
 /* "BITEZ1.DKOTA" is said "BITEZ ONE": the revision number as a word, the way
    the procedure is named on the radio. The name itself is written as-is — no
    spoken form is known for any of the new ones but KBREW and ZMBRO
    (claude_SID_TTS_Voicing.md), and a guessed one would be learned. */
 function sidSpoken(key){
- if(sidOf(key)==='MSP9') return MSP9.say;      /* the order's own words, not a voicing-table entry */
+ if(sidOf(key)==='MSP1') return MSP1.say;      /* the order's own words, not a voicing-table entry */
  var s=sidOf(key), m=s.match(/^([A-Z]+)(\d)$/);
  return m ? (m[1]+' '+SAY_DIGIT[+m[2]].toUpperCase()) : s;
 }
@@ -1162,8 +1168,11 @@ var SID_CHANGE = {
 SID_CHANGE.retired.KFCM=SID_CHANGE.retired.KANE; SID_CHANGE.retired.KSTP=SID_CHANGE.retired.KANE;
 /* The retired set's names the way strips stored them — COULT, not COULT7.
    HSTIN, MEDOW and SLAYR are left out because the deck never carried them. */
-var SID_RETIRED_KEYS = ['COULT','KBREW','LEINY','ORSKY','RST','SCHEP','SMERF','WLSTN','ZMBRO'];
-function sidRetired(key){ return SID_RETIRED_KEYS.indexOf(String(key||''))>=0; }
+var SID_RETIRED_KEYS = ['COULT','KBREW','LEINY','ORSKY','RST','SCHEP','SMERF','WLSTN','ZMBRO','MSP9'];
+/* by procedure name, so a stored MSP9.FAR is as retired as a stored COULT. MSP9
+   is up-numbered rather than replaced, so its refusal also names MSP1. */
+function sidRetired(key){ return SID_RETIRED_KEYS.indexOf(sidOf(key))>=0; }
+function sidRetiredNote(key){ return sidOf(key)==='MSP9' ? ' MSP9 is MSP1 from '+SID_CHANGE.effective+' (vZMP PBN Phase II briefing, p.3): the same departure under its new name.' : ''; }
 function isoToday(){ try{ return new Date().toISOString().slice(0,10); }catch(e){ return ''; } }
 /* 'early' before the effective date and 'live' from it. A clock that cannot be
    read counts as early: the banner names the date, which is what matters. */
@@ -1849,9 +1858,9 @@ function scratchpadValid(s){
 function routeTextFor(o){
  var role=(o&&o.role)||'arrival';
  if(role==='departure'){
-  /* MSP9 "does not need to be amended into the route string" (7110.26G 3-2-4.b),
+  /* MSP1 "does not need to be amended into the route string" (7110.26G 3-2-4.b),
      so a non-SID departure files from its first fix, the initial fix */
-  if(isMsp9(o.sid) && MSP9_DEPS[o.sid]) return MSP9_DEPS[o.sid].msp9.fix;
+  if(isMsp1(o.sid) && MSP1_DEPS[o.sid]) return MSP1_DEPS[o.sid].msp1.fix;
   return depTrackFor(o.sid, o.depRwy, o.dep) ? String(o.sid) : '';
  }
  if(role==='arrival'){
@@ -3212,9 +3221,9 @@ function transmit(){
    acted=true;
    var firstFix=(a.route[1]&&a.route[1].f)||'its first fix';
    log('flag','<span class="dd-chip flag">flag</span>'+want+' is the field <b>'+a.cs+'</b> just left — where its track on the scope starts, not a fix on the '
-     +(a.sid ? ((isMsp9(a.sid) && MSP9_DEPS[a.sid]) ? (MSP9.say+' departure, which is flown on an initial track of '+MSP9_DEPS[a.sid].msp9.trk+' toward '+MSP9_DEPS[a.sid].msp9.fix)
+     +(a.sid ? ((isMsp1(a.sid) && MSP1_DEPS[a.sid]) ? (MSP1.say+' departure, which is flown on an initial track of '+MSP1_DEPS[a.sid].msp1.trk+' toward '+MSP1_DEPS[a.sid].msp1.fix)
                               : (sidOf(a.sid)+' departure, which begins at '+firstFix)) : 'departure')
-     +'. Direct '+want+' turns a climbing departure back over the top into the traffic behind it. Give it a fix on the '+(a.sid&&isMsp9(a.sid)?'route':'SID')+', or a heading.');
+     +'. Direct '+want+' turns a climbing departure back over the top into the traffic behind it. Give it a fix on the '+(a.sid&&isMsp1(a.sid)?'route':'SID')+', or a heading.');
   } else if(onRt){
    acted=true; acks.push('direct '+want);
    if(!a.dirNoted){ a.dirNoted=true;
@@ -3406,7 +3415,7 @@ function sidDrawGroups(items){
      and STP is therefore one track and one label naming the three fields
      (owner, 2026-10-22). The Runway 17 segment is drawn from the field, so it
      stays its own. */
-  var drawn=r.rw17 ? r.slice(2) : ((r[0] && r[0].field && !isMsp9(k)) ? r.slice(1) : r);   /* a vectored track (MSP9) IS the stand-in, so it is drawn whole */
+  var drawn=r.rw17 ? r.slice(2) : ((r[0] && r[0].field && !isMsp1(k)) ? r.slice(1) : r);   /* a vectored track (MSP1) IS the stand-in, so it is drawn whole */
   /* one track per SID and per drawn path: two SIDs never merge, whatever they share */
   var sig=sidOf(k)+(r.rw17?' 17: ':': ')+drawn.map(function(p){ return p.f; }).join(' ');
   if(!by[sig]){ by[sig]={route:r, drawn:drawn, sid:sidOf(k), keys:[], fields:[]}; out.push(by[sig]); }
@@ -3875,7 +3884,7 @@ window.ddLoad=function(id){
  dropped.forEach(function(o){
   log('flag','<span class="dd-chip flag">not flown</span><b>'+(o.cs||'a departure')+'</b> was built on '
    +(o.sid?('the '+o.sid+' departure'):'no SID')+(sidRetired(o.sid)
-     ?(', which went with the SID set that ends on '+SID_CHANGE.effective+'. This deck flies the '+SID_CHANGE.cycle+' set (issue #'+SID_CHANGE.issue+'), so rebuild the strip on one of those.')
+     ?(', which went with the SID set that ends on '+SID_CHANGE.effective+'. This deck flies the '+SID_CHANGE.cycle+' set (issue #'+SID_CHANGE.issue+'), so rebuild the strip on one of those.'+sidRetiredNote(o.sid))
      :(', which is not a SID this deck carries.')));
  });
  ddRate(0); render();
@@ -4053,11 +4062,11 @@ window.DD = {
  ladderFor:ladderFor, transitionFor:transitionFor, buildRoutes:buildRoutes, trunkFor:trunkFor,
  setFlow:setFlow, flowCarried:flowCarried, assignableRwys:assignableRwys, splitFix:splitFix, splitFixFor:splitFixFor, parallelsFor:parallelsFor, routeCfg:function(){ return ROUTE_CFG; },
  SCENARIOS:SCENARIOS, DRILL_LOG:DRILL_LOG, STANDING:STANDING,
- DEPS:DEPS, DEPS_AT:DEPS_AT, MSP9:MSP9, MSP9_DEPS:MSP9_DEPS, depKeysAt:depKeysAt, isMsp9:isMsp9, sidKeysAt:sidKeysAt, sidsAtMsp:sidsAtMsp, satOnlySidItems:satOnlySidItems, depCall:depCall, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
+ DEPS:DEPS, DEPS_AT:DEPS_AT, MSP1:MSP1, MSP1_DEPS:MSP1_DEPS, depKeysAt:depKeysAt, isMsp1:isMsp1, sidKeysAt:sidKeysAt, sidsAtMsp:sidsAtMsp, satOnlySidItems:satOnlySidItems, depCall:depCall, DEP_RELEASE:DEP_RELEASE, FARGATE_XFER:FARGATE_XFER,
  SID_CHANGE:SID_CHANGE, sidChangeState:sidChangeState, sidChangeHtml:sidChangeHtml,
  sidChangeShort:sidChangeShort, sidsCarried:sidsCarried,
  SID_SET:SID_SET, SID_FIX:SID_FIX, SID_FIELDS:SID_FIELDS, SID_SRC:SID_SRC, SID_MAP:SID_MAP,
- SID_RETIRED_KEYS:SID_RETIRED_KEYS, sidRetired:sidRetired,
+ SID_RETIRED_KEYS:SID_RETIRED_KEYS, sidRetired:sidRetired, sidRetiredNote:sidRetiredNote,
  sidOf:sidOf, transOf:transOf, sidRw17Leg:sidRw17Leg, sidSpoken:sidSpoken,
  DEPS17:DEPS17, depTrackFor:depTrackFor, sidRw17Svg:sidRw17Svg,
  sidDrawGroups:sidDrawGroups,
@@ -5752,12 +5761,12 @@ function validate(rec){
       satellite, that field's own track (issue #67) */
    var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
    if(!dTrk){
-    /* MSP9 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
-    if(DD.isMsp9(a.sid))
-     errs.push(tag+': '+a.sid+(dFld!=='KMSP' ? ' is MSP’s departure, not '+dName+'’s' : ' is not a Minneapolis Nine initial fix this deck carries ('+Object.keys(DD.MSP9.fixes).join(', ')+')')+' (MSP ATCT 7110.26G 6-3-1.a.4).');
+    /* MSP1 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
+    if(DD.isMsp1(a.sid))
+     errs.push(tag+': '+a.sid+(dFld!=='KMSP' ? ' is MSP’s departure, not '+dName+'’s' : ' is not a Minneapolis One initial fix this deck carries ('+Object.keys(DD.MSP1.fixes).join(', ')+')')+' (MSP ATCT 7110.26G 6-3-1.a.4).');
     /* a strip saved before 2026-10-14 names the retired set, and says so */
     else if(DD.sidRetired(a.sid))
-     errs.push(tag+': '+a.sid+' went with the SID set that ends on '+DD.SID_CHANGE.effective+'. This deck flies the '+DD.SID_CHANGE.cycle+' set — '+DD.sidsCarried().join(', ')+' — so pick one of those and its transition (issue #'+DD.SID_CHANGE.issue+').');
+     errs.push(tag+': '+a.sid+' went with the SID set that ends on '+DD.SID_CHANGE.effective+'. This deck flies the '+DD.SID_CHANGE.cycle+' set — '+DD.sidsCarried().join(', ')+' — so pick one of those and its transition (issue #'+DD.SID_CHANGE.issue+').'+DD.sidRetiredNote(a.sid));
     else if(DD.SID_SET[DD.sidOf(a.sid)]){
      var atFld=DD.SID_FIELDS[dFld]||[];
      errs.push(tag+': '+DD.sidOf(a.sid)+' is not coded at '+dFld+' in '+DD.SID_CHANGE.cycle+'. '
@@ -5769,14 +5778,14 @@ function validate(rec){
    }
    else {
     var dt=dTrk.total;
-    /* MSP9 is the order's 30L/30R turbojet dispersal departure; the order gives it
+    /* MSP1 is the order's 30L/30R turbojet dispersal departure; the order gives it
        to no other runway, and says turbojets (7110.26G 3-2-4.b, 6-3-1.a.4) */
-    if(DD.isMsp9(a.sid)){
+    if(DD.isMsp1(a.sid)){
      var rw9=String(a.depRwy||'').toUpperCase();
-     if(rw9 && DD.MSP9.rwys.indexOf(rw9)<0)
-      errs.push(tag+': '+a.sid+' is the Minneapolis Nine departure, which the order gives to runways '+DD.MSP9.rwys.join(' and ')+' only (MSP ATCT 7110.26G 6-3-1.a.4), and '+rw9+' is not one. Pick a SID, or runway 30L or 30R.');
-     else if(!rw9) warns.push(tag+': no runway stated. The order gives MSP9 to 30L and 30R only (7110.26G 6-3-1.a.4); state one.');
-     if((a.engine||'jet')!=='jet') warns.push(tag+': MSP9 is a turbojet departure (7110.26G 3-2-4.b, 6-3-1.a), and this strip is a '+a.engine+'.');
+     if(rw9 && DD.MSP1.rwys.indexOf(rw9)<0)
+      errs.push(tag+': '+a.sid+' is the Minneapolis One departure, which the order gives to runways '+DD.MSP1.rwys.join(' and ')+' only (MSP ATCT 7110.26G 6-3-1.a.4), and '+rw9+' is not one. Pick a SID, or runway 30L or 30R.');
+     else if(!rw9) warns.push(tag+': no runway stated. The order gives MSP1 to 30L and 30R only (7110.26G 6-3-1.a.4); state one.');
+     if((a.engine||'jet')!=='jet') warns.push(tag+': MSP1 is a turbojet departure (7110.26G 3-2-4.b, 6-3-1.a), and this strip is a '+a.engine+'.');
     }
     /* the join limit and the release are both measured from the MSP DME, which
        is the same number as the distance along the track only where the track
@@ -6361,9 +6370,9 @@ function rowContext(a){
  if(role==='departure'){
   var dr=DD.depTrackFor(a.sid, a.depRwy, a.dep);
   if(!dr) return '';
-  if(DD.isMsp9(a.sid) && DD.MSP9_DEPS[a.sid]){
-   var m9=DD.MSP9_DEPS[a.sid].msp9;
-   return DD.MSP9.id+' · initial fix '+m9.fix+', tower assigns headings that approximate a '+m9.trk+' track (7110.26G 6-3-1.a.4) · stand-in line mapped '+dr.total.toFixed(1)+' NM, the turn toward '+m9.fix+' is not published · starts '+a.fromStart+' NM out · release at '
+  if(DD.isMsp1(a.sid) && DD.MSP1_DEPS[a.sid]){
+   var m9=DD.MSP1_DEPS[a.sid].msp1;
+   return DD.MSP1.id+' · initial fix '+m9.fix+', tower assigns headings that approximate a '+m9.trk+' track (7110.26G 6-3-1.a.4) · stand-in line mapped '+dr.total.toFixed(1)+' NM, the turn toward '+m9.fix+' is not published · starts '+a.fromStart+' NM out · release at '
    +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
   }
   return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out'+((a.dep||'KMSP')==='KMSP'?'':(' of '+a.dep.replace(/^K/,'')))+' · released to Center by '
@@ -6489,20 +6498,20 @@ function acRowHtml(a,i){
      +(function(){
        var keys=DD.sidKeysAt(dep), sids=[];
        keys.forEach(function(k){ var s=DD.sidOf(k); if(sids.indexOf(s)<0) sids.push(s); });
-       /* MSP9 is offered at MSP after the coded SIDs, in a group of its own, and says
+       /* MSP1 is offered at MSP after the coded SIDs, in a group of its own, and says
           what it is: a non-SID turbojet departure, 30L and 30R, flown on the order's
           initial track (7110.26G 6-3-1.a.4). It is not a coded SID. */
-       var msp9=(dep==='KMSP') ? Object.keys(DD.MSP9_DEPS).map(function(k){
-           var t=DD.MSP9_DEPS[k].msp9;
-           return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+DD.MSP9.id+' · '+t.fix+' · track '+t.trk+'</option>';
+       var msp1=(dep==='KMSP') ? Object.keys(DD.MSP1_DEPS).map(function(k){
+           var t=DD.MSP1_DEPS[k].msp1;
+           return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+DD.MSP1.id+' · '+t.fix+' · track '+t.trk+'</option>';
          }).join('') : '';
-       if(!sids.length && !msp9) return '<option value="">none coded at '+dep+'</option>';
+       if(!sids.length && !msp1) return '<option value="">none coded at '+dep+'</option>';
        return sids.map(function(sid){
          return '<optgroup label="'+sid+(DD.SID_SET[sid].rwy.length&&dep==='KMSP'?' — via RUBRB off 17':'')+'">'
            +keys.filter(function(k){ return DD.sidOf(k)===sid; }).map(function(k){
              return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+sid+' · '+DD.transOf(k)+'</option>';
            }).join('')+'</optgroup>';
-       }).join('')+(msp9 ? '<optgroup label="'+DD.MSP9.id+' — no SID filed, turbojets off 30L and 30R (not a coded SID)">'+msp9+'</optgroup>' : '');
+       }).join('')+(msp1 ? '<optgroup label="'+DD.MSP1.id+' — no SID filed, turbojets off 30L and 30R (not a coded SID)">'+msp1+'</optgroup>' : '');
      })()+'</select>'
      /* issue #61 — when the set goes live, and that the gates are tabled */
      +'<span class="dd-sidexp">'+esc(DD.sidChangeShort())+'</span>'

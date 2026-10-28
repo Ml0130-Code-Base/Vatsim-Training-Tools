@@ -149,7 +149,11 @@ Q934 PONCT JFUND2 KBOS` — i.e. the SID and its transition written as two words
 
 ## 8. What the deck does with it
 
-**Nothing yet, and on purpose.** The deck flies the CIFP 261029 SIDs and is unchanged. This file is a source,
-and the deck takes from it only what the owner decides to. Candidates, none done: the fifteen scratchpad codes as
-a display beside a departure's SID and transition; MSP1 in place of MSP9; HTDSH1 offered only in a 30s/17. Each
-asserts something the SOP has not yet said, so each wants the owner's word first (root `CLAUDE.md` invariant 3).
+**One thing, on the owner's word (2026-10-28): MSP9 is MSP1 in the deck**, spoken "Minneapolis One". Code names
+`MSP1`, `MSP1_DEPS`, `isMsp1`; keys `MSP1.FAR` … `MSP1.DLL`; a drill saved under `MSP9` is refused by name and the
+refusal says MSP9 is MSP1. The harness is 701 checks. The tower order still says MSP9 and is quoted as written.
+
+**Everything else is unchanged, on purpose.** The deck flies the CIFP 261029 SIDs. This file is a source, and the
+deck takes from it only what the owner decides to. Candidates, none done: the fifteen scratchpad codes as a display
+beside a departure's SID and transition; HTDSH1 offered only in a 30s/17. Each asserts something the SOP has not yet
+said, so each wants the owner's word first (root `CLAUDE.md` invariant 3).

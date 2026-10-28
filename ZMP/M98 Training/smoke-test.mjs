@@ -2485,63 +2485,71 @@ try {
     assert('a satellite departure’s join and release are measured from the MSP DME, not along the track',
       dv({ sid: 'BITEZ1.DKOTA', dep: 'KANE', depRwy: '9', fromStart: 4 }).warnings.every(w => !w.includes('release point') && !w.includes('join limit'))
       && dv({ sid: 'DUHCK1.LLUKY', dep: 'KSTP', depRwy: '14', fromStart: 40 }).warnings.some(w => w.includes('DME from MSP') && w.includes('release point')));
-    /* MSP9 — issue #77. MSP ATCT 7110.26G 3-2-4.b-c and 6-3-1.a.4; not in CIFP 261001.
+    /* MSP1 (MSP9 until 2026-10-29) — issue #77. MSP ATCT 7110.26G 3-2-4.b-c and 6-3-1.a.4; not in CIFP 261029.
        It is a departure with no coded legs, so it lives beside DEPS and not in it, and
        what is flown is the order's initial track as a straight stand-in line. */
     {
-      const D = globalThis.DD, M = D.MSP9, M9 = D.MSP9_DEPS;
-      assert('MSP9 carries the order’s seven initial fixes on its three tracks, for 30L and 30R only',
+      const D = globalThis.DD, M = D.MSP1, M9 = D.MSP1_DEPS;
+      assert('MSP1 carries the order’s seven initial fixes on its three tracks, for 30L and 30R only',
         Object.keys(M.fixes).join() === 'FAR,BRNRD,DLH,HYR,EAU,GRB,DLL'
         && M.fixes.FAR === 320 && ['BRNRD', 'DLH', 'HYR', 'EAU', 'GRB'].every(f => M.fixes[f] === 340) && M.fixes.DLL === 360
-        && M.rwys.join() === '30L,30R' && M.say === 'Minneapolis Nine' && /7110\.26G 3-2-4/.test(M.src) && /not in CIFP/.test(M.src),
+        && M.rwys.join() === '30L,30R' && M.say === 'Minneapolis One' && /7110\.26G 3-2-4/.test(M.src) && /not in CIFP/.test(M.src),
         JSON.stringify(M.fixes));
-      assert('MSP9 is not a coded SID: out of SID_SET, DEPS, the field lists and every SID colour',
-        Object.keys(D.DEPS).every(k => D.sidOf(k) !== 'MSP9') && !D.SID_SET.MSP9 && !D.SID_FIELDS.KMSP.includes('MSP9')
-        && D.sidKeysAt('KMSP').length === 25 && Object.keys(D.SID_HUES).indexOf('MSP9') < 0);
-      assert('the picker offers MSP9 at MSP after the 25, and at no satellite',
-        D.depKeysAt('KMSP').length === 32 && D.depKeysAt().length === 32 && D.depKeysAt('KMSP').slice(25).every(k => D.isMsp9(k))
-        && D.depKeysAt('KSTP').length === 18 && D.depKeysAt('KMIC').length === 0 && D.depKeysAt('KSTP').every(k => !D.isMsp9(k)));
-      assert('each MSP9 track starts at the field and runs straight out on the order’s track to the 50 NM the SIDs are drawn to',
+      assert('MSP1 is not a coded SID: out of SID_SET, DEPS, the field lists and every SID colour',
+        Object.keys(D.DEPS).every(k => D.sidOf(k) !== 'MSP1') && !D.SID_SET.MSP1 && !D.SID_FIELDS.KMSP.includes('MSP1')
+        && D.sidKeysAt('KMSP').length === 25 && Object.keys(D.SID_HUES).indexOf('MSP1') < 0);
+      assert('the picker offers MSP1 at MSP after the 25, and at no satellite',
+        D.depKeysAt('KMSP').length === 32 && D.depKeysAt().length === 32 && D.depKeysAt('KMSP').slice(25).every(k => D.isMsp1(k))
+        && D.depKeysAt('KSTP').length === 18 && D.depKeysAt('KMIC').length === 0 && D.depKeysAt('KSTP').every(k => !D.isMsp1(k)));
+      assert('each MSP1 track starts at the field and runs straight out on the order’s track to the 50 NM the SIDs are drawn to',
         Object.keys(M9).length === 7 && Object.keys(M9).every(k => {
           const t = M9[k], p = t[1], brg = (Math.atan2(p.e, p.n) * 180 / Math.PI + 360) % 360;
-          const off = Math.abs(brg - t.msp9.trk) % 360;      /* a 360 track measures as bearing 0 */
+          const off = Math.abs(brg - t.msp1.trk) % 360;      /* a 360 track measures as bearing 0 */
           return t.length === 2 && t[0].field === true && t[0].f === 'MSP' && Math.min(off, 360 - off) < 0.3
-            && Math.abs(Math.hypot(p.e, p.n) - D.SID_MAP.nm) < 0.3 && t.vec === true && t.msp9.trk === M.fixes[t.msp9.fix];
+            && Math.abs(Math.hypot(p.e, p.n) - D.SID_MAP.nm) < 0.3 && t.vec === true && t.msp1.trk === M.fixes[t.msp1.fix];
         }));
       assert('depTrackFor finds it at MSP off any runway, never at a satellite',
-        D.depTrackFor('MSP9.FAR', '30L') === M9['MSP9.FAR'] && D.depTrackFor('MSP9.DLL', null, 'KMSP') === M9['MSP9.DLL']
-        && D.depTrackFor('MSP9.FAR', null, 'KSTP') === null && D.depTrackFor('MSP9.NOSUCH', '30L') === null);
+        D.depTrackFor('MSP1.FAR', '30L') === M9['MSP1.FAR'] && D.depTrackFor('MSP1.DLL', null, 'KMSP') === M9['MSP1.DLL']
+        && D.depTrackFor('MSP1.FAR', null, 'KSTP') === null && D.depTrackFor('MSP1.NOSUCH', '30L') === null);
       assert('it is said as the order says it, files the first fix and no procedure name, and takes no gate or scratchpad',
-        D.sidSpoken('MSP9.GRB') === 'Minneapolis Nine' && D.routeTextFor({ role: 'departure', sid: 'MSP9.DLL' }) === 'DLL'
-        && D.routeTextFor({ role: 'departure', sid: 'MSP9.FAR' }) === 'FAR' && D.scratchpadFor('MSP9.GRB', 11000) === null
-        && D.scratchpadFor('MSP9.GRB') === null);
-      const m9 = D.mkAc({ cs: 'DAL9', type: 'B738', role: 'departure', sid: 'MSP9.GRB', dep: 'KMSP', depRwy: '30L', fromStart: 3, alt: 3000, ias: 210 });
-      assert('an aircraft built on MSP9 is on the stand-in line and files the fix',
-        m9.route === M9['MSP9.GRB'] && m9.filed === 'GRB' && D.depCall(m9) === 'Minneapolis Departure');
+        D.sidSpoken('MSP1.GRB') === 'Minneapolis One' && D.routeTextFor({ role: 'departure', sid: 'MSP1.DLL' }) === 'DLL'
+        && D.routeTextFor({ role: 'departure', sid: 'MSP1.FAR' }) === 'FAR' && D.scratchpadFor('MSP1.GRB', 11000) === null
+        && D.scratchpadFor('MSP1.GRB') === null);
+      const m9 = D.mkAc({ cs: 'DAL9', type: 'B738', role: 'departure', sid: 'MSP1.GRB', dep: 'KMSP', depRwy: '30L', fromStart: 3, alt: 3000, ias: 210 });
+      assert('an aircraft built on MSP1 is on the stand-in line and files the fix',
+        m9.route === M9['MSP1.GRB'] && m9.filed === 'GRB' && D.depCall(m9) === 'Minneapolis Departure');
       assert('and the drawn SID groups never take it, so it is not coloured as a SID',
-        D.sidDrawGroups(['MSP9.GRB', 'MSP9.FAR']).length === 0 && D.sidDrawGroups(['MSP9.GRB', 'BITEZ1.DKOTA']).length === 1);
-      /* validation — only the MSP9 rules are under test; the fixture is a bare strip */
-      const m9says = v => v.errors.concat(v.warnings).filter(x => /MSP9|Minneapolis Nine/.test(x));
-      const okFar = dv({ sid: 'MSP9.FAR', depRwy: '30L' }), ok30r = dv({ sid: 'MSP9.DLL', depRwy: '30R' });
-      assert('MSP9 off 30L and 30R raises nothing about MSP9',
+        D.sidDrawGroups(['MSP1.GRB', 'MSP1.FAR']).length === 0 && D.sidDrawGroups(['MSP1.GRB', 'BITEZ1.DKOTA']).length === 1);
+      /* validation — only the MSP1 rules are under test; the fixture is a bare strip */
+      const m9says = v => v.errors.concat(v.warnings).filter(x => /MSP1|Minneapolis One/.test(x));
+      const okFar = dv({ sid: 'MSP1.FAR', depRwy: '30L' }), ok30r = dv({ sid: 'MSP1.DLL', depRwy: '30R' });
+      assert('MSP1 off 30L and 30R raises nothing about MSP1',
         m9says(okFar).length === 0 && m9says(ok30r).length === 0, m9says(okFar).concat(m9says(ok30r)).join(' | '));
-      const off12m = dv({ sid: 'MSP9.FAR', depRwy: '12R' });
-      assert('MSP9 off any other runway is refused, naming 30L and 30R and the paragraph',
+      const off12m = dv({ sid: 'MSP1.FAR', depRwy: '12R' });
+      assert('MSP1 off any other runway is refused, naming 30L and 30R and the paragraph',
         off12m.errors.some(e => e.includes('30L and 30R only') && e.includes('6-3-1.a.4') && e.includes('12R')), off12m.errors.join(' | '));
       assert('no runway stated is a warning and not an error',
-        m9says(dv({ sid: 'MSP9.FAR' })).length > 0 && !dv({ sid: 'MSP9.FAR' }).errors.some(e => /MSP9/.test(e))
-        && dv({ sid: 'MSP9.FAR' }).warnings.some(w => w.includes('MSP9') && w.includes('30L and 30R')),
-        dv({ sid: 'MSP9.FAR' }).errors.concat(dv({ sid: 'MSP9.FAR' }).warnings).join(' | '));
-      const prop9 = dv({ sid: 'MSP9.GRB', depRwy: '30L', engine: 'turboprop' });
-      assert('a turboprop on MSP9 is a warning that it is a turbojet departure, not an error',
-        prop9.warnings.some(w => w.includes('turbojet departure') && w.includes('turboprop')) && !prop9.errors.some(e => /MSP9/.test(e)),
+        m9says(dv({ sid: 'MSP1.FAR' })).length > 0 && !dv({ sid: 'MSP1.FAR' }).errors.some(e => /MSP1/.test(e))
+        && dv({ sid: 'MSP1.FAR' }).warnings.some(w => w.includes('MSP1') && w.includes('30L and 30R')),
+        dv({ sid: 'MSP1.FAR' }).errors.concat(dv({ sid: 'MSP1.FAR' }).warnings).join(' | '));
+      const prop9 = dv({ sid: 'MSP1.GRB', depRwy: '30L', engine: 'turboprop' });
+      assert('a turboprop on MSP1 is a warning that it is a turbojet departure, not an error',
+        prop9.warnings.some(w => w.includes('turbojet departure') && w.includes('turboprop')) && !prop9.errors.some(e => /MSP1/.test(e)),
         prop9.errors.concat(prop9.warnings).join(' | '));
-      const noFix = dv({ sid: 'MSP9.XYZ', depRwy: '30L' }), sat9 = dv({ sid: 'MSP9.FAR', dep: 'KSTP', depRwy: '14' });
+      const noFix = dv({ sid: 'MSP1.XYZ', depRwy: '30L' }), sat9 = dv({ sid: 'MSP1.FAR', dep: 'KSTP', depRwy: '14' });
       assert('an initial fix the deck does not carry is refused and the seven are listed',
-        noFix.errors.some(e => e.includes('not a Minneapolis Nine initial fix') && e.includes('FAR, BRNRD, DLH, HYR, EAU, GRB, DLL') && e.includes('6-3-1.a.4')),
+        noFix.errors.some(e => e.includes('not a Minneapolis One initial fix') && e.includes('FAR, BRNRD, DLH, HYR, EAU, GRB, DLL') && e.includes('6-3-1.a.4')),
         noFix.errors.join(' | '));
-      assert('MSP9 off a satellite is refused as MSP’s departure',
-        sat9.errors.some(e => e.includes('MSP9.FAR') && e.includes('is MSP’s departure, not')), sat9.errors.join(' | '));
+      assert('MSP1 off a satellite is refused as MSP’s departure',
+        sat9.errors.some(e => e.includes('MSP1.FAR') && e.includes('is MSP’s departure, not')), sat9.errors.join(' | '));
+      /* MSP9 became MSP1 on 2026-10-29 (vZMP PBN Phase II briefing p.3; FAA Not_In_CIFP 2609/2610 list
+         KMSP MSP9, 2611 lists KMSP MSP1). A drill saved on the old name is refused and told so. */
+      const old9 = dv({ sid: 'MSP9.FAR', depRwy: '30L' });
+      assert('MSP9 is retired by name, no MSP9 key is carried, and a stored MSP9 strip is refused with MSP1 named',
+        D.sidRetired('MSP9') && D.sidRetired('MSP9.FAR') && !D.sidRetired('MSP1.FAR') && !D.sidRetired('BITEZ1.DKOTA')
+        && Object.keys(M9).every(k => k.indexOf('MSP1.') === 0) && D.depTrackFor('MSP9.FAR', '30L') === null
+        && old9.errors.some(e => e.includes('MSP9.FAR') && e.includes('MSP9 is MSP1 from 2026-10-29')),
+        old9.errors.join(' | '));
     }
     /* the generator draws from all nine now, HTDSH1 and SNOWZ1 included */
     {
@@ -2841,16 +2849,16 @@ try {
     say('DAL77 proceed direct SNUPE');
     mustContain('direct to a fix further along the SID is read back honestly', 'does not re-path an aircraft');
 
-    /* MSP9 (issue #77): the field is not a fix on it either, and the flag names the
+    /* MSP1 (issue #77): the field is not a fix on it either, and the flag names the
        track it is flown on and the fix it is filed to, not a SID that has no legs */
     const m9d = globalThis.DD.mkAc({cs:'DAL78', type:'B738', role:'departure', rules:'IFR',
-      radar:'departure', sid:'MSP9.GRB', dep:'KMSP', depRwy:'30L', alt:3000, ias:210, fromStart:3});
+      radar:'departure', sid:'MSP1.GRB', dep:'KMSP', depRwy:'30L', alt:3000, ias:210, fromStart:3});
     m9d.onFreq = true; m9d.ckdIn = true; m9d.squawk = '4232';
     globalThis.DD.sim.ac.push(m9d);
     say('DAL78 radar contact');
     say('DAL78 proceed direct MSP');
-    mustContain('direct to the field on an MSP9 departure names MSP9 and its initial track and fix',
-      'Minneapolis Nine departure, which is flown on an initial track of 340 toward GRB');
+    mustContain('direct to the field on an MSP1 departure names MSP1 and its initial track and fix',
+      'Minneapolis One departure, which is flown on an initial track of 340 toward GRB');
     mustContain('and asks for a fix on the route rather than on a SID', 'Give it a fix on the route');
     globalThis.DD.sim.ac.splice(globalThis.DD.sim.ac.indexOf(m9d), 1);
 
