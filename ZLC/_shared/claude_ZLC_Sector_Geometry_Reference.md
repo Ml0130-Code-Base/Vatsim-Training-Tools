@@ -343,3 +343,30 @@ same commit (root `CLAUDE.md` §11). These are **not** filled by it:
 
 Recovering the gates and the shelf lines still means carving the chart images out of the PDFs
 and measuring them, the way `claude_M98_DDA_Geometry.md` was produced.
+
+---
+
+## The facility outline the scope draws, and the 2026-10-28 recheck
+
+**Why this section exists.** Neither ZLC deck drew a boundary on the *Start positions* scope or the *Fly it* scope until 2026-10-28: both decks carried the sector extents as bounding boxes and the altitude blocks as vertex *counts*, and neither handed the player an `outline`. They do now, and this is where it came from.
+
+**Both sources were pulled again on 2026-10-28 and nothing upstream had moved.**
+
+| Source | Result |
+|---|---|
+| VATGlasses `data/zlc` (`airspace.json`, `positions.json`, `ownership/default.json`) | **Byte-identical** to the vendored copies (`md5sum`). The last upstream commit that touches `data/zlc` is 2026-07-12, before the pinned commit `c469b42` (2026-08-26). |
+| SimAware `Boundaries/S56`, `BOI`, `BZN` | Same repository head as the 2026-09-02 pull, `cf9feb3` (2025-03-30). |
+
+**What is drawn.** The outer edge of the **union of every VATGlasses sector block** of the facility, because the dataset carries no single facility ring. Traced on a 0.09 NM grid and simplified to 0.12 NM, so it is good to about **0.2 NM of the dataset**, and no better than the dataset. S56 is 32 vertices, Boise 42, Bozeman 30. They are carried in each deck as `ZLC.FOOTPRINT`. **Second tier, as ever**: a facility document outranks it and a boundary the owner or the facility supplies supersedes it.
+
+**How it compares with SimAware** (vertex to nearest edge, both ways):
+
+| Facility | Agreement | Where it differs |
+|---|---|---|
+| Bozeman | **0.07 NM** at the worst vertex: the same polygon | nowhere |
+| S56 | about 0.7 NM mean | four vertices up to about **7 NM** on the south and east edge (40.174 N 112.200 W, 40.354 N 111.624 W, 40.468 N 111.625 W) and one union vertex 6 NM from SimAware (40.079 N 112.291 W) |
+| Boise | the union lies **inside** SimAware to 0.06 NM | SimAware reaches up to about **10 NM** further south-east, to 43.035 N 115.632 W, a lobe towards Mountain Home. VATGlasses assigns that country to the Mountain Home sectors, which are a separate facility with their own radio names |
+
+**Named, not resolved.** Neither difference is settled by a document in the set. The scope draws the VATGlasses union because ZLC vARTCC owns that dataset and it is what the deck's own sector extents were decoded from; the SimAware polygon is not drawn.
+
+**What this does not give.** Sector shapes. The scope draws the facility's outer edge only; the nine S56 sectors and the three Big Sky sectors are not drawn on it.

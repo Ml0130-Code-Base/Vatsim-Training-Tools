@@ -104,6 +104,8 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 
    **The sector boundaries are now carried (2026-09-02).** The VATGlasses ZLC dataset is vendored at `_shared/source-vatglasses/` and decoded per sector in **`_shared/claude_ZLC_Sector_Geometry_Reference.md`**: all nine S56 sectors and all three Big Sky sectors as lateral shapes with runway-gated altitude blocks, plus their ownership chains.
 
+   **The scope draws the facility's outer edge since 2026-10-28** (`ZLC.FOOTPRINT`, the union of the sector blocks, good to about 0.2 NM of the dataset; the recheck against SimAware, including the ten-mile difference at Boise, is the last section of `_shared/claude_ZLC_Sector_Geometry_Reference.md`). Sector shapes are not drawn.
+
    **It is trusted because ZLC vARTCC owns the dataset.** Upstream `Owners.xlsx` names Adam Earl (`shadeddude`) as its manager, and locally managed sets receive *"periodic bulk updates when local sector files change"* — so these polygons come from the facility's own sector file. It also confirmed all twenty ZLC frequencies in `_shared/claude_ZLC_Positions_Reference.md`. It is still **not a facility document**: an SOP outranks it, and one divergence is already recorded (the Bozeman fold, `B1Z → 06` against the AFV tree's `08 → 06`). Licence is **CC BY-NC-SA 4.0** — any tool drawing these shapes **must credit VATGlasses on the page**.
 
    **Still names without shapes:** the gates, the P2/P3/P4 areas and the Heber Shelf line. VATGlasses draws sectors, not gates. Recovering those still means carving the images out of the PDFs and measuring them, the way `claude_M98_DDA_Geometry.md` was produced.
@@ -203,14 +205,14 @@ the owner's machine**, so the harness was run through the browser runner (a copy
 local HTTP, which prints `SMOKE PASS: N checks passed.` That is the same check in another engine, not
 `node smoke-test.mjs`. Both decks export `ZLC.STANDING = []`, added the same day so the harness could assert it.
 
-- **S56 - 100 checks passed.** Seven blocks; nine sectors with the stated frequencies, three roots (Lake, Bear,
+- **S56 - 104 checks passed.** Seven blocks; nine sectors with the stated frequencies, three roots (Lake, Bear,
   Valley), no combining cycle; North and South flow with 32 North altitude blocks; six `OPEN_Q`; CIFP 261001
   (13 STARs, 15 SIDs, 164 fixes, **Hill Air Force Base zero**, SLC4 a vector SID, NICHOL absent); `STANDING`
-  empty; the pages block last.
-- **Big Sky - 98 checks passed.** Seven blocks; three sectors (SAG 119.600, ALP 126.900, APB 118.975); **no fold
+  empty; the facility outline (32 vertices); the pages block last.
+- **Big Sky - 102 checks passed.** Seven blocks; three sectors (SAG 119.600, ALP 126.900, APB 118.975); **no fold
   ever crosses an area**; Boise East and West flow and Bozeman none; persistence under `bigsky-drill-deck-v1`
   with the frame and the weather text coexisting; CIFP 261001 (5 + 5 STARs, 2 + 5 SIDs, 94 fixes, BOI3 a vector
-  SID); `STANDING` empty; the third page named *What this tool knows*, not *Notes and log*.
+  SID); the two area outlines (Boise 42 vertices, Bozeman 30) and that the contract hands the player the one for the area in play; `STANDING` empty; the third page named *What this tool knows*, not *Notes and log*.
 - **Both share a tail** that drives the player: the 50-strip ceiling, a track built from the procedure table's own
   coordinates, the generator's determinism and legality, transmit parsing, handoff, a debrief that names no
   standing item, the *Position Setup* sub-panels by name, scheduled events and the start positions preview.

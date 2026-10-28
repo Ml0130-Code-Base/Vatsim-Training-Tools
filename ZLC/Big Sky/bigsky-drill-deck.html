@@ -228,6 +228,17 @@ var CREDIT = {
 
 /* The runway gate on each airspace block is the configuration selector.
    Four gates exist across the whole ZLC dataset; Big Sky uses two. */
+/* The lateral outlines the scope draws, one per area. Each is the outer edge of the union of that area's VATGlasses sector
+   blocks (ZLC dataset, the pinned commit in CREDIT), traced on a 0.09 NM grid and simplified to 0.12 NM: good to about 0.2 NM of
+   the dataset and no better than the dataset. Second tier: a facility document outranks it and a boundary the owner or the
+   facility supplies supersedes it. Bozeman agrees with SimAware's polygon (cf9feb3, 2025-03-30) to 0.07 NM. SimAware's Boise
+   polygon reaches about ten miles further south-east than this one, towards Mountain Home, which is a separate facility;
+   that is recorded in _shared/claude_ZLC_Sector_Geometry_Reference.md and not resolved. [lat, lon] */
+var FOOTPRINT={
+ BOI:{src:'VATGlasses ZLC dataset, outer edge of Sage and Alpine blocks', tolerance:'about 0.2 NM of the dataset', points:[[43.5462,-117.1297],[43.4607,-117.1214],[43.3737,-117.0966],[43.2837,-117.0531],[43.2027,-116.9951],[43.1307,-116.9247],[43.0572,-116.8294],[43.0017,-116.7341],[42.9717,-116.6658],[43.2837,-116.2019],[43.2837,-116.032],[43.1727,-115.4583],[43.2207,-115.4169],[43.3047,-115.361],[43.3947,-115.3216],[43.4832,-115.3009],[43.5852,-115.2968],[43.6767,-115.3113],[43.7352,-115.332],[43.7637,-115.3423],[43.8477,-115.39],[43.9287,-115.4563],[43.9542,-115.4873],[43.9977,-115.5308],[44.0487,-115.6033],[44.0712,-115.6385],[44.1207,-115.7359],[44.1642,-115.8539],[44.1942,-115.974],[44.2122,-116.1004],[44.2167,-116.2329],[44.2092,-116.3531],[44.1897,-116.4732],[44.1537,-116.6057],[44.1072,-116.7196],[44.0922,-116.7424],[44.0652,-116.7963],[43.9842,-116.9123],[43.9032,-116.993],[43.8282,-117.0489],[43.7517,-117.0883],[43.6467,-117.1214]]},
+ BZN:{src:'VATGlasses ZLC dataset, outer edge of Bozeman blocks', tolerance:'about 0.2 NM of the dataset', points:[[45.7202,-112.1039],[45.6617,-112.0953],[45.5597,-112.0545],[45.4472,-111.9793],[45.3542,-111.8848],[45.2702,-111.7646],[45.2477,-111.7131],[45.2057,-111.6315],[45.1532,-111.4639],[45.1262,-111.3158],[45.1172,-111.1676],[45.1262,-110.9958],[45.1592,-110.8219],[45.2057,-110.6801],[45.2627,-110.562],[45.3557,-110.4246],[45.4472,-110.3344],[45.4772,-110.0209],[45.8837,-109.9994],[46.0802,-110.4632],[46.2167,-110.8111],[46.2377,-111.086],[46.2692,-111.6014],[46.2347,-111.6808],[46.2092,-111.7732],[46.1927,-111.8827],[46.1927,-111.9106],[46.1162,-111.9879],[46.0982,-111.9987],[45.7307,-112.1039]]}
+};
+
 var FLOWS = {
  BOI:[
   {id:'E', label:'East Flow',  gate:'KBOI 10L/R'},
@@ -791,6 +802,7 @@ window.ZLC = {
  secById:secById, areaById:areaById, sectorsIn:sectorsIn,
  isOpen:isOpen, ownerOf:ownerOf, answerFor:answerFor, openCount:openCount,
  flowsFor:flowsFor, curFlow:curFlow, flowObj:flowObj, blocksFor:blocksFor,
+ FOOTPRINT:FOOTPRINT,
  envelope:envelope, ft:ft, bandTxt:bandTxt,
  render:render, esc:esc,
  /* Empty until a session is flown, and the smoke test asserts it (root CLAUDE.md invariant 4). */
@@ -3180,6 +3192,7 @@ window.FLY_FACILITY = {
  cycle:'CIFP ' + NS.CIFP_CYCLE,
  host:function(){ return document.getElementById('bskfly-host'); },
  ref:function(){ return NS.fixLL(area() === 'BZN' ? 'BZN' : 'BOI'); },
+ outline:function(){ var f = NS.FOOTPRINT && NS.FOOTPRINT[area() === 'BZN' ? 'BZN' : 'BOI']; return f ? [f.points] : []; },
  airportLL:function(icao){ return (NS.APT && NS.APT[icao]) || null; },
  flow:function(){
   var f = NS.flowObj ? NS.flowObj() : null, r = f ? gateRunways(f.gate) : [];
@@ -4263,6 +4276,9 @@ function load(drill){
   log('crit', chip('crit', 'cannot fly') + 'This drill cannot be flown yet:<br>' + v.errs.map(esc).join('<br>'));
   return {ok:false, errs:v.errs, warns:v.warns};
  }
+ /* the scope origin and the outline are projected from the deck's reference point, which a deck may move between drills (Big Sky
+    changes area), so they are worked out again for every drill and every preview rather than kept from the first */
+ REFLL = null; OUTLINE = null;
  stopClock();
  sim.t = 0; sim.rate = 0; sim.hot = false; sim.ended = false; sim.drill = drill; sim.sel = null;
  sim.feed = []; sim.timing = []; sim.tx = 0; sim.pausedTx = 0; sim.tally = {good:0, flag:0, crit:0}; sim.los = {}; sim.lastTx = null;
@@ -4469,6 +4485,8 @@ function scopeSvg(){
    swapped out for the call and put back, so nothing a drill is doing is touched. A strip with no
    flyable track has no position and is named in the returned list. */
 function preview(strips){
+ /* not while a drill is flying: its aircraft are already placed against the origin it began with */
+ if(!sim.drill || sim.ended){ REFLL = null; OUTLINE = null; }
  var keep = sim, acs = [], skipped = [], svg = '';
  (strips || []).forEach(function(s, i){
   var a = mkAc(s, i);

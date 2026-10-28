@@ -365,6 +365,23 @@ try {
   const pv0 = FL.preview([]);
   assert('with no strips there is nothing to draw and the preview says so', pv0.count === 0 && pv0.svg === '' && pv0.skipped.length === 0);
 
+  /* ============ The lateral outlines the scope draws (2026-10-28) ============
+     One per area: the outer edge of the union of that area's VATGlasses sector blocks, a second-tier footprint, drawn dashed. */
+  const FPB = NSO.FOOTPRINT;
+  assert('each area carries an outline: Boise 42 vertices and Bozeman 30, inside the extents the geometry reference states',
+    FPB.BOI.points.length === 42 && FPB.BZN.points.length === 30
+    && FPB.BOI.points.every(p => p[0] >= 42.96 && p[0] <= 44.225 && p[1] >= -117.14 && p[1] <= -115.29)
+    && FPB.BZN.points.every(p => p[0] >= 45.11 && p[0] <= 46.275 && p[1] >= -112.115 && p[1] <= -109.995));
+  assert('each outline names its source and its tolerance', ['BOI', 'BZN'].every(a => /VATGlasses/.test(FPB[a].src) && /0\.2 NM/.test(FPB[a].tolerance)));
+  const areaWas = NSO.state.area;
+  globalThis.zlcArea('BOI');
+  const ringBoi = FF.outline();
+  globalThis.zlcArea('BZN');
+  const ringBzn = FF.outline();
+  globalThis.zlcArea(areaWas);
+  assert('the contract hands the player the ring of the area in play and never the other area\'s', ringBoi.length === 1 && ringBoi[0] === FPB.BOI.points && ringBzn.length === 1 && ringBzn[0] === FPB.BZN.points);
+  assert('the start-positions preview draws it, dashed, on the live scope\'s own code', /<polygon[^>]*stroke-dasharray/.test(pv.svg));
+
   console.log('\nSMOKE PASS: ' + checks + ' checks passed.');
 } catch (e) {
   console.error('FAIL: threw —', e && e.stack ? e.stack : e);

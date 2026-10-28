@@ -363,6 +363,15 @@ try {
   const pv0 = FL.preview([]);
   assert('with no strips there is nothing to draw and the preview says so', pv0.count === 0 && pv0.svg === '' && pv0.skipped.length === 0);
 
+  /* ============ The lateral outline the scope draws (2026-10-28) ============
+     The outer edge of the union of the nine VATGlasses sector blocks, a second-tier footprint, and the player draws it dashed. */
+  const FPS = NSO.FOOTPRINT;
+  assert('the deck carries a facility outline of 32 vertices, each inside the nine sectors\' bounding box (39.88-41.64 N, 111.50-112.74 W)',
+    !!FPS && FPS.points.length === 32 && FPS.points.every(p => p[0] >= 39.87 && p[0] <= 41.645 && p[1] >= -112.745 && p[1] <= -111.495));
+  assert('the outline names its source and its tolerance, so the scope never presents it as the facility boundary', /VATGlasses/.test(FPS.src) && /0\.2 NM/.test(FPS.tolerance));
+  assert('the facility contract hands the player exactly that one ring', FF.outline().length === 1 && FF.outline()[0] === FPS.points);
+  assert('the start-positions preview draws it, dashed, on the live scope\'s own code', /<polygon[^>]*stroke-dasharray/.test(pv.svg));
+
   console.log('\nSMOKE PASS: ' + checks + ' checks passed.');
 } catch (e) {
   console.error('FAIL: threw —', e && e.stack ? e.stack : e);

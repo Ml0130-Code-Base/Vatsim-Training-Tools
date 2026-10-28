@@ -259,6 +259,17 @@ var CREDIT={
  licence:'CC BY-NC-SA 4.0'
 };
 
+/* The lateral outline the scope draws. It is the outer edge of the union of every VATGlasses sector block in this deck
+   (ZLC dataset, the pinned commit in CREDIT), traced on a 0.09 NM grid and simplified to 0.12 NM, so it is good to about 0.2 NM
+   of the dataset and no better than the dataset. Second tier: a facility document outranks it and a boundary the owner or the
+   facility supplies supersedes it. SimAware's S56 polygon (cf9feb3, 2025-03-30) agrees to about a mile along most of the edge and
+   differs by up to about seven miles at four vertices on the south and east edge; both are recorded in
+   _shared/claude_ZLC_Sector_Geometry_Reference.md and neither is resolved. [lat, lon] */
+var FOOTPRINT={
+ src:'VATGlasses ZLC dataset, outer edge of all sector blocks', tolerance:'about 0.2 NM of the dataset',
+ points:[[41.1786,-112.7367],[41.1171,-112.6515],[40.8291,-112.6476],[40.6866,-112.6515],[40.4271,-112.5981],[40.3326,-112.5842],[40.0791,-112.2911],[39.9156,-111.9822],[39.8781,-111.8297],[39.8781,-111.7822],[40.1556,-111.505],[40.3506,-111.5169],[41.1141,-111.5169],[41.4576,-111.9763],[41.4816,-111.9981],[41.4981,-111.9723],[41.5161,-111.9585],[41.5386,-111.9505],[41.5731,-111.9545],[41.5926,-111.9664],[41.6106,-111.9862],[41.6256,-112.0159],[41.6316,-112.0436],[41.6301,-112.0891],[41.6136,-112.1327],[41.5851,-112.1624],[41.5596,-112.1723],[41.5491,-112.1723],[41.5476,-112.3188],[41.5131,-112.3703],[41.4126,-112.5367],[41.2941,-112.7089]]
+};
+
 var FLOWS=[
  {id:'N', label:'North Flow', gate:'KSLC 34L/R, 35', rwys:'34L, 34R, 35, 32'},
  {id:'S', label:'South Flow', gate:'KSLC 16L/R, 17', rwys:'16L, 16R, 17, 14'}
@@ -928,7 +939,7 @@ function mountAll(){
 /* ---------- 12. Extension bridge ---------- */
 window.ZLC = {
  version:0.2, skeleton:true, facility:'S56', hooks:[],
- RADIO:RADIO, CENTER:CENTER, CREDIT:CREDIT, FLOWS:FLOWS,
+ RADIO:RADIO, CENTER:CENTER, CREDIT:CREDIT, FOOTPRINT:FOOTPRINT, FLOWS:FLOWS,
  SECTORS:SECTORS, PRESETS:PRESETS, OPEN_Q:OPEN_Q, KINDS:KINDS, DIVERGE:DIVERGE,
  KEY:KEY, state:state,
  secById:secById, isOpen:isOpen, ownerOf:ownerOf, answerFor:answerFor,
@@ -3545,6 +3556,7 @@ window.FLY_FACILITY = {
  host:function(){ return document.getElementById('s56fly-host'); },
  airportLL:function(icao){ return NS.airportLL(icao); },
  ref:function(){ return NS.airportLL('KSLC'); },
+ outline:function(){ return (NS.FOOTPRINT && NS.FOOTPRINT.points) ? [NS.FOOTPRINT.points] : []; },
  flow:function(){
   var f = NS.flowObj(), r = runways();
   return {airport:'KSLC', land:r, dep:r.slice(), name:(f ? f.label : 'no flow')};
@@ -4624,6 +4636,9 @@ function load(drill){
   log('crit', chip('crit', 'cannot fly') + 'This drill cannot be flown yet:<br>' + v.errs.map(esc).join('<br>'));
   return {ok:false, errs:v.errs, warns:v.warns};
  }
+ /* the scope origin and the outline are projected from the deck's reference point, which a deck may move between drills (Big Sky
+    changes area), so they are worked out again for every drill and every preview rather than kept from the first */
+ REFLL = null; OUTLINE = null;
  stopClock();
  sim.t = 0; sim.rate = 0; sim.hot = false; sim.ended = false; sim.drill = drill; sim.sel = null;
  sim.feed = []; sim.timing = []; sim.tx = 0; sim.pausedTx = 0; sim.tally = {good:0, flag:0, crit:0}; sim.los = {}; sim.lastTx = null;
@@ -4830,6 +4845,8 @@ function scopeSvg(){
    swapped out for the call and put back, so nothing a drill is doing is touched. A strip with no
    flyable track has no position and is named in the returned list. */
 function preview(strips){
+ /* not while a drill is flying: its aircraft are already placed against the origin it began with */
+ if(!sim.drill || sim.ended){ REFLL = null; OUTLINE = null; }
  var keep = sim, acs = [], skipped = [], svg = '';
  (strips || []).forEach(function(s, i){
   var a = mkAc(s, i);
