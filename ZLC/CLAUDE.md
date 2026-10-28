@@ -207,6 +207,10 @@ panel.
 
 ---
 
+### Operators by field (2026-10-28, issue #76)
+
+The drill generator draws a callsign at a field from the operators the owner's printouts name for it (S56: KSLC and KPVU; Big Sky: KBOI and KBZN), and the *Operators at these fields* disclosure on *Set up a drill* says where each list came from and what it lacks. The tables and their sources are in `_shared/claude_ZLC_Operators_Reference.md`, which wins on a disagreement. Equal chance per operator, because no source in the tree has frequencies. Ogden and Hill AFB (S56) stay on the flat list of twelve carriers, and the panel says so. Salt Lake City's printout ends at the Cargo heading with no cargo table, so SLC cargo is unknown, not empty.
+
 ## Session hygiene
 
 Commit after each completed subtask. When aviation data is involved, cite which document and paragraph the number came from in the commit message. Long sessions: `/clear` and let this file re-anchor context. **One commit touches one ARTCC:** S56 and Big Sky may share a commit, and nothing under `ZMP/` or `ZAU/` may join it. Root `CLAUDE.md` §14.

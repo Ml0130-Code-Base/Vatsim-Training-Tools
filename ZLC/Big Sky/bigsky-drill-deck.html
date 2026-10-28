@@ -4645,6 +4645,16 @@ if(!window.strip || !window.fly || !window.bskstRows) return;
 window.DRILL_FACILITY = {
  id:'Big Sky', prefix:'bskdrill', sectionClass:'panel',
  storeKey:'bigsky-drill-deck-fly-v1',
+ operators:{
+  KBOI:{src:'Wikipedia, "Boise Airport", Airlines and destinations, page 5 of 14, printed 2026-10-27, attached by the owner to issue #76, comment of 2026-10-28T03:55:02Z (IC_kwDOUKuA2c8AAAABgQ-Ifw)',
+   flown:[{n:'Alaska Airlines',k:'passenger',cs:['ASA']},{n:'Allegiant Air',k:'passenger',cs:['AAY']},{n:'American Airlines',k:'passenger',cs:['AAL']},{n:'American Eagle',k:'passenger',cs:['SKW','RPA','JIA','ENY','PDT']},{n:'Delta Air Lines',k:'passenger',cs:['DAL']},{n:'Delta Connection',k:'passenger',cs:['SKW','EDV','RPA']},{n:'Frontier Airlines',k:'passenger',cs:['FFT']},{n:'Southwest Airlines',k:'passenger',cs:['SWA']},{n:'Sun Country Airlines',k:'passenger',cs:['SCX']},{n:'United Airlines',k:'passenger',cs:['UAL']},{n:'United Express',k:'passenger',cs:['SKW','RPA','ASH','GJS','UCA']}],
+   named:['Idaho Air National Guard, 124th Fighter Wing (A-10), Gowen Field (military)'],
+   gap:'One page of the article: the passenger table only. The cargo section is not in the printout. No charter, business-aviation or general-aviation operator is named in the printout.'},
+  KBZN:{src:'Wikipedia, "Bozeman Yellowstone International Airport", Airlines and destinations, page 2 of 6, printed 2026-10-27, attached by the owner to issue #76, comment of 2026-10-28T03:55:02Z (IC_kwDOUKuA2c8AAAABgQ-Ifw)',
+   flown:[{n:'Alaska Airlines',k:'passenger',cs:['ASA']},{n:'Allegiant Air',k:'passenger',cs:['AAY']},{n:'American Airlines',k:'passenger',cs:['AAL']},{n:'American Eagle',k:'passenger',cs:['SKW','RPA','JIA','ENY','PDT']},{n:'Delta Air Lines',k:'passenger',cs:['DAL']},{n:'Delta Connection',k:'passenger',cs:['SKW','EDV','RPA']},{n:'JetBlue',k:'passenger',cs:['JBU']},{n:'Southwest Airlines',k:'passenger',cs:['SWA']},{n:'Sun Country Airlines',k:'passenger',cs:['SCX']},{n:'United Airlines',k:'passenger',cs:['UAL']},{n:'United Express',k:'passenger',cs:['SKW','RPA','ASH','GJS','UCA']}],
+   named:[],
+   gap:'One page of the article: the passenger table only. The cargo section is not in the printout. No charter, business-aviation or general-aviation operator is named in the printout.'}
+ },
  anchor:function(){ return document.getElementById('mod-' + window.strip.prefix); },
  rows:function(next){ return window.bskstRows(next); },
  page:function(id){ if(window.zlcPage) window.zlcPage(id); },
@@ -4681,9 +4691,9 @@ window.DRILL_FACILITY = {
    accepts for that field; the runway comes from the configuration in
    force, never from a guess. The numbers that are NOT published - the
    altitude an arrival starts at, a departure's cleared altitude, the
-   speed it starts at, the callsigns, the types, the stagger of the
-   check-ins - are DRILL PARAMETERS, picked from the fixture lists
-   below. Each one is a box on the strip the trainee can change, and the
+   speed it starts at, the flight numbers, the types, the stagger of the
+   check-ins, and the carrier at any field the deck names no operators
+   for - are DRILL PARAMETERS, picked from the fixture lists below. Each one is a box on the strip the trainee can change, and the
    panel says so. Nothing here is aviation data.
 
    ---------------------------------------------------------------
@@ -4709,7 +4719,24 @@ window.DRILL_FACILITY = {
      note:     ''                     // OPTIONAL. Plain text the Generate panel
                                       //   adds to its note: what this deck's
                                       //   generator cannot build, and why
+     operators: {                     // OPTIONAL. Which operators fly each field:
+       KXXX: {                        //   a callsign at KXXX is drawn from flown[],
+         src:   '',                   //   never from the flat list below. src is the
+         flown: [{n:'Delta Air Lines', //  document it came from, cited in the panel.
+                  k:'passenger',       //  flown[].cs are callsign designators from
+                  cs:['DAL']}],        //  claude_US_Carrier_Callsigns.md: a brand with
+         named: [],                    //  several operators lists each. named[] is what
+         gap:   ''                     //  the source names and the generator cannot
+       }                               //  fly (no designator), shown, never drawn. gap
+     }                                 //  is what the source does not hold.
    };
+
+   OPERATORS. A field with an entry draws every airline callsign from it,
+   with an equal chance per operator printed, because the sources carry
+   no frequencies and nothing here may invent one. A field with none
+   keeps the flat list below, and the panel says so field by field.
+   Overflights have no field and keep the flat list. The aircraft type is
+   still drawn independently of the operator: no source gives a fleet.
 
    The configuration and the frame are read from window.FLY_FACILITY
    (flow, frame, host), so the deck states each of them once. A flow may
@@ -4772,13 +4799,25 @@ function engineOf(type){
  if(PISTONS.indexOf(type) >= 0) return 'piston';
  return 'jet';
 }
-function callsign(R, used, piston){
+/* The operators the deck names for a field (D.operators): null when it names none, or none this
+   generator can fly. */
+function opsAt(apt){
+ var O = D.operators, e = (O && apt) ? O[apt] : null;
+ return (e && e.flown && e.flown.length) ? e : null;
+}
+/* A brand, then one of its operators: equal chance per brand printed. At a field with no list the
+   flat list stands, and it draws once, as it always did. */
+function carrierAt(R, apt){
+ var e = opsAt(apt);
+ return e ? pick(R, pick(R, e.flown).cs) : pick(R, CARRIERS);
+}
+function callsign(R, used, piston, apt){
  for(var k = 0; k < 40; k++){
   var cs = piston ? ('N' + between(R, 100, 9999) + String.fromCharCode(65 + between(R, 0, 25)) + String.fromCharCode(65 + between(R, 0, 25)))
-                  : (pick(R, CARRIERS) + String(between(R, 1, 9999)));
+                  : (carrierAt(R, apt) + String(between(R, 1, 9999)));
   if(!used[cs]){ used[cs] = 1; return cs; }
  }
- return 'DAL' + between(R, 1000, 9999);
+ return (opsAt(apt) ? carrierAt(R, apt) : 'DAL') + between(R, 1000, 9999);
 }
 /* The altitude an arrival starts at: what its first published ceiling ahead allows on the
    engine's descent path, rounded to a thousand; with no ceiling anywhere on the track, a
@@ -4828,7 +4867,7 @@ function genArrival(R, used, fl){
    var s = ST.blank();
    s.role = 'arrival'; s.rules = 'IFR'; s.dest = apt; s.gate = ids[t]; s.rwy = rws[r]; s.type = type;
    s.engine = engineOf(type);
-   s.cs = callsign(R, used, false);
+   s.cs = callsign(R, used, false, apt);
    var q = FL.procFor(s), tr = FL.transOptions(s);
    if(tr.length){ s.trans = pick(R, tr); }
    var T = FL.track(s);
@@ -4856,7 +4895,7 @@ function genDeparture(R, used, fl){
   var s = ST.blank();
   s.role = 'departure'; s.rules = 'IFR'; s.dep = apt; s.sid = ids[t]; s.depRwy = pick(R, rwys); s.type = type;
   s.engine = engineOf(type);
-  s.cs = callsign(R, used, false);
+  s.cs = callsign(R, used, false, apt);
   var q = FL.procFor(s), tr = FL.transOptions(s);
   if(tr.length){ s.trans = pick(R, tr); }
   var T = FL.track(s);
@@ -5017,6 +5056,28 @@ function frameInner(f){
 }
 var lastFrame = null;
 
+/* Who the generator flies at each field, and where that comes from. A field the deck names no
+   operators for is said to be on the flat list, so the gap is on the page and not found mid-drill. */
+function opsHtml(){
+ var apts = ST.airportsHere(), have = 0, lines = [];
+ apts.forEach(function(a){
+  var e = opsAt(a), O = D.operators && D.operators[a];
+  if(e){
+   have++;
+   lines.push('<div class="' + PFX + '-hint"><b>' + esc(a) + '</b> draws from '
+    + e.flown.map(function(f){ return esc(f.n) + ' (' + esc(f.cs.join(', ')) + ')'; }).join('; ') + '.'
+    + (e.named && e.named.length ? ' Named by the source and not flown (no callsign for them in the carrier document, or not an airline): ' + esc(e.named.join('; ')) + '.' : '')
+    + (e.gap ? ' ' + esc(e.gap) : '')
+    + ' Seasonal service is not told apart, and the source gives no frequencies, so every operator printed has an equal chance. <i>Source: ' + esc(e.src || '') + '</i></div>');
+  } else if(O){
+   lines.push('<div class="' + PFX + '-hint"><b>' + esc(a) + '</b>: the source names operators but none the generator can fly. It uses the flat list of twelve carriers, which is not this field\'s.</div>');
+  } else {
+   lines.push('<div class="' + PFX + '-hint"><b>' + esc(a) + '</b>: no operator data in this deck. It uses the flat list of twelve carriers (' + esc(CARRIERS.join(' ')) + '), which is not this field\'s.</div>');
+  }
+ });
+ return '<details class="' + PFX + '-note"><summary>Operators at these fields: ' + have + ' of ' + apts.length + ' have a list</summary>'
+  + lines.join('') + '<div class="' + PFX + '-hint">Overflights keep the flat list. The aircraft type is drawn independently of the operator; no source gives a fleet. Reminder, not a judgement.</div></details>';
+}
 function genPanel(){
  var body;
  if(hasFlyable){
@@ -5032,7 +5093,8 @@ function genPanel(){
    + '<button class="' + PFX + '-btn" onclick="' + PFX + 'Blank()">start blank instead</button>'
    + '<span class="' + PFX + '-hint" style="margin:0;">Same seed, same drill - write the number in your notes and you can fly it again cold.</span>'
    + '</div>'
-   + '<div class="' + PFX + '-note">The generator picks procedures, runways and transitions this deck carries and the configuration in force allows. <b>The start altitude, cleared altitude, speed, callsign, type and check-in time are drill parameters, not published data</b> - each is a box on the strip you can change.' + (D.note ? ' ' + esc(D.note) : '') + '</div>';
+   + '<div class="' + PFX + '-note">The generator picks procedures, runways and transitions this deck carries and the configuration in force allows. <b>The start altitude, cleared altitude, speed, callsign, type and check-in time are drill parameters, not published data</b> - each is a box on the strip you can change.' + (D.note ? ' ' + esc(D.note) : '') + '</div>'
+   + opsHtml();
  } else {
   body = '<div class="' + PFX + '-note">This deck carries no published procedures to fly, so there is nothing to generate from: build overflights below by radial and distance.</div>'
    + '<div class="' + PFX + '-actions"><button class="' + PFX + '-btn" onclick="' + PFX + 'Blank()">start blank instead</button></div>';
