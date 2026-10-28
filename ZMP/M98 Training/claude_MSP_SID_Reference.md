@@ -315,6 +315,15 @@ MSP9 reaches it.
 
 **What is not in the data, written down so it is not rediscovered.**
 
+- **MSP9 becomes MSP1 on 2026-10-29, and CIFP 261029 agrees it is still not coded (checked 2026-10-28).** vZMP's PBN
+  Phase II briefing says MSP9 is up-numbered to MSP1 (p.3, `claude_M98_PBN_Phase_II_Reference.md`). Against CIFP 261029
+  (cycle 2611): **no `MSP1` or `MSP9` procedure record anywhere in the file; KMSP codes nine SIDs, none of them a vector
+  SID, and no route type `T` at KMSP, STP, ANE or FCM; MIC codes no SID.** The FAA's own *Not in CIFP* workbook lists
+  **`KMSP MSP9` in 2609 and 2610 and `KMSP MSP1` in 2611** — one row, the name changed — which is a second, independent
+  source for the rename and for the procedure staying uncoded. **The seven initial-fix coordinates below are
+  identical in CIFP 261001 and 261029** (FAR, BRNRD, DLH, HYR, EAU, GRB, DLL, all five decimals). What this does **not**
+  check: the tracks 320 / 340 / 360 and the seven fixes come from the tower order, which still says MSP9, and CIFP has
+  no leg to compare them with. The deck is unchanged and still says MSP9.
 - **MSP9 is not in CIFP 261001.** KMSP codes COULT7, HSTIN6, KBREW2, LEINY6, MEDOW5, ORSKY3, RST1, SCHEP1,
   SLAYR4, SMERF7, WLSTN7 and ZMBRO7, and **no route type T (vector SID)** — checked and empty. The order
   and the owner's gap analysis (`claude_M98_MD_Gap_Analysis.md`, the 3-2-5 frequency row) are the only

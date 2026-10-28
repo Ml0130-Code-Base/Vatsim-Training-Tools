@@ -132,7 +132,9 @@ Q934 PONCT JFUND2 KBOS` — i.e. the SID and its transition written as two words
 - **Item 3, the gate letters.** Still tabled. The briefing gives scratchpad codes, not gate letters, and does not
   say how they relate (section 4).
 - **Item 8, the vZMP documents that still name retired SIDs.** Still waiting: the briefing is not an order.
-- **MSP9 to MSP1** (issue #77). The briefing is the first source for the rename; the MSP tower order that names
+- **MSP9 to MSP1** (issue #77). **Cross-checked against CIFP 261029 on 2026-10-28:** neither name is coded, and the
+  FAA's *Not in CIFP* workbook carries `KMSP MSP9` in 2609 and 2610 and `KMSP MSP1` in 2611, so the rename has a
+  second source (detail in `claude_MSP_SID_Reference.md`). The briefing was the first source for the rename; the MSP tower order that names
   it (7110.26G 3-2-4, 6-3-1.a.4) has not been revised, and nothing says how a controller voices it.
 
 ## 7. Things the briefing implies that other references still carry
