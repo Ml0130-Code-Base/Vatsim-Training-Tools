@@ -134,6 +134,12 @@
   .idx-tier.t1{color:var(--amber);border-color:rgba(232,162,61,0.4);background:rgba(232,162,61,0.08);}
   .idx-tier.t0{color:var(--dim);border-color:var(--line);background:var(--panel2);}
 
+  .idx-fly{
+    display:inline-block;margin-left:8px;
+    font-family:var(--mono);font-size:9px;letter-spacing:0.1em;
+    text-transform:uppercase;color:var(--green);
+  }
+
   .idx-legend{
     display:flex;gap:16px;flex-wrap:wrap;
     font-family:var(--mono);font-size:10px;letter-spacing:0.08em;
@@ -162,13 +168,14 @@
 
   <section class="hero">
     <div class="eyebrow">Training toolset</div>
-    <h1>Seven drill decks, three air route traffic control centers, one honest account of what each one knows.</h1>
+    <h1>Ten drill decks, four air route traffic control centers, one honest account of what each one knows.</h1>
     <p>Single-file training tools for one controller working toward certification at several facilities. Every operational number traces to a document and a paragraph, and every gap is rendered rather than hidden.</p>
   </section>
 
   <div class="idx-panel">
     <h2>Read this before you fly anything here</h2>
     <p><b>Only M98 has been flown.</b> Everything else is a skeleton, and the word is load-bearing: the frame is real and cited, the geometry is mostly not carried, and each tool renders the difference rather than papering over it.</p>
+    <p>Most of the other decks can run a drill: their aircraft fly each strip along the facility&rsquo;s own <b>published SID and STAR tracks</b> from FAA coded procedure data, with the published crossings and speeds and nothing else. <b>No sector boundary, no handoff owner and no wind is modelled, and nothing is graded</b> &mdash; every check there is a reminder, not a judgement. Cards marked &ldquo;flies published tracks&rdquo; have this.</p>
     <p>A tool that does not carry sector boundaries <b>does not claim a boundary was crossed</b>. Where a check is weaker than it looks, the tool says so on the page. Read the &ldquo;what this tool knows&rdquo; registry inside each one before trusting a number in a drill.</p>
     <p>These are study aids built by a trainee, <b>not facility training material and not endorsed by any virtual air route traffic control center</b>. The governing orders and letters of agreement always win.</p>
   </div>
@@ -178,12 +185,12 @@
   <div class="idx-legend">
     <span><b>Tier 0</b> &mdash; reference and selector</span>
     <span><b>Tier 1</b> &mdash; data spine and shell</span>
-    <span><b>Tier 2</b> &mdash; live engine</span>
+    <span><b>Tier 2</b> &mdash; live engine, graded against flown sessions</span>
   </div>
 
   <div class="idx-panel">
     <h2>Working offline</h2>
-    <p>Every tool is one self-contained HTML file with no dependencies and no build step. <b>Save the page and it keeps working with the machine offline</b> &mdash; the web font is the only external reference, and each page is fully functional without it.</p>
+    <p>Every tool is one self-contained HTML file with no dependencies and no build step. <b>Save the page and it keeps working with the machine offline</b> &mdash; the web font is the only external reference, and each page is fully functional without it. Some decks can optionally fetch a live D-ATIS (and, at fields with none, a METAR); that is never needed, and a failed fetch falls back to a paste box.</p>
     <p>Progress is kept in your browser&rsquo;s local storage, per tool, on the device you used. <b>It does not follow you to another browser or another machine</b>, and there is no server holding a copy. The Markdown or JSON export inside each tool is the real backup.</p>
   </div>
 
@@ -216,19 +223,29 @@
           somebody has already bookmarked
    src    path to the tool inside the repository, relative to the repo root
    tier   0 reference and selector · 1 data spine and shell · 2 live engine
+   fly    optional, after tier: the text of the "flies published tracks" tag.
+          It says what the deck's player does (CLAUDE.md section 3), never a tier
    ============================================================================ */
 (function(){
   var TOOLS = [
     {slug:'m98',    src:'ZMP/M98 Training/m98-drill-deck.html', artcc:'ZMP', name:'M98',     kind:'Minneapolis approach — terminal, STARS', ns:'DD',  tier:2, blurb:'Real M98 geometry, a deterministic engine, and a clock that keeps running while you think. The only tool here that has been flown.'},
     {slug:'zmp',    src:'ZMP/ZMP/zmp-drill-deck.html',          artcc:'ZMP', name:'ZMP',     kind:'Minneapolis Center — en route, ERAM',    ns:'ZD',  tier:1, blurb:'Thirty-three sectors, six areas, and the en route procedures that actually get graded. Every number traces to ZMP 7200.1O or the vNAS facility record.'},
-    {slug:'r90',    src:'ZMP/R90/r90-drill-deck.html',          artcc:'ZMP', name:'R90',     kind:'Omaha TRACON — terminal, STARS',         ns:'RD',  tier:1, blurb:'Six positions, three fields, and a hard airspace lid that changes over Lincoln. Sector boundaries are pictures in every source document, so nothing spatial is claimed.'},
-    {slug:'c90',    src:'ZAU/C90/c90-drill-deck.html',          artcc:'ZAU', name:'C90',     kind:'Chicago TRACON — terminal',              ns:'DD',  tier:0, blurb:'Positions, combining, configurations, finals and capture points out of the vZAU documents, plus the facility footprint from the ZAU sector data. The internal sectorisation is not carried, and every empty slot names the document that would fill it.'},
-    {slug:'azo',    src:'ZAU/AZO/azo-drill-deck.html',          artcc:'ZAU', name:'AZO',     kind:'Great Lakes, West Wall — terminal',      ns:'DD',  tier:0, blurb:'Kalamazoo works the West Wall. The facility footprint and a ceiling are carried; the six West Wall sector boundaries are not, and the tool says which is which.'},
-    {slug:'s56',    src:'ZLC/S56/s56-drill-deck.html',          artcc:'ZLC', name:'S56',     kind:'Salt Lake approach — terminal',          ns:'ZLC', tier:0, blurb:'Nine sectors and a flow that reshapes them. The selector, the vertical structure and the flow branch are built; the engine is not. Every sector and every open question carries a note slot.'},
-    {slug:'bigsky', src:'ZLC/Big Sky/bigsky-drill-deck.html',   artcc:'ZLC', name:'Big Sky', kind:'Boise and Bozeman — terminal',           ns:'ZLC', tier:0, blurb:'Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector and the vertical structure are built; the engine that flies traffic through them is not.'},
-    {slug:'ind',    src:'ZID/IND/ind-drill-deck.html',          artcc:'ZID', name:'IND',     kind:'Indianapolis TRACON — terminal, STARS',  ns:'IND', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. A lateral outline is carried; sector boundaries are not.'},
-    {slug:'sdf',    src:'ZID/SDF/sdf-drill-deck.html',          artcc:'ZID', name:'SDF',     kind:'Louisville TRACON — terminal, STARS',    ns:'SDF', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. A lateral outline is carried; sector boundaries are not.'},
-    {slug:'cvg',    src:'ZID/CVG/cvg-drill-deck.html',          artcc:'ZID', name:'CVG',     kind:'Cincinnati TRACON — terminal, STARS',    ns:'CVG', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. Where the SOP and vNAS disagree, both are shown.'}
+    {slug:'r90',    src:'ZMP/R90/r90-drill-deck.html',          artcc:'ZMP', name:'R90',     kind:'Omaha TRACON — terminal, STARS',         ns:'RD',  tier:1, blurb:'Six positions, three fields, and a hard airspace lid that changes over Lincoln. Sector boundaries are pictures in every source document, so nothing spatial is claimed.', fly:'flies published tracks'},
+
+    {slug:'c90',    src:'ZAU/C90/c90-drill-deck.html',          artcc:'ZAU', name:'C90',     kind:'Chicago TRACON — terminal',              ns:'DD',  tier:0, blurb:'Positions, combining, configurations, finals and capture points out of the vZAU documents, plus the facility footprint from the ZAU sector data. The internal sectorisation is not carried, and every empty slot names the document that would fill it.', fly:'flies published tracks'},
+
+    {slug:'azo',    src:'ZAU/AZO/azo-drill-deck.html',          artcc:'ZAU', name:'AZO',     kind:'Great Lakes, West Wall — terminal',      ns:'DD',  tier:0, blurb:'Kalamazoo works the West Wall. The facility footprint and a ceiling are carried; the six West Wall sector boundaries are not, and the tool says which is which.', fly:'flies overflights only'},
+
+    {slug:'s56',    src:'ZLC/S56/s56-drill-deck.html',          artcc:'ZLC', name:'S56',     kind:'Salt Lake approach — terminal',          ns:'ZLC', tier:0, blurb:'Nine sectors and a flow that reshapes them. The selector, the vertical structure and the flow branch are built, and aircraft fly the published SIDs and STARs. Nothing is graded. Every sector and every open question carries a note slot.', fly:'flies published tracks'},
+
+    {slug:'bigsky', src:'ZLC/Big Sky/bigsky-drill-deck.html',   artcc:'ZLC', name:'Big Sky', kind:'Boise and Bozeman — terminal',           ns:'ZLC', tier:0, blurb:'Two areas that never touch: Boise in southwest Idaho, Bozeman in southwest Montana. The selector and the vertical structure are built, and aircraft fly the published SIDs and STARs. Nothing is graded.', fly:'flies published tracks'},
+
+    {slug:'ind',    src:'ZID/IND/ind-drill-deck.html',          artcc:'ZID', name:'IND',     kind:'Indianapolis TRACON — terminal, STARS',  ns:'IND', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. A lateral outline is carried; sector boundaries are not. Aircraft fly the published procedures.', fly:'flies published tracks'},
+
+    {slug:'sdf',    src:'ZID/SDF/sdf-drill-deck.html',          artcc:'ZID', name:'SDF',     kind:'Louisville TRACON — terminal, STARS',    ns:'SDF', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. A lateral outline is carried; sector boundaries are not. Aircraft fly the published procedures.', fly:'flies published tracks'},
+
+    {slug:'cvg',    src:'ZID/CVG/cvg-drill-deck.html',          artcc:'ZID', name:'CVG',     kind:'Cincinnati TRACON — terminal, STARS',    ns:'CVG', tier:1, blurb:'Positions, runways, configurations and every SOP table, set beside vNAS and CIFP. Where the SOP and vNAS disagree, both are shown. Aircraft fly the published procedures.', fly:'flies published tracks'}
+
   ];
 
   var ARTCC = {
@@ -268,7 +285,9 @@
       out += '<a class="idx-card" href="' + esc(hrefFor(t)) + '">';
       out += '<div class="idx-top"><h3>' + esc(t.name) + '</h3>';
       out += '<span class="idx-tier t' + t.tier + '">Tier ' + t.tier + '</span></div>';
-      out += '<div class="idx-meta">' + esc(t.kind) + '</div>';
+      out += '<div class="idx-meta">' + esc(t.kind);
+      if(t.fly) out += '<span class="idx-fly">' + esc(t.fly) + '</span>';
+      out += '</div>';
       out += '<p>' + esc(t.blurb) + '</p>';
       out += '</a>';
     }

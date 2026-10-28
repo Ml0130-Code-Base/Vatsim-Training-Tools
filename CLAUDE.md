@@ -351,7 +351,7 @@ changes. Read `claude_vNAS_Source_Reference.md` before using it; four things in 
 
 **A community source closes the gap for ZLC and ZAU, and not for ZMP.** VATGlasses publishes
 sector polygons **with altitude stratums and ownership chains** for both, and nothing at all
-for ZMP. SimAware publishes a lateral facility footprint — no altitudes — for all seven of our
+for ZMP. SimAware publishes a lateral facility footprint — no altitudes — for all of our
 facilities. Both were pulled and verified on 2026-09-02; the coordinate decode was confirmed
 against six known field positions, and all twenty ZLC frequencies in
 `claude_ZLC_Positions_Reference.md` matched. **Full detail, licence terms and pull recipes in
@@ -480,7 +480,7 @@ section says what is true, not what to do about it next.
   `'S56'`). Defensible — they are never on the same page — and it stopped being a
   divergence on **2026-09-06**: every block in both decks now guards on the discriminator
   rather than on there being only one ZLC tool loaded.
-- **Storage keys.** Six tools use `<basename>-v1`, S56 included — its key was renamed off the
+- **Storage keys.** Nine tools use `<basename>-v1`, S56 included — its key was renamed off the
   status word and the deck still reads `zlc-s56-skeleton-v1` once, to migrate. **Big Sky has no
   persistence at all**, and deliberately: its weather block sets `STORE_KEY` to the empty string
   and `storeSave()` returns early rather than inventing a key as a drive-by — issue **#45**
@@ -506,10 +506,11 @@ section says what is true, not what to do about it next.
   the §2 "every copy in the same commit" rule bent once, knowingly, and of what it cost:
   a copy out of step for a day, and a second session needed to close it.
 - **The two ZLC tools carry the three-page wrapper as of 2026-09-06.** Both were one long
-  scroll with a row of anchor links while the other five decks had tabs. A fourth block in each
-  moves the already-mounted sections into `zlc-view` wrappers and turns `#modnav` into the same
-  switcher (`zlcPage`), tab styling copied from M98 so the seven read as one toolset. That block
-  edits nothing before it and **must stay last** — it finds sections by id after they mount, so
+  scroll with a row of anchor links while the other five decks had tabs. A late block in each
+  (the fourth when it landed, the seventh in both decks since the fly and drill masters were
+  added, and still the last) moves the already-mounted sections into `zlc-view` wrappers and
+  turns `#modnav` into the same switcher (`zlcPage`), tab styling copied from M98 so the decks
+  read as one toolset. That block edits nothing before it and **must stay last** — it finds sections by id after they mount, so
   a new block goes before it or names its section in `PAGES`. **Big Sky's third page is named
   *what this tool knows*, not *notes and log***, because it has no notes layer: naming a page
   after a section the tool does not have is the tool asserting something untrue. Issue **#45** carries the notes layer and the
@@ -707,13 +708,18 @@ node smoke-test.mjs r90-drill-deck.html
 ```
 
 **There is no Node on the owner's machine** (checked 2026-09-01; no `node`, no working
-`python`, no `jq` — `perl`, `curl` and `pdftotext` are present). **The harnesses have not been
-run.** Say that plainly rather than implying a suite passed. The same applies to any harness
-you write: until Node exists it is verified by being parsed, not by being executed.
+`python`, no `jq` — `perl`, `curl` and `pdftotext` are present), so `node smoke-test.mjs`
+cannot be run here. **A harness is executed through a browser runner instead.** M98 and the
+three ZID decks each ship a `smoke-test-browser.html` beside the `.mjs`; it is served over local
+HTTP and loads the real deck. It has been run: M98 (700 checks on 2026-10-28) and IND, SDF and
+CVG (248, 262 and 340 on 2026-10-26) pass. **R90 and ZMP Center have only the `.mjs`, and
+ZMP Center's cannot pass against the current deck (issue #69); ZAU and ZLC have no smoke test
+(issues #42, #46).** Say which of these a claim rests on rather than implying a suite passed,
+and a harness without a runner is verified by being parsed, not by being executed.
 
-What has actually been done instead: **serve the folder over local HTTP and drive the real
-page.** The preview pane renders `file://` as a static snapshot, so a page opened that way
-cannot be driven. ZLC used a PowerShell `System.Net.HttpListener`; that works.
+The other check, and the one that covers layout: **serve the folder over local HTTP and drive
+the real page.** The preview pane renders `file://` as a static snapshot, so a page opened
+that way cannot be driven. ZLC used a PowerShell `System.Net.HttpListener`; that works.
 
 **Report exactly which checks were run.** When a change touches layout, describe what to look
 at. "Verified in a browser: sections mount, page tabs switch, the combining chain resolves,
@@ -741,12 +747,12 @@ default** — that is the thing to hold in mind before writing a new note file, 
 owner's call to publish.** The Indy Center wiki serves every page but its home page only to a signed-in
 VATSIM account, so the three ZID SOPs are **not committed** and their source index records the sign-in
 steps instead of a `curl` recipe. The reference markdown transcribing them is in the tree and is public
-once pushed; **the ZID decks are deliberately not in `site/index.html`**, so a push does not put them on
-Pages, until the owner decides. See `ZID/CLAUDE.md`.
+once pushed. **The ZID decks were held out of `site/index.html` until the owner decided, and have been in
+it since `f98fb28` (owner, 2026-10-20)**, so they are on Pages. See `ZID/CLAUDE.md`.
 
 **The site is still not the repository.** Pages publishes the staged `_site/` directory built
-by `build-site.sh`, which contains the landing page and the seven tools and nothing else —
-about 656 KB. `build-site.sh` fails the build if any other file reaches `_site/`. That guard
+by `build-site.sh`, which contains the landing page and the ten tools and nothing else —
+about 3.5 MB (measured 2026-10-28; M98 alone is most of it). `build-site.sh` fails the build if any other file reaches `_site/`. That guard
 is no longer about secrecy, since the repository is public either way; it is about the site
 staying the thing it claims to be, and about the next person who adds a data file not silently
 widening what the Pages domain serves.
@@ -770,7 +776,7 @@ fires on **every** push to `main` and renders `README.md` with Jekyll; this work
 on the paths it filters and publishes `_site/`. Both deploy to the same domain and neither waits
 for the other, so whichever finished last won — and the landing page alternated, commit to
 commit, between the dark tool index and the README rendered as a table of paragraphs. **While
-Jekyll held the site, all seven tool URLs returned 404**, because `/m98/` exists only in the
+Jekyll held the site, all seven tool URLs (the site had seven tools then) returned 404**, because `/m98/` exists only in the
 staged directory. Fixed by setting the source to GitHub Actions, which disables the legacy
 builder outright rather than out-racing it.
 
@@ -793,10 +799,10 @@ column is where we stand.
 | Limit | Us |
 |---|---|
 | Source repository — **recommended** 1 GB | 305 MB, and the PDF sets are growing (§6) |
-| Published site — hard 1 GB | 657 KB |
+| Published site — hard 1 GB | 3.5 MB |
 | Bandwidth — soft 100 GB/month | not a factor for one trainee |
 | Builds — soft 10/hour, **waived for a custom Actions workflow** | ours is custom, so waived |
-| Artifact — `tar.gz`, under 10 GB, **no symbolic or hard links** | 657 KB, no links anywhere in the tree |
+| Artifact — `tar.gz`, under 10 GB, **no symbolic or hard links** | 3.5 MB, no links anywhere in the tree |
 | Deployment timeout — 10 minutes | seconds |
 
 **The plan rule, in their words:** *"If the account that owns the repository uses GitHub Free
