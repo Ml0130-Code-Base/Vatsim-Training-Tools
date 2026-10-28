@@ -2,7 +2,7 @@
 
 Single-file, offline-first HTML training tools for VATSIM controllers working Salt Lake City ARTCC terminal facilities. Built on the pattern established by `../ZMP/M98 Training/` — read that CLAUDE.md before making architectural decisions here.
 
-**Current state: skeleton.** The position selectors are real and their data is verified. The sector-level traffic engine and the grading are not built. **Big Sky carries a published-track player and a drill builder since 2026-10-27 (issue #76, `../claude_Fly_Block_Reference.md`): the aircraft fly the CIFP 261001 SIDs and STARs straight between fixes, the *Set up a drill* page holds *Position Setup* (M98's four sub-panels by name: *Quick setups*, *Which seat are you working*, *Open around you*, *What that resolves to*) and then the drill builder (*Generate*, *Edit*, *Special observation*, *Landline events*, *Brief*, the strips, *Start positions*, *Flown on*, *Saved drills*), and nothing is graded. The seat's vertical structure and top-down table are reference and sit on the third page. A special observation or a landline call is a notice the author typed, fired once, and the player does not re-plan strips already flying. Big Sky still has no smoke test (issue #46), so this is verified by driving the real page.** S56 does not carry them yet. Stubs on the page say so by name rather than rendering something plausible and empty.
+**Current state: skeleton.** The position selectors are real and their data is verified. The sector-level traffic engine and the grading are not built. **Big Sky carries a published-track player and a drill builder since 2026-10-27 (issue #76, `../claude_Fly_Block_Reference.md`): the aircraft fly the CIFP 261001 SIDs and STARs straight between fixes, the *Set up a drill* page holds *Position Setup* (M98's four sub-panels by name: *Quick setups*, *Which seat are you working*, *Open around you*, *What that resolves to*) and then the drill builder (*Generate*, *Edit*, *Special observation*, *Landline events*, *Brief*, the strips, *Start positions*, *Flown on*, *Saved drills*), and nothing is graded. The seat's vertical structure and top-down table are reference and sit on the third page. A special observation or a landline call is a notice the author typed, fired once, and the player does not re-plan strips already flying. Big Sky still has no smoke test (issue #46), so this is verified by driving the real page.** **S56 carries the same player and builder since 2026-10-27**, with its own procedures block from CIFP 261001 (13 STARs and 15 SIDs across seven fields; Hill Air Force Base has none) and a *Configuration* sub-panel for its North and South flow ahead of the four named ones; it has no smoke test either (issue #46). Stubs on the page say so by name rather than rendering something plausible and empty.
 
 Treat correctness of aviation data as safety-critical for training value: **never invent procedures, fixes, altitudes, frequencies or paragraph citations.** Every operational number must trace to a document in `source-docs/`.
 
@@ -87,7 +87,7 @@ The notes layer is not a scratchpad bolted on the side; it is the intake path fo
 
 - A note carries a `kind` (question, correction, technique, phraseology) and an `anchor` — either a sector id or one of the `OPEN_Q` ids.
 - `OPEN_Q` holds the questions the source documents genuinely do not answer. They are listed on the page with the reason each is unanswerable, so a note against one is the thing that closes it.
-- Notes persist to `localStorage` under `zlc-s56-skeleton-v1`, wrapped in try/catch. Where storage is unavailable the tool still works in memory and says so; the markdown export is the fallback.
+- Notes persist to `localStorage` under `s56-drill-deck-v1` (renamed off the old `zlc-s56-skeleton-v1`, which the deck still reads once to migrate), wrapped in try/catch. Saved drills are under `s56-drill-deck-fly-v1`, a second key so a corrupt drill list cannot sit in the way of the notes (issue #70). Where storage is unavailable the tool still works in memory and says so; the markdown export is the fallback.
 - Export groups by anchor and is written to be pasted into `claude_S56_Reference.md` or handed to a mentor.
 
 When a note is confirmed, **promote it into the reference markdown and cite who confirmed it** — then it can be trusted by the tool's data. Do not promote an unconfirmed note.
@@ -148,9 +148,15 @@ Named on the page as numbered slots so the gaps are visible rather than discover
    named `RW10L` is the procedure's runway, not the flow**: the flow branch lives in the
    geometry (item 3), and nothing in this block touches it.
 
-   **S56 was deliberately left out of this pass** at the owner's direction (issue **#3**), so its deck carries
-   no procedures block: its strip contract hand-lists the CIFP 261001 procedure *names* per
-   field, not the ladders behind them.
+   **S56 got its procedures block 2026-10-27** (issue **#3**, left out of the 2026-09-06 pass at the owner's direction and
+   asked for on 2026-10-27). Big Sky's machinery under S56's data, generated with `tools/cifp/gen.pl` on CIFP 261001: 13 STARs
+   (Salt Lake City 11, Ogden 1, Provo 1) and 15 SIDs (Salt Lake City 8, Provo 2, and one each at Brigham City, Ogden,
+   Spanish Fork, Tooele and South Valley). **Hill Air Force Base has no coded SID, STAR or approach: checked and
+   empty, CIFP 261001.** SLC4 is a Vector SID (route type T) and the player refuses it by name. The strip contract
+   now derives its arrivals and departures from the block instead of hand-listing names, `PROCS.airportLL` carries
+   the eight CIFP airport reference points (KSLC from `PFIX`, the other seven from the airport records of the same file),
+   and the block sits before the strips block, with `mod-s56p` on the third page. Like Big Sky's, it is regenerated at the
+   next cycle, never patched (#65).
 
    **Audited against a fresh decode 2026-10-20 (issue #64), cycle 261001.** Cycle 261001 carries the
    same procedures as 260903 at all ten fields, so what changed is the decode, not the data.
@@ -176,18 +182,17 @@ Named on the page as numbered slots so the gaps are visible rather than discover
 
    **Its copy of the master strip block caught up 2026-09-06.** All five decks that carry the
    block — R90, C90, AZO, S56, Big Sky — are now byte-identical to root `strip-block.html`,
-   checked with `diff`. **S56's rows still read *"frame only"*, and that is correct, not
-   leftover**: `track` says the published ladder is carried, S56 carries names, so the flag
-   stays unset and the row says which of the two is true. It becomes *"track only"* the day
-   S56 gets a procedures block. Root `CLAUDE.md` §9 recorded the divergence; this closes the
-   block half of it.
+   checked with `diff`. **S56's rows read *"frame only"* until 2026-10-27, and that was correct**:
+   `track` says the published ladder is carried, S56 then carried names, so the flag stayed unset. With the
+   procedures block in, the contract sets `flies:true, track:true` and the row says the procedure is flown
+   straight between fixes. Root `CLAUDE.md` §9 recorded the divergence; this closes the block half of it.
 3. **Configuration.** S56 procedures branch on North Flow vs South Flow almost everywhere; the selector does not model flow yet, so duty text shows both branches. BOI branches on East vs West Flow the same way.
 
    **The geometry now carries the branch**, which is the natural way to model it when the selector grows one: every airspace block in `_shared/source-vatglasses/airspace.json` is gated on a runway configuration, and there are exactly four across the dataset — `KSLC 34L/R, 35` (North), `KSLC 16L/R, 17` (South), `KBOI 10L/R` (East), `KBOI 28L/R` (West). Selecting a flow selects which blocks exist. Big Sky shows it most clearly: Alpine and Sage **swap shapes** between east and west flow over the same total airspace.
-4. **Engine and grading.** No aircraft model, no scope, no clock, no standing training items. In M98 the standing items came out of real session notes and were not invented to fill the slot; the same should happen here, which is what the S56 notes section is for.
+4. **Engine and grading.** Since 2026-10-27 Big Sky and S56 fly the published CIFP tracks on a real clock (issue #76); neither has a sector engine and neither grades anything, and there are no standing training items. In M98 the standing items came out of real session notes and were not invented to fill the slot; the same should happen here, which is what the S56 notes section is for.
 
-**One caution about reading these slots.** Both decks still render **Slot 4 as empty** for fixes
-the 2026-09-06 CIFP pull located — issue **#51**. The data and the panel sit in the same file,
+**One caution about reading these slots.** Big Sky still renders **Slot 4 as empty** for fixes
+the 2026-09-06 CIFP pull located — issue **#51**. S56's Slots 4 and 5 were brought current on 2026-10-27, when it got its procedures block and its player. The data and the panel sit in the same file,
 disagreeing. A gap rendered after it has closed is invariant 2 failing in the direction nobody
 watches for, and it costs more than a stale sentence: it teaches the trainee not to trust the
 panel.

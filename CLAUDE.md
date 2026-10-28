@@ -10,7 +10,7 @@ certification at several facilities. Four ARTCCs, ten tools:
 | `ZMP/R90/r90-drill-deck.html` | R90 — Omaha TRACON | terminal, STARS | `RD` | skeleton + published-track player |
 | `ZAU/C90/c90-drill-deck.html` | C90 — Chicago TRACON | terminal | `DD` | skeleton + published-track player |
 | `ZAU/AZO/azo-drill-deck.html` | Great Lakes, West Wall | terminal | `DD` | skeleton + overflight player |
-| `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | skeleton |
+| `ZLC/S56/s56-drill-deck.html` | S56 — Salt Lake approach | terminal | `ZLC` | skeleton + published-track player |
 | `ZLC/Big Sky/bigsky-drill-deck.html` | Big Sky — BOI + BZN | terminal | `ZLC` | skeleton + published-track player |
 | `ZID/IND/ind-drill-deck.html` | IND — Indianapolis TRACON | terminal, STARS | `IND` | Tier 1 shell + published-track player |
 | `ZID/SDF/sdf-drill-deck.html` | SDF — Louisville TRACON | terminal, STARS | `SDF` | Tier 1 shell + published-track player |
@@ -163,7 +163,7 @@ ladder. That waives the gate below **for what CIFP itself publishes and nothing 
 clock, the published crossings and the published speeds. A drill may also schedule a special observation or landline calls: notices the author typed, fired once by the clock, never graded, and a configuration change does not re-plan a strip already flying. It adds no boundary, no sector owner,
 no handoff grading and no wind; `STANDING` stays `[]`; every check says *"reminder, not a
 judgement"*. Two masters carry it, `fly-block.html` and `drill-block.html`
-(`claude_Fly_Block_Reference.md`). *IND, SDF, CVG, R90, Big Sky and C90 today, and AZO for overflights only (CIFP codes no procedure at its fields); the rest are issue #76.*
+(`claude_Fly_Block_Reference.md`). *IND, SDF, CVG, R90, Big Sky, C90 and S56 today, and AZO for overflights only (CIFP codes no procedure at its fields); ZMP Center is the rest of issue #76.*
 
 **The jump from 1 to 2 is gated on geometry and on a first OJT session, in that order** — and
 neither is a coding task. See §7 and invariant 4. The player above does not make a deck Tier 2:
@@ -185,7 +185,7 @@ explicit ask.
 `strip-block.html` (the flight-strip row and the 50-strip ceiling on a drill, `claude_Strip_Block_Reference.md`),
 `fly-block.html` (the *Fly it* player: clock, scope, transmit box, feed, debrief, flying each strip along its
 published CIFP track) and `drill-block.html` (the *Set up a drill* builder: seeded generator, per-strip
-transition, saved drills, JSON) — both in `claude_Fly_Block_Reference.md`, 2026-10-27, **in the three ZID decks, R90, Big Sky, C90 and AZO only**,
+transition, saved drills, JSON) — both in `claude_Fly_Block_Reference.md`, 2026-10-27, **in the three ZID decks, R90, Big Sky, C90, AZO and S56 only**,
 `routedraw-block.html` (M98's *Routes drawn* bar — open procedure, all STARs, all SIDs, all SIDs + STARs,
 off — on a deck's plot, trimmed to the flow in force, `claude_RouteDraw_Block_Reference.md`, 2026-10-20) and
 `datis-block.html` (the D-ATIS reader that finds the flow and sets the frame,
