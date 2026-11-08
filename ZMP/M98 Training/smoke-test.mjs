@@ -687,51 +687,41 @@ try {
   assert('the release rule is 25 DME or leaving 11,000',
     globalThis.DD.DEP_RELEASE.dme === 25 && globalThis.DD.DEP_RELEASE.alt === 11000);
 
-  /* ============ 3a-b. Departure gates and scratchpad #1 — M98 7110.26A ============ */
-  /* A gate is the fix a departure exits M98 through, and several SIDs share one.
-     Scratchpad #1 is the gate letter plus the two-digit altitude in thousands. */
-  const GATES = globalThis.DD.DEP_GATES;
-  assert('eight departure gates', Object.keys(GATES).length === 8);
-  assert('the gate letters are the 7110.26A set',
-    Object.keys(GATES).sort().join() === 'A,B,D,E,F,N,O,R');
-  assert('the two dual-fix gates carry their alternate',
-    GATES.B.alt === 'DLH' && GATES.O.alt === 'FOD');
-  assert('every gate names a fix', Object.values(GATES).every(g => !!g.fix));
-
-  /* The 2026-10-29 set's gate letters are TABLED — owner, 2026-10-14: not known
-     yet. The retired set's (WLSTN E, COULT D, ZMBRO N, RST R, ORSKY and SCHEP O,
-     KBREW F, LEINY and SMERF none) were derived from bearings and confirmed on the
-     owner's chart; nothing here derives the new ones. */
+  /* ============ 3a-b. Scratchpad #1 codes — MSP-M98 LOA 5.b Table 1, eff. 2026-11-01 ============ */
+  /* M98 7110.26B 3-3 a(2): scratchpad #1 carries the THREE-LETTER code; the
+     one-letter gates and the B12 altitude form are gone. Table 1 prints fourteen
+     codes with no transition column; the transition mapping is the vZMP PBN
+     Phase II briefing's (p.23-24), and DUHCK's DUK is the briefing's alone. */
+  const GC = globalThis.DD.GATE_CODES;
   const SG = globalThis.DD.SID_GATE;
-  assert('every SID carries a gate record, keyed by SID rather than transition',
+  assert('fourteen codes are the LOA Table 1 set, plus DUK which is the briefing’s alone',
+    Object.keys(GC).filter(c => !GC[c].briefingOnly).sort().join() === 'BAB,BRO,GPR,KBR,MGL,PAG,PKE,PLW,PRR,SNU,TIK,TOT,TTZ,ZMB'
+    && Object.keys(GC).filter(c => GC[c].briefingOnly).join() === 'DUK' && GC.DUK.gate === null);
+  assert('every LOA code names its gate and the old one-letter gates are gone',
+    Object.keys(GC).filter(c => !GC[c].briefingOnly).every(c => /Gate$/.test(GC[c].gate))
+    && globalThis.DD.DEP_GATES === undefined && globalThis.DD.gateForSid === undefined);
+  assert('every SID carries a code record, keyed by SID rather than transition',
     Object.keys(SG).join() === Object.keys(globalThis.DD.SID_SET).join());
-  assert('and every gate is tabled — null, never derived',
-    Object.values(SG).every(g => g.gate === null && g.fix === null && g.tabled === true));
-  assert('so no departure gets a scratchpad gate, whatever its altitude',
-    Object.keys(globalThis.DD.DEPS).every(k => globalThis.DD.scratchpadFor(k, 11000) === null
-      && globalThis.DD.scratchpadFor(k) === null));
-  assert('a gate lookup reads the SID, not the transition',
-    globalThis.DD.gateForSid('BITEZ1.DKOTA') === null && SG.BITEZ1 !== undefined);
-
-  /* The scratchpad FORMS are still M98 7110.26A's and still tested — on a gate
-     record set up for the test and taken away again, so no SID is given one.
-     The order's example is B12; the old chart's was E11. */
-  {
-    const keep = SG.BITEZ1;
-    SG.BITEZ1 = {gate:'E', fix:'EAU'};
-    assert('form (a): gate letter and the two-digit altitude, zero-padded',
-      globalThis.DD.scratchpadFor('BITEZ1.DKOTA', 11000) === 'E11'
-      && globalThis.DD.scratchpadFor('BITEZ1.DKOTA', 9000) === 'E09');
-    /* With no altitude the order's form (b) applies — the THREE-LETTER gate. A
-       bare letter would be one character and CRC will not take it. */
-    assert('form (b): the three-letter gate with no altitude, never a bare letter',
-      globalThis.DD.scratchpadFor('BITEZ1.SMERF') === 'EAU');
-    assert('both forms are entries CRC can take',
-      globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor('BITEZ1.DKOTA', 11000))
-      && globalThis.DD.scratchpadValid(globalThis.DD.scratchpadFor('BITEZ1.DKOTA')));
-    SG.BITEZ1 = keep;
-  }
-  assert('and the record is tabled again afterwards', globalThis.DD.gateForSid('BITEZ1.DKOTA') === null);
+  assert('every transition of every SID has an entry, and each entry is a known code or null',
+    Object.keys(SG).every(s => Object.keys(globalThis.DD.SID_SET[s].trans).sort().join() === Object.keys(SG[s]).sort().join()
+      && Object.values(SG[s]).every(c => c === null || !!GC[c])));
+  assert('SNOWZ1.SMTHA has no code in either document — null, never derived',
+    SG.SNOWZ1.SMTHA === null && globalThis.DD.scratchpadFor('SNOWZ1.SMTHA') === null
+    && Object.keys(SG).every(s => Object.keys(SG[s]).filter(t => SG[s][t] === null).length === (s === 'SNOWZ1' ? 1 : 0)));
+  assert('the transitions take the codes the briefing and Table 1 pair them with',
+    [['BUNYN1.DLH','BAB'],['BUNYN1.KVUSI','GPR'],['NRTHN1.AROND','PRR'],['NRTHN1.TTOWN','PKE'],['SNUPE1.DLL','SNU'],
+     ['ZMBRO1.BRIBE','BRO'],['HTDSH1.BRIBE','ZMB'],['HTDSH1.ALO','TTZ'],['HTDSH1.ZZIPR','TTZ'],['TOTTZ1.FOOLS','TOT'],
+     ['SNOWZ1.ISTIQ','MGL'],['SNOWZ1.LLUKY','MGL'],['SNOWZ1.ZZEEE','PLW'],['SNOWZ1.DABOY','PLW'],
+     ['BITEZ1.SMERF','PAG'],['BITEZ1.DKOTA','TIK'],['BITEZ1.LEINY','TIK'],['KBREW1.KEETN','KBR'],['DUHCK1.STIER','DUK']]
+      .every(p => globalThis.DD.scratchpadFor(p[0]) === p[1]));
+  assert('a code lookup reads the SID and then the transition; a bare SID or the vector departure gets none',
+    globalThis.DD.scratchpadFor('BITEZ1') === null && globalThis.DD.scratchpadFor('MSP1.FAR') === null
+    && globalThis.DD.scratchpadFor('NOPE1.X') === null);
+  assert('the gate a code stands for comes from Table 1, and DUK has no LOA row',
+    globalThis.DD.gateNameFor('BITEZ1.DKOTA') === 'TICKK Gate' && globalThis.DD.gateNameFor('HTDSH1.BRIBE') === 'ZMBRO Gate'
+    && globalThis.DD.gateNameFor('DUHCK1.STIER') === null);
+  assert('every code is an entry CRC can take',
+    Object.keys(GC).every(c => globalThis.DD.scratchpadValid(c)));
   assert('scratchpadValid rejects a bare gate letter', !globalThis.DD.scratchpadValid('R'));
   assert('scratchpadValid rejects an over-long entry', !globalThis.DD.scratchpadValid('ABCDE'));
 
@@ -739,7 +729,7 @@ try {
      The deck carries the CIFP 261029 set EARLY (owner, 2026-10-14), so until the
      date the banner says the network is still on the retired set; from the date
      the set is simply current and the banner is gone. The note at the picker
-     stays either side, because the gates are tabled either side. */
+     stays either side, because the SID17 question is open either side. */
   const SC = globalThis.DD.SID_CHANGE;
   assert('the change carries its date, its cycle, its issue and its source',
     SC.effective === '2026-10-29' && SC.cycle === 'CIFP 261029' && SC.issue === 61 && /owner, 2026-10-14/.test(SC.src));
@@ -763,9 +753,9 @@ try {
     && ['COULT7', 'WLSTN7', 'ZMBRO7'].every(s => scEarly.includes(s)) && !scEarly.includes('HSTIN6'));
   assert('from the date there is no banner — the set is simply current',
     globalThis.DD.sidChangeHtml('2026-10-29') === '');
-  assert('the picker line says when, then just that the gates are tabled',
-    globalThis.DD.sidChangeShort('2026-10-28') === 'live on 2026-10-29 · gate letters not known yet'
-    && globalThis.DD.sidChangeShort('2026-10-29') === 'gate letters not known yet');
+  assert('the picker line says when, then where the scratchpad codes come from',
+    globalThis.DD.sidChangeShort('2026-10-28') === 'live on 2026-10-29 · scratchpad codes from MSP-M98 LOA Table 1'
+    && globalThis.DD.sidChangeShort('2026-10-29') === 'scratchpad codes from MSP-M98 LOA Table 1');
 
   /* The ILS category on the MSP runway records, ARINC 424 5.80. 0 is a
      localizer with NO glide slope — 4, 17 and 22 have no ILS, which the CIFP
@@ -863,7 +853,7 @@ try {
   {
     const q = globalThis.DD.SID17_OPEN;
     assert('the off-17 question names HTDSH1 as the owner’s expectation, says it is not a published rule, and says it is open',
-      typeof q === 'string' && q.includes('HTDSH1') && /owner/.test(q) && /not a published rule/.test(q) && /Open until the updated SOP and LOA/.test(q), q);
+      typeof q === 'string' && q.includes('HTDSH1') && /owner/.test(q) && /not a published rule/.test(q) && /Open until a document ranks them/.test(q) && q.includes("7110.26H 3-2-3"), q);
     assert('and the deck prefers neither SID — both are generated and offered',
       globalThis.DD.sidKeysAt('KMSP').some(k => k.startsWith('HTDSH1.')) && globalThis.DD.sidKeysAt('KMSP').some(k => k.startsWith('SNOWZ1.')));
   }
@@ -1022,16 +1012,16 @@ try {
   }
 
   /* ============ 3c-b2. The far-gate transfer of communications — issue #24 ====
-     M98 7110.26A 4-5b(1): a far-gate crossover is handed to the appropriate
+     M98 7110.26B 4-5d(1): a far-gate crossover is handed to the appropriate
      Feeder and communication transferred "as soon as practicable but not later
      than 15 NM from MSP". THE DATUM IS THE MSP DME, not the threshold — the
-     order names the same number again as a range ring in 4-5b(2). Graded
+     order names the same number again as a range ring in 4-5d(2). Graded
      against `posthandoff`, which already carries the 4.c release deadline of
      exactly this shape, so no standing item is invented (invariant 4). */
   {
     assert('the far-gate deadline is 15 NM from MSP, and it carries its paragraph',
       globalThis.DD.FARGATE_XFER.dme === 15
-      && globalThis.DD.FARGATE_XFER.src.indexOf('4-5b(1)') >= 0,
+      && globalThis.DD.FARGATE_XFER.src.indexOf('4-5d(1)') >= 0,
       JSON.stringify(globalThis.DD.FARGATE_XFER));
 
     /* WHICH CROSSOVER IS FAR IS A PROPERTY OF THE FLOW, NOT OF THE GATE. On a
@@ -1077,7 +1067,7 @@ try {
 
     let r = ringRun(a => { a.flashed = 'H'; a.switched = true; });
     assert('a far-gate crossover switched before the ring is graded good',
-      r.a.farChecked && /made 4-5b\(1\)/.test(r.said), r.said.slice(0, 160));
+      r.a.farChecked && /made 4-5d\(1\)/.test(r.said), r.said.slice(0, 160));
 
     r = ringRun(a => { a.flashed = 'H'; });
     assert('flashed but not switched at 15 NM is flagged, and says the flash does not stop the clock',
@@ -2555,14 +2545,15 @@ try {
     {
       const picked = {};
       for (let seed = 1; seed <= 40; seed++)
-        globalThis.ddb.gen({ seed: seed, focus: 'free', pressure: 'routine', count: 6, arrivals: 2, deps: 4 })
+        /* HTDSH1 is drawn only in a 30s/17 (MSP ATCT 7110.26H 3-2-3), so the sweep takes both */
+        globalThis.ddb.gen({ seed: seed, cfg: seed % 2 ? '30-17' : '12', focus: 'free', pressure: 'routine', count: 6, arrivals: 2, deps: 4 })
           .ac.filter(a => a.role === 'departure').forEach(a => { picked[globalThis.DD.sidOf(a.sid)] = 1; });
       assert('the generator draws on all nine SIDs, the two with a Runway 17 segment among them',
         Object.keys(picked).sort().join() === globalThis.DD.SID_FIELDS.KMSP.slice().sort().join(), Object.keys(picked).sort().join());
     }
-    /* HTDSH on a 30s/17 — vZMP PBN Phase II briefing p.12 and p.16. A briefing, not an
-       order: the generator follows it, the validator WARNS, nothing is refused, and every
-       other configuration is untouched. */
+    /* HTDSH on a 30s/17 — MSP ATCT 7110.26H 3-2-3 and MSP-M98 LOA 5.b Table 1 fn 1
+       (eff. 2026-11-01; the vZMP briefing said it first). The generator follows it, the
+       validator WARNS in both directions, nothing is refused. */
     {
       const D = globalThis.DD, dep = c => {
         const out = [];
@@ -2572,10 +2563,10 @@ try {
         }
         return out;
       };
-      assert('the 30-17 swap is data: ZMBRO1 and TOTTZ1 become HTDSH1, at MSP, citing the briefing pages',
+      assert('the 30-17 swap is data: ZMBRO1 and TOTTZ1 become HTDSH1, at MSP, citing the tower order and the LOA footnote',
         D.SID_SWAP['30-17'] && D.SID_SWAP['30-17'].to === 'HTDSH1' && D.SID_SWAP['30-17'].from.join() === 'ZMBRO1,TOTTZ1'
-        && D.SID_SWAP['30-17'].field === 'KMSP' && /p\.12 and p\.16/.test(D.SID_SWAP['30-17'].src)
-        && /not an order/.test(D.SID_SWAP['30-17'].src) && Object.keys(D.SID_SWAP).join() === '30-17',
+        && D.SID_SWAP['30-17'].field === 'KMSP' && /7110\.26H 3-2-3/.test(D.SID_SWAP['30-17'].src)
+        && /Table 1 footnote 1/.test(D.SID_SWAP['30-17'].src) && Object.keys(D.SID_SWAP).join() === '30-17',
         JSON.stringify(D.SID_SWAP));
       assert('sidSwapFor answers for the two SIDs at MSP in 30-17, by SID and not by transition, and for nothing else',
         !!D.sidSwapFor('30-17', 'ZMBRO1.BRIBE', 'KMSP') && !!D.sidSwapFor('30-17', 'TOTTZ1.FOOLS')
@@ -2593,8 +2584,8 @@ try {
                dep: 'KMSP', fromStart: 4, alt: 5000, ias: 250, route: '', sid: sid, depRwy: '30L' }] });
       const swapSays = v => v.warnings.filter(w => /HTDSH1/.test(w) && /30s\/17/.test(w));
       const a17 = sv('30-17', 'ZMBRO1.BRIBE'), b17 = sv('30-17', 'TOTTZ1.FOOLS');
-      assert('a ZMBRO1 or TOTTZ1 strip in 30-17 is warned, citing the briefing, and not refused',
-        swapSays(a17).length === 1 && swapSays(b17).length === 1 && /p\.12 and p\.16/.test(swapSays(a17)[0])
+      assert('a ZMBRO1 or TOTTZ1 strip in 30-17 is warned, citing the order, and not refused',
+        swapSays(a17).length === 1 && swapSays(b17).length === 1 && /7110.26H 3-2-3/.test(swapSays(a17)[0])
         && /Reminder, not a judgement/.test(swapSays(a17)[0])
         && !a17.errors.some(e => /HTDSH|swap/i.test(e)) && !b17.errors.some(e => /HTDSH|swap/i.test(e)),
         swapSays(a17).join(' | ') + ' || ' + a17.errors.join(' | '));
@@ -2606,9 +2597,23 @@ try {
           ac: [{ cs: 'DAL11', type: 'B738', role: 'departure', rules: 'IFR', radar: 'established',
                  dep: 'KSTP', fromStart: 4, alt: 5000, ias: 250, route: '', sid: 'ZMBRO1.BRIBE', depRwy: '14' }] })
           .warnings.filter(w => /flown as HTDSH1/.test(w)).length === 0);
-      assert('sidSwapNote reads for 30-17 and is empty elsewhere; SID17_OPEN now points at the briefing but keeps its caveats',
+      assert('the swap seen from the other side: sidSwapMisuse finds HTDSH1 at MSP outside 30-17 and nothing else',
+        !!D.sidSwapMisuse('12', 'HTDSH1.ALO', 'KMSP') && D.sidSwapMisuse('12', 'HTDSH1.ALO').cfg === '30-17'
+        && !D.sidSwapMisuse('30-17', 'HTDSH1.ALO', 'KMSP') && !D.sidSwapMisuse('12', 'ZMBRO1.BRIBE') && !D.sidSwapMisuse('12', 'SNOWZ1.ISTIQ')
+        && !D.sidSwapMisuse('12', 'HTDSH1.ALO', 'KSTP'));
+      const hmis = sv('12', 'HTDSH1.ALO'), hmis2 = sv('30', 'HTDSH1.BRIBE');
+      const hSays = v => v.warnings.filter(w => /HTDSH1 is assigned only in a 30s\/17/.test(w));
+      assert('HTDSH1 outside 30-17 is warned, citing the order, and not refused — the owner ruled it valid off every runway',
+        hSays(hmis).length === 1 && hSays(hmis2).length === 1 && /7110\.26H 3-2-3/.test(hSays(hmis)[0])
+        && /Reminder, not a judgement/.test(hSays(hmis)[0]) && !hmis.errors.some(e => /HTDSH/.test(e)),
+        hSays(hmis).join(' | ') + ' || ' + hmis.errors.join(' | '));
+      assert('and the generator draws HTDSH1 in 30-17 but never in a 12 configuration',
+        in3017.indexOf('HTDSH1') >= 0 && elsewhere.indexOf('HTDSH1') < 0, Array.from(new Set(elsewhere)).sort().join());
+      assert('the 30-17 configuration note carries the 2026-11-01 position: no always-Knock-It-Off line, Area F kept as written',
+        (c => c && !/are always Knock-It-Off/.test(c.note) && /HTDSH/.test(c.note) && /deleted from the ZMP-M98 LOA/.test(c.note))(globalThis.ddb.configById('30-17')));
+      assert('sidSwapNote reads for 30-17 and is empty elsewhere; SID17_OPEN now points at the order but keeps its caveats',
         /HTDSH1 replaces ZMBRO1 and TOTTZ1 at MSP/.test(D.sidSwapNote('30-17')) && D.sidSwapNote('12') === ''
-        && /briefing/.test(D.SID17_OPEN) && /not a published rule/.test(D.SID17_OPEN) && /Open until the updated SOP and LOA/.test(D.SID17_OPEN),
+        && /7110.26H/.test(D.SID17_OPEN) && /not a published rule/.test(D.SID17_OPEN) && /Open until a document ranks them/.test(D.SID17_OPEN),
         D.SID17_OPEN);
     }
     /* a stored drill naming a retired SID is not flown — and is not put on an arrival ladder */
@@ -3305,7 +3310,7 @@ try {
   }
 
   /* ============ 4c. Scripted landline events — issue #25 ============
-     Every catalogue entry is a paragraph of M98 7110.26A Chapter 3, and the
+     Every catalogue entry is a paragraph of M98 7110.26B Chapter 3, and the
      distinction the catalogue exists to teach is 3-2's own: a P-ACP is look
      and go and owes nothing back, a standard point-out is a request. Nothing
      here is graded against a standing item, and that is asserted rather than

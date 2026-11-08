@@ -1102,9 +1102,9 @@ function sidKeysAt(icao){
    groups, the first point is the field, no gate scratchpad for any key) are
    about coded SIDs.
 
-   MSP ATCT 7110.26G 3-2-4.b-c: a turbojet that files no SID gets the Minneapolis
+   MSP ATCT 7110.26H 3-2-3.b (7110.26G 3-2-4.b-c until 2026-10-31): a turbojet that files no SID gets the Minneapolis
    Nine Departure (MSP9, as the order writes it) or the current version, and one
-   unable a SID gets it to its first filed fix. 6-3-1.a.4: off runways 30L and 30R the tower assigns
+   unable a SID gets it to its first filed fix. MSP-M98 LOA 9.e (7110.26G 6-3-1.a.4 until 2026-10-31): off runways 30L and 30R the tower assigns
    headings that approximate the track listed for the initial fix — Fargo 320;
    Brainerd, Duluth, Hayward, Eau Claire or Green Bay 340; Dells 360.
 
@@ -1121,7 +1121,7 @@ function sidKeysAt(icao){
    judgement. */
 var MSP1 = {
  id:'MSP1', say:'Minneapolis One', rwys:['30L','30R'],
- src:'MSP ATCT 7110.26G 3-2-4.b-c and 6-3-1.a.4 (written MSP9 there); renamed by the vZMP PBN Phase II briefing p.3; not in CIFP 261029',
+ src:'MSP ATCT 7110.26H 3-2-3.b and MSP-M98 LOA 9.e (7110.26G 3-2-4.b-c and 6-3-1.a.4 until 2026-10-31, written MSP9 there); renamed by the vZMP PBN Phase II briefing p.3; not in CIFP 261029',
  fixes:{FAR:320, BRNRD:340, DLH:340, HYR:340, EAU:340, GRB:340, DLL:360}
 };
 var MSP1_DEPS = {};
@@ -1154,7 +1154,7 @@ function sidSpoken(key){
    learned before it is used. Until the effective date the network still files
    the retired set below, which this deck no longer carries (it last did in
    15cedb9). The banner says so on every page and comes down by itself on the
-   day; the note at the SID picker stays, because the gate letters are tabled
+   day; the note at the SID picker stays, because the SID17 question is open
    either side of the date. CIFP 261001, in force until then, codes the retired
    set identically to 260903. */
 var SID_CHANGE = {
@@ -1192,31 +1192,35 @@ function sidChangeHtml(day){
  var gone = c.retired.KMSP.filter(function(s){ return ['HSTIN6','MEDOW5','SLAYR4'].indexOf(s)<0; });
  return '<b>These are the SIDs from '+c.effective+'.</b> The deck flies MSP’s new set early, so it can be learned before it goes live — '
   +andList(sidsAtMsp())+' ('+c.cycle+'), and the satellites’ DUHCK1, which Anoka, Flying Cloud and St. Paul code and MSP does not. Until '+c.effective+' the network still files the old set, which the deck no longer carries: '+andList(gone)+'.'
-  +'<span class="dd-expiry-sub">KBREW and ZMBRO are new routes under old names. Gate letters for the new SIDs are not known yet, so a departure carries no scratchpad gate. This comes down by itself on '+c.effective+'. Issue #'+c.issue+'.</span>';
+  +'<span class="dd-expiry-sub">KBREW and ZMBRO are new routes under old names. The scratchpad #1 codes are the three letters in MSP-M98 LOA Table 1 (SMTHA has none). This comes down by itself on '+c.effective+'. Issue #'+c.issue+'.</span>';
 }
 /* An open question the deck shows rather than hides (root CLAUDE.md invariant 2).
    Owner, 2026-10-22: HTDSH1 and SNOWZ1 are both valid off Runway 17, and the
-   owner EXPECTS HTDSH1 to be the preferred one — a feeling, not a source. No
-   current document ranks them and the updated SOP and LOA for the 2026-10-29
-   set are not out, so it is recorded as open (claude_M98_MD_Gap_Analysis.md,
-   Part 6 item 7) and the deck prefers neither. Shown beside the SID picker on a
-   strip departing 17. */
-var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. Open until the updated SOP and LOA come out. (The vZMP briefing does say HTDSH1 replaces ZMBRO1 and TOTTZ1 in a 30s/17, and that SNOWZ1 replaces ORSKY and SCHEP — they serve different traffic.)';
-/* HTDSH on a 30s/17 — vZMP PBN Phase II briefing p.12 and p.16 (owner, 2026-10-28):
-   "ZMBRO and TOTTZ merge into a new SID on 30s/17" and "on a 30s/17 configuration
-   the ZMBRO and TOTTZ departures get swapped to a combined SID called HTDSH".
-   Carried as DATA keyed by configuration, so another swap is a row and not a
-   branch. WHAT IT COVERS: MSP only (CIFP 261029 codes HTDSH1 at MSP alone; the
-   satellites keep ZMBRO1 and TOTTZ1), every runway (the swap is by configuration,
-   and 30-17 departs 30L/R and 17), the SID and not its transition. WHAT IT DOES NOT
-   SAY, and the deck therefore does not assert: that HTDSH1 is wrong in any other
-   configuration (the owner ruled it valid off every runway, 2026-10-18); what the
-   swap does to TOTTZ1's FOOLS transition, which HTDSH1 does not carry in CIFP 261029.
-   It is a briefing, not an order — the SOP and LOA are not revised — so a strip that
-   disagrees is WARNED, never refused: reminder, not a judgement. */
+   owner EXPECTS HTDSH1 to be the preferred one — a feeling, not a source. The
+   2026-11-01 orders now speak to HTDSH (MSP ATCT 7110.26H 3-2-3: assign it on a
+   30/17, TOTTZ and ZMBRO in every other configuration; MSP-M98 LOA 5.b Table 1
+   fn 1) but rank neither it nor SNOWZ against the other off 17, so it stays open
+   (claude_M98_MD_Gap_Analysis.md, Part 6 item 7) and the deck prefers neither.
+   Shown beside the SID picker on a strip departing 17. */
+var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. Open until a document ranks them: MSP ATCT 7110.26H 3-2-3 lists both for 17 and says to assign HTDSH1 in a 30/17 and TOTTZ1 or ZMBRO1 in every other configuration, but does not rank HTDSH1 against SNOWZ1.';
+/* HTDSH on a 30s/17 — MSP ATCT 7110.26H 3-2-3 (asterisk) and MSP-M98 LOA 5.b
+   Table 1 footnote 1, effective 2026-11-01. The tower order: "Assign the HTDSH
+   departure, regardless of departure runway, when MSP is in a 30/17 configuration.
+   Assign TOTTZ/ZMBRO in all other configurations." The vZMP PBN Phase II briefing
+   said the same earlier (p.12 and p.16, owner, 2026-10-28). Carried as DATA keyed by
+   configuration, so another swap is a row and not a branch. WHAT IT COVERS: MSP
+   only (CIFP 261029 codes HTDSH1 at MSP alone; the satellites keep ZMBRO1 and
+   TOTTZ1), every runway (the swap is by configuration), the SID and not its
+   transition. CONFLICTS, named and not settled: the order's SID table lists HTDSH
+   for Runway 17 only and the LOA footnote says it is "only authorized for Runway 17
+   departures on a 30s/17" — while the asterisk says regardless of runway; and the
+   owner ruled HTDSH1 and SNOWZ1 valid off every runway (2026-10-18, on CIFP data,
+   before any order spoke to it). What the swap does to TOTTZ1's FOOLS transition is
+   unsaid: the order spells it FOOLZ and HTDSH carries no such transition. A strip
+   that disagrees is WARNED, never refused: reminder, not a judgement. */
 var SID_SWAP = {
  '30-17': { from:['ZMBRO1','TOTTZ1'], to:'HTDSH1', field:'KMSP',
-            src:'vZMP PBN Phase II briefing p.12 and p.16 — a briefing, not an order; the SOP and LOA are not revised' }
+            src:'MSP ATCT 7110.26H 3-2-3 and MSP-M98 LOA 5.b Table 1 footnote 1, effective 2026-11-01 — the order and the LOA disagree with each other on the runway, and with the owner’s 2026-10-18 ruling' }
 };
 function sidSwapFor(cfg, key, field){
  var s=SID_SWAP[cfg];
@@ -1227,15 +1231,26 @@ function sidSwapNote(cfg){
  var s=SID_SWAP[cfg];
  return s ? ('In this configuration '+s.to+' replaces '+s.from.join(' and ')+' at MSP ('+s.src+').') : '';
 }
+/* The swap seen from the other side: HTDSH1 at MSP outside the configuration the
+   order assigns it to. Returns the swap row and the configuration it belongs to,
+   or null. A warning, never a refusal — the owner ruled it valid off every runway
+   (2026-10-18) and the order and LOA disagree about the runway. */
+function sidSwapMisuse(cfg, key, field){
+ var c, s;
+ for(c in SID_SWAP){ s=SID_SWAP[c];
+  if((field||'KMSP')===s.field && sidOf(key)===s.to && cfg!==c) return {cfg:c, swap:s};
+ }
+ return null;
+}
 /* One short line for the place a SID is picked. */
 function sidChangeShort(day){
- return (sidChangeState(day)==='live' ? '' : ('live on '+SID_CHANGE.effective+' · ')) + 'gate letters not known yet';
+ return (sidChangeState(day)==='live' ? '' : ('live on '+SID_CHANGE.effective+' · ')) + 'scratchpad codes from MSP-M98 LOA Table 1';
 }
 
 /* ---------- The airports M98 works ----------
    Runway inventories, towers, and the numbers that go with them. Nothing here
    is inferred; each field traces to a reference file:
-     - MSP local positions and frequencies — MSP ATCT 7110.26G, table in
+     - MSP local positions and frequencies — MSP ATCT 7110.26H, table in
        claude_MSP_Tower_Reference.md.
      - The satellite towers' frequencies, IFR initial altitudes, standard
        departure headings and Class D ceilings — M98/Satellite ATCT LOA
@@ -1250,7 +1265,7 @@ function sidChangeShort(day){
    MSP's own reference point is the MSP VOR, which is the anchor every other
    position in this file is measured from. MSP initial departure altitudes are
    not a single number — they run off the filed altitude and the engine type
-   (MSP-M98 LOA 8.h) — so MSP deliberately carries no initAlt here. */
+   (MSP-M98 LOA 8.i, 8.h until 2026-10-31) — so MSP deliberately carries no initAlt here. */
 var AIRPORTS = {
  KMSP:{name:'Minneapolis-St. Paul', lat:MSP0.lat, lon:MSP0.lon,
        tower:'Minneapolis Tower', twrFrq:['123.95 North Local','126.7 South Local','123.675 West Local'],
@@ -1539,7 +1554,7 @@ function overflightRoute(entry, exit){
 /* M98 releases departures to ZMP at 25 NM from the MSP DME or leaving 11,000
    (ZMP-M98 LOA 4.c) — not a flat 40-mile ring. */
 var DEP_RELEASE = {dme:25, alt:11000};
-/* The far-gate crossover deadline — M98 7110.26A 4-5b(1) and (2), verbatim:
+/* The far-gate crossover deadline — M98 7110.26B 4-5d(1) and (2), verbatim:
    "Far Gate crossovers must be handed off to the appropriate Feeder Control
    position and communication transferred as soon as practicable but not later
    than 15 NM from MSP", and "the receiving controller has control for speed on
@@ -1555,9 +1570,9 @@ var DEP_RELEASE = {dme:25, alt:11000};
    that did not happen when it should have: the 4.c release check above is the
    same shape, and two more calls flag an aircraft that left the airspace still
    on frequency. No new standing item is invented for it (invariant 4). */
-var FARGATE_XFER = {dme:15, src:'M98 7110.26A 4-5b(1)'};
+var FARGATE_XFER = {dme:15, src:'M98 7110.26B 4-5d(1)'};
 
-/* ---------- Feeder north/south gate split — M98 7110.26A 4-4d ----------
+/* ---------- Feeder north/south gate split — M98 7110.26B 4-4d ----------
    Which gates belong to North Feeder and which to South, by configuration. The
    boundary is the Runway 30L/12R or 4/22 localizer as appropriate. The order
    also says individual gates may be reassigned between the Feeder positions to
@@ -1725,7 +1740,7 @@ function zmpSectorFor(brg){
  return null;
 }
 
-/* ---------- Charted obstructions — M98 7110.26A 8-1 ----------
+/* ---------- Charted obstructions — M98 7110.26B 8-1 ----------
    MSP radial/DME and top elevation. Arden Hills/Shoreview is the recurring MVA
    bust near the STP Runway 14 final and is drawn brighter than the rest. */
 var OBSTRUCTIONS = [
@@ -1741,6 +1756,10 @@ var OBSTRUCTIONS = [
 /* ---------- Departure Dispersal Area verticals — MSP-M98 LOA 5.a ----------
    The altitudes are published in prose. The lateral shape was not, until it
    was traced off the chart itself — see DDA_AREAS below. */
+/* The figures below are the 2026-03-31 LOA's prose (5.a(3)-(5)). The 2026-11-01 LOA
+   replaces that prose with "depicted in Attachment 4" — the sheets traced into
+   DDA_AREAS are byte-identical to March's — so these altitudes are carried forward
+   from the earlier edition and are not in the current text layer. */
 var DDA_VERTICALS = [
  {what:'Dispersal area itself',        lo:0,    hi:7000, src:'MSP-M98 LOA 5.a(3)'},
  {what:'FCM and MIC cutouts',          lo:3500, hi:7000, src:'MSP-M98 LOA 5.a(3)', note:'satellite owns below 3,500 inside the cutouts — the only legal under-path near those fields'},
@@ -1750,7 +1769,7 @@ var DDA_VERTICALS = [
 
 /* ---------- Departure Dispersal Area — the lateral shape ----------
    Traced 2026-08-31 from the chart itself. The area is drawn in MSP-M98 LOA
-   Attachment 1 and M98 7110.26A Appendix A, both page images with no text
+   Attachment 1 and M98 7110.26B Appendix A, both page images with no text
    layer, so the polygon was recovered from the pixels rather than read off
    prose. How, so the number can be argued with:
 
@@ -1773,7 +1792,7 @@ var DDA_VERTICALS = [
 var DDA_AREAS = {
  '12': {
   cfgs:['12','12-17'],
-  src:'MSP-M98 LOA Attachment 1 / M98 7110.26A Appendix A, sheet "RUNWAY 12/17" — traced, not published as coordinates',
+  src:'MSP-M98 LOA Attachment 1 / M98 7110.26B Appendix A, sheet "RUNWAY 12/17" — traced, not published as coordinates',
   arc:11.4,
   poly:[[74,6.40],[101,11.35],[111,11.40],[120,11.43],[130,11.43],[139,11.43],
         [148,11.43],[158,11.43],[173,11.43],[189,11.40],[199,11.40],[210,11.40],
@@ -1808,63 +1827,49 @@ function inDDA(e, n, cfg){
    its published track, which is what vectoring made possible. */
 function inM98(e, n){ return inPoly(e, n, rdPts(BOUNDARY)); }
 
-/* Where each departure gate ultimately runs, from the SID reference's gate
-   table. Used to finish a route string past the join fixes M98 works. */
-/* ---------- Departure gates — M98 7110.26A, scratchpad #1 ----------
-   A departure gate is the fix through which an aircraft exits M98 airspace, and
-   SEVERAL SIDs can share one. The gate is not decoration: it is what goes in
-   scratchpad #1 for APO automated coordination, as the gate's first letter
-   followed by the two-digit requested altitude in thousands, "if other than the
-   aircraft's present altitude". The order's own example is B12 — the BRD/DLH
-   gate, assigned 12,000. Scratchpad #1 may instead carry the three-letter gate,
-   or the arrival airport.
-
-   Eight letters, transcribed from M98 7110.26A and confirmed against the owner's
-   "M98 SIDS & Pointout Fix Indicators" chart (owner-supplied 2026-09-01), which
-   also carries the datablock example BMJ59 / E11 / BE85 / G and a 20 NM ring. */
-var DEP_GATES = {
- A:{fix:'ABR', name:'Aberdeen'},
- B:{fix:'BRD', name:'Brainerd', alt:'DLH'},
- D:{fix:'DLL', name:'Dells'},
- E:{fix:'EAU', name:'Eau Claire'},
- F:{fix:'FAR', name:'Fargo'},
- N:{fix:'ODI', name:'Nodine'},
- O:{fix:'ONL', name:'O’Neill', alt:'FOD'},
- R:{fix:'RST', name:'Rochester'}
+/* ---------- Departure scratchpad codes — MSP-M98 LOA 5.b Table 1, eff. 2026-11-01 ----------
+   The one-letter gates (E, R, D, F, N, A, B, O) and the "B12" letter-plus-altitude
+   form are gone: M98 7110.26B 3-3 a(2) puts the THREE-LETTER code in scratchpad #1
+   and a(3) puts the requested altitude in the assigned-altitude field. Until
+   2026-11-08 every SID's code was tabled here because no document printed one.
+   Table 1 prints fourteen codes and NO TRANSITION COLUMN. Which transition takes
+   which code is the vZMP PBN Phase II briefing's (p.23-24), which the table's gate
+   names corroborate — single-sourced for the transition, and said so wherever it
+   is shown. Two entries stay honest about what is missing: SNOWZ1.SMTHA has no
+   code in either document (null, not guessed), and DUHCK1 is the satellites'
+   SID, so its DUK is the briefing's alone — Table 1 has no row for it.
+   MSP1 (the vector departure) has no gate and no code. Keyed by SID, then by
+   transition: a lookup on 'BITEZ1.DKOTA' reads BITEZ1, then DKOTA.
+   Detail and the conflicts in claude_MSP_SID_Reference.md, "Gates". */
+var GATE_CODES = {
+ BAB:{gate:'BAYBB Gate'}, GPR:{gate:'GPERS Gate'}, PRR:{gate:'PRRCH Gate'},
+ PKE:{gate:'PIKKE Gate'}, SNU:{gate:'SNUPE Gate'}, BRO:{gate:'ZMBRO Gate'},
+ ZMB:{gate:'ZMBRO Gate'}, TTZ:{gate:'TOTTZ Gate'}, TOT:{gate:'TOTTZ Gate'},
+ MGL:{gate:'MOGLL Gate'}, PLW:{gate:'PLOWW Gate'}, PAG:{gate:'PAGOZ Gate'},
+ TIK:{gate:'TICKK Gate'}, KBR:{gate:'KBREW Gate'},
+ DUK:{gate:null, briefingOnly:true}
 };
-
-/* Which gate each SID exits through — TABLED, every one of them. The owner does
-   not have the 2026-10-29 set's gate letters yet (2026-10-14), so each entry is
-   null and scratchpadFor() returns nothing for a departure, which is what it has
-   always done for a SID with no gate. The retired set's letters were derived
-   from bearings and then CONFIRMED against the owner's "M98 SIDS & Pointout Fix
-   Indicators" chart; a bearing alone would be a guess, and the new set crosses
-   the boundary in new places. The letters come from that chart's revision or
-   from the owner. The gates themselves (DEP_GATES above) are the facility's and
-   do not change with the SIDs.
-
-   The retired mapping, for the record: WLSTN E · COULT D · ZMBRO N · RST R ·
-   ORSKY and SCHEP O · KBREW F · LEINY and SMERF none. Keyed by SID, not by
-   transition — a lookup takes 'BITEZ1.DKOTA' and reads BITEZ1. */
-var SID_GATE = {};
-Object.keys(SID_SET).forEach(function(s){ SID_GATE[s]={gate:null, fix:null, tabled:true}; });
-function gateForSid(sid){ var g=SID_GATE[sidOf(sid)]; return g?g.gate:null; }
-function gateFixFor(sid){ var g=SID_GATE[sidOf(sid)]; return g?g.fix:null; }
-/* Build the scratchpad #1 entry. 7110.26A gives three permitted forms:
-     (a) gate letter + two-digit requested altitude in thousands, "if other than
-         the aircraft's present altitude"  — B12
-     (b) the three-letter departure gate                          — BRD
-     (c) the arrival airport
-   A CRC scratchpad is 3 or 4 alphanumeric characters (claude_CRC_Platform_Reference.md),
-   so form (a) with no altitude would be a bare one-character letter and is NOT
-   enterable in the client. With no altitude we therefore return form (b), the
-   three-letter gate, which is both what the order permits and what CRC accepts.
-   Returns null where the SID has no gate letter, rather than inventing one. */
-function scratchpadFor(sid, altFt){
- var g=gateForSid(sid); if(!g) return null;
- if(altFt===null||altFt===undefined) return gateFixFor(sid);   /* form (b) */
- var th=Math.round(altFt/1000);
- return g + (th<10?'0':'') + th;                               /* form (a) */
+var SID_GATE = {
+ BITEZ1:{SMERF:'PAG', DKOTA:'TIK', LEINY:'TIK'},
+ BUNYN1:{DLH:'BAB', KVUSI:'GPR'},
+ DUHCK1:{LLUKY:'DUK', SBRNA:'DUK', STIER:'DUK'},
+ HTDSH1:{BRIBE:'ZMB', ALO:'TTZ', OANNA:'TTZ', OHHMY:'TTZ', ZZIPR:'TTZ'},
+ KBREW1:{KEETN:'KBR'},
+ NRTHN1:{AROND:'PRR', TTOWN:'PKE'},
+ SNOWZ1:{ISTIQ:'MGL', LLUKY:'MGL', ZZEEE:'PLW', DABOY:'PLW', SMTHA:null},
+ SNUPE1:{DLL:'SNU'},
+ TOTTZ1:{ALO:'TOT', FOOLS:'TOT', OANNA:'TOT', OHHMY:'TOT', ZZIPR:'TOT'},
+ ZMBRO1:{BRIBE:'BRO'}
+};
+/* The scratchpad #1 entry for a departure, or null where the document gives none
+   (SMTHA, MSP1, an unknown SID) rather than inventing one. */
+function scratchpadFor(sid){
+ var t=SID_GATE[sidOf(sid)]; if(!t) return null;
+ var c=t[transOf(sid)]; return c||null;
+}
+/* The gate that code stands for, as Table 1 names it; null for DUK (no LOA row). */
+function gateNameFor(sid){
+ var c=scratchpadFor(sid); return (c&&GATE_CODES[c])?GATE_CODES[c].gate:null;
 }
 /* Is a string enterable as a CRC scratchpad? 3-4 chars, alphanumeric plus + . * / and
    backtick. Used to keep any generated entry inside what the client can actually take. */
@@ -1883,7 +1888,7 @@ function scratchpadValid(s){
 function routeTextFor(o){
  var role=(o&&o.role)||'arrival';
  if(role==='departure'){
-  /* MSP1 "does not need to be amended into the route string" (7110.26G 3-2-4.b),
+  /* MSP1 "does not need to be amended into the route string" (MSP ATCT 7110.26H 3-2-3.b; 7110.26G 3-2-4.b to 2026-10-31),
      so a non-SID departure files from its first fix, the initial fix */
   if(isMsp1(o.sid) && MSP1_DEPS[o.sid]) return MSP1_DEPS[o.sid].msp1.fix;
   return depTrackFor(o.sid, o.depRwy, o.dep) ? String(o.sid) : '';
@@ -2589,14 +2594,14 @@ function tick(dt){
    }
   }
   /* Far-gate crossover: communication transferred not later than 15 NM from
-     MSP (4-5b(1)). The near-gate case is a different rule — 9,000 with a
+     MSP (4-5d(1)). The near-gate case is a different rule — 9,000 with a
      heading at the 25-mile ring — and is not graded here. */
   if(a.role==='arrival' && a.alive && !a.farChecked && a.rwy
      && crossoverFor(a.gate, a.rwy, ROUTE_CFG).type==='far' && dmeOf(a)<=FARGATE_XFER.dme){
    a.farChecked=true;
    var fr=receiverFor(a);
    if(a.switched){
-    log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> was with '+fr.name+' before the '+FARGATE_XFER.dme+' NM ring — the far-gate crossover made 4-5b(1).', 'posthandoff');
+    log('good','<span class="dd-chip good">good</span><b>'+a.cs+'</b> was with '+fr.name+' before the '+FARGATE_XFER.dme+' NM ring — the far-gate crossover made 4-5d(1).', 'posthandoff');
    } else if(a.flashed){
     log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> crossed '+FARGATE_XFER.dme+' NM from MSP flashed but not switched. A far-gate crossover wants communication transferred <b>not later than '+FARGATE_XFER.dme+' NM from MSP</b> ('+FARGATE_XFER.src+') — the flash alone does not stop the clock, and inside that ring '+fr.name+' has control for turns.', 'posthandoff');
    } else {
@@ -3008,13 +3013,13 @@ function transmit(){
      +' of the '+(apG.kind==='localizer'?('localizer, course '+apG.inbound.toFixed(1)):('final, course '+apG.inbound.toFixed(1)))
      +', intercepting at '+Math.round(ang)+'\u00b0.');
     /* SOP 4-7 best practice — intercept at less than 30 degrees when able. */
-    if(ang>=30) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is intercepting at <b>'+Math.round(ang)+'\u00b0</b>. M98 7110.26A 4-7 says intercept at <b>less than 30 degrees when able</b> \u2014 this is a best practice in the order, not an absolute, so it is a flag and not an error. Say why if it was deliberate.', 'turnon');
+    if(ang>=30) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is intercepting at <b>'+Math.round(ang)+'\u00b0</b>. M98 7110.26B 4-7 says intercept at <b>less than 30 degrees when able</b> \u2014 this is a best practice in the order, not an absolute, so it is a flag and not an error. Say why if it was deliberate.', 'turnon');
     /* SOP 4-8 noise — at or above 4,000 until intercepting the glidepath.
        The engine has no glidepath, so this reads the altitude at the clearance
        and says plainly that it is the weaker check. */
-    if(a.alt<4000) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is at '+fmtAlt(a.alt)+' on the turn-on. M98 7110.26A 4-8 vectors arrivals <b>at or above 4,000 ft MSL until intercepting the glidepath</b> unless the situation dictates otherwise. <i>Reminder, not a judgement</i> \u2014 the engine models no glidepath, so it cannot tell whether you had intercepted it.', 'turnon');
+    if(a.alt<4000) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is at '+fmtAlt(a.alt)+' on the turn-on. M98 7110.26B 4-8 vectors arrivals <b>at or above 4,000 ft MSL until intercepting the glidepath</b> unless the situation dictates otherwise. <i>Reminder, not a judgement</i> \u2014 the engine models no glidepath, so it cannot tell whether you had intercepted it.', 'turnon');
     /* 4-8 again: Runway 17 is not for arrivals from the north. */
-    if(apR==='17' && apOff.cross!==null && posOf(a).n>0) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is north of the field and cleared Runway 17. M98 7110.26A 4-8: <b>Runway 17 should not be used for arrivals from the north</b> except when weather or operations require.', 'turnon');
+    if(apR==='17' && apOff.cross!==null && posOf(a).n>0) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is north of the field and cleared Runway 17. M98 7110.26B 4-8: <b>Runway 17 should not be used for arrivals from the north</b> except when weather or operations require.', 'turnon');
     /* Already past the field. */
     if(apOff.along<=0) log('flag','<span class="dd-chip flag">flag</span><b>'+a.cs+'</b> is already past the '+apR+' threshold, so there is no final left to join on this heading.', 'turnon');
    }
@@ -3324,7 +3329,7 @@ function satOnlySidItems(){
    SNUPE1+ZMBRO1, TOTTZ1+ZMBRO1, DUHCK1+SNOWZ1, BITEZ1+KBREW1, BUNYN1+NRTHN1.
    Where two SIDs run on one leg they are drawn as parallel lines side by side
    (sidDrawGroups), not one over the other. The colour is a drawing aid. It is
-   NOT a gate (the gate letters are tabled) and NOT a ZMP sector (no
+   NOT a gate (the scratchpad codes are LOA Table 1's) and NOT a ZMP sector (no
    SID-to-sector table exists).
    The hues are an owner-approved exception to "no new accent colours", used on
    SID tracks, their labels and their key and nowhere else; green stays the
@@ -3570,7 +3575,7 @@ function scopeSvg(){
  /* The 25 DME release ring (ZMP-M98 LOA 4.c) is NOT drawn — owner, 2026-10-22:
     it is not needed. The release itself is still graded, and a departure's strip
     still counts down to it; only the circle is gone. */
- /* The 15 NM ring — the far-gate transfer deadline, 4-5b(1). Drawn only when
+ /* The 15 NM ring — the far-gate transfer deadline, 4-5d(1). Drawn only when
     there is a far-gate crossover airborne to measure against: a ring with
     nothing to measure is decoration. */
  if(LAYERS!=='off' && sim.ac.some(function(a){
@@ -3804,7 +3809,7 @@ function stripHtml(a){
   }
   /* A far-gate crossover carries a live countdown to the 15 NM ring, the way a
      departure carries one to the 25 DME release. It is the deadline the
-     crossover actually tests (4-5b(1)), so it belongs where the trainee is
+     crossover actually tests (4-5d(1)), so it belongs where the trainee is
      already reading the aircraft rather than only in the debrief. */
   var xo = a.rwy ? crossoverFor(a.gate, a.rwy, ROUTE_CFG) : {type:'none'};
   if(xo.type==='far'){
@@ -4120,15 +4125,15 @@ window.DD = {
  neighbourAt:neighbourAt, exitBearing:exitBearing,
  setRstOpen:setRstOpen, rstOpen:function(){ return RST_OPEN; },
  LAYER_MODES:LAYER_MODES, layers:function(){ return LAYERS; }, SID17_OPEN:SID17_OPEN,
- SID_SWAP:SID_SWAP, sidSwapFor:sidSwapFor, sidSwapNote:sidSwapNote,
+ SID_SWAP:SID_SWAP, sidSwapFor:sidSwapFor, sidSwapNote:sidSwapNote, sidSwapMisuse:sidSwapMisuse,
  directFixes:directFixes, directFixesHtml:directFixesHtml, directFixPoints:directFixPoints, directFixesSvg:directFixesSvg, directList:function(){ return DIRECT_LIST; }, DIRECT_LIMIT:DIRECT_LIMIT,
  overflightRoute:overflightRoute, rdToLatLon:rdToLatLon, finalize:finalize,
  sim:sim, mkAc:mkAc, trunkLenFor:trunkLenFor, pubSpeedAt:pubSpeedAt,
  FLOOR_BASIS:FLOOR_BASIS, sharedTail:sharedTail, MTOW:MTOW, wakeOf:wakeOf,
  sayDigits:sayDigits, altimIn:altimIn, simAltim:simAltim,
  routeTextFor:routeTextFor,
- DEP_GATES:DEP_GATES, SID_GATE:SID_GATE,
- gateForSid:gateForSid, gateFixFor:gateFixFor, scratchpadFor:scratchpadFor,
+ GATE_CODES:GATE_CODES, SID_GATE:SID_GATE,
+ gateNameFor:gateNameFor, scratchpadFor:scratchpadFor,
  scratchpadValid:scratchpadValid,
  fmtAlt:fmtAlt, clock:clock, log:log, render:render, renderFeed:renderFeed,
  logHtml:logHtml, px:px, pxRD:pxRD, nmOf:nmOf
@@ -4357,7 +4362,7 @@ var CONFIGS=[
  {id:'12',     name:'12 — land 12L/12R, depart 12L/12R', land:['12L','12R'], note:'SE flow; Mendota and Eagan corridor departures; STP shelf active'},
  {id:'12-17',  name:'12-17 — land 12L/12R, depart 12L/12R and 17', land:['12L','12R'], note:'Maximum runway 17 track 215 degrees; 3 miles in trail same fix'},
  {id:'30',     name:'30 — land 30L/30R, depart 30L/30R', land:['30L','30R'], note:'NW flow; dependent parallels; heavy jets to 30L'},
- {id:'30-17',  name:'30-17 — land 30L/30R, depart 30L/30R and 17', land:['30L','30R'], note:'NITZR and BLUEM are always Knock-It-Off in this one; Area F point-out to 6,000'},
+ {id:'30-17',  name:'30-17 — land 30L/30R, depart 30L/30R and 17', land:['30L','30R'], note:'HTDSH replaces ZMBRO and TOTTZ at MSP (7110.26H 3-2-3); NITZR and BLUEM no longer carry the always-Knock-It-Off line (deleted from the ZMP-M98 LOA 2026-11-01); Area F point-out to 6,000 (SOP 3-2 c)'},
  {id:'30-35',  name:'30-35 CRO — land 30L/30R and 35, depart 30L/30R', land:['30L','30R','35'], min:{ceil:2200, vis:5}, src:'MSP-M98 LOA 7.i', note:'CRDA ghost 30L to 35; matched and balanced sets'},
  {id:'17-22',  name:'17-22 CRO — land 17 and 22, depart 12R and 17', land:['17','22'], min:{ceil:1400, vis:4}, src:'SOP 7-1 / LOA 11', note:'LAHSO and CRDA; KKILR and WILDD arrivals prohibited'},
  {id:'4-35',   name:'4-35 — land 35, depart 4', land:['35'], note:'Land 35, depart 4 off the south intersection'},
@@ -4817,7 +4822,7 @@ function coverageFor(id){
    THE SEAT LETTER IS THE ONE THING THE SOURCES DO NOT AGREE ON, and it is
    named here rather than resolved (root CLAUDE.md §6). The LOA's parenthetical
    says MSP_R_APP and NO SUCH CALLSIGN EXISTS: vNAS has MSP_R_DEP — South
-   Departure, 124.700, which M98 7110.26A 2-1 gives as well — and it has
+   Departure, 124.700, which M98 7110.26B 2-1 gives as well — and it has
    MSP_E_APP/"Midnight" on 124.7. All three sources agree on the FREQUENCY;
    only which letter owns it overnight is unsettled. The tool takes E, because
    that is the record actually named "Midnight" and the only 124.7 record whose
@@ -5103,7 +5108,7 @@ function oldestOwed(){
    The SPECI showed the shape a scheduled event takes; this is the second of
    that family and it reuses the mechanism rather than inventing a new one.
 
-   EVERY ENTRY IS A PARAGRAPH OF M98 7110.26A CHAPTER 3, which is where the
+   EVERY ENTRY IS A PARAGRAPH OF M98 7110.26B CHAPTER 3, which is where the
    point-out rules actually live. Nothing here is invented phraseology, and the
    one case the order gates on a configuration is gated here too rather than
    fired in a flow the order does not authorise.
@@ -5136,7 +5141,7 @@ var LANDLINE = [
  {id:'pacp-arr-areaf', kind:'pacp', label:'P-ACP — Arrival descending to 6,000 in Area F',
   from:['N','S'], src:'SOP 3-2', cfg:['30-17'],
   say:function(o){ return o.fromName+' point-out: "'+o.cs+', descending to six thousand in Area F."'; },
-  why:'SOP 3-2 authorizes this one on a 30/17 configuration ONLY, and adds that Departure and Satellite must tell Arrival about any non-STARS-tracked target in Area F. The catalogue gates it on the configuration rather than offering it in a flow the order does not name.'},
+  why:'SOP 3-2 authorizes this one on a 30/17 configuration ONLY, and adds that Departure and Satellite must tell Arrival about any non-STARS-tracked target in Area F. The catalogue gates it on the configuration rather than offering it in a flow the order does not name. As written in 7110.26B: 3-2 c is unchanged, but 4-2 g, which defined Area F, and its Appendix A diagrams were deleted, and the vZMP PBN Phase II briefing p.22 calls Area F eliminated. Kept, not corrected.'},
  {id:'pointout', kind:'pointout', label:'Standard point-out — approval owed',
   from:['D','R','L','I','H','N','S','E','G','K'], src:'SOP 3-2',
   say:function(o){ return o.fromName+': "point out, '+o.cs+'."'; },
@@ -5719,9 +5724,11 @@ function gen(o){
   do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
   used[dcs]=1;
   var dsid=pick(rnd,SIDS_GEN);
-  /* in a 30s/17 ZMBRO1 and TOTTZ1 are HTDSH1 (briefing p.16): draw again rather than
-     rewrite the pick, so every other configuration's seed builds the drill it always did */
-  for(var swapTry=0; swapTry<50 && DD.sidSwapFor(o.cfg, dsid, 'KMSP'); swapTry++) dsid=pick(rnd,SIDS_GEN);
+  /* in a 30s/17 ZMBRO1 and TOTTZ1 are HTDSH1, and HTDSH1 is assigned in no other
+     configuration (MSP ATCT 7110.26H 3-2-3): draw again rather than rewrite the
+     pick, so every other configuration's seed builds the drill it always did
+     unless it drew HTDSH1 */
+  for(var swapTry=0; swapTry<50 && (DD.sidSwapFor(o.cfg, dsid, 'KMSP') || DD.sidSwapMisuse(o.cfg, dsid, 'KMSP')); swapTry++) dsid=pick(rnd,SIDS_GEN);
   ac.push({cs:dcs, type:ftd.t, role:'departure', rules:'IFR', radar:'established', from:'MSP tower', sid:dsid,
            route:DD.routeTextFor({role:'departure', sid:dsid}),
            fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
@@ -5789,13 +5796,16 @@ function validate(rec){
       SNOWZ1, which are valid off every runway (owner, 2026-10-18); off a
       satellite, that field's own track (issue #67) */
    var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
-   /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP (briefing p.16) — a reminder, not a refusal */
+   /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP, and HTDSH1 is assigned in no other
+      configuration (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b Table 1 fn 1) — a reminder, not a refusal */
    var swp=DD.sidSwapFor(rec.cfg, a.sid, dFld);
    if(swp) warns.push(tag+': '+DD.sidOf(a.sid)+' is flown as '+swp.to+' in a 30s/17 — '+swp.src+'. Reminder, not a judgement.');
+   var swm=DD.sidSwapMisuse(rec.cfg, a.sid, dFld);
+   if(swm) warns.push(tag+': '+DD.sidOf(a.sid)+' is assigned only in a 30s/17 at MSP — '+swm.swap.src+'. This strip is in a '+rec.cfg+'. Reminder, not a judgement.');
    if(!dTrk){
     /* MSP1 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
     if(DD.isMsp1(a.sid))
-     errs.push(tag+': '+a.sid+(dFld!=='KMSP' ? ' is MSP’s departure, not '+dName+'’s' : ' is not a Minneapolis One initial fix this deck carries ('+Object.keys(DD.MSP1.fixes).join(', ')+')')+' (MSP ATCT 7110.26G 6-3-1.a.4).');
+     errs.push(tag+': '+a.sid+(dFld!=='KMSP' ? ' is MSP’s departure, not '+dName+'’s' : ' is not a Minneapolis One initial fix this deck carries ('+Object.keys(DD.MSP1.fixes).join(', ')+')')+' (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31).');
     /* a strip saved before 2026-10-14 names the retired set, and says so */
     else if(DD.sidRetired(a.sid))
      errs.push(tag+': '+a.sid+' went with the SID set that ends on '+DD.SID_CHANGE.effective+'. This deck flies the '+DD.SID_CHANGE.cycle+' set — '+DD.sidsCarried().join(', ')+' — so pick one of those and its transition (issue #'+DD.SID_CHANGE.issue+').'+DD.sidRetiredNote(a.sid));
@@ -5811,13 +5821,13 @@ function validate(rec){
    else {
     var dt=dTrk.total;
     /* MSP1 is the order's 30L/30R turbojet dispersal departure; the order gives it
-       to no other runway, and says turbojets (7110.26G 3-2-4.b, 6-3-1.a.4) */
+       to no other runway, and says turbojets (MSP ATCT 7110.26H 3-2-3.b, MSP-M98 LOA 9.e; 7110.26G 3-2-4.b, 6-3-1.a.4 to 2026-10-31) */
     if(DD.isMsp1(a.sid)){
      var rw9=String(a.depRwy||'').toUpperCase();
      if(rw9 && DD.MSP1.rwys.indexOf(rw9)<0)
-      errs.push(tag+': '+a.sid+' is the Minneapolis One departure, which the order gives to runways '+DD.MSP1.rwys.join(' and ')+' only (MSP ATCT 7110.26G 6-3-1.a.4), and '+rw9+' is not one. Pick a SID, or runway 30L or 30R.');
-     else if(!rw9) warns.push(tag+': no runway stated. The order gives MSP1 to 30L and 30R only (7110.26G 6-3-1.a.4); state one.');
-     if((a.engine||'jet')!=='jet') warns.push(tag+': MSP1 is a turbojet departure (7110.26G 3-2-4.b, 6-3-1.a), and this strip is a '+a.engine+'.');
+      errs.push(tag+': '+a.sid+' is the Minneapolis One departure, which the order gives to runways '+DD.MSP1.rwys.join(' and ')+' only (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31), and '+rw9+' is not one. Pick a SID, or runway 30L or 30R.');
+     else if(!rw9) warns.push(tag+': no runway stated. The order gives MSP1 to 30L and 30R only (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31); state one.');
+     if((a.engine||'jet')!=='jet') warns.push(tag+': MSP1 is a turbojet departure (MSP ATCT 7110.26H 3-2-3.b; 7110.26G 3-2-4.b to 2026-10-31), and this strip is a '+a.engine+'.');
     }
     /* the join limit and the release are both measured from the MSP DME, which
        is the same number as the distance along the track only where the track
@@ -6053,7 +6063,7 @@ function validate(rec){
    if(t2 && t2 !== a.trans){
     var xk = DD.crossoverFor(a.gate, a.trans, rec.cfg);
     var how = xk.type==='far'
-      ? 'As a crossover that is the far-gate case: handed to the appropriate Feeder, communication transferred not later than 15 NM from MSP, and inside that ring they have control for turns (SOP 4-5b(1)-(2)).'
+      ? 'As a crossover that is the far-gate case: handed to the appropriate Feeder, communication transferred not later than 15 NM from MSP, and inside that ring they have control for turns (SOP 4-5d(1)-(2)).'
       : (xk.type==='near'
          ? 'As a crossover that is the near-gate case: 9,000 with a heading aimed at the 25-mile ring, or straight to the Arrival whose airspace it enters first on an OPD (SOP 4-5a).'
          : (xk.note ? ('And '+xk.note+'.') : 'It does not count as a crossover here, so no 4-5 coordination attaches to it.'));
@@ -6404,7 +6414,7 @@ function rowContext(a){
   if(!dr) return '';
   if(DD.isMsp1(a.sid) && DD.MSP1_DEPS[a.sid]){
    var m9=DD.MSP1_DEPS[a.sid].msp1;
-   return DD.MSP1.id+' · initial fix '+m9.fix+', tower assigns headings that approximate a '+m9.trk+' track (7110.26G 6-3-1.a.4) · stand-in line mapped '+dr.total.toFixed(1)+' NM, the turn toward '+m9.fix+' is not published · starts '+a.fromStart+' NM out · release at '
+   return DD.MSP1.id+' · initial fix '+m9.fix+', tower assigns headings that approximate a '+m9.trk+' track (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31) · stand-in line mapped '+dr.total.toFixed(1)+' NM, the turn toward '+m9.fix+' is not published · starts '+a.fromStart+' NM out · release at '
    +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
   }
   return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out'+((a.dep||'KMSP')==='KMSP'?'':(' of '+a.dep.replace(/^K/,'')))+' · released to Center by '
@@ -6532,7 +6542,7 @@ function acRowHtml(a,i){
        keys.forEach(function(k){ var s=DD.sidOf(k); if(sids.indexOf(s)<0) sids.push(s); });
        /* MSP1 is offered at MSP after the coded SIDs, in a group of its own, and says
           what it is: a non-SID turbojet departure, 30L and 30R, flown on the order's
-          initial track (7110.26G 6-3-1.a.4). It is not a coded SID. */
+          initial track (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31). It is not a coded SID. */
        var msp1=(dep==='KMSP') ? Object.keys(DD.MSP1_DEPS).map(function(k){
            var t=DD.MSP1_DEPS[k].msp1;
            return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+DD.MSP1.id+' · '+t.fix+' · track '+t.trk+'</option>';
@@ -7548,7 +7558,7 @@ function buildHtml(){
  +'<div class="dd-sub" style="margin-top:16px;">Landline events — the other side of the operation</div>'
  +'<div id="ddb-events"></div>'
  +'<div class="dd-actions"><button class="dd-btn" onclick="ddbAddEvent()">add a landline event</button></div>'
- +'<div class="dd-hint">Every entry is a paragraph of <b>M98 7110.26A Chapter 3</b>, and the distinction it exists to teach is 3-2&rsquo;s own: a <b>P-ACP</b> is <i>look and go</i>, authorized only within M98 airspace, so it is a statement and nothing is owed back — while a <b>standard point-out</b> is what you use where a P-ACP is impracticable, and it is a request that wants an answer. Knowing which one just rang is the drill. Answer an open one by typing <b>approved</b>, or refuse it with <b>unable</b>. <b>Content is not graded</b>: none of the five standing items covers landline work, and one is not invented for it — what is measured is how long you took, kept separate from the aircraft response-time median because it is a different measurement. One call at a time.</div>'
+ +'<div class="dd-hint">Every entry is a paragraph of <b>M98 7110.26B Chapter 3</b>, and the distinction it exists to teach is 3-2&rsquo;s own: a <b>P-ACP</b> is <i>look and go</i>, authorized only within M98 airspace, so it is a statement and nothing is owed back — while a <b>standard point-out</b> is what you use where a P-ACP is impracticable, and it is a request that wants an answer. Knowing which one just rang is the drill. Answer an open one by typing <b>approved</b>, or refuse it with <b>unable</b>. <b>Content is not graded</b>: none of the five standing items covers landline work, and one is not invented for it — what is measured is how long you took, kept separate from the aircraft response-time median because it is a different measurement. One call at a time.</div>'
  +'<div class="dd-field" style="margin-top:14px;"><span class="dd-lab">Brief — what the drill is asking of you</span><textarea class="dd-ta" id="ddb-brief"></textarea></div>'
  +'<div class="dd-sub" style="margin-top:16px;">Strips</div>'
  +'<div id="ddb-rows"></div>'

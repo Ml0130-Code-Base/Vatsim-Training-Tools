@@ -216,7 +216,7 @@ var CONFIGS=[
  {id:'12',     name:'12 — land 12L/12R, depart 12L/12R', land:['12L','12R'], note:'SE flow; Mendota and Eagan corridor departures; STP shelf active'},
  {id:'12-17',  name:'12-17 — land 12L/12R, depart 12L/12R and 17', land:['12L','12R'], note:'Maximum runway 17 track 215 degrees; 3 miles in trail same fix'},
  {id:'30',     name:'30 — land 30L/30R, depart 30L/30R', land:['30L','30R'], note:'NW flow; dependent parallels; heavy jets to 30L'},
- {id:'30-17',  name:'30-17 — land 30L/30R, depart 30L/30R and 17', land:['30L','30R'], note:'NITZR and BLUEM are always Knock-It-Off in this one; Area F point-out to 6,000'},
+ {id:'30-17',  name:'30-17 — land 30L/30R, depart 30L/30R and 17', land:['30L','30R'], note:'HTDSH replaces ZMBRO and TOTTZ at MSP (7110.26H 3-2-3); NITZR and BLUEM no longer carry the always-Knock-It-Off line (deleted from the ZMP-M98 LOA 2026-11-01); Area F point-out to 6,000 (SOP 3-2 c)'},
  {id:'30-35',  name:'30-35 CRO — land 30L/30R and 35, depart 30L/30R', land:['30L','30R','35'], min:{ceil:2200, vis:5}, src:'MSP-M98 LOA 7.i', note:'CRDA ghost 30L to 35; matched and balanced sets'},
  {id:'17-22',  name:'17-22 CRO — land 17 and 22, depart 12R and 17', land:['17','22'], min:{ceil:1400, vis:4}, src:'SOP 7-1 / LOA 11', note:'LAHSO and CRDA; KKILR and WILDD arrivals prohibited'},
  {id:'4-35',   name:'4-35 — land 35, depart 4', land:['35'], note:'Land 35, depart 4 off the south intersection'},
@@ -676,7 +676,7 @@ function coverageFor(id){
    THE SEAT LETTER IS THE ONE THING THE SOURCES DO NOT AGREE ON, and it is
    named here rather than resolved (root CLAUDE.md §6). The LOA's parenthetical
    says MSP_R_APP and NO SUCH CALLSIGN EXISTS: vNAS has MSP_R_DEP — South
-   Departure, 124.700, which M98 7110.26A 2-1 gives as well — and it has
+   Departure, 124.700, which M98 7110.26B 2-1 gives as well — and it has
    MSP_E_APP/"Midnight" on 124.7. All three sources agree on the FREQUENCY;
    only which letter owns it overnight is unsettled. The tool takes E, because
    that is the record actually named "Midnight" and the only 124.7 record whose
@@ -962,7 +962,7 @@ function oldestOwed(){
    The SPECI showed the shape a scheduled event takes; this is the second of
    that family and it reuses the mechanism rather than inventing a new one.
 
-   EVERY ENTRY IS A PARAGRAPH OF M98 7110.26A CHAPTER 3, which is where the
+   EVERY ENTRY IS A PARAGRAPH OF M98 7110.26B CHAPTER 3, which is where the
    point-out rules actually live. Nothing here is invented phraseology, and the
    one case the order gates on a configuration is gated here too rather than
    fired in a flow the order does not authorise.
@@ -995,7 +995,7 @@ var LANDLINE = [
  {id:'pacp-arr-areaf', kind:'pacp', label:'P-ACP — Arrival descending to 6,000 in Area F',
   from:['N','S'], src:'SOP 3-2', cfg:['30-17'],
   say:function(o){ return o.fromName+' point-out: "'+o.cs+', descending to six thousand in Area F."'; },
-  why:'SOP 3-2 authorizes this one on a 30/17 configuration ONLY, and adds that Departure and Satellite must tell Arrival about any non-STARS-tracked target in Area F. The catalogue gates it on the configuration rather than offering it in a flow the order does not name.'},
+  why:'SOP 3-2 authorizes this one on a 30/17 configuration ONLY, and adds that Departure and Satellite must tell Arrival about any non-STARS-tracked target in Area F. The catalogue gates it on the configuration rather than offering it in a flow the order does not name. As written in 7110.26B: 3-2 c is unchanged, but 4-2 g, which defined Area F, and its Appendix A diagrams were deleted, and the vZMP PBN Phase II briefing p.22 calls Area F eliminated. Kept, not corrected.'},
  {id:'pointout', kind:'pointout', label:'Standard point-out — approval owed',
   from:['D','R','L','I','H','N','S','E','G','K'], src:'SOP 3-2',
   say:function(o){ return o.fromName+': "point out, '+o.cs+'."'; },
@@ -1578,9 +1578,11 @@ function gen(o){
   do{ dcs=ftd.c+ri(rnd,120,2980); }while(used[dcs]);
   used[dcs]=1;
   var dsid=pick(rnd,SIDS_GEN);
-  /* in a 30s/17 ZMBRO1 and TOTTZ1 are HTDSH1 (briefing p.16): draw again rather than
-     rewrite the pick, so every other configuration's seed builds the drill it always did */
-  for(var swapTry=0; swapTry<50 && DD.sidSwapFor(o.cfg, dsid, 'KMSP'); swapTry++) dsid=pick(rnd,SIDS_GEN);
+  /* in a 30s/17 ZMBRO1 and TOTTZ1 are HTDSH1, and HTDSH1 is assigned in no other
+     configuration (MSP ATCT 7110.26H 3-2-3): draw again rather than rewrite the
+     pick, so every other configuration's seed builds the drill it always did
+     unless it drew HTDSH1 */
+  for(var swapTry=0; swapTry<50 && (DD.sidSwapFor(o.cfg, dsid, 'KMSP') || DD.sidSwapMisuse(o.cfg, dsid, 'KMSP')); swapTry++) dsid=pick(rnd,SIDS_GEN);
   ac.push({cs:dcs, type:ftd.t, role:'departure', rules:'IFR', radar:'established', from:'MSP tower', sid:dsid,
            route:DD.routeTextFor({role:'departure', sid:dsid}),
            fromStart:ri(rnd,2,7), alt:ri(rnd,40,60)*100, ias:250,
@@ -1648,13 +1650,16 @@ function validate(rec){
       SNOWZ1, which are valid off every runway (owner, 2026-10-18); off a
       satellite, that field's own track (issue #67) */
    var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
-   /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP (briefing p.16) — a reminder, not a refusal */
+   /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP, and HTDSH1 is assigned in no other
+      configuration (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b Table 1 fn 1) — a reminder, not a refusal */
    var swp=DD.sidSwapFor(rec.cfg, a.sid, dFld);
    if(swp) warns.push(tag+': '+DD.sidOf(a.sid)+' is flown as '+swp.to+' in a 30s/17 — '+swp.src+'. Reminder, not a judgement.');
+   var swm=DD.sidSwapMisuse(rec.cfg, a.sid, dFld);
+   if(swm) warns.push(tag+': '+DD.sidOf(a.sid)+' is assigned only in a 30s/17 at MSP — '+swm.swap.src+'. This strip is in a '+rec.cfg+'. Reminder, not a judgement.');
    if(!dTrk){
     /* MSP1 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
     if(DD.isMsp1(a.sid))
-     errs.push(tag+': '+a.sid+(dFld!=='KMSP' ? ' is MSP’s departure, not '+dName+'’s' : ' is not a Minneapolis One initial fix this deck carries ('+Object.keys(DD.MSP1.fixes).join(', ')+')')+' (MSP ATCT 7110.26G 6-3-1.a.4).');
+     errs.push(tag+': '+a.sid+(dFld!=='KMSP' ? ' is MSP’s departure, not '+dName+'’s' : ' is not a Minneapolis One initial fix this deck carries ('+Object.keys(DD.MSP1.fixes).join(', ')+')')+' (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31).');
     /* a strip saved before 2026-10-14 names the retired set, and says so */
     else if(DD.sidRetired(a.sid))
      errs.push(tag+': '+a.sid+' went with the SID set that ends on '+DD.SID_CHANGE.effective+'. This deck flies the '+DD.SID_CHANGE.cycle+' set — '+DD.sidsCarried().join(', ')+' — so pick one of those and its transition (issue #'+DD.SID_CHANGE.issue+').'+DD.sidRetiredNote(a.sid));
@@ -1670,13 +1675,13 @@ function validate(rec){
    else {
     var dt=dTrk.total;
     /* MSP1 is the order's 30L/30R turbojet dispersal departure; the order gives it
-       to no other runway, and says turbojets (7110.26G 3-2-4.b, 6-3-1.a.4) */
+       to no other runway, and says turbojets (MSP ATCT 7110.26H 3-2-3.b, MSP-M98 LOA 9.e; 7110.26G 3-2-4.b, 6-3-1.a.4 to 2026-10-31) */
     if(DD.isMsp1(a.sid)){
      var rw9=String(a.depRwy||'').toUpperCase();
      if(rw9 && DD.MSP1.rwys.indexOf(rw9)<0)
-      errs.push(tag+': '+a.sid+' is the Minneapolis One departure, which the order gives to runways '+DD.MSP1.rwys.join(' and ')+' only (MSP ATCT 7110.26G 6-3-1.a.4), and '+rw9+' is not one. Pick a SID, or runway 30L or 30R.');
-     else if(!rw9) warns.push(tag+': no runway stated. The order gives MSP1 to 30L and 30R only (7110.26G 6-3-1.a.4); state one.');
-     if((a.engine||'jet')!=='jet') warns.push(tag+': MSP1 is a turbojet departure (7110.26G 3-2-4.b, 6-3-1.a), and this strip is a '+a.engine+'.');
+      errs.push(tag+': '+a.sid+' is the Minneapolis One departure, which the order gives to runways '+DD.MSP1.rwys.join(' and ')+' only (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31), and '+rw9+' is not one. Pick a SID, or runway 30L or 30R.');
+     else if(!rw9) warns.push(tag+': no runway stated. The order gives MSP1 to 30L and 30R only (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31); state one.');
+     if((a.engine||'jet')!=='jet') warns.push(tag+': MSP1 is a turbojet departure (MSP ATCT 7110.26H 3-2-3.b; 7110.26G 3-2-4.b to 2026-10-31), and this strip is a '+a.engine+'.');
     }
     /* the join limit and the release are both measured from the MSP DME, which
        is the same number as the distance along the track only where the track
@@ -1912,7 +1917,7 @@ function validate(rec){
    if(t2 && t2 !== a.trans){
     var xk = DD.crossoverFor(a.gate, a.trans, rec.cfg);
     var how = xk.type==='far'
-      ? 'As a crossover that is the far-gate case: handed to the appropriate Feeder, communication transferred not later than 15 NM from MSP, and inside that ring they have control for turns (SOP 4-5b(1)-(2)).'
+      ? 'As a crossover that is the far-gate case: handed to the appropriate Feeder, communication transferred not later than 15 NM from MSP, and inside that ring they have control for turns (SOP 4-5d(1)-(2)).'
       : (xk.type==='near'
          ? 'As a crossover that is the near-gate case: 9,000 with a heading aimed at the 25-mile ring, or straight to the Arrival whose airspace it enters first on an OPD (SOP 4-5a).'
          : (xk.note ? ('And '+xk.note+'.') : 'It does not count as a crossover here, so no 4-5 coordination attaches to it.'));
@@ -2263,7 +2268,7 @@ function rowContext(a){
   if(!dr) return '';
   if(DD.isMsp1(a.sid) && DD.MSP1_DEPS[a.sid]){
    var m9=DD.MSP1_DEPS[a.sid].msp1;
-   return DD.MSP1.id+' · initial fix '+m9.fix+', tower assigns headings that approximate a '+m9.trk+' track (7110.26G 6-3-1.a.4) · stand-in line mapped '+dr.total.toFixed(1)+' NM, the turn toward '+m9.fix+' is not published · starts '+a.fromStart+' NM out · release at '
+   return DD.MSP1.id+' · initial fix '+m9.fix+', tower assigns headings that approximate a '+m9.trk+' track (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31) · stand-in line mapped '+dr.total.toFixed(1)+' NM, the turn toward '+m9.fix+' is not published · starts '+a.fromStart+' NM out · release at '
    +DD.DEP_RELEASE.dme+' DME or leaving '+DD.fmtAlt(DD.DEP_RELEASE.alt)+' (ZMP-M98 LOA 4.c)';
   }
   return a.sid+' · first fix '+dr[1].f+(dr[1].climbAA?(' at or above '+DD.fmtAlt(dr[1].climbAA)):'')+' · track mapped '+dr.total.toFixed(1)+' NM · starts '+a.fromStart+' NM out'+((a.dep||'KMSP')==='KMSP'?'':(' of '+a.dep.replace(/^K/,'')))+' · released to Center by '
@@ -2391,7 +2396,7 @@ function acRowHtml(a,i){
        keys.forEach(function(k){ var s=DD.sidOf(k); if(sids.indexOf(s)<0) sids.push(s); });
        /* MSP1 is offered at MSP after the coded SIDs, in a group of its own, and says
           what it is: a non-SID turbojet departure, 30L and 30R, flown on the order's
-          initial track (7110.26G 6-3-1.a.4). It is not a coded SID. */
+          initial track (MSP-M98 LOA 9.e; 7110.26G 6-3-1.a.4 to 2026-10-31). It is not a coded SID. */
        var msp1=(dep==='KMSP') ? Object.keys(DD.MSP1_DEPS).map(function(k){
            var t=DD.MSP1_DEPS[k].msp1;
            return '<option value="'+k+'"'+(k===a.sid?' selected':'')+'>'+DD.MSP1.id+' · '+t.fix+' · track '+t.trk+'</option>';
@@ -3407,7 +3412,7 @@ function buildHtml(){
  +'<div class="dd-sub" style="margin-top:16px;">Landline events — the other side of the operation</div>'
  +'<div id="ddb-events"></div>'
  +'<div class="dd-actions"><button class="dd-btn" onclick="ddbAddEvent()">add a landline event</button></div>'
- +'<div class="dd-hint">Every entry is a paragraph of <b>M98 7110.26A Chapter 3</b>, and the distinction it exists to teach is 3-2&rsquo;s own: a <b>P-ACP</b> is <i>look and go</i>, authorized only within M98 airspace, so it is a statement and nothing is owed back — while a <b>standard point-out</b> is what you use where a P-ACP is impracticable, and it is a request that wants an answer. Knowing which one just rang is the drill. Answer an open one by typing <b>approved</b>, or refuse it with <b>unable</b>. <b>Content is not graded</b>: none of the five standing items covers landline work, and one is not invented for it — what is measured is how long you took, kept separate from the aircraft response-time median because it is a different measurement. One call at a time.</div>'
+ +'<div class="dd-hint">Every entry is a paragraph of <b>M98 7110.26B Chapter 3</b>, and the distinction it exists to teach is 3-2&rsquo;s own: a <b>P-ACP</b> is <i>look and go</i>, authorized only within M98 airspace, so it is a statement and nothing is owed back — while a <b>standard point-out</b> is what you use where a P-ACP is impracticable, and it is a request that wants an answer. Knowing which one just rang is the drill. Answer an open one by typing <b>approved</b>, or refuse it with <b>unable</b>. <b>Content is not graded</b>: none of the five standing items covers landline work, and one is not invented for it — what is measured is how long you took, kept separate from the aircraft response-time median because it is a different measurement. One call at a time.</div>'
  +'<div class="dd-field" style="margin-top:14px;"><span class="dd-lab">Brief — what the drill is asking of you</span><textarea class="dd-ta" id="ddb-brief"></textarea></div>'
  +'<div class="dd-sub" style="margin-top:16px;">Strips</div>'
  +'<div id="ddb-rows"></div>'
