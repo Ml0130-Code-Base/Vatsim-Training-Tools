@@ -15,13 +15,13 @@ are clean, so re-download rather than trusting an old local copy.
 
 | Local file | Title on the site | Effective | Pages | Text? |
 |---|---|---|---|---|
-| `M98_7110_26A.pdf` | M98 TRACON 7110.26A | 2026-03-31 | 102 | yes |
-| `MSP_ATCT_7110_26G.pdf` | MSP ATCT 7110.26G CHG 1 | 2026-03-31 | 83 | yes |
-| `MSP_M98_LOA.pdf` | MSP-M98 LOA | 2026-03-31 | 103 | yes |
-| `ZMP_M98_LOA.pdf` | ZMP-M98 LOA | 2026-03-31 | 24 | yes |
-| `M98_RST_LOA.pdf` | M98-RST LOA | 2026-03-31 | 7 | yes |
+| `M98_7110_26B.pdf` | M98 TRACON 7110.26B | 2026-11-01 | 102 | yes |
+| `MSP_ATCT_7110_26H.pdf` | MSP ATCT 7110.26H | 2026-11-01 | 76 | yes |
+| `MSP_M98_LOA.pdf` | MSP-M98 LOA | 2026-11-01 | 104 | yes |
+| `ZMP_M98_LOA.pdf` | ZMP-M98 LOA | 2026-11-01 | 24 | yes |
+| `M98_RST_LOA.pdf` | M98-RST LOA | 2026-11-01 | 6 | yes |
 | `ZMP_RST_LOA.pdf` | ZMP-RST LOA | 2023-12-27 | 4 | yes |
-| `M98_SAT_LOA.pdf` | M98-Satellite ATCT LOA | 2025-11-30 | 7 | yes |
+| `M98_SAT_LOA.pdf` | M98-Satellite ATCT LOA | 2026-11-01 | 7 | yes |
 | `ANE_FCT_7110_65.pdf` | ANE FCT 7110.65 CHG 1 | 2025-11-30 | 9 | yes |
 | `FCM_ATCT_7110_1A.pdf` | FCM ATCT 7110.1A CHG 1 | 2025-11-30 | 15 | yes |
 | `MIC_ATCT_7220_3N.pdf` | MIC ATCT 7220.3N CHG 1 | 2025-11-30 | 11 | yes |
@@ -52,10 +52,11 @@ must not be inferred:
   maps. The sector *numbers* around M98 are recoverable from ZMP-M98 LOA Table 1 (see
   `claude_ZMP_Reference.md`); their *boundaries* are not.
 - `MSP_Departure_Headings.pdf` and `M98_SATS.pdf` — heading and satellite-split diagrams.
-- **Appendix A of M98 7110.26A** (54 pages of delegated-airspace diagrams, one set per runway
-  configuration) — the near/far gate designation, the ACDA shelves, Area R, Area F and the STP
-  Shelf are all *drawn* there and nowhere written. This is the single largest remaining gap.
-- **Appendix E of M98 7110.26A** — the MVA chart.
+- **Appendix A of M98 7110.26B** (delegated-airspace diagrams, one set per runway configuration; the
+  Area F pages of 26A are gone and a *Land 35 – Depart 12 Departure Close In* diagram is new) — the
+  near/far gate designation, the ACDA shelves, Area R and the STP Shelf are all *drawn* there and
+  nowhere written. **Not re-read on 2026-11-08** — the text layer was diffed, the pictures were not. This is the single largest remaining gap.
+- **Appendix E of M98 7110.26B** — the MVA chart.
 - **Appendix A of both RST letters of agreement** — the RST delegated-airspace depiction. Still
   unread, exactly as `CLAUDE.md` already records.
 - **Attachments A–D of the ZMP-M98 LOA** — sector map, SIDs, conventional STARs, RNAV STARs,
@@ -109,10 +110,38 @@ are both untouched by it. Full statement of what it can and cannot answer in the
 a `perl` script that finds each `/DCTDecode` stream and writes it out as a `.jpg` — the same method that
 recovered the DDA chart pages — and read by eye. The airspace charts' altitude blocks were **not** transcribed.
 
+## Refresh of 2026-11-08 — the orders effective 2026-11-01
+
+The owner supplied ten documents on 2026-11-08 (issue #61, item 8). **Six replaced the files above**; four
+were byte-identical to what the folder already held and changed nothing.
+
+| Local file | Replaces | Effective | Pages (form feeds) | md5 |
+|---|---|---|---|---|
+| `M98_7110_26B.pdf` | `M98_7110_26A.pdf` (git rename) | 2026-11-01 | 102 | `2ecdbd3b882b8b3a0841472d7ab9b0db` |
+| `MSP_ATCT_7110_26H.pdf` | `MSP_ATCT_7110_26G.pdf` (git rename) | 2026-11-01 | 76 | `520d90225388d47354970fb20efe0760` |
+| `MSP_M98_LOA.pdf` | itself, 2026-03-31 edition | 2026-11-01 | 104 | `bf28b9e6c3b7413f2e5e5f8e2dc5f9b7` |
+| `ZMP_M98_LOA.pdf` | itself, 2026-03-31 edition | 2026-11-01 | 24 | `ec49c42c4ba792744d75dd9bdc686831` |
+| `M98_RST_LOA.pdf` | itself, 2026-03-31 edition | 2026-11-01 | 6 | `2956a71ce2918fb33c0b861c2a0f19e8` |
+| `M98_SAT_LOA.pdf` | itself, 2025-11-30 edition | 2026-11-01 | 7 | `8474a0b5da81c257b42f5149508d57ac` |
+
+**Unchanged, verified byte-identical to the copies held:** `MIC_ATCT_7220_3N.pdf`, `FCM_ATCT_7110_1A.pdf`,
+`ANE_FCT_7110_65.pdf`, `STP_ATCT_7220_3Q.pdf` — the four satellite tower orders — so nothing in
+`claude_M98_Satellite_Towers_Reference.md` that rests on them moved.
+
+- **These were not pulled with the curl recipe below.** The owner supplied the files and the folder's PDFs
+  were replaced from them. The site recipe is untested against the November editions; the titles inside the
+  documents are what identify them (see the note on stale URLs at the end of this file).
+- **Pictures, re-checked.** The three dispersal-area sheets and the MVA chart carved from the MSP-M98 LOA
+  are byte-identical to the March carves (`claude_M98_DDA_Geometry.md`), so the traced polygon stands.
+  **Not re-read:** the LOA attachments and the ZMP-M98 LOA's images beyond those, and Appendix A of
+  7110.26B.
+- **The text layers were diffed against the previous extractions**, paragraph by paragraph; the deltas are
+  recorded in each reference file's own change section, not here.
+
 ## Regenerating this pull
 
 ```bash
-curl -sSL -o "source-docs/M98_7110_26A.pdf" "https://minniecenter.org/file/M98%207110.26.pdf"
+curl -sSL -o "source-docs/M98_7110_26B.pdf" "https://minniecenter.org/file/M98%207110.26.pdf"
 ```
 
 Filenames on the site contain spaces; they must be percent-encoded or the request 404s. The

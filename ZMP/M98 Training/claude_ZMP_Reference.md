@@ -2,8 +2,13 @@
 
 Sources, extracted 2026-08-31:
 
-- `source-docs/ZMP_M98_LOA.pdf` — **ZMP/M98 Letter of Agreement, effective March 31, 2026**.
-  The primary document. Attachments A-D and D-1 through D-11 are images and are **unread**.
+- `source-docs/ZMP_M98_LOA.pdf` — **ZMP/M98 Letter of Agreement, effective November 1, 2026** (24 pages; the
+  March 31, 2026 edition was re-read against it on 2026-11-08 and is described below only where it differs).
+  The primary document. Attachments A-D and D-1 through D-11 are images and are **unread** — **all 15 embedded
+  images in the November file differ from the March file**, so the attachments (sector map, SIDs, STARs, the
+  approach-control plates) were redrawn or re-encoded and anything read off the March ones should be re-checked
+  before it is trusted. The running footer of the November file still reads *3/31/2026* on most pages; the cover
+  and the effective line say November 1, 2026 (as written).
 - `source-docs/ZMP_Minor_TRACON_Reference.pdf` — ZMP Minor ATCT/TRACON reference, dated
   2015-01-01. Still posted, but several of its entries have been superseded by newer facility
   orders; treated as secondary throughout.
@@ -70,7 +75,7 @@ receiving sector by *heading band*:
 
 Read as a rough compass rose around M98: **040-060 to Sector 06, 100-130 to RWA, 140-160 to
 Sector 07, 210-240 to Sector 08, 265-285 to Sector 09, 290-300 and 350-020 to Sector 10.**
-"RWA" is given without expansion in the LOA. Note these are the headings assigned to get a
+**RWA is now defined (para 1.c, 2026-11-01): *Red Wing Airspace — a ZMP FAVs area overlying Sector 05, between Sectors 06 and 07, and underlying Sector 15; RWA is combined to either Sector 05 or Sector 15.*** The March edition gave it without expansion. Note these are the headings assigned to get a
 non-SID aircraft *into* that sector, so the mapping is directional and approximate — it is not a
 published boundary, and it must not be presented as one.
 
@@ -185,10 +190,10 @@ between arrivals on parallel STARs.**
   traffic.
 - ZMP must **verbally coordinate any assigned speed deviating from the published RNAV STAR
   speed**, except speeds that are part of a TMU initiative.
-- On a **30/17** configuration, **"Knock It Off" is in effect on NITZR and BLUEM**: no
-  "descend via" is issued, runway transitions are still issued, any non-published speed must be
-  coordinated. **NITZR crosses WRSAW at and maintain 11,000; BLUEM crosses HHAMR at and maintain
-  10,000.** M98 verifies the assigned altitude.
+- ~~On a **30/17** configuration, "Knock It Off" is in effect on NITZR and BLUEM~~ — **deleted from the LOA on
+  2026-11-01** (it was 5.b(e), with a 11,000 WRSAW and 10,000 HHAMR crossing). **NITZR and BLUEM now descend
+  via on a 30/17**, as the vZMP PBN Phase II briefing p.22 said they would. The Table 3 altitudes for the two
+  gates are unchanged and still apply whenever Knock It Off is invoked another way.
 
 ### Table 3 — "Knock It Off" OPD crossing altitudes
 
@@ -207,13 +212,20 @@ configuration** when operationally necessary, through M98 CIC/TMU and ZMP CIC/TM
 
 Cross the M98 boundary at the **published speed of 280 kt** unless otherwise coordinated.
 
+**New in the table notes, 2026-11-01 (note 4):** when M98 is on a **35/12s configuration, Knock It Off must be
+implemented on the MUSCL, KKILR, TORGY and BAINY arrivals; NITZR and BLUEM must continue to use OPD descents
+unless otherwise coordinated.** This is the first place any ZMP-M98 document names a **land-35, depart-12s**
+configuration. **Table 2 still has no 35/12s row** — the runway transitions ZMP assigns in it are not stated.
+
 ### Non-RNAV arrivals
 
 All turbojets and turboprops must be routed via STARs to the extent practical. A turbojet that
 cannot be on a conventional STAR must be coordinated, **on a heading through an arrival gate to
 approximate direct MSP, at the appropriate knock-it-off altitude for that gate**. A turboprop
-that cannot be on a conventional STAR must be coordinated, **direct MSP through an arrival gate,
-or on a heading through a gate to approximate direct MSP, at 7,000**.
+that cannot be on a conventional STAR **must be routed** (2026-11-01; *must be coordinated* until then)
+**direct MSP through an arrival gate, or on a heading through a gate to approximate direct MSP, at 7,000**
+— and **an aircraft that has been issued a heading must be coordinated**. The coordination duty moved from the
+route to the heading.
 
 ### Table 4 — Conventional STAR crossing altitudes
 

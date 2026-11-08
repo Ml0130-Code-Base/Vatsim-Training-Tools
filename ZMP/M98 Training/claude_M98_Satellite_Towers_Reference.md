@@ -3,7 +3,9 @@
 Sources, extracted 2026-08-31:
 
 - `source-docs/M98_SAT_LOA.pdf` — **M98/Satellite ATCT Letter of Agreement, effective
-  2025-11-30**, covering ANE, FCM, MIC and STP together. Initial release.
+  2026-11-01**, covering ANE, FCM, MIC and STP together. **Re-read 2026-11-08:** it now cancels the LOA dated
+  11/30/2025 (which was the *initial release*). **Its only text change is Attachment 1, the scratch pad entries**
+  (below); the tower headings, altitudes, Attachment 2 and the rest read word for word as in 2025-11-30.
 - `source-docs/ANE_FCT_7110_65.pdf` — ANE FCT 7110.65 CHG 1, eff. 2025-11-30.
 - `source-docs/FCM_ATCT_7110_1A.pdf` — FCM ATCT 7110.1A CHG 1, eff. 2025-11-30.
 - `source-docs/MIC_ATCT_7220_3N.pdf` — MIC ATCT 7220.3N CHG 1, eff. 2025-11-30.
@@ -60,8 +62,7 @@ responsibility and intent.
 
 - **Issue departure releases via the Run-Down Tab List.** Non-standard headings and altitudes are
   verbally coordinated.
-- Ensure full data blocks on arriving traffic carry the **scratch pad entries** (Attachment 1,
-  identical to M98 7110.26A Appendix G) and the **type aircraft in field four**, unless verbally
+- Ensure full data blocks on arriving traffic carry the **scratch pad entries** (Attachment 1 — **no longer identical to M98 7110.26B Appendix G**, see below) and the **type aircraft in field four**, unless verbally
   coordinated.
 - Issue the missed-approach headings and altitudes in the table above, and **advise the tower of
   any heading or altitude different from those**.
@@ -230,6 +231,13 @@ Positions: **Local 119.1**, **Ground/CD 121.675**, ATIS 118.35.
   3-4 (MSP 30L/R with SGS 34) and 3-5 (MSP 35 with FCM RNAV 28L/28R).
 - **The APO rules that let MSP Tower and M98 point out satellite traffic transiting the DDA** are
   in `claude_MSP_Tower_Reference.md` section 4, LOA 8.k.
-- **Satellite scratch pad entries** are identical in all three places they appear (M98 7110.26A
-  Appendix G, M98/SAT LOA Attachment 1, MSP-M98 LOA Attachment 8); the canonical copy is in
+- **Satellite scratch pad entries are NOT identical in the three places any more (2026-11-01).** They were
+  in 2026-08-31. **M98 7110.26B Appendix G** and **M98/SAT LOA Attachment 1** agree on the approach table
+  (ILS I, RNAV GPS G, Localizer L, VOR V; full stop F, missed approach M, published missed PM; **no NDB**,
+  and the example now an *RNAV 14 to a full stop* `+GF` beside the ILS-to-published-missed `+IPM`). They differ on
+  the rest: **the SAT LOA still lists `HLD` holding, holding at `GEP` and holding at `FGT` with `A/W` and `PIX`, and
+  still describes `VV` in scratch pad 2 as a time-shared `VV+`; 7110.26B has `Holding at GEP` only and moves VV to the
+  secondary scratch pad as `+VV`**; **MSP-M98 LOA Attachment 8** keeps `A/W`, `PIX` and `2ER` and drops every holding
+  entry. **Which copy governs a satellite scratchpad is not stated**; the order (26B) and the LOA that is specific
+  to the satellites (M98/SAT) are both M98 documents. The 26B copy is transcribed in
   `claude_M98_SOP_Reference.md`.

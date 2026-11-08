@@ -1,14 +1,37 @@
-# M98 TRACON Standard Operating Procedures — Order M98 7110.26A
+# M98 TRACON Standard Operating Procedures — Order M98 7110.26B
 
-Source: `source-docs/M98_7110_26A.pdf`, effective **March 31, 2026**, signed Dhruv Kalra, Air
-Traffic Manager, VATSIM Minneapolis ARTCC. Cancels M98 Order 7110.26 CHG 1 (eff. 2025-11-30).
-Extracted 2026-08-31. This is the authoritative M98 document; where it disagrees with anything
-hardcoded in the tool, **this wins**.
+Source: `source-docs/M98_7110_26B.pdf`, effective **November 1, 2026**, 102 pages. Cancels M98
+Order 7110.26A (eff. 2026-03-31) per 1-4. Extracted 2026-08-31 from 7110.26A and **re-extracted and
+re-read against 7110.26B on 2026-11-08** (owner-supplied PDF, `claude_Source_Documents_Index.md`). This
+is the authoritative M98 document; where it disagrees with anything hardcoded in the tool, **this wins**.
 
-Changes in this revision worth knowing: Land 35 / Depart 12 is **no longer prohibited**;
-P-ACP and automated point-out applicability updated; **feeder-to-ACDA altitudes updated**;
-satellite practice-approach IFR separation added; airspace maps, MVA map and relief checklists
-revised.
+## What 7110.26B changed from 7110.26A (read 2026-11-08, word for word against the old text)
+
+The order's own record of changes names: *P-ACP and APO updates in 3-2 and 3-3; language update in
+parallel visual turn-ons to be consistent with dependent instrument approaches; airspace diagram
+updates for PBN Phase II; VVN/VVS etc. pilot-assumed-responsibility scratchpads now entered in the
+secondary scratchpad; rewrote satellite scratchpads.* The paragraph-level diff found those and a few
+the record does not name. **Every change in the text layer:**
+
+| Para | 7110.26A | 7110.26B |
+|---|---|---|
+| 1-4 | cancels 7110.26 CHG 1 | cancels **7110.26A** |
+| 2-3 g (Satellite Control) | ensures aircraft have current arrival information | …**and pertinent NOTAMs** |
+| 3-2 f | Satellite may transit tracked MSP departures **at/assigned 4,000 ft** through Departure airspace adjacent to the dispersal area, 10-15 mi of MSP | …**at or climbing to the tower-assigned altitude** (no 4,000 figure) |
+| 4-2 g | **Area F**: on a 30/17 only, Arrival may descend to 6,000 in Area F as depicted in Appendix A using P-ACP | **paragraph deleted**, and the two Area F diagram pages with it. **3-2 c, which authorises the same P-ACP, is unchanged** |
+| 3-3 a(2) | scratchpad #1 = (a) departure-gate **letter + two-digit altitude**, (b) three-letter gate, (c) arrival airport | scratchpad #1 = **(a) the three-letter departure gate, (b) the arrival airport**. The letter form and the `B12` example are gone |
+| 3-3 a(3) | field 7 shows requested altitude if different from present, *unless conveyed in scratchpad #1* | field 7 shows the requested altitude if different from present (no scratchpad alternative) |
+| 4-7 (parallel visual turn-ons, both runway-pair lists) | Arrival designates "LOW" and "HIGH" turn-on altitudes **and "sides"** | altitudes only — **"sides" deleted** |
+| 4-4 e | the same sentence appeared twice, as 4-4 a and 4-4 e | **4-4 e deleted** (4-4 a stays) |
+| 4-8 b | Runway 17 should not be used for arrivals **from the north** | …for arrivals (no "from the north") |
+| 5-3 | Runway 35 should not be used for departures **to the north** | …for departures (no "to the north") |
+| App. G | VV scratchpad alone; **+VV** time-share; satellite sp2 table with NDB; `GEP`/`FGT` holding entries and `2ER` tour | `+VVN`…`+VV7` **in the secondary scratchpad**; satellite sp2 table has no NDB and no VV; **`Holding at GEP` only**, no FGT, no `2ER` |
+| App. A | 54 pages incl. **Area F** diagrams (30s/17) | Area F pages gone; a **Land 35 – Depart 12 Departure Close In** diagram added; diagrams redrawn for PBN Phase II. **Charts: not parsed** |
+
+**What did not change in the text layer:** the position set and frequencies (2-1), combining (NOTE 2),
+the 4-4 feeder/arrival altitude tables, the 4-4d north/south gate split, crossover rules (4-5), the
+obstruction table (8-1), 7-1 and the 17-22 chapter. **A text diff cannot see the charts**, and the
+airspace diagrams were redrawn: see the gap analysis Part 6.
 
 ---
 
@@ -99,28 +122,28 @@ use standard point-outs. Specifically authorized for:
 
 - Arrival to descend through Departure airspace to **6,000 ft in Area F, on a 30/17
   configuration only**. Departure and Satellite must tell Arrival about any non-STARS-tracked
-  target in Area F.
+  target in Area F. **As-written anomaly in 7110.26B, kept and not corrected:** this paragraph
+  (3-2 c) is **unchanged**, but the paragraph that defined the area (4-2 g) and the Area F diagrams
+  in Appendix A were **deleted**, and the vZMP PBN Phase II briefing p.22 says Area F is eliminated
+  on a 30s/17. The P-ACP still stands in the text; the area it points at no longer has a definition.
 - Departure positions **D, R, L** to climb through the **ACDA shelves ("Bat Wings")**.
 - Departure **D, R, L** and Satellite **E, G, K** to climb tracked aircraft through Feeder
   airspace, through North/South Arrival airspace **6,000-7,000 ft over-the-top of MSP**, and
   through Runway 35 Arrival airspace.
-- Satellite to transit tracked MSP departures at or assigned **4,000 ft** through Departure
-  airspace adjacent to the dispersal area, **between 10 and 15 miles of MSP**.
+- Satellite to transit tracked MSP departures **at or climbing to the tower-assigned altitude**
+  (7110.26A said *at/assigned 4,000 ft*) through Departure airspace adjacent to the dispersal
+  area, **between 10 and 15 miles of MSP**.
 - **Between Feeder positions when crossing near-gate arrivals at 9,000 ft over the ACDA.**
 
 **3-3 Automated Point Outs (APO).** Authorized between all positions when the aircraft will not
 transit the ACDA (except through J airspace on a 30s/35 configuration) **and** scratchpad #1
-shows either the departure-gate letter plus a two-digit thousands altitude, the three-letter
-departure gate, or the arrival airport. Gate letters:
-
-| | | | |
-|---|---|---|---|
-| E — EAU | R — RST | D — DLL | F — FAR |
-| N — ODI | A — ABR | B — BRD/DLH | O — ONL/FOD |
-
-`B12` = BRD/DLH gate, assigned 12,000. Field 7 shows the requested altitude if different from
-present and not already in scratchpad 1. Aircraft scratchpadded **STC or MKT are assumed
-descending to 4,000**; any other altitude must be in the assigned-altitude field.
+shows either **the three-letter departure gate or the arrival airport** (3-3 a(2), 7110.26B). The
+gates are **MSP-M98 LOA Table 1** (`claude_MSP_Tower_Reference.md`, `claude_MSP_SID_Reference.md`).
+**The 7110.26A forms are gone:** the one-letter gate (E, R, D, F, N, A, B, O) followed by a
+two-digit altitude, and the `B12` example. **Field 7 (assigned altitude) shows the requested
+altitude if different from present** — there is no longer a scratchpad alternative (3-3 a(3)).
+Aircraft scratchpadded **STC or MKT are assumed descending to 4,000**; any other altitude must be
+in the assigned-altitude field.
 
 APO is also authorized **Arrival to/from Satellite to descend to 3,000 ft inside the lateral
 ACDA** when the aircraft is tagged for an MSP approach, is **within 20 NM of the runway on a
@@ -161,8 +184,8 @@ excluding Tower delegated airspace; drawn in Appendix A (image, unread).
   BLUEM/DELZY traffic*; South Arrival east.
 - **ACDA Shelves** are delegated to Arrival at **6,000 ft**.
 - **Area R** — during heavy traffic or unusual situations the CIC may coordinate possession.
-- **Area F** — on a **30/17 configuration only**, Arrival may descend to **6,000 ft** using
-  P-ACP.
+- ~~**Area F**~~ — **4-2 g deleted in 7110.26B** (in 26A: *on a 30/17 only, Arrival may descend to
+  6,000 ft in Area F as depicted in Appendix A using P-ACP*). 3-2 c still authorises that P-ACP; see 3-2.
 
 **4-3 Feeder airspace** is near-gate and far-gate ingress routes; routes and their altitudes are
 in Appendix A (image, unread).
@@ -397,22 +420,28 @@ airspace; **when changing to 30/17, remind Feeder and Arrival of the 8,000 ft ai
 | 22 | G22 | — | L22 | V22 |
 
 **Visual separation** — when the pilot has accepted responsibility for separation from the
-preceding aircraft, enter a `VV` code. *(The source table's row/value alignment is scrambled in
-extraction; the codes present are `VVN VVS VV4 VV2 VV5 VV7` across the MSP arrival runway groups
-12L/30R, 12R/30L, 4, 22, 35, 17, and `+VV` for all satellite arrivals. **Verify the pairing
-against the PDF before relying on a specific code.**)*
+preceding aircraft, enter a `VV` code **in the secondary scratchpad (7110.26B; a `+` in front)**.
+*(The source table's row/value alignment is scrambled in extraction, as it was in 26A and in the
+MSP tower order and the MSP-M98 LOA; the codes present are `+VVN +VVS +VV4 +VV2 +VV5 +VV7` across the MSP
+arrival runway groups 12L/30R, 12R/30L, 4, 22, 35, 17 in the order the table lists them, and `+VV` for
+all satellite arrivals. The pairing agrees with the last digit of the runway in four of six, and the
+source reads that way, but **verify it against the PDF before relying on a specific code.**)*
+26A showed the entries without the `+`; 26B and the other two documents add it.
 
-**Satellite airports.** Scratch pad 1 = **airport of intended landing** (STP, FCM, ANE, MIC, LVN,
-21D, SGS). Scratch pad 2 = approach type then termination:
+**Satellite airports (rewritten in 7110.26B — "rewrote satellite scratchpads").** Scratch pad 1 =
+**airport of intended landing** (STP, FCM, ANE, MIC, LVN, 21D, SGS). Scratch pad 2 **must indicate the
+instrument approach** for IFR and VFR aircraft; **airport-specific agreements are in the M98-SAT ATCT
+LOA** (`claude_M98_Satellite_Towers_Reference.md`). Approach type then termination:
 
-| 1st char — type | 2nd/3rd char — termination |
+| Type of approach (1st char) | Approach termination (2nd/3rd char) |
 |---|---|
-| I = ILS | F = Full stop |
-| G = RNAV (GPS) | M = Missed approach |
-| L = Localizer | PM = Published missed |
-| N = NDB | VV = Pilot-provided visual separation |
-| V = VOR | |
+| ILS = I | Full stop = F |
+| RNAV (GPS) = G | Missed approach = M |
+| Localizer = L | Published missed = PM |
+| VOR = V | |
 
-Example — N12345 requesting ILS 30 to a published missed at LVN: `<+IPM, slew, enter>`.
-Other entries: `A/W` air work, `HLD` holding, `PIX` photo flight, `GEP` holding at GEP,
-`FGT` holding at FGT, `2ER` tour.
+Examples — *an ILS 30 to a published missed*: `<+IPM, slew, enter>`; *an RNAV 14 to a full stop*:
+`<+GF, slew, enter>`. **Removed from 26A:** `N` = NDB, `VV` = pilot-provided visual separation as a
+termination (it is now the secondary-scratchpad `+VV` above), and the LVN-specific example.
+Other entries: `A/W` air work, `PIX` photo flight, **`Holding at GEP`** — **26A's `HLD`, `FGT` holding
+at FGT and `2ER` tour are not in 26B** (a text diff cannot say whether the omission is deliberate).

@@ -1,5 +1,7 @@
 # MSP STAR Reference (Arrivals)
 
+> **Citations to M98 7110.26A, MSP ATCT 7110.26G and the March 2026 LOAs in this file are the superseded editions** (replaced 2026-11-01 by 7110.26B, 7110.26H and the November LOAs). Check `claude_M98_SOP_Reference.md` and `claude_MSP_Tower_Reference.md` for what changed before quoting a paragraph number from here.
+
 Companion to `claude/MSP_SID_Reference.md`. Built from Michael's lat/long fix data; positions are great-circle from the MSP VOR (N44 53.79 / W093 14.19). FOR SIMULATION USE.
 
 ## Source self-check — LOAs + SOP (read before quoting a number in a drill)
@@ -158,7 +160,7 @@ On the **Runway 30/17** config, NITZR (WRSAW 11,000) and BLUEM (HHAMR 10,000) ar
 **Inside M98 — descent floors & handoff altitudes — M98 7110.26**
 - Vector arrivals **at/above 4,000** until glidepath intercept (§4-8, noise).
 - Feeder→Arrival handoff floors (SOP 4-4c): **30s** near 7,000 / far 8,000; **12s** near 7,000 / far 8,000; **4/22** near 8,000 / far 9,000; **17** KKILR & MUSCL 8,000, TORGY/NITZR/BLUEM 9,000, BAINY straight-in; **35** NITZR & BLUEM straight-in, TORGY 8,000, BAINY/KKILR/MUSCL 9,000.
-- **ACDA shelves** delegated to Arrival at 6,000; Area F (30/17) to 6,000 via P-ACP.
+- **ACDA shelves** delegated to Arrival at 6,000; Area F (30/17) to 6,000 via P-ACP (SOP 3-2 c; as of 7110.26B 4-2 g, which defined the area, is deleted).
 - **APO to 3,000** in the ACDA when tagged MSP, within 20 NM, ≤90° to the FAC, and not crossing through / turning off the final.
 - Crossover: near-gate 9,000 with a heading aimed at the 25-mile ring; far-gate comm transferred no later than 15 NM.
 - *Technique (M98 Notes, not a rule):* hold MSP landers at 4,000 to the 10-mile ring to stay in the Bravo; 3,000 only as needed.

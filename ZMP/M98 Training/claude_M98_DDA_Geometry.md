@@ -1,5 +1,7 @@
 # M98 Departure Dispersal Area — lateral geometry
 
+> **Re-checked 2026-11-08 against the November 2026 MSP-M98 LOA.** The three dispersal-area sheets below (*RUNWAY 12/17*, *RUNWAY 30*, *Land RWY 35 / Dept RWY 12*) and the MVA chart are **byte-identical** to the ones carved in March (sheets 45-47 and 48 of 60 are now images 7-9 and 10 of 22), so **the trace stands and nothing here moves**. The March LOA stated the vertical limits in prose (5.a.3-5); **the November text says only that the DDAs are "depicted in Attachment 4"**, and the figures survive on the diagrams (`70/0`, `30/0`, `40/0`, `40/35`, `50/0`) rather than in a paragraph.
+
 **Extracted 2026-08-31 by tracing the chart image itself.** The DDA's vertical limits have
 always been in prose (MSP-M98 LOA 5.a.3–5). Its *shape* is drawn only in **MSP-M98 LOA
 Attachment 1** and **M98 7110.26A Appendix A**, which are page images with no text layer — the
@@ -19,7 +21,7 @@ area sheets:
 | 46 | **RUNWAY 30** | traced but not carried — no 30s route set yet |
 | 47 | **Land RWY 35 / Dept RWY 12** | shows a go-around area, 280° |
 
-`M98_7110_26A.pdf` carries the same image set.
+`M98_7110_26A.pdf` (now `M98_7110_26B.pdf`, where the diagrams were **redrawn for PBN Phase II** — see the note at the top) carried the same image set.
 
 ## How the scale was established
 

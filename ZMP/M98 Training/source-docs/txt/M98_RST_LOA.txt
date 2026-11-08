@@ -5,14 +5,14 @@
 
                                                      LETTER OF AGREEMENT
 
-                                                                                                         EFFECTIVE: March 31, 2026
+                                                                                                     EFFECTIVE: November 1, 2026
 
 SUBJECT: TOWER ENROUTE SERVICE
 
 1. PURPOSE. To prescribe procedures for the inter-facility control of IFR and VFR air traffic.
 
 2. CANCELLATION. Minneapolis Terminal Radar Approach Control (TRACON) and
-    Rochester Airport Traffic Control Tower Letter of Agreement dated December 27, 2023 is
+    Rochester Airport Traffic Control Tower Letter of Agreement dated March 31, 2026 is
     cancelled.
 
 3. SCOPE. This agreement between Minneapolis TRACON (M98) and Rochester Airport Traffic
@@ -56,18 +56,20 @@ indicated airspeed (IAS) landing MSP Airport.
 
              (c) Landing Runway 30L/R ­ At 9,000 ft. (Feeder). Jets
 
-             (d) Landing Runway 30L/R and when departing 17 ­ at 9,000 ft. (Feeder) Jets/Props
+             (d) Landing Runway 30L/R and when departing 17 ­ at 9,000 ft. (Feeder) Jets
 
-             (e) Landing Runway 35 ­ at 7,000 feet. (35 Arrival) Jets/Props
+             (e) Landing Runway 30L/R and when departing 17 ­ at 7,000 ft. (Satellite) Props
 
                                                FOR SIMULATION USE ONLY
-M98/RST LOA              FOR SIMULATION USE ONLY                               3/31/2026
+M98/RST LOA              FOR SIMULATION USE ONLY                               11/1/2026
 
-(f) Landing Runway 4 ­ at 8,000 feet. (Feeder) All aircraft capable of 200 kts>
+(f) Landing Runway 35 ­ at 7,000 feet. (35 Arrival) Jets/Props
 
-(g) Landing Runway 17 or 22 ­ at 9,000 feet (Feeder) All aircraft capable of 200 kts>
+(g) Landing Runway 4 ­ at 8,000 feet. (Feeder) All aircraft capable of 200 kts>
 
-(h) Any other Runway configurations as coordinated.
+(h) Landing Runway 17 or 22 ­ at 9,000 feet (Feeder) All aircraft capable of 200 kts>
+
+(i) Any other Runway configurations as coordinated.
 
 NOTE-
 The KASPR STAR airspace is considered 4 NM wide each side of the STAR centerline. When MSP
@@ -115,19 +117,16 @@ Air Traffic Manager
 VATSIM Minneapolis ARTCC
 
                                                FOR SIMULATION USE ONLY
-M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+M98/RST LOA  FOR SIMULATION USE ONLY  11/1/2026
 
              FOR SIMULATION USE ONLY
-M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+M98/RST LOA  FOR SIMULATION USE ONLY  11/1/2026
 
              FOR SIMULATION USE ONLY
-M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+M98/RST LOA  FOR SIMULATION USE ONLY  11/1/2026
 
              FOR SIMULATION USE ONLY
-M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
-
-             FOR SIMULATION USE ONLY
-M98/RST LOA  FOR SIMULATION USE ONLY  3/31/2026
+M98/RST LOA  FOR SIMULATION USE ONLY  11/1/2026
 
              FOR SIMULATION USE ONLY
 

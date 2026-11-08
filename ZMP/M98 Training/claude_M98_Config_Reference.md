@@ -1,5 +1,7 @@
 # M98 Config Reference
 
+> **Citations to M98 7110.26A, MSP ATCT 7110.26G and the March 2026 LOAs in this file are the superseded editions** (replaced 2026-11-01 by 7110.26B, 7110.26H and the November LOAs). Check `claude_M98_SOP_Reference.md` and `claude_MSP_Tower_Reference.md` for what changed before quoting a paragraph number from here.
+
 The runway configurations — what picks them, what weather they need, and what changes when the airport turns. **Config follows wind/weather; it is not a free pick.** FOR SIMULATION USE. *(Cross-checked against the field vATIS presets; verify anything operational against how it actually runs.)*
 
 ## Source self-check
@@ -46,7 +48,7 @@ Trap: state the **wind first**, then the config it produces — don't hand the s
 | **12** | 12L/12R — visual / **ILS 12L + 12R** (simul dependent) | 12L/12R | SE flow; Mendota/Eagan corridor deps (105–119°); STP shelf active |
 | **12-17** | 12L/12R — visual / ILS 12L + 12R | 12L/12R + 17 | max Rwy 17 track 215°; 3 MIT same-fix |
 | **30** | 30L/30R — visual / **ILS 30L + 30R** (simul dependent) | 30L/30R | NW flow; dependent parallels; heavy → 30L |
-| **30-17** | 30L/30R — visual / ILS 30L + 30R | 30L/30R + 17 | **NITZR/BLUEM always Knock-It-Off**; Area F P-ACP to 6,000 |
+| **30-17** | 30L/30R — visual / ILS 30L + 30R | 30L/30R + 17 | **HTDSH replaces ZMBRO/TOTTZ at MSP** (7110.26H 3-2-3); NITZR/BLUEM Knock-It-Off line **deleted** from the ZMP-M98 LOA 2026-11-01; Area F P-ACP to 6,000 (SOP 3-2 c; 4-2 g deleted) |
 | **30-35 (CRO)** | 30L/30R + 35 — visual / ILS 30L + 30R + **ILS-V 35** | 30L/30R | **needs 2,200/5**; CRDA ghost 30L→35; matched/balanced sets |
 | **17-22 (CRO)** | 17 + 22 — visual / **LOC 17 + LOC 22** | 12R + 17 | **needs 1,400/4**; LAHSO / CRDA; **KKILR/WILDD arrivals prohibited** |
 | **4-35** | 35 — visual / **ILS-Z 35** | 4 (S intersection) | land 35 / depart 4 |
@@ -108,7 +110,7 @@ The Config table already names "ADW + ODO cutoff points"; these are the rules:
 
 ## Configuration edge rules recovered from the sources
 
-- **Land 12s + 35 / Depart 12s is prohibited (MSP 7110.26G 2-2-10)** — go-around concerns. Distinct from **Land 35 – Depart 12s**, which the 3/31/2026 M98 SOP explicitly supports (floors and ACDA split in the STAR reference). The SOP change-log phrase "Land 35/12 – Depart 12 no longer prohibited" is ambiguous against the tower order's standing prohibition — worth an instructor question before drilling the combined-landing variant.
+- **Superseded 2026-11-01: MSP 7110.26H deletes 2-2-10, so the prohibition below is gone and the SOP-change-log ambiguity is settled in the SOP's favour (read 2026-11-08; the deck carries no such configuration).** Was: - **Land 12s + 35 / Depart 12s is prohibited (MSP 7110.26G 2-2-10)** — go-around concerns. Distinct from **Land 35 – Depart 12s**, which the 3/31/2026 M98 SOP explicitly supports (floors and ACDA split in the STAR reference). The SOP change-log phrase "Land 35/12 – Depart 12 no longer prohibited" is ambiguous against the tower order's standing prohibition — worth an instructor question before drilling the combined-landing variant.
 - **17/22 overflight triangle (ZMP-M98 LOA 5.d):** the triangular airspace **north of MSP between and including the Runway 17 and 22 ACDAs must be avoided by overflights below 13,000** from all directions.
 - **Runway-change checklist highlight (tower Appendix D):** the coordination sequence runs last-departure and last-arrival call signs, new-ACDA availability, then new-runway departures — and **changing to 30/17 includes reminding Feeder and Arrival of the 8,000 ft airspace base**.
 - **Automatic releases (tower 6-3-1b):** MSP has automatic releases for departures from advertised runways into the dispersal area — the baseline every release drill sits on.

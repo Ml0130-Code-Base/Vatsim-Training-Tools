@@ -210,6 +210,34 @@ The markdown layer pulls §6-3-1 (dispersal tracks) and the 2-5-1 runway-crossin
 9. **Two spellings and a wording to settle (added 2026-10-28).** The briefing's table writes the TOTTZ and HTDSH transition **FOOLZ**; CIFP 261029 and the reference carry **FOOLS**. **Consequence for the 30s/17 swap:** TOTTZ1 has a FOOLS transition and HTDSH1 has neither FOOLS nor FOOLZ in CIFP 261029 (ALO, BRIBE, OANNA, OHHMY, ZZIPR), so the deck cannot say which HTDSH1 track a TOTTZ1.FOOLS strip becomes; it warns toward HTDSH1 and stops there. Closes when the FAA codes HTDSH1's transitions or the SOP says. It calls KBREW and ZMBRO *"unchanged"*, which is true of the ground track and not of the first fix (HRBEK, JEDET) CIFP codes. It says **ZOGAP moved west and PAGOZ east**, which its own comparison chart shows; the deck's 4.3 and 6.4 NM figures were not compared for direction.
 10. **Briefing statements no reference or tool reads yet (added 2026-10-28):** Area F eliminated on a 30s/17 (the deck's Area F landline case and SOP 3-2 still name it); NITZR and BLUEM descend via in a 30s/17 (effect on the 4-4c floors not stated); RNAV Y to 30L needs no MSP coordination; HTDSH turboprops, or jets staying below 9,000, enter satellite airspace on 170° climbing to 5,000; **MSP9 becomes MSP1**; the MSP VOR is to be decommissioned on a date to be named and the DME stays. **Unread because it is a picture:** the current-and-new airspace charts for the departure, feeder, ACDA and satellite areas (briefing p.17–21) carry altitude blocks that were not transcribed.
 
+### Update 2026-11-08 — what the orders effective 2026-11-01 settle, and what they leave (issue #61, item 8)
+
+Read from `source-docs/txt/` (M98 7110.26B, MSP ATCT 7110.26H, MSP-M98 LOA, ZMP-M98 LOA, M98-SAT LOA, M98-RST LOA).
+The items above stay as written; this is what moved.
+
+- **Item 2 (Land 35 – Depart 12): settled on the document side.** The tower order's *"land 35 prohibited"* line
+  is deleted in 7110.26H, the M98 SOP defines and diagrams the configuration, and the ZMP-M98 LOA's table notes
+  carry a Knock It Off rule for a 35/12s. **The deck has no configuration for it** — an addition, not a conflict.
+- **Item 7 (which SID off 17): narrowed, not closed.** 7110.26H 3-2-3 and MSP-M98 LOA 5.b Table 1 footnote 1 now
+  say *assign HTDSH on a 30/17, TOTTZ/ZMBRO in every other configuration*. **Neither ranks HTDSH against SNOWZ off
+  17.** **Conflicts, named and not settled:** the tower order's table lists HTDSH for Runway 17 only and the LOA
+  footnote says *"only authorized for Runway 17 departures on a 30s/17"*, while the order's asterisk says
+  *regardless of departure runway*; and the owner's 2026-10-18 ruling (HTDSH1 and SNOWZ1 valid off every runway)
+  was made on CIFP data before any order spoke to it. The deck warns on HTDSH1 outside a 30/17 and the
+  generator stops drawing it there; it refuses nothing.
+- **Item 8 (scratchpad codes): answered by the LOA.** MSP-M98 LOA 5.b Table 1 prints **fourteen** three-letter
+  codes (and 7110.26B 3-3 a(2) says the code goes in scratchpad #1, altitude in the assigned-altitude field; the
+  one-letter gates and the `B12` form are gone). **It has no transition column**, so which transition takes
+  which code is still the briefing's p.23-24. **SNOWZ's SMTHA has no code in either document; DUHCK's `DUK` is the
+  briefing's alone** (no LOA row, a satellite-only SID). `claude_MSP_SID_Reference.md`, *Gates*.
+- **Item 9 (FOOLZ / FOOLS): the conflict grew.** The tower order also spells the fifth TOTTZ transition **FOOLZ**;
+  CIFP 261029 carries **FOOLS**. Two documents against the coded source; the deck keeps CIFP's spelling.
+- **Item 10 (briefing statements): two are now in the orders.** The ZMP-M98 LOA no longer says NITZR and BLUEM
+  are always Knock It Off on a 30/17 (deleted). **Area F is an as-written anomaly:** SOP 3-2 c still authorises the
+  P-ACP, but 4-2 g, which defined Area F, and the Area F diagrams in Appendix A are deleted, and the briefing p.22
+  calls Area F eliminated. The deck keeps the landline case on its 3-2 c citation and says so in the entry's
+  *why*; nothing here corrects the order.
+
 ---
 
 ## Where these get folded in

@@ -1,15 +1,82 @@
-# MSP Tower — Order MSP ATCT 7110.26G CHG 1, and the MSP-M98 Letter of Agreement
+# MSP Tower — Order MSP ATCT 7110.26H, and the MSP-M98 Letter of Agreement
 
-Sources, extracted 2026-08-31:
+Sources, extracted 2026-08-31 and **re-read against the November 2026 revisions on 2026-11-08**:
 
-- `source-docs/MSP_ATCT_7110_26G.pdf` — **MSP ATCT 7110.26G CHG 1, effective March 31, 2026**.
-  Cancels MSP/M98 Order 7110.26G (2024-07-28). Appendices A-J are images and are **unread**.
-- `source-docs/MSP_M98_LOA.pdf` — **MSP-M98 Letter of Agreement, effective March 31, 2026**.
-  Cancels the 2024-07-28 edition. Attachments 1-7 are images and are **unread**; Attachment 8
-  (scratch pads) is text and is reproduced in `claude_M98_SOP_Reference.md`.
+- `source-docs/MSP_ATCT_7110_26H.pdf` — **MSP ATCT 7110.26H, effective November 1, 2026**, 76 pages
+  (7110.26G CHG 1 was 83). Its own cancellation line says *"MSP Order 7110.26G CHG 1, eff. Nov 1, 2026"*
+  — **as-written: it names the order it cancels with the new effective date**, and the rest of the
+  document is 26H. Kept and not corrected. Appendices are images and are **unread**.
+- `source-docs/MSP_M98_LOA.pdf` — **MSP-M98 Letter of Agreement, effective November 1, 2026**, 104 pages.
+  Cancels the LOA dated 2026-03-29 (the March edition was effective 2026-03-31 and cancelled the 2024-07-28
+  one). The attachments are images; **Attachment 8 (scratch pads) is text** and is reproduced in
+  `claude_M98_SOP_Reference.md`.
 
 The two documents were split out of a single combined order in 2024 and still overlap heavily.
 Where they say the same thing, the LOA is cited, since that is the inter-facility rule.
+
+## What changed on 2026-11-01 (word-for-word diff of the text layers, 2026-11-08)
+
+**MSP-M98 LOA** (paragraph numbers are the new ones — `h` gained a sibling, so old 8.h is now 8.i):
+
+| Para | Before (2026-03-31) | Now (2026-11-01) |
+|---|---|---|
+| 5.a(3)-(5) | the DDA verticals in prose: surface-7,000; FCM/MIC cutouts 3,500-7,000; extensions 4,000-7,000; Runway 35-12 ACDA cutout surface-5,000 | **one line: the DDAs "are depicted in Attachment 4".** The prose figures are **gone from the text layer** — they are drawings now, and the deck's `DDA_VERTICALS` cites a paragraph that no longer says them |
+| 5.b(2) | pilot-applied visual separation for successive departures, **no more than 2 via the same SID** | **no more than 2 via the same Departure Gate, as depicted in Table 1** |
+| **Table 1** | *(none)* | **Standard Instrument Departure Gates — SID · three-letter scratchpad · gate name.** Fourteen rows; below |
+| 7.c-d | CRDA at J, then the balanced-arrivals sentence | the same two sentences **in the other order** (now (c) balanced, (d) CRDA) |
+| 8.a | *(none)* | **Runway 17: an aircraft that will be assigned a heading in lieu of the initial RNAV fix must be verbally coordinated and shown on the flight progress strip.** Old 8.a-g shift to 8.b-h |
+| 8.h(2)(a) | 12L/R departures **for FOD or ONL** get a 230 heading three miles out | **SNOWZ aircraft** departing 12L/R get a 230 heading three miles out (3 MIT same fix, different runways) |
+| 8.h(2)(b), (4)(b) | "D" traffic (**ABR, FAR, WLSTN**) | "D" traffic (**BITEZ, KBREW**) off 17 left; (4)(b) still names *ABR, FAR, WLSTN* for the right-turn case — **as written, not updated** |
+| 8.h(4)(c) | on a 30/17, **all** Runway 17 departures track no less than 170 | …all Runway 17 departures **that will enter Satellite Airspace at or below 5,000 ft** |
+| 8.h(4)(d) | *(none)* | **30L/R departures must be issued a heading no farther left than 215** |
+| 8.h(5) *(old)* | **Runway 17 same-fix spacing** (3 MIT turbojet-to-turbojet, turboprop-to-turboprop, no divergence) and **Land 30L/R and 35, depart 30L/R: ODI/RST turboprops 260 track** | **both deleted**; old (7) *Land 35, depart 12L/R* is now (5) |
+| 8.i | initial departure altitudes (was 8.h) | the same table, plus **`*RWY 17 ZMB and TTZ Gates on 30/17 — 170° track and 5,000 E`** |
+| 8.j / 8.k / 8.l | non-advertised runways / VFR / APO (were 8.i / 8.j / 8.k) | unchanged text; re-lettered. 8.l(2)(e) and (f) are the same sentence twice (STP RNAV or ILS), as in the March text |
+| 9.e | dispersal tracks by the retired SIDs: KBREW 320, WLSTN 340, COULT 360; MSP9 by fix | **KBREW 320, NRTHN 340, SNUPE 360, BUNYN 340; MINNEAPOLIS One: KBR 320; BAB, GPR, PRR, PKE 340; SNU 360** |
+| 10 | ODO fix names by retired SIDs (LEINY/DWN/SMERF, FAR/BRD, DLH/WLSTN) | BITEZ one fix; KBREW and BUNYN one fix; tower turns BUNYN and NRTHN east |
+| Att. 8 | `HLD`, `GEP` and `FGT` holding entries; VV entered beside the runway group | holding entries **removed** (`A/W`, `PIX`, `2ER` stay); VV is **`+VVN` … `+VV7`**, secondary scratchpad |
+
+**Table 1 — Standard Instrument Departure Gates** (LOA 5.b(2); read from the page with `pdftotext -raw`, which
+keeps the row grouping that `-layout` loses). **The table has no transition column**:
+
+| SID | Scratchpad | Gate name |
+|---|---|---|
+| KBREW | **KBR** | KBREW Gate |
+| BUNYN | **GPR** | GPERS Gate |
+| | **BAB** | BAYBB Gate |
+| NRTHN | **PRR** | PRRCH Gate |
+| | **PKE** | PIKKE Gate |
+| SNUPE | **SNU** | SNUPE Gate |
+| ZMBRO | **BRO** | ZMBRO Gate |
+| HTDSH¹ | **ZMB** | ZMBRO Gate |
+| | **TTZ** | TOTTZ Gate |
+| TOTTZ | **TOT** | TOTTZ Gate |
+| SNOWZ | **MGL** | MOGLL Gate |
+| | **PLW** | PLOWW Gate |
+| BITEZ | **PAG** | PAGOZ Gate |
+| | **TIK** | TICKK Gate |
+
+¹ *HTDSH SID is only authorized for Runway 17 departures on a 30s/17 configuration.* **DUHCK has no row**
+(it is a satellite-only SID). The same fourteen codes appear in the vZMP PBN Phase II briefing p.23-24, which
+*does* give transitions (`claude_M98_PBN_Phase_II_Reference.md` §4) — and adds `DUK` for DUHCK. **The
+transition-to-code assignment therefore rests on the briefing alone; the order and LOA corroborate the codes
+and the gate names, not which transition takes which.** Pilot-applied visual separation now counts **gates, not
+SIDs**: no more than two successive aircraft through one gate — and two codes share the ZMBRO gate and two share
+the TOTTZ gate (ZMB/BRO, TTZ/TOT), which is a fact the table prints and the LOA does not remark on.
+
+**MSP ATCT 7110.26H** was reorganised (record of changes: *M98 PBN Phase II update*). **Removed from the
+tower order:** 2-2-3 Runway Use System, 2-2-6 Runway 4/22 departures, 2-2-9 Quiet hours, 2-2-10 *Land 12s,
+land 35 prohibited*, 2-5-2 Special taxi considerations, **3-2-3 IFR altitude assignments**, **3-2-5 IFR
+departure frequency assignments**, 5-1-4 Combining/decombining, 6-1-4, 6-2-2 Go-arounds, **6-3-1 Departure
+headings**, 6-3-2, 6-3-3, 7-3-3 Arrival Departure Window, **all of Section 7-4 Opposite Direction Operations**
+and 7-4-5 Midnight. **Not lost:** the RUS table, 4/22 departures, quiet hours and the dispersal tracks are in
+**MSP-M98 LOA 9** (unchanged apart from 9.e above); the initial altitudes are in LOA 8.i; ODO is LOA 10. **Gone
+from every document read: the departure-frequency-by-SID table (old 3-2-5) and the *land 12s / land 35* tower
+prohibition.** **Added or rewritten:** **3-2-3 IFR routing assignments now carries the new SID table**; 5-1-2
+GC areas of jurisdiction; 6-1-2 LC area of jurisdiction; 6-2-1 *TDW usage mandatory*; 6-3-1 split-LC headings
+(30s/35: Runway 30R from 315, 30L from 260 to 300; 12s/17: Runway 12L 090 to 105 "or as coordinated"; RNAV fix
+or headings off 17); 6-4-2 helicopters; 7-2-3 *Waivers*; 7-3-3(2) a heavy departing 30L against a Runway 35
+arrival needs a heavy gap through CIC or TMU.
 
 ---
 
@@ -24,15 +91,21 @@ M98 delegates to MSP Tower:
 2. When **landing Runways 30L/R and Runway 35**, the airspace inside the 6-mile ring **between
    the eastern boundary of the satellite "corridor" over MSP west to the departure dispersal
    area, surface up to and including 4,000 ft**.
-3. **In the Departure Dispersal Area (DDA): surface up to and including 7,000 ft, and over the
-   FCM and MIC satellite cutouts from 3,500 ft up to and including 7,000 ft.**
-4. **Within the DDA extensions: 4,000 ft up to and including 7,000 ft.**
-5. **Within the Runway 35-12 configuration ACDA cutout: surface up to and including 5,000 ft.**
+3. **The Departure Dispersal Areas (DDA) are depicted in Attachment 4** (LOA 5.a(3), 2026-11-01).
+   *Until 2026-10-31 this paragraph and the next two said the verticals in words — surface to 7,000;
+   FCM and MIC cutouts 3,500 to 7,000; extensions 4,000 to 7,000; the Runway 35-12 ACDA cutout surface
+   to 5,000 (LOA 5.a(3)-(5), 2026-03-31). **They are not in the November text layer.** The November
+   Attachment 4 diagrams carry `70/0` over the dispersal area and `30/0` over the Class B, and the
+   Land 35 - Depart 12 page adds a go-around area (280) at `40/0` with a `40/35` cutout and a `50/0` wedge;
+   the March figures are not contradicted by what was read, but they are no longer stated. **Checked 2026-11-08: the three dispersal-area sheets (Runway 12/17, Runway 30, Land 35 - Depart 12) are byte-identical to the ones carved from the March LOA** — so the picture the polygon was traced from has not changed.*
 
-> **On the DDA.** Items 3 and 4 are the complete published description of the Departure Dispersal
-> Area's vertical extent, and they match what `CLAUDE.md` already records. **There is still no
-> boundary polygon** — the DDA is drawn in LOA Attachment 1 and SOP Appendix A, both images.
-> Roadmap item 7 (modelling the DDA) remains blocked on geometry, not on altitudes.
+> **On the DDA.** The altitudes in `DDA_VERTICALS` were **verbatim** from LOA 5.a(3)-(5) in the March
+> edition and are now **carried from that edition**, not from the November text. **The traced polygon in
+> `claude_M98_DDA_Geometry.md` stands**: its three source sheets are byte-identical in the November file (an `md5`
+> of the carved JPEGs, 2026-11-08), and the sheets read `70/0` over the dispersal area and `30/0` over the Class B,
+> agreeing with the March prose. **What did change is the rest of the attachment set** — 60 embedded JPEGs became 22
+> (the Attachment 1 airspace pages and the Appendix A diagrams), and a count of embedded JPEGs cannot say whether
+> they were redrawn or re-encoded. The MVA chart (Attachment 5) is also byte-identical. See the gap analysis Part 6.
 
 For VFR, each M98 position holds VFR altitudes to the base of the overlying airspace and **down
 to 500 ft above MSP airspace**. **M98 may transition VFR aircraft not cleared for an instrument
@@ -42,7 +115,8 @@ separation responsibility with MSP departure traffic**.
 
 **Visual separation** (LOA 5.b) is authorized between aircraft under either facility's control
 when weather permits. MSP may use **pilot-applied visual separation for successive departures,
-no more than 2 successive aircraft via the same SID**.
+no more than 2 successive aircraft via the same Departure Gate, as depicted in Table 1** (it was
+*the same SID* until 2026-10-31).
 
 ---
 
@@ -169,43 +243,66 @@ passes its Virtual Runway Intersection Point.
 
 ## 4. Departures
 
-### Initial altitudes (LOA 8.h, SOP 3-2-3)
+### Initial altitudes (LOA 8.i; SOP 3-2-3 until 2026-10-31)
 
 | Requested final altitude | Jets | Turboprops | Piston |
 |---|---|---|---|
 | **9,000 or above** | **7,000** | **5,000** | **4,000** |
 | **8,000 or below** | **4,000** | **4,000** | **4,000** |
 
-The LOA annotates these `DRL` and `EGK`; the SOP gives the same numbers without the annotation.
+The LOA annotates these `DRL` and `EGK`. **The tower order's 3-2-3 altitude paragraph is deleted in 26H, so
+the LOA is now the only place the table is stated.** **New in the November LOA, under the table:**
+*`*RWY 17 ZMB and TTZ Gates on 30/17 — 170° track and 5,000 E`* — read, with 8.h(4)(c), as a Runway 17
+departure through the ZMB or TTZ gate on a 30/17 flying a 170 track and 5,000 initially. **The trailing `E` is
+unexplained in the document** (the table's own annotations are `DRL` and `EGK`); it is quoted as printed.
 
-### SIDs, preferred runways and initial fixes (SOP 3-2-4)
+### SIDs, preferred runways and initial fixes (SOP 3-2-3, 7110.26H; was 3-2-4 in 26G)
 
-> **The tower order names the SID set retired on 2026-10-29**, and is transcribed as written. From
-> that date MSP flies the CIFP 261029 set — `claude_MSP_SID_Reference.md`, issue #61 — and vZMP has
-> not yet revised this order. Read the names below as the order's, not as the current procedures.
+**Rewritten for the SID set that went live 2026-10-29.** The tower order's table now carries the CIFP 261029
+set, as printed:
 
-| Departure | Preferred runway(s) | Direction | Initial fix | Transition |
+| Departure | Runway(s) | Direction | Initial fix | Transitions |
 |---|---|---|---|---|
-| COULT | 17, 12L/30R | SE | TAXEE | DLL |
-| KBREW (Kay-Brew) | 12L/30R | NW | HRBEK | FAR |
-| ORSKY (Or-skee) | 17, 12R/30L | S | RUMLE | ONTIJ |
-| RST (Rochester) | 17, 12R/30L | SE | FOBUG/DOKTR | ALO |
-| SCHEP (Shepp) | 17, 12R/30L | SW | MCONL | RXANN |
-| WLSTN (Wellstone) | 12L/30R | NE | SNINE | GRB |
-| ZMBRO (Zumbro) | 17, 12R/30L | SE | JEDET | ODI |
-| SMERF (Smurf) | 12L/30R | W | ZOGAP | none |
-| LEINY (Line-ee) | 12L/30R | W | BOTNE | none |
+| BITEZ | 12L/30R | W | HHOBA | DKOTA, SMERF, LEINY |
+| BUNYN (Bunyan) | 12L/30R | N | JBUGG | DLH, KVUSI |
+| HTDSH (Hotdish)\* | 17 | SE | ITZME | ALO, BRIBE, OANNA, OHHMY, ZZIPR |
+| KBREW (Kay-Brew) | 12L/30R | NW | HRBEK | KEETN |
+| NRTHN (Northern) | 12L/30R | NE | SIEDL | AROUND, TTOWN |
+| SNOWZ | 17, 12R/30L | SW | MANCY | DABOY, ISTIQ, LLUKY, SMTHA, ZZEEE |
+| SNUPE (Snoopy) | 17, 12L/30R | SE | PNUTZ | DLL |
+| TOTTZ (Tots)\* | 17, 12R/30L | SE | HTDSH | ALO, FOOLZ, OANNA, OHHMY, ZZIPR |
+| ZMBRO (Zumbro)\* | 17, 12R/30L | SE | JEDET | BRIBE |
 
-Aircraft that do not file a SID get the **Minneapolis Nine (MSP9)** or current version, which
-does not need to be amended into the route string. Aircraft unable a SID get **MSP9 to the first
-filed fix** (which must be inside ZMP airspace); unable both, **radar vectors to the first filed
-fix**, with coordination to the affected M98 sectors for obstacle and airspace clearance.
+\* *Assign the HTDSH departure, regardless of departure runway, when MSP is in a 30/17 configuration. Assign
+TOTTZ/ZMBRO in all other configurations.* **Three readings the table forces, each a conflict or a gap the tool
+must name rather than settle:**
 
-*Nine turbojet SIDs are named here — the same nine the tool carries, with COULT, KBREW, LEINY,
-ORSKY, RST, SCHEP, SMERF, WLSTN, ZMBRO. This document gives their **initial fixes**, which the
-existing `claude_MSP_SID_Reference.md` should be checked against.*
+1. **HTDSH is listed for Runway 17 only** here and **"only authorized for Runway 17 departures on a 30s/17
+   configuration"** in LOA Table 1 footnote 1 — while the **asterisked note says assign HTDSH *regardless of
+   departure runway* in a 30/17.** The two are reconcilable only as *"on a 30/17, HTDSH replaces ZMBRO and TOTTZ
+   for every runway's traffic that would have flown them, and the SID's own runway is 17"* — the tower order does
+   not say that. **It contradicts the owner's ruling of 2026-10-18** (HTDSH1 and SNOWZ1 valid off every runway),
+   which was made on the CIFP data before any order spoke to it. Named here; the deck warns and does not refuse
+   (`CLAUDE.md`, *Departures*).
+2. **FOOLZ, not FOOLS.** The order spells TOTTZ's fifth transition **FOOLZ**, as the briefing did; CIFP 261029
+   carries **FOOLS**. Two documents now say FOOLZ and the coded source says FOOLS: one is wrong and this file
+   cannot tell which. The deck keeps CIFP's spelling.
+3. **The runway column is the tower's assignment, not a restriction CIFP codes** — CIFP codes **no** runway
+   transition for the other seven SIDs and only the Runway 17 segment for HTDSH1 and SNOWZ1.
+   **SNOWZ1 is listed for 12R/30L and 17, not for 12L/30R; the deck allows it off every runway.**
 
-### Departure frequency assignment (SOP 3-2-5)
+**Minneapolis One (3-2-3 b, was *Nine*):** aircraft that file no SID get the **Minneapolis One Departure
+(MSP1)** or the most current version, **which does not need to be amended into the route string**; unable an
+assigned SID, **MSP 1 to the first filed fix** (inside ZMP airspace); unable both, **radar vectors to the first
+filed fix**, with coordination to the affected M98 sectors. **The order now says One, as the briefing and the
+FAA Not-in-CIFP workbook did** (`claude_MSP_SID_Reference.md`). The dispersal tracks it carries moved to LOA 9.e
+(below) and are now worded by gate scratchpad rather than by fix.
+
+### Departure frequency assignment — **deleted from the tower order in 26H** (was SOP 3-2-5)
+
+*Kept below as the March reading, because no November document restates it and the SID names in it are the
+retired set's. **It is not current and no November text replaces it.** The frequency each departure gets is
+not stated anywhere read on 2026-11-08.*
 
 When Departure and/or Satellite are split:
 
@@ -222,7 +319,7 @@ When Departure and/or Satellite are split:
 Anything not on a listed SID: find the fix pair in STARS (`MULTI FUNC, D, BEACON CODE, enter`),
 compare to Appendix H, and issue the frequency from the Satellite Airspace Split map.
 
-### Departure headings and the D/R/L coordination rule (LOA 8.g)
+### Departure headings and the D/R/L coordination rule (LOA 8.h; was 8.g until 2026-10-31)
 
 Local Control issues initial headings that keep departures inside the delegated departure
 airspace, and:
@@ -230,10 +327,10 @@ airspace, and:
 - **Depart 12L/R, any landing configuration:** if LC gives **"R" traffic** a heading tracking
   **on or north of 105**, coordinate with **"D"**. If LC gives **"D" traffic** a heading tracking
   **south of 105**, coordinate with **"R"**.
-- **Land 12L/R, depart 12L/R and 17:** 12L/R departures for **FOD or ONL get a 230 heading for a
-  turn at three miles from the departure end**, with **3 MIT for same-fix departures off
-  different runways**. **M98 has control for left turns of "D" traffic (ABR, FAR, WLSTN) off
-  Runway 17 regardless of assigned heading.** Maximum Runway 17 departure track is **215**. The
+- **Land 12L/R, depart 12L/R and 17:** **SNOWZ** aircraft departing 12L/R get a **230 heading for a
+  turn at three miles from the departure end** (it said *FOD or ONL* until 2026-10-31), with **3 MIT for
+  same-fix departures off different runways**. **M98 has control for left turns of "D" traffic (BITEZ,
+  KBREW) off Runway 17 regardless of assigned heading.** Maximum Runway 17 departure track is **215**. The
   joint-use track for 12L/R departures is **105**, with the same coordination rule between "L"
   and "D" either side of it.
 - **Depart 30L/R, any landing configuration:** if LC gives **"R" traffic** a heading tracking
@@ -242,30 +339,32 @@ airspace, and:
 - **Land 30L/R, depart 30L/R and 17:** a Runway 17 departure simultaneous with a same-fix 30L/R
   departure must be **3 MIT, no visual separation, no divergence** (visual or divergence only in
   unusual circumstances). **M98 has control for right turns of "D" traffic off Runway 17.**
-  On a 30/17, all Runway 17 departures must track **no less than 170**.
-- **Runway 17 same-fix spacing:** landing 12L/R or 30L/R and departing 17, **3 MIT
-  turbojet-to-turbojet and turboprop-to-turboprop over the same fix, no divergence**.
-- **Land 30L/R and 35, depart 30L/R:** turboprops assigned **ODI and RST filed 11,000 and above**
-  get a **260 track**, treated as one fix, **3 MIT, no visual separation**.
+  On a 30/17, all Runway 17 departures **that will enter Satellite Airspace at or below 5,000 ft** must
+  track **no less than 170**; **30L/R departures must be issued a heading no farther left than 215**
+  (both new or narrowed 2026-11-01; the right-turn sentence still names ABR, FAR and WLSTN, as written).
+- **Deleted 2026-11-01:** the *Runway 17 same-fix spacing* rule (3 MIT, no divergence, landing 12L/R or
+  30L/R and departing 17) and the *land 30L/R and 35, depart 30L/R* ODI/RST turboprop 260-track rule.
+- **New 2026-11-01 (8.a):** a Runway 17 aircraft that will be given a heading in lieu of the initial RNAV fix
+  must be **verbally coordinated and shown on the flight progress strip**.
 - **Land 35, depart 12L/R:** maximum departure track southeast of MSP is **135 from the Runway
   12R departure end**. Non-turbojets assigned into Sector 8 (FOD, ONL) that are turned right go
-  to **"E"**. **SCHEP and ORSKY turbojets must track at or north of 105.**
+  to **"E"**. **SCHEP and ORSKY turbojets must track at or north of 105** (the retired names, still printed so in the November LOA 8.h(5)(c)).
 
-### Non-advertised runways (LOA 8.i)
+### Non-advertised runways (LOA 8.j; 8.i until 2026-10-31)
 
 MSP CIC coordinates with all affected M98 positions. **Runway 4 departures** must be coordinated
 with the **G Satellite controller**, assigned **4,000 ft, heading 040, frequency 121.2**, and MSP
 must coordinate with STP Tower. **Runway 22 departures** get a **DDA heading and initial 3,000
 ft**, then climb to the table altitude once inside the DDA.
 
-### VFR departures (LOA 8.j, SOP 3-2-6)
+### VFR departures (LOA 8.k, SOP 3-2-4)
 
 Requesting only to leave the Class B without advisories: **at or below 2,700 ft**, with a
 departure frequency matching the tower frequency for the route and configuration, and a
 transponder code from **0341-0346**. Requesting radar advisory service in M98 airspace: **at or
 below 3,500 ft**, assigned to the appropriate satellite position on a **discrete** code.
 
-### Automated point-outs, MSP to/from M98 (LOA 8.k)
+### Automated point-outs, MSP to/from M98 (LOA 8.l)
 
 APOs are flashed to **all staffed MSP Local Control positions**. Eligible:
 
@@ -278,7 +377,7 @@ APOs are flashed to **all staffed MSP Local Control positions**. Eligible:
 
 ---
 
-## 5. Runway use, noise and quiet hours (LOA 9, SOP 2-2)
+## 5. Runway use, noise and quiet hours (LOA 9; the tower order dropped its RUS, 4/22 and quiet-hours paragraphs 2026-11-01)
 
 **Runway Use System preference**, descending:
 
@@ -303,8 +402,11 @@ already enforces.
 - **30L/30R arrivals.** Aircraft south of the 30L localizer arriving 30L or 30R must be **vectored
   to at least a 4-mile final**, and a visual approach clearance must say so — *"Cleared visual
   approach Runway 30L, make at least a 4 mile final for noise abatement."*
-- **30L/R turbojet dispersal tracks:** **KBREW 320, WLSTN 340, COULT 360**; MSP9 by initial fix —
-  **FAR 320**; **BRD, DLH, HYR, EAU or GRB 340**; **DLL 360**.
+- **30L/R turbojet dispersal tracks (LOA 9.e, rewritten 2026-11-01):** **KBREW 320, NRTHN 340, SNUPE 360, BUNYN 340**;
+  Minneapolis One by gate scratchpad — **KBR 320**; **BAB, GPR, PRR, PKE 340**; **SNU 360**. *Until 2026-10-31
+  this read KBREW 320, WLSTN 340, COULT 360 and MSP9 by fix — FAR 320; BRD, DLH, HYR, EAU, GRB 340; DLL 360. The
+  three tracks did not move; the fixes are now named by gate. That KBR is the old FAR, and BAB/GPR/PRR/PKE the old
+  BRD/DLH/HYR/EAU/GRB, is an inference from the matching tracks, not something either document says.*
 - **Runway 4 and 22.** Runway 22 departures turning right **remain runway heading until leaving
   1,500 ft MSL** and are **not issued a heading greater than 350 until past the 12L localizer**.
   Runway 4 departures avoid overflying the Veterans' Administration Hospital.
@@ -318,13 +420,15 @@ already enforces.
   typically 0015-0530 local, and Departure may turn them on course on initial contact. If
   Runway 4/22 is needed, give equal priority to either end. Applies to all aircraft with noise
   characteristics at or above a C-130 or turbojet.
-- **SOP 2-2-10: land 12s and 35 while departing 12s is prohibited** (go-around concerns).
-  *This is a tower-order prohibition and is separate from the M98 SOP's note that Land 35 /
-  Depart 12 is no longer prohibited — different configurations, do not conflate them.*
+- **SOP 2-2-10 (*land 12s, land 35 prohibited*) is deleted from the tower order in 26H** (2026-11-01). The M98
+  SOP had already dropped its own prohibition in 26A, and the **ZMP-M98 LOA now has a Knock-It-Off rule for a
+  35/12s configuration** (`claude_ZMP_Reference.md`) and the M98 7110.26B Appendix A has a *Land 35 - Depart 12*
+  diagram. **Land 35 / Depart 12 is now an expressly supported configuration in every document read.** The
+  tower-order sentence this bullet used to carry is gone, so the distinction it drew no longer exists.
 
 ---
 
-## 6. Opposite Direction Operations (LOA 10, SOP 7-4)
+## 6. Opposite Direction Operations (LOA 10; tower SOP 7-4 deleted 2026-11-01)
 
 **Cutoff point is 10 NM from the threshold of the runway of intended landing.** Aircraft on a
 downwind or vectored away are not inside the cutoff until established on a base leg that falls

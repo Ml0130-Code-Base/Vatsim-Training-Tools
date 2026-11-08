@@ -6,8 +6,12 @@
 > flow"*). **Until 2026-10-29 the network still files the retired set** — recorded at the end of
 > this file — and the deck says so in a banner on every page until the day. Issue #61.
 >
-> **Gate letters for the new set are TABLED** (owner, 2026-10-14: not known yet). **The scope draws a
-> SID only out to 50 NM from MSP** (owner, 2026-10-22 — the STARS limit; it was 80 NM from
+> **The departure gates are no longer tabled (2026-11-08).** The MSP-M98 LOA of 2026-11-01 carries **Table 1,
+> Standard Instrument Departure Gates** — a three-letter scratchpad and a gate name per SID — and M98 7110.26B
+> 3-3 a(2) makes *the three-letter departure gate* the scratchpad #1 entry. See *Gates — LOA Table 1* below.
+> **The orders of 2026-11-01 now name this SID set** (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 8-10), so the
+> *Facility text that names SIDs* caveat further down is **partly retired** — read it there.
+> **The scope draws a SID only out to 50 NM from MSP** (owner, 2026-10-22 — the STARS limit; it was 80 NM from
 > 2026-10-14). The tables below still list every fix to 80 NM; the rest are named, not plotted.
 
 ## Source self-check — LOAs + SOP + plates (read before quoting a routing/altitude in a drill)
@@ -18,7 +22,7 @@ This doc is a convenience layer over the SID plates + LOAs + SOP. Before asserti
 - **ZMP-M98 LOA** → who clears what by filed altitude (4.f), the 60-NM SID-join rule, non-SID Table 1 headings, departure release boundary (25 NM / 110), 17/22-config SID changes.
 - **MSP-M98 LOA** → 30L/R turbojet dispersal tracks (9.e), departure heading coordination (8.g), initial altitudes (8.h), non-advertised-runway departures (8.i).
 - **MSP 7110.26G (tower order)** → LC initial departure headings (§6-3-1, mirrors LOA 9.e), diverging-departure runway headings, VRIP/ADW, auto-releases (§6-3-1b).
-- **M98 7110.26A (TRACON SOP)** → what M98 owns once it takes the departure: Departure/Feeder duties, ingress-route coordination (5-1), P-ACP climbs through arrival airspace (3-2).
+- **M98 7110.26B (TRACON SOP)** → what M98 owns once it takes the departure: Departure/Feeder duties, ingress-route coordination (5-1), P-ACP climbs through arrival airspace (3-2).
 
 If two disagree, name the conflict — don't silently pick one. **When a value drives an LC/tower action (initial runway heading, release) it's a tower-order/LOA fact; when it drives an inside-M98 action it's an SOP fact — verify in the right book.** Traps:
 
@@ -203,23 +207,46 @@ LOA for the 2026-10-29 set are not out. It closes when one of them publishes a p
 Part 6, item 7. Until then no choice here is a preference: the generator draws all nine alike and no
 grading rule favours either SID.
 
-## Gates — TABLED for the new set
+## Gates — LOA Table 1 (MSP-M98 LOA 5.b(2), effective 2026-11-01)
 
-**Which gate each 2026-10-29 SID exits through is not known yet** (owner, 2026-10-14), so the deck
-carries every one as null and a departure gets **no scratchpad gate** — exactly what it always did
-for a SID with no gate letter. The gates themselves are the facility's and do not change (below).
-They will come from the revision of the owner's *M98 SIDS & Pointout Fix Indicators* chart, or from
-the owner — **not from a bearing**, which is how the retired set's were first worked out and then
-had to be confirmed on that chart.
+**Until 2026-11-08 every gate here was tabled** (owner, 2026-10-14: *not known yet*). The LOA now prints them,
+and **the old one-letter gates (E, R, D, F, N, A, B, O) and the `B12` altitude form are gone from the SOP**
+(7110.26B 3-3 a(2)). The scratchpad is the **three-letter code**; the requested altitude goes in the
+assigned-altitude field (3-3 a(3)). **Table 1 has no transition column**; the transition assignment below is the
+vZMP PBN Phase II briefing's (p.23-24), which the table's codes and gate names corroborate.
 
-**Dispersal, as the facility wrote it for the retired set** — MSP tower order §6-3-1, mirroring
-MSP-M98 LOA 9.e: KBREW ~320°, WLSTN ~340°, COULT ~360° (MINNEAPOLIS Nine: FAR 320 / BRD-DLH-HYR-EAU-GRB 340 / DLL 360). **These name retired SIDs** and are kept as the facility's text until vZMP revises it (issue #61); the initial heading still follows dispersal, not the SID's direction.
+| SID | Transition(s) | Scratchpad | Gate (LOA Table 1) | Source of the transition |
+|---|---|---|---|---|
+| KBREW1 | KEETN | **KBR** | KBREW Gate | briefing |
+| BUNYN1 | KVUSI | **GPR** | GPERS Gate | briefing |
+| BUNYN1 | DLH | **BAB** | BAYBB Gate | briefing |
+| NRTHN1 | AROUND (the briefing writes AROND) | **PRR** | PRRCH Gate | briefing |
+| NRTHN1 | TTOWN | **PKE** | PIKKE Gate | briefing |
+| SNUPE1 | DLL | **SNU** | SNUPE Gate | briefing |
+| ZMBRO1 | BRIBE | **BRO** | ZMBRO Gate | briefing |
+| HTDSH1 | BRIBE | **ZMB** | ZMBRO Gate | briefing |
+| HTDSH1 | ALO · OANNA · OHHMY · ZZIPR | **TTZ** | TOTTZ Gate | briefing |
+| TOTTZ1 | ALO · FOOLS · OANNA · OHHMY · ZZIPR | **TOT** | TOTTZ Gate | briefing |
+| SNOWZ1 | ISTIQ · LLUKY | **MGL** | MOGLL Gate | briefing |
+| SNOWZ1 | ZZEEE · DABOY | **PLW** | PLOWW Gate | briefing |
+| SNOWZ1 | SMTHA | — | — | **no code in either document** |
+| BITEZ1 | SMERF | **PAG** | PAGOZ Gate | briefing |
+| BITEZ1 | DKOTA · LEINY | **TIK** | TICKK Gate | briefing |
+| DUHCK1 | LLUKY · STIER · SBRNA | **DUK** | — | **briefing only; no LOA row (satellite-only SID)** |
+
+**What it does not say:** which scratchpad (#1) carries the code is now stated (7110.26B 3-3 a(2)); **what a
+gate is** is not defined — the names are fixes on or near the SID (PAGOZ, TICKK, MOGLL, PLOWW, PRRCH, PIKKE,
+GPERS, BAYBB, ZMBRO, TOTTZ, KBREW, SNUPE) and **PAGOZ, TICKK and MOGLL are fixes the CIFP table above carries**.
+**SNOWZ's SMTHA transition is unassigned.** **MSP1 (the vector departure) has no row**; its dispersal tracks are
+worded by these codes in LOA 9.e (below) but the tracks are the same three.
+
+**Dispersal, as the facility writes it now** — MSP-M98 LOA 9.e (rewritten 2026-11-01; the tower order's 6-3-1 is
+deleted): **KBREW ~320°, NRTHN ~340°, SNUPE ~360°, BUNYN ~340°; MINNEAPOLIS One: KBR 320 · BAB, GPR, PRR, PKE 340 ·
+SNU 360.** The three tracks are the ones the retired text gave (320 / 340 / 360). *Until 2026-10-31 it read: KBREW ~320°, WLSTN ~340°, COULT ~360° (MINNEAPOLIS Nine: FAR 320 / BRD-DLH-HYR-EAU-GRB 340 / DLL 360), naming retired SIDs; the initial heading still follows dispersal, not the SID's direction.*
 
 ## Facility text that names SIDs — read as written
 
-**The LOA and tower-order paragraphs below are transcribed as written, and several name SIDs that
-are retired on 2026-10-29** (WLSTN, COULT, KBREW, SCHEP, ORSKY, the MINNEAPOLIS NINE). vZMP has not
-revised them (issue #61, item 8). They are the facility's words, not the current procedures — do not
+**The LOA and tower-order paragraphs below are transcribed as written. The March 2026 text named SIDs retired on 2026-10-29** (WLSTN, COULT, KBREW, SCHEP, ORSKY, the MINNEAPOLIS NINE) and **vZMP revised the order and the LOA on 2026-11-01** (issue #61, item 8 — read 2026-11-08): MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b, 8.h, 9.e and 10 now name BITEZ, BUNYN, HTDSH, KBREW, NRTHN, SNOWZ, SNUPE, TOTTZ and ZMBRO and MSP One. **What still names a retired SID in the November text, as written:** LOA 8.h(4)(b) (ABR, FAR, WLSTN) and 8.h(5)(c) (SCHEP, ORSKY), and the whole *Departure frequency assignment* section of the March tower order (deleted from 26H, kept in `claude_MSP_Tower_Reference.md`). They are the facility's words, not the current procedures — do not
 read a retired name as the new SID in the same direction.
 
 ## 17/22 landing config — SID changes (ZMP-M98 LOA 5.a)
@@ -236,7 +263,7 @@ The dispersal area is MSP tower's airspace, and these are its actual limits — 
 - **VFR transit (5.a.7):** VFR aircraft not on an instrument approach may cross the dispersal area **outside the Class B without coordination**; anything **loitering** (photo, tour, survey) is coordinated individually, with M98 keeping separation from MSP departures.
 - Related (8.c/8.d): Departure/Satellite may **alter any MSP departure's initial heading** with separation ensured, and Departure may **climb departures initially assigned 5,000 or higher within the dispersal area**.
 
-## Initial departure altitudes & seat routing (MSP-M98 LOA 8.h / MSP 7110.26G 3-2-3)
+## Initial departure altitudes & seat routing (MSP-M98 LOA 8.i; MSP 7110.26G 3-2-3 until 2026-10-31)
 
 Decides both the altitude **and which M98 position works the aircraft**:
 
@@ -261,14 +288,12 @@ Low-filers and pistons off MSP belong to the **Satellite** seat at 4,000 — the
 - **Runway 4:** coordinate with **G Satellite** — assign **4,000, heading 040, frequency 121.2**; MSP tower also coordinates with STP tower.
 - **Runway 22:** assign a **dispersal-area heading at 3,000**; once inside the dispersal area, climb per the 8.h table.
 
-## The departure gates, complete (M98 7110.26A 3-3a — APO scratchpad letters)
+## The departure gates — the letters are retired (M98 7110.26A 3-3a, superseded by 7110.26B 3-3a)
 
-The full gate set M98 files against. **The gates are the facility's and do not change with the
-SIDs**; which gate each new SID uses is tabled (above):
-
-**E** = EAU · **D** = DLL · **N** = ODI · **B** = BRD/DLH · **R** = RST · **F** = FAR · **A** = ABR · **O** = ONL/FOD.
-
-Scratchpad form: gate letter + two-digit altitude in thousands ("**B12**" = BRD/DLH gate, assigned 12,000); aircraft tagged **STC or MKT are presumed descending to 4,000** unless the altitude field says otherwise.
+**Superseded 2026-11-01.** 7110.26A made the scratchpad a one-letter gate and a two-digit altitude. The eight
+letters were **E** = EAU · **D** = DLL · **N** = ODI · **B** = BRD/DLH · **R** = RST · **F** = FAR · **A** = ABR · **O** = ONL/FOD, and
+the form was "**B12**" = BRD/DLH gate, assigned 12,000. **7110.26B drops both**; the gate is the three-letter
+code in *Gates — LOA Table 1* above. **Carried over unchanged:** aircraft tagged **STC or MKT are presumed descending to 4,000** unless the altitude field says otherwise.
 
 ## Non-SID headings into ZMP — Table 1 values (ZMP-M98 LOA)
 
@@ -294,11 +319,11 @@ Previously cited by name only; the actual bands:
 
 Clear departures **via the first fix in the route**, point them out to any affected Center position, and climb **turboprops/props to 17,000** (or lower on request). The whole TRACON is collapsed onto **124.7** in this regime — see the Config reference for the arrival side.
 
-## MSP1 (MSP9 until 2026-10-29), the radar-vector departure — its charted fixes and navaids (MSP ATCT 7110.26G 6-3-1.a.4; CIFP 261001, 261029)
+## MSP1 (MSP9 until 2026-10-29), the radar-vector departure — its charted fixes and navaids (MSP ATCT 7110.26G 6-3-1.a.4 until 2026-10-31, now MSP-M98 LOA 9.e.5; CIFP 261001, 261029)
 
 **What the order says.** Turbojets off runways 30L/30R who do not file a SID get the Minneapolis Nine
 (MSP9) or current version, and MSP9 is flown to an **initial fix by direction**
-(*MSP ATCT 7110.26G* paragraph 6-3-1.a.4, `source-docs/txt/MSP_ATCT_7110_26G.txt`). Unable a SID, they get
+(*MSP ATCT 7110.26G* paragraph 6-3-1.a.4 — **that paragraph is deleted from 7110.26H; the tracks are now MSP-M98 LOA 9.e.5**, worded by gate scratchpad: KBR 320, BAB/GPR/PRR/PKE 340, SNU 360. The 26G text is in git history; the extraction of the current order is `source-docs/txt/MSP_ATCT_7110_26H.txt`). Unable a SID, they get
 MSP9 to the first filed fix, which must be inside ZMP airspace; unable both, radar vectors to the first
 filed fix. The order names the initial fixes and a track for each:
 

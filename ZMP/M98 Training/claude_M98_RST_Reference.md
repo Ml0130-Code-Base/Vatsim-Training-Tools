@@ -3,7 +3,7 @@
 Rochester Approach is the one neighbour around M98 that is not Center. This doc carries the two agreements that govern it, extracted from the source PDFs.
 
 **Sources**
-- **M98/RST LOA** — *Minneapolis TRACON / Rochester ATCT, Letter of Agreement, SUBJECT: TOWER ENROUTE SERVICE*, effective **31 March 2026** (cancels the 27 Dec 2023 edition). This is the operative one for M98.
+- **M98/RST LOA** — *Minneapolis TRACON / Rochester ATCT, Letter of Agreement, SUBJECT: TOWER ENROUTE SERVICE*, effective **1 November 2026** (re-read 2026-11-08: it cancels the RST ATCT letter of agreement dated 31 March 2026, where the March edition cancelled the one dated 27 Dec 2023; six pages now, seven before — the embedded Appendix A image is byte-identical, so the loss is a text page). This is the operative one for M98.
 - **ZMP/RST LOA** — *Minneapolis ARTCC / Rochester Approach/ATCT, SUBJECT: TERMINAL AREA CONTROL SERVICE*, effective **27 December 2023**. Governs RST against Center; relevant to M98 mainly for what happens when RST is closed and for the BLUEM/KASPR assignment when RST hands to Sector 7.
 - Both are marked **FOR SIMULATION USE ONLY** (VATSIM Minneapolis ARTCC, Dhruv Kalra, ATM).
 
@@ -39,7 +39,8 @@ M98/RST **5.a**:
 | 12L/R | 9,000 | Feeder | jets and props |
 | 30L/R | 7,000 | Satellite | props |
 | 30L/R | 9,000 | Feeder | jets |
-| 30L/R, departing 17 | 9,000 | Feeder | jets and props |
+| 30L/R, departing 17 | 9,000 | Feeder | **jets** *(2026-11-01; was jets and props)* |
+| 30L/R, departing 17 | **7,000** | **Satellite** | **props** *(new row, 2026-11-01)* |
 | 35 | 7,000 | 35 Arrival | jets and props |
 | 4 | 8,000 | Feeder | all capable of 200 kt |
 | 17 or 22 | 9,000 | Feeder | all capable of 200 kt |

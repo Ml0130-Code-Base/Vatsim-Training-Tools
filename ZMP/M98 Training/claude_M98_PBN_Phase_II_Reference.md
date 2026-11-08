@@ -4,6 +4,8 @@
 **10/29/2026**. Supplied by the owner on 2026-10-28 (the SOP and LOA revisions are not out yet — the
 last page says they are coming, with another brief and an R&I). **Cited here as "briefing p.N".**
 
+> **2026-11-08 — the orders are out.** M98 7110.26B, MSP ATCT 7110.26H and the November LOAs (all effective 2026-11-01) now confirm much of this: the three-letter scratchpad codes (MSP-M98 LOA 5.b Table 1), HTDSH on a 30s/17 only (7110.26H 3-2-3), MSP1 (LOA 9.e), Area F eliminated in effect (4-2 g deleted) and the NITZR/BLUEM Knock-It-Off line deleted. Where this file below says the SOP and LOA are *not revised* or *not out*, read it as written on 2026-10-28; `claude_MSP_SID_Reference.md` and `claude_MSP_Tower_Reference.md` carry the current text and name where it still disagrees with this briefing (FOOLZ / FOOLS, SMTHA, DUK).
+
 **What kind of document this is.** A training briefing, not an order. It does not amend the M98 SOP,
 the MSP-M98 LOA or the ZMP-M98 LOA, and where it differs from them the briefing describes what is
 coming and the orders describe what is written. Nothing below is graded by the deck (see *What the deck

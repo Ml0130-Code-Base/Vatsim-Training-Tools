@@ -1,5 +1,7 @@
 # M98 Satellite Reference
 
+> **Citations to M98 7110.26A, MSP ATCT 7110.26G and the March 2026 LOAs in this file are the superseded editions** (replaced 2026-11-01 by 7110.26B, 7110.26H and the November LOAs). Check `claude_M98_SOP_Reference.md` and `claude_MSP_Tower_Reference.md` for what changed before quoting a paragraph number from here.
+
 Companion to the STAR / SID / Coordination references. Covers the **M98 Satellite operation** — the low airspace and the outlying fields, worked from the **E / G / K** positions. FOR SIMULATION USE.
 
 ## Source self-check
