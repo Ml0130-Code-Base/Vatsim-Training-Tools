@@ -916,6 +916,8 @@ function flowCarried(cfg){ return !!TABLE2[cfgFlow(cfg)]; }
    fix is a STAND-IN drawn straight, not a procedure — departure dispersal, a
    tower function, decides the real first turn, as it always has.
 
+   (Owner, 2026-11-08: HTDSH is only for a 30/17 — a RUNWAY-wise ruling below, not a
+   configuration one; see SID_SWAP.)
    HTDSH1 AND SNOWZ1 ARE VALID OFF EVERY RUNWAY — owner, 2026-10-18: "the
    difference is that off of 17 there's the rnav segment to RUBRB then vector
    to join." Their Runway 17 transition (heading 169.5, RUBRB at or above
@@ -1202,7 +1204,7 @@ function sidChangeHtml(day){
    fn 1) but rank neither it nor SNOWZ against the other off 17, so it stays open
    (claude_M98_MD_Gap_Analysis.md, Part 6 item 7) and the deck prefers neither.
    Shown beside the SID picker on a strip departing 17. */
-var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. Open until a document ranks them: MSP ATCT 7110.26H 3-2-3 lists both for 17 and says to assign HTDSH1 in a 30/17 and TOTTZ1 or ZMBRO1 in every other configuration, but does not rank HTDSH1 against SNOWZ1.';
+var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is the owner’s expectation, not a published rule. HTDSH1 is assigned only in a 30/17 (owner, 2026-11-08; MSP ATCT 7110.26H 3-2-3), so in any other configuration the choice off 17 is not between it and SNOWZ1. In a 30/17 both are listed for 17 and no document ranks them. Open until a document ranks them.';
 /* HTDSH on a 30s/17 — MSP ATCT 7110.26H 3-2-3 (asterisk) and MSP-M98 LOA 5.b
    Table 1 footnote 1, effective 2026-11-01. The tower order: "Assign the HTDSH
    departure, regardless of departure runway, when MSP is in a 30/17 configuration.
@@ -1211,16 +1213,18 @@ var SID17_OPEN = 'Off 17 it is not known which SID is preferred — HTDSH1 is th
    configuration, so another swap is a row and not a branch. WHAT IT COVERS: MSP
    only (CIFP 261029 codes HTDSH1 at MSP alone; the satellites keep ZMBRO1 and
    TOTTZ1), every runway (the swap is by configuration), the SID and not its
-   transition. CONFLICTS, named and not settled: the order's SID table lists HTDSH
-   for Runway 17 only and the LOA footnote says it is "only authorized for Runway 17
-   departures on a 30s/17" — while the asterisk says regardless of runway; and the
-   owner ruled HTDSH1 and SNOWZ1 valid off every runway (2026-10-18, on CIFP data,
-   before any order spoke to it). What the swap does to TOTTZ1's FOOLS transition is
-   unsaid: the order spells it FOOLZ and HTDSH carries no such transition. A strip
-   that disagrees is WARNED, never refused: reminder, not a judgement. */
+   transition. OWNER RULING, 2026-11-08: HTDSH is only for a 30/17 — so a strip naming
+   HTDSH1 at MSP in any other configuration is an ERROR, and the 2026-10-18 "valid off
+   every runway" ruling now holds for SNOWZ1 and for HTDSH1's runway, not for HTDSH1's
+   configuration. The order's SID table (Runway 17 only) and its asterisk (regardless of
+   runway) still differ; the swap is by configuration and does not decide it. FOOLS, not
+   FOOLZ: the owner confirms CIFP 261029's spelling (2026-11-08) and the order's FOOLZ is
+   a typo. What the swap does to TOTTZ1's FOOLS transition is unsaid: HTDSH1 carries no
+   such transition. ZMBRO1 and TOTTZ1 in a 30/17 are WARNED, never refused: reminder,
+   not a judgement. */
 var SID_SWAP = {
  '30-17': { from:['ZMBRO1','TOTTZ1'], to:'HTDSH1', field:'KMSP',
-            src:'MSP ATCT 7110.26H 3-2-3 and MSP-M98 LOA 5.b Table 1 footnote 1, effective 2026-11-01 — the order and the LOA disagree with each other on the runway, and with the owner’s 2026-10-18 ruling' }
+            src:'MSP ATCT 7110.26H 3-2-3 and MSP-M98 LOA 5.b Table 1 footnote 1, effective 2026-11-01; owner, 2026-11-08: HTDSH is only for a 30/17' }
 };
 function sidSwapFor(cfg, key, field){
  var s=SID_SWAP[cfg];
@@ -1233,8 +1237,8 @@ function sidSwapNote(cfg){
 }
 /* The swap seen from the other side: HTDSH1 at MSP outside the configuration the
    order assigns it to. Returns the swap row and the configuration it belongs to,
-   or null. A warning, never a refusal — the owner ruled it valid off every runway
-   (2026-10-18) and the order and LOA disagree about the runway. */
+   or null. Validated as an ERROR: owner, 2026-11-08, "HTDSH is only for when we are in
+   a 30/17". */
 function sidSwapMisuse(cfg, key, field){
  var c, s;
  for(c in SID_SWAP){ s=SID_SWAP[c];
@@ -5797,11 +5801,11 @@ function validate(rec){
       satellite, that field's own track (issue #67) */
    var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
    /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP, and HTDSH1 is assigned in no other
-      configuration (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b Table 1 fn 1) — a reminder, not a refusal */
+      configuration (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b Table 1 fn 1; owner, 2026-11-08) — the first a reminder, the second a refusal */
    var swp=DD.sidSwapFor(rec.cfg, a.sid, dFld);
    if(swp) warns.push(tag+': '+DD.sidOf(a.sid)+' is flown as '+swp.to+' in a 30s/17 — '+swp.src+'. Reminder, not a judgement.');
    var swm=DD.sidSwapMisuse(rec.cfg, a.sid, dFld);
-   if(swm) warns.push(tag+': '+DD.sidOf(a.sid)+' is assigned only in a 30s/17 at MSP — '+swm.swap.src+'. This strip is in a '+rec.cfg+'. Reminder, not a judgement.');
+   if(swm) errs.push(tag+': '+DD.sidOf(a.sid)+' is assigned only in a 30s/17 at MSP — '+swm.swap.src+'. This strip is in a '+rec.cfg+'; MSP is assigned TOTTZ or ZMBRO there.');
    if(!dTrk){
     /* MSP1 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
     if(DD.isMsp1(a.sid))

@@ -207,6 +207,8 @@ LOA for the 2026-10-29 set are not out. It closes when one of them publishes a p
 Part 6, item 7. Until then no choice here is a preference: the generator draws all nine alike and no
 grading rule favours either SID.
 
+> **Owner rulings, 2026-11-08.** (1) **HTDSH is only for a 30/17** — it is assigned at MSP in a 30/17 configuration and in no other; ZMBRO and TOTTZ in every other. This supersedes the 2026-10-18 "valid off every runway" ruling **for HTDSH1's configuration only**; it stays valid off every *runway* within a 30/17 and SNOWZ1 is unchanged. The deck refuses HTDSH1 at MSP outside a 30/17. (2) **FOOLS is the spelling** — CIFP 261029's, so the order's and the briefing's FOOLZ is a typo in those documents, not a second transition.
+
 ## Gates — LOA Table 1 (MSP-M98 LOA 5.b(2), effective 2026-11-01)
 
 **Until 2026-11-08 every gate here was tabled** (owner, 2026-10-14: *not known yet*). The LOA now prints them,

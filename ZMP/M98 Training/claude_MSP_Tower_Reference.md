@@ -291,6 +291,8 @@ must name rather than settle:**
    transition for the other seven SIDs and only the Runway 17 segment for HTDSH1 and SNOWZ1.
    **SNOWZ1 is listed for 12R/30L and 17, not for 12L/30R; the deck allows it off every runway.**
 
+> **Owner rulings, 2026-11-08.** (1) **HTDSH is only for a 30/17** — it is assigned at MSP in a 30/17 configuration and in no other; ZMBRO and TOTTZ in every other. This supersedes the 2026-10-18 "valid off every runway" ruling **for HTDSH1's configuration only**; it stays valid off every *runway* within a 30/17 and SNOWZ1 is unchanged. The deck refuses HTDSH1 at MSP outside a 30/17. (2) **FOOLS is the spelling** — CIFP 261029's, so the order's and the briefing's FOOLZ is a typo in those documents, not a second transition. Readings 1 and 2 above are settled by it on the deck side; the documents themselves still differ.
+
 **Minneapolis One (3-2-3 b, was *Nine*):** aircraft that file no SID get the **Minneapolis One Departure
 (MSP1)** or the most current version, **which does not need to be amended into the route string**; unable an
 assigned SID, **MSP 1 to the first filed fix** (inside ZMP airspace); unable both, **radar vectors to the first

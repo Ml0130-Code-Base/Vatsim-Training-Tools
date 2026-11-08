@@ -2602,11 +2602,15 @@ try {
         && !D.sidSwapMisuse('30-17', 'HTDSH1.ALO', 'KMSP') && !D.sidSwapMisuse('12', 'ZMBRO1.BRIBE') && !D.sidSwapMisuse('12', 'SNOWZ1.ISTIQ')
         && !D.sidSwapMisuse('12', 'HTDSH1.ALO', 'KSTP'));
       const hmis = sv('12', 'HTDSH1.ALO'), hmis2 = sv('30', 'HTDSH1.BRIBE');
-      const hSays = v => v.warnings.filter(w => /HTDSH1 is assigned only in a 30s\/17/.test(w));
-      assert('HTDSH1 outside 30-17 is warned, citing the order, and not refused — the owner ruled it valid off every runway',
+      const hSays = v => v.errors.filter(e => /HTDSH1 is assigned only in a 30s\/17/.test(e));
+      assert('HTDSH1 outside 30-17 is REFUSED, citing the order — owner, 2026-11-08: HTDSH is only for a 30/17',
         hSays(hmis).length === 1 && hSays(hmis2).length === 1 && /7110\.26H 3-2-3/.test(hSays(hmis)[0])
-        && /Reminder, not a judgement/.test(hSays(hmis)[0]) && !hmis.errors.some(e => /HTDSH/.test(e)),
-        hSays(hmis).join(' | ') + ' || ' + hmis.errors.join(' | '));
+        && !hmis.warnings.some(w => /HTDSH1 is assigned only/.test(w)),
+        hSays(hmis).join(' | ') + ' || ' + hmis.warnings.join(' | '));
+      assert('and HTDSH1 in a 30-17 is not refused, whatever the runway',
+        ['30L', '30R', '17'].every(r => globalThis.ddb.validate({ name: 'h17', cfg: '30-17', ceil: 5000, vis: 10,
+          ac: [{ cs: 'DAL12', type: 'B738', role: 'departure', rules: 'IFR', radar: 'established', dep: 'KMSP',
+                 fromStart: 4, alt: 5000, ias: 250, route: '', sid: 'HTDSH1.ALO', depRwy: r }] }).errors.filter(e => /HTDSH1 is assigned only/.test(e)).length === 0));
       assert('and the generator draws HTDSH1 in 30-17 but never in a 12 configuration',
         in3017.indexOf('HTDSH1') >= 0 && elsewhere.indexOf('HTDSH1') < 0, Array.from(new Set(elsewhere)).sort().join());
       assert('the 30-17 configuration note carries the 2026-11-01 position: no always-Knock-It-Off line, Area F kept as written',

@@ -223,8 +223,8 @@ The items above stay as written; this is what moved.
   17.** **Conflicts, named and not settled:** the tower order's table lists HTDSH for Runway 17 only and the LOA
   footnote says *"only authorized for Runway 17 departures on a 30s/17"*, while the order's asterisk says
   *regardless of departure runway*; and the owner's 2026-10-18 ruling (HTDSH1 and SNOWZ1 valid off every runway)
-  was made on CIFP data before any order spoke to it. The deck warns on HTDSH1 outside a 30/17 and the
-  generator stops drawing it there; it refuses nothing.
+  was made on CIFP data before any order spoke to it. The deck warned on HTDSH1 outside a 30/17 until the owner ruled on 2026-11-08 (below); it now refuses it, and the
+  generator does not draw it there.
 - **Item 8 (scratchpad codes): answered by the LOA.** MSP-M98 LOA 5.b Table 1 prints **fourteen** three-letter
   codes (and 7110.26B 3-3 a(2) says the code goes in scratchpad #1, altitude in the assigned-altitude field; the
   one-letter gates and the `B12` form are gone). **It has no transition column**, so which transition takes
@@ -237,6 +237,8 @@ The items above stay as written; this is what moved.
   P-ACP, but 4-2 g, which defined Area F, and the Area F diagrams in Appendix A are deleted, and the briefing p.22
   calls Area F eliminated. The deck keeps the landline case on its 3-2 c citation and says so in the entry's
   *why*; nothing here corrects the order.
+
+- **Owner rulings, 2026-11-08.** (1) **HTDSH is only for a 30/17** — it is assigned at MSP in a 30/17 configuration and in no other; ZMBRO and TOTTZ in every other. This supersedes the 2026-10-18 "valid off every runway" ruling **for HTDSH1's configuration only**; it stays valid off every *runway* within a 30/17 and SNOWZ1 is unchanged. The deck refuses HTDSH1 at MSP outside a 30/17. (2) **FOOLS is the spelling** — CIFP 261029's, so the order's and the briefing's FOOLZ is a typo in those documents, not a second transition.
 
 ---
 

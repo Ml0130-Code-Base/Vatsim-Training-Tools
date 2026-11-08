@@ -1651,11 +1651,11 @@ function validate(rec){
       satellite, that field's own track (issue #67) */
    var dTrk=DD.depTrackFor(a.sid, a.depRwy, dFld);
    /* a 30s/17 swaps ZMBRO1 and TOTTZ1 to HTDSH1 at MSP, and HTDSH1 is assigned in no other
-      configuration (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b Table 1 fn 1) — a reminder, not a refusal */
+      configuration (MSP ATCT 7110.26H 3-2-3, MSP-M98 LOA 5.b Table 1 fn 1; owner, 2026-11-08) — the first a reminder, the second a refusal */
    var swp=DD.sidSwapFor(rec.cfg, a.sid, dFld);
    if(swp) warns.push(tag+': '+DD.sidOf(a.sid)+' is flown as '+swp.to+' in a 30s/17 — '+swp.src+'. Reminder, not a judgement.');
    var swm=DD.sidSwapMisuse(rec.cfg, a.sid, dFld);
-   if(swm) warns.push(tag+': '+DD.sidOf(a.sid)+' is assigned only in a 30s/17 at MSP — '+swm.swap.src+'. This strip is in a '+rec.cfg+'. Reminder, not a judgement.');
+   if(swm) errs.push(tag+': '+DD.sidOf(a.sid)+' is assigned only in a 30s/17 at MSP — '+swm.swap.src+'. This strip is in a '+rec.cfg+'; MSP is assigned TOTTZ or ZMBRO there.');
    if(!dTrk){
     /* MSP1 is MSP's alone and has seven initial fixes; anything else naming it is a typo or a satellite */
     if(DD.isMsp1(a.sid))

@@ -19,6 +19,8 @@ JPEGs (the SID comparison chart, four SID maps, two SNOWZ/HTDSH plates, the airs
 scratchpad table), carved out of the PDF with `perl` and read by eye on 2026-10-28. There is no
 rasteriser on the owner's machine, so a page is read as the image it carries and not rendered.
 
+> **Owner rulings, 2026-11-08.** (1) **HTDSH is only for a 30/17** — it is assigned at MSP in a 30/17 configuration and in no other; ZMBRO and TOTTZ in every other. This supersedes the 2026-10-18 "valid off every runway" ruling **for HTDSH1's configuration only**; it stays valid off every *runway* within a 30/17 and SNOWZ1 is unchanged. The deck refuses HTDSH1 at MSP outside a 30/17. (2) **FOOLS is the spelling** — CIFP 261029's, so the order's and the briefing's FOOLZ is a typo in those documents, not a second transition.
+
 ## 1. The slide text, by page
 
 | Page | Says |
