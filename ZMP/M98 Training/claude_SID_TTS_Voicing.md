@@ -4,9 +4,16 @@ Michael listens to drill responses via text-to-speech. TTS reads exactly what is
 
 **The SIDs from 2026-10-29 (CIFP 261029, issue #61)** — the set the deck carries:
 
-- KBREW -> Kay-Brew (carried over)
-- ZMBRO -> Zum-bro (carried over)
-- BITEZ, BUNYN, DUHCK, HTDSH, NRTHN, SNOWZ, SNUPE, TOTTZ -> **no spoken form yet.** Write them as-is until Michael says how each is pronounced. A confident wrong pronunciation is worse than a flat one, because it gets learned (root `CLAUDE.md` §8).
+**Spoken forms as the tower order prints them — MSP ATCT 7110.26H 3-2-3 SID table, effective 2026-11-01 (read 2026-11-08):**
+
+- KBREW -> Kay-Brew (carried over; the order prints it too)
+- ZMBRO -> Zum-bro (carried over; the order prints "Zumbro")
+- BUNYN -> Bunyan
+- HTDSH -> Hotdish
+- NRTHN -> Northern
+- SNUPE -> Snoopy
+- TOTTZ -> Tots
+- BITEZ, DUHCK, SNOWZ -> **no spoken form in any document** (the order prints none, and DUHCK is not in its table at all, being the satellites' SID). Write them as-is until Michael says how each is pronounced. A confident wrong pronunciation is worse than a flat one, because it gets learned (root `CLAUDE.md` §8).
 
 **The revision number is said as a word:** BITEZ1 -> "BITEZ ONE", KBREW1 -> "KBREW ONE". A
 transition, when it is said, follows the SID: "BITEZ ONE departure, DKOTA transition".

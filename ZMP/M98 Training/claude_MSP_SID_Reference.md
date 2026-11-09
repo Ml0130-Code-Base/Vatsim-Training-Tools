@@ -158,7 +158,7 @@ Clear direct to a **fix within 60 NM of the MSP DME** that's ahead of the aircra
 - M98 issues enroute clearance only when cleared **170 or below**.
 - **Boundary:** M98 releases departures to ZMP at **25 NM from the MSP DME or leaving 11,000** — not a flat 40-mile ring.
 
-**Voicing:** KBREW is *Kay-Brew* and ZMBRO *Zum-bro*, carried over. The other new names have **no
+**Voicing:** KBREW is *Kay-Brew* and ZMBRO *Zum-bro*, carried over. The tower order 7110.26H 3-2-3 (2026-11-01) prints Bunyan, Hotdish, Northern, Snoopy and Tots; the other new names have **no
 spoken form yet** — write them as-is (`claude_SID_TTS_Voicing.md`, root `CLAUDE.md` §8). The
 revision number is said as a word: *BITEZ ONE departure*.
 
