@@ -273,9 +273,8 @@ trust it. Never promote an unconfirmed note.
 
 ### 5.1 OpenSpec — the behaviour contract, and what it must never hold
 
-Adopted 2026-11-18 at the owner's request; the decisions are in
-`openspec/changes/adopt-openspec/design.md` (archived under `openspec/changes/archive/` once it
-lands). `openspec/config.yaml` turns the rules below into rules on each artifact. The OpenSpec
+Adopted 2026-11-18 at the owner's request (issue #80); the decisions are in
+`openspec/changes/archive/2026-11-18-adopt-openspec/design.md`. `openspec/config.yaml` turns the rules below into rules on each artifact. The OpenSpec
 skills are installed per user, so the tree carries no skill files.
 
 **Three kinds of document, three kinds of authority.** Reference markdown (`claude_*.md`) is
