@@ -16,10 +16,10 @@ each one is a single `.html` file that works from `file://` with the machine off
 | [m98-drill-deck.html](ZMP/M98%20Training/m98-drill-deck.html) | **M98** — Minneapolis approach | terminal, STARS | 2 | its own engine | `/m98/` |
 | [zmp-drill-deck.html](ZMP/ZMP/zmp-drill-deck.html) | **ZMP** — Minneapolis Center | en route, ERAM | 1 | none yet | `/zmp/` |
 | [r90-drill-deck.html](ZMP/R90/r90-drill-deck.html) | **R90** — Omaha TRACON | terminal, STARS | 1 | published tracks | `/r90/` |
-| [c90-drill-deck.html](ZAU/C90/c90-drill-deck.html) | **C90** — Chicago TRACON | terminal | 0 | published tracks | `/c90/` |
-| [azo-drill-deck.html](ZAU/AZO/azo-drill-deck.html) | **AZO** — Great Lakes, West Wall | terminal | 0 | overflights only | `/azo/` |
-| [s56-drill-deck.html](ZLC/S56/s56-drill-deck.html) | **S56** — Salt Lake approach | terminal | 0 | published tracks | `/s56/` |
-| [bigsky-drill-deck.html](ZLC/Big%20Sky/bigsky-drill-deck.html) | **Big Sky** — Boise and Bozeman | terminal | 0 | published tracks | `/bigsky/` |
+| [c90-drill-deck.html](ZAU/C90/c90-drill-deck.html) | **C90** — Chicago TRACON | terminal | 1 | published tracks | `/c90/` |
+| [azo-drill-deck.html](ZAU/AZO/azo-drill-deck.html) | **AZO** — Great Lakes, West Wall | terminal | 1 | overflights only | `/azo/` |
+| [s56-drill-deck.html](ZLC/S56/s56-drill-deck.html) | **S56** — Salt Lake approach | terminal | 1 | published tracks | `/s56/` |
+| [bigsky-drill-deck.html](ZLC/Big%20Sky/bigsky-drill-deck.html) | **Big Sky** — Boise and Bozeman | terminal | 1 | published tracks | `/bigsky/` |
 | [ind-drill-deck.html](ZID/IND/ind-drill-deck.html) | **IND** — Indianapolis TRACON | terminal, STARS | 1 | published tracks | `/ind/` |
 | [sdf-drill-deck.html](ZID/SDF/sdf-drill-deck.html) | **SDF** — Louisville TRACON | terminal, STARS | 1 | published tracks | `/sdf/` |
 | [cvg-drill-deck.html](ZID/CVG/cvg-drill-deck.html) | **CVG** — Cincinnati TRACON | terminal, STARS | 1 | published tracks | `/cvg/` |
@@ -27,7 +27,8 @@ each one is a single `.html` file that works from `file://` with the machine off
 ### What the tiers mean
 
 - **Tier 0 — reference and selector.** Cited reference data, a tool that resolves positions,
-  frequencies and the combining chain, and a rendered statement of what is missing.
+  frequencies and the combining chain, and a rendered statement of what is missing. No tool sits
+  here any more: C90, AZO, S56 and Big Sky left it on 2026-10-28.
 - **Tier 1 — data spine and shell.** All of the above, plus the full reference layer, the
   three-page architecture, saved progress, and a smoke test that asserts both the spine and the
   emptiness. No traffic model of its own.
@@ -106,6 +107,10 @@ fly-block.html  drill-block.html       master blocks, copied byte for byte into 
 strip-block.html  routedraw-block.html
 datis-block.html
 tools/                                 cifp/ (the procedure decoder) and vnas/ (the map puller)
+openspec/                              behaviour specs and change plans (OpenSpec, since 2026-11-18)
+  config.yaml                          the house rules each spec, design and task list obeys
+  specs/                               what each master block and deck must do
+  changes/                             the plan for one issue each; archive/ once landed
 site/index.html                        the landing page, and the ONLY copy of the site manifest
 build-site.sh                          stage the published site into _site/
 serve-site.ps1                         preview it at localhost:8080
@@ -117,12 +122,17 @@ ZLC/    S56/ · Big Sky/ · _shared/ · _vnas/
 ZID/    IND/ · SDF/ · CVG/ · _shared/ · _vnas/ · _vatis/
 ```
 
-A mature facility folder carries the tool, its smoke test, and a reference layer: a source
-document index that makes the pull reproducible, the governing order and each letter of
-agreement transcribed by paragraph, a CIFP procedures file, a gap analysis of what the documents
-never answer, the drill format, the session review, the practice log and the text-to-speech
-voicing table. Tier 0 facilities carry the reference file and the index; the rest comes before
-an engine does.
+A facility folder carries the tool, its smoke test, and a reference layer: a source document
+index that makes the pull reproducible, the governing order and each letter of agreement
+transcribed by paragraph, a CIFP procedures file, a gap analysis of what the documents never
+answer, the drill format, the session review, the practice log and the text-to-speech voicing
+table. Every tool is at Tier 1 or above, so every folder has the drill format, session review,
+practice log, voicing table and gap analysis. Three gaps remain:
+- ZLC's two folders have no source document index.
+- M98 carries its SIDs in `claude_MSP_SID_Reference.md` instead of a CIFP procedures file.
+- ZMP Center has no CIFP procedures file.
+
+The full target shape is in [CLAUDE.md](CLAUDE.md) §2.
 
 Shared reference documents are **copied, not linked**, so no facility folder depends on
 another's files. The cost is that a change to one must land in every copy in the same commit.
@@ -143,12 +153,13 @@ sh build-site.sh
 powershell -ExecutionPolicy Bypass -File serve-site.ps1
 ```
 
-`build-site.sh` stages the landing page and the ten tools into `_site/` — about 3.5 MB — and
+`build-site.sh` stages the landing page and the ten tools into `_site/` — about 3.7 MB — and
 **fails the build if anything else reaches it**. The manifest lives in `site/index.html` and
 nowhere else, so adding a tool is one line there and no edit to the script.
 
 Publishing happens on push: the workflow rebuilds and redeploys on any push to `main` that
-touches a drill deck, `site/`, or `build-site.sh`. It publishes to
+touches a drill deck, `site/`, `build-site.sh` or the workflow itself. Nothing under `openspec/`
+or in the reference markdown reaches the site. It publishes to
 `https://ml0130-code-base.github.io/Vatsim-Training-Tools/`, which requires
 **Settings → Pages → Source: GitHub Actions** set once. Deploying from a branch instead would
 put every tool behind a percent-encoded URL, because the source folders carry spaces.
@@ -206,15 +217,36 @@ before every commit:
 git diff --cached --name-only | cut -d/ -f1 | sort -u
 ```
 
-M98, R90, ZMP Center and the three ZID decks each carry a smoke test that asserts the block count,
-the data spine, that nothing spatial is fabricated, and that the graded-items list is empty:
+**Specs and plans live in `openspec/`** (root `CLAUDE.md` §5.1). A spec says what a master block
+or a deck does, and every scenario names its proof: the harness check that asserts it, a
+recorded drive of the page, *unverified*, or *contradicted* by a named issue. **A spec never
+states an aviation value**; it cites the reference markdown that holds it, which stays
+authoritative. The issue is still the work item. A change under `openspec/changes/` is the plan
+for one issue. It is opened for work that changes a master block, changes behaviour in more than
+one deck, or adds a capability, and it is archived when the work lands. The five master blocks
+have specs; the deck shell, the honesty registries and the CIFP pipeline come next (issue #80).
+
+`openspec/specs/zmp/`, `zau/`, `zlc/` and `zid/` belong to their ARTCC's tree for the rule above.
+The rest of `openspec/` is repo-level. When a commit stages specs, this must print nothing, or
+the same tree as the check above:
+
+```bash
+git diff --cached --name-only -- openspec/specs | cut -d/ -f3 | grep -x -E 'zmp|zau|zlc|zid' | sort -u
+```
+
+Every deck carries a smoke test that asserts the block count, the data spine, that nothing
+spatial is fabricated, and that the graded-items list is empty:
 
 ```bash
 node smoke-test.mjs r90-drill-deck.html
 ```
 
 **There is no Node on the machine this repository is written on**, so a harness is run through
-the `smoke-test-browser.html` beside it, served over local HTTP. M98 and the three ZID decks have
-that runner and pass; R90 and ZMP Center have only the `.mjs`, and ZMP Center's cannot pass
-against the current deck (issue #69). Changes are also checked by driving the real page — the
-same honesty the tools apply to their own data applies to claims about testing them.
+the `smoke-test-browser.html` beside it, served over local HTTP.
+- Eight decks have that runner and pass: M98, C90, AZO, S56, Big Sky, IND, SDF and CVG. IND, SDF
+  and CVG were last run on 2026-11-18.
+- R90 and ZMP Center have only the `.mjs`, and ZMP Center's cannot pass against the current deck
+  (issue #69).
+
+Changes are also checked by driving the real page. The same honesty the tools apply to their own
+data applies to claims about testing them.
