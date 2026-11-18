@@ -16,7 +16,7 @@
 
 - [x] 3.1 Run `openspec validate baseline-master-blocks --strict`, and scan the specs for aviation values (runway designators, altitudes, flight levels, frequencies, ICAO codes, procedure names); verify validation passes and the scan finds none. Result 2026-11-18: valid; the scan found none.
 - [x] 3.2 Commit this change folder as a repo-level commit naming #80 and staged by path; verify `git diff --cached --name-only | cut -d/ -f1 | sort -u` prints only `openspec`, and the ARTCC spec-folder check prints nothing.
-- [ ] 3.3 Post the landing comment on #80 naming the commit, the runner counts from 1.3, the number of scenarios at each proof grade, and what is left (`deck-shell` and `honesty` next); verify the comment is posted.
+- [x] 3.3 Post the landing comment on #80 naming the commit, the runner counts from 1.3, the number of scenarios at each proof grade, and what is left (`deck-shell` and `honesty` next); verify the comment is posted.
 
 ## Workflow follow-up
 
