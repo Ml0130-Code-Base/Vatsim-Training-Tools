@@ -1,0 +1,49 @@
+schema: spec-driven
+
+# What an agent cannot infer by reading the code. Root CLAUDE.md is the house rules and
+# is read first; nothing here replaces it.
+context: |
+  Read root CLAUDE.md before any artifact. It is authoritative for architecture and process;
+  the claude_*.md reference markdown is authoritative for aviation data (invariant 7);
+  openspec/specs/ is authoritative for tool behaviour only.
+  There is no Node and no working Python on the owner's machine. Perl, curl, pdftotext and gh
+  are present. A smoke-test.mjs is executed through its smoke-test-browser.html runner over
+  local HTTP, never with node; a harness without a runner is verified only by being parsed.
+  The repository is public. Everything under openspec/ is published once pushed.
+  The issue tracker is the work queue. A change is the plan for one issue, never a second queue.
+
+rules:
+  proposal:
+    - "Name the issue this change plans, as #N. A change with no issue is not started."
+    - Name every ARTCC tree touched (ZMP, ZAU, ZLC, ZID) and whether repo-level files ride along.
+    - Any aviation number mentioned cites its document and paragraph, and a CIFP value its cycle.
+    - Declare skip_specs only when no tool behaviour changes.
+  specs:
+    - Never state an aviation value (frequency, altitude, speed, fix, coordinate, runway, procedure
+      name). Name the slot or table and cite the reference file that holds it.
+    - Every scenario names its proof on its last line, either the harness check that asserts it,
+      "checked by driving the page", or "unverified".
+    - Facility specs carry only what is particular to that facility; never restate a master or
+      deck-shell requirement.
+    - Never add to STANDING, and never quote a practice log or an OJT session review.
+    - Use the layout in root CLAUDE.md; path segments are kebab-case (Big Sky is big-sky).
+  design:
+    - Name every master block touched and every deck that carries a copy of it.
+    - State the conflict and keep both sources when two documents disagree; never pick one silently.
+  tasks:
+    - One commit per ARTCC tree; repo-level files ride along only with the work they came from.
+    - A task that changes a master or a deck's behaviour updates its spec in the same commit.
+    - Regenerate the paste-block files from the main deck file; never edit them separately.
+    - End each ARTCC's group by running its browser runners and recording the check counts, then
+      post the landing comment on the issue naming the commits and what is left.
+
+operations:
+  apply:
+    guidance:
+      - Report exactly which checks ran and how, per root CLAUDE.md section 12.
+      - Stage by path and run the commit-boundary check before every commit.
+  archive:
+    guidance:
+      - Archive in the landing commit, or in a repo-level commit after the last ARTCC commit when
+        the change spans trees.
+      - Post the archive on the issue; archiving does not close it.

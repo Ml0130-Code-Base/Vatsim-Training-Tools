@@ -42,6 +42,10 @@ GeoJSON that §7 said did not exist** (2026-10-22), how `tools/vnas/vnas.pl` pul
 measured to hold and where it is older than the community sources. **vNAS is the primary geometry
 source** (owner, 2026-10-22); read that file before saying vNAS lacks anything.
 
+`openspec/` sits at the root beside all of them: the behaviour contract for the tools and the plan
+for each change, adopted 2026-11-18 (owner). **What it may and may not hold is §5.1**, and how a
+change relates to an issue and to a commit is §14.
+
 ---
 
 ## 1. The invariants
@@ -266,6 +270,43 @@ trust it. Never promote an unconfirmed note.
 - **Part 4 — conflicts and as-written anomalies, preserved rather than corrected.**
 - **Part 5 — what is fully covered and needs nothing.** Worth writing; it is what stops the
   next session re-litigating settled ground.
+
+### 5.1 OpenSpec — the behaviour contract, and what it must never hold
+
+Adopted 2026-11-18 at the owner's request; the decisions are in
+`openspec/changes/adopt-openspec/design.md` (archived under `openspec/changes/archive/` once it
+lands). `openspec/config.yaml` turns the rules below into rules on each artifact. The OpenSpec
+skills are installed per user, so the tree carries no skill files.
+
+**Three kinds of document, three kinds of authority.** Reference markdown (`claude_*.md`) is
+authoritative for aviation data (invariant 7). `openspec/specs/` is authoritative for **tool
+behaviour**: what a deck or a master block does and what it refuses. This file and the facility
+`CLAUDE.md` files are authoritative for architecture and process. A spec and this file disagreeing
+on architecture is a bug in one of them. **Process rules are never specs**: where data comes from,
+issue hygiene and commit boundaries stay here.
+
+**A spec never states an aviation value.** It names the slot or table and cites the reference file
+that holds it. *"The deck SHALL show each position's frequency from
+`claude_ZLC_Positions_Reference.md`"*, never the frequency. Invariant 5 is the reason: a spec
+stating a crossing altitude is a third copy that no CIFP roll updates. A tool's own constants
+(storage keys, block counts, namespaces) may be stated, because the spec is where they are decided.
+
+**The layout.** Root-level capabilities are `deck-shell/` (§1, §4), `honesty/` (this section),
+`masters/{strip,fly-player,drill-builder,route-draw,datis-reader}/`, `pipelines/{cifp,vnas}/` and
+`site-publishing/`. Facility capabilities sit under `zmp/ zau/ zlc/ zid/`, one folder per deck
+(`zlc/big-sky/`: path segments are kebab-case). A facility spec carries only what is particular to
+that facility and never restates a master or `deck-shell` requirement.
+
+**How existing behaviour gets in.** Through baseline changes: ADDED requirements written from the
+block reference and the harness, no tool change, archived on landing. The order is the five masters
+first (byte-identical code with written contracts), then `deck-shell` and `honesty`, then
+`pipelines/cifp` before the CIFP 261126 roll (#65). **Facility specs are written only when facility
+work touches them, never in bulk**, because a bulk backfill would be written from the code, and the
+code is what a spec exists to check.
+
+**Every scenario names its proof**: the harness check that asserts it, *"checked by driving the
+page"*, or *"unverified"*. That is invariant 2 applied to the specs: a gap a spec shows is one
+someone can close.
 
 ---
 
@@ -923,6 +964,11 @@ nine numbered items of which five were marked **Done** with their superseded tex
 underneath — a roadmap describing more finished work than remaining work, in the file whose job
 is to re-anchor a cold session. The tracker closes things; a heading cannot.
 
+**An OpenSpec `tasks.md` is not an exception to this, and here is why.** It is the plan for one
+issue, it belongs to a change folder with a state, and archiving moves it out of the active tree
+when the work lands. Nothing in it is a work item the issue does not already carry. A task that
+turns into new work of its own becomes a new issue, never a new line in someone else's `tasks.md`.
+
 **What an issue has to carry**, because *"MKE needs a skeleton created"* is a reminder rather
 than a brief:
 
@@ -944,6 +990,19 @@ that record.
 **A file may cite an issue the way it cites a document.** *"NICHOL is not in CIFP — issue #41"*
 is a pointer, and pointers are fine. A list of pointers under a heading called **Roadmap** is
 the thing this rule removes.
+
+**An OpenSpec change is the plan for one issue, never a second queue** (§5.1, adopted 2026-11-18).
+The issue is the work item. The change folder under `openspec/changes/` is how that item will be
+done, and its proposal names the issue as `#N`. A change with no issue is not started. The pickup
+comment links the change folder, and the landing comment names the commits and says the change
+was archived. **Archiving does not close the issue**: who closes still follows from who opened it.
+Work that spans the baseline specs shares one tracking issue.
+
+**When a change is required, and when it is not.** Open a change for work that **changes a master
+block, changes behaviour in more than one deck, or adds a capability**. Anything else may go straight
+from issue to commit, as before: a fix inside one deck, a data-only update such as a CIFP restamp,
+a reference-markdown transcription, a question answered. When in doubt, ask whether a spec would
+change. If one would, open a change.
 
 **Capability, as of 2026-09-04:** the GitHub CLI is installed (2.100.0) and authenticated as
 `ml0130` with `repo` scope — `gh issue list` and `gh issue comment` both work, and the token
@@ -975,11 +1034,20 @@ three commits — the root reference document, then ZLC, then ZAU.
 
 **Repo-level files are not a facility, and they do not launder a cross-ARTCC commit.** Root
 `CLAUDE.md`, `claude_CRC_Platform_Reference.md`, `claude_Community_Geometry_Sources.md`,
-`claude_vNAS_Source_Reference.md`, `tools/` and the site harness (`build-site.sh`, `serve-site.ps1`, `site/index.html`, `.github/workflows/`,
+`claude_vNAS_Source_Reference.md`, `tools/`, `openspec/` outside its four ARTCC spec folders (below) and the site harness (`build-site.sh`, `serve-site.ps1`, `site/index.html`, `.github/workflows/`,
 `.gitignore`) may ride along with one ARTCC's commit when the change came out of that work — a
 house rule learned at C90 lands with the C90 change that taught it. A root change that stands
 on its own, or that came out of work in two trees, is its own commit and touches no facility
 folder.
+
+**`openspec/` is split between the two kinds** (2026-11-18). **`openspec/specs/zmp/`, `zau/`, `zlc/`
+and `zid/` belong to that ARTCC's tree** and change only in its commits, exactly as if they sat
+under `ZMP/`, `ZAU/`, `ZLC/` or `ZID/`. **Everything else under `openspec/` is repo-level**:
+`config.yaml`, the root-level specs (`deck-shell/`, `honesty/`, `masters/`, `pipelines/`,
+`site-publishing/`) and the change folders. A change that spans ARTCCs, such as the CIFP roll, is
+planned once and implemented in one commit per ARTCC. Its archive is a repo-level commit of its
+own, after the last ARTCC commit. Because the facility specs sit outside the facility folders, read
+a tree's full history with `git log -- ZLC/ openspec/specs/zlc/`.
 
 **One declared exception: a synchronised shared-document update.** §2 requires every copy of a
 copied document to land in the same commit, and once a copy exists under two ARTCCs that commit
@@ -1005,6 +1073,13 @@ git add ZAU/ && git commit -m "Move the C90 capture-point slot to partial"
 
 ```bash
 git diff --cached --name-only | cut -d/ -f1 | sort -u
+```
+
+When `openspec` is in that list, this second line prints the ARTCC spec folders staged. It must be
+empty or name the same tree as the first:
+
+```bash
+git diff --cached --name-only -- openspec/specs | cut -d/ -f3 | grep -x -E 'zmp|zau|zlc|zid' | sort -u
 ```
 
 **Name the scope in the subject line** — the ARTCC, or the facilities inside it. *"Wire the
